@@ -38,26 +38,46 @@ struct readidx_string {
   static R_altrep_class_t class_t;
 
   // Make an altrep object of class `stdvec_double::class_t`
-  static SEXP Make(NumericVector offsets, const char* filename) {
+  static SEXP Make(std::vector<size_t>* offsets, const char* filename) {
 
-    // `xp` needs protection because R_new_altrep allocates
-    SEXP xp = PROTECT(Rf_allocVector(VECSXP, 2));
-    SET_VECTOR_ELT(xp, 0, offsets);
-    SET_VECTOR_ELT(xp, 1, Rf_mkString(filename));
-    // The std::vector<double> pointer is wrapped into an R external pointer
-    //
-    // make a new altrep object of class `stdvec_double::class_t`
-    SEXP res = R_new_altrep(class_t, xp, R_NilValue);
+    // `out` and `xp` needs protection because R_new_altrep allocates
+    SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
 
-    UNPROTECT(1);
+    SEXP xp = PROTECT(R_MakeExternalPtr(offsets, R_NilValue, R_NilValue));
+    R_RegisterCFinalizerEx(xp, readidx_string::Finalize, TRUE);
+
+    SET_VECTOR_ELT(out, 0, xp);
+    SET_VECTOR_ELT(out, 1, Rf_mkString(filename));
+
+    // make a new altrep object of class `readidx_string::class_t`
+    SEXP res = R_new_altrep(class_t, out, R_NilValue);
+
+    UNPROTECT(2);
 
     return res;
   }
 
-  // The length of the object
-  static R_xlen_t Length(SEXP vec) {
-    return Rf_xlength(VECTOR_ELT(R_altrep_data1(vec), 0)) - 1;
+  // finalizer for the external pointer
+  static void Finalize(SEXP xp) {
+    delete static_cast<std::vector<size_t>*>(R_ExternalPtrAddr(xp));
   }
+
+  static std::vector<size_t>* Ptr(SEXP x) {
+    return static_cast<std::vector<size_t>*>(
+        R_ExternalPtrAddr(VECTOR_ELT(R_altrep_data1(x), 0)));
+  }
+
+  // same, but as a reference, for convenience
+  static std::vector<size_t>& Get(SEXP vec) { return *Ptr(vec); }
+
+  static const char* Filename(SEXP vec) {
+    return CHAR(STRING_ELT(VECTOR_ELT(R_altrep_data1(vec), 1), 0));
+  }
+
+  // ALTREP methods -------------------
+
+  // The length of the object
+  static R_xlen_t Length(SEXP vec) { return Get(vec).size(); }
 
   // What gets printed when .Internal(inspect()) is used
   static Rboolean Inspect(
@@ -66,7 +86,11 @@ struct readidx_string {
       int deep,
       int pvec,
       void (*inspect_subtree)(SEXP, int, int, int)) {
-    Rprintf("readidx_string (len=%d, ptr=%p)\n", Length(x));
+    Rprintf(
+        "readidx_string (file=%s, len=%d, ptr=%p)\n",
+        Filename(x),
+        Length(x),
+        Ptr(x));
     return TRUE;
   }
 
@@ -77,9 +101,8 @@ struct readidx_string {
   // this does not do bounds checking because that's expensive, so
   // the caller must take care of that
   static SEXP string_Elt(SEXP vec, R_xlen_t i) {
-    const char* filename(
-        CHAR(STRING_ELT(VECTOR_ELT(R_altrep_data1(vec), 1), 0)));
-    NumericVector idx = VECTOR_ELT(R_altrep_data1(vec), 0);
+    const char* filename = Filename(vec);
+    const std::vector<size_t>& idx = Get(vec);
 
     size_t cur_loc = idx[i];
     size_t next_loc = idx[i + 1];
@@ -157,16 +180,20 @@ size_t guess_size(size_t records, size_t bytes, size_t file_size) {
 // [[Rcpp::export]]
 SEXP create_index(std::string filename) {
   // TODO: probably change this to something like 1024
-  NumericVector out(100);
+  auto out = new std::vector<size_t>();
+  out->reserve(96);
 
   char c;
-  size_t i = 0;
   size_t columns = 0;
-  size_t current_size = out.size();
   size_t file_size = get_file_size(filename);
   size_t file_offset = 0;
 
   size_t prev_loc = 0;
+
+  // First try opening the index
+  std::string idx_file = filename + ".idx";
+
+  int idx_fd = open(idx_file.c_str(), O_RDONLY);
 
   // From https://stackoverflow.com/a/17925143/2055486
   const size_t BUFFER_SIZE = 16 * 1024;
@@ -189,17 +216,16 @@ SEXP create_index(std::string filename) {
       switch (*p) {
       case '\n': {
         if (columns == 0) {
-          columns = i + 1;
+          columns = out->size() + 1;
+          size_t cur_loc = file_offset + (p - buf + 1);
+
+          size_t new_size = guess_size(out->size(), cur_loc, file_size);
+          out->reserve(new_size);
         }
       }
       case '\t': {
         size_t cur_loc = file_offset + (p - buf + 1);
-        if (i >= current_size) {
-          size_t new_size = guess_size(i, cur_loc, file_size);
-          out = resize(out, new_size);
-          current_size = new_size;
-        }
-        out[i++] = prev_loc;
+        out->push_back(prev_loc);
         prev_loc = cur_loc;
         break;
       }
@@ -208,16 +234,12 @@ SEXP create_index(std::string filename) {
     }
     file_offset += bytes_read;
   }
-  out[i++] = file_size;
-
-  out = resize(out, i);
+  out->push_back(file_size);
 
   close(fd);
 
-  // Create index file
-  std::string out_file = filename + ".idx";
   int fd_out = open(out_file.c_str(), O_WRONLY | O_CREAT, 0644);
-  write(fd_out, REAL(out), i);
+  write(fd_out, out->data(), out->size());
   close(fd_out);
 
   return readidx_string::Make(out, filename.c_str());
