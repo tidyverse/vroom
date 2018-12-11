@@ -214,5 +214,11 @@ SEXP create_index(std::string filename) {
 
   close(fd);
 
+  // Create index file
+  std::string out_file = filename + ".idx";
+  int fd_out = open(out_file.c_str(), O_WRONLY | O_CREAT, 0644);
+  write(fd_out, REAL(out), i);
+  close(fd_out);
+
   return readidx_string::Make(out, filename.c_str());
 }
