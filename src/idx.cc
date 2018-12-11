@@ -180,10 +180,9 @@ size_t guess_size(size_t records, size_t bytes, size_t file_size) {
 // [[Rcpp::export]]
 SEXP create_index(std::string filename) {
   // TODO: probably change this to something like 1024
-  auto out = new std::vector<size_t>();
+  std::vector<size_t>* out = new std::vector<size_t>();
   out->reserve(96);
 
-  char c;
   size_t columns = 0;
   size_t file_size = get_file_size(filename);
   size_t file_offset = 0;
@@ -193,8 +192,6 @@ SEXP create_index(std::string filename) {
   // First try opening the index
   std::string idx_file = filename + ".idx";
 
-  int idx_fd = open(idx_file.c_str(), O_RDONLY);
-
   // From https://stackoverflow.com/a/17925143/2055486
   const size_t BUFFER_SIZE = 16 * 1024;
   int fd = open(filename.c_str(), O_RDONLY);
@@ -202,7 +199,6 @@ SEXP create_index(std::string filename) {
   /* Advise the kernel of our access pattern.  */
 
   char buf[BUFFER_SIZE + 1];
-  size_t lines = 0;
 
   // TODO: consider safe_read
   // (https://github.com/coreutils/gnulib/blob/master/lib/safe-read.c)
@@ -238,7 +234,7 @@ SEXP create_index(std::string filename) {
 
   close(fd);
 
-  int fd_out = open(out_file.c_str(), O_WRONLY | O_CREAT, 0644);
+  int fd_out = open(idx_file.c_str(), O_WRONLY | O_CREAT, 0644);
   write(fd_out, out->data(), out->size());
   close(fd_out);
 
