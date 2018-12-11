@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // create_index
 SEXP create_index(std::string filename);
-RcppExport SEXP _fastidx_create_index(SEXP filenameSEXP) {
+RcppExport SEXP _readidx_create_index(SEXP filenameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -18,12 +18,12 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_fastidx_create_index", (DL_FUNC) &_fastidx_create_index, 1},
+    {"_readidx_create_index", (DL_FUNC) &_readidx_create_index, 1},
     {NULL, NULL, 0}
 };
 
 void init_readidx_string(DllInfo* dll);
-RcppExport void R_init_fastidx(DllInfo *dll) {
+RcppExport void R_init_readidx(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
     init_readidx_string(dll);

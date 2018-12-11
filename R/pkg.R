@@ -1,3 +1,3 @@
-#' @useDynLib fastidx, .registration = TRUE
+#' @useDynLib readidx, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 NULL
