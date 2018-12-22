@@ -1,7 +1,8 @@
 #include <Rcpp.h>
 #include <fcntl.h>
 #include <fstream>
-#include <stdio.h>
+#include <mio/mmap.hpp>
+#include <mio/shared_mmap.hpp>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -40,7 +41,7 @@ struct readidx_string {
   // Make an altrep object of class `stdvec_double::class_t`
   static SEXP Make(
       std::shared_ptr<std::vector<size_t> >* offsets,
-      const char* filename,
+      mio::shared_mmap_source* mmap,
       R_xlen_t column,
       R_xlen_t num_columns) {
 
@@ -50,15 +51,18 @@ struct readidx_string {
     SEXP xp = PROTECT(R_MakeExternalPtr(offsets, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(xp, readidx_string::Finalize, TRUE);
 
+    SEXP mmap_xp = PROTECT(R_MakeExternalPtr(mmap, R_NilValue, R_NilValue));
+    R_RegisterCFinalizerEx(mmap_xp, readidx_string::Finalize_Mmap, TRUE);
+
     SET_VECTOR_ELT(out, 0, xp);
-    SET_VECTOR_ELT(out, 1, Rf_mkString(filename));
+    SET_VECTOR_ELT(out, 1, mmap_xp);
     SET_VECTOR_ELT(out, 2, Rf_ScalarReal(column));
     SET_VECTOR_ELT(out, 3, Rf_ScalarReal(num_columns));
 
     // make a new altrep object of class `readidx_string::class_t`
     SEXP res = R_new_altrep(class_t, out, R_NilValue);
 
-    UNPROTECT(2);
+    UNPROTECT(3);
 
     return res;
   }
@@ -71,6 +75,16 @@ struct readidx_string {
     delete test;
   }
 
+  static void Finalize_Mmap(SEXP xp) {
+    auto test = static_cast<mio::shared_mmap_source*>(R_ExternalPtrAddr(xp));
+    delete test;
+  }
+
+  static mio::shared_mmap_source* Mmap(SEXP x) {
+    return static_cast<mio::shared_mmap_source*>(
+        R_ExternalPtrAddr(VECTOR_ELT(R_altrep_data1(x), 1)));
+  }
+
   static std::shared_ptr<std::vector<size_t> >* Ptr(SEXP x) {
     return static_cast<std::shared_ptr<std::vector<size_t> >*>(
         R_ExternalPtrAddr(VECTOR_ELT(R_altrep_data1(x), 0)));
@@ -79,10 +93,6 @@ struct readidx_string {
   // same, but as a reference, for convenience
   static std::shared_ptr<std::vector<size_t> >& Get(SEXP vec) {
     return *Ptr(vec);
-  }
-
-  static const char* Filename(SEXP vec) {
-    return CHAR(STRING_ELT(VECTOR_ELT(R_altrep_data1(vec), 1), 0));
   }
 
   static const R_xlen_t Column(SEXP vec) {
@@ -107,11 +117,7 @@ struct readidx_string {
       int deep,
       int pvec,
       void (*inspect_subtree)(SEXP, int, int, int)) {
-    Rprintf(
-        "readidx_string (file=%s, len=%d, ptr=%p)\n",
-        Filename(x),
-        Length(x),
-        Ptr(x));
+    Rprintf("readidx_string (len=%d, ptr=%p)\n", Length(x), Ptr(x));
     return TRUE;
   }
 
@@ -122,7 +128,6 @@ struct readidx_string {
   // this does not do bounds checking because that's expensive, so
   // the caller must take care of that
   static SEXP string_Elt(SEXP vec, R_xlen_t i) {
-    const char* filename = Filename(vec);
     auto sep_locs = Get(vec);
     const R_xlen_t column = Column(vec);
     const R_xlen_t num_columns = Num_Columns(vec);
@@ -133,14 +138,9 @@ struct readidx_string {
     size_t len = next_loc - cur_loc;
     // Rcerr << cur_loc << ':' << next_loc << ':' << len << '\n';
 
-    int fd = open(filename, O_RDONLY);
-    lseek(fd, cur_loc, SEEK_SET);
+    mio::shared_mmap_source* mmap = Mmap(vec);
 
-    char buffer[2048];
-    read(fd, buffer, len - 1);
-    close(fd);
-
-    return Rf_mkCharLenCE(buffer, len - 1, CE_UTF8);
+    return Rf_mkCharLenCE(mmap->data() + cur_loc, len - 1, CE_UTF8);
   }
 
   // -------- initialize the altrep class with the methods above
@@ -203,8 +203,9 @@ size_t guess_size(size_t records, size_t bytes, size_t file_size) {
 
 // [[Rcpp::export]]
 SEXP create_index_(std::string filename) {
-  // TODO: probably change this to something like 1024
   auto out = std::make_shared<std::vector<size_t> >();
+
+  // TODO: probably change this to something like 1024
   out->reserve(1024);
 
   size_t columns = 0;
@@ -213,50 +214,30 @@ SEXP create_index_(std::string filename) {
 
   size_t prev_loc = 0;
 
-  // First try opening the index
-  std::string idx_file = filename + ".idx";
-
+  mio::shared_mmap_source mmap(filename);
   // From https://stackoverflow.com/a/17925143/2055486
-  const size_t BUFFER_SIZE = 16 * 1024;
-  int fd = open(filename.c_str(), O_RDONLY);
 
-  /* Advise the kernel of our access pattern.  */
+  size_t cur_loc = 0;
+  for (auto i = mmap.cbegin(); i != mmap.cend(); ++i) {
+    switch (*i) {
+    case '\n': {
+      if (columns == 0) {
+        columns = out->size() + 1;
 
-  char buf[BUFFER_SIZE + 1];
-
-  // TODO: consider safe_read
-  // (https://github.com/coreutils/gnulib/blob/master/lib/safe-read.c)
-  while (size_t bytes_read = read(fd, buf, BUFFER_SIZE)) {
-    if (!bytes_read)
-      break;
-
-    char* p = buf;
-    char* end = p + bytes_read;
-    while (p != end) {
-      switch (*p) {
-      case '\n': {
-        if (columns == 0) {
-          columns = out->size() + 1;
-          size_t cur_loc = file_offset + (p - buf + 1);
-
-          size_t new_size = guess_size(out->size(), cur_loc, file_size);
-          out->reserve(new_size);
-        }
+        size_t new_size = guess_size(out->size(), cur_loc, file_size);
+        out->reserve(new_size);
       }
-      case '\t': {
-        size_t cur_loc = file_offset + (p - buf + 1);
-        out->push_back(prev_loc);
-        prev_loc = cur_loc;
-        break;
-      }
-      }
-      ++p;
+      /* explicit fall through */
     }
-    file_offset += bytes_read;
+    case '\t': {
+      out->push_back(prev_loc);
+      prev_loc = cur_loc + 1;
+      break;
+    }
+    }
+    ++cur_loc;
   }
   out->push_back(file_size);
-
-  close(fd);
 
   // int fd_out = open(idx_file.c_str(), O_WRONLY | O_CREAT, 0644);
   // write(fd_out, out.data(), out->size());
@@ -270,7 +251,7 @@ SEXP create_index_(std::string filename) {
         i,
         readidx_string::Make(
             new std::shared_ptr<std::vector<size_t> >(out),
-            filename.c_str(),
+            new mio::shared_mmap_source(mmap),
             i,
             columns));
   }
