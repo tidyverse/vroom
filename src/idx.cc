@@ -217,26 +217,39 @@ SEXP create_index_(std::string filename) {
   mio::shared_mmap_source mmap(filename);
   // From https://stackoverflow.com/a/17925143/2055486
 
-  size_t cur_loc = 0;
-  for (auto i = mmap.cbegin(); i != mmap.cend(); ++i) {
-    switch (*i) {
-    case '\n': {
-      if (columns == 0) {
-        columns = out->size() + 1;
+  auto begin_p = mmap.cbegin();
+  auto nl_p = begin_p;
+  auto end_p = mmap.cend();
+  auto sep_p = begin_p;
 
-        size_t new_size = guess_size(out->size(), cur_loc, file_size);
-        out->reserve(new_size);
-      }
-      /* explicit fall through */
-    }
-    case '\t': {
+  while (
+      (nl_p =
+           static_cast<const char*>(std::memchr(nl_p, '\n', (end_p - nl_p))))) {
+    size_t cur_loc;
+
+    while (sep_p < nl_p && (sep_p = static_cast<const char*>(
+                                std::memchr(sep_p, '\t', end_p - sep_p)))) {
+      cur_loc = sep_p - begin_p;
+
       out->push_back(prev_loc);
+      // Rcpp::Rcout << prev_loc << " 1\n";
       prev_loc = cur_loc + 1;
-      break;
+      ++sep_p;
     }
+
+    cur_loc = nl_p - begin_p;
+    if (columns == 0) {
+      columns = out->size();
+
+      size_t new_size = guess_size(out->size(), cur_loc, file_size);
+      out->reserve(new_size);
     }
-    ++cur_loc;
+    out->push_back(cur_loc + 1);
+    // Rcpp::Rcout << cur_loc + 1 << " 2\n";
+
+    ++nl_p;
   }
+
   out->push_back(file_size);
 
   // int fd_out = open(idx_file.c_str(), O_WRONLY | O_CREAT, 0644);
