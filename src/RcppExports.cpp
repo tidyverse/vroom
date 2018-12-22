@@ -5,20 +5,20 @@
 
 using namespace Rcpp;
 
-// create_index
-SEXP create_index(std::string filename);
-RcppExport SEXP _readidx_create_index(SEXP filenameSEXP) {
+// create_index_
+SEXP create_index_(std::string filename);
+RcppExport SEXP _readidx_create_index_(SEXP filenameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    rcpp_result_gen = Rcpp::wrap(create_index(filename));
+    rcpp_result_gen = Rcpp::wrap(create_index_(filename));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_readidx_create_index", (DL_FUNC) &_readidx_create_index, 1},
+    {"_readidx_create_index_", (DL_FUNC) &_readidx_create_index_, 1},
     {NULL, NULL, 0}
 };
 

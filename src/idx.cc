@@ -38,16 +38,22 @@ struct readidx_string {
   static R_altrep_class_t class_t;
 
   // Make an altrep object of class `stdvec_double::class_t`
-  static SEXP Make(std::vector<size_t>* offsets, const char* filename) {
+  static SEXP Make(
+      std::shared_ptr<std::vector<size_t> >* offsets,
+      const char* filename,
+      R_xlen_t column,
+      R_xlen_t num_columns) {
 
     // `out` and `xp` needs protection because R_new_altrep allocates
-    SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
+    SEXP out = PROTECT(Rf_allocVector(VECSXP, 4));
 
     SEXP xp = PROTECT(R_MakeExternalPtr(offsets, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(xp, readidx_string::Finalize, TRUE);
 
     SET_VECTOR_ELT(out, 0, xp);
     SET_VECTOR_ELT(out, 1, Rf_mkString(filename));
+    SET_VECTOR_ELT(out, 2, Rf_ScalarReal(column));
+    SET_VECTOR_ELT(out, 3, Rf_ScalarReal(num_columns));
 
     // make a new altrep object of class `readidx_string::class_t`
     SEXP res = R_new_altrep(class_t, out, R_NilValue);
@@ -59,25 +65,40 @@ struct readidx_string {
 
   // finalizer for the external pointer
   static void Finalize(SEXP xp) {
-    delete static_cast<std::vector<size_t>*>(R_ExternalPtrAddr(xp));
+    auto test = static_cast<std::shared_ptr<std::vector<size_t> >*>(
+        R_ExternalPtrAddr(xp));
+    auto use_count = test->use_count();
+    delete test;
   }
 
-  static std::vector<size_t>* Ptr(SEXP x) {
-    return static_cast<std::vector<size_t>*>(
+  static std::shared_ptr<std::vector<size_t> >* Ptr(SEXP x) {
+    return static_cast<std::shared_ptr<std::vector<size_t> >*>(
         R_ExternalPtrAddr(VECTOR_ELT(R_altrep_data1(x), 0)));
   }
 
   // same, but as a reference, for convenience
-  static std::vector<size_t>& Get(SEXP vec) { return *Ptr(vec); }
+  static std::shared_ptr<std::vector<size_t> >& Get(SEXP vec) {
+    return *Ptr(vec);
+  }
 
   static const char* Filename(SEXP vec) {
     return CHAR(STRING_ELT(VECTOR_ELT(R_altrep_data1(vec), 1), 0));
   }
 
+  static const R_xlen_t Column(SEXP vec) {
+    return REAL(VECTOR_ELT(R_altrep_data1(vec), 2))[0];
+  }
+
+  static const R_xlen_t Num_Columns(SEXP vec) {
+    return REAL(VECTOR_ELT(R_altrep_data1(vec), 3))[0];
+  }
+
   // ALTREP methods -------------------
 
   // The length of the object
-  static R_xlen_t Length(SEXP vec) { return Get(vec).size(); }
+  static R_xlen_t Length(SEXP vec) {
+    return Get(vec)->size() / Num_Columns(vec);
+  }
 
   // What gets printed when .Internal(inspect()) is used
   static Rboolean Inspect(
@@ -102,10 +123,13 @@ struct readidx_string {
   // the caller must take care of that
   static SEXP string_Elt(SEXP vec, R_xlen_t i) {
     const char* filename = Filename(vec);
-    const std::vector<size_t>& idx = Get(vec);
+    auto sep_locs = Get(vec);
+    const R_xlen_t column = Column(vec);
+    const R_xlen_t num_columns = Num_Columns(vec);
 
-    size_t cur_loc = idx[i];
-    size_t next_loc = idx[i + 1];
+    size_t idx = i * num_columns + column;
+    size_t cur_loc = (*sep_locs)[idx];
+    size_t next_loc = (*sep_locs)[idx + 1];
     size_t len = next_loc - cur_loc;
     // Rcerr << cur_loc << ':' << next_loc << ':' << len << '\n';
 
@@ -178,10 +202,10 @@ size_t guess_size(size_t records, size_t bytes, size_t file_size) {
 }
 
 // [[Rcpp::export]]
-SEXP create_index(std::string filename) {
+SEXP create_index_(std::string filename) {
   // TODO: probably change this to something like 1024
-  std::vector<size_t>* out = new std::vector<size_t>();
-  out->reserve(96);
+  auto out = std::make_shared<std::vector<size_t> >();
+  out->reserve(1024);
 
   size_t columns = 0;
   size_t file_size = get_file_size(filename);
@@ -234,9 +258,24 @@ SEXP create_index(std::string filename) {
 
   close(fd);
 
-  int fd_out = open(idx_file.c_str(), O_WRONLY | O_CREAT, 0644);
-  write(fd_out, out->data(), out->size());
-  close(fd_out);
+  // int fd_out = open(idx_file.c_str(), O_WRONLY | O_CREAT, 0644);
+  // write(fd_out, out.data(), out->size());
+  // close(fd_out);
 
-  return readidx_string::Make(out, filename.c_str());
+  SEXP res = PROTECT(Rf_allocVector(VECSXP, columns));
+
+  for (size_t i = 0; i < columns; ++i) {
+    SET_VECTOR_ELT(
+        res,
+        i,
+        readidx_string::Make(
+            new std::shared_ptr<std::vector<size_t> >(out),
+            filename.c_str(),
+            i,
+            columns));
+  }
+
+  UNPROTECT(1);
+
+  return res;
 }
