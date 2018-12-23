@@ -117,7 +117,11 @@ struct readidx_string {
       int deep,
       int pvec,
       void (*inspect_subtree)(SEXP, int, int, int)) {
-    Rprintf("readidx_string (len=%d, ptr=%p)\n", Length(x), Ptr(x));
+    Rprintf(
+        "readidx_string (len=%d, ptr=%p materialized=%s)\n",
+        Length(x),
+        Ptr(x),
+        R_altrep_data2(x) != R_NilValue ? "T" : "F");
     return TRUE;
   }
 
@@ -128,6 +132,10 @@ struct readidx_string {
   // this does not do bounds checking because that's expensive, so
   // the caller must take care of that
   static SEXP string_Elt(SEXP vec, R_xlen_t i) {
+    SEXP data2 = R_altrep_data2(vec);
+    if (data2 != R_NilValue) {
+      return STRING_ELT(data2, i);
+    }
     auto sep_locs = Get(vec);
     const R_xlen_t column = Column(vec);
     const R_xlen_t num_columns = Num_Columns(vec);
@@ -143,6 +151,38 @@ struct readidx_string {
     return Rf_mkCharLenCE(mmap->data() + cur_loc, len - 1, CE_UTF8);
   }
 
+  // --- Altvec
+  static SEXP Materialize(SEXP vec) {
+    SEXP data2 = R_altrep_data2(vec);
+    if (data2 != R_NilValue) {
+      return data2;
+    }
+
+    // allocate a standard character vector for data2
+    R_xlen_t n = Length(vec);
+    data2 = PROTECT(Rf_allocVector(STRSXP, n));
+
+    for (R_xlen_t i = 0; i < n; ++i) {
+      SET_STRING_ELT(data2, i, string_Elt(vec, i));
+    }
+
+    R_set_altrep_data2(vec, data2);
+    UNPROTECT(1);
+    return data2;
+  }
+
+  static void* Dataptr(SEXP vec, Rboolean writeable) {
+    return STDVEC_DATAPTR(Materialize(vec));
+  }
+
+  static const void* Dataptr_or_null(SEXP vec) {
+    SEXP data2 = R_altrep_data2(vec);
+    if (data2 == R_NilValue)
+      return nullptr;
+
+    return STDVEC_DATAPTR(data2);
+  }
+
   // -------- initialize the altrep class with the methods above
 
   static void Init(DllInfo* dll) {
@@ -153,8 +193,8 @@ struct readidx_string {
     R_set_altrep_Inspect_method(class_t, Inspect);
 
     // altvec
-    // R_set_altvec_Dataptr_method(class_t, Dataptr);
-    // R_set_altvec_Dataptr_or_null_method(class_t, Dataptr_or_null);
+    R_set_altvec_Dataptr_method(class_t, Dataptr);
+    R_set_altvec_Dataptr_or_null_method(class_t, Dataptr_or_null);
 
     // altstring
     R_set_altstring_Elt_method(class_t, string_Elt);
@@ -201,18 +241,17 @@ size_t guess_size(size_t records, size_t bytes, size_t file_size) {
   return total_records;
 }
 
-// [[Rcpp::export]]
-SEXP create_index_(std::string filename) {
+std::tuple<
+    std::shared_ptr<std::vector<size_t> >,
+    size_t,
+    mio::shared_mmap_source>
+create_index(const std::string& filename) {
   auto out = std::make_shared<std::vector<size_t> >();
 
   // TODO: probably change this to something like 1024
   out->reserve(1024);
 
   size_t columns = 0;
-  size_t file_size = get_file_size(filename);
-  size_t file_offset = 0;
-
-  size_t prev_loc = 0;
 
   mio::shared_mmap_source mmap(filename);
   // From https://stackoverflow.com/a/17925143/2055486
@@ -221,6 +260,8 @@ SEXP create_index_(std::string filename) {
   auto nl_p = begin_p;
   auto end_p = mmap.cend();
   auto sep_p = begin_p;
+  auto file_size = end_p - begin_p;
+  size_t prev_loc = 0;
 
   while (
       (nl_p =
@@ -252,9 +293,17 @@ SEXP create_index_(std::string filename) {
 
   out->push_back(file_size);
 
-  // int fd_out = open(idx_file.c_str(), O_WRONLY | O_CREAT, 0644);
-  // write(fd_out, out.data(), out->size());
-  // close(fd_out);
+  return std::make_tuple(out, columns, mmap);
+}
+
+// [[Rcpp::export]]
+SEXP read_tsv_(const std::string& filename) {
+
+  std::shared_ptr<std::vector<size_t> > idx;
+  size_t columns;
+  mio::shared_mmap_source mmap;
+
+  std::tie(idx, columns, mmap) = create_index(filename);
 
   SEXP res = PROTECT(Rf_allocVector(VECSXP, columns));
 
@@ -263,7 +312,7 @@ SEXP create_index_(std::string filename) {
         res,
         i,
         readidx_string::Make(
-            new std::shared_ptr<std::vector<size_t> >(out),
+            new std::shared_ptr<std::vector<size_t> >(idx),
             new mio::shared_mmap_source(mmap),
             i,
             columns));
