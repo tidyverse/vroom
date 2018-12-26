@@ -4,8 +4,7 @@ NULL
 
 #' @export
 read_tsv <- function(x) {
-  out <- read_tsv_(x)
-  names(out) <- letters[seq_len(length(out))]
+  out <- read_tsv_(x, skip = 1)
 
   tibble::as_tibble(out)
 }

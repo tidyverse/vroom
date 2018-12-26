@@ -6,19 +6,20 @@
 using namespace Rcpp;
 
 // read_tsv_
-SEXP read_tsv_(const std::string& filename);
-RcppExport SEXP _readidx_read_tsv_(SEXP filenameSEXP) {
+SEXP read_tsv_(const std::string& filename, R_xlen_t skip);
+RcppExport SEXP _readidx_read_tsv_(SEXP filenameSEXP, SEXP skipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::string& >::type filename(filenameSEXP);
-    rcpp_result_gen = Rcpp::wrap(read_tsv_(filename));
+    Rcpp::traits::input_parameter< R_xlen_t >::type skip(skipSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_tsv_(filename, skip));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_readidx_read_tsv_", (DL_FUNC) &_readidx_read_tsv_, 1},
+    {"_readidx_read_tsv_", (DL_FUNC) &_readidx_read_tsv_, 2},
     {NULL, NULL, 0}
 };
 

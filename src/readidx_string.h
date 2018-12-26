@@ -1,26 +1,9 @@
-#include <Rcpp.h>
+#include "altrep.h"
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wsign-compare"
 #include <mio/shared_mmap.hpp>
-
-#if R_VERSION < R_Version(3, 6, 0)
-
-// workaround because R's <R_ext/Altrep.h> not so conveniently uses `class`
-// as a variable name, and C++ is not happy about that
-//
-// SEXP R_new_altrep(R_altrep_class_t class, SEXP data1, SEXP data2);
-//
-#define class klass
-
-// Because functions declared in <R_ext/Altrep.h> have C linkage
-extern "C" {
-#include <R_ext/Altrep.h>
-}
-
-// undo the workaround
-#undef class
-
-#else
-#include <R_ext/Altrep.h>
-#endif
+#pragma clang diagnostic pop
 
 using namespace Rcpp;
 
@@ -38,10 +21,11 @@ struct readidx_string {
       std::shared_ptr<std::vector<size_t> >* offsets,
       mio::shared_mmap_source* mmap,
       R_xlen_t column,
-      R_xlen_t num_columns) {
+      R_xlen_t num_columns,
+      R_xlen_t skip) {
 
     // `out` and `xp` needs protection because R_new_altrep allocates
-    SEXP out = PROTECT(Rf_allocVector(VECSXP, 4));
+    SEXP out = PROTECT(Rf_allocVector(VECSXP, 5));
 
     SEXP xp = PROTECT(R_MakeExternalPtr(offsets, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(xp, readidx_string::Finalize, TRUE);
@@ -53,6 +37,7 @@ struct readidx_string {
     SET_VECTOR_ELT(out, 1, mmap_xp);
     SET_VECTOR_ELT(out, 2, Rf_ScalarReal(column));
     SET_VECTOR_ELT(out, 3, Rf_ScalarReal(num_columns));
+    SET_VECTOR_ELT(out, 4, Rf_ScalarReal(skip));
 
     // make a new altrep object of class `readidx_string::class_t`
     SEXP res = R_new_altrep(class_t, out, R_NilValue);
@@ -64,15 +49,14 @@ struct readidx_string {
 
   // finalizer for the external pointer
   static void Finalize(SEXP xp) {
-    auto test = static_cast<std::shared_ptr<std::vector<size_t> >*>(
+    auto vec_p = static_cast<std::shared_ptr<std::vector<size_t> >*>(
         R_ExternalPtrAddr(xp));
-    auto use_count = test->use_count();
-    delete test;
+    delete vec_p;
   }
 
   static void Finalize_Mmap(SEXP xp) {
-    auto test = static_cast<mio::shared_mmap_source*>(R_ExternalPtrAddr(xp));
-    delete test;
+    auto mmap_p = static_cast<mio::shared_mmap_source*>(R_ExternalPtrAddr(xp));
+    delete mmap_p;
   }
 
   static mio::shared_mmap_source* Mmap(SEXP x) {
@@ -96,6 +80,10 @@ struct readidx_string {
 
   static const R_xlen_t Num_Columns(SEXP vec) {
     return REAL(VECTOR_ELT(R_altrep_data1(vec), 3))[0];
+  }
+
+  static const R_xlen_t Skip(SEXP vec) {
+    return REAL(VECTOR_ELT(R_altrep_data1(vec), 4))[0];
   }
 
   // ALTREP methods -------------------
@@ -132,10 +120,11 @@ struct readidx_string {
       return STRING_ELT(data2, i);
     }
     auto sep_locs = Get(vec);
-    const R_xlen_t column = Column(vec);
-    const R_xlen_t num_columns = Num_Columns(vec);
+    auto column = Column(vec);
+    auto num_columns = Num_Columns(vec);
+    auto skip = Skip(vec);
 
-    size_t idx = i * num_columns + column;
+    size_t idx = (i + skip) * num_columns + column;
     size_t cur_loc = (*sep_locs)[idx];
     size_t next_loc = (*sep_locs)[idx + 1];
     size_t len = next_loc - cur_loc;
