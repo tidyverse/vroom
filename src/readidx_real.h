@@ -148,14 +148,33 @@ struct readidx_real {
       return data2;
     }
 
-    // allocate a standard character vector for data2
+    // allocate a standard numeric vector for data2
     R_xlen_t n = Length(vec);
     data2 = PROTECT(Rf_allocVector(REALSXP, n));
 
     auto p = REAL(data2);
 
+    auto sep_locs = Get(vec);
+    auto column = Column(vec);
+    auto num_columns = Num_Columns(vec);
+    auto skip = Skip(vec);
+
+    mio::shared_mmap_source* mmap = Mmap(vec);
+
+    // Need to copy to a temp buffer since we have no way to tell strtod how
+    // long the buffer is.
+    char buf[128];
+
     for (R_xlen_t i = 0; i < n; ++i) {
-      p[i] = real_Elt(vec, i);
+      size_t idx = (i + skip) * num_columns + column;
+      size_t cur_loc = (*sep_locs)[idx];
+      size_t next_loc = (*sep_locs)[idx + 1];
+      size_t len = next_loc - cur_loc;
+
+      std::copy(mmap->data() + cur_loc, mmap->data() + next_loc, buf);
+      buf[len + 1] = '\0';
+
+      p[i] = R_strtod(buf, NULL);
     }
 
     R_set_altrep_data2(vec, data2);
