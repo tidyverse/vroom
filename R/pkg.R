@@ -9,6 +9,7 @@ read_tsv <- function(x) {
   tibble::as_tibble(out)
 }
 
+#' @export
 guess_type <- function(x) {
   type <- readr::guess_parser(x[seq_len(min(length(x), 100))])
   switch(type,
