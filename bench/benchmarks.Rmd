@@ -167,7 +167,7 @@ library(dplyr)
 library(forcats)
 
 tm_df <- map_dfr(times, function(x) {
-  ops <- c("read", "print", "head", "tail", "sample", "fitler")
+  ops <- c("read", "print", "head", "tail", "sample", "filter")
   tibble::tibble(
     op = factor(ops, levels = ops),
     process = map_dbl(x, "process"),
@@ -184,19 +184,22 @@ tm_df %>% dplyr::filter(op == "read", type == "real") %>% select(package, time) 
 ```
 
 ```{r, echo = FALSE, warning = FALSE}
-tm_df %>% group_by(package) %>% dplyr::filter(type == "real") %>% count(wt = time, name = "time") %>% gt::gt() %>% fmt_number(vars(time)) %>% tab_header("Total time for all operations")
+tm_df %>% group_by(package) %>% dplyr::filter(type == "real") %>% tally(wt = time) %>% rename("time" = "n") %>% gt::gt() %>% fmt_number(vars(time)) %>% tab_header("Total time for all operations")
 ```
 
 Graph of timings, note because data.table operations use multiple cores the
 processor time is often much higher than the real time.
 
-```{r, fig.width=10}
+```{r, fig.height = 8, fig.width=10, warning = FALSE}
 library(ggplot2)
+library(ggalt)
 tm_df %>%
   ggplot() +
+  geom_segment(y = 0, aes(x = package, xend = package, yend = time, alpha = type), color = "grey50") +
     geom_point(aes(x = package, y = time, color = type)) +
     facet_wrap(vars(op), scales = "free") +
-    bench::scale_y_bench_time()
+    bench::scale_y_bench_time(base = NULL) +
+    theme(legend.position = "bottom")
 ```
 
 ```{r}

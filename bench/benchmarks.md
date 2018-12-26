@@ -449,7 +449,7 @@ base
 
 <td class="gt_row gt_right">
 
-4.18
+4.56
 
 </td>
 
@@ -465,7 +465,7 @@ dplyr
 
 <td class="gt_row gt_right gt_striped">
 
-4.24
+4.46
 
 </td>
 
@@ -481,7 +481,7 @@ data.table
 
 <td class="gt_row gt_right">
 
-20.62
+19.79
 
 </td>
 
@@ -497,7 +497,7 @@ readr
 
 <td class="gt_row gt_right gt_striped">
 
-28.40
+26.57
 
 </td>
 
@@ -796,14 +796,6 @@ time
 
 <tbody class="gt_table_body">
 
-<tr class="gt_group_heading_row">
-
-<td colspan="2" class="gt_empty_group_heading">
-
-</td>
-
-</tr>
-
 <tr>
 
 <td class="gt_row gt_center">
@@ -814,7 +806,7 @@ base
 
 <td class="gt_row gt_right">
 
-5.83
+6.29
 
 </td>
 
@@ -830,7 +822,7 @@ dplyr
 
 <td class="gt_row gt_right gt_striped">
 
-10.90
+10.68
 
 </td>
 
@@ -846,7 +838,7 @@ data.table
 
 <td class="gt_row gt_right">
 
-20.81
+19.96
 
 </td>
 
@@ -862,7 +854,7 @@ readr
 
 <td class="gt_row gt_right gt_striped">
 
-29.51
+26.97
 
 </td>
 
@@ -883,22 +875,25 @@ the processor time is often much higher than the real time.
 
 ``` r
 library(ggplot2)
+library(ggalt)
 tm_df %>%
   ggplot() +
+  geom_segment(y = 0, aes(x = package, xend = package, yend = time, alpha = type), color = "grey50") +
     geom_point(aes(x = package, y = time, color = type)) +
     facet_wrap(vars(op), scales = "free") +
-    bench::scale_y_bench_time()
+    bench::scale_y_bench_time(base = NULL) +
+    theme(legend.position = "bottom")
 ```
 
 ![](benchmarks_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
 sessioninfo::package_info(c("readidx", "readr", "dplyr", "data.table"), dependencies = FALSE)
-#>  package    * version     date       lib source        
-#>  data.table   1.11.8      2018-09-30 [1] CRAN (R 3.5.0)
-#>  dplyr      * 0.7.99.9000 2018-12-26 [1] local         
-#>  readidx    * 0.0.0.9000  2018-12-26 [1] local         
-#>  readr        1.3.1       2018-12-21 [1] CRAN (R 3.5.0)
+#>  package    * version    date       lib source        
+#>  data.table   1.11.8     2018-09-30 [1] CRAN (R 3.5.0)
+#>  dplyr      * 0.7.8      2018-11-10 [1] CRAN (R 3.5.0)
+#>  readidx    * 0.0.0.9000 2018-12-26 [1] local         
+#>  readr        1.3.1      2018-12-21 [1] CRAN (R 3.5.0)
 #> 
 #> [1] /Users/jhester/Library/R/3.5/library
 #> [2] /Library/Frameworks/R.framework/Versions/3.5/Resources/library
