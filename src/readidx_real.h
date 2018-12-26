@@ -127,7 +127,7 @@ struct readidx_real {
     size_t idx = (i + skip) * num_columns + column;
     size_t cur_loc = (*sep_locs)[idx];
     size_t next_loc = (*sep_locs)[idx + 1];
-    size_t len = next_loc - cur_loc;
+    size_t len = next_loc - cur_loc - 1;
     // Rcerr << cur_loc << ':' << next_loc << ':' << len << '\n';
 
     mio::shared_mmap_source* mmap = Mmap(vec);
