@@ -12,7 +12,7 @@ using namespace Rcpp;
 // and Romain François
 // https://purrple.cat/blog/2018/10/21/lazy-abs-altrep-cplusplus/ and Dirk
 
-struct readidx_string {
+struct readidx_real {
 
   static R_altrep_class_t class_t;
 
@@ -28,10 +28,10 @@ struct readidx_string {
     SEXP out = PROTECT(Rf_allocVector(VECSXP, 5));
 
     SEXP xp = PROTECT(R_MakeExternalPtr(offsets, R_NilValue, R_NilValue));
-    R_RegisterCFinalizerEx(xp, readidx_string::Finalize, TRUE);
+    R_RegisterCFinalizerEx(xp, readidx_real::Finalize, TRUE);
 
     SEXP mmap_xp = PROTECT(R_MakeExternalPtr(mmap, R_NilValue, R_NilValue));
-    R_RegisterCFinalizerEx(mmap_xp, readidx_string::Finalize_Mmap, TRUE);
+    R_RegisterCFinalizerEx(mmap_xp, readidx_real::Finalize_Mmap, TRUE);
 
     SET_VECTOR_ELT(out, 0, xp);
     SET_VECTOR_ELT(out, 1, mmap_xp);
@@ -39,7 +39,7 @@ struct readidx_string {
     SET_VECTOR_ELT(out, 3, Rf_ScalarReal(num_columns));
     SET_VECTOR_ELT(out, 4, Rf_ScalarReal(skip));
 
-    // make a new altrep object of class `readidx_string::class_t`
+    // make a new altrep object of class `readidx_real::class_t`
     SEXP res = R_new_altrep(class_t, out, R_NilValue);
 
     UNPROTECT(3);
@@ -101,23 +101,23 @@ struct readidx_string {
       int pvec,
       void (*inspect_subtree)(SEXP, int, int, int)) {
     Rprintf(
-        "readidx_string (len=%d, ptr=%p materialized=%s)\n",
+        "readidx_real (len=%d, ptr=%p materialized=%s)\n",
         Length(x),
         Ptr(x),
         R_altrep_data2(x) != R_NilValue ? "T" : "F");
     return TRUE;
   }
 
-  // ALTSTRING methods -----------------
+  // ALTREAL methods -----------------
 
   // the element at the index `i`
   //
   // this does not do bounds checking because that's expensive, so
   // the caller must take care of that
-  static SEXP string_Elt(SEXP vec, R_xlen_t i) {
+  static double real_Elt(SEXP vec, R_xlen_t i) {
     SEXP data2 = R_altrep_data2(vec);
     if (data2 != R_NilValue) {
-      return STRING_ELT(data2, i);
+      return REAL(data2)[i];
     }
     auto sep_locs = Get(vec);
     auto column = Column(vec);
@@ -132,7 +132,13 @@ struct readidx_string {
 
     mio::shared_mmap_source* mmap = Mmap(vec);
 
-    return Rf_mkCharLenCE(mmap->data() + cur_loc, len - 1, CE_UTF8);
+    // Need to copy to a temp buffer since we have no way to tell strtod how
+    // long the buffer is.
+    char buf[128];
+    std::copy(mmap->data() + cur_loc, mmap->data() + next_loc, buf);
+    buf[len + 1] = '\0';
+
+    return R_strtod(buf, NULL);
   }
 
   // --- Altvec
@@ -144,10 +150,12 @@ struct readidx_string {
 
     // allocate a standard character vector for data2
     R_xlen_t n = Length(vec);
-    data2 = PROTECT(Rf_allocVector(STRSXP, n));
+    data2 = PROTECT(Rf_allocVector(REALSXP, n));
+
+    auto p = REAL(data2);
 
     for (R_xlen_t i = 0; i < n; ++i) {
-      SET_STRING_ELT(data2, i, string_Elt(vec, i));
+      p[i] = real_Elt(vec, i);
     }
 
     R_set_altrep_data2(vec, data2);
@@ -170,7 +178,7 @@ struct readidx_string {
   // -------- initialize the altrep class with the methods above
 
   static void Init(DllInfo* dll) {
-    class_t = R_make_altstring_class("readidx_string", "readidx", dll);
+    class_t = R_make_altreal_class("readidx_real", "readidx", dll);
 
     // altrep
     R_set_altrep_Length_method(class_t, Length);
@@ -180,13 +188,13 @@ struct readidx_string {
     R_set_altvec_Dataptr_method(class_t, Dataptr);
     R_set_altvec_Dataptr_or_null_method(class_t, Dataptr_or_null);
 
-    // altstring
-    R_set_altstring_Elt_method(class_t, string_Elt);
+    // altreal
+    R_set_altreal_Elt_method(class_t, real_Elt);
   }
 };
 
-R_altrep_class_t readidx_string::class_t;
+R_altrep_class_t readidx_real::class_t;
 
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
-void init_readidx_string(DllInfo* dll) { readidx_string::Init(dll); }
+void init_readidx_real(DllInfo* dll) { readidx_real::Init(dll); }

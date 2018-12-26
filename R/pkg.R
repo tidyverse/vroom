@@ -8,3 +8,11 @@ read_tsv <- function(x) {
 
   tibble::as_tibble(out)
 }
+
+guess_type <- function(x) {
+  type <- readr::guess_parser(x[seq_len(min(length(x), 100))])
+  switch(type,
+    "double" = 1L,
+    0L
+  )
+}

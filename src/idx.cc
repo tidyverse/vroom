@@ -49,39 +49,30 @@ create_index(const std::string& filename) {
   mio::shared_mmap_source mmap(filename);
   // From https://stackoverflow.com/a/17925143/2055486
 
-  auto begin_p = mmap.cbegin();
-  auto nl_p = begin_p;
-  auto end_p = mmap.cend();
-  auto sep_p = begin_p;
-  auto file_size = end_p - begin_p;
+  auto begin = mmap.cbegin();
+  auto end = mmap.cend();
+  auto file_size = end - begin;
   size_t prev_loc = 0;
+  size_t cur_loc = 0;
 
-  while (
-      (nl_p =
-           static_cast<const char*>(std::memchr(nl_p, '\n', (end_p - nl_p))))) {
-    size_t cur_loc;
+  for (auto i = begin; i != end; ++i) {
+    switch (*i) {
+    case '\n': {
+      if (columns == 0) {
+        columns = out->size() + 1;
 
-    while (sep_p < nl_p && (sep_p = static_cast<const char*>(
-                                std::memchr(sep_p, '\t', end_p - sep_p)))) {
-      cur_loc = sep_p - begin_p;
-
+        size_t new_size = guess_size(out->size(), cur_loc, file_size);
+        out->reserve(new_size);
+      }
+      /* explicit fall through */
+    }
+    case '\t': {
       out->push_back(prev_loc);
-      // Rcpp::Rcout << prev_loc << " 1\n";
       prev_loc = cur_loc + 1;
-      ++sep_p;
+      break;
     }
-
-    cur_loc = nl_p - begin_p;
-    if (columns == 0) {
-      columns = out->size();
-
-      size_t new_size = guess_size(out->size(), cur_loc, file_size);
-      out->reserve(new_size);
     }
-    out->push_back(cur_loc + 1);
-    // Rcpp::Rcout << cur_loc + 1 << " 2\n";
-
-    ++nl_p;
+    ++cur_loc;
   }
 
   out->push_back(file_size);
