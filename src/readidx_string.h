@@ -126,13 +126,13 @@ struct readidx_string {
 
     size_t idx = (i + skip) * num_columns + column;
     size_t cur_loc = (*sep_locs)[idx];
-    size_t next_loc = (*sep_locs)[idx + 1];
+    size_t next_loc = (*sep_locs)[idx + 1] - 1;
     size_t len = next_loc - cur_loc;
     // Rcerr << cur_loc << ':' << next_loc << ':' << len << '\n';
 
     mio::shared_mmap_source* mmap = Mmap(vec);
 
-    return Rf_mkCharLenCE(mmap->data() + cur_loc, len - 1, CE_UTF8);
+    return Rf_mkCharLenCE(mmap->data() + cur_loc, len, CE_UTF8);
   }
 
   // --- Altvec

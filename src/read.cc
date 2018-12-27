@@ -33,18 +33,18 @@ SEXP read_tsv_(const std::string& filename, R_xlen_t skip) {
   for (size_t i = 0; i < num_columns; ++i) {
     // Set column header
     size_t cur_loc = (*readidx_idx)[i];
-    size_t next_loc = (*readidx_idx)[i + 1];
+    size_t next_loc = (*readidx_idx)[i + 1] - 1;
     size_t len = next_loc - cur_loc;
-    nms[i] = Rf_mkCharLenCE(mmap.data() + cur_loc, len - 1, CE_UTF8);
+    nms[i] = Rf_mkCharLenCE(mmap.data() + cur_loc, len, CE_UTF8);
 
     // Guess column type
     CharacterVector col(num_guess);
     for (auto j = 0; j < num_guess; ++j) {
       size_t idx = (j + skip) * num_columns + i;
       size_t cur_loc = (*readidx_idx)[idx];
-      size_t next_loc = (*readidx_idx)[idx + 1];
+      size_t next_loc = (*readidx_idx)[idx + 1] - 1;
       size_t len = next_loc - cur_loc;
-      col[j] = Rf_mkCharLenCE(mmap.data() + cur_loc, len - 1, CE_UTF8);
+      col[j] = Rf_mkCharLenCE(mmap.data() + cur_loc, len, CE_UTF8);
       // Rcpp::Rcout << "i:" << i << " j:" << j << " cur_loc:" << cur_loc
       //<< " next_loc:" << next_loc << " " << col[j] << "\n";
     }
