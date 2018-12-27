@@ -14,6 +14,7 @@ RoxygenNote: 6.1.1
 LinkingTo: 
     Rcpp
 Imports: 
+    readr,
     Rcpp
 URL: https://github.com/jimhester/readidx
 BugReports: https://github.com/jimhester/readidx/issues
