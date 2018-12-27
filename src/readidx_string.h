@@ -146,8 +146,21 @@ struct readidx_string {
     R_xlen_t n = Length(vec);
     data2 = PROTECT(Rf_allocVector(STRSXP, n));
 
+    auto sep_locs = Get(vec);
+    auto column = Column(vec);
+    auto num_columns = Num_Columns(vec);
+    auto skip = Skip(vec);
+
+    mio::shared_mmap_source* mmap = Mmap(vec);
+
     for (R_xlen_t i = 0; i < n; ++i) {
-      SET_STRING_ELT(data2, i, string_Elt(vec, i));
+      size_t idx = (i + skip) * num_columns + column;
+      size_t cur_loc = (*sep_locs)[idx];
+      size_t next_loc = (*sep_locs)[idx + 1] - 1;
+      size_t len = next_loc - cur_loc;
+
+      auto val = Rf_mkCharLenCE(mmap->data() + cur_loc, len, CE_UTF8);
+      SET_STRING_ELT(data2, i, val);
     }
 
     R_set_altrep_data2(vec, data2);
