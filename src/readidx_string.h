@@ -27,13 +27,13 @@ struct readidx_string {
     // `out` and `xp` needs protection because R_new_altrep allocates
     SEXP out = PROTECT(Rf_allocVector(VECSXP, 5));
 
-    SEXP xp = PROTECT(R_MakeExternalPtr(offsets, R_NilValue, R_NilValue));
-    R_RegisterCFinalizerEx(xp, readidx_string::Finalize, TRUE);
+    SEXP idx_xp = PROTECT(R_MakeExternalPtr(offsets, R_NilValue, R_NilValue));
+    R_RegisterCFinalizerEx(idx_xp, readidx_string::Finalize_Idx, TRUE);
 
     SEXP mmap_xp = PROTECT(R_MakeExternalPtr(mmap, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(mmap_xp, readidx_string::Finalize_Mmap, TRUE);
 
-    SET_VECTOR_ELT(out, 0, xp);
+    SET_VECTOR_ELT(out, 0, idx_xp);
     SET_VECTOR_ELT(out, 1, mmap_xp);
     SET_VECTOR_ELT(out, 2, Rf_ScalarReal(column));
     SET_VECTOR_ELT(out, 3, Rf_ScalarReal(num_columns));
@@ -48,9 +48,10 @@ struct readidx_string {
   }
 
   // finalizer for the external pointer
-  static void Finalize(SEXP xp) {
+  static void Finalize_Idx(SEXP xp) {
     auto vec_p = static_cast<std::shared_ptr<std::vector<size_t> >*>(
         R_ExternalPtrAddr(xp));
+    // Rcpp::Rcerr << "string_idx_ptr:" << vec_p->use_count() << '\n';
     delete vec_p;
   }
 
@@ -64,14 +65,10 @@ struct readidx_string {
         R_ExternalPtrAddr(VECTOR_ELT(R_altrep_data1(x), 1)));
   }
 
-  static std::shared_ptr<std::vector<size_t> >* Ptr(SEXP x) {
-    return static_cast<std::shared_ptr<std::vector<size_t> >*>(
-        R_ExternalPtrAddr(VECTOR_ELT(R_altrep_data1(x), 0)));
-  }
-
   // same, but as a reference, for convenience
-  static std::shared_ptr<std::vector<size_t> >& Get(SEXP vec) {
-    return *Ptr(vec);
+  static std::shared_ptr<std::vector<size_t> >& Idx(SEXP vec) {
+    return *static_cast<std::shared_ptr<std::vector<size_t> >*>(
+        R_ExternalPtrAddr(VECTOR_ELT(R_altrep_data1(vec), 0)));
   }
 
   static const R_xlen_t Column(SEXP vec) {
@@ -90,7 +87,7 @@ struct readidx_string {
 
   // The length of the object
   static R_xlen_t Length(SEXP vec) {
-    return (Get(vec)->size() / Num_Columns(vec)) - Skip(vec);
+    return (Idx(vec)->size() / Num_Columns(vec)) - Skip(vec);
   }
 
   // What gets printed when .Internal(inspect()) is used
@@ -101,9 +98,8 @@ struct readidx_string {
       int pvec,
       void (*inspect_subtree)(SEXP, int, int, int)) {
     Rprintf(
-        "readidx_string (len=%d, ptr=%p materialized=%s)\n",
+        "readidx_string (len=%d, materialized=%s)\n",
         Length(x),
-        Ptr(x),
         R_altrep_data2(x) != R_NilValue ? "T" : "F");
     return TRUE;
   }
@@ -119,7 +115,7 @@ struct readidx_string {
     if (data2 != R_NilValue) {
       return STRING_ELT(data2, i);
     }
-    auto sep_locs = Get(vec);
+    auto sep_locs = Idx(vec);
     auto column = Column(vec);
     auto num_columns = Num_Columns(vec);
     auto skip = Skip(vec);

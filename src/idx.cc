@@ -1,5 +1,9 @@
 #include "idx.h"
 
+#include "parallel.h"
+
+#include <array>
+
 // SEXP resize(SEXP in, size_t n) {
 //// Rcerr << "Resizing to: " << n << std::endl;
 // size_t sz = Rf_xlength(in);
@@ -34,48 +38,79 @@ size_t guess_size(size_t records, size_t bytes, size_t file_size) {
   return total_records;
 }
 
+// std::vector<T>&& src - src MUST be an rvalue reference
+// std::vector<T> src - src MUST NOT, but MAY be an rvalue reference
+template <typename T>
+inline void append(std::vector<T> source, std::vector<T>& destination) {
+  if (destination.empty())
+    destination = std::move(source);
+  else
+    destination.insert(
+        std::end(destination),
+        std::make_move_iterator(std::begin(source)),
+        std::make_move_iterator(std::end(source)));
+}
+
 std::tuple<
     std::shared_ptr<std::vector<size_t> >,
     size_t,
     mio::shared_mmap_source>
-create_index(const std::string& filename) {
-  auto out = std::make_shared<std::vector<size_t> >();
-
-  // TODO: probably change this to something like 1024
-  out->reserve(1024);
-
+create_index(const std::string& filename, int num_threads) {
   size_t columns = 0;
 
   mio::shared_mmap_source mmap(filename);
   // From https://stackoverflow.com/a/17925143/2055486
 
-  auto begin = mmap.cbegin();
-  auto end = mmap.cend();
-  auto file_size = end - begin;
-  size_t prev_loc = 0;
-  size_t cur_loc = 0;
+  auto file_size = mmap.cend() - mmap.cbegin();
 
-  for (auto i = begin; i != end; ++i) {
-    switch (*i) {
-    case '\n': {
-      if (columns == 0) {
-        columns = out->size() + 1;
+  std::vector<std::vector<size_t> > values(num_threads);
 
-        size_t new_size = guess_size(out->size(), cur_loc, file_size);
-        out->reserve(new_size);
-      }
-      /* explicit fall through */
-    }
-    case '\t': {
-      out->push_back(prev_loc);
-      prev_loc = cur_loc + 1;
-      break;
-    }
-    }
-    ++cur_loc;
+  parallel_for(
+      file_size,
+      [&](int start, int end, int id) {
+        // Rcpp::Rcerr << start << '\t' << end - start << '\n';
+        mio::mmap_source thread_mmap(filename, start, end - start);
+        size_t cur_loc = start;
+        values[id].reserve(128);
+        for (auto i = thread_mmap.cbegin(); i != thread_mmap.cend(); ++i) {
+          switch (*i) {
+          case '\n': {
+            if (id == 0 && columns == 0) {
+              columns = values[id].size() + 1;
+            }
+          }
+          case '\t': {
+            // Rcpp::Rcout << id << '\n';
+            values[id].push_back(cur_loc + 1);
+            break;
+          }
+          }
+          ++cur_loc;
+        }
+      },
+      num_threads,
+      true);
+
+  // Rcpp::Rcerr << "Calculating size\n";
+  auto total_size = std::accumulate(
+      values.begin(),
+      values.end(),
+      0,
+      [](size_t sum, const std::vector<size_t>& v) {
+        sum += v.size();
+        return sum;
+      });
+
+  auto out = std::make_shared<std::vector<size_t> >();
+
+  out->reserve(total_size + 1);
+
+  out->push_back(0);
+
+  // Rcpp::Rcerr << "combining vectors\n";
+  for (auto& v : values) {
+    append<size_t>(std::move(v), *out);
   }
-
-  out->push_back(file_size);
 
   return std::make_tuple(out, columns, mmap);
 }
