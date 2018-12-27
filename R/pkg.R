@@ -18,9 +18,10 @@ read_tsv <- function(file, num_threads = parallel::detectCores()) {
 #' @inheritParams readr::guess_parser
 #' @export
 guess_type <- function(x, locale = readr::default_locale(), guess_integer = FALSE) {
-  type <- readr::guess_parser(x[seq_len(min(length(x), 100))], locale = locale, guess_integer = guess_integer)
+  type <- readr::guess_parser(x, locale = locale, guess_integer = guess_integer)
   switch(type,
     "double" = 1L,
+    "integer" = 2L,
     0L
   )
 }

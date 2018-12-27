@@ -2,10 +2,10 @@
 #include <mio/shared_mmap.hpp>
 
 #include "idx.h"
-#include "readidx_real.h"
+#include "readidx_numeric.h"
 #include "readidx_string.h"
 
-enum column_type { character = 0, real = 1 };
+enum column_type { character = 0, real = 1, integer = 2 };
 
 inline int min(int a, int b) { return a < b ? a : b; }
 
@@ -49,7 +49,7 @@ SEXP read_tsv_(const std::string& filename, R_xlen_t skip, int num_threads) {
       // Rcpp::Rcout << "i:" << i << " j:" << j << " cur_loc:" << cur_loc
       //<< " next_loc:" << next_loc << " " << col[j] << "\n";
     }
-    auto col_type = INTEGER(guess_type(col))[0];
+    auto col_type = INTEGER(guess_type(col, Named("guess_integer") = true))[0];
     // Rcpp::Rcout << "i:" << i << " type:" << col_type << "\n";
 
     switch (col_type) {
@@ -58,6 +58,18 @@ SEXP read_tsv_(const std::string& filename, R_xlen_t skip, int num_threads) {
           res,
           i,
           readidx_real::Make(
+              new std::shared_ptr<std::vector<size_t> >(readidx_idx),
+              new mio::shared_mmap_source(mmap),
+              i,
+              num_columns,
+              skip,
+              num_threads));
+      break;
+    case integer:
+      SET_VECTOR_ELT(
+          res,
+          i,
+          readidx_int::Make(
               new std::shared_ptr<std::vector<size_t> >(readidx_idx),
               new mio::shared_mmap_source(mmap),
               i,
