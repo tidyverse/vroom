@@ -63,6 +63,7 @@ create_index(const std::string& filename, int num_threads) {
 
   auto file_size = mmap.cend() - mmap.cbegin();
 
+  // We read the values into a vector of vectors, then merge them afterwards
   std::vector<std::vector<size_t> > values(num_threads);
 
   parallel_for(
@@ -70,8 +71,11 @@ create_index(const std::string& filename, int num_threads) {
       [&](int start, int end, int id) {
         // Rcpp::Rcerr << start << '\t' << end - start << '\n';
         mio::mmap_source thread_mmap(filename, start, end - start);
+
         size_t cur_loc = start;
         values[id].reserve(128);
+
+        // The actual parsing is here
         for (auto i = thread_mmap.cbegin(); i != thread_mmap.cend(); ++i) {
           switch (*i) {
           case '\n': {
@@ -91,7 +95,7 @@ create_index(const std::string& filename, int num_threads) {
       num_threads,
       true);
 
-  // Rcpp::Rcerr << "Calculating size\n";
+  // Rcpp::Rcerr << "Calculating total size\n";
   auto total_size = std::accumulate(
       values.begin(),
       values.end(),
