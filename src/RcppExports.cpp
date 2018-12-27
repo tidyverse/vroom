@@ -25,10 +25,12 @@ static const R_CallMethodDef CallEntries[] = {
 };
 
 void init_readidx_real(DllInfo* dll);
+void init_readidx_int(DllInfo* dll);
 void init_readidx_string(DllInfo* dll);
 RcppExport void R_init_readidx(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
     init_readidx_real(dll);
+    init_readidx_int(dll);
     init_readidx_string(dll);
 }
