@@ -38,6 +38,10 @@ size_t guess_size(size_t records, size_t bytes, size_t file_size) {
   return total_records;
 }
 
+// From https://stackoverflow.com/a/53710597/2055486
+// To move an object use `std::move()` when calling `append()`
+// append<type>(std::move(source),destination)
+//
 // std::vector<T>&& src - src MUST be an rvalue reference
 // std::vector<T> src - src MUST NOT, but MAY be an rvalue reference
 template <typename T>
