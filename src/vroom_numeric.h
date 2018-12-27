@@ -6,7 +6,7 @@
 #pragma clang diagnostic pop
 
 #include "parallel.h"
-#include "readidx_vec.h"
+#include "vroom_vec.h"
 
 using namespace Rcpp;
 
@@ -15,7 +15,7 @@ using namespace Rcpp;
 // and Romain François
 // https://purrple.cat/blog/2018/10/21/lazy-abs-altrep-cplusplus/ and Dirk
 
-template <class TYPE> class readidx_numeric : public readidx_vec {
+template <class TYPE> class vroom_numeric : public vroom_vec {
 
 public:
   static R_altrep_class_t class_t;
@@ -45,7 +45,7 @@ public:
     SET_VECTOR_ELT(out, 4, Rf_ScalarReal(skip));
     SET_VECTOR_ELT(out, 5, Rf_ScalarReal(num_threads));
 
-    // make a new altrep object of class `readidx_real::class_t`
+    // make a new altrep object of class `vroom_real::class_t`
     SEXP res = R_new_altrep(class_t, out, R_NilValue);
 
     UNPROTECT(3);
@@ -63,7 +63,7 @@ public:
       int pvec,
       void (*inspect_subtree)(SEXP, int, int, int)) {
     Rprintf(
-        "readidx_numeric (len=%d, materialized=%s)\n",
+        "vroom_numeric (len=%d, materialized=%s)\n",
         Length(x),
         R_altrep_data2(x) != R_NilValue ? "T" : "F");
     return TRUE;
@@ -145,9 +145,9 @@ public:
   // -------- initialize the altrep class with the methods above
 };
 
-typedef readidx_numeric<NumericVector> readidx_real;
+typedef vroom_numeric<NumericVector> vroom_real;
 
-template <> R_altrep_class_t readidx_real::class_t{};
+template <> R_altrep_class_t vroom_real::class_t{};
 
 // the element at the index `i`
 double real_Elt(SEXP vec, R_xlen_t i) {
@@ -156,32 +156,32 @@ double real_Elt(SEXP vec, R_xlen_t i) {
     return REAL(data2)[i];
   }
   char buf[128];
-  readidx_real::buf_Elt(vec, i, buf);
+  vroom_real::buf_Elt(vec, i, buf);
 
   return R_strtod(buf, NULL);
 }
 
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
-void init_readidx_real(DllInfo* dll) {
-  readidx_real::class_t = R_make_altreal_class("readidx_real", "readidx", dll);
+void init_vroom_real(DllInfo* dll) {
+  vroom_real::class_t = R_make_altreal_class("vroom_real", "vroom", dll);
 
   // altrep
-  R_set_altrep_Length_method(readidx_real::class_t, readidx_real::Length);
-  R_set_altrep_Inspect_method(readidx_real::class_t, readidx_real::Inspect);
+  R_set_altrep_Length_method(vroom_real::class_t, vroom_real::Length);
+  R_set_altrep_Inspect_method(vroom_real::class_t, vroom_real::Inspect);
 
   // altvec
-  R_set_altvec_Dataptr_method(readidx_real::class_t, readidx_real::Dataptr);
+  R_set_altvec_Dataptr_method(vroom_real::class_t, vroom_real::Dataptr);
   R_set_altvec_Dataptr_or_null_method(
-      readidx_real::class_t, readidx_real::Dataptr_or_null);
+      vroom_real::class_t, vroom_real::Dataptr_or_null);
 
   // altreal
-  R_set_altreal_Elt_method(readidx_real::class_t, real_Elt);
+  R_set_altreal_Elt_method(vroom_real::class_t, real_Elt);
 }
 
-typedef readidx_numeric<IntegerVector> readidx_int;
+typedef vroom_numeric<IntegerVector> vroom_int;
 
-template <> R_altrep_class_t readidx_int::class_t{};
+template <> R_altrep_class_t vroom_int::class_t{};
 
 // https://github.com/wch/r-source/blob/efed16c945b6e31f8e345d2f18e39a014d2a57ae/src/main/scan.c#L145-L157
 static int Strtoi(const char* nptr, int base) {
@@ -207,33 +207,33 @@ int int_Elt(SEXP vec, R_xlen_t i) {
     return INTEGER(data2)[i];
   }
   char buf[128];
-  readidx_int::buf_Elt(vec, i, buf);
+  vroom_int::buf_Elt(vec, i, buf);
 
   return Strtoi(buf, 10);
 }
 
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
-void init_readidx_int(DllInfo* dll) {
-  readidx_int::class_t = R_make_altinteger_class("readidx_int", "readidx", dll);
+void init_vroom_int(DllInfo* dll) {
+  vroom_int::class_t = R_make_altinteger_class("vroom_int", "vroom", dll);
 
   // altrep
-  R_set_altrep_Length_method(readidx_int::class_t, readidx_int::Length);
-  R_set_altrep_Inspect_method(readidx_int::class_t, readidx_int::Inspect);
+  R_set_altrep_Length_method(vroom_int::class_t, vroom_int::Length);
+  R_set_altrep_Inspect_method(vroom_int::class_t, vroom_int::Inspect);
 
   // altvec
-  R_set_altvec_Dataptr_method(readidx_int::class_t, readidx_int::Dataptr);
+  R_set_altvec_Dataptr_method(vroom_int::class_t, vroom_int::Dataptr);
   R_set_altvec_Dataptr_or_null_method(
-      readidx_int::class_t, readidx_int::Dataptr_or_null);
+      vroom_int::class_t, vroom_int::Dataptr_or_null);
 
   // altinteger
-  R_set_altinteger_Elt_method(readidx_int::class_t, int_Elt);
+  R_set_altinteger_Elt_method(vroom_int::class_t, int_Elt);
 }
 
 // Altrep for Logical vectors does not yet exist
-// typedef readidx_numeric<LogicalVector> readidx_lgl;
+// typedef vroom_numeric<LogicalVector> vroom_lgl;
 
-// template <> R_altrep_class_t readidx_lgl::class_t{};
+// template <> R_altrep_class_t vroom_lgl::class_t{};
 
 //// the element at the index `i`
 // int lgl_Elt(SEXP vec, R_xlen_t i) {
@@ -242,26 +242,26 @@ void init_readidx_int(DllInfo* dll) {
 // return INTEGER(data2)[i];
 //}
 // char buf[128];
-// readidx_lgl::buf_Elt(vec, i, buf);
+// vroom_lgl::buf_Elt(vec, i, buf);
 
 // return Rf_StringTrue(buf);
 //}
 
 //// Called the package is loaded (needs Rcpp 0.12.18.3)
 //// [[Rcpp::init]]
-// void init_readidx_lgl(DllInfo* dll) {
-// readidx_lgl::class_t = R_make_altinteger_class("readidx_lgl", "readidx",
+// void init_vroom_lgl(DllInfo* dll) {
+// vroom_lgl::class_t = R_make_altinteger_class("vroom_lgl", "vroom",
 // dll);
 
 //// altrep
-// R_set_altrep_Length_method(readidx_lgl::class_t, readidx_lgl::Length);
-// R_set_altrep_Inspect_method(readidx_lgl::class_t, readidx_lgl::Inspect);
+// R_set_altrep_Length_method(vroom_lgl::class_t, vroom_lgl::Length);
+// R_set_altrep_Inspect_method(vroom_lgl::class_t, vroom_lgl::Inspect);
 
 //// altvec
-// R_set_altvec_Dataptr_method(readidx_lgl::class_t, readidx_lgl::Dataptr);
+// R_set_altvec_Dataptr_method(vroom_lgl::class_t, vroom_lgl::Dataptr);
 // R_set_altvec_Dataptr_or_null_method(
-// readidx_lgl::class_t, readidx_lgl::Dataptr_or_null);
+// vroom_lgl::class_t, vroom_lgl::Dataptr_or_null);
 
 //// altinteger
-// R_set_altinteger_Elt_method(readidx_lgl::class_t, lgl_Elt);
+// R_set_altinteger_Elt_method(vroom_lgl::class_t, lgl_Elt);
 //}

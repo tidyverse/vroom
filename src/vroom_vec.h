@@ -1,6 +1,6 @@
 #pragma once
 
-class readidx_vec {
+class vroom_vec {
 
 public:
   // finalizer for the external pointer

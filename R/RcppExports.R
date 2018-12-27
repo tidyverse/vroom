@@ -2,6 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 read_tsv_ <- function(filename, skip, num_threads) {
-    .Call(`_readidx_read_tsv_`, filename, skip, num_threads)
+    .Call(`_vroom_read_tsv_`, filename, skip, num_threads)
 }
 

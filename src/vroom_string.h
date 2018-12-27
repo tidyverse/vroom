@@ -5,7 +5,7 @@
 #include <mio/shared_mmap.hpp>
 #pragma clang diagnostic pop
 
-#include "readidx_vec.h"
+#include "vroom_vec.h"
 
 using namespace Rcpp;
 
@@ -14,7 +14,7 @@ using namespace Rcpp;
 // and Romain François
 // https://purrple.cat/blog/2018/10/21/lazy-abs-altrep-cplusplus/ and Dirk
 
-struct readidx_string : readidx_vec {
+struct vroom_string : vroom_vec {
 
 public:
   static R_altrep_class_t class_t;
@@ -31,10 +31,10 @@ public:
     SEXP out = PROTECT(Rf_allocVector(VECSXP, 5));
 
     SEXP idx_xp = PROTECT(R_MakeExternalPtr(offsets, R_NilValue, R_NilValue));
-    R_RegisterCFinalizerEx(idx_xp, readidx_string::Finalize_Idx, TRUE);
+    R_RegisterCFinalizerEx(idx_xp, vroom_string::Finalize_Idx, TRUE);
 
     SEXP mmap_xp = PROTECT(R_MakeExternalPtr(mmap, R_NilValue, R_NilValue));
-    R_RegisterCFinalizerEx(mmap_xp, readidx_string::Finalize_Mmap, TRUE);
+    R_RegisterCFinalizerEx(mmap_xp, vroom_string::Finalize_Mmap, TRUE);
 
     SET_VECTOR_ELT(out, 0, idx_xp);
     SET_VECTOR_ELT(out, 1, mmap_xp);
@@ -42,7 +42,7 @@ public:
     SET_VECTOR_ELT(out, 3, Rf_ScalarReal(num_columns));
     SET_VECTOR_ELT(out, 4, Rf_ScalarReal(skip));
 
-    // make a new altrep object of class `readidx_string::class_t`
+    // make a new altrep object of class `vroom_string::class_t`
     SEXP res = R_new_altrep(class_t, out, R_NilValue);
 
     UNPROTECT(3);
@@ -60,7 +60,7 @@ public:
       int pvec,
       void (*inspect_subtree)(SEXP, int, int, int)) {
     Rprintf(
-        "readidx_string (len=%d, materialized=%s)\n",
+        "vroom_string (len=%d, materialized=%s)\n",
         Length(x),
         R_altrep_data2(x) != R_NilValue ? "T" : "F");
     return TRUE;
@@ -133,7 +133,7 @@ public:
   // -------- initialize the altrep class with the methods above
 
   static void Init(DllInfo* dll) {
-    class_t = R_make_altstring_class("readidx_string", "readidx", dll);
+    class_t = R_make_altstring_class("vroom_string", "vroom", dll);
 
     // altrep
     R_set_altrep_Length_method(class_t, Length);
@@ -148,8 +148,8 @@ public:
   }
 };
 
-R_altrep_class_t readidx_string::class_t;
+R_altrep_class_t vroom_string::class_t;
 
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
-void init_readidx_string(DllInfo* dll) { readidx_string::Init(dll); }
+void init_vroom_string(DllInfo* dll) { vroom_string::Init(dll); }

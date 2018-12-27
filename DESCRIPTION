@@ -1,13 +1,13 @@
-Package: readidx
+Package: vroom
 Title: An experiment with lazily reading indexed files
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Jim",
+           family = "Hester",
            role = c("aut", "cre"),
-           email = "first.last@example.com")
-Description: What the package does (one paragraph).
-License: What license it uses
+           email = "james.f.hester@gmail.com")
+Description: Vroom vroom
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1

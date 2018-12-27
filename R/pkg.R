@@ -1,4 +1,4 @@
-#' @useDynLib readidx, .registration = TRUE
+#' @useDynLib vroom, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 NULL
 
@@ -7,7 +7,7 @@ NULL
 #' @inheritParams readr::read_tsv
 #' @param num_threads Number of threads to use when reading and materializing vectors.
 #' @export
-read_tsv <- function(file, num_threads = parallel::detectCores()) {
+vroom <- function(file, num_threads = parallel::detectCores()) {
   out <- read_tsv_(file, skip = 1, num_threads = num_threads)
 
   tibble::as_tibble(out)
