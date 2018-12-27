@@ -17,11 +17,10 @@
 ///
 static void parallel_for(
     unsigned nb_elements,
-    std::function<void(int start, int end)> functor,
+    std::function<void(int start, int end, int thread_id)> functor,
+    unsigned nb_threads,
     bool use_threads = true) {
   // -------
-  unsigned nb_threads_hint = std::thread::hardware_concurrency();
-  unsigned nb_threads = nb_threads_hint == 0 ? 8 : (nb_threads_hint);
 
   unsigned batch_size = nb_elements / nb_threads;
   unsigned batch_remainder = nb_elements % nb_threads;
@@ -32,22 +31,22 @@ static void parallel_for(
     // Multithread execution
     for (unsigned i = 0; i < nb_threads; ++i) {
       int start = i * batch_size;
-      my_threads[i] = std::thread(functor, start, start + batch_size);
+      my_threads[i] = std::thread(functor, start, start + batch_size, i);
     }
   } else {
     // Single thread execution (for easy debugging)
     for (unsigned i = 0; i < nb_threads; ++i) {
       int start = i * batch_size;
-      functor(start, start + batch_size);
+      functor(start, start + batch_size, i);
     }
   }
-
-  // Deform the elements left
-  int start = nb_threads * batch_size;
-  functor(start, start + batch_remainder);
 
   // Wait for the other thread to finish their task
   if (use_threads)
     std::for_each(
         my_threads.begin(), my_threads.end(), std::mem_fn(&std::thread::join));
+
+  // Deform the elements left
+  int start = nb_threads * batch_size;
+  functor(start, start + batch_remainder, nb_threads - 1);
 }

@@ -24,22 +24,24 @@ struct readidx_real {
       mio::shared_mmap_source* mmap,
       R_xlen_t column,
       R_xlen_t num_columns,
-      R_xlen_t skip) {
+      R_xlen_t skip,
+      R_xlen_t num_threads) {
 
     // `out` and `xp` needs protection because R_new_altrep allocates
-    SEXP out = PROTECT(Rf_allocVector(VECSXP, 5));
+    SEXP out = PROTECT(Rf_allocVector(VECSXP, 6));
 
-    SEXP xp = PROTECT(R_MakeExternalPtr(offsets, R_NilValue, R_NilValue));
-    R_RegisterCFinalizerEx(xp, readidx_real::Finalize, TRUE);
+    SEXP idx_xp = PROTECT(R_MakeExternalPtr(offsets, R_NilValue, R_NilValue));
+    R_RegisterCFinalizerEx(idx_xp, readidx_real::Finalize_Idx, TRUE);
 
     SEXP mmap_xp = PROTECT(R_MakeExternalPtr(mmap, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(mmap_xp, readidx_real::Finalize_Mmap, TRUE);
 
-    SET_VECTOR_ELT(out, 0, xp);
+    SET_VECTOR_ELT(out, 0, idx_xp);
     SET_VECTOR_ELT(out, 1, mmap_xp);
     SET_VECTOR_ELT(out, 2, Rf_ScalarReal(column));
     SET_VECTOR_ELT(out, 3, Rf_ScalarReal(num_columns));
     SET_VECTOR_ELT(out, 4, Rf_ScalarReal(skip));
+    SET_VECTOR_ELT(out, 5, Rf_ScalarReal(num_threads));
 
     // make a new altrep object of class `readidx_real::class_t`
     SEXP res = R_new_altrep(class_t, out, R_NilValue);
@@ -50,14 +52,17 @@ struct readidx_real {
   }
 
   // finalizer for the external pointer
-  static void Finalize(SEXP xp) {
+  static void Finalize_Idx(SEXP xp) {
     auto vec_p = static_cast<std::shared_ptr<std::vector<size_t> >*>(
         R_ExternalPtrAddr(xp));
+    // Rcpp::Rcerr << "real_idx_ptr:" << vec_p->use_count() << '\n';
     delete vec_p;
   }
 
-  static void Finalize_Mmap(SEXP xp) {
-    auto mmap_p = static_cast<mio::shared_mmap_source*>(R_ExternalPtrAddr(xp));
+  static void Finalize_Mmap(SEXP mmap) {
+    auto mmap_p =
+        static_cast<mio::shared_mmap_source*>(R_ExternalPtrAddr(mmap));
+    // Rcpp::Rcerr << "mmap_ptr:" << mmap_p.use_count() << '\n';
     delete mmap_p;
   }
 
@@ -66,14 +71,9 @@ struct readidx_real {
         R_ExternalPtrAddr(VECTOR_ELT(R_altrep_data1(x), 1)));
   }
 
-  static std::shared_ptr<std::vector<size_t> >* Ptr(SEXP x) {
-    return static_cast<std::shared_ptr<std::vector<size_t> >*>(
+  static std::shared_ptr<std::vector<size_t> > Idx(SEXP x) {
+    return *static_cast<std::shared_ptr<std::vector<size_t> >*>(
         R_ExternalPtrAddr(VECTOR_ELT(R_altrep_data1(x), 0)));
-  }
-
-  // same, but as a reference, for convenience
-  static std::shared_ptr<std::vector<size_t> >& Get(SEXP vec) {
-    return *Ptr(vec);
   }
 
   static const R_xlen_t Column(SEXP vec) {
@@ -88,11 +88,15 @@ struct readidx_real {
     return REAL(VECTOR_ELT(R_altrep_data1(vec), 4))[0];
   }
 
+  static const R_xlen_t Num_Threads(SEXP vec) {
+    return REAL(VECTOR_ELT(R_altrep_data1(vec), 5))[0];
+  }
+
   // ALTREP methods -------------------
 
   // The length of the object
   static R_xlen_t Length(SEXP vec) {
-    return (Get(vec)->size() / Num_Columns(vec)) - Skip(vec);
+    return (Idx(vec)->size() / Num_Columns(vec)) - Skip(vec);
   }
 
   // What gets printed when .Internal(inspect()) is used
@@ -103,9 +107,8 @@ struct readidx_real {
       int pvec,
       void (*inspect_subtree)(SEXP, int, int, int)) {
     Rprintf(
-        "readidx_real (len=%d, ptr=%p materialized=%s)\n",
+        "readidx_real (len=%d, materialized=%s)\n",
         Length(x),
-        Ptr(x),
         R_altrep_data2(x) != R_NilValue ? "T" : "F");
     return TRUE;
   }
@@ -121,7 +124,7 @@ struct readidx_real {
     if (data2 != R_NilValue) {
       return REAL(data2)[i];
     }
-    auto sep_locs = Get(vec);
+    auto sep_locs = Idx(vec);
     auto column = Column(vec);
     auto num_columns = Num_Columns(vec);
     auto skip = Skip(vec);
@@ -156,7 +159,7 @@ struct readidx_real {
 
     auto p = REAL(data2);
 
-    auto sep_locs = Get(vec);
+    auto sep_locs = Idx(vec);
     auto column = Column(vec);
     auto num_columns = Num_Columns(vec);
     auto skip = Skip(vec);
@@ -167,19 +170,22 @@ struct readidx_real {
     // long the buffer is.
     char buf[128];
 
-    parallel_for(n, [&](int start, int end) {
-      for (int i = start; i < end; ++i) {
-        size_t idx = (i + skip) * num_columns + column;
-        size_t cur_loc = (*sep_locs)[idx];
-        size_t next_loc = (*sep_locs)[idx + 1] - 1;
-        size_t len = next_loc - cur_loc;
+    parallel_for(
+        n,
+        [&](int start, int end, int id) {
+          for (int i = start; i < end; ++i) {
+            size_t idx = (i + skip) * num_columns + column;
+            size_t cur_loc = (*sep_locs)[idx];
+            size_t next_loc = (*sep_locs)[idx + 1] - 1;
+            size_t len = next_loc - cur_loc;
 
-        std::copy(mmap->data() + cur_loc, mmap->data() + next_loc, buf);
-        buf[len] = '\0';
+            std::copy(mmap->data() + cur_loc, mmap->data() + next_loc, buf);
+            buf[len] = '\0';
 
-        p[i] = R_strtod(buf, NULL);
-      }
-    });
+            p[i] = R_strtod(buf, NULL);
+          }
+        },
+        Num_Threads(vec));
 
     R_set_altrep_data2(vec, data2);
     UNPROTECT(1);

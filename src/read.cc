@@ -10,13 +10,14 @@ enum column_type { character = 0, real = 1 };
 inline int min(int a, int b) { return a < b ? a : b; }
 
 // [[Rcpp::export]]
-SEXP read_tsv_(const std::string& filename, R_xlen_t skip) {
+SEXP read_tsv_(const std::string& filename, R_xlen_t skip, int num_threads) {
 
   std::shared_ptr<std::vector<size_t> > readidx_idx;
   size_t num_columns;
   mio::shared_mmap_source mmap;
 
-  std::tie(readidx_idx, num_columns, mmap) = create_index(filename);
+  std::tie(readidx_idx, num_columns, mmap) =
+      create_index(filename, num_threads);
 
   List res(num_columns);
 
@@ -61,7 +62,8 @@ SEXP read_tsv_(const std::string& filename, R_xlen_t skip) {
               new mio::shared_mmap_source(mmap),
               i,
               num_columns,
-              skip));
+              skip,
+              num_threads));
       break;
     case character:
       SET_VECTOR_ELT(
