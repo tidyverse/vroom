@@ -1,0 +1,67 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+# vroom voom! <a href="https://readr.tidyverse.org"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+```{r echo = FALSE, message = FALSE}
+tm <- readRDS(here::here("bench", "timings.Rds"))
+library(dplyr)
+tm %>% dplyr::filter(type == "real", op == "read", package != "vroom_dplyr") %>%
+  mutate(package = sub("_base", "", package)) %>%
+  transmute(
+    package = package,
+    "time (sec)" = time,
+    speedup = max(time) / time,
+    "throughput (B/sec)" = fs::file_info(fs::link_path("trip_fare_1.tsv"))$size / time)
+```
+
+But that's impossible! How can it be [so fast](https://raw.githack.com/jimhester/readidx/master/bench/benchmarks.html)?
+
+vroom doesn't stop to actually _read_ all of your data, it simply indexes where
+each record is located so it can be read later. The vectors returned use the
+[Altrep framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html) to
+lazily load the data on-demand when it is accessed, so you only pay for what
+you use.
+
+## Installation
+
+Install the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("jimhester/vroom")
+```
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(vroom)
+
+vroom::vroom("mtcars.tsv")
+```
+
+## Thanks
+
+- [Gabe Becker](https://twitter.com/groundwalkergmb), [Luke
+  Tierney](https://stat.uiowa.edu/~luke/) and [Tomas Kalibera]() for
+  implementing and maintain the [Altrep
+  framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html)
+- [Romain François](https://twitter.com/romain_francois), whose
+  [Altrepisode](https://purrple.cat/blog/2018/10/14/altrep-and-cpp/) package
+  and post was a great guide for creating new Altrep objects.
+- [Matt Dowle](https://twitter.com/mattdowle) and the rest of the [Rdatatable](https://github.com/Rdatatable) team, `data.table::fread()` is blazing fast and great motivation!

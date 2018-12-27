@@ -1,12 +1,12 @@
-readidx
+vroom
 ================
 
 ``` r
-library(readidx)
+library(vroom)
 ```
 
-readidx (name to be changed in the future) is an experiment for a future
-version of readr (2.0), or a possible extension package.
+vroom is an experiment for a future version of readr (2.0), or a
+possible extension package.
 
 It stems from the observation that IO is not the bottle neck in parsing
 delimited datasets, rather (re)-allocating memory and parsing the values
@@ -72,14 +72,14 @@ trip\_fare\_1.tsv, It is 1.55G in size.
     #> $ fare_amount     <dbl> 6.5, 6.0, 5.5, 5.0, 9.5, 9.5, 6.0, 34.0, 5.5, ...
     #> $ surcharge       <dbl> 0.0, 0.5, 1.0, 0.5, 0.5, 0.0, 0.0, 0.0, 1.0, 0...
     #> $ mta_tax         <dbl> 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0...
-    #> $ tip_amount      <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...
+    #> $ tip_amount      <int> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...
     #> $ tolls_amount    <dbl> 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.8, 0.0, 0...
     #> $ total_amount    <dbl> 7.0, 7.0, 7.0, 6.0, 10.5, 10.0, 6.5, 39.3, 7.0...
 
 ## Benchmarks
 
-The benchmark `base` uses `readidx` with base functions for subsetting.
-`dplyr` uses `readidx` to read the file and dplyr functions to subset.
+The benchmark `base` uses `vroom` with base functions for subsetting.
+`dplyr` uses `vroom` to read the file and dplyr functions to subset.
 `data.table` uses `fread()` to read the file and `data.table` functions
 to subset and `readr` uses `readr` to read the file and `dplyr` to
 subset.
@@ -96,10 +96,10 @@ The following operations are performed.
 <!-- end list -->
 
 ``` r
-base <- function(file) {
-  library(readidx)
+vroom_base <- function(file) {
+  library(vroom)
   list(
-    bench::system_time(x <- read_tsv(file)),
+    bench::system_time(x <- vroom(file)),
     bench::system_time(print(x)),
     bench::system_time(head(x)),
     bench::system_time(tail(x)),
@@ -108,11 +108,11 @@ base <- function(file) {
   )
 }
 
-dplyr <- function(file) {
-  library(readidx)
+vroom_dplyr <- function(file) {
+  library(vroom)
   library(dplyr)
   list(
-    bench::system_time(x <- read_tsv(file)),
+    bench::system_time(x <- vroom(file)),
     bench::system_time(print(x)),
     bench::system_time(head(x)),
     bench::system_time(tail(x)),
@@ -146,11 +146,23 @@ readr <- function(file) {
   )
 }
 
+read.delim <- function(file) {
+  list(
+    bench::system_time(x <- read.delim(file)),
+    bench::system_time(print(x)),
+    bench::system_time(head(x)),
+    bench::system_time(tail(x)),
+    bench::system_time(x[sample(NROW(x), 100), ]),
+    bench::system_time(x[x$payment_type == "UNK", ])
+  )
+}
+
 times <- list(
-  base = callr::r(base, list(file = here::here("trip_fare_1.tsv"))),
-  dplyr = callr::r(dplyr, list(file = here::here("trip_fare_1.tsv"))),
+  vroom_base = callr::r(vroom_base, list(file = here::here("trip_fare_1.tsv"))),
+  vroom_dplyr = callr::r(vroom_dplyr, list(file = here::here("trip_fare_1.tsv"))),
   data.table = callr::r(data.table, list(file = here::here("trip_fare_1.tsv"))),
-  readr = callr::r(readr, list(file = here::here("trip_fare_1.tsv")))
+  readr = callr::r(readr, list(file = here::here("trip_fare_1.tsv"))),
+  read.delim = callr::r(read.delim, list(file = here::here("trip_fare_1.tsv")))
 )
 ```
 
@@ -160,7 +172,7 @@ times <- list(
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#xtwfmpladv .gt_table {
+#xzhqkgxnbl .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -179,13 +191,13 @@ times <- list(
   /* table.border.top.color */
 }
 
-#xtwfmpladv .gt_heading {
+#xzhqkgxnbl .gt_heading {
   background-color: #FFFFFF;
   /* heading.background.color */
   border-bottom-color: #FFFFFF;
 }
 
-#xtwfmpladv .gt_title {
+#xzhqkgxnbl .gt_title {
   color: #000000;
   font-size: 125%;
   /* heading.title.font.size */
@@ -196,7 +208,7 @@ times <- list(
   border-bottom-width: 0;
 }
 
-#xtwfmpladv .gt_subtitle {
+#xzhqkgxnbl .gt_subtitle {
   color: #000000;
   font-size: 85%;
   /* heading.subtitle.font.size */
@@ -207,7 +219,7 @@ times <- list(
   border-top-width: 0;
 }
 
-#xtwfmpladv .gt_bottom_border {
+#xzhqkgxnbl .gt_bottom_border {
   border-bottom-style: solid;
   /* heading.border.bottom.style */
   border-bottom-width: 2px;
@@ -216,7 +228,7 @@ times <- list(
   /* heading.border.bottom.color */
 }
 
-#xtwfmpladv .gt_column_spanner {
+#xzhqkgxnbl .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #A8A8A8;
@@ -224,7 +236,7 @@ times <- list(
   padding-bottom: 4px;
 }
 
-#xtwfmpladv .gt_col_heading {
+#xzhqkgxnbl .gt_col_heading {
   color: #000000;
   background-color: #FFFFFF;
   /* column_labels.background.color */
@@ -237,11 +249,11 @@ times <- list(
   margin: 10px;
 }
 
-#xtwfmpladv .gt_sep_right {
+#xzhqkgxnbl .gt_sep_right {
   border-right: 5px solid #FFFFFF;
 }
 
-#xtwfmpladv .gt_group_heading {
+#xzhqkgxnbl .gt_group_heading {
   padding: 8px;
   color: #000000;
   background-color: #FFFFFF;
@@ -265,7 +277,7 @@ times <- list(
   vertical-align: middle;
 }
 
-#xtwfmpladv .gt_empty_group_heading {
+#xzhqkgxnbl .gt_empty_group_heading {
   padding: 0.5px;
   color: #000000;
   background-color: #FFFFFF;
@@ -289,29 +301,29 @@ times <- list(
   vertical-align: middle;
 }
 
-#xtwfmpladv .gt_striped {
+#xzhqkgxnbl .gt_striped {
   background-color: #f2f2f2;
 }
 
-#xtwfmpladv .gt_row {
+#xzhqkgxnbl .gt_row {
   padding: 10px;
   /* row.padding */
   margin: 10px;
   vertical-align: middle;
 }
 
-#xtwfmpladv .gt_stub {
+#xzhqkgxnbl .gt_stub {
   border-right-style: solid;
   border-right-width: 2px;
   border-right-color: #A8A8A8;
   padding-left: 12px;
 }
 
-#xtwfmpladv .gt_stub.gt_row {
+#xzhqkgxnbl .gt_stub.gt_row {
   background-color: #FFFFFF;
 }
 
-#xtwfmpladv .gt_summary_row {
+#xzhqkgxnbl .gt_summary_row {
   background-color: #FFFFFF;
   /* summary_row.background.color */
   padding: 6px;
@@ -320,13 +332,13 @@ times <- list(
   /* summary_row.text_transform */
 }
 
-#xtwfmpladv .gt_first_summary_row {
+#xzhqkgxnbl .gt_first_summary_row {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #A8A8A8;
 }
 
-#xtwfmpladv .gt_table_body {
+#xzhqkgxnbl .gt_table_body {
   border-top-style: solid;
   /* field.border.top.style */
   border-top-width: 2px;
@@ -341,56 +353,56 @@ times <- list(
   /* field.border.bottom.color */
 }
 
-#xtwfmpladv .gt_footnote {
+#xzhqkgxnbl .gt_footnote {
   font-size: 90%;
   /* footnote.font.size */
   padding: 4px;
   /* footnote.padding */
 }
 
-#xtwfmpladv .gt_sourcenote {
+#xzhqkgxnbl .gt_sourcenote {
   font-size: 90%;
   /* sourcenote.font.size */
   padding: 4px;
   /* sourcenote.padding */
 }
 
-#xtwfmpladv .gt_center {
+#xzhqkgxnbl .gt_center {
   text-align: center;
 }
 
-#xtwfmpladv .gt_left {
+#xzhqkgxnbl .gt_left {
   text-align: left;
 }
 
-#xtwfmpladv .gt_right {
+#xzhqkgxnbl .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#xtwfmpladv .gt_font_normal {
+#xzhqkgxnbl .gt_font_normal {
   font-weight: normal;
 }
 
-#xtwfmpladv .gt_font_bold {
+#xzhqkgxnbl .gt_font_bold {
   font-weight: bold;
 }
 
-#xtwfmpladv .gt_font_italic {
+#xzhqkgxnbl .gt_font_italic {
   font-style: italic;
 }
 
-#xtwfmpladv .gt_super {
+#xzhqkgxnbl .gt_super {
   font-size: 65%;
 }
 
-#xtwfmpladv .gt_footnote_glyph {
+#xzhqkgxnbl .gt_footnote_glyph {
   font-style: italic;
   font-size: 65%;
 }
 </style>
 
-<div id="xtwfmpladv" style="overflow-x:auto;">
+<div id="xzhqkgxnbl" style="overflow-x:auto;">
 
 <!--gt table start-->
 
@@ -413,7 +425,7 @@ file
 
 <th class="gt_heading gt_subtitle gt_font_normal gt_center gt_bottom_border" colspan="2">
 
-(base and dplyr both use `readidx`, so are equivalent)
+(base and dplyr both use `vroom`, so are equivalent)
 
 </th>
 
@@ -443,13 +455,13 @@ time
 
 <td class="gt_row gt_center">
 
-base
+vroom\_base
 
 </td>
 
 <td class="gt_row gt_right">
 
-2.56
+2.59
 
 </td>
 
@@ -459,13 +471,13 @@ base
 
 <td class="gt_row gt_center gt_striped">
 
-dplyr
+vroom\_dplyr
 
 </td>
 
 <td class="gt_row gt_right gt_striped">
 
-2.43
+2.45
 
 </td>
 
@@ -481,7 +493,7 @@ data.table
 
 <td class="gt_row gt_right">
 
-19.62
+19.26
 
 </td>
 
@@ -497,7 +509,23 @@ readr
 
 <td class="gt_row gt_right gt_striped">
 
-27.06
+26.93
+
+</td>
+
+</tr>
+
+<tr>
+
+<td class="gt_row gt_center">
+
+read.delim
+
+</td>
+
+<td class="gt_row gt_right">
+
+109.91
 
 </td>
 
@@ -519,7 +547,7 @@ readr
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#xidjzyikat .gt_table {
+#jurenzfteh .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -538,13 +566,13 @@ readr
   /* table.border.top.color */
 }
 
-#xidjzyikat .gt_heading {
+#jurenzfteh .gt_heading {
   background-color: #FFFFFF;
   /* heading.background.color */
   border-bottom-color: #FFFFFF;
 }
 
-#xidjzyikat .gt_title {
+#jurenzfteh .gt_title {
   color: #000000;
   font-size: 125%;
   /* heading.title.font.size */
@@ -555,7 +583,7 @@ readr
   border-bottom-width: 0;
 }
 
-#xidjzyikat .gt_subtitle {
+#jurenzfteh .gt_subtitle {
   color: #000000;
   font-size: 85%;
   /* heading.subtitle.font.size */
@@ -566,7 +594,7 @@ readr
   border-top-width: 0;
 }
 
-#xidjzyikat .gt_bottom_border {
+#jurenzfteh .gt_bottom_border {
   border-bottom-style: solid;
   /* heading.border.bottom.style */
   border-bottom-width: 2px;
@@ -575,7 +603,7 @@ readr
   /* heading.border.bottom.color */
 }
 
-#xidjzyikat .gt_column_spanner {
+#jurenzfteh .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #A8A8A8;
@@ -583,7 +611,7 @@ readr
   padding-bottom: 4px;
 }
 
-#xidjzyikat .gt_col_heading {
+#jurenzfteh .gt_col_heading {
   color: #000000;
   background-color: #FFFFFF;
   /* column_labels.background.color */
@@ -596,11 +624,11 @@ readr
   margin: 10px;
 }
 
-#xidjzyikat .gt_sep_right {
+#jurenzfteh .gt_sep_right {
   border-right: 5px solid #FFFFFF;
 }
 
-#xidjzyikat .gt_group_heading {
+#jurenzfteh .gt_group_heading {
   padding: 8px;
   color: #000000;
   background-color: #FFFFFF;
@@ -624,7 +652,7 @@ readr
   vertical-align: middle;
 }
 
-#xidjzyikat .gt_empty_group_heading {
+#jurenzfteh .gt_empty_group_heading {
   padding: 0.5px;
   color: #000000;
   background-color: #FFFFFF;
@@ -648,29 +676,29 @@ readr
   vertical-align: middle;
 }
 
-#xidjzyikat .gt_striped {
+#jurenzfteh .gt_striped {
   background-color: #f2f2f2;
 }
 
-#xidjzyikat .gt_row {
+#jurenzfteh .gt_row {
   padding: 10px;
   /* row.padding */
   margin: 10px;
   vertical-align: middle;
 }
 
-#xidjzyikat .gt_stub {
+#jurenzfteh .gt_stub {
   border-right-style: solid;
   border-right-width: 2px;
   border-right-color: #A8A8A8;
   padding-left: 12px;
 }
 
-#xidjzyikat .gt_stub.gt_row {
+#jurenzfteh .gt_stub.gt_row {
   background-color: #FFFFFF;
 }
 
-#xidjzyikat .gt_summary_row {
+#jurenzfteh .gt_summary_row {
   background-color: #FFFFFF;
   /* summary_row.background.color */
   padding: 6px;
@@ -679,13 +707,13 @@ readr
   /* summary_row.text_transform */
 }
 
-#xidjzyikat .gt_first_summary_row {
+#jurenzfteh .gt_first_summary_row {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #A8A8A8;
 }
 
-#xidjzyikat .gt_table_body {
+#jurenzfteh .gt_table_body {
   border-top-style: solid;
   /* field.border.top.style */
   border-top-width: 2px;
@@ -700,56 +728,56 @@ readr
   /* field.border.bottom.color */
 }
 
-#xidjzyikat .gt_footnote {
+#jurenzfteh .gt_footnote {
   font-size: 90%;
   /* footnote.font.size */
   padding: 4px;
   /* footnote.padding */
 }
 
-#xidjzyikat .gt_sourcenote {
+#jurenzfteh .gt_sourcenote {
   font-size: 90%;
   /* sourcenote.font.size */
   padding: 4px;
   /* sourcenote.padding */
 }
 
-#xidjzyikat .gt_center {
+#jurenzfteh .gt_center {
   text-align: center;
 }
 
-#xidjzyikat .gt_left {
+#jurenzfteh .gt_left {
   text-align: left;
 }
 
-#xidjzyikat .gt_right {
+#jurenzfteh .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#xidjzyikat .gt_font_normal {
+#jurenzfteh .gt_font_normal {
   font-weight: normal;
 }
 
-#xidjzyikat .gt_font_bold {
+#jurenzfteh .gt_font_bold {
   font-weight: bold;
 }
 
-#xidjzyikat .gt_font_italic {
+#jurenzfteh .gt_font_italic {
   font-style: italic;
 }
 
-#xidjzyikat .gt_super {
+#jurenzfteh .gt_super {
   font-size: 65%;
 }
 
-#xidjzyikat .gt_footnote_glyph {
+#jurenzfteh .gt_footnote_glyph {
   font-style: italic;
   font-size: 65%;
 }
 </style>
 
-<div id="xidjzyikat" style="overflow-x:auto;">
+<div id="jurenzfteh" style="overflow-x:auto;">
 
 <!--gt table start-->
 
@@ -800,13 +828,13 @@ time
 
 <td class="gt_row gt_center">
 
-base
+vroom\_base
 
 </td>
 
 <td class="gt_row gt_right">
 
-4.74
+4.91
 
 </td>
 
@@ -816,13 +844,13 @@ base
 
 <td class="gt_row gt_center gt_striped">
 
-dplyr
+vroom\_dplyr
 
 </td>
 
 <td class="gt_row gt_right gt_striped">
 
-7.33
+7.45
 
 </td>
 
@@ -838,7 +866,7 @@ data.table
 
 <td class="gt_row gt_right">
 
-19.79
+19.43
 
 </td>
 
@@ -854,7 +882,23 @@ readr
 
 <td class="gt_row gt_right gt_striped">
 
-27.44
+27.32
+
+</td>
+
+</tr>
+
+<tr>
+
+<td class="gt_row gt_center">
+
+read.delim
+
+</td>
+
+<td class="gt_row gt_right">
+
+718.81
 
 </td>
 
@@ -876,6 +920,7 @@ the processor time is often much higher than the real time.
 ``` r
 library(ggplot2)
 tm_df %>%
+  mutate(package = fct_inorder(sub("_", "\n", package))) %>%
   ggplot() +
   geom_segment(y = 0, aes(x = package, xend = package, yend = time, alpha = type), color = "grey50") +
     geom_point(aes(x = package, y = time, color = type)) +
@@ -887,12 +932,12 @@ tm_df %>%
 ![](benchmarks_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
-sessioninfo::package_info(c("readidx", "readr", "dplyr", "data.table"), dependencies = FALSE)
+sessioninfo::package_info(c("vroom", "readr", "dplyr", "data.table"), dependencies = FALSE)
 #>  package    * version    date       lib source        
 #>  data.table   1.11.8     2018-09-30 [1] CRAN (R 3.5.0)
 #>  dplyr      * 0.7.8      2018-11-10 [1] CRAN (R 3.5.0)
-#>  readidx    * 0.0.0.9000 2018-12-27 [1] local         
 #>  readr        1.3.1      2018-12-21 [1] CRAN (R 3.5.0)
+#>  vroom      * 0.0.0.9000 2018-12-27 [1] local         
 #> 
 #> [1] /Users/jhester/Library/R/3.5/library
 #> [2] /Library/Frameworks/R.framework/Versions/3.5/Resources/library
