@@ -5,6 +5,8 @@
 #include <mio/shared_mmap.hpp>
 #pragma clang diagnostic pop
 
+#include "parallel.h"
+
 using namespace Rcpp;
 
 // inspired by Luke Tierney and the R Core Team
@@ -165,17 +167,19 @@ struct readidx_real {
     // long the buffer is.
     char buf[128];
 
-    for (R_xlen_t i = 0; i < n; ++i) {
-      size_t idx = (i + skip) * num_columns + column;
-      size_t cur_loc = (*sep_locs)[idx];
-      size_t next_loc = (*sep_locs)[idx + 1] - 1;
-      size_t len = next_loc - cur_loc;
+    parallel_for(n, [&](int start, int end) {
+      for (int i = start; i < end; ++i) {
+        size_t idx = (i + skip) * num_columns + column;
+        size_t cur_loc = (*sep_locs)[idx];
+        size_t next_loc = (*sep_locs)[idx + 1] - 1;
+        size_t len = next_loc - cur_loc;
 
-      std::copy(mmap->data() + cur_loc, mmap->data() + next_loc, buf);
-      buf[len] = '\0';
+        std::copy(mmap->data() + cur_loc, mmap->data() + next_loc, buf);
+        buf[len] = '\0';
 
-      p[i] = R_strtod(buf, NULL);
-    }
+        p[i] = R_strtod(buf, NULL);
+      }
+    });
 
     R_set_altrep_data2(vec, data2);
     UNPROTECT(1);
