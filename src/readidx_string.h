@@ -5,6 +5,8 @@
 #include <mio/shared_mmap.hpp>
 #pragma clang diagnostic pop
 
+#include "readidx_vec.h"
+
 using namespace Rcpp;
 
 // inspired by Luke Tierney and the R Core Team
@@ -12,8 +14,9 @@ using namespace Rcpp;
 // and Romain François
 // https://purrple.cat/blog/2018/10/21/lazy-abs-altrep-cplusplus/ and Dirk
 
-struct readidx_string {
+struct readidx_string : readidx_vec {
 
+public:
   static R_altrep_class_t class_t;
 
   // Make an altrep object of class `stdvec_double::class_t`
@@ -47,48 +50,7 @@ struct readidx_string {
     return res;
   }
 
-  // finalizer for the external pointer
-  static void Finalize_Idx(SEXP xp) {
-    auto vec_p = static_cast<std::shared_ptr<std::vector<size_t> >*>(
-        R_ExternalPtrAddr(xp));
-    // Rcpp::Rcerr << "string_idx_ptr:" << vec_p->use_count() << '\n';
-    delete vec_p;
-  }
-
-  static void Finalize_Mmap(SEXP xp) {
-    auto mmap_p = static_cast<mio::shared_mmap_source*>(R_ExternalPtrAddr(xp));
-    delete mmap_p;
-  }
-
-  static mio::shared_mmap_source* Mmap(SEXP x) {
-    return static_cast<mio::shared_mmap_source*>(
-        R_ExternalPtrAddr(VECTOR_ELT(R_altrep_data1(x), 1)));
-  }
-
-  // same, but as a reference, for convenience
-  static std::shared_ptr<std::vector<size_t> >& Idx(SEXP vec) {
-    return *static_cast<std::shared_ptr<std::vector<size_t> >*>(
-        R_ExternalPtrAddr(VECTOR_ELT(R_altrep_data1(vec), 0)));
-  }
-
-  static const R_xlen_t Column(SEXP vec) {
-    return REAL(VECTOR_ELT(R_altrep_data1(vec), 2))[0];
-  }
-
-  static const R_xlen_t Num_Columns(SEXP vec) {
-    return REAL(VECTOR_ELT(R_altrep_data1(vec), 3))[0];
-  }
-
-  static const R_xlen_t Skip(SEXP vec) {
-    return REAL(VECTOR_ELT(R_altrep_data1(vec), 4))[0];
-  }
-
   // ALTREP methods -------------------
-
-  // The length of the object
-  static R_xlen_t Length(SEXP vec) {
-    return (Idx(vec)->size() / Num_Columns(vec)) - Skip(vec);
-  }
 
   // What gets printed when .Internal(inspect()) is used
   static Rboolean Inspect(
@@ -142,7 +104,7 @@ struct readidx_string {
     R_xlen_t n = Length(vec);
     data2 = PROTECT(Rf_allocVector(STRSXP, n));
 
-    auto sep_locs = Get(vec);
+    auto sep_locs = Idx(vec);
     auto column = Column(vec);
     auto num_columns = Num_Columns(vec);
     auto skip = Skip(vec);
@@ -166,14 +128,6 @@ struct readidx_string {
 
   static void* Dataptr(SEXP vec, Rboolean writeable) {
     return STDVEC_DATAPTR(Materialize(vec));
-  }
-
-  static const void* Dataptr_or_null(SEXP vec) {
-    SEXP data2 = R_altrep_data2(vec);
-    if (data2 == R_NilValue)
-      return nullptr;
-
-    return STDVEC_DATAPTR(data2);
   }
 
   // -------- initialize the altrep class with the methods above
