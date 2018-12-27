@@ -2,10 +2,11 @@
 #include <mio/shared_mmap.hpp>
 
 #include "idx.h"
+#include "read_normal.h"
 #include "readidx_numeric.h"
 #include "readidx_string.h"
 
-enum column_type { character = 0, real = 1, integer = 2 };
+enum column_type { character = 0, real = 1, integer = 2, logical = 3 };
 
 inline int min(int a, int b) { return a < b ? a : b; }
 
@@ -39,6 +40,7 @@ SEXP read_tsv_(const std::string& filename, R_xlen_t skip, int num_threads) {
     nms[i] = Rf_mkCharLenCE(mmap.data() + cur_loc, len, CE_UTF8);
 
     // Guess column type
+    // TODO: guess from rows interspersed throughout the data
     CharacterVector col(num_guess);
     for (auto j = 0; j < num_guess; ++j) {
       size_t idx = (j + skip) * num_columns + i;
@@ -72,6 +74,18 @@ SEXP read_tsv_(const std::string& filename, R_xlen_t skip, int num_threads) {
           readidx_int::Make(
               new std::shared_ptr<std::vector<size_t> >(readidx_idx),
               new mio::shared_mmap_source(mmap),
+              i,
+              num_columns,
+              skip,
+              num_threads));
+      break;
+    case logical:
+      SET_VECTOR_ELT(
+          res,
+          i,
+          read_lgl(
+              std::shared_ptr<std::vector<size_t> >(readidx_idx),
+              mio::shared_mmap_source(mmap),
               i,
               num_columns,
               skip,

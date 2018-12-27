@@ -229,3 +229,39 @@ void init_readidx_int(DllInfo* dll) {
   // altinteger
   R_set_altinteger_Elt_method(readidx_int::class_t, int_Elt);
 }
+
+// Altrep for Logical vectors does not yet exist
+// typedef readidx_numeric<LogicalVector> readidx_lgl;
+
+// template <> R_altrep_class_t readidx_lgl::class_t{};
+
+//// the element at the index `i`
+// int lgl_Elt(SEXP vec, R_xlen_t i) {
+// SEXP data2 = R_altrep_data2(vec);
+// if (data2 != R_NilValue) {
+// return INTEGER(data2)[i];
+//}
+// char buf[128];
+// readidx_lgl::buf_Elt(vec, i, buf);
+
+// return Rf_StringTrue(buf);
+//}
+
+//// Called the package is loaded (needs Rcpp 0.12.18.3)
+//// [[Rcpp::init]]
+// void init_readidx_lgl(DllInfo* dll) {
+// readidx_lgl::class_t = R_make_altinteger_class("readidx_lgl", "readidx",
+// dll);
+
+//// altrep
+// R_set_altrep_Length_method(readidx_lgl::class_t, readidx_lgl::Length);
+// R_set_altrep_Inspect_method(readidx_lgl::class_t, readidx_lgl::Inspect);
+
+//// altvec
+// R_set_altvec_Dataptr_method(readidx_lgl::class_t, readidx_lgl::Dataptr);
+// R_set_altvec_Dataptr_or_null_method(
+// readidx_lgl::class_t, readidx_lgl::Dataptr_or_null);
+
+//// altinteger
+// R_set_altinteger_Elt_method(readidx_lgl::class_t, lgl_Elt);
+//}

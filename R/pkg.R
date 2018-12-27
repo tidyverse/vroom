@@ -22,6 +22,7 @@ guess_type <- function(x, locale = readr::default_locale(), guess_integer = FALS
   switch(type,
     "double" = 1L,
     "integer" = 2L,
+    "logical" = 3L,
     0L
   )
 }
