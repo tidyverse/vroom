@@ -55,7 +55,10 @@ devtools::install_github("jimhester/vroom")
 ```
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+```{r, include = FALSE}
+tibble::rownames_to_column(mtcars, "model") %>%
+  write.table(sep = "\t", quote = FALSE, file = "mtcars.tsv", row.names = FALSE)
+```
 
 ```{r example}
 vroom::vroom("mtcars.tsv")
