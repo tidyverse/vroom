@@ -6,13 +6,13 @@
 <!-- badges: start -->
 
 [![Travis build
-status](https://travis-ci.org/jimhester/readidx.svg?branch=master)](https://travis-ci.org/jimhester/readidx)
+status](https://travis-ci.org/jimhester/vroom?branch=master)](https://travis-ci.org/jimhester/vroom)
 <!-- badges: end -->
 
-The fastest tsv reader for R, **644.2 MB/sec**.
+The fastest tsv reader for R, **605.51 MB/sec**.
 
 But that’s impossible\! How can it be [so
-fast](https://raw.githack.com/jimhester/readidx/master/bench/benchmarks.html)?
+fast](https://raw.githack.com/jimhester/vroom/master/bench/benchmarks.html)?
 
 vroom doesn’t stop to actually *read* all of your data, it simply
 indexes where each record is located so it can be read later. The
@@ -23,10 +23,10 @@ what you use.
 
 | package    | time (sec) | speedup | throughput |
 | :--------- | ---------: | ------: | :--------- |
-| vroom      |       2.59 |   42.48 | 644.2 MB   |
-| data.table |      19.26 |    5.71 | 86.5 MB    |
-| readr      |      26.93 |    4.08 | 61.9 MB    |
-| read.delim |     109.91 |    1.00 | 15.2 MB    |
+| vroom      |       2.75 |   41.05 | 605.51 MB  |
+| data.table |      20.45 |    5.53 | 81.50 MB   |
+| readr      |      25.95 |    4.35 | 64.23 MB   |
+| read.delim |     113.00 |    1.00 | 14.75 MB   |
 
 ## Installation
 
@@ -62,8 +62,9 @@ vroom::vroom("mtcars.tsv")
 ## Thanks
 
   - [Gabe Becker](https://twitter.com/groundwalkergmb), [Luke
-    Tierney](https://stat.uiowa.edu/~luke/) and [Tomas Kalibera]() for
-    implementing and maintain the [Altrep
+    Tierney](https://stat.uiowa.edu/~luke/) and [Tomas
+    Kalibera](https://github.com/kalibera) for implementing and maintain
+    the [Altrep
     framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html)
   - [Romain François](https://twitter.com/romain_francois), whose
     [Altrepisode](https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)

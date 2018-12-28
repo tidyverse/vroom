@@ -4,3 +4,7 @@
 ^\.travis\.yml$
 ^README\.Rmd$
 ^LICENSE\.md$
+^src/.clang-format$
+^bench$
+^vignettes$
+^script.R$

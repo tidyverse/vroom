@@ -27,7 +27,7 @@ tbl <- tm %>% dplyr::filter(type == "real", op == "read", package != "vroom_dply
     package = package,
     "time (sec)" = time,
     speedup = max(time) / time,
-    "throughput" = prettyunits::pretty_bytes(fs::file_info(fs::link_path("trip_fare_1.tsv"))$size / time))
+    "throughput" = prettyunits::pretty_bytes(file.size("~/data/trip_fare_1.tsv") / time))
 ```
 
 The fastest tsv reader for R, **`r dplyr::filter(tbl, package == "vroom") %>% pull("throughput") %>% paste0("/sec")`**.
@@ -63,7 +63,7 @@ vroom::vroom("mtcars.tsv")
 ## Thanks
 
 - [Gabe Becker](https://twitter.com/groundwalkergmb), [Luke
-  Tierney](https://stat.uiowa.edu/~luke/) and [Tomas Kalibera]() for
+  Tierney](https://stat.uiowa.edu/~luke/) and [Tomas Kalibera](https://github.com/kalibera) for
   implementing and maintain the [Altrep
   framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html)
 - [Romain François](https://twitter.com/romain_francois), whose

@@ -1,3 +1,5 @@
+path <- "~/data/trip_fare_1.tsv"
+
 vroom_base <- function(file) {
   library(vroom)
   list(
@@ -60,11 +62,11 @@ read.delim <- function(file) {
 }
 
 times <- list(
-  vroom_base = callr::r(vroom_base, list(file = here::here("trip_fare_1.tsv"))),
-  vroom_dplyr = callr::r(vroom_dplyr, list(file = here::here("trip_fare_1.tsv"))),
-  data.table = callr::r(data.table, list(file = here::here("trip_fare_1.tsv"))),
-  readr = callr::r(readr, list(file = here::here("trip_fare_1.tsv"))),
-  read.delim = callr::r(read.delim, list(file = here::here("trip_fare_1.tsv")))
+  vroom_base = callr::r(vroom_base, list(file = path)),
+  vroom_dplyr = callr::r(vroom_dplyr, list(file = path)),
+  data.table = callr::r(data.table, list(file = path)),
+  readr = callr::r(readr, list(file = path)),
+  read.delim = callr::r(read.delim, list(file = path))
 )
 
 library(purrr)

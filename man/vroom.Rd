@@ -14,3 +14,16 @@ vroom(file, num_threads = parallel::detectCores())
 \description{
 Read a tab delimited file into a tibbe
 }
+\examples{
+\dontshow{
+.old_wd <- setwd(tempdir())
+}
+
+readr::write_tsv(mtcars, "mtcars.tsv")
+vroom("mtcars.tsv")
+
+\dontshow{
+unlink("mtcars.tsv")
+setwd(.old_wd)
+}
+}

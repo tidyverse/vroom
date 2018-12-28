@@ -8,8 +8,20 @@ NULL
 #' @param file path to a local file.
 #' @param num_threads Number of threads to use when reading and materializing vectors.
 #' @export
+#' @examples
+#' \dontshow{
+#' .old_wd <- setwd(tempdir())
+#' }
+#'
+#' readr::write_tsv(mtcars, "mtcars.tsv")
+#' vroom("mtcars.tsv")
+#'
+#' \dontshow{
+#' unlink("mtcars.tsv")
+#' setwd(.old_wd)
+#' }
 vroom <- function(file, num_threads = parallel::detectCores()) {
-  out <- read_tsv_(file, skip = 1, num_threads = num_threads)
+  out <- read_tsv_(path.expand(file), skip = 1, num_threads = num_threads)
 
   tibble::as_tibble(out)
 }

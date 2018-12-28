@@ -1,9 +1,11 @@
 #include "altrep.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wsign-compare"
+// clang-format off
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wsign-compare"
 #include <mio/shared_mmap.hpp>
-#pragma clang diagnostic pop
+# pragma clang diagnostic pop
+// clang-format on
 
 #include "vroom_vec.h"
 

@@ -3,10 +3,12 @@
 
 #include <Rcpp.h>
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wsign-compare"
+// clang-format off
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wsign-compare"
 #include <mio/shared_mmap.hpp>
-#pragma clang diagnostic pop
+# pragma clang diagnostic pop
+// clang-format on
 
 std::tuple<
     std::shared_ptr<std::vector<size_t> >,

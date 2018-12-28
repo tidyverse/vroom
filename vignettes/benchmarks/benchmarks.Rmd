@@ -58,12 +58,11 @@ parallelized.
 ## Dataset
 
 ```{r include = FALSE}
-file <- here::here("trip_fare_1.tsv")
+file <- "~/data/trip_fare_1.tsv"
 
-library(fs)
-data_size <- fs:::format.fs_bytes(file_info(link_path(file))$size)
+data_size <- prettyunits::pretty_bytes(file.size(file))
 
-x <- vroom(file)
+x <- vroom::vroom(file)
 
 filtered_rows <- sum(x$payment_type == "UNK")
 ```

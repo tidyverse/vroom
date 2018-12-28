@@ -8,10 +8,12 @@
 // SEXP R_new_altrep(R_altrep_class_t class, SEXP data1, SEXP data2);
 //
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wkeyword-macro"
+// clang-format off
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wkeyword-macro"
 #define class klass
-#pragma clang diagnostic pop
+# pragma clang diagnostic pop
+// clang-format on
 
 // Because functions declared in <R_ext/Altrep.h> have C linkage
 extern "C" {

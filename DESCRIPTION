@@ -1,12 +1,13 @@
 Package: vroom
-Title: An experiment with lazily reading indexed files
+Title: Read 'TSV' Files Fast, Really Fast
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Jim",
            family = "Hester",
            role = c("aut", "cre"),
            email = "james.f.hester@gmail.com")
-Description: Vroom vroom
+Description: An experiment using lazy parsing to read 'TSV' files quickly into R,
+  delaying parsing until the values are used.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -15,6 +16,7 @@ LinkingTo:
     Rcpp
 Imports: 
     readr,
+    tibble,
     Rcpp
 URL: https://github.com/jimhester/vroom
 BugReports: https://github.com/jimhester/vroom/issues
