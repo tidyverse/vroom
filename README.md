@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# vroom voom\! <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
+# vroom vroom\! <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
 
 <!-- badges: start -->
 
@@ -9,7 +9,7 @@
 status](https://travis-ci.org/jimhester/vroom.svg?branch=master)](https://travis-ci.org/jimhester/vroom)
 <!-- badges: end -->
 
-The fastest delimited reader for R, **605.51 MB/sec**.
+The fastest delimited reader for R, **631.84 MB/sec**.
 
 But that’s impossible\! How can it be [so
 fast](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)?
@@ -24,10 +24,10 @@ comments, whitespace trimming and other niceties.
 
 | package    | time (sec) | speedup | throughput |
 | :--------- | ---------: | ------: | :--------- |
-| vroom      |       2.75 |   41.05 | 605.51 MB  |
-| data.table |      20.45 |    5.53 | 81.50 MB   |
-| readr      |      25.95 |    4.35 | 64.23 MB   |
-| read.delim |     113.00 |    1.00 | 14.75 MB   |
+| vroom      |       2.64 |   42.12 | 631.84 MB  |
+| data.table |      19.67 |    5.65 | 84.73 MB   |
+| readr      |      25.82 |    4.30 | 64.55 MB   |
+| read.delim |     111.12 |    1.00 | 15.00 MB   |
 
 ## Installation
 

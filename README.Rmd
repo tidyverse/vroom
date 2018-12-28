@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# vroom voom! <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
+# vroom vroom! <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
 
 <!-- badges: start -->
 [![Travis build status](https://travis-ci.org/jimhester/vroom.svg?branch=master)](https://travis-ci.org/jimhester/vroom)
@@ -27,7 +27,7 @@ tbl <- tm %>% dplyr::filter(type == "real", op == "read", package != "vroom_dply
     package = package,
     "time (sec)" = time,
     speedup = max(time) / time,
-    "throughput" = prettyunits::pretty_bytes(file.size("~/data/trip_fare_1.tsv") / time))
+    "throughput" = prettyunits::pretty_bytes(size / time))
 ```
 
 The fastest delimited reader for R, **`r dplyr::filter(tbl, package == "vroom") %>% pull("throughput") %>% paste0("/sec")`**.
