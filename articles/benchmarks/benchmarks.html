@@ -94,7 +94,7 @@
 <h2 class="hasAnchor">
 <a href="#how-it-works" class="anchor"></a>How it works</h2>
 <p>The initial reading of the file simply records the locations of each individual record, the actual values are not read into R. Altrep vectors are created for each column in the data which hold a pointer to the index and the memory mapped file. When these vectors are indexed the value is read from the memory mapping.</p>
-<p>This means initial reading is extremely fast, in the example below it is ~ 1/4 the time of the multi-threaded <code><a href="https://www.rdocumentation.org/packages/data.table/topics/fread">data.table::fread()</a></code>. Sampling operations are likewise extremely fast, as only the data actually included in the sample is read. This means things like the tibble print method, calling <code><a href="https://www.rdocumentation.org/packages/utils/topics/head">head()</a></code>, <code><a href="https://www.rdocumentation.org/packages/utils/topics/head">tail()</a></code> <code>x[sample(), ]</code> etc. have very low overhead.</p>
+<p>This means initial reading is extremely fast, in the example below it is ~ 1/4 the time of the multi-threaded <code>data.table::fread()</code>. Sampling operations are likewise extremely fast, as only the data actually included in the sample is read. This means things like the tibble print method, calling <code><a href="https://www.rdocumentation.org/packages/utils/topics/head">head()</a></code>, <code><a href="https://www.rdocumentation.org/packages/utils/topics/head">tail()</a></code> <code>x[sample(), ]</code> etc. have very low overhead.</p>
 <p>Filtering also can be fast, only the columns included in the filter itself have to be fully read across the entire dataset, only the filtered rows need to be read from the remaining columns.</p>
 <p>(<em>N.B. currently the dplyr implementation materializes the all numeric vectors when using <code><a href="https://www.rdocumentation.org/packages/stats/topics/filter">filter()</a></code> or <code>sample_n()</code>, so these cases are not as fast as they could otherwise be</em>).</p>
 <p>This approach also allows you to work with data that is larger than memory. As long as you are careful to avoid materializing the entire dataset at once it can be efficiently queried and subset.</p>
@@ -105,7 +105,7 @@
 <h2 class="hasAnchor">
 <a href="#dataset" class="anchor"></a>Dataset</h2>
 <p>The dataset used in these benchmarks is from FOIA/FOILed Taxi Trip Data from the NYC Taxi and Limousine Commission 2013, originally posted at <a href="http://chriswhong.com/open-data/foil_nyc_taxi/" class="uri">http://chriswhong.com/open-data/foil_nyc_taxi/</a>. It is also hosted on <a href="https://archive.org/details/nycTaxiTripData2013">archive.org</a>.</p>
-<p>The first table trip_fare_1.csv was converted to tsv and saved as trip_fare_1.tsv, It is 1.67 GB in size.</p>
+<p>The first table trip_fare_1.csv was converted to tsv and saved as trip_fare_1.tsv, It is 1.55G in size.</p>
 <pre><code>#&gt; Observations: 14,776,615
 #&gt; Variables: 11
 #&gt; $ medallion       &lt;chr&gt; "89D227B655E5C82AECF13C3F540D4CF4", "0BD7C8F5B...
@@ -154,10 +154,10 @@ Total time for all operations (sec)
 vroom_base
 </td>
 <td style="text-align:right;">
-2.8s
+2.6s
 </td>
 <td style="text-align:right;">
-5.1s
+5.3s
 </td>
 </tr>
 <tr>
@@ -165,10 +165,10 @@ vroom_base
 vroom_dplyr
 </td>
 <td style="text-align:right;">
-2.5s
+2.6s
 </td>
 <td style="text-align:right;">
-7.7s
+12.4s
 </td>
 </tr>
 <tr>
@@ -176,10 +176,10 @@ vroom_dplyr
 data.table
 </td>
 <td style="text-align:right;">
-20.5s
+19.7s
 </td>
 <td style="text-align:right;">
-20.6s
+19.9s
 </td>
 </tr>
 <tr>
@@ -187,10 +187,10 @@ data.table
 readr
 </td>
 <td style="text-align:right;">
-26s
+25.8s
 </td>
 <td style="text-align:right;">
-26.3s
+26.2s
 </td>
 </tr>
 <tr>
@@ -198,10 +198,10 @@ readr
 read.delim
 </td>
 <td style="text-align:right;">
-1m 53s
+1m 51.1s
 </td>
 <td style="text-align:right;">
-1m 53.3s
+1m 51.4s
 </td>
 </tr>
 </tbody>
@@ -217,16 +217,19 @@ read.delim
 <a class="sourceLine" id="cb2-8" data-line-number="8"><span class="st">    </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="kw"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(op), <span class="dt">scales =</span> <span class="st">"free"</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb2-9" data-line-number="9"><span class="st">    </span>bench<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/bench/topics/scale_bench_time">scale_y_bench_time</a></span>(<span class="dt">base =</span> <span class="ot">NULL</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb2-10" data-line-number="10"><span class="st">    </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="dt">legend.position =</span> <span class="st">"bottom"</span>)</a></code></pre></div>
-<p><img src="benchmarks_files/figure-html/unnamed-chunk-5-1.png" width="960"></p>
+<p><img src="benchmarks_files/figure-html/unnamed-chunk-3-1.png" width="960"></p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">sessioninfo<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/sessioninfo/topics/package_info">package_info</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"vroom"</span>, <span class="st">"readr"</span>, <span class="st">"dplyr"</span>, <span class="st">"data.table"</span>), <span class="dt">dependencies =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt;  package    * version    date       lib source        </span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt;  data.table   1.11.8     2018-09-30 [1] CRAN (R 3.5.0)</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt;  dplyr      * 0.7.8      2018-11-10 [1] CRAN (R 3.5.0)</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt;  readr        1.3.1      2018-12-21 [1] CRAN (R 3.5.0)</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt;  vroom        0.0.0.9000 2018-12-28 [1] local         </span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt;  ! package    * version    date       lib source        </span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt;  R data.table   &lt;NA&gt;       &lt;NA&gt;       [?] &lt;NA&gt;          </span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt;    dplyr      * 0.7.8      2018-11-10 [1] CRAN (R 3.5.1)</span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt;    readr        1.3.1      2018-12-21 [1] CRAN (R 3.5.1)</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt;    vroom        0.0.0.9000 2018-12-28 [1] local         </span></a>
 <a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; [1] /Users/jhester/Library/R/3.5/library</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; [2] /Library/Frameworks/R.framework/Versions/3.5/Resources/library</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; [1] /home/travis/R/Library</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; [2] /usr/local/lib/R/site-library</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; [3] /home/travis/R-bin/lib/R/library</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt;  R ── Package was removed from disk.</span></a></code></pre></div>
 </div>
   </div>
 
@@ -250,7 +253,7 @@ read.delim
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
 </div>
       </footer>
 </div>

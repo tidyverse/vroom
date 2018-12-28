@@ -19,7 +19,7 @@
 <![endif]-->
 </head>
 <body>
-    <div class="container template-home">
+    <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -76,15 +76,19 @@
 
       
       </header><div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
+    
+
+    
+    
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<div id="vroom-voom" class="section level1">
+<div id="vroom-vroom" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#vroom-voom" class="anchor"></a>vroom voom! <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right"></a>
+<a href="#vroom-vroom" class="anchor"></a>vroom vroom! <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right"></a>
 </h1></div>
 <!-- badges: start -->
 
-<p>The fastest delimited reader for R, <strong>605.51 MB/sec</strong>.</p>
+<p>The fastest delimited reader for R, <strong>631.84 MB/sec</strong>.</p>
 <p>But that’s impossible! How can it be <a href="https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html">so fast</a>?</p>
 <p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use. It also has no (current) support for quoted fields, comments, whitespace trimming and other niceties.</p>
 <table class="table table">
@@ -97,27 +101,27 @@
 <tbody>
 <tr class="odd">
 <td align="left">vroom</td>
-<td align="right">2.75</td>
-<td align="right">41.05</td>
-<td align="left">605.51 MB</td>
+<td align="right">2.64</td>
+<td align="right">42.12</td>
+<td align="left">631.84 MB</td>
 </tr>
 <tr class="even">
 <td align="left">data.table</td>
-<td align="right">20.45</td>
-<td align="right">5.53</td>
-<td align="left">81.50 MB</td>
+<td align="right">19.67</td>
+<td align="right">5.65</td>
+<td align="left">84.73 MB</td>
 </tr>
 <tr class="odd">
 <td align="left">readr</td>
-<td align="right">25.95</td>
-<td align="right">4.35</td>
-<td align="left">64.23 MB</td>
+<td align="right">25.82</td>
+<td align="right">4.30</td>
+<td align="left">64.55 MB</td>
 </tr>
 <tr class="even">
 <td align="left">read.delim</td>
-<td align="right">113.00</td>
+<td align="right">111.12</td>
 <td align="right">1.00</td>
-<td align="left">14.75 MB</td>
+<td align="left">15.00 MB</td>
 </tr>
 </tbody>
 </table>
@@ -131,21 +135,20 @@
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
-<p>This is a basic example which shows you how to solve a common problem:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">vroom<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/vroom/topics/vroom">vroom</a></span>(<span class="st">"mtcars.tsv"</span>)</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt;      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb test </span></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;lgl&gt;</span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt;  1  21       6  160    110  3.9   2.62  16.5     0     1     4     4 TRUE </span></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt;  2  21       6  160    110  3.9   2.88  17.0     0     1     4     4 FALSE</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt;  3  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1 TRUE </span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt;  4  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1 FALSE</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt;  5  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2 FALSE</span></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt;  6  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1 FALSE</span></a>
-<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt;  7  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4 FALSE</span></a>
-<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt;  8  24.4     4  147.    62  3.69  3.19  20       1     0     4     2 TRUE </span></a>
-<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt;  9  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2 TRUE </span></a>
-<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt; 10  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4 FALSE</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt;    model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt;  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1     4     4</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt;  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1     4     4</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt;  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt;  4 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt;  5 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2</span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt;  6 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt;  7 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4</span></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt;  8 Merc …  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span></a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt;  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span></a>
+<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt; 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4</span></a>
 <a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">#&gt; # ... with 22 more rows</span></a></code></pre></div>
 </div>
 <div id="thanks" class="section level2">
@@ -158,13 +161,13 @@
 <li>
 <a href="https://twitter.com/romain_francois">Romain François</a>, whose <a href="https://purrple.cat/blog/2018/10/14/altrep-and-cpp/">Altrepisode</a> package and <a href="https://purrple.cat/blog/2018/10/14/altrep-and-cpp/">related blog-posts</a> were a great guide for creating new Altrep objects in C++.</li>
 <li>
-<a href="https://twitter.com/mattdowle">Matt Dowle</a> and the rest of the <a href="https://github.com/Rdatatable">Rdatatable</a> team, <code><a href="https://www.rdocumentation.org/packages/data.table/topics/fread">data.table::fread()</a></code> is blazing fast and great motivation!</li>
+<a href="https://twitter.com/mattdowle">Matt Dowle</a> and the rest of the <a href="https://github.com/Rdatatable">Rdatatable</a> team, <code>data.table::fread()</code> is blazing fast and great motivation!</li>
 </ul>
 </div>
 </div>
   </div>
 
-  <div class="col-md-3" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
@@ -188,13 +191,14 @@
 </ul>
 </div>
 
-  <div class="dev-status">
+      <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://travis-ci.org/jimhester/vroom"><img src="https://travis-ci.org/jimhester/vroom.svg?branch=master" alt="Travis build status"></a></li>
 </ul>
 </div>
 </div>
+
 </div>
 
 
@@ -203,7 +207,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
 </div>
       </footer>
 </div>
