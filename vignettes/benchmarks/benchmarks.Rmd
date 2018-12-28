@@ -9,11 +9,6 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
-
-```{r setup}
-library(vroom)
-```
-
 vroom is an experiment for a future version of readr (2.0), or a possible
 extension package.
 
