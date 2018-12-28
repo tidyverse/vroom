@@ -14,6 +14,6 @@ std::tuple<
     std::shared_ptr<std::vector<size_t> >,
     size_t,
     mio::shared_mmap_source>
-create_index(const std::string& filename, int num_threads);
+create_index(const std::string& filename, const char delim, int num_threads);
 
 #endif /* READIDX_IDX_HEADER */

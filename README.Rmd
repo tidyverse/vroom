@@ -30,7 +30,7 @@ tbl <- tm %>% dplyr::filter(type == "real", op == "read", package != "vroom_dply
     "throughput" = prettyunits::pretty_bytes(file.size("~/data/trip_fare_1.tsv") / time))
 ```
 
-The fastest tsv reader for R, **`r dplyr::filter(tbl, package == "vroom") %>% pull("throughput") %>% paste0("/sec")`**.
+The fastest delimited reader for R, **`r dplyr::filter(tbl, package == "vroom") %>% pull("throughput") %>% paste0("/sec")`**.
 
 But that's impossible! How can it be [so fast](https://raw.githack.com/jimhester/vroom/master/bench/benchmarks.html)?
 
@@ -38,7 +38,8 @@ vroom doesn't stop to actually _read_ all of your data, it simply indexes where
 each record is located so it can be read later. The vectors returned use the
 [Altrep framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html) to
 lazily load the data on-demand when it is accessed, so you only pay for what
-you use.
+you use. It also has no (current) support for quoted fields, comments,
+whitespace trimming and other niceties.
 
 ```{r, echo = FALSE}
 knitr::kable(tbl, digits = 2)
@@ -68,5 +69,5 @@ vroom::vroom("mtcars.tsv")
   framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html)
 - [Romain François](https://twitter.com/romain_francois), whose
   [Altrepisode](https://purrple.cat/blog/2018/10/14/altrep-and-cpp/) package
-  and post was a great guide for creating new Altrep objects.
+  and [related blog-posts](https://purrple.cat/blog/2018/10/14/altrep-and-cpp/) were a great guide for creating new Altrep objects in C++.
 - [Matt Dowle](https://twitter.com/mattdowle) and the rest of the [Rdatatable](https://github.com/Rdatatable) team, `data.table::fread()` is blazing fast and great motivation!

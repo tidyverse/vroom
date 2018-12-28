@@ -11,13 +11,18 @@ enum column_type { character = 0, real = 1, integer = 2, logical = 3 };
 inline int min(int a, int b) { return a < b ? a : b; }
 
 // [[Rcpp::export]]
-SEXP read_tsv_(const std::string& filename, R_xlen_t skip, int num_threads) {
+SEXP vroom_(
+    const std::string& filename,
+    const char delim,
+    R_xlen_t skip,
+    int num_threads) {
 
   std::shared_ptr<std::vector<size_t> > vroom_idx;
   size_t num_columns;
   mio::shared_mmap_source mmap;
 
-  std::tie(vroom_idx, num_columns, mmap) = create_index(filename, num_threads);
+  std::tie(vroom_idx, num_columns, mmap) =
+      create_index(filename, delim, num_threads);
 
   List res(num_columns);
 

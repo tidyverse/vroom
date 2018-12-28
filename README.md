@@ -9,7 +9,7 @@
 status](https://travis-ci.org/jimhester/vroom?branch=master)](https://travis-ci.org/jimhester/vroom)
 <!-- badges: end -->
 
-The fastest tsv reader for R, **605.51 MB/sec**.
+The fastest delimited reader for R, **605.51 MB/sec**.
 
 But that’s impossible\! How can it be [so
 fast](https://raw.githack.com/jimhester/vroom/master/bench/benchmarks.html)?
@@ -19,7 +19,8 @@ indexes where each record is located so it can be read later. The
 vectors returned use the [Altrep
 framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html) to
 lazily load the data on-demand when it is accessed, so you only pay for
-what you use.
+what you use. It also has no (current) support for quoted fields,
+comments, whitespace trimming and other niceties.
 
 | package    | time (sec) | speedup | throughput |
 | :--------- | ---------: | ------: | :--------- |
@@ -68,7 +69,9 @@ vroom::vroom("mtcars.tsv")
     framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html)
   - [Romain François](https://twitter.com/romain_francois), whose
     [Altrepisode](https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
-    package and post was a great guide for creating new Altrep objects.
+    package and [related
+    blog-posts](https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
+    were a great guide for creating new Altrep objects in C++.
   - [Matt Dowle](https://twitter.com/mattdowle) and the rest of the
     [Rdatatable](https://github.com/Rdatatable) team,
     `data.table::fread()` is blazing fast and great motivation\!

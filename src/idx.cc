@@ -59,8 +59,10 @@ std::tuple<
     std::shared_ptr<std::vector<size_t> >,
     size_t,
     mio::shared_mmap_source>
-create_index(const std::string& filename, int num_threads) {
+create_index(const std::string& filename, const char delim, int num_threads) {
   size_t columns = 0;
+
+  Rcpp::Rcerr << delim << '\n';
 
   std::error_code error;
   mio::shared_mmap_source mmap = mio::make_mmap_source(filename, error);
@@ -84,17 +86,15 @@ create_index(const std::string& filename, int num_threads) {
 
         // The actual parsing is here
         for (auto i = thread_mmap.cbegin(); i != thread_mmap.cend(); ++i) {
-          switch (*i) {
-          case '\n': {
+          if (*i == '\n') {
             if (id == 0 && columns == 0) {
               columns = values[id].size() + 1;
             }
-          }
-          case '\t': {
+            values[id].push_back(cur_loc + 1);
+
+          } else if (*i == delim) {
             // Rcpp::Rcout << id << '\n';
             values[id].push_back(cur_loc + 1);
-            break;
-          }
           }
           ++cur_loc;
         }
@@ -122,6 +122,10 @@ create_index(const std::string& filename, int num_threads) {
   for (auto& v : values) {
     append<size_t>(std::move(v), *out);
   }
+
+  // for (auto& v : *out) {
+  // Rcpp::Rcerr << v << '\n';
+  //}
 
   return std::make_tuple(out, columns, mmap);
 }

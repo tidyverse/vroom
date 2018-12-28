@@ -1,19 +1,20 @@
 Package: vroom
-Title: Read 'TSV' Files Fast, Really Fast
+Title: Read Delimited Files Fast, Really Fast
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Jim",
            family = "Hester",
            role = c("aut", "cre"),
            email = "james.f.hester@gmail.com")
-Description: An experiment using lazy parsing to read 'TSV' files quickly into R,
-  delaying parsing until the values are used.
+Description: An experiment using lazy parsing to read delimited files quickly into R,
+  delaying parsing until the specific values are used.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
 LinkingTo: 
     Rcpp
+Depends: R (>= 3.5)
 Imports: 
     readr,
     tibble,

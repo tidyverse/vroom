@@ -2,17 +2,19 @@
 % Please edit documentation in R/pkg.R
 \name{vroom}
 \alias{vroom}
-\title{Read a tab delimited file into a tibbe}
+\title{Read a delimited file into a tibble}
 \usage{
-vroom(file, num_threads = parallel::detectCores())
+vroom(file, delim = "\\t", num_threads = parallel::detectCores())
 }
 \arguments{
 \item{file}{path to a local file.}
 
+\item{delim}{Single character used to separate fields within a record.}
+
 \item{num_threads}{Number of threads to use when reading and materializing vectors.}
 }
 \description{
-Read a tab delimited file into a tibbe
+Read a delimited file into a tibble
 }
 \examples{
 \dontshow{
