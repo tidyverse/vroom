@@ -24,33 +24,28 @@ public:
 
   // Make an altrep object of class `stdvec_double::class_t`
   static SEXP Make(
-      std::shared_ptr<std::vector<size_t> >* offsets,
-      mio::shared_mmap_source* mmap,
+      std::shared_ptr<std::vector<size_t> > offsets,
+      mio::shared_mmap_source mmap,
       R_xlen_t column,
       R_xlen_t num_columns,
       R_xlen_t skip,
       R_xlen_t num_threads) {
 
-    // `out` and `xp` needs protection because R_new_altrep allocates
-    SEXP out = PROTECT(Rf_allocVector(VECSXP, 6));
+    auto info = new vroom_vec_info;
+    info->idx = offsets;
+    info->mmap = mmap;
+    info->column = column;
+    info->num_columns = num_columns;
+    info->skip = skip;
+    info->num_threads = num_threads;
 
-    SEXP idx_xp = PROTECT(R_MakeExternalPtr(offsets, R_NilValue, R_NilValue));
-    R_RegisterCFinalizerEx(idx_xp, Finalize_Idx, TRUE);
+    SEXP out = PROTECT(R_MakeExternalPtr(info, R_NilValue, R_NilValue));
+    R_RegisterCFinalizerEx(out, vroom_vec::Finalize, TRUE);
 
-    SEXP mmap_xp = PROTECT(R_MakeExternalPtr(mmap, R_NilValue, R_NilValue));
-    R_RegisterCFinalizerEx(mmap_xp, Finalize_Mmap, TRUE);
-
-    SET_VECTOR_ELT(out, 0, idx_xp);
-    SET_VECTOR_ELT(out, 1, mmap_xp);
-    SET_VECTOR_ELT(out, 2, Rf_ScalarReal(column));
-    SET_VECTOR_ELT(out, 3, Rf_ScalarReal(num_columns));
-    SET_VECTOR_ELT(out, 4, Rf_ScalarReal(skip));
-    SET_VECTOR_ELT(out, 5, Rf_ScalarReal(num_threads));
-
-    // make a new altrep object of class `vroom_real::class_t`
+    // make a new altrep object of class `vroom_numeric::class_t`
     SEXP res = R_new_altrep(class_t, out, R_NilValue);
 
-    UNPROTECT(3);
+    UNPROTECT(1);
 
     return res;
   }
@@ -86,12 +81,8 @@ public:
 
     auto p = out.begin();
 
-    auto sep_locs = Idx(vec);
-    auto column = Column(vec);
-    auto num_columns = Num_Columns(vec);
-    auto skip = Skip(vec);
-
-    mio::shared_mmap_source* mmap = Mmap(vec);
+    auto inf = Info(vec);
+    auto sep_locs = inf.idx;
 
     // Need to copy to a temp buffer since we have no way to tell strtod how
     // long the buffer is.
@@ -101,18 +92,19 @@ public:
         n,
         [&](int start, int end, int id) {
           for (int i = start; i < end; ++i) {
-            size_t idx = (i + skip) * num_columns + column;
+            size_t idx = (i + inf.skip) * inf.num_columns + inf.column;
             size_t cur_loc = (*sep_locs)[idx];
             size_t next_loc = (*sep_locs)[idx + 1] - 1;
             size_t len = next_loc - cur_loc;
 
-            std::copy(mmap->data() + cur_loc, mmap->data() + next_loc, buf);
+            std::copy(
+                inf.mmap.data() + cur_loc, inf.mmap.data() + next_loc, buf);
             buf[len] = '\0';
 
             p[i] = R_strtod(buf, NULL);
           }
         },
-        Num_Threads(vec));
+        inf.num_threads);
 
     R_set_altrep_data2(vec, out);
 
@@ -121,22 +113,18 @@ public:
 
   // Fills buf with contents from the i item
   static void buf_Elt(SEXP vec, size_t i, char* buf) {
-    auto sep_locs = Idx(vec);
-    auto column = Column(vec);
-    auto num_columns = Num_Columns(vec);
-    auto skip = Skip(vec);
 
-    size_t idx = (i + skip) * num_columns + column;
+    auto inf = Info(vec);
+    auto sep_locs = inf.idx;
+
+    size_t idx = (i + inf.skip) * inf.num_columns + inf.column;
     size_t cur_loc = (*sep_locs)[idx];
     size_t next_loc = (*sep_locs)[idx + 1] - 1;
     size_t len = next_loc - cur_loc;
-    // Rcerr << cur_loc << ':' << next_loc << ':' << len << '\n';
-
-    mio::shared_mmap_source* mmap = Mmap(vec);
 
     // Need to copy to a temp buffer since we have no way to tell strtod how
     // long the buffer is.
-    std::copy(mmap->data() + cur_loc, mmap->data() + next_loc, buf);
+    std::copy(inf.mmap.data() + cur_loc, inf.mmap.data() + next_loc, buf);
     buf[len] = '\0';
   }
 

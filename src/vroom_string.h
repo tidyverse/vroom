@@ -23,31 +23,29 @@ public:
 
   // Make an altrep object of class `stdvec_double::class_t`
   static SEXP Make(
-      std::shared_ptr<std::vector<size_t> >* offsets,
-      mio::shared_mmap_source* mmap,
+      std::shared_ptr<std::vector<size_t> > offsets,
+      mio::shared_mmap_source mmap,
       R_xlen_t column,
       R_xlen_t num_columns,
       R_xlen_t skip) {
 
     // `out` and `xp` needs protection because R_new_altrep allocates
-    SEXP out = PROTECT(Rf_allocVector(VECSXP, 5));
+    // SEXP out = PROTECT(Rf_allocVector(VECSXP, 1));
 
-    SEXP idx_xp = PROTECT(R_MakeExternalPtr(offsets, R_NilValue, R_NilValue));
-    R_RegisterCFinalizerEx(idx_xp, vroom_string::Finalize_Idx, TRUE);
+    auto info = new vroom_vec_info;
+    info->idx = offsets;
+    info->mmap = mmap;
+    info->column = column;
+    info->num_columns = num_columns;
+    info->skip = skip;
 
-    SEXP mmap_xp = PROTECT(R_MakeExternalPtr(mmap, R_NilValue, R_NilValue));
-    R_RegisterCFinalizerEx(mmap_xp, vroom_string::Finalize_Mmap, TRUE);
-
-    SET_VECTOR_ELT(out, 0, idx_xp);
-    SET_VECTOR_ELT(out, 1, mmap_xp);
-    SET_VECTOR_ELT(out, 2, Rf_ScalarReal(column));
-    SET_VECTOR_ELT(out, 3, Rf_ScalarReal(num_columns));
-    SET_VECTOR_ELT(out, 4, Rf_ScalarReal(skip));
+    SEXP out = PROTECT(R_MakeExternalPtr(info, R_NilValue, R_NilValue));
+    R_RegisterCFinalizerEx(out, vroom_vec::Finalize, TRUE);
 
     // make a new altrep object of class `vroom_string::class_t`
     SEXP res = R_new_altrep(class_t, out, R_NilValue);
 
-    UNPROTECT(3);
+    UNPROTECT(1);
 
     return res;
   }
@@ -79,20 +77,16 @@ public:
     if (data2 != R_NilValue) {
       return STRING_ELT(data2, i);
     }
-    auto sep_locs = Idx(vec);
-    auto column = Column(vec);
-    auto num_columns = Num_Columns(vec);
-    auto skip = Skip(vec);
+    auto inf = Info(vec);
+    auto sep_locs = inf.idx;
 
-    size_t idx = (i + skip) * num_columns + column;
+    size_t idx = (i + inf.skip) * inf.num_columns + inf.column;
     size_t cur_loc = (*sep_locs)[idx];
     size_t next_loc = (*sep_locs)[idx + 1] - 1;
     size_t len = next_loc - cur_loc;
     // Rcerr << cur_loc << ':' << next_loc << ':' << len << '\n';
 
-    mio::shared_mmap_source* mmap = Mmap(vec);
-
-    return Rf_mkCharLenCE(mmap->data() + cur_loc, len, CE_UTF8);
+    return Rf_mkCharLenCE(inf.mmap.data() + cur_loc, len, CE_UTF8);
   }
 
   // --- Altvec
@@ -106,20 +100,16 @@ public:
     R_xlen_t n = Length(vec);
     data2 = PROTECT(Rf_allocVector(STRSXP, n));
 
-    auto sep_locs = Idx(vec);
-    auto column = Column(vec);
-    auto num_columns = Num_Columns(vec);
-    auto skip = Skip(vec);
-
-    mio::shared_mmap_source* mmap = Mmap(vec);
+    auto inf = Info(vec);
+    auto sep_locs = inf.idx;
 
     for (R_xlen_t i = 0; i < n; ++i) {
-      size_t idx = (i + skip) * num_columns + column;
+      size_t idx = (i + inf.skip) * inf.num_columns + inf.column;
       size_t cur_loc = (*sep_locs)[idx];
       size_t next_loc = (*sep_locs)[idx + 1] - 1;
       size_t len = next_loc - cur_loc;
 
-      auto val = Rf_mkCharLenCE(mmap->data() + cur_loc, len, CE_UTF8);
+      auto val = Rf_mkCharLenCE(inf.mmap.data() + cur_loc, len, CE_UTF8);
       SET_STRING_ELT(data2, i, val);
     }
 

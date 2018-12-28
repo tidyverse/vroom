@@ -59,8 +59,8 @@ SEXP read_tsv_(const std::string& filename, R_xlen_t skip, int num_threads) {
           res,
           i,
           vroom_real::Make(
-              new std::shared_ptr<std::vector<size_t> >(vroom_idx),
-              new mio::shared_mmap_source(mmap),
+              std::shared_ptr<std::vector<size_t> >(vroom_idx),
+              mio::shared_mmap_source(mmap),
               i,
               num_columns,
               skip,
@@ -71,8 +71,8 @@ SEXP read_tsv_(const std::string& filename, R_xlen_t skip, int num_threads) {
           res,
           i,
           vroom_int::Make(
-              new std::shared_ptr<std::vector<size_t> >(vroom_idx),
-              new mio::shared_mmap_source(mmap),
+              std::shared_ptr<std::vector<size_t> >(vroom_idx),
+              mio::shared_mmap_source(mmap),
               i,
               num_columns,
               skip,
@@ -95,8 +95,8 @@ SEXP read_tsv_(const std::string& filename, R_xlen_t skip, int num_threads) {
           res,
           i,
           vroom_string::Make(
-              new std::shared_ptr<std::vector<size_t> >(vroom_idx),
-              new mio::shared_mmap_source(mmap),
+              std::shared_ptr<std::vector<size_t> >(vroom_idx),
+              mio::shared_mmap_source(mmap),
               i,
               num_columns,
               skip));
