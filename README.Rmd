@@ -12,10 +12,10 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# vroom voom! <a href="https://readr.tidyverse.org"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
+# vroom voom! <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.org/jimhester/vroom?branch=master)](https://travis-ci.org/jimhester/vroom)
+[![Travis build status](https://travis-ci.org/jimhester/vroom.svg?branch=master)](https://travis-ci.org/jimhester/vroom)
 <!-- badges: end -->
 
 ```{r echo = FALSE, message = FALSE}
@@ -32,7 +32,7 @@ tbl <- tm %>% dplyr::filter(type == "real", op == "read", package != "vroom_dply
 
 The fastest delimited reader for R, **`r dplyr::filter(tbl, package == "vroom") %>% pull("throughput") %>% paste0("/sec")`**.
 
-But that's impossible! How can it be [so fast](https://raw.githack.com/jimhester/vroom/master/bench/benchmarks.html)?
+But that's impossible! How can it be [so fast](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)?
 
 vroom doesn't stop to actually _read_ all of your data, it simply indexes where
 each record is located so it can be read later. The vectors returned use the

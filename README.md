@@ -1,18 +1,18 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# vroom voom\! <a href="https://readr.tidyverse.org"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
+# vroom voom\! <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
 
 <!-- badges: start -->
 
 [![Travis build
-status](https://travis-ci.org/jimhester/vroom?branch=master)](https://travis-ci.org/jimhester/vroom)
+status](https://travis-ci.org/jimhester/vroom.svg?branch=master)](https://travis-ci.org/jimhester/vroom)
 <!-- badges: end -->
 
 The fastest delimited reader for R, **605.51 MB/sec**.
 
 But that’s impossible\! How can it be [so
-fast](https://raw.githack.com/jimhester/vroom/master/bench/benchmarks.html)?
+fast](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)?
 
 vroom doesn’t stop to actually *read* all of your data, it simply
 indexes where each record is located so it can be read later. The
