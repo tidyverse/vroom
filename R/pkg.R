@@ -5,6 +5,7 @@ NULL
 #' Read a tab delimited file into a tibbe
 #'
 #' @inheritParams readr::read_tsv
+#' @param file path to a local file.
 #' @param num_threads Number of threads to use when reading and materializing vectors.
 #' @export
 vroom <- function(file, num_threads = parallel::detectCores()) {
