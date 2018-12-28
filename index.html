@@ -90,7 +90,7 @@
 
 <p>The fastest delimited reader for R, <strong>631.84 MB/sec</strong>.</p>
 <p>But that’s impossible! How can it be <a href="https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html">so fast</a>?</p>
-<p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use. It also has no (current) support for quoted fields, comments, whitespace trimming and other niceties.</p>
+<p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use. It also has no (current) support for windows newlines, quoted fields, comments, whitespace trimming and other niceties.</p>
 <table class="table table">
 <thead><tr class="header">
 <th align="left">package</th>
@@ -156,7 +156,7 @@
 <a href="#thanks" class="anchor"></a>Thanks</h2>
 <ul>
 <li>
-<a href="https://twitter.com/groundwalkergmb">Gabe Becker</a>, <a href="https://stat.uiowa.edu/~luke/">Luke Tierney</a> and <a href="https://github.com/kalibera">Tomas Kalibera</a> for implementing and maintain the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a>
+<a href="https://twitter.com/groundwalkergmb">Gabe Becker</a>, <a href="https://stat.uiowa.edu/~luke/">Luke Tierney</a> and <a href="https://github.com/kalibera">Tomas Kalibera</a> for implementing and maintaining the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a>
 </li>
 <li>
 <a href="https://twitter.com/romain_francois">Romain François</a>, whose <a href="https://purrple.cat/blog/2018/10/14/altrep-and-cpp/">Altrepisode</a> package and <a href="https://purrple.cat/blog/2018/10/14/altrep-and-cpp/">related blog-posts</a> were a great guide for creating new Altrep objects in C++.</li>
@@ -195,6 +195,7 @@
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://travis-ci.org/jimhester/vroom"><img src="https://travis-ci.org/jimhester/vroom.svg?branch=master" alt="Travis build status"></a></li>
+<li><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 </ul>
 </div>
 </div>
