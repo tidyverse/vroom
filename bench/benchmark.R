@@ -82,7 +82,10 @@ tm_df <- map_dfr(times, function(x) {
     real = map_dbl(x, "real")
   )
   }, .id = "package") %>%
-  mutate(package = fct_inorder(package)) %>%
-  gather(type, time, -package, -op)
+  mutate(
+    package = fct_inorder(package),
+  ) %>%
+  gather(type, time, -package, -op) %>%
+  mutate(size = file.size("~/data/trip_fare_1.tsv"))
 
 saveRDS(tm_df, here::here("bench", "timings.Rds"))
