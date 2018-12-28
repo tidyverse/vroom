@@ -80,12 +80,12 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <div id="vroom-voom" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#vroom-voom" class="anchor"></a>vroom voom! <a href="https://readr.tidyverse.org"><img src="https://i.gifer.com/2TjY.gif" align="right"></a>
+<a href="#vroom-voom" class="anchor"></a>vroom voom! <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right"></a>
 </h1></div>
 <!-- badges: start -->
 
 <p>The fastest delimited reader for R, <strong>605.51 MB/sec</strong>.</p>
-<p>But that’s impossible! How can it be <a href="https://raw.githack.com/jimhester/vroom/master/bench/benchmarks.html">so fast</a>?</p>
+<p>But that’s impossible! How can it be <a href="https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html">so fast</a>?</p>
 <p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use. It also has no (current) support for quoted fields, comments, whitespace trimming and other niceties.</p>
 <table class="table table">
 <thead><tr class="header">
@@ -136,7 +136,7 @@
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt;      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb test </span></a>
 <a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;lgl&gt;</span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt;  1  21       6  160    110  3.9   2.62  16.5     0     1     4     4 FALSE</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt;  1  21       6  160    110  3.9   2.62  16.5     0     1     4     4 TRUE </span></a>
 <a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt;  2  21       6  160    110  3.9   2.88  17.0     0     1     4     4 FALSE</span></a>
 <a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt;  3  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1 TRUE </span></a>
 <a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt;  4  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1 FALSE</span></a>
@@ -191,7 +191,7 @@
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://travis-ci.org/jimhester/vroom"><img src="https://travis-ci.org/jimhester/vroom?branch=master" alt="Travis build status"></a></li>
+<li><a href="https://travis-ci.org/jimhester/vroom"><img src="https://travis-ci.org/jimhester/vroom.svg?branch=master" alt="Travis build status"></a></li>
 </ul>
 </div>
 </div>
