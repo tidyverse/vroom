@@ -80,10 +80,11 @@ public:
     auto inf = Info(vec);
     auto sep_locs = inf.idx;
 
-    size_t idx = (i + inf.skip) * inf.num_columns + inf.column;
-    size_t cur_loc = (*sep_locs)[idx];
-    size_t next_loc = (*sep_locs)[idx + 1] - 1;
-    size_t len = next_loc - cur_loc;
+    auto idx = Idx(vec, i);
+    auto cur_loc = (*sep_locs)[idx];
+    auto next_loc = (*sep_locs)[idx + 1] - 1;
+    auto len = next_loc - cur_loc;
+
     // Rcerr << cur_loc << ':' << next_loc << ':' << len << '\n';
 
     return Rf_mkCharLenCE(inf.mmap.data() + cur_loc, len, CE_UTF8);
@@ -104,10 +105,10 @@ public:
     auto sep_locs = inf.idx;
 
     for (R_xlen_t i = 0; i < n; ++i) {
-      size_t idx = (i + inf.skip) * inf.num_columns + inf.column;
-      size_t cur_loc = (*sep_locs)[idx];
-      size_t next_loc = (*sep_locs)[idx + 1] - 1;
-      size_t len = next_loc - cur_loc;
+      auto idx = Idx(vec, i);
+      auto cur_loc = (*sep_locs)[idx];
+      auto next_loc = (*sep_locs)[idx + 1] - 1;
+      auto len = next_loc - cur_loc;
 
       auto val = Rf_mkCharLenCE(inf.mmap.data() + cur_loc, len, CE_UTF8);
       SET_STRING_ELT(data2, i, val);

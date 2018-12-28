@@ -31,6 +31,12 @@ public:
     return (inf.idx->size() / inf.num_columns) - inf.skip;
   }
 
+  static R_xlen_t Idx(SEXP vec, R_xlen_t i) {
+    auto inf = Info(vec);
+
+    return (i + inf.skip) * inf.num_columns + inf.column;
+  }
+
   // ALTVec methods -------------------
 
   static const void* Dataptr_or_null(SEXP vec) {

@@ -92,10 +92,10 @@ public:
         n,
         [&](int start, int end, int id) {
           for (int i = start; i < end; ++i) {
-            size_t idx = (i + inf.skip) * inf.num_columns + inf.column;
-            size_t cur_loc = (*sep_locs)[idx];
-            size_t next_loc = (*sep_locs)[idx + 1] - 1;
-            size_t len = next_loc - cur_loc;
+            auto idx = Idx(vec, i);
+            auto cur_loc = (*sep_locs)[idx];
+            auto next_loc = (*sep_locs)[idx + 1] - 1;
+            auto len = next_loc - cur_loc;
 
             std::copy(
                 inf.mmap.data() + cur_loc, inf.mmap.data() + next_loc, buf);
@@ -117,10 +117,10 @@ public:
     auto inf = Info(vec);
     auto sep_locs = inf.idx;
 
-    size_t idx = (i + inf.skip) * inf.num_columns + inf.column;
-    size_t cur_loc = (*sep_locs)[idx];
-    size_t next_loc = (*sep_locs)[idx + 1] - 1;
-    size_t len = next_loc - cur_loc;
+    auto idx = Idx(vec, i);
+    auto cur_loc = (*sep_locs)[idx];
+    auto next_loc = (*sep_locs)[idx + 1] - 1;
+    auto len = next_loc - cur_loc;
 
     // Need to copy to a temp buffer since we have no way to tell strtod how
     // long the buffer is.
