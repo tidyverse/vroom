@@ -66,6 +66,10 @@ create_index(const std::string& filename, const char delim, int num_threads) {
 
   std::error_code error;
   mio::shared_mmap_source mmap = mio::make_mmap_source(filename, error);
+  if (error) {
+    throw Rcpp::exception(error.message().c_str(), false);
+  }
+
   // From https://stackoverflow.com/a/17925143/2055486
 
   auto file_size = mmap.cend() - mmap.cbegin();
@@ -80,6 +84,9 @@ create_index(const std::string& filename, const char delim, int num_threads) {
         std::error_code error;
         auto thread_mmap =
             mio::make_mmap_source(filename, start, end - start, error);
+        if (error) {
+          throw Rcpp::exception(error.message().c_str(), false);
+        }
 
         size_t cur_loc = start;
         values[id].reserve(128);
