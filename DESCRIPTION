@@ -16,6 +16,6 @@ LinkingTo:
 Imports: 
     readr,
     Rcpp
-URL: https://github.com/jimhester/readidx
-BugReports: https://github.com/jimhester/readidx/issues
+URL: https://github.com/jimhester/vroom
+BugReports: https://github.com/jimhester/vroom/issues
 SystemRequirements: C++11

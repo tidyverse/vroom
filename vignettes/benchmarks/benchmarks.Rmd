@@ -87,6 +87,9 @@ dplyr::glimpse(x)
 
 ## Benchmarks
 
+The code used to run the benchmarks is in
+[bench/benchmark.R](https://github.com/jimhester/vroom/blob/master/bench/benchmark.R).
+
 The benchmark `base` uses `vroom` with base functions for subsetting.
 `dplyr` uses `vroom` to read the file and dplyr functions to subset.
 `data.table` uses `fread()` to read the file and `data.table` functions to
