@@ -15,19 +15,22 @@ knitr::opts_chunk$set(
 # vroom voom! <a href="https://readr.tidyverse.org"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
 
 <!-- badges: start -->
+[![Travis build status](https://travis-ci.org/jimhester/readidx.svg?branch=master)](https://travis-ci.org/jimhester/readidx)
 <!-- badges: end -->
 
 ```{r echo = FALSE, message = FALSE}
 tm <- readRDS(here::here("bench", "timings.Rds"))
 library(dplyr)
-tm %>% dplyr::filter(type == "real", op == "read", package != "vroom_dplyr") %>%
+tbl <- tm %>% dplyr::filter(type == "real", op == "read", package != "vroom_dplyr") %>%
   mutate(package = sub("_base", "", package)) %>%
   transmute(
     package = package,
     "time (sec)" = time,
     speedup = max(time) / time,
-    "throughput (B/sec)" = fs::file_info(fs::link_path("trip_fare_1.tsv"))$size / time)
+    "throughput" = prettyunits::pretty_bytes(fs::file_info(fs::link_path("trip_fare_1.tsv"))$size / time))
 ```
+
+The fastest tsv reader for R, **`r dplyr::filter(tbl, package == "vroom") %>% pull("throughput") %>% paste0("/sec")`**.
 
 But that's impossible! How can it be [so fast](https://raw.githack.com/jimhester/readidx/master/bench/benchmarks.html)?
 
@@ -36,6 +39,10 @@ each record is located so it can be read later. The vectors returned use the
 [Altrep framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html) to
 lazily load the data on-demand when it is accessed, so you only pay for what
 you use.
+
+```{r, echo = FALSE}
+knitr::kable(tbl, digits = 2)
+```
 
 ## Installation
 
@@ -50,8 +57,6 @@ devtools::install_github("jimhester/vroom")
 This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
-library(vroom)
-
 vroom::vroom("mtcars.tsv")
 ```
 

@@ -5,15 +5,11 @@
 
 <!-- badges: start -->
 
+[![Travis build
+status](https://travis-ci.org/jimhester/readidx.svg?branch=master)](https://travis-ci.org/jimhester/readidx)
 <!-- badges: end -->
 
-    #> # A tibble: 4 x 4
-    #>   package    `time (sec)` speedup `throughput (B/sec)`
-    #>   <chr>             <dbl>   <dbl>          <fs::bytes>
-    #> 1 vroom              2.59   42.5                614.3M
-    #> 2 data.table        19.3     5.71                82.5M
-    #> 3 readr             26.9     4.08                  59M
-    #> 4 read.delim       110.      1                   14.5M
+The fastest tsv reader for R, **644.2 MB/sec**.
 
 But that’s impossible\! How can it be [so
 fast](https://raw.githack.com/jimhester/readidx/master/bench/benchmarks.html)?
@@ -24,6 +20,13 @@ vectors returned use the [Altrep
 framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html) to
 lazily load the data on-demand when it is accessed, so you only pay for
 what you use.
+
+| package    | time (sec) | speedup | throughput |
+| :--------- | ---------: | ------: | :--------- |
+| vroom      |       2.59 |   42.48 | 644.2 MB   |
+| data.table |      19.26 |    5.71 | 86.5 MB    |
+| readr      |      26.93 |    4.08 | 61.9 MB    |
+| read.delim |     109.91 |    1.00 | 15.2 MB    |
 
 ## Installation
 
@@ -39,8 +42,6 @@ devtools::install_github("jimhester/vroom")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-library(vroom)
-
 vroom::vroom("mtcars.tsv")
 #> # A tibble: 32 x 12
 #>      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb test 

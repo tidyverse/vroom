@@ -192,13 +192,12 @@ tm_df <- map_dfr(times, function(x) {
 saveRDS(tm_df, here::here("bench", "timings.Rds"))
 ```
 
-```{r, echo = FALSE, warning = FALSE}
-library(gt)
-tm_df %>% dplyr::filter(op == "read", type == "real") %>% select(package, time) %>% gt::gt() %>% fmt_number(vars(time)) %>% tab_header("Real time to read the file", "(base and dplyr both use `vroom`, so are equivalent)")
-```
+```{r, echo = FALSE, message = FALSE}
+read_times <- tm_df %>% dplyr::filter(op == "read", type == "real") %>% select(package, `Time to read file` = time)
 
-```{r, echo = FALSE, warning = FALSE}
-tm_df %>% group_by(package) %>% dplyr::filter(type == "real") %>% tally(wt = time) %>% rename("time" = "n") %>% gt::gt() %>% fmt_number(vars(time)) %>% tab_header("Total time for all operations")
+total_times <- tm_df %>% group_by(package) %>% dplyr::filter(type == "real") %>% tally(wt = time) %>% rename("Total time for all operations (sec)" = "n")
+
+left_join(read_times, total_times) %>% mutate_if(is.numeric, prettyunits::pretty_sec) %>% knitr::kable(digits = 2, align = "r")
 ```
 
 Graph of timings, note because data.table operations use multiple cores the
