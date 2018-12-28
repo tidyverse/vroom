@@ -52,6 +52,7 @@ SEXP vroom_(
   } else if (
       col_names.sexp_type() == LGLSXP && as<LogicalVector>(col_names)[0]) {
     res.attr("names") = read_column_names(vroom_idx, mmap, num_columns, skip);
+    ++skip;
   }
 
   auto vroom = Rcpp::Environment::namespace_env("vroom");

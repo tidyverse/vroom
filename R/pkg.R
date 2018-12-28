@@ -24,12 +24,6 @@ vroom <- function(file, delim = "\t", col_names = TRUE, skip = 0, num_threads = 
 
   file <- path.expand(file)
 
-  if (is.logical(col_names)) {
-    if (isTRUE(col_names)) {
-      skip <- skip + 1
-    }
-  }
-
   out <- vroom_(file, delim = delim, col_names = col_names, skip = skip, num_threads = num_threads)
 
   if (is.null(names(out))) {
