@@ -17,15 +17,14 @@ SEXP read_tsv_(const std::string& filename, R_xlen_t skip, int num_threads) {
   size_t num_columns;
   mio::shared_mmap_source mmap;
 
-  std::tie(vroom_idx, num_columns, mmap) =
-      create_index(filename, num_threads);
+  std::tie(vroom_idx, num_columns, mmap) = create_index(filename, num_threads);
 
   List res(num_columns);
 
   // Create column name vector
   CharacterVector nms(num_columns);
 
-  Rcpp::Environment vroom("package:vroom");
+  auto vroom = Rcpp::Environment::namespace_env("vroom");
   Rcpp::Function guess_type = vroom["guess_type"];
 
   auto num_rows = (vroom_idx->size() / num_columns) - skip;
