@@ -1,5 +1,5 @@
 ---
-title: "vroom"
+title: "Benchmarks"
 output: rmarkdown::github_document
 ---
 
@@ -95,116 +95,28 @@ subset and `readr` uses `readr` to read the file and `dplyr` to subset.
 The following operations are performed.
 
   - The data is read
-  - `print()`
+  - `print()` - _N.B. read.delim uses `print(head(x, 25))` because printing the whole dataset takes > 10 minutes_
   - `head()`
   - `tail()`
   - Sampling 100 random rows
   - Filtering for "UNK" payment, this is `r filtered_rows` rows (`r scales::percent(filtered_rows / nrow(x))` of total).
 
-```{r run_benchmark, cache = TRUE}
-vroom_base <- function(file) {
-  library(vroom)
-  list(
-    bench::system_time(x <- vroom(file)),
-    bench::system_time(print(x)),
-    bench::system_time(head(x)),
-    bench::system_time(tail(x)),
-    bench::system_time(x[sample(NROW(x), 100), ]),
-    bench::system_time(x[x$payment_type == "UNK", ])
-  )
-}
-
-vroom_dplyr <- function(file) {
-  library(vroom)
-  library(dplyr)
-  list(
-    bench::system_time(x <- vroom(file)),
-    bench::system_time(print(x)),
-    bench::system_time(head(x)),
-    bench::system_time(tail(x)),
-    bench::system_time(sample_n(x, 100)),
-    bench::system_time(filter(x, payment_type == "UNK"))
-  )
-}
-
-data.table <- function(file) {
-  library(data.table)
-  list(
-    bench::system_time(x <- data.table::fread(file)),
-    bench::system_time(print(x)),
-    bench::system_time(head(x)),
-    bench::system_time(tail(x)),
-    bench::system_time(x[sample(NROW(x), 100), ]),
-    bench::system_time(x[x$payment_type == "UNK", ])
-  )
-}
-
-readr <- function(file) {
-  library(readr)
-  library(dplyr)
-  list(
-    bench::system_time(x <- read_tsv(file)),
-    bench::system_time(print(x)),
-    bench::system_time(head(x)),
-    bench::system_time(tail(x)),
-    bench::system_time(sample_n(x, 100)),
-    bench::system_time(filter(x, payment_type == "UNK"))
-  )
-}
-
-read.delim <- function(file) {
-  list(
-    bench::system_time(x <- read.delim(file)),
-    bench::system_time(print(x)),
-    bench::system_time(head(x)),
-    bench::system_time(tail(x)),
-    bench::system_time(x[sample(NROW(x), 100), ]),
-    bench::system_time(x[x$payment_type == "UNK", ])
-  )
-}
-
-times <- list(
-  vroom_base = callr::r(vroom_base, list(file = here::here("trip_fare_1.tsv"))),
-  vroom_dplyr = callr::r(vroom_dplyr, list(file = here::here("trip_fare_1.tsv"))),
-  data.table = callr::r(data.table, list(file = here::here("trip_fare_1.tsv"))),
-  readr = callr::r(readr, list(file = here::here("trip_fare_1.tsv"))),
-  read.delim = callr::r(read.delim, list(file = here::here("trip_fare_1.tsv")))
-)
-```
-
-```{r, include = FALSE}
-library(purrr)
-library(tidyr)
-library(dplyr)
-library(forcats)
-
-tm_df <- map_dfr(times, function(x) {
-  ops <- c("read", "print", "head", "tail", "sample", "filter")
-  tibble::tibble(
-    op = factor(ops, levels = ops),
-    process = map_dbl(x, "process"),
-    real = map_dbl(x, "real")
-  )
-  }, .id = "package") %>%
-  mutate(package = fct_inorder(package)) %>%
-  gather(type, time, -package, -op)
-
-saveRDS(tm_df, here::here("bench", "timings.Rds"))
-```
-
 ```{r, echo = FALSE, message = FALSE}
+library(dplyr)
+tm_df <- readRDS(here::here("bench", "timings.Rds"))
 read_times <- tm_df %>% dplyr::filter(op == "read", type == "real") %>% select(package, `Time to read file` = time)
 
 total_times <- tm_df %>% group_by(package) %>% dplyr::filter(type == "real") %>% tally(wt = time) %>% rename("Total time for all operations (sec)" = "n")
 
-left_join(read_times, total_times) %>% mutate_if(is.numeric, prettyunits::pretty_sec) %>% knitr::kable(digits = 2, align = "r")
+left_join(read_times, total_times) %>% mutate_if(is.numeric, prettyunits::pretty_sec) %>% knitr::kable(digits = 2, align = "r", format = "html")
 ```
 
-Graph of timings, note because data.table operations use multiple cores the
+Graph of timings, note because `vroom` and `data.table` operations use multiple cores the
 processor time is often much higher than the real time.
 
 ```{r, fig.height = 8, fig.width=10, warning = FALSE}
 library(ggplot2)
+library(forcats)
 tm_df %>%
   mutate(package = fct_inorder(sub("_", "\n", package))) %>%
   ggplot() +
