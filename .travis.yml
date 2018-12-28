@@ -3,7 +3,7 @@
 language: R
 cache: packages
 
-before_cache: Rscript -e 'remotes::install_cran(c("pkgdown", "rmarkdown", "knitr", "here", "dplyr", "prettyunits", "ggplot2", "forcats", "bench", "sessioninfo"))'
+before_cache: Rscript -e 'remotes::install_cran(c("pkgdown", "rmarkdown", "knitr", "here", "dplyr", "prettyunits", "ggplot2", "forcats", "bench", "sessioninfo"))' -e 'remotes::install_github("r-lib/bench")'
 deploy:
   provider: script
   script: Rscript -e 'pkgdown::deploy_site_github()'
