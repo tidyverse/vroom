@@ -39,8 +39,14 @@ vroom doesn't stop to actually _read_ all of your data, it simply indexes where
 each record is located so it can be read later. The vectors returned use the
 [Altrep framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html) to
 lazily load the data on-demand when it is accessed, so you only pay for what
-you use. It also has no (current) support for windows newlines, quoted fields,
-comments, whitespace trimming and other niceties.
+you use.
+
+vroom uses multiple threads for indexing and materializing non-character
+vectors, to further improve performance.
+
+However it has no (current) support for windows newlines, quoted fields,
+comments, whitespace trimming and other niceties which also slow down and
+complicate parsing.
 
 ```{r, echo = FALSE}
 knitr::kable(tbl, digits = 2)
@@ -64,6 +70,13 @@ tibble::rownames_to_column(mtcars, "model") %>%
 ```{r example}
 vroom::vroom("mtcars.tsv")
 ```
+
+## Benchmarks
+
+The speed quoted above is from a dataset with 14,776,615 rows and 11 columns,
+see the [benchmark
+article](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)
+for details.
 
 ## Thanks
 

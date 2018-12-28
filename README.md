@@ -21,8 +21,14 @@ indexes where each record is located so it can be read later. The
 vectors returned use the [Altrep
 framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html) to
 lazily load the data on-demand when it is accessed, so you only pay for
-what you use. It also has no (current) support for windows newlines,
-quoted fields, comments, whitespace trimming and other niceties.
+what you use.
+
+vroom uses multiple threads for indexing and materializing non-character
+vectors, to further improve performance.
+
+However it has no (current) support for windows newlines, quoted fields,
+comments, whitespace trimming and other niceties which also slow down
+and complicate parsing.
 
 | package    | time (sec) | speedup | throughput |
 | :--------- | ---------: | ------: | :--------- |
@@ -59,6 +65,13 @@ vroom::vroom("mtcars.tsv")
 #> 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4
 #> # ... with 22 more rows
 ```
+
+## Benchmarks
+
+The speed quoted above is from a dataset with 14,776,615 rows and 11
+columns, see the [benchmark
+article](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)
+for details.
 
 ## Thanks
 
