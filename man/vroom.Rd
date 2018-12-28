@@ -4,12 +4,30 @@
 \alias{vroom}
 \title{Read a delimited file into a tibble}
 \usage{
-vroom(file, delim = "\\t", num_threads = parallel::detectCores())
+vroom(file, delim = "\\t", col_names = TRUE, skip = 0,
+  num_threads = parallel::detectCores())
 }
 \arguments{
 \item{file}{path to a local file.}
 
 \item{delim}{Single character used to separate fields within a record.}
+
+\item{col_names}{Either \code{TRUE}, \code{FALSE} or a character vector
+of column names.
+
+If \code{TRUE}, the first row of the input will be used as the column
+names, and will not be included in the data frame. If \code{FALSE}, column
+names will be generated automatically: X1, X2, X3 etc.
+
+If \code{col_names} is a character vector, the values will be used as the
+names of the columns, and the first row of the input will be read into
+the first row of the output data frame.
+
+Missing (\code{NA}) column names will generate a warning, and be filled
+in with dummy names \code{X1}, \code{X2} etc. Duplicate column names
+will generate a warning and be made unique with a numeric prefix.}
+
+\item{skip}{Number of lines to skip before reading data.}
 
 \item{num_threads}{Number of threads to use when reading and materializing vectors.}
 }

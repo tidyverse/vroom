@@ -10,10 +10,31 @@ enum column_type { character = 0, real = 1, integer = 2, logical = 3 };
 
 inline int min(int a, int b) { return a < b ? a : b; }
 
+CharacterVector read_column_names(
+    std::shared_ptr<std::vector<size_t> > idx,
+    mio::shared_mmap_source mmap,
+    size_t num_columns,
+    R_xlen_t skip) {
+
+  CharacterVector nms(num_columns);
+
+  for (size_t col = 0; col < num_columns; ++col) {
+    // Set column header
+    auto i = skip * num_columns + col;
+    size_t cur_loc = (*idx)[i];
+    size_t next_loc = (*idx)[i + 1] - 1;
+    size_t len = next_loc - cur_loc;
+    nms[col] = Rf_mkCharLenCE(mmap.data() + cur_loc, len, CE_UTF8);
+  }
+
+  return nms;
+}
+
 // [[Rcpp::export]]
 SEXP vroom_(
     const std::string& filename,
     const char delim,
+    RObject col_names,
     R_xlen_t skip,
     int num_threads) {
 
@@ -26,8 +47,12 @@ SEXP vroom_(
 
   List res(num_columns);
 
-  // Create column name vector
-  CharacterVector nms(num_columns);
+  if (col_names.sexp_type() == STRSXP) {
+    res.attr("names") = col_names;
+  } else if (
+      col_names.sexp_type() == LGLSXP && as<LogicalVector>(col_names)[0]) {
+    res.attr("names") = read_column_names(vroom_idx, mmap, num_columns, skip);
+  }
 
   auto vroom = Rcpp::Environment::namespace_env("vroom");
   Rcpp::Function guess_type = vroom["guess_type"];
@@ -37,12 +62,6 @@ SEXP vroom_(
   // Rcpp::Rcout << num_guess << "\n";
 
   for (size_t i = 0; i < num_columns; ++i) {
-    // Set column header
-    size_t cur_loc = (*vroom_idx)[i];
-    size_t next_loc = (*vroom_idx)[i + 1] - 1;
-    size_t len = next_loc - cur_loc;
-    nms[i] = Rf_mkCharLenCE(mmap.data() + cur_loc, len, CE_UTF8);
-
     // Guess column type
     // TODO: guess from rows interspersed throughout the data
     CharacterVector col(num_guess);
@@ -108,8 +127,6 @@ SEXP vroom_(
       break;
     }
   }
-
-  res.attr("names") = nms;
 
   return res;
 }

@@ -6,22 +6,23 @@
 using namespace Rcpp;
 
 // vroom_
-SEXP vroom_(const std::string& filename, const char delim, R_xlen_t skip, int num_threads);
-RcppExport SEXP _vroom_vroom_(SEXP filenameSEXP, SEXP delimSEXP, SEXP skipSEXP, SEXP num_threadsSEXP) {
+SEXP vroom_(const std::string& filename, const char delim, RObject col_names, R_xlen_t skip, int num_threads);
+RcppExport SEXP _vroom_vroom_(SEXP filenameSEXP, SEXP delimSEXP, SEXP col_namesSEXP, SEXP skipSEXP, SEXP num_threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::string& >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< const char >::type delim(delimSEXP);
+    Rcpp::traits::input_parameter< RObject >::type col_names(col_namesSEXP);
     Rcpp::traits::input_parameter< R_xlen_t >::type skip(skipSEXP);
     Rcpp::traits::input_parameter< int >::type num_threads(num_threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(vroom_(filename, delim, skip, num_threads));
+    rcpp_result_gen = Rcpp::wrap(vroom_(filename, delim, col_names, skip, num_threads));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 4},
+    {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 5},
     {NULL, NULL, 0}
 };
 

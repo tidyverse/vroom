@@ -62,8 +62,8 @@ vroom::vroom("mtcars.tsv")
 
   - [Gabe Becker](https://twitter.com/groundwalkergmb), [Luke
     Tierney](https://stat.uiowa.edu/~luke/) and [Tomas
-    Kalibera](https://github.com/kalibera) for implementing and maintain
-    the [Altrep
+    Kalibera](https://github.com/kalibera) for implementing and
+    maintaining the [Altrep
     framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html)
   - [Romain François](https://twitter.com/romain_francois), whose
     [Altrepisode](https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
