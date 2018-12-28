@@ -57,27 +57,27 @@ parallelized.
 
 ## Dataset
 
-```{r include = FALSE}
-file <- "~/data/trip_fare_1.tsv"
-
-data_size <- prettyunits::pretty_bytes(file.size(file))
-
-x <- vroom::vroom(file)
-
-filtered_rows <- sum(x$payment_type == "UNK")
-```
-
 The dataset used in these benchmarks is from FOIA/FOILed Taxi Trip Data from
 the NYC Taxi and Limousine Commission 2013, originally posted at
 <http://chriswhong.com/open-data/foil_nyc_taxi/>. It is also hosted on
 [archive.org](https://archive.org/details/nycTaxiTripData2013).
 
 The first table trip_fare_1.csv was converted to tsv and saved as
-trip_fare_1.tsv, It is `r data_size` in size.
+trip_fare_1.tsv, It is 1.55G in size.
 
-```{r, echo = FALSE}
-dplyr::glimpse(x)
-```
+    #> Observations: 14,776,615
+    #> Variables: 11
+    #> $ medallion       <chr> "89D227B655E5C82AECF13C3F540D4CF4", "0BD7C8F5B...
+    #> $ hack_license    <chr> "BA96DE419E711691B9445D6A6307C170", "9FD8F69F0...
+    #> $ vendor_id       <chr> "CMT", "CMT", "CMT", "CMT", "CMT", "CMT", "CMT...
+    #> $ pickup_datetime <chr> "2013-01-01 15:11:48", "2013-01-06 00:18:35", ...
+    #> $ payment_type    <chr> "CSH", "CSH", "CSH", "CSH", "CSH", "CSH", "CSH...
+    #> $ fare_amount     <dbl> 6.5, 6.0, 5.5, 5.0, 9.5, 9.5, 6.0, 34.0, 5.5, ...
+    #> $ surcharge       <dbl> 0.0, 0.5, 1.0, 0.5, 0.5, 0.0, 0.0, 0.0, 1.0, 0...
+    #> $ mta_tax         <dbl> 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0...
+    #> $ tip_amount      <int> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...
+    #> $ tolls_amount    <dbl> 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.8, 0.0, 0...
+    #> $ total_amount    <dbl> 7.0, 7.0, 7.0, 6.0, 10.5, 10.0, 6.5, 39.3, 7.0...
 
 ## Benchmarks
 
@@ -96,7 +96,7 @@ The following operations are performed.
   - `head()`
   - `tail()`
   - Sampling 100 random rows
-  - Filtering for "UNK" payment, this is `r filtered_rows` rows (`r scales::percent(filtered_rows / nrow(x))` of total).
+  - Filtering for "UNK" payment, this is 6434 rows (0.0435% of total).
 
 ```{r, echo = FALSE, message = FALSE}
 library(dplyr)

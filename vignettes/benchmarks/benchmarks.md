@@ -1,9 +1,5 @@
-vroom
+Benchmarks
 ================
-
-``` r
-library(vroom)
-```
 
 vroom is an experiment for a future version of readr (2.0), or a
 possible extension package.
@@ -78,6 +74,9 @@ trip\_fare\_1.tsv, It is 1.55G in size.
 
 ## Benchmarks
 
+The code used to run the benchmarks is in
+[bench/benchmark.R](https://github.com/jimhester/vroom/blob/master/bench/benchmark.R).
+
 The benchmark `base` uses `vroom` with base functions for subsetting.
 `dplyr` uses `vroom` to read the file and dplyr functions to subset.
 `data.table` uses `fread()` to read the file and `data.table` functions
@@ -87,98 +86,164 @@ subset.
 The following operations are performed.
 
   - The data is read
-  - `print()`
+  - `print()` - *N.B. read.delim uses `print(head(x, 25))` because
+    printing the whole dataset takes \> 10 minutes*
   - `head()`
   - `tail()`
   - Sampling 100 random rows
   - Filtering for “UNK” payment, this is 6434 rows (0.0435% of total).
 
-<!-- end list -->
+<table>
 
-``` r
-vroom_base <- function(file) {
-  library(vroom)
-  list(
-    bench::system_time(x <- vroom(file)),
-    bench::system_time(print(x)),
-    bench::system_time(head(x)),
-    bench::system_time(tail(x)),
-    bench::system_time(x[sample(NROW(x), 100), ]),
-    bench::system_time(x[x$payment_type == "UNK", ])
-  )
-}
+<thead>
 
-vroom_dplyr <- function(file) {
-  library(vroom)
-  library(dplyr)
-  list(
-    bench::system_time(x <- vroom(file)),
-    bench::system_time(print(x)),
-    bench::system_time(head(x)),
-    bench::system_time(tail(x)),
-    bench::system_time(sample_n(x, 100)),
-    bench::system_time(filter(x, payment_type == "UNK"))
-  )
-}
+<tr>
 
-data.table <- function(file) {
-  library(data.table)
-  list(
-    bench::system_time(x <- data.table::fread(file)),
-    bench::system_time(print(x)),
-    bench::system_time(head(x)),
-    bench::system_time(tail(x)),
-    bench::system_time(x[sample(NROW(x), 100), ]),
-    bench::system_time(x[x$payment_type == "UNK", ])
-  )
-}
+<th style="text-align:right;">
 
-readr <- function(file) {
-  library(readr)
-  library(dplyr)
-  list(
-    bench::system_time(x <- read_tsv(file)),
-    bench::system_time(print(x)),
-    bench::system_time(head(x)),
-    bench::system_time(tail(x)),
-    bench::system_time(sample_n(x, 100)),
-    bench::system_time(filter(x, payment_type == "UNK"))
-  )
-}
+package
 
-read.delim <- function(file) {
-  list(
-    bench::system_time(x <- read.delim(file)),
-    bench::system_time(print(x)),
-    bench::system_time(head(x)),
-    bench::system_time(tail(x)),
-    bench::system_time(x[sample(NROW(x), 100), ]),
-    bench::system_time(x[x$payment_type == "UNK", ])
-  )
-}
+</th>
 
-times <- list(
-  vroom_base = callr::r(vroom_base, list(file = here::here("trip_fare_1.tsv"))),
-  vroom_dplyr = callr::r(vroom_dplyr, list(file = here::here("trip_fare_1.tsv"))),
-  data.table = callr::r(data.table, list(file = here::here("trip_fare_1.tsv"))),
-  readr = callr::r(readr, list(file = here::here("trip_fare_1.tsv"))),
-  read.delim = callr::r(read.delim, list(file = here::here("trip_fare_1.tsv")))
-)
-```
+<th style="text-align:right;">
 
-|      package | Time to read file | Total time for all operations (sec) |
-| -----------: | ----------------: | ----------------------------------: |
-|  vroom\_base |              2.6s |                                4.9s |
-| vroom\_dplyr |              2.5s |                                7.5s |
-|   data.table |             19.3s |                               19.4s |
-|        readr |             26.9s |                               27.3s |
-|   read.delim |          1m 49.9s |                           11m 58.8s |
+Time to read file
 
-Graph of timings, note because data.table operations use multiple cores
-the processor time is often much higher than the real time.
+</th>
+
+<th style="text-align:right;">
+
+Total time for all operations (sec)
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:right;">
+
+vroom\_base
+
+</td>
+
+<td style="text-align:right;">
+
+2.6s
+
+</td>
+
+<td style="text-align:right;">
+
+5.3s
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+vroom\_dplyr
+
+</td>
+
+<td style="text-align:right;">
+
+2.6s
+
+</td>
+
+<td style="text-align:right;">
+
+12.4s
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+data.table
+
+</td>
+
+<td style="text-align:right;">
+
+19.7s
+
+</td>
+
+<td style="text-align:right;">
+
+19.9s
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+readr
+
+</td>
+
+<td style="text-align:right;">
+
+25.8s
+
+</td>
+
+<td style="text-align:right;">
+
+26.2s
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+read.delim
+
+</td>
+
+<td style="text-align:right;">
+
+1m 51.1s
+
+</td>
+
+<td style="text-align:right;">
+
+1m 51.4s
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+Graph of timings, note because `vroom` and `data.table` operations use
+multiple cores the processor time is often much higher than the real
+time.
 
 ``` r
 library(ggplot2)
+library(forcats)
 tm_df %>%
   mutate(package = fct_inorder(sub("_", "\n", package))) %>%
   ggplot() +
@@ -189,7 +254,7 @@ tm_df %>%
     theme(legend.position = "bottom")
 ```
 
-![](benchmarks_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](benchmarks_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 ``` r
 sessioninfo::package_info(c("vroom", "readr", "dplyr", "data.table"), dependencies = FALSE)
@@ -197,7 +262,7 @@ sessioninfo::package_info(c("vroom", "readr", "dplyr", "data.table"), dependenci
 #>  data.table   1.11.8     2018-09-30 [1] CRAN (R 3.5.0)
 #>  dplyr      * 0.7.8      2018-11-10 [1] CRAN (R 3.5.0)
 #>  readr        1.3.1      2018-12-21 [1] CRAN (R 3.5.0)
-#>  vroom      * 0.0.0.9000 2018-12-28 [1] local         
+#>  vroom        0.0.0.9000 2018-12-28 [1] local         
 #> 
 #> [1] /Users/jhester/Library/R/3.5/library
 #> [2] /Library/Frameworks/R.framework/Versions/3.5/Resources/library
