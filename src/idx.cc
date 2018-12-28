@@ -62,7 +62,8 @@ std::tuple<
 create_index(const std::string& filename, int num_threads) {
   size_t columns = 0;
 
-  mio::shared_mmap_source mmap(filename);
+  std::error_code error;
+  mio::shared_mmap_source mmap = mio::make_mmap_source(filename, error);
   // From https://stackoverflow.com/a/17925143/2055486
 
   auto file_size = mmap.cend() - mmap.cbegin();
@@ -74,7 +75,9 @@ create_index(const std::string& filename, int num_threads) {
       file_size,
       [&](int start, int end, int id) {
         // Rcpp::Rcerr << start << '\t' << end - start << '\n';
-        mio::mmap_source thread_mmap(filename, start, end - start);
+        std::error_code error;
+        auto thread_mmap =
+            mio::make_mmap_source(filename, start, end - start, error);
 
         size_t cur_loc = start;
         values[id].reserve(128);
