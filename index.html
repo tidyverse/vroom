@@ -90,7 +90,9 @@
 
 <p>The fastest delimited reader for R, <strong>631.84 MB/sec</strong>.</p>
 <p>But that’s impossible! How can it be <a href="https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html">so fast</a>?</p>
-<p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use. It also has no (current) support for windows newlines, quoted fields, comments, whitespace trimming and other niceties.</p>
+<p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use.</p>
+<p>vroom uses multiple threads for indexing and materializing non-character vectors, to further improve performance.</p>
+<p>However it has no (current) support for windows newlines, quoted fields, comments, whitespace trimming and other niceties which also slow down and complicate parsing.</p>
 <table class="table table">
 <thead><tr class="header">
 <th align="left">package</th>
@@ -150,6 +152,11 @@
 <a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt;  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span></a>
 <a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt; 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4</span></a>
 <a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">#&gt; # ... with 22 more rows</span></a></code></pre></div>
+</div>
+<div id="benchmarks" class="section level2">
+<h2 class="hasAnchor">
+<a href="#benchmarks" class="anchor"></a>Benchmarks</h2>
+<p>The speed quoted above is from a dataset with 14,776,615 rows and 11 columns, see the <a href="https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html">benchmark article</a> for details.</p>
 </div>
 <div id="thanks" class="section level2">
 <h2 class="hasAnchor">
