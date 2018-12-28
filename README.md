@@ -7,6 +7,8 @@
 
 [![Travis build
 status](https://travis-ci.org/jimhester/vroom.svg?branch=master)](https://travis-ci.org/jimhester/vroom)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
 The fastest delimited reader for R, **631.84 MB/sec**.
@@ -19,8 +21,8 @@ indexes where each record is located so it can be read later. The
 vectors returned use the [Altrep
 framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html) to
 lazily load the data on-demand when it is accessed, so you only pay for
-what you use. It also has no (current) support for quoted fields,
-comments, whitespace trimming and other niceties.
+what you use. It also has no (current) support for windows newlines,
+quoted fields, comments, whitespace trimming and other niceties.
 
 | package    | time (sec) | speedup | throughput |
 | :--------- | ---------: | ------: | :--------- |

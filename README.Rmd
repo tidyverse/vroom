@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Travis build status](https://travis-ci.org/jimhester/vroom.svg?branch=master)](https://travis-ci.org/jimhester/vroom)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
 ```{r echo = FALSE, message = FALSE}
@@ -38,8 +39,8 @@ vroom doesn't stop to actually _read_ all of your data, it simply indexes where
 each record is located so it can be read later. The vectors returned use the
 [Altrep framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html) to
 lazily load the data on-demand when it is accessed, so you only pay for what
-you use. It also has no (current) support for quoted fields, comments,
-whitespace trimming and other niceties.
+you use. It also has no (current) support for windows newlines, quoted fields,
+comments, whitespace trimming and other niceties.
 
 ```{r, echo = FALSE}
 knitr::kable(tbl, digits = 2)
