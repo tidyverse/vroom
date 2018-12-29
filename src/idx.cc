@@ -4,34 +4,6 @@
 
 #include <array>
 
-// SEXP resize(SEXP in, size_t n) {
-//// Rcerr << "Resizing to: " << n << std::endl;
-// size_t sz = Rf_xlength(in);
-// if (sz == n)
-// return in;
-
-// if (n > 0 && n < sz) {
-// SETLENGTH(in, n);
-// SET_TRUELENGTH(in, n);
-//} else {
-// in = Rf_xlengthgets(in, n);
-//}
-// return in;
-//}
-
-/**
- * Get the size of a file.
- * @param filename The name of the file to check size for
- * @return The filesize, or 0 if the file does not exist.
- */
-size_t get_file_size(const std::string& filename) {
-  struct stat st;
-  if (stat(filename.c_str(), &st) != 0) {
-    return 0;
-  }
-  return st.st_size;
-}
-
 size_t guess_size(size_t records, size_t bytes, size_t file_size) {
   double percent_complete = (double)(bytes) / file_size;
   size_t total_records = records / percent_complete * 1.1;

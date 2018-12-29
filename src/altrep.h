@@ -1,5 +1,3 @@
-#include <Rcpp.h>
-
 #if R_VERSION < R_Version(3, 6, 0)
 
 // workaround because R's <R_ext/Altrep.h> not so conveniently uses `class`

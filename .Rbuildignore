@@ -9,3 +9,5 @@
 ^bench$
 ^vignettes$
 ^script.R$
+^.*\.Rproj$
+^\.Rproj\.user$

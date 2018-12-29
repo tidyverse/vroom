@@ -1,14 +1,16 @@
 #include "altrep.h"
 
+#include "parallel.h"
+#include "vroom_vec.h"
+
 // clang-format off
 # pragma clang diagnostic push
 # pragma clang diagnostic ignored "-Wsign-compare"
 #include <mio/shared_mmap.hpp>
 # pragma clang diagnostic pop
 // clang-format on
-//
-#include "parallel.h"
-#include "vroom_vec.h"
+
+#include <Rcpp.h>
 
 using namespace Rcpp;
 

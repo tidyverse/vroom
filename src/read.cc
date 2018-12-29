@@ -1,10 +1,11 @@
-#include <Rcpp.h>
 #include <mio/shared_mmap.hpp>
 
 #include "idx.h"
 #include "read_normal.h"
 #include "vroom_numeric.h"
 #include "vroom_string.h"
+
+#include <Rcpp.h>
 
 enum column_type { character = 0, real = 1, integer = 2, logical = 3 };
 

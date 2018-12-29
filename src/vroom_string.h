@@ -9,6 +9,8 @@
 
 #include "vroom_vec.h"
 
+#include <Rcpp.h>
+
 using namespace Rcpp;
 
 // inspired by Luke Tierney and the R Core Team
