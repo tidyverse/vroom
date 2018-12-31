@@ -7,6 +7,7 @@ struct vroom_vec_info {
   R_xlen_t num_columns;
   R_xlen_t skip;
   R_xlen_t num_threads;
+  Rcpp::CharacterVector na;
 };
 
 class vroom_vec {

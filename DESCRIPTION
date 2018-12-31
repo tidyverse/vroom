@@ -22,3 +22,5 @@ Imports:
 URL: https://github.com/jimhester/vroom
 BugReports: https://github.com/jimhester/vroom/issues
 SystemRequirements: C++11
+Suggests: 
+    testthat

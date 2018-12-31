@@ -46,6 +46,12 @@ create_index(const std::string& filename, const char delim, int num_threads) {
 
   auto file_size = mmap.cend() - mmap.cbegin();
 
+  // This should be enough to ensure the first line fits in one thread, I
+  // hope...
+  if (file_size < 32768) {
+    num_threads = 1;
+  }
+
   // We read the values into a vector of vectors, then merge them afterwards
   std::vector<std::vector<size_t> > values(num_threads);
 

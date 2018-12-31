@@ -37,6 +37,7 @@ SEXP vroom_(
     const char delim,
     RObject col_names,
     R_xlen_t skip,
+    CharacterVector na,
     int num_threads) {
 
   std::shared_ptr<std::vector<size_t> > vroom_idx;
@@ -76,7 +77,8 @@ SEXP vroom_(
       // Rcpp::Rcout << "i:" << i << " j:" << j << " cur_loc:" << cur_loc
       //<< " next_loc:" << next_loc << " " << col[j] << "\n";
     }
-    auto col_type = INTEGER(guess_type(col, Named("guess_integer") = true))[0];
+    auto col_type = INTEGER(
+        guess_type(col, Named("guess_integer") = true, Named("na") = na))[0];
     // Rcpp::Rcout << "i:" << i << " type:" << col_type << "\n";
 
     switch (col_type) {
@@ -125,7 +127,8 @@ SEXP vroom_(
               mio::shared_mmap_source(mmap),
               i,
               num_columns,
-              skip));
+              skip,
+              na));
       break;
     }
   }

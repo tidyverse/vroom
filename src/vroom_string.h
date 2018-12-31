@@ -29,7 +29,8 @@ public:
       mio::shared_mmap_source mmap,
       R_xlen_t column,
       R_xlen_t num_columns,
-      R_xlen_t skip) {
+      R_xlen_t skip,
+      CharacterVector na) {
 
     // `out` and `xp` needs protection because R_new_altrep allocates
     // SEXP out = PROTECT(Rf_allocVector(VECSXP, 1));
@@ -40,6 +41,7 @@ public:
     info->column = column;
     info->num_columns = num_columns;
     info->skip = skip;
+    info->na = na;
 
     SEXP out = PROTECT(R_MakeExternalPtr(info, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(out, vroom_vec::Finalize, TRUE);
@@ -70,6 +72,29 @@ public:
 
   // ALTSTRING methods -----------------
 
+  static SEXP Val(SEXP vec, R_xlen_t i) {
+    auto inf = Info(vec);
+    auto sep_locs = inf.idx;
+
+    auto idx = Idx(vec, i);
+    auto cur_loc = (*sep_locs)[idx];
+    auto next_loc = (*sep_locs)[idx + 1] - 1;
+    auto len = next_loc - cur_loc;
+
+    auto val = Rf_mkCharLenCE(inf.mmap.data() + cur_loc, len, CE_UTF8);
+
+    // Look for NAs
+    for (R_xlen_t i = 0; i < inf.na.length(); ++i) {
+      // We can just compare the addresses directly because they should now
+      // both be in the global string cache.
+      if (inf.na(i) == val) {
+        val = NA_STRING;
+        break;
+      }
+    }
+    return val;
+  }
+
   // the element at the index `i`
   //
   // this does not do bounds checking because that's expensive, so
@@ -79,17 +104,8 @@ public:
     if (data2 != R_NilValue) {
       return STRING_ELT(data2, i);
     }
-    auto inf = Info(vec);
-    auto sep_locs = inf.idx;
 
-    auto idx = Idx(vec, i);
-    auto cur_loc = (*sep_locs)[idx];
-    auto next_loc = (*sep_locs)[idx + 1] - 1;
-    auto len = next_loc - cur_loc;
-
-    // Rcerr << cur_loc << ':' << next_loc << ':' << len << '\n';
-
-    return Rf_mkCharLenCE(inf.mmap.data() + cur_loc, len, CE_UTF8);
+    return Val(vec, i);
   }
 
   // --- Altvec
@@ -107,13 +123,7 @@ public:
     auto sep_locs = inf.idx;
 
     for (R_xlen_t i = 0; i < n; ++i) {
-      auto idx = Idx(vec, i);
-      auto cur_loc = (*sep_locs)[idx];
-      auto next_loc = (*sep_locs)[idx + 1] - 1;
-      auto len = next_loc - cur_loc;
-
-      auto val = Rf_mkCharLenCE(inf.mmap.data() + cur_loc, len, CE_UTF8);
-      SET_STRING_ELT(data2, i, val);
+      SET_STRING_ELT(data2, i, Val(vec, i));
     }
 
     R_set_altrep_data2(vec, data2);

@@ -20,11 +20,11 @@ NULL
 #' unlink("mtcars.tsv")
 #' setwd(.old_wd)
 #' }
-vroom <- function(file, delim = "\t", col_names = TRUE, skip = 0, num_threads = parallel::detectCores()) {
+vroom <- function(file, delim = "\t", col_names = TRUE, skip = 0, na = c("", "NA"), num_threads = parallel::detectCores()) {
 
-  file <- path.expand(file)
+  file <- standardise_path(file)
 
-  out <- vroom_(file, delim = delim, col_names = col_names, skip = skip, num_threads = num_threads)
+  out <- vroom_(file, delim = delim, col_names = col_names, skip = skip, na = na, num_threads = num_threads)
 
   if (is.null(names(out))) {
     names(out) <- make.names(seq_along(out))
@@ -37,7 +37,10 @@ vroom <- function(file, delim = "\t", col_names = TRUE, skip = 0, num_threads = 
 #'
 #' @inheritParams readr::guess_parser
 #' @export
-guess_type <- function(x, locale = readr::default_locale(), guess_integer = FALSE) {
+guess_type <- function(x, na = c("", "NA"), locale = readr::default_locale(), guess_integer = FALSE) {
+
+  x[x %in% na] <- NA
+
   type <- readr::guess_parser(x, locale = locale, guess_integer = guess_integer)
   switch(type,
     "double" = 1L,
