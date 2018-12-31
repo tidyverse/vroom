@@ -86,10 +86,6 @@ public:
     auto inf = Info(vec);
     auto sep_locs = inf.idx;
 
-    // Need to copy to a temp buffer since we have no way to tell strtod how
-    // long the buffer is.
-    char buf[128];
-
     parallel_for(
         n,
         [&](int start, int end, int id) {
@@ -98,6 +94,10 @@ public:
             auto cur_loc = (*sep_locs)[idx];
             auto next_loc = (*sep_locs)[idx + 1] - 1;
             auto len = next_loc - cur_loc;
+
+            // Need to copy to a temp buffer since we have no way to tell strtod
+            // how long the buffer is.
+            char buf[128];
 
             std::copy(
                 inf.mmap.data() + cur_loc, inf.mmap.data() + next_loc, buf);
