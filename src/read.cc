@@ -61,35 +61,37 @@ SEXP vroom_(
   Rcpp::Function guess_type = vroom["guess_type"];
 
   auto num_rows = (vroom_idx->size() / num_columns) - skip;
-  auto num_guess = min(num_rows, 100);
-  // Rcpp::Rcout << num_guess << "\n";
+  auto guess_num = min(num_rows, 100);
 
-  for (size_t i = 0; i < num_columns; ++i) {
-    // Guess column type
-    // TODO: guess from rows interspersed throughout the data
-    CharacterVector col(num_guess);
-    for (auto j = 0; j < num_guess; ++j) {
-      size_t idx = (j + skip) * num_columns + i;
+  // Guess based on values throughout the data
+  auto guess_step = num_rows / guess_num;
+
+  for (size_t col = 0; col < num_columns; ++col) {
+    CharacterVector col_vals(guess_num);
+    for (auto j = 0; j < guess_num; ++j) {
+      auto row = j * guess_step + skip;
+      size_t idx = row * num_columns + col;
       size_t cur_loc = (*vroom_idx)[idx];
       size_t next_loc = (*vroom_idx)[idx + 1] - 1;
       size_t len = next_loc - cur_loc;
-      col[j] = Rf_mkCharLenCE(mmap.data() + cur_loc, len, CE_UTF8);
-      // Rcpp::Rcout << "i:" << i << " j:" << j << " cur_loc:" << cur_loc
-      //<< " next_loc:" << next_loc << " " << col[j] << "\n";
+      col_vals[j] = Rf_mkCharLenCE(mmap.data() + cur_loc, len, CE_UTF8);
+      // Rcpp::Rcout << "row:" << row << " col:" << col << " cur_loc:" <<
+      // cur_loc
+      //<< " next_loc:" << next_loc << " " << col_vals[j] << "\n";
     }
-    auto col_type = INTEGER(
-        guess_type(col, Named("guess_integer") = true, Named("na") = na))[0];
+    auto col_type = INTEGER(guess_type(
+        col_vals, Named("guess_integer") = true, Named("na") = na))[0];
     // Rcpp::Rcout << "i:" << i << " type:" << col_type << "\n";
 
     switch (col_type) {
     case real:
       SET_VECTOR_ELT(
           res,
-          i,
+          col,
           vroom_real::Make(
               std::shared_ptr<std::vector<size_t> >(vroom_idx),
               mio::shared_mmap_source(mmap),
-              i,
+              col,
               num_columns,
               skip,
               num_threads));
@@ -97,11 +99,11 @@ SEXP vroom_(
     case integer:
       SET_VECTOR_ELT(
           res,
-          i,
+          col,
           vroom_int::Make(
               std::shared_ptr<std::vector<size_t> >(vroom_idx),
               mio::shared_mmap_source(mmap),
-              i,
+              col,
               num_columns,
               skip,
               num_threads));
@@ -109,11 +111,11 @@ SEXP vroom_(
     case logical:
       SET_VECTOR_ELT(
           res,
-          i,
+          col,
           read_lgl(
               std::shared_ptr<std::vector<size_t> >(vroom_idx),
               mio::shared_mmap_source(mmap),
-              i,
+              col,
               num_columns,
               skip,
               num_threads));
@@ -121,11 +123,11 @@ SEXP vroom_(
     case character:
       SET_VECTOR_ELT(
           res,
-          i,
+          col,
           vroom_string::Make(
               std::shared_ptr<std::vector<size_t> >(vroom_idx),
               mio::shared_mmap_source(mmap),
-              i,
+              col,
               num_columns,
               skip,
               na));
