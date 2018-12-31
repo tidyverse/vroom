@@ -18,6 +18,7 @@ Depends: R (>= 3.5)
 Imports: 
     readr,
     tibble,
+    withr,
     Rcpp
 URL: https://github.com/jimhester/vroom
 BugReports: https://github.com/jimhester/vroom/issues

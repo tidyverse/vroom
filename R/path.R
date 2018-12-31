@@ -8,6 +8,8 @@ standardise_path <-function (path) {
   path.expand(path)
 }
 
+utils::globalVariables("con")
+
 chr_to_file <- function(x, envir = parent.frame()) {
   out <- tempfile()
   withr::with_connection(list(con = file(out, "wb")),

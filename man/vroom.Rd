@@ -4,8 +4,8 @@
 \alias{vroom}
 \title{Read a delimited file into a tibble}
 \usage{
-vroom(file, delim = "\\t", col_names = TRUE, skip = 0,
-  num_threads = parallel::detectCores())
+vroom(file, delim = "\\t", col_names = TRUE, skip = 0, na = c("",
+  "NA"), num_threads = parallel::detectCores())
 }
 \arguments{
 \item{file}{path to a local file.}
@@ -28,6 +28,9 @@ in with dummy names \code{X1}, \code{X2} etc. Duplicate column names
 will generate a warning and be made unique with a numeric prefix.}
 
 \item{skip}{Number of lines to skip before reading data.}
+
+\item{na}{Character vector of strings to interpret as missing values. Set this
+option to \code{character()} to indicate no missing values.}
 
 \item{num_threads}{Number of threads to use when reading and materializing vectors.}
 }

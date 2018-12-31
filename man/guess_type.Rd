@@ -4,10 +4,14 @@
 \alias{guess_type}
 \title{Guess the type of a vector}
 \usage{
-guess_type(x, locale = readr::default_locale(), guess_integer = FALSE)
+guess_type(x, na = c("", "NA"), locale = readr::default_locale(),
+  guess_integer = FALSE)
 }
 \arguments{
 \item{x}{Character vector of values to parse.}
+
+\item{na}{Character vector of strings to interpret as missing values. Set this
+option to \code{character()} to indicate no missing values.}
 
 \item{locale}{The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
