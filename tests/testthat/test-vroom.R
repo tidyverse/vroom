@@ -35,3 +35,29 @@ test_that("vroom guesses columns with NAs", {
     tibble::tibble(a = c(NA, "bar"), b = c(2, 5), c = c(3, 6))
   )
 })
+
+test_that("vroom can read a tsv from a connection", {
+  tf <- tempfile()
+  on.exit(unlink(tf))
+  readr::write_lines(c("a\tb\tc", "1\t2\t3"), tf)
+
+  con <- file(tf, "rb")
+  on.exit(close(con), add = TRUE)
+
+  res <- vroom(con)
+
+  # Has a temp_file environment, with a filename
+  tf <- attr(res, "temp_file")$filename
+  expect_true(is.character(tf))
+  expect_true(file.exists(tf))
+  expect_equivalent(
+    res,
+    tibble::tibble(a = 1, b = 2, c = 3)
+  )
+
+  rm(res)
+  gc()
+
+  # Which is removed after the object is deleted and the finalizer has run
+  expect_false(file.exists(tf))
+})

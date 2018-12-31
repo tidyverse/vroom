@@ -31,9 +31,13 @@ CharacterVector read_column_names(
   return nms;
 }
 
+void unlink_file_finalizer(SEXP env) {
+  unlink(as<Rcpp::Environment>(env)["filename"]);
+}
+
 // [[Rcpp::export]]
 SEXP vroom_(
-    const std::string& filename,
+    RObject file,
     const char delim,
     RObject col_names,
     R_xlen_t skip,
@@ -44,8 +48,19 @@ SEXP vroom_(
   size_t num_columns;
   mio::shared_mmap_source mmap;
 
-  std::tie(vroom_idx, num_columns, mmap) =
-      create_index(filename, delim, num_threads);
+  Rcpp::CharacterVector tempfile;
+
+  bool is_connection = file.sexp_type() != STRSXP;
+
+  if (is_connection) {
+    tempfile = as<Rcpp::Function>(Rcpp::Environment::base_env()["tempfile"])();
+
+    std::tie(vroom_idx, num_columns, mmap) = create_index_connection(
+        file, CHAR(STRING_ELT(tempfile, 0)), delim, 1024 * 1024);
+  } else {
+    std::tie(vroom_idx, num_columns, mmap) =
+        create_index(CHAR(STRING_ELT(file, 0)), delim, num_threads);
+  }
 
   List res(num_columns);
 
@@ -102,7 +117,7 @@ SEXP vroom_(
           col,
           vroom_int::Make(
               std::shared_ptr<std::vector<size_t> >(vroom_idx),
-              mio::shared_mmap_source(mmap),
+              mmap,
               col,
               num_columns,
               skip,
@@ -114,7 +129,7 @@ SEXP vroom_(
           col,
           read_lgl(
               std::shared_ptr<std::vector<size_t> >(vroom_idx),
-              mio::shared_mmap_source(mmap),
+              mmap,
               col,
               num_columns,
               skip,
@@ -126,13 +141,21 @@ SEXP vroom_(
           col,
           vroom_string::Make(
               std::shared_ptr<std::vector<size_t> >(vroom_idx),
-              mio::shared_mmap_source(mmap),
+              mmap,
               col,
               num_columns,
               skip,
               na));
       break;
     }
+  }
+
+  if (is_connection) {
+    auto env = Rcpp::Environment::empty_env().new_child(false);
+    env["filename"] = tempfile;
+    R_RegisterCFinalizerEx(env, unlink_file_finalizer, TRUE);
+
+    res.attr("temp_file") = env;
   }
 
   return res;

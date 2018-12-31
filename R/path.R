@@ -1,4 +1,7 @@
 standardise_path <-function (path) {
+  if (!is.character(path)) {
+    return(path)
+  }
   if (length(path) > 1) {
     return(chr_to_file(path, parent.frame()))
   }
@@ -12,9 +15,9 @@ utils::globalVariables("con")
 
 chr_to_file <- function(x, envir = parent.frame()) {
   out <- tempfile()
-  withr::with_connection(list(con = file(out, "wb")),
-    writeLines(x,con)
-  )
+  con <- file(out, "wb")
+  writeLines(x, con)
+  close(con)
 
   withr::defer(unlink(out), envir = envir)
 

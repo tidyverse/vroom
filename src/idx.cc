@@ -2,7 +2,7 @@
 
 #include "parallel.h"
 
-#include <array>
+#include <fstream>
 
 size_t guess_size(size_t records, size_t bytes, size_t file_size) {
   double percent_complete = (double)(bytes) / file_size;
@@ -31,10 +31,8 @@ std::tuple<
     std::shared_ptr<std::vector<size_t> >,
     size_t,
     mio::shared_mmap_source>
-create_index(const std::string& filename, const char delim, int num_threads) {
+create_index(const char* filename, char delim, int num_threads) {
   size_t columns = 0;
-
-  Rcpp::Rcerr << delim << '\n';
 
   std::error_code error;
   mio::shared_mmap_source mmap = mio::make_mmap_source(filename, error);
@@ -85,7 +83,7 @@ create_index(const std::string& filename, const char delim, int num_threads) {
         }
       },
       num_threads,
-      true);
+      false);
 
   // Rcpp::Rcerr << "Calculating total size\n";
   auto total_size = std::accumulate(
@@ -108,9 +106,13 @@ create_index(const std::string& filename, const char delim, int num_threads) {
     append<size_t>(std::move(v), *out);
   }
 
+  // std::ofstream log(
+  //"test2.idx",
+  // std::fstream::out | std::fstream::binary | std::fstream::trunc);
   // for (auto& v : *out) {
-  // Rcpp::Rcerr << v << '\n';
+  // log << v << '\n';
   //}
+  // log.close();
 
   return std::make_tuple(out, columns, mmap);
 }
