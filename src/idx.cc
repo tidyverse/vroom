@@ -83,7 +83,7 @@ create_index(const char* filename, char delim, int num_threads) {
         }
       },
       num_threads,
-      false);
+      true);
 
   // Rcpp::Rcerr << "Calculating total size\n";
   auto total_size = std::accumulate(
