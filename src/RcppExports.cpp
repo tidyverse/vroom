@@ -5,6 +5,16 @@
 
 using namespace Rcpp;
 
+// force_materialization
+void force_materialization(SEXP x);
+RcppExport SEXP _vroom_force_materialization(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type x(xSEXP);
+    force_materialization(x);
+    return R_NilValue;
+END_RCPP
+}
 // vroom_
 SEXP vroom_(RObject file, const char delim, RObject col_names, R_xlen_t skip, CharacterVector na, int num_threads);
 RcppExport SEXP _vroom_vroom_(SEXP fileSEXP, SEXP delimSEXP, SEXP col_namesSEXP, SEXP skipSEXP, SEXP naSEXP, SEXP num_threadsSEXP) {
@@ -23,6 +33,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_vroom_force_materialization", (DL_FUNC) &_vroom_force_materialization, 1},
     {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 6},
     {NULL, NULL, 0}
 };

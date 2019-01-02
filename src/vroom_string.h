@@ -82,9 +82,16 @@ public:
     auto len = next_loc - cur_loc;
 
     auto val = Rf_mkCharLenCE(inf.mmap.data() + cur_loc, len, CE_UTF8);
+    val = check_na(vec, val);
+
+    return val;
+  }
+
+  static SEXP check_na(SEXP vec, SEXP val) {
+    auto inf = Info(vec);
 
     // Look for NAs
-    for (R_xlen_t i = 0; i < inf.na->length(); ++i) {
+    for (R_xlen_t i = 0; i < Info(vec).na->length(); ++i) {
       // We can just compare the addresses directly because they should now
       // both be in the global string cache.
       if ((*inf.na)(i) == val) {
@@ -122,8 +129,27 @@ public:
     auto inf = Info(vec);
     auto sep_locs = inf.idx;
 
+    auto idx = Idx(vec, 0);
+    auto na_len = inf.na->length();
     for (R_xlen_t i = 0; i < n; ++i) {
-      SET_STRING_ELT(data2, i, Val(vec, i));
+      auto cur_loc = (*sep_locs)[idx];
+      auto next_loc = (*sep_locs)[idx + 1] - 1;
+      auto len = next_loc - cur_loc;
+
+      auto val = Rf_mkCharLenCE(inf.mmap.data() + cur_loc, len, CE_UTF8);
+
+      // Look for NAs
+      for (R_xlen_t j = 0; j < na_len; ++j) {
+        // We can just compare the addresses directly because they should now
+        // both be in the global string cache.
+        if ((*inf.na)[j] == val) {
+          val = NA_STRING;
+          break;
+        }
+      }
+
+      SET_STRING_ELT(data2, i, val);
+      idx += inf.num_columns;
     }
 
     R_set_altrep_data2(vec, data2);

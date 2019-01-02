@@ -89,8 +89,8 @@ public:
     parallel_for(
         n,
         [&](int start, int end, int id) {
+          auto idx = Idx(vec, start);
           for (int i = start; i < end; ++i) {
-            auto idx = Idx(vec, i);
             auto cur_loc = (*sep_locs)[idx];
             auto next_loc = (*sep_locs)[idx + 1] - 1;
             auto len = next_loc - cur_loc;
@@ -104,6 +104,7 @@ public:
             buf[len] = '\0';
 
             p[i] = R_strtod(buf, NULL);
+            idx += inf.num_columns;
           }
         },
         inf.num_threads);

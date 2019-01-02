@@ -20,19 +20,19 @@ public:
     delete info_p;
   }
 
-  static vroom_vec_info& Info(SEXP x) {
+  static inline vroom_vec_info& Info(SEXP x) {
     return *static_cast<vroom_vec_info*>(R_ExternalPtrAddr(R_altrep_data1(x)));
   }
 
   // ALTREP methods -------------------
 
   // The length of the object
-  static R_xlen_t Length(SEXP vec) {
+  static inline R_xlen_t Length(SEXP vec) {
     auto inf = Info(vec);
     return (inf.idx->size() / inf.num_columns) - inf.skip;
   }
 
-  static R_xlen_t Idx(SEXP vec, R_xlen_t i) {
+  static inline R_xlen_t Idx(SEXP vec, R_xlen_t i) {
     auto inf = Info(vec);
     return (i + inf.skip) * inf.num_columns + inf.column;
   }
