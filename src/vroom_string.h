@@ -41,7 +41,7 @@ public:
     info->column = column;
     info->num_columns = num_columns;
     info->skip = skip;
-    info->na = na;
+    info->na = std::make_shared<Rcpp::CharacterVector>(na);
 
     SEXP out = PROTECT(R_MakeExternalPtr(info, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(out, vroom_vec::Finalize, TRUE);
@@ -84,10 +84,10 @@ public:
     auto val = Rf_mkCharLenCE(inf.mmap.data() + cur_loc, len, CE_UTF8);
 
     // Look for NAs
-    for (R_xlen_t i = 0; i < inf.na.length(); ++i) {
+    for (R_xlen_t i = 0; i < inf.na->length(); ++i) {
       // We can just compare the addresses directly because they should now
       // both be in the global string cache.
-      if (inf.na(i) == val) {
+      if ((*inf.na)(i) == val) {
         val = NA_STRING;
         break;
       }

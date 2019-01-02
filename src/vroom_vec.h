@@ -7,7 +7,7 @@ struct vroom_vec_info {
   R_xlen_t num_columns;
   R_xlen_t skip;
   R_xlen_t num_threads;
-  Rcpp::CharacterVector na;
+  std::shared_ptr<Rcpp::CharacterVector> na;
 };
 
 class vroom_vec {
@@ -34,7 +34,6 @@ public:
 
   static R_xlen_t Idx(SEXP vec, R_xlen_t i) {
     auto inf = Info(vec);
-
     return (i + inf.skip) * inf.num_columns + inf.column;
   }
 
