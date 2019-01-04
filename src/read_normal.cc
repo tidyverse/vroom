@@ -1,7 +1,5 @@
 #include "read_normal.h"
 #include "parallel.h"
-#include <mutex>
-#include <shared_mutex>
 
 Rcpp::LogicalVector read_lgl(
     std::shared_ptr<std::vector<size_t> > offsets,
