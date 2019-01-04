@@ -1,5 +1,7 @@
 #include "read_normal.h"
 #include "parallel.h"
+#include <mutex>
+#include <shared_mutex>
 
 Rcpp::LogicalVector read_lgl(
     std::shared_ptr<std::vector<size_t> > offsets,
@@ -51,36 +53,32 @@ Rcpp::IntegerVector read_fctr(
 
   Rcpp::IntegerVector out(n);
   std::vector<std::string> levels;
-  std::map<std::string, int> level_map;
+  std::unordered_map<std::string, int> level_map;
 
   auto p = out.begin();
 
   int max_level = 1;
 
-  parallel_for(
-      n,
-      [&](int start, int end, int id) {
-        size_t idx = (start + skip) * num_columns + column;
-        for (int i = start; i < end; ++i) {
-          size_t cur_loc = (*offsets)[idx];
-          size_t next_loc = (*offsets)[idx + 1] - 1;
-          size_t len = next_loc - cur_loc;
+  auto start = 0;
+  auto end = n;
+  size_t idx = (start + skip) * num_columns + column;
+  for (int i = start; i < end; ++i) {
+    size_t cur_loc = (*offsets)[idx];
+    size_t next_loc = (*offsets)[idx + 1] - 1;
+    size_t len = next_loc - cur_loc;
 
-          auto str = std::string(mmap.data() + cur_loc, len);
+    auto str = std::string(mmap.data() + cur_loc, len);
 
-          auto val = level_map.find(str);
-          if (val != level_map.end()) {
-            p[i] = val->second;
-          } else {
-            p[i] = max_level;
-            level_map[str] = max_level++;
-            levels.emplace_back(str);
-          }
-          idx += num_columns;
-        }
-      },
-      num_threads,
-      false);
+    auto val = level_map.find(str);
+    if (val != level_map.end()) {
+      p[i] = val->second;
+    } else {
+      p[i] = max_level;
+      level_map[str] = max_level++;
+      levels.emplace_back(str);
+    }
+    idx += num_columns;
+  }
 
   out.attr("levels") = levels;
   out.attr("class") = "factor";

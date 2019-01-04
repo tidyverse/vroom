@@ -135,18 +135,18 @@ SEXP vroom_(
               skip,
               num_threads));
       break;
-    case factor:
-      SET_VECTOR_ELT(
-          res,
-          col,
-          read_fctr(
-              std::shared_ptr<std::vector<size_t> >(vroom_idx),
-              mmap,
-              col,
-              num_columns,
-              skip,
-              num_threads));
-      break;
+    // case factor:
+    //   SET_VECTOR_ELT(
+    //       res,
+    //       col,
+    //       read_fctr(
+    //           std::shared_ptr<std::vector<size_t> >(vroom_idx),
+    //           mmap,
+    //           col,
+    //           num_columns,
+    //           skip,
+    //           num_threads));
+    //   break;
     case character:
       SET_VECTOR_ELT(
           res,
