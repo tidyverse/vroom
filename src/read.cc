@@ -15,7 +15,7 @@ CharacterVector read_column_names(
     std::shared_ptr<std::vector<size_t> > idx,
     mio::shared_mmap_source mmap,
     size_t num_columns,
-    R_xlen_t skip) {
+    size_t skip) {
 
   CharacterVector nms(num_columns);
 
@@ -31,18 +31,14 @@ CharacterVector read_column_names(
   return nms;
 }
 
-void unlink_file_finalizer(SEXP env) {
-  unlink(as<Rcpp::Environment>(env)["filename"]);
-}
-
 // [[Rcpp::export]]
 SEXP vroom_(
     RObject file,
     const char delim,
     RObject col_names,
-    R_xlen_t skip,
+    size_t skip,
     CharacterVector na,
-    int num_threads) {
+    size_t num_threads) {
 
   std::shared_ptr<std::vector<size_t> > vroom_idx;
   size_t num_columns;
@@ -52,14 +48,17 @@ SEXP vroom_(
 
   bool is_connection = file.sexp_type() != STRSXP;
 
+  std::string filename;
+
   if (is_connection) {
     tempfile = as<Rcpp::Function>(Rcpp::Environment::base_env()["tempfile"])();
-
-    std::tie(vroom_idx, num_columns, mmap) = create_index_connection(
-        file, CHAR(STRING_ELT(tempfile, 0)), delim, 1024 * 1024);
-  } else {
+    filename = CHAR(STRING_ELT(tempfile, 0));
     std::tie(vroom_idx, num_columns, mmap) =
-        create_index(CHAR(STRING_ELT(file, 0)), delim, num_threads);
+        create_index_connection(file, filename, delim, 1024 * 1024);
+  } else {
+    filename = CHAR(STRING_ELT(file, 0));
+    std::tie(vroom_idx, num_columns, mmap) =
+        create_index(filename.c_str(), delim, num_threads);
   }
 
   List res(num_columns);
@@ -98,42 +97,26 @@ SEXP vroom_(
         col_vals, Named("guess_integer") = true, Named("na") = na))[0];
     // Rcpp::Rcout << "i:" << i << " type:" << col_type << "\n";
 
+    // This is deleted in finalizes when the vectors are GC'd by R
+    auto info = new vroom_vec_info{vroom_idx,
+                                   mmap,
+                                   filename,
+                                   is_connection,
+                                   col,
+                                   num_columns,
+                                   skip,
+                                   num_threads,
+                                   std::make_shared<Rcpp::CharacterVector>(na)};
+
     switch (col_type) {
     case real:
-      SET_VECTOR_ELT(
-          res,
-          col,
-          vroom_real::Make(
-              std::shared_ptr<std::vector<size_t> >(vroom_idx),
-              mio::shared_mmap_source(mmap),
-              col,
-              num_columns,
-              skip,
-              num_threads));
+      SET_VECTOR_ELT(res, col, vroom_real::Make(info));
       break;
     case integer:
-      SET_VECTOR_ELT(
-          res,
-          col,
-          vroom_int::Make(
-              std::shared_ptr<std::vector<size_t> >(vroom_idx),
-              mmap,
-              col,
-              num_columns,
-              skip,
-              num_threads));
+      SET_VECTOR_ELT(res, col, vroom_int::Make(info));
       break;
     case logical:
-      SET_VECTOR_ELT(
-          res,
-          col,
-          read_lgl(
-              std::shared_ptr<std::vector<size_t> >(vroom_idx),
-              mmap,
-              col,
-              num_columns,
-              skip,
-              num_threads));
+      SET_VECTOR_ELT(res, col, read_lgl(info));
       break;
     // case factor:
     //   SET_VECTOR_ELT(
@@ -148,27 +131,12 @@ SEXP vroom_(
     //           num_threads));
     //   break;
     case character:
-      SET_VECTOR_ELT(
-          res,
-          col,
-          vroom_string::Make(
-              std::shared_ptr<std::vector<size_t> >(vroom_idx),
-              mmap,
-              col,
-              num_columns,
-              skip,
-              na));
+      SET_VECTOR_ELT(res, col, vroom_string::Make(info));
       break;
     }
   }
 
-  if (is_connection) {
-    auto env = Rcpp::Environment::empty_env().new_child(false);
-    env["filename"] = tempfile;
-    R_RegisterCFinalizerEx(env, unlink_file_finalizer, TRUE);
-
-    res.attr("temp_file") = env;
-  }
+  res.attr("filename") = filename;
 
   return res;
 }

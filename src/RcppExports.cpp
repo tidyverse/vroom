@@ -16,7 +16,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // vroom_
-SEXP vroom_(RObject file, const char delim, RObject col_names, R_xlen_t skip, CharacterVector na, int num_threads);
+SEXP vroom_(RObject file, const char delim, RObject col_names, size_t skip, CharacterVector na, size_t num_threads);
 RcppExport SEXP _vroom_vroom_(SEXP fileSEXP, SEXP delimSEXP, SEXP col_namesSEXP, SEXP skipSEXP, SEXP naSEXP, SEXP num_threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -24,9 +24,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< RObject >::type file(fileSEXP);
     Rcpp::traits::input_parameter< const char >::type delim(delimSEXP);
     Rcpp::traits::input_parameter< RObject >::type col_names(col_namesSEXP);
-    Rcpp::traits::input_parameter< R_xlen_t >::type skip(skipSEXP);
+    Rcpp::traits::input_parameter< size_t >::type skip(skipSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type na(naSEXP);
-    Rcpp::traits::input_parameter< int >::type num_threads(num_threadsSEXP);
+    Rcpp::traits::input_parameter< size_t >::type num_threads(num_threadsSEXP);
     rcpp_result_gen = Rcpp::wrap(vroom_(file, delim, col_names, skip, na, num_threads));
     return rcpp_result_gen;
 END_RCPP

@@ -1,15 +1,9 @@
 #include "read_normal.h"
 #include "parallel.h"
 
-Rcpp::LogicalVector read_lgl(
-    std::shared_ptr<std::vector<size_t> > offsets,
-    mio::shared_mmap_source mmap,
-    R_xlen_t column,
-    R_xlen_t num_columns,
-    R_xlen_t skip,
-    R_xlen_t num_threads) {
+Rcpp::LogicalVector read_lgl(vroom_vec_info* info) {
 
-  R_xlen_t n = offsets->size() / num_columns - skip;
+  R_xlen_t n = info->idx->size() / info->num_columns - info->skip;
 
   Rcpp::LogicalVector out(n);
 
@@ -22,19 +16,25 @@ Rcpp::LogicalVector read_lgl(
   parallel_for(
       n,
       [&](int start, int end, int id) {
+        size_t idx = (start + info->skip) * info->num_columns + info->column;
         for (int i = start; i < end; ++i) {
-          size_t idx = (i + skip) * num_columns + column;
-          size_t cur_loc = (*offsets)[idx];
-          size_t next_loc = (*offsets)[idx + 1] - 1;
+          size_t cur_loc = (*info->idx)[idx];
+          size_t next_loc = (*info->idx)[idx + 1] - 1;
           size_t len = next_loc - cur_loc;
 
-          std::copy(mmap.data() + cur_loc, mmap.data() + next_loc, buf);
+          std::copy(
+              info->mmap.data() + cur_loc, info->mmap.data() + next_loc, buf);
           buf[len] = '\0';
 
+          // TODO: na values
           p[i] = Rf_StringTrue(buf);
+
+          idx += info->num_columns;
         }
       },
-      num_threads);
+      info->num_threads);
+
+  delete info;
 
   return out;
 }

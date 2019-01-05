@@ -3,10 +3,12 @@
 struct vroom_vec_info {
   std::shared_ptr<std::vector<size_t> > idx;
   mio::shared_mmap_source mmap;
-  R_xlen_t column;
-  R_xlen_t num_columns;
-  R_xlen_t skip;
-  R_xlen_t num_threads;
+  std::string filename;
+  bool should_cleanup;
+  size_t column;
+  size_t num_columns;
+  size_t skip;
+  size_t num_threads;
   std::shared_ptr<Rcpp::CharacterVector> na;
 };
 
@@ -16,8 +18,18 @@ public:
   // finalizer for the external pointer
   static void Finalize(SEXP xp) {
     auto info_p = static_cast<vroom_vec_info*>(R_ExternalPtrAddr(xp));
-    // Rcpp::Rcerr << "real_idx_ptr:" << vec_p->use_count() << '\n';
+
+    bool should_delete = info_p->should_cleanup &&
+                         info_p->mmap.get_shared_ptr().use_count() == 2;
+    // 2 beceause get_shared_ptr returns a new shared pointer and the last one
+    // in info_p
+    auto filename = info_p->filename;
+
     delete info_p;
+
+    if (should_delete) {
+      unlink(filename.c_str());
+    }
   }
 
   static inline vroom_vec_info& Info(SEXP x) {

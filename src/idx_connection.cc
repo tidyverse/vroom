@@ -78,6 +78,8 @@ create_index_connection(
     throw Rcpp::exception(error.message().c_str(), false);
   }
 
+  // Rcpp::Rcerr << mmap.get_shared_ptr().use_count() << '\n';
+
   return std::make_tuple(
       std::make_shared<std::vector<size_t> >(values), columns, mmap);
 }

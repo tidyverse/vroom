@@ -25,21 +25,7 @@ public:
   static R_altrep_class_t class_t;
 
   // Make an altrep object of class `stdvec_double::class_t`
-  static SEXP Make(
-      std::shared_ptr<std::vector<size_t> > offsets,
-      mio::shared_mmap_source mmap,
-      R_xlen_t column,
-      R_xlen_t num_columns,
-      R_xlen_t skip,
-      R_xlen_t num_threads) {
-
-    auto info = new vroom_vec_info;
-    info->idx = offsets;
-    info->mmap = mmap;
-    info->column = column;
-    info->num_columns = num_columns;
-    info->skip = skip;
-    info->num_threads = num_threads;
+  static SEXP Make(vroom_vec_info* info) {
 
     SEXP out = PROTECT(R_MakeExternalPtr(info, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(out, vroom_vec::Finalize, TRUE);

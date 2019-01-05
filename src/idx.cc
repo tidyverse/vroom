@@ -36,6 +36,9 @@ create_index(const char* filename, char delim, int num_threads) {
 
   std::error_code error;
   mio::shared_mmap_source mmap = mio::make_mmap_source(filename, error);
+
+  // Rcpp::Rcerr << mmap.get_shared_ptr().use_count() << '\n';
+
   if (error) {
     throw Rcpp::exception(error.message().c_str(), false);
   }
