@@ -27,15 +27,18 @@ inline void append(std::vector<T> source, std::vector<T>& destination) {
         std::make_move_iterator(std::end(source)));
 }
 
-std::tuple<
-    std::shared_ptr<std::vector<size_t> >,
-    size_t,
-    mio::shared_mmap_source>
-create_index(const char* filename, char delim, int num_threads) {
-  size_t columns = 0;
+using namespace vroom;
+
+index::index(
+    const char* filename,
+    const char delim,
+    bool has_header,
+    size_t skip,
+    size_t num_threads)
+    : filename_(filename), has_header_(has_header), columns_(0) {
 
   std::error_code error;
-  mio::shared_mmap_source mmap = mio::make_mmap_source(filename, error);
+  mmap_ = mio::make_mmap_source(filename, error);
 
   // Rcpp::Rcerr << mmap.get_shared_ptr().use_count() << '\n';
 
@@ -45,12 +48,18 @@ create_index(const char* filename, char delim, int num_threads) {
 
   // From https://stackoverflow.com/a/17925143/2055486
 
-  auto file_size = mmap.cend() - mmap.cbegin();
+  auto file_size = mmap_.cend() - mmap_.cbegin();
 
   // This should be enough to ensure the first line fits in one thread, I
   // hope...
   if (file_size < 32768) {
     num_threads = 1;
+  }
+
+  auto start = mmap_.data();
+  while (skip > 0) {
+    --skip;
+    start = strchr(start + 1, '\n');
   }
 
   // We read the values into a vector of vectors, then merge them afterwards
@@ -62,7 +71,7 @@ create_index(const char* filename, char delim, int num_threads) {
         // Rcpp::Rcerr << start << '\t' << end - start << '\n';
         std::error_code error;
         auto thread_mmap =
-            mio::make_mmap_source(filename, start, end - start, error);
+            mio::make_mmap_source(filename_, start, end - start, error);
         if (error) {
           throw Rcpp::exception(error.message().c_str(), false);
         }
@@ -73,8 +82,8 @@ create_index(const char* filename, char delim, int num_threads) {
         // The actual parsing is here
         for (auto i = thread_mmap.cbegin(); i != thread_mmap.cend(); ++i) {
           if (*i == '\n') {
-            if (id == 0 && columns == 0) {
-              columns = values[id].size() + 1;
+            if (id == 0 && columns_ == 0) {
+              columns_ = values[id].size() + 1;
             }
             values[id].push_back(cur_loc + 1);
 
@@ -98,15 +107,19 @@ create_index(const char* filename, char delim, int num_threads) {
         return sum;
       });
 
-  auto out = std::make_shared<std::vector<size_t> >();
+  idx_.reserve(total_size + 1);
 
-  out->reserve(total_size + 1);
-
-  out->push_back(0);
+  idx_.push_back(0);
 
   // Rcpp::Rcerr << "combining vectors\n";
   for (auto& v : values) {
-    append<size_t>(std::move(v), *out);
+    append<size_t>(std::move(v), idx_);
+  }
+
+  rows_ = idx_.size() / columns_;
+
+  if (has_header_) {
+    --rows_;
   }
 
   // std::ofstream log(
@@ -116,6 +129,12 @@ create_index(const char* filename, char delim, int num_threads) {
   // log << v << '\n';
   //}
   // log.close();
+}
 
-  return std::make_tuple(out, columns, mmap);
+const cell index::get(size_t row, size_t col) const {
+  auto i = (row + has_header_) * columns_ + col;
+  auto cur_loc = idx_[i];
+  auto next_loc = idx_[i + 1] - 1;
+
+  return {mmap_.data() + cur_loc, mmap_.data() + next_loc};
 }

@@ -13,5 +13,4 @@ Rcpp::IntegerVector read_fctr(
     mio::shared_mmap_source mmap,
     R_xlen_t column,
     R_xlen_t num_columns,
-    R_xlen_t skip,
     R_xlen_t num_threads);
