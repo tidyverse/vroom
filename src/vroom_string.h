@@ -109,7 +109,6 @@ public:
     auto inf = Info(vec);
     auto sep_locs = inf.idx;
 
-    auto na_len = inf.na->length();
     auto i = 0;
 
     for (const auto& loc : inf.idx->column(inf.column)) {

@@ -2,9 +2,15 @@
 
 namespace vroom {
 
-class index_connection : index {
+class index_connection : public index {
 
-  index_connection(SEXP con, const char delim, size_t num_threads);
+public:
+  index_connection(
+      SEXP in,
+      const char delim,
+      bool has_header,
+      size_t skip,
+      size_t chunk_size);
 
   ~index_connection() { unlink(filename_.c_str()); }
 };

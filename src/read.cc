@@ -12,7 +12,7 @@ enum column_type { character = 0, real = 1, integer = 2, logical = 3 };
 
 inline int min(int a, int b) { return a < b ? a : b; }
 
-CharacterVector read_column_names(std::shared_ptr<vroom::index> idx) {
+CharacterVector read_column_names(const std::shared_ptr<vroom::index>& idx) {
   CharacterVector nms(idx->num_columns());
 
   auto col = 0;
@@ -38,20 +38,20 @@ SEXP vroom_(
 
   std::string filename;
 
-  // if (is_connection) {
-  // tempfile =
-  // as<Rcpp::Function>(Rcpp::Environment::base_env()["tempfile"])(); filename
-  // = CHAR(STRING_ELT(tempfile, 0)); auto idx = vroom::index_connection(file,
-  // filename, delim, 1024 * 1024);
-  //} else {
-  filename = CHAR(STRING_ELT(file, 0));
-  //}
-
   bool has_header =
       col_names.sexp_type() == STRSXP ||
       (col_names.sexp_type() == LGLSXP && as<LogicalVector>(col_names)[0]);
-  auto idx = std::make_shared<vroom::index>(
-      filename.c_str(), delim, has_header, skip, num_threads);
+
+  std::shared_ptr<vroom::index> idx;
+
+  if (is_connection) {
+    idx = std::make_shared<vroom::index_connection>(
+        file, delim, has_header, skip, 1024 * 1024);
+  } else {
+    filename = CHAR(STRING_ELT(file, 0));
+    idx = std::make_shared<vroom::index>(
+        filename.c_str(), delim, has_header, skip, num_threads);
+  }
 
   auto num_columns = idx->num_columns();
 
@@ -117,7 +117,7 @@ SEXP vroom_(
     }
   }
 
-  res.attr("filename") = filename;
+  res.attr("filename") = idx->filename();
 
   return res;
 }

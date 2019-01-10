@@ -29,6 +29,16 @@ inline void append(std::vector<T> source, std::vector<T>& destination) {
 
 using namespace vroom;
 
+// const char index::skip_lines() {
+// auto start = mmap_.data();
+// while (skip > 0) {
+//--skip;
+// start = strchr(start + 1, '\n');
+//}
+
+// return start;
+//}
+
 index::index(
     const char* filename,
     const char delim,
@@ -56,43 +66,17 @@ index::index(
     num_threads = 1;
   }
 
-  auto start = mmap_.data();
-  while (skip > 0) {
-    --skip;
-    start = strchr(start + 1, '\n');
-  }
-
   // We read the values into a vector of vectors, then merge them afterwards
   std::vector<std::vector<size_t> > values(num_threads);
 
   parallel_for(
       file_size,
       [&](int start, int end, int id) {
-        // Rcpp::Rcerr << start << '\t' << end - start << '\n';
-        std::error_code error;
-        auto thread_mmap =
-            mio::make_mmap_source(filename_, start, end - start, error);
-        if (error) {
-          throw Rcpp::exception(error.message().c_str(), false);
-        }
-
-        size_t cur_loc = start;
         values[id].reserve(128);
-
-        // The actual parsing is here
-        for (auto i = thread_mmap.cbegin(); i != thread_mmap.cend(); ++i) {
-          if (*i == '\n') {
-            if (id == 0 && columns_ == 0) {
-              columns_ = values[id].size() + 1;
-            }
-            values[id].push_back(cur_loc + 1);
-
-          } else if (*i == delim) {
-            // Rcpp::Rcout << id << '\n';
-            values[id].push_back(cur_loc + 1);
-          }
-          ++cur_loc;
+        if (id == 0) {
+          values[id].push_back(0);
         }
+        index_region(mmap_, values[id], delim, start, end, id);
       },
       num_threads,
       true);
@@ -107,9 +91,7 @@ index::index(
         return sum;
       });
 
-  idx_.reserve(total_size + 1);
-
-  idx_.push_back(0);
+  idx_.reserve(total_size);
 
   // Rcpp::Rcerr << "combining vectors\n";
   for (auto& v : values) {
@@ -122,13 +104,16 @@ index::index(
     --rows_;
   }
 
-  // std::ofstream log(
-  //"test2.idx",
-  // std::fstream::out | std::fstream::binary | std::fstream::trunc);
-  // for (auto& v : *out) {
-  // log << v << '\n';
-  //}
-  // log.close();
+#if DEBUG
+  std::ofstream log(
+      "index.idx",
+      std::fstream::out | std::fstream::binary | std::fstream::trunc);
+  for (auto& v : idx_) {
+    log << v << '\n';
+  }
+  log.close();
+  Rcpp::Rcout << columns_ << ':' << rows_ << '\n';
+#endif
 }
 
 const cell index::get(size_t row, size_t col) const {

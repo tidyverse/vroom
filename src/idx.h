@@ -27,11 +27,15 @@ public:
       size_t skip,
       size_t num_threads);
 
+  index() : rows_(0), columns_(0){};
+
   const cell get(size_t row, size_t col) const;
 
   size_t num_columns() const { return columns_; }
 
   size_t num_rows() const { return rows_; }
+
+  std::string filename() const { return filename_; }
 
   class row_iterator {
     size_t i_;
@@ -151,14 +155,37 @@ public:
   row_iterator header() const { return row_iterator(-1, this); }
 
 protected:
-  const std::string filename_;
+  std::string filename_;
   mio::mmap_source mmap_;
   std::vector<size_t> idx_;
   bool has_header_;
+  size_t rows_;
   size_t columns_;
 
-private:
-  size_t rows_;
+  void skip_lines();
+
+  template <typename T>
+  void index_region(
+      const T& source,
+      std::vector<size_t>& destination,
+      const char delim,
+      size_t start,
+      size_t end,
+      size_t id = 0) {
+
+    // The actual parsing is here
+    for (auto i = start; i < end; ++i) {
+      auto c = source[i];
+      if (c == delim) {
+        destination.push_back(i + 1);
+      } else if (c == '\n') {
+        if (id == 0 && columns_ == 0) {
+          columns_ = destination.size();
+        }
+        destination.push_back(i + 1);
+      }
+    }
+  }
 };
 
 } // namespace vroom

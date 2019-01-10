@@ -72,8 +72,6 @@ public:
     auto inf = Info(vec);
     auto sep_locs = inf.idx;
 
-    auto begin_it = inf.idx->column(inf.column);
-
     parallel_for(
         n,
         [&](int start, int end, int id) {
