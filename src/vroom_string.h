@@ -71,10 +71,10 @@ public:
     auto inf = Info(vec);
 
     // Look for NAs
-    for (R_xlen_t i = 0; i < Info(vec).na->length(); ++i) {
+    for (const auto& v : *Info(vec).na) {
       // We can just compare the addresses directly because they should now
       // both be in the global string cache.
-      if ((*inf.na)(i) == val) {
+      if (v == val) {
         val = NA_STRING;
         break;
       }
@@ -117,10 +117,10 @@ public:
       auto val = Rf_mkCharLenCE(loc.begin, loc.end - loc.begin, CE_UTF8);
 
       // Look for NAs
-      for (R_xlen_t j = 0; j < na_len; ++j) {
+      for (const auto& v : *Info(vec).na) {
         // We can just compare the addresses directly because they should now
         // both be in the global string cache.
-        if ((*inf.na)[j] == val) {
+        if (v == val) {
           val = NA_STRING;
           break;
         }

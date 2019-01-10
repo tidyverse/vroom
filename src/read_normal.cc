@@ -12,16 +12,12 @@ Rcpp::LogicalVector read_lgl(vroom_vec_info* info) {
   parallel_for(
       n,
       [&](int start, int end, int id) {
-        auto it = info->idx->column(info->column) + start;
-        auto it_end = info->idx->column(info->column) + end;
-
         // Need to copy to a temp buffer since we have no way to tell strtod how
         // long the buffer is.
         char buf[128];
 
         auto i = start;
-        for (; it != it_end; ++it) {
-          auto loc = *it;
+        for (const auto& loc : info->idx->column(info->column, start, end)) {
           std::copy(loc.begin, loc.end, buf);
           buf[loc.end - loc.begin] = '\0';
 
