@@ -11,6 +11,8 @@ status](https://travis-ci.org/jimhester/vroom.svg?branch=master)](https://travis
 status](https://ci.appveyor.com/api/projects/status/github/jimhester/vroom?branch=master&svg=true)](https://ci.appveyor.com/project/jimhester/vroom)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Codecov test
+coverage](https://codecov.io/gh/jimhester/vroom/branch/master/graph/badge.svg)](https://codecov.io/gh/jimhester/vroom?branch=master)
 <!-- badges: end -->
 
 The fastest delimited reader for R, **631.84 MB/sec**.
