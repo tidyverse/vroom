@@ -1,6 +1,6 @@
 #include <mio/shared_mmap.hpp>
 
-#include "idx.h"
+#include "index.h"
 #include "index_connection.h"
 #include "read_normal.h"
 #include "vroom_numeric.h"

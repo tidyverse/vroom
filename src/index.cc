@@ -1,4 +1,4 @@
-#include "idx.h"
+#include "index.h"
 
 #include "parallel.h"
 
