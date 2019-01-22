@@ -50,8 +50,6 @@ index::index(
   std::error_code error;
   mmap_ = mio::make_mmap_source(filename, error);
 
-  // Rcpp::Rcerr << mmap.get_shared_ptr().use_count() << '\n';
-
   if (error) {
     throw Rcpp::exception(error.message().c_str(), false);
   }
@@ -73,25 +71,27 @@ index::index(
       file_size,
       [&](int start, int end, int id) {
         values[id].reserve(128);
-        if (id == 0) {
-          values[id].push_back(0);
-        }
+        // if (id == 0) {
+        // values[id].push_back(0);
+        //}
+        // Rcpp::Rcerr << "Indexing start: ", v.size() << '\n';
         index_region(mmap_, values[id], delim, start, end, id);
       },
       num_threads,
       true);
 
-  // Rcpp::Rcerr << "Calculating total size\n";
   auto total_size = std::accumulate(
       values.begin(),
       values.end(),
       0,
       [](size_t sum, const std::vector<size_t>& v) {
         sum += v.size();
+        Rcpp::Rcerr << v.size() << '\n';
         return sum;
       });
 
   idx_.reserve(total_size);
+  idx_.push_back(0);
 
   // Rcpp::Rcerr << "combining vectors\n";
   for (auto& v : values) {

@@ -124,6 +124,7 @@ public:
       return *this;
     }
     bool operator!=(col_iterator& other) const { return i_ != other.i_; }
+
     cell operator*() const {
       cell out{idx_->mmap_.data() + idx_->idx_[i_],
                idx_->mmap_.data() + idx_->idx_[i_ + 1] - 1};
@@ -169,21 +170,34 @@ protected:
       const T& source,
       std::vector<size_t>& destination,
       const char delim,
-      size_t start,
-      size_t end,
-      size_t id = 0) {
+      const size_t start,
+      const size_t end,
+      const size_t id = 0) {
+
+    char query[8] = {delim, '\n'};
+
+    size_t last = start;
+    // Rcpp::Rcerr << "start:\t" << start << '\n' << "end:\t" << end << '\n';
+    auto begin = source.data();
 
     // The actual parsing is here
-    for (auto i = start; i < end; ++i) {
+    auto i = strcspn(begin + last, query) + last;
+    while (i < end) {
       auto c = source[i];
+
       if (c == delim) {
         destination.push_back(i + 1);
-      } else if (c == '\n') {
+      }
+
+      else if (c == '\n') {
         if (id == 0 && columns_ == 0) {
-          columns_ = destination.size();
+          columns_ = destination.size() + 1;
         }
         destination.push_back(i + 1);
       }
+
+      last = i;
+      i = strcspn(begin + last + 1, query) + last + 1;
     }
   }
 };
