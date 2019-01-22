@@ -95,6 +95,7 @@ create_index(const char* filename, char delim, int num_threads) {
       0,
       [](size_t sum, const std::vector<size_t>& v) {
         sum += v.size();
+        Rcpp::Rcerr << v.size() << '\n';
         return sum;
       });
 
@@ -104,7 +105,7 @@ create_index(const char* filename, char delim, int num_threads) {
 
   out->push_back(0);
 
-  // Rcpp::Rcerr << "combining vectors\n";
+  Rcpp::Rcerr << "combining vectors of size: " << total_size << "\n";
   for (auto& v : values) {
     append<size_t>(std::move(v), *out);
   }
