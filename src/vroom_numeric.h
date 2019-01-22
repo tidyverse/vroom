@@ -28,7 +28,7 @@ public:
   static SEXP Make(vroom_vec_info* info) {
 
     SEXP out = PROTECT(R_MakeExternalPtr(info, R_NilValue, R_NilValue));
-    R_RegisterCFinalizerEx(out, vroom_vec::Finalize, TRUE);
+    R_RegisterCFinalizerEx(out, vroom_vec::Finalize, FALSE);
 
     // make a new altrep object of class `vroom_numeric::class_t`
     SEXP res = R_new_altrep(class_t, out, R_NilValue);
@@ -75,22 +75,16 @@ public:
     parallel_for(
         n,
         [&](int start, int end, int id) {
-          auto idx = Idx(vec, start);
-          for (int i = start; i < end; ++i) {
-            auto cur_loc = (*sep_locs)[idx];
-            auto next_loc = (*sep_locs)[idx + 1] - 1;
-            auto len = next_loc - cur_loc;
+          // Need to copy to a temp buffer since we have no way to tell strtod
+          // how long the buffer is.
+          char buf[128];
 
-            // Need to copy to a temp buffer since we have no way to tell strtod
-            // how long the buffer is.
-            char buf[128];
+          size_t i = start;
+          for (const auto& loc : inf.idx->column(inf.column, start, end)) {
+            std::copy(loc.begin, loc.end, buf);
+            buf[loc.end - loc.begin] = '\0';
 
-            std::copy(
-                inf.mmap.data() + cur_loc, inf.mmap.data() + next_loc, buf);
-            buf[len] = '\0';
-
-            p[i] = R_strtod(buf, NULL);
-            idx += inf.num_columns;
+            p[i++] = R_strtod(buf, NULL);
           }
         },
         inf.num_threads);
@@ -103,18 +97,12 @@ public:
   // Fills buf with contents from the i item
   static void buf_Elt(SEXP vec, size_t i, char* buf) {
 
-    auto inf = Info(vec);
-    auto sep_locs = inf.idx;
-
-    auto idx = Idx(vec, i);
-    auto cur_loc = (*sep_locs)[idx];
-    auto next_loc = (*sep_locs)[idx + 1] - 1;
-    auto len = next_loc - cur_loc;
+    auto loc = Get(vec, i);
 
     // Need to copy to a temp buffer since we have no way to tell strtod how
     // long the buffer is.
-    std::copy(inf.mmap.data() + cur_loc, inf.mmap.data() + next_loc, buf);
-    buf[len] = '\0';
+    std::copy(loc.begin, loc.end, buf);
+    buf[loc.end - loc.begin] = '\0';
   }
 
   static void* Dataptr(SEXP vec, Rboolean writeable) {

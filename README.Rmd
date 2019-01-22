@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 [![Travis build status](https://travis-ci.org/jimhester/vroom.svg?branch=master)](https://travis-ci.org/jimhester/vroom)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/jimhester/vroom?branch=master&svg=true)](https://ci.appveyor.com/project/jimhester/vroom)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Codecov test coverage](https://codecov.io/gh/jimhester/vroom/branch/master/graph/badge.svg)](https://codecov.io/gh/jimhester/vroom?branch=master)
 <!-- badges: end -->
 
 ```{r echo = FALSE, message = FALSE}

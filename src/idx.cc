@@ -10,34 +10,28 @@ size_t guess_size(size_t records, size_t bytes, size_t file_size) {
   return total_records;
 }
 
-// From https://stackoverflow.com/a/53710597/2055486
-// To move an object use `std::move()` when calling `append()`
-// append<type>(std::move(source),destination)
-//
-// std::vector<T>&& src - src MUST be an rvalue reference
-// std::vector<T> src - src MUST NOT, but MAY be an rvalue reference
-template <typename T>
-inline void append(std::vector<T> source, std::vector<T>& destination) {
-  if (destination.empty())
-    destination = std::move(source);
-  else
-    destination.insert(
-        std::end(destination),
-        std::make_move_iterator(std::begin(source)),
-        std::make_move_iterator(std::end(source)));
-}
+using namespace vroom;
 
-std::tuple<
-    std::shared_ptr<std::vector<size_t> >,
-    size_t,
-    mio::shared_mmap_source>
-create_index(const char* filename, char delim, int num_threads) {
-  size_t columns = 0;
+// const char index::skip_lines() {
+// auto start = mmap_.data();
+// while (skip > 0) {
+//--skip;
+// start = strchr(start + 1, '\n');
+//}
+
+// return start;
+//}
+
+index::index(
+    const char* filename,
+    const char delim,
+    bool has_header,
+    size_t skip,
+    size_t num_threads)
+    : filename_(filename), has_header_(has_header), columns_(0) {
 
   std::error_code error;
-  mio::shared_mmap_source mmap = mio::make_mmap_source(filename, error);
-
-  // Rcpp::Rcerr << mmap.get_shared_ptr().use_count() << '\n';
+  mmap_ = mio::make_mmap_source(filename, error);
 
   if (error) {
     throw Rcpp::exception(error.message().c_str(), false);
@@ -45,7 +39,7 @@ create_index(const char* filename, char delim, int num_threads) {
 
   // From https://stackoverflow.com/a/17925143/2055486
 
-  auto file_size = mmap.cend() - mmap.cbegin();
+  auto file_size = mmap_.cend() - mmap_.cbegin();
 
   // This should be enough to ensure the first line fits in one thread, I
   // hope...
@@ -59,64 +53,64 @@ create_index(const char* filename, char delim, int num_threads) {
   parallel_for(
       file_size,
       [&](int start, int end, int id) {
-        // Rcpp::Rcerr << start << '\t' << end - start << '\n';
-        std::error_code error;
-        auto thread_mmap =
-            mio::make_mmap_source(filename, start, end - start, error);
-        if (error) {
-          throw Rcpp::exception(error.message().c_str(), false);
-        }
-
-        size_t cur_loc = start;
         values[id].reserve(128);
-
-        // The actual parsing is here
-        for (auto i = thread_mmap.cbegin(); i != thread_mmap.cend(); ++i) {
-          if (*i == '\n') {
-            if (id == 0 && columns == 0) {
-              columns = values[id].size() + 1;
-            }
-            values[id].push_back(cur_loc + 1);
-
-          } else if (*i == delim) {
-            // Rcpp::Rcout << id << '\n';
-            values[id].push_back(cur_loc + 1);
-          }
-          ++cur_loc;
+        if (id == 0) {
+          values[id].push_back(0);
         }
+        // Rcpp::Rcerr << "Indexing start: ", v.size() << '\n';
+        index_region(mmap_, values[id], delim, start, end, id);
       },
       num_threads,
       true);
 
-  // Rcpp::Rcerr << "Calculating total size\n";
   auto total_size = std::accumulate(
       values.begin(),
       values.end(),
       0,
       [](size_t sum, const std::vector<size_t>& v) {
         sum += v.size();
+#if DEBUG
         Rcpp::Rcerr << v.size() << '\n';
+#endif
         return sum;
       });
 
-  auto out = std::make_shared<std::vector<size_t> >();
+  idx_.reserve(total_size);
 
-  out->reserve(total_size + 1);
-
-  out->push_back(0);
-
+#if DEBUG
   Rcpp::Rcerr << "combining vectors of size: " << total_size << "\n";
+#endif
+
   for (auto& v : values) {
-    append<size_t>(std::move(v), *out);
+
+    idx_.insert(
+        std::end(idx_),
+        std::make_move_iterator(std::begin(v)),
+        std::make_move_iterator(std::end(v)));
   }
 
-  // std::ofstream log(
-  //"test2.idx",
-  // std::fstream::out | std::fstream::binary | std::fstream::trunc);
-  // for (auto& v : *out) {
-  // log << v << '\n';
-  //}
-  // log.close();
+  rows_ = idx_.size() / columns_;
 
-  return std::make_tuple(out, columns, mmap);
+  if (has_header_) {
+    --rows_;
+  }
+
+#if DEBUG
+  std::ofstream log(
+      "index.idx",
+      std::fstream::out | std::fstream::binary | std::fstream::trunc);
+  for (auto& v : idx_) {
+    log << v << '\n';
+  }
+  log.close();
+  Rcpp::Rcerr << columns_ << ':' << rows_ << '\n';
+#endif
+}
+
+const cell index::get(size_t row, size_t col) const {
+  auto i = (row + has_header_) * columns_ + col;
+  auto cur_loc = idx_[i];
+  auto next_loc = idx_[i + 1] - 1;
+
+  return {mmap_.data() + cur_loc, mmap_.data() + next_loc};
 }

@@ -1,4 +1,4 @@
-#include "idx.h"
+#include "index_connection.h"
 
 #include <fstream>
 
@@ -27,44 +27,36 @@ static Rconnection R_GetConnection(SEXP sConn) {
 }
 #endif
 
-std::tuple<
-    std::shared_ptr<std::vector<size_t> >,
-    size_t,
-    mio::shared_mmap_source>
-create_index_connection(
-    SEXP in, const std::string& out_file, char delim, R_xlen_t chunk_size) {
-  size_t columns = 0;
+using namespace vroom;
 
-  std::vector<size_t> values;
-  values.reserve(128);
+index_connection::index_connection(
+    SEXP in,
+    const char delim,
+    bool has_header,
+    size_t skip,
+    size_t chunk_size) {
 
-  values.push_back(0);
+  has_header_ = has_header;
+
+  auto tempfile =
+      Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["tempfile"])();
+  filename_ = std::string(CHAR(STRING_ELT(tempfile, 0)));
 
   std::ofstream out(
-      out_file.c_str(),
+      filename_.c_str(),
       std::fstream::out | std::fstream::binary | std::fstream::trunc);
-
-  R_xlen_t cur_loc = 0;
 
   auto con = R_GetConnection(in);
 
   std::vector<char> buf(chunk_size);
 
-  auto sz = R_ReadConnection(con, buf.data(), chunk_size);
-  while (sz > 0) {
-    for (const auto& c : buf) {
-      if (c == '\n') {
-        if (columns == 0) {
-          columns = values.size();
-        }
-        values.push_back(cur_loc + 1);
+  idx_.reserve(128);
+  idx_.push_back(0);
 
-      } else if (c == delim) {
-        // Rcpp::Rcout << id << '\n';
-        values.push_back(cur_loc + 1);
-      }
-      ++cur_loc;
-    }
+  auto sz = R_ReadConnection(con, buf.data(), chunk_size);
+
+  while (sz > 0) {
+    index_region(buf, idx_, delim, 0, sz);
     out.write(buf.data(), sz);
 
     sz = R_ReadConnection(con, buf.data(), chunk_size);
@@ -73,13 +65,25 @@ create_index_connection(
   out.close();
 
   std::error_code error;
-  mio::shared_mmap_source mmap = mio::make_mmap_source(out_file, error);
+  mmap_ = mio::make_mmap_source(filename_, error);
   if (error) {
     throw Rcpp::exception(error.message().c_str(), false);
   }
 
-  // Rcpp::Rcerr << mmap.get_shared_ptr().use_count() << '\n';
+  rows_ = idx_.size() / columns_;
 
-  return std::make_tuple(
-      std::make_shared<std::vector<size_t> >(values), columns, mmap);
+  if (has_header_) {
+    --rows_;
+  }
+
+#if DEBUG
+  std::ofstream log(
+      "index_connection.idx",
+      std::fstream::out | std::fstream::binary | std::fstream::trunc);
+  for (auto& v : idx_) {
+    log << v << '\n';
+  }
+  log.close();
+  Rcpp::Rcerr << columns_ << ':' << rows_ << '\n';
+#endif
 }

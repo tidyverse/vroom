@@ -27,7 +27,7 @@ public:
   static SEXP Make(vroom_vec_info* info) {
 
     SEXP out = PROTECT(R_MakeExternalPtr(info, R_NilValue, R_NilValue));
-    R_RegisterCFinalizerEx(out, vroom_vec::Finalize, TRUE);
+    R_RegisterCFinalizerEx(out, vroom_vec::Finalize, FALSE);
 
     // make a new altrep object of class `vroom_string::class_t`
     SEXP res = R_new_altrep(class_t, out, R_NilValue);
@@ -59,12 +59,9 @@ public:
     auto inf = Info(vec);
     auto sep_locs = inf.idx;
 
-    auto idx = Idx(vec, i);
-    auto cur_loc = (*sep_locs)[idx];
-    auto next_loc = (*sep_locs)[idx + 1] - 1;
-    auto len = next_loc - cur_loc;
+    auto loc = Get(vec, i);
 
-    auto val = Rf_mkCharLenCE(inf.mmap.data() + cur_loc, len, CE_UTF8);
+    auto val = Rf_mkCharLenCE(loc.begin, loc.end - loc.begin, CE_UTF8);
     val = check_na(vec, val);
 
     return val;
@@ -74,10 +71,10 @@ public:
     auto inf = Info(vec);
 
     // Look for NAs
-    for (R_xlen_t i = 0; i < Info(vec).na->length(); ++i) {
+    for (const auto& v : *Info(vec).na) {
       // We can just compare the addresses directly because they should now
       // both be in the global string cache.
-      if ((*inf.na)(i) == val) {
+      if (v == val) {
         val = NA_STRING;
         break;
       }
@@ -112,27 +109,23 @@ public:
     auto inf = Info(vec);
     auto sep_locs = inf.idx;
 
-    auto idx = Idx(vec, 0);
-    auto na_len = inf.na->length();
-    for (R_xlen_t i = 0; i < n; ++i) {
-      auto cur_loc = (*sep_locs)[idx];
-      auto next_loc = (*sep_locs)[idx + 1] - 1;
-      auto len = next_loc - cur_loc;
+    auto i = 0;
 
-      auto val = Rf_mkCharLenCE(inf.mmap.data() + cur_loc, len, CE_UTF8);
+    for (const auto& loc : inf.idx->column(inf.column)) {
+
+      auto val = Rf_mkCharLenCE(loc.begin, loc.end - loc.begin, CE_UTF8);
 
       // Look for NAs
-      for (R_xlen_t j = 0; j < na_len; ++j) {
+      for (const auto& v : *Info(vec).na) {
         // We can just compare the addresses directly because they should now
         // both be in the global string cache.
-        if ((*inf.na)[j] == val) {
+        if (v == val) {
           val = NA_STRING;
           break;
         }
       }
 
-      SET_STRING_ELT(data2, i, val);
-      idx += inf.num_columns;
+      SET_STRING_ELT(data2, i++, val);
     }
 
     R_set_altrep_data2(vec, data2);
