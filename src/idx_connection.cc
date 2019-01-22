@@ -84,6 +84,6 @@ index_connection::index_connection(
     log << v << '\n';
   }
   log.close();
-  Rcpp::Rcout << columns_ << ':' << rows_ << '\n';
+  Rcpp::Rcerr << columns_ << ':' << rows_ << '\n';
 #endif
 }

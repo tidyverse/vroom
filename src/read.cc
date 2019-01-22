@@ -83,7 +83,9 @@ SEXP vroom_(
     }
     auto col_type = INTEGER(guess_type(
         col_vals, Named("guess_integer") = true, Named("na") = na))[0];
-    // Rcpp::Rcout << "i:" << i << " type:" << col_type << "\n";
+#if DEBUG
+    Rcpp::Rcerr << "i:" << i << " type:" << col_type << "\n";
+#endif
 
     // This is deleted in finalizes when the vectors are GC'd by R
     auto info = new vroom_vec_info{

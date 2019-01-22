@@ -10,23 +10,6 @@ size_t guess_size(size_t records, size_t bytes, size_t file_size) {
   return total_records;
 }
 
-// From https://stackoverflow.com/a/53710597/2055486
-// To move an object use `std::move()` when calling `append()`
-// append<type>(std::move(source),destination)
-//
-// std::vector<T>&& src - src MUST be an rvalue reference
-// std::vector<T> src - src MUST NOT, but MAY be an rvalue reference
-template <typename T>
-inline void append(std::vector<T> source, std::vector<T>& destination) {
-  if (destination.empty())
-    destination = std::move(source);
-  else
-    destination.insert(
-        std::end(destination),
-        std::make_move_iterator(std::begin(source)),
-        std::make_move_iterator(std::end(source)));
-}
-
 using namespace vroom;
 
 // const char index::skip_lines() {
@@ -71,9 +54,9 @@ index::index(
       file_size,
       [&](int start, int end, int id) {
         values[id].reserve(128);
-        // if (id == 0) {
-        // values[id].push_back(0);
-        //}
+        if (id == 0) {
+          values[id].push_back(0);
+        }
         // Rcpp::Rcerr << "Indexing start: ", v.size() << '\n';
         index_region(mmap_, values[id], delim, start, end, id);
       },
@@ -86,16 +69,24 @@ index::index(
       0,
       [](size_t sum, const std::vector<size_t>& v) {
         sum += v.size();
+#if DEBUG
         Rcpp::Rcerr << v.size() << '\n';
+#endif
         return sum;
       });
 
   idx_.reserve(total_size);
-  idx_.push_back(0);
 
-  // Rcpp::Rcerr << "combining vectors\n";
+#if DEBUG
+  Rcpp::Rcerr << "combining vectors\n";
+#endif
+
   for (auto& v : values) {
-    append<size_t>(std::move(v), idx_);
+
+    idx_.insert(
+        std::end(idx_),
+        std::make_move_iterator(std::begin(v)),
+        std::make_move_iterator(std::end(v)));
   }
 
   rows_ = idx_.size() / columns_;
@@ -112,7 +103,7 @@ index::index(
     log << v << '\n';
   }
   log.close();
-  Rcpp::Rcout << columns_ << ':' << rows_ << '\n';
+  Rcpp::Rcerr << columns_ << ':' << rows_ << '\n';
 #endif
 }
 

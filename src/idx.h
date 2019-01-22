@@ -177,7 +177,10 @@ protected:
     char query[8] = {delim, '\n'};
 
     size_t last = start;
-    // Rcpp::Rcerr << "start:\t" << start << '\n' << "end:\t" << end << '\n';
+#if DEBUG
+    Rcpp::Rcerr << "start:\t" << start << '\n' << "end:\t" << end << '\n';
+#endif
+
     auto begin = source.data();
 
     // The actual parsing is here
@@ -191,7 +194,7 @@ protected:
 
       else if (c == '\n') {
         if (id == 0 && columns_ == 0) {
-          columns_ = destination.size() + 1;
+          columns_ = destination.size();
         }
         destination.push_back(i + 1);
       }
