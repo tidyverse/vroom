@@ -133,40 +133,22 @@ cell index::trim_quotes(cell c) const {
     ++c.begin;
   }
 
-  // end starts one past the last character we want to look at and ends one
-  // character too far. So we decrement it first, then increment it afterwards
-  //
-  // Before:
-  //
-  // "foo","bar"
-  // ^----^----begin
-  //      |----end
-  //
-  // After:
-  // "foo","bar"
-  //  ^-^------begin
-  //    |------end
-
-  --c.end;
-  if (c.end >= c.begin && (*c.end == quote_)) {
+  while (c.end != c.begin && *(c.end - 1) == quote_) {
     --c.end;
   }
-  ++c.end;
 
   return c;
 }
 
 cell index::trim_whitespace(cell c) const {
   const std::locale loc("");
-  while (c.begin < c.end && std::isspace(*c.begin, loc)) {
+  while (c.begin != c.end && std::isspace(*c.begin, loc)) {
     ++c.begin;
   }
 
-  --c.end;
-  while (c.end > c.begin && std::isspace(*c.end, loc)) {
+  while (c.end != c.begin && std::isspace(*(c.end - 1), loc)) {
     --c.end;
   }
-  ++c.end;
 
   return c;
 }
