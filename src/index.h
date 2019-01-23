@@ -24,9 +24,10 @@ public:
       const char* filename,
       const char delim,
       const char quote,
-      bool has_header,
-      size_t skip,
-      size_t num_threads);
+      const bool trim_ws,
+      const bool has_header,
+      const size_t skip,
+      const size_t num_threads);
 
   index() : rows_(0), columns_(0){};
 
@@ -154,10 +155,14 @@ protected:
   std::vector<size_t> idx_;
   bool has_header_;
   char quote_;
+  bool trim_ws_;
   size_t rows_;
   size_t columns_;
 
   void skip_lines();
+
+  cell trim_quotes(cell c) const;
+  cell trim_whitespace(cell c) const;
 
   const cell get_trimmed_val(size_t i) const;
 

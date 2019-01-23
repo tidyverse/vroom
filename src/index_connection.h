@@ -9,9 +9,10 @@ public:
       SEXP in,
       const char delim,
       const char quote,
-      bool has_header,
-      size_t skip,
-      size_t chunk_size);
+      const bool trim_ws,
+      const bool has_header,
+      const size_t skip,
+      const size_t chunk_size);
 
   ~index_connection() { unlink(filename_.c_str()); }
 };

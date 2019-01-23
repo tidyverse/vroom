@@ -5,7 +5,8 @@
 \title{Read a delimited file into a tibble}
 \usage{
 vroom(file, delim = "\\t", col_names = TRUE, skip = 0, na = c("",
-  "NA"), quote = "\\"", num_threads = parallel::detectCores())
+  "NA"), quote = "\\"", trim_ws = TRUE,
+  num_threads = parallel::detectCores())
 }
 \arguments{
 \item{file}{path to a local file.}
@@ -33,6 +34,9 @@ will generate a warning and be made unique with a numeric prefix.}
 option to \code{character()} to indicate no missing values.}
 
 \item{quote}{Single character used to quote strings.}
+
+\item{trim_ws}{Should leading and trailing whitespace be trimmed from
+each field before parsing it?}
 
 \item{num_threads}{Number of threads to use when reading and materializing vectors.}
 }

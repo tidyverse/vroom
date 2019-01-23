@@ -30,6 +30,26 @@ test_that("vroom guesses columns with NAs", {
   )
 })
 
+test_that("vroom can trim whitespace", {
+  test_vroom('a,b,c\n foo ,  bar  ,baz', delim = ",",
+    equals = tibble::tibble(a = "foo", b = "bar", c = "baz")
+  )
+
+  test_vroom('a,b,c\n\tfoo\t,\t\tbar\t\t,baz', delim = ",",
+    equals = tibble::tibble(a = "foo", b = "bar", c = "baz")
+  )
+
+  # whitespace trimmed before quotes
+  test_vroom('a,b,c\n "foo" ,  "bar"  ,"baz"', delim = ",",
+    equals = tibble::tibble(a = "foo", b = "bar", c = "baz")
+  )
+
+  # whitespace kept inside quotes
+  test_vroom('a,b,c\n "foo" ,  " bar"  ,"\tbaz"', delim = ",",
+    equals = tibble::tibble(a = "foo", b = " bar", c = "\tbaz")
+  )
+})
+
 test_that("vroom can read files with quotes", {
   test_vroom('"a","b","c"\n"foo","bar","baz"', delim = ",",
     equals = tibble::tibble(a = "foo", b = "bar", c = "baz")

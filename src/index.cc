@@ -36,10 +36,16 @@ index::index(
     const char* filename,
     const char delim,
     const char quote,
-    bool has_header,
-    size_t skip,
+    const bool trim_ws,
+    const bool has_header,
+    const size_t skip,
     size_t num_threads)
-    : filename_(filename), has_header_(has_header), quote_(quote), columns_(0) {
+    : filename_(filename),
+      has_header_(has_header),
+      quote_(quote),
+      trim_ws_(trim_ws),
+      rows_(0),
+      columns_(0) {
 
   std::error_code error;
   mmap_ = mio::make_mmap_source(filename, error);
@@ -122,12 +128,9 @@ index::index(
 #endif
 }
 
-const cell index::get_trimmed_val(size_t i) const {
-  auto begin = mmap_.data() + idx_[i];
-  auto end = mmap_.data() + idx_[i + 1] - 1;
-
-  if (begin != end && (*begin == quote_)) {
-    ++begin;
+cell index::trim_quotes(cell c) const {
+  if (c.begin != c.end && (*c.begin == quote_)) {
+    ++c.begin;
   }
 
   // end starts one past the last character we want to look at and ends one
@@ -144,13 +147,44 @@ const cell index::get_trimmed_val(size_t i) const {
   //  ^-^------begin
   //    |------end
 
-  --end;
-  if (end >= begin && (*end == quote_)) {
-    --end;
+  --c.end;
+  if (c.end >= c.begin && (*c.end == quote_)) {
+    --c.end;
   }
-  ++end;
+  ++c.end;
 
-  return {begin, end};
+  return c;
+}
+
+cell index::trim_whitespace(cell c) const {
+  const std::locale loc("");
+  while (c.begin < c.end && std::isspace(*c.begin, loc)) {
+    ++c.begin;
+  }
+
+  --c.end;
+  while (c.end > c.begin && std::isspace(*c.end, loc)) {
+    --c.end;
+  }
+  ++c.end;
+
+  return c;
+}
+
+const cell index::get_trimmed_val(size_t i) const {
+  auto begin = mmap_.data() + idx_[i];
+  auto end = mmap_.data() + idx_[i + 1] - 1;
+  cell out = {begin, end};
+
+  if (trim_ws_) {
+    out = trim_whitespace(out);
+  }
+
+  if (quote_ != '\0') {
+    out = trim_quotes(out);
+  }
+
+  return out;
 }
 
 const cell index::get(size_t row, size_t col) const {

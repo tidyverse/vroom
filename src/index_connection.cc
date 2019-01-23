@@ -33,12 +33,14 @@ index_connection::index_connection(
     SEXP in,
     const char delim,
     const char quote,
-    bool has_header,
-    size_t skip,
-    size_t chunk_size) {
+    const bool trim_ws,
+    const bool has_header,
+    const size_t skip,
+    const size_t chunk_size) {
 
   has_header_ = has_header;
   quote_ = quote;
+  trim_ws_ = trim_ws;
 
   auto tempfile =
       Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["tempfile"])();
