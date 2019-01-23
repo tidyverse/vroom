@@ -35,10 +35,11 @@ size_t find_next_newline(const mio::mmap_source& mmap_, size_t start) {
 index::index(
     const char* filename,
     const char delim,
+    const char quote,
     bool has_header,
     size_t skip,
     size_t num_threads)
-    : filename_(filename), has_header_(has_header), columns_(0) {
+    : filename_(filename), has_header_(has_header), quote_(quote), columns_(0) {
 
   std::error_code error;
   mmap_ = mio::make_mmap_source(filename, error);
@@ -72,7 +73,7 @@ index::index(
           end = find_next_newline(mmap_, end);
         }
         // Rcpp::Rcerr << "Indexing start: ", v.size() << '\n';
-        index_region(mmap_, values[id], delim, start, end, id);
+        index_region(mmap_, values[id], delim, quote, start, end, id);
       },
       num_threads,
       true);
@@ -121,10 +122,39 @@ index::index(
 #endif
 }
 
+const cell index::get_trimmed_val(size_t i) const {
+  auto begin = mmap_.data() + idx_[i];
+  auto end = mmap_.data() + idx_[i + 1] - 1;
+
+  if (begin != end && (*begin == quote_)) {
+    ++begin;
+  }
+
+  // end starts one past the last character we want to look at and ends one
+  // character too far. So we decrement it first, then increment it afterwards
+  //
+  // Before:
+  //
+  // "foo","bar"
+  // ^----^----begin
+  //      |----end
+  //
+  // After:
+  // "foo","bar"
+  //  ^-^------begin
+  //    |------end
+
+  --end;
+  if (end >= begin && (*end == quote_)) {
+    --end;
+  }
+  ++end;
+
+  return {begin, end};
+}
+
 const cell index::get(size_t row, size_t col) const {
   auto i = (row + has_header_) * columns_ + col;
-  auto cur_loc = idx_[i];
-  auto next_loc = idx_[i + 1] - 1;
 
-  return {mmap_.data() + cur_loc, mmap_.data() + next_loc};
+  return get_trimmed_val(i);
 }

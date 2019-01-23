@@ -23,6 +23,7 @@ public:
   index(
       const char* filename,
       const char delim,
+      const char quote,
       bool has_header,
       size_t skip,
       size_t num_threads);
@@ -70,11 +71,7 @@ public:
       return *this;
     }
     bool operator!=(row_iterator& other) const { return i_ != other.i_; }
-    cell operator*() const {
-      cell out{idx_->mmap_.data() + idx_->idx_[i_],
-               idx_->mmap_.data() + idx_->idx_[i_ + 1] - 1};
-      return out;
-    }
+    cell operator*() const { return idx_->get_trimmed_val(i_); }
   };
 
   class col_iterator {
@@ -125,11 +122,7 @@ public:
     }
     bool operator!=(col_iterator& other) const { return i_ != other.i_; }
 
-    cell operator*() const {
-      cell out{idx_->mmap_.data() + idx_->idx_[i_],
-               idx_->mmap_.data() + idx_->idx_[i_ + 1] - 1};
-      return out;
-    }
+    cell operator*() const { return idx_->get_trimmed_val(i_); }
 
     col_iterator& operator+=(int n) {
       i_ += idx_->columns_ * n;
@@ -160,26 +153,32 @@ protected:
   mio::mmap_source mmap_;
   std::vector<size_t> idx_;
   bool has_header_;
+  char quote_;
   size_t rows_;
   size_t columns_;
 
   void skip_lines();
+
+  const cell get_trimmed_val(size_t i) const;
 
   template <typename T>
   void index_region(
       const T& source,
       std::vector<size_t>& destination,
       const char delim,
+      const char quote,
       const size_t start,
       const size_t end,
       const size_t id = 0) {
 
-    char query[8] = {delim, '\n'};
+    char query[8] = {delim, '\n', quote};
 
     size_t last = start;
 #if DEBUG
     Rcpp::Rcerr << "start:\t" << start << '\n' << "end:\t" << end << '\n';
 #endif
+
+    bool in_quote = false;
 
     auto begin = source.data();
 
@@ -188,11 +187,15 @@ protected:
     while (i < end) {
       auto c = source[i];
 
-      if (c == delim) {
+      if (c == delim && !in_quote) {
         destination.push_back(i + 1);
       }
 
-      else if (c == '\n') {
+      else if (c == quote) {
+        in_quote = !in_quote;
+      }
+
+      else if (c == '\n') { // no embedded quotes allowed
         if (id == 0 && columns_ == 0) {
           columns_ = destination.size();
         }

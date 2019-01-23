@@ -20,11 +20,11 @@ NULL
 #' unlink("mtcars.tsv")
 #' setwd(.old_wd)
 #' }
-vroom <- function(file, delim = "\t", col_names = TRUE, skip = 0, na = c("", "NA"), num_threads = parallel::detectCores()) {
+vroom <- function(file, delim = "\t", col_names = TRUE, skip = 0, na = c("", "NA"), quote = '"', num_threads = parallel::detectCores()) {
 
   file <- standardise_path(file)
 
-  out <- vroom_(file, delim = delim, col_names = col_names, skip = skip, na = na, num_threads = num_threads)
+  out <- vroom_(file, delim = delim, col_names = col_names, skip = skip, na = na, quote = quote, num_threads = num_threads)
 
   if (is.null(names(out))) {
     names(out) <- make.names(seq_along(out))

@@ -27,6 +27,7 @@ CharacterVector read_column_names(const std::shared_ptr<vroom::index>& idx) {
 SEXP vroom_(
     RObject file,
     const char delim,
+    const char quote,
     RObject col_names,
     size_t skip,
     CharacterVector na,
@@ -46,11 +47,11 @@ SEXP vroom_(
 
   if (is_connection) {
     idx = std::make_shared<vroom::index_connection>(
-        file, delim, has_header, skip, 1024 * 1024);
+        file, delim, quote, has_header, skip, 1024 * 1024);
   } else {
     filename = CHAR(STRING_ELT(file, 0));
     idx = std::make_shared<vroom::index>(
-        filename.c_str(), delim, has_header, skip, num_threads);
+        filename.c_str(), delim, quote, has_header, skip, num_threads);
   }
 
   auto num_columns = idx->num_columns();

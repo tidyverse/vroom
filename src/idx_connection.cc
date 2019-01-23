@@ -32,11 +32,13 @@ using namespace vroom;
 index_connection::index_connection(
     SEXP in,
     const char delim,
+    const char quote,
     bool has_header,
     size_t skip,
     size_t chunk_size) {
 
   has_header_ = has_header;
+  quote_ = quote;
 
   auto tempfile =
       Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["tempfile"])();
@@ -56,7 +58,7 @@ index_connection::index_connection(
   auto sz = R_ReadConnection(con, buf.data(), chunk_size);
 
   while (sz > 0) {
-    index_region(buf, idx_, delim, 0, sz);
+    index_region(buf, idx_, delim, quote, 0, sz);
     out.write(buf.data(), sz);
 
     sz = R_ReadConnection(con, buf.data(), chunk_size);

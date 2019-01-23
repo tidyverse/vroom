@@ -8,6 +8,7 @@ public:
   index_connection(
       SEXP in,
       const char delim,
+      const char quote,
       bool has_header,
       size_t skip,
       size_t chunk_size);
