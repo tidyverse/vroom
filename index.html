@@ -88,7 +88,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>The fastest delimited reader for R, <strong>631.84 MB/sec</strong>.</p>
+<p>The fastest delimited reader for R, <strong>650.54 MB/sec</strong>.</p>
 <p>But that’s impossible! How can it be <a href="https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html">so fast</a>?</p>
 <p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use.</p>
 <p>vroom uses multiple threads for indexing and materializing non-character vectors, to further improve performance.</p>
@@ -103,27 +103,27 @@
 <tbody>
 <tr class="odd">
 <td align="left">vroom</td>
-<td align="right">2.64</td>
-<td align="right">42.12</td>
-<td align="left">631.84 MB</td>
+<td align="right">2.56</td>
+<td align="right">42.14</td>
+<td align="left">650.54 MB</td>
 </tr>
 <tr class="even">
 <td align="left">data.table</td>
-<td align="right">19.67</td>
-<td align="right">5.65</td>
-<td align="left">84.73 MB</td>
+<td align="right">19.00</td>
+<td align="right">5.68</td>
+<td align="left">87.71 MB</td>
 </tr>
 <tr class="odd">
 <td align="left">readr</td>
-<td align="right">25.82</td>
-<td align="right">4.30</td>
-<td align="left">64.55 MB</td>
+<td align="right">25.18</td>
+<td align="right">4.29</td>
+<td align="left">66.21 MB</td>
 </tr>
 <tr class="even">
 <td align="left">read.delim</td>
-<td align="right">111.12</td>
+<td align="right">107.97</td>
 <td align="right">1.00</td>
-<td align="left">15.00 MB</td>
+<td align="left">15.44 MB</td>
 </tr>
 </tbody>
 </table>
