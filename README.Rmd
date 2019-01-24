@@ -46,9 +46,8 @@ you use.
 vroom uses multiple threads for indexing and materializing non-character
 vectors, to further improve performance.
 
-However it has no (current) support for windows newlines, quoted fields,
-comments, whitespace trimming and other niceties which also slow down and
-complicate parsing.
+However it has no (current) support for windows newlines, comments, or other
+niceties which can slow down and complicate parsing.
 
 ```{r, echo = FALSE}
 knitr::kable(tbl, digits = 2)

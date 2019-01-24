@@ -30,9 +30,8 @@ what you use.
 vroom uses multiple threads for indexing and materializing non-character
 vectors, to further improve performance.
 
-However it has no (current) support for windows newlines, quoted fields,
-comments, whitespace trimming and other niceties which also slow down
-and complicate parsing.
+However it has no (current) support for windows newlines, comments, or
+other niceties which can slow down and complicate parsing.
 
 | package    | time (sec) | speedup | throughput |
 | :--------- | ---------: | ------: | :--------- |
@@ -67,7 +66,7 @@ vroom::vroom("mtcars.tsv")
 #>  8 Merc …  24.4     4  147.    62  3.69  3.19  20       1     0     4     2
 #>  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2
 #> 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4
-#> # ... with 22 more rows
+#> # … with 22 more rows
 ```
 
 ## Benchmarks
