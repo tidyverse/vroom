@@ -33,6 +33,7 @@ SEXP vroom_(
     bool escape_backslash,
     const char comment,
     RObject col_names,
+    RObject col_types,
     size_t skip,
     CharacterVector na,
     size_t num_threads) {
@@ -76,18 +77,27 @@ SEXP vroom_(
         num_threads);
   }
 
-  auto num_columns = idx->num_columns();
+  auto total_columns = idx->num_columns();
 
-  List res(num_columns);
+  List res(total_columns);
 
-  if (col_names.sexp_type() == STRSXP) {
-    res.attr("names") = col_names;
-  } else if (
-      col_names.sexp_type() == LGLSXP && as<LogicalVector>(col_names)[0]) {
-    res.attr("names") = read_column_names(idx);
-  }
+  CharacterVector col_nms;
 
   auto vroom = Rcpp::Environment::namespace_env("vroom");
+
+  if (col_names.sexp_type() == STRSXP) {
+    col_nms = col_names;
+  } else if (
+      col_names.sexp_type() == LGLSXP && as<LogicalVector>(col_names)[0]) {
+    col_nms = read_column_names(idx);
+  } else {
+    Rcpp::Function make_names = vroom["make_names"];
+    col_nms = make_names(total_columns);
+  }
+
+  Rcpp::Function col_types_standardise = vroom["col_types_standardise"];
+  col_types = col_types_standardise(col_types, col_nms);
+
   Rcpp::Function guess_type = vroom["guess_type"];
 
   auto num_rows = idx->num_rows();
@@ -97,48 +107,60 @@ SEXP vroom_(
   // Guess based on values throughout the data
   auto guess_step = num_rows / guess_num;
 
-  for (size_t col = 0; col < num_columns; ++col) {
-    CharacterVector col_vals(guess_num);
-    for (auto j = 0; j < guess_num; ++j) {
-      auto row = j * guess_step;
-      auto str = idx->get(row, col);
-      col_vals[j] = Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8);
-    }
-    auto col_type = INTEGER(guess_type(
-        col_vals, Named("guess_integer") = true, Named("na") = na))[0];
+  std::vector<std::string> res_nms;
 
-    // This is deleted in finalizes when the vectors are GC'd by R
+  size_t i = 0;
+  for (size_t col = 0; col < total_columns; ++col) {
+    Rcpp::List collector =
+        Rcpp::as<List>(Rcpp::as<List>(col_types)["cols"])[col];
+    std::string col_type = Rcpp::as<std::string>(
+        Rcpp::as<CharacterVector>(collector.attr("class"))[0]);
+
+    if (col_type == "collector_skip") {
+      continue;
+    }
+
+    if (col_type == "collector_guess") {
+      CharacterVector col_vals(guess_num);
+      for (auto j = 0; j < guess_num; ++j) {
+        auto row = j * guess_step;
+        auto str = idx->get(row, col);
+        col_vals[j] = Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8);
+      }
+      collector = guess_type(
+          col_vals, Named("guess_integer") = false, Named("na") = na);
+      col_type = Rcpp::as<std::string>(
+          Rcpp::as<CharacterVector>(collector.attr("class"))[0]);
+    }
+
+    // This is deleted in the finalizers when the vectors are GC'd by R
     auto info = new vroom_vec_info{
         idx, col, num_threads, std::make_shared<Rcpp::CharacterVector>(na)};
 
-    switch (col_type) {
-    case real:
-      SET_VECTOR_ELT(res, col, vroom_real::Make(info));
-      break;
-    case integer:
-      SET_VECTOR_ELT(res, col, vroom_int::Make(info));
-      break;
-    case logical:
-      SET_VECTOR_ELT(res, col, read_lgl(info));
-      break;
-    // case factor:
-    //   SET_VECTOR_ELT(
-    //       res,
-    //       col,
-    //       read_fctr(
-    //           std::shared_ptr<std::vector<size_t> >(vroom_idx),
-    //           mmap,
-    //           col,
-    //           num_columns,
-    //           skip,
-    //           num_threads));
-    //   break;
-    case character:
-      SET_VECTOR_ELT(res, col, vroom_string::Make(info));
-      break;
+    res_nms.push_back(Rcpp::as<std::string>(col_nms[col]));
+
+    if (col_type == "collector_double") {
+      SET_VECTOR_ELT(res, i, vroom_real::Make(info));
+    } else if (col_type == "collector_integer") {
+      SET_VECTOR_ELT(res, i, vroom_int::Make(info));
+    } else if (col_type == "collector_logical") {
+      SET_VECTOR_ELT(res, i, read_lgl(info));
+    } else if (col_type == "collector_factor") {
+      SET_VECTOR_ELT(res, i, read_fctr(info));
+    } else {
+      SET_VECTOR_ELT(res, i, vroom_string::Make(info));
     }
+
+    ++i;
   }
 
+  if (i < total_columns) {
+    // Resize the list appropriately
+    SETLENGTH(res, i);
+    SET_TRUELENGTH(res, i);
+  }
+
+  res.attr("names") = res_nms;
   res.attr("filename") = idx->filename();
 
   return res;

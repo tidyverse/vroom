@@ -15,7 +15,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 coverage](https://codecov.io/gh/jimhester/vroom/branch/master/graph/badge.svg)](https://codecov.io/gh/jimhester/vroom?branch=master)
 <!-- badges: end -->
 
-The fastest delimited reader for R, **631.84 MB/sec**.
+The fastest delimited reader for R, **650.54 MB/sec**.
 
 But that’s impossible\! How can it be [so
 fast](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)?
@@ -35,10 +35,10 @@ newlines or other niceties which can slow down and complicate parsing.
 
 | package    | time (sec) | speedup | throughput |
 | :--------- | ---------: | ------: | :--------- |
-| vroom      |       2.64 |   42.12 | 631.84 MB  |
-| data.table |      19.67 |    5.65 | 84.73 MB   |
-| readr      |      25.82 |    4.30 | 64.55 MB   |
-| read.delim |     111.12 |    1.00 | 15.00 MB   |
+| vroom      |       2.56 |   42.14 | 650.54 MB  |
+| data.table |      19.00 |    5.68 | 87.71 MB   |
+| readr      |      25.18 |    4.29 | 66.21 MB   |
+| read.delim |     107.97 |    1.00 | 15.44 MB   |
 
 ## Installation
 

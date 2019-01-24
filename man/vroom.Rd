@@ -4,9 +4,9 @@
 \alias{vroom}
 \title{Read a delimited file into a tibble}
 \usage{
-vroom(file, delim = "\\t", col_names = TRUE, skip = 0, na = c("",
-  "NA"), quote = "\\"", comment = "", trim_ws = TRUE,
-  escape_double = TRUE, escape_backslash = FALSE,
+vroom(file, delim = "\\t", col_names = TRUE, col_types = NULL,
+  skip = 0, na = c("", "NA"), quote = "\\"", comment = "",
+  trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE,
   num_threads = parallel::detectCores())
 }
 \arguments{
@@ -28,6 +28,23 @@ the first row of the output data frame.
 Missing (\code{NA}) column names will generate a warning, and be filled
 in with dummy names \code{X1}, \code{X2} etc. Duplicate column names
 will generate a warning and be made unique with a numeric prefix.}
+
+\item{col_types}{One of \code{NULL}, a \code{\link[=cols]{cols()}} specification, or
+a string. See \code{vignette("readr")} for more details.
+
+If \code{NULL}, all column types will be imputed from the first 1000 rows
+on the input. This is convenient (and fast), but not robust. If the
+imputation fails, you'll need to supply the correct types yourself.
+
+If a column specification created by \code{\link[=cols]{cols()}}, it must contain
+one column specification for each column. If you only want to read a
+subset of the columns, use \code{\link[=cols_only]{cols_only()}}.
+
+Alternatively, you can use a compact string representation where each
+character represents one column:
+c = character, i = integer, n = number, d = double,
+l = logical, f = factor, D = date, T = date time, t = time, ? = guess, or
+\code{_}/\code{-} to skip the column.}
 
 \item{skip}{Number of lines to skip before reading data.}
 

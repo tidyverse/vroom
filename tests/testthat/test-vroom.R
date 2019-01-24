@@ -105,3 +105,13 @@ test_that("vroom respects skip", {
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 })
+
+test_that("vroom respects col_types", {
+  test_vroom('a,b,c\n1,2,3"', delim = ",", col_types = "idc",
+    equals = tibble::tibble(a = 1L, b = 2, c = "3")
+  )
+
+  test_vroom('a,b,c,d\nT,2,3,4"', delim = ",", col_types = "lfc_",
+    equals = tibble::tibble(a = TRUE, b = factor(2), c = "3")
+  )
+})

@@ -81,7 +81,6 @@ index::index(
   parallel_for(
       file_size - first_nl,
       [&](int start, int end, int id) {
-        // values[id + 1].reserve((guessed_rows / num_threads) * columns_);
         values[id + 1].reserve((guessed_rows / num_threads) * columns_);
         start = find_next_newline(mmap_, first_nl + start);
         end = find_next_newline(mmap_, first_nl + end);
