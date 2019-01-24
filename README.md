@@ -30,8 +30,8 @@ what you use.
 vroom uses multiple threads for indexing and materializing non-character
 vectors, to further improve performance.
 
-However it has no (current) support for windows newlines, comments, or
-other niceties which can slow down and complicate parsing.
+However it has no (current) support for windows newlines, embedded
+newlines or other niceties which can slow down and complicate parsing.
 
 | package    | time (sec) | speedup | throughput |
 | :--------- | ---------: | ------: | :--------- |
