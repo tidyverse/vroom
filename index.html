@@ -158,6 +158,11 @@
 <a href="#benchmarks" class="anchor"></a>Benchmarks</h2>
 <p>The speed quoted above is from a dataset with 14,776,615 rows and 11 columns, see the <a href="https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html">benchmark article</a> for details.</p>
 </div>
+<div id="rstudio-caveats" class="section level2">
+<h2 class="hasAnchor">
+<a href="#rstudio-caveats" class="anchor"></a>RStudio Caveats</h2>
+<p>Until very recently (2019-01-23) RStudio’s environment pane caused Altrep objects to be automatically materialized, which removes most of the benefits (and can acutally make things much slower). This was fixed in <a href="https://github.com/rstudio/rstudio/pull/4210">rstudio#4210</a>, so it is recommended you use a <a href="https://dailies.rstudio.com/">daily version</a> if you are trying to use vroom inside RStudio.</p>
+</div>
 <div id="thanks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#thanks" class="anchor"></a>Thanks</h2>
