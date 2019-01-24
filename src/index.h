@@ -10,6 +10,8 @@
 # pragma clang diagnostic pop
 // clang-format on
 
+#include <array>
+
 namespace vroom {
 
 struct cell {
@@ -26,6 +28,7 @@ public:
       const char quote,
       const bool trim_ws,
       const bool escape_double,
+      const bool escape_backslash,
       const bool has_header,
       const size_t skip,
       const size_t num_threads);
@@ -158,6 +161,7 @@ protected:
   char quote_;
   bool trim_ws_;
   bool escape_double_;
+  bool escape_backslash_;
   size_t rows_;
   size_t columns_;
 
@@ -165,7 +169,7 @@ protected:
 
   void trim_quotes(const char*& begin, const char*& end) const;
   void trim_whitespace(const char*& begin, const char*& end) const;
-  std::string remove_double_quotes(const char* begin, const char* end) const;
+  std::string get_escaped_string(const char* begin, const char* end) const;
 
   const std::string get_trimmed_val(size_t i) const;
 
@@ -179,7 +183,8 @@ protected:
       const size_t end,
       const size_t id = 0) {
 
-    char query[8] = {delim, '\n', quote};
+    // If there are no quotes quote will be '\0', so will just work
+    std::array<char, 4> query = {delim, '\n', '\\', quote};
 
     size_t last = start;
 #if DEBUG
@@ -191,12 +196,16 @@ protected:
     auto begin = source.data();
 
     // The actual parsing is here
-    auto i = strcspn(begin + last, query) + last;
+    auto i = strcspn(begin + last, query.data()) + last;
     while (i < end) {
       auto c = source[i];
 
       if (c == delim && !in_quote) {
         destination.push_back(i + 1);
+      }
+
+      else if (escape_backslash_ && c == '\\') {
+        ++i;
       }
 
       else if (c == quote) {
@@ -211,7 +220,7 @@ protected:
       }
 
       last = i;
-      i = strcspn(begin + last + 1, query) + last + 1;
+      i = strcspn(begin + last + 1, query.data()) + last + 1;
     }
   }
 };

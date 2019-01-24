@@ -30,6 +30,7 @@ SEXP vroom_(
     const char quote,
     bool trim_ws,
     bool escape_double,
+    bool escape_backslash,
     RObject col_names,
     size_t skip,
     CharacterVector na,
@@ -54,6 +55,7 @@ SEXP vroom_(
         quote,
         trim_ws,
         escape_double,
+        escape_backslash,
         has_header,
         skip,
         1024 * 1024);
@@ -65,6 +67,7 @@ SEXP vroom_(
         quote,
         trim_ws,
         escape_double,
+        escape_backslash,
         has_header,
         skip,
         num_threads);

@@ -11,6 +11,7 @@ public:
       const char quote,
       const bool trim_ws,
       const bool escape_double,
+      const bool escape_backslash,
       const bool has_header,
       const size_t skip,
       const size_t chunk_size);

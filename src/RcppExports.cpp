@@ -16,8 +16,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // vroom_
-SEXP vroom_(RObject file, const char delim, const char quote, bool trim_ws, bool escape_double, RObject col_names, size_t skip, CharacterVector na, size_t num_threads);
-RcppExport SEXP _vroom_vroom_(SEXP fileSEXP, SEXP delimSEXP, SEXP quoteSEXP, SEXP trim_wsSEXP, SEXP escape_doubleSEXP, SEXP col_namesSEXP, SEXP skipSEXP, SEXP naSEXP, SEXP num_threadsSEXP) {
+SEXP vroom_(RObject file, const char delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, RObject col_names, size_t skip, CharacterVector na, size_t num_threads);
+RcppExport SEXP _vroom_vroom_(SEXP fileSEXP, SEXP delimSEXP, SEXP quoteSEXP, SEXP trim_wsSEXP, SEXP escape_doubleSEXP, SEXP escape_backslashSEXP, SEXP col_namesSEXP, SEXP skipSEXP, SEXP naSEXP, SEXP num_threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -26,18 +26,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const char >::type quote(quoteSEXP);
     Rcpp::traits::input_parameter< bool >::type trim_ws(trim_wsSEXP);
     Rcpp::traits::input_parameter< bool >::type escape_double(escape_doubleSEXP);
+    Rcpp::traits::input_parameter< bool >::type escape_backslash(escape_backslashSEXP);
     Rcpp::traits::input_parameter< RObject >::type col_names(col_namesSEXP);
     Rcpp::traits::input_parameter< size_t >::type skip(skipSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type na(naSEXP);
     Rcpp::traits::input_parameter< size_t >::type num_threads(num_threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(vroom_(file, delim, quote, trim_ws, escape_double, col_names, skip, na, num_threads));
+    rcpp_result_gen = Rcpp::wrap(vroom_(file, delim, quote, trim_ws, escape_double, escape_backslash, col_names, skip, na, num_threads));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_vroom_force_materialization", (DL_FUNC) &_vroom_force_materialization, 1},
-    {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 9},
+    {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 10},
     {NULL, NULL, 0}
 };
 

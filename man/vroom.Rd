@@ -6,7 +6,7 @@
 \usage{
 vroom(file, delim = "\\t", col_names = TRUE, skip = 0, na = c("",
   "NA"), quote = "\\"", trim_ws = TRUE, escape_double = TRUE,
-  num_threads = parallel::detectCores())
+  escape_backslash = FALSE, num_threads = parallel::detectCores())
 }
 \arguments{
 \item{file}{path to a local file.}
@@ -41,6 +41,11 @@ each field before parsing it?}
 \item{escape_double}{Does the file escape quotes by doubling them?
 i.e. If this option is `TRUE`, the value `""` represents
 a single quote, `"`.}
+
+\item{escape_backslash}{Does the file use backslashes to escape special
+characters? This is more general than \code{escape_double} as backslashes
+can be used to escape the delimiter character, the quote character, or
+to add special characters like \code{\\n}.}
 
 \item{num_threads}{Number of threads to use when reading and materializing vectors.}
 }

@@ -38,6 +38,7 @@ index::index(
     const char quote,
     const bool trim_ws,
     const bool escape_double,
+    const bool escape_backslash,
     const bool has_header,
     const size_t skip,
     size_t num_threads)
@@ -46,6 +47,7 @@ index::index(
       quote_(quote),
       trim_ws_(trim_ws),
       escape_double_(escape_double),
+      escape_backslash_(escape_backslash),
       rows_(0),
       columns_(0) {
 
@@ -152,12 +154,13 @@ void index::trim_whitespace(const char*& begin, const char*& end) const {
 }
 
 std::string
-index::remove_double_quotes(const char* begin, const char* end) const {
+index::get_escaped_string(const char* begin, const char* end) const {
   std::string out;
   out.reserve(end - begin);
 
   while (begin < end) {
-    if (*begin == '"') {
+    if ((escape_double_ && *begin == '"') ||
+        (escape_backslash_ && *begin == '\\')) {
       ++begin;
     }
 
@@ -181,8 +184,8 @@ const std::string index::get_trimmed_val(size_t i) const {
 
   std::string out;
 
-  if (escape_double_) {
-    out = remove_double_quotes(begin, end);
+  if (escape_double_ || escape_backslash_) {
+    out = get_escaped_string(begin, end);
   } else {
     out = std::string(begin, end - begin);
   }
