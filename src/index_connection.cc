@@ -34,6 +34,7 @@ index_connection::index_connection(
     const char delim,
     const char quote,
     const bool trim_ws,
+    const bool escape_double,
     const bool has_header,
     const size_t skip,
     const size_t chunk_size) {
@@ -41,6 +42,7 @@ index_connection::index_connection(
   has_header_ = has_header;
   quote_ = quote;
   trim_ws_ = trim_ws;
+  escape_double_ = escape_double;
 
   auto tempfile =
       Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["tempfile"])();

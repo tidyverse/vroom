@@ -37,6 +37,7 @@ index::index(
     const char delim,
     const char quote,
     const bool trim_ws,
+    const bool escape_double,
     const bool has_header,
     const size_t skip,
     size_t num_threads)
@@ -44,6 +45,7 @@ index::index(
       has_header_(has_header),
       quote_(quote),
       trim_ws_(trim_ws),
+      escape_double_(escape_double),
       rows_(0),
       columns_(0) {
 
@@ -128,48 +130,67 @@ index::index(
 #endif
 }
 
-cell index::trim_quotes(cell c) const {
-  if (c.begin != c.end && (*c.begin == quote_)) {
-    ++c.begin;
+void index::trim_quotes(const char*& begin, const char*& end) const {
+  if (begin != end && (*begin == quote_)) {
+    ++begin;
   }
 
-  while (c.end != c.begin && *(c.end - 1) == quote_) {
-    --c.end;
+  if (end != begin && *(end - 1) == quote_) {
+    --end;
   }
-
-  return c;
 }
 
-cell index::trim_whitespace(cell c) const {
-  const std::locale loc("");
-  while (c.begin != c.end && std::isspace(*c.begin, loc)) {
-    ++c.begin;
+void index::trim_whitespace(const char*& begin, const char*& end) const {
+  static const std::locale loc("");
+  while (begin != end && std::isspace(*begin, loc)) {
+    ++begin;
   }
 
-  while (c.end != c.begin && std::isspace(*(c.end - 1), loc)) {
-    --c.end;
+  while (end != begin && std::isspace(*(end - 1), loc)) {
+    --end;
   }
-
-  return c;
 }
 
-const cell index::get_trimmed_val(size_t i) const {
-  auto begin = mmap_.data() + idx_[i];
-  auto end = mmap_.data() + idx_[i + 1] - 1;
-  cell out = {begin, end};
+std::string
+index::remove_double_quotes(const char* begin, const char* end) const {
+  std::string out;
+  out.reserve(end - begin);
 
-  if (trim_ws_) {
-    out = trim_whitespace(out);
-  }
+  while (begin < end) {
+    if (*begin == '"') {
+      ++begin;
+    }
 
-  if (quote_ != '\0') {
-    out = trim_quotes(out);
+    out.push_back(*begin++);
   }
 
   return out;
 }
 
-const cell index::get(size_t row, size_t col) const {
+const std::string index::get_trimmed_val(size_t i) const {
+  auto begin = mmap_.data() + idx_[i];
+  auto end = mmap_.data() + idx_[i + 1] - 1;
+
+  if (trim_ws_) {
+    trim_whitespace(begin, end);
+  }
+
+  if (quote_ != '\0') {
+    trim_quotes(begin, end);
+  }
+
+  std::string out;
+
+  if (escape_double_) {
+    out = remove_double_quotes(begin, end);
+  } else {
+    out = std::string(begin, end - begin);
+  }
+
+  return out;
+}
+
+const std::string index::get(size_t row, size_t col) const {
   auto i = (row + has_header_) * columns_ + col;
 
   return get_trimmed_val(i);

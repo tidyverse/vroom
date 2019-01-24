@@ -29,7 +29,7 @@ public:
     return inf.idx->num_rows();
   }
 
-  static inline vroom::cell Get(SEXP vec, R_xlen_t i) {
+  static inline std::string Get(SEXP vec, R_xlen_t i) {
     auto inf = Info(vec);
     return inf.idx->get(i, inf.column);
   }

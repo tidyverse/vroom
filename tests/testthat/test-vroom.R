@@ -63,3 +63,10 @@ test_that("vroom can read files with quotes", {
     equals = tibble::tibble(a = ",foo", b = "bar", c = "baz")
   )
 })
+
+
+test_that("vroom escapes double quotes", {
+  test_vroom('"a","b","c"\n"""fo""o","b""""ar","baz"""', delim = ",",
+    equals = tibble::tibble(a = "\"fo\"o", b = "b\"\"ar", c = "baz\"")
+  )
+})

@@ -10,6 +10,7 @@ public:
       const char delim,
       const char quote,
       const bool trim_ws,
+      const bool escape_double,
       const bool has_header,
       const size_t skip,
       const size_t chunk_size);

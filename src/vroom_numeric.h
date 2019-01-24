@@ -80,9 +80,9 @@ public:
           char buf[128];
 
           size_t i = start;
-          for (const auto& loc : inf.idx->column(inf.column, start, end)) {
-            std::copy(loc.begin, loc.end, buf);
-            buf[loc.end - loc.begin] = '\0';
+          for (const auto& str : inf.idx->column(inf.column, start, end)) {
+            std::copy(str.begin(), str.end(), buf);
+            buf[str.length()] = '\0';
 
             p[i++] = R_strtod(buf, NULL);
           }
@@ -92,17 +92,6 @@ public:
     R_set_altrep_data2(vec, out);
 
     return out;
-  }
-
-  // Fills buf with contents from the i item
-  static void buf_Elt(SEXP vec, size_t i, char* buf) {
-
-    auto loc = Get(vec, i);
-
-    // Need to copy to a temp buffer since we have no way to tell strtod how
-    // long the buffer is.
-    std::copy(loc.begin, loc.end, buf);
-    buf[loc.end - loc.begin] = '\0';
   }
 
   static void* Dataptr(SEXP vec, Rboolean writeable) {
@@ -122,10 +111,10 @@ double real_Elt(SEXP vec, R_xlen_t i) {
   if (data2 != R_NilValue) {
     return REAL(data2)[i];
   }
-  char buf[128];
-  vroom_real::buf_Elt(vec, i, buf);
 
-  return R_strtod(buf, NULL);
+  auto str = vroom_vec::Get(vec, i);
+
+  return R_strtod(str.c_str(), NULL);
 }
 
 // Called the package is loaded (needs Rcpp 0.12.18.3)
@@ -173,10 +162,10 @@ int int_Elt(SEXP vec, R_xlen_t i) {
   if (data2 != R_NilValue) {
     return INTEGER(data2)[i];
   }
-  char buf[128];
-  vroom_int::buf_Elt(vec, i, buf);
 
-  return Strtoi(buf, 10);
+  auto str = vroom_vec::Get(vec, i);
+
+  return Strtoi(str.c_str(), 10);
 }
 
 // Called the package is loaded (needs Rcpp 0.12.18.3)

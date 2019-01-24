@@ -25,13 +25,14 @@ public:
       const char delim,
       const char quote,
       const bool trim_ws,
+      const bool escape_double,
       const bool has_header,
       const size_t skip,
       const size_t num_threads);
 
   index() : rows_(0), columns_(0){};
 
-  const cell get(size_t row, size_t col) const;
+  const std::string get(size_t row, size_t col) const;
 
   size_t num_columns() const { return columns_; }
 
@@ -46,10 +47,10 @@ public:
 
   public:
     using iterator_category = std::forward_iterator_tag;
-    using value_type = cell;
-    using difference_type = cell;
-    using pointer = cell*;
-    using reference = cell&;
+    using value_type = std::string;
+    using difference_type = std::string;
+    using pointer = std::string*;
+    using reference = std::string&;
 
     row_iterator(int row, const index* idx) : row_(row), idx_(idx) {
       i_ = (row_ + idx_->has_header_) * idx_->columns_;
@@ -72,7 +73,7 @@ public:
       return *this;
     }
     bool operator!=(row_iterator& other) const { return i_ != other.i_; }
-    cell operator*() const { return idx_->get_trimmed_val(i_); }
+    std::string operator*() const { return idx_->get_trimmed_val(i_); }
   };
 
   class col_iterator {
@@ -84,10 +85,10 @@ public:
 
   public:
     using iterator_category = std::forward_iterator_tag;
-    using value_type = cell;
-    using difference_type = cell;
-    using pointer = cell*;
-    using reference = cell&;
+    using value_type = std::string;
+    using difference_type = std::string;
+    using pointer = std::string*;
+    using reference = std::string&;
 
     col_iterator(size_t column, const index* idx)
         : column_(column),
@@ -123,7 +124,7 @@ public:
     }
     bool operator!=(col_iterator& other) const { return i_ != other.i_; }
 
-    cell operator*() const { return idx_->get_trimmed_val(i_); }
+    std::string operator*() const { return idx_->get_trimmed_val(i_); }
 
     col_iterator& operator+=(int n) {
       i_ += idx_->columns_ * n;
@@ -156,15 +157,17 @@ protected:
   bool has_header_;
   char quote_;
   bool trim_ws_;
+  bool escape_double_;
   size_t rows_;
   size_t columns_;
 
   void skip_lines();
 
-  cell trim_quotes(cell c) const;
-  cell trim_whitespace(cell c) const;
+  void trim_quotes(const char*& begin, const char*& end) const;
+  void trim_whitespace(const char*& begin, const char*& end) const;
+  std::string remove_double_quotes(const char* begin, const char* end) const;
 
-  const cell get_trimmed_val(size_t i) const;
+  const std::string get_trimmed_val(size_t i) const;
 
   template <typename T>
   void index_region(

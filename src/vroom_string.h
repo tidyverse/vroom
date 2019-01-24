@@ -57,11 +57,10 @@ public:
 
   static SEXP Val(SEXP vec, R_xlen_t i) {
     auto inf = Info(vec);
-    auto sep_locs = inf.idx;
 
-    auto loc = Get(vec, i);
+    auto str = Get(vec, i);
 
-    auto val = Rf_mkCharLenCE(loc.begin, loc.end - loc.begin, CE_UTF8);
+    auto val = Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8);
     val = check_na(vec, val);
 
     return val;
@@ -107,13 +106,12 @@ public:
     data2 = PROTECT(Rf_allocVector(STRSXP, n));
 
     auto inf = Info(vec);
-    auto sep_locs = inf.idx;
 
     auto i = 0;
 
-    for (const auto& loc : inf.idx->column(inf.column)) {
+    for (const auto& str : inf.idx->column(inf.column)) {
 
-      auto val = Rf_mkCharLenCE(loc.begin, loc.end - loc.begin, CE_UTF8);
+      auto val = Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8);
 
       // Look for NAs
       for (const auto& v : *Info(vec).na) {

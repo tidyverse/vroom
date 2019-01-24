@@ -5,7 +5,7 @@
 \title{Read a delimited file into a tibble}
 \usage{
 vroom(file, delim = "\\t", col_names = TRUE, skip = 0, na = c("",
-  "NA"), quote = "\\"", trim_ws = TRUE,
+  "NA"), quote = "\\"", trim_ws = TRUE, escape_double = TRUE,
   num_threads = parallel::detectCores())
 }
 \arguments{
@@ -37,6 +37,10 @@ option to \code{character()} to indicate no missing values.}
 
 \item{trim_ws}{Should leading and trailing whitespace be trimmed from
 each field before parsing it?}
+
+\item{escape_double}{Does the file escape quotes by doubling them?
+i.e. If this option is `TRUE`, the value `""` represents
+a single quote, `"`.}
 
 \item{num_threads}{Number of threads to use when reading and materializing vectors.}
 }

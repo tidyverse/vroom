@@ -16,8 +16,8 @@ CharacterVector read_column_names(const std::shared_ptr<vroom::index>& idx) {
   CharacterVector nms(idx->num_columns());
 
   auto col = 0;
-  for (const auto& loc : idx->header()) {
-    nms[col++] = Rf_mkCharLenCE(loc.begin, loc.end - loc.begin, CE_UTF8);
+  for (const auto& str : idx->header()) {
+    nms[col++] = Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8);
   }
 
   return nms;
@@ -29,6 +29,7 @@ SEXP vroom_(
     const char delim,
     const char quote,
     bool trim_ws,
+    bool escape_double,
     RObject col_names,
     size_t skip,
     CharacterVector na,
@@ -48,11 +49,25 @@ SEXP vroom_(
 
   if (is_connection) {
     idx = std::make_shared<vroom::index_connection>(
-        file, delim, quote, trim_ws, has_header, skip, 1024 * 1024);
+        file,
+        delim,
+        quote,
+        trim_ws,
+        escape_double,
+        has_header,
+        skip,
+        1024 * 1024);
   } else {
     filename = CHAR(STRING_ELT(file, 0));
     idx = std::make_shared<vroom::index>(
-        filename.c_str(), delim, quote, trim_ws, has_header, skip, num_threads);
+        filename.c_str(),
+        delim,
+        quote,
+        trim_ws,
+        escape_double,
+        has_header,
+        skip,
+        num_threads);
   }
 
   auto num_columns = idx->num_columns();
@@ -80,8 +95,8 @@ SEXP vroom_(
     CharacterVector col_vals(guess_num);
     for (auto j = 0; j < guess_num; ++j) {
       auto row = j * guess_step;
-      auto loc = idx->get(row, col);
-      col_vals[j] = Rf_mkCharLenCE(loc.begin, loc.end - loc.begin, CE_UTF8);
+      auto str = idx->get(row, col);
+      col_vals[j] = Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8);
     }
     auto col_type = INTEGER(guess_type(
         col_vals, Named("guess_integer") = true, Named("na") = na))[0];

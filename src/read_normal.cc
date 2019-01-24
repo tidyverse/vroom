@@ -17,9 +17,9 @@ Rcpp::LogicalVector read_lgl(vroom_vec_info* info) {
         char buf[128];
 
         auto i = start;
-        for (const auto& loc : info->idx->column(info->column, start, end)) {
-          std::copy(loc.begin, loc.end, buf);
-          buf[loc.end - loc.begin] = '\0';
+        for (const auto& str : info->idx->column(info->column, start, end)) {
+          std::copy(str.begin(), str.end(), buf);
+          buf[str.length()] = '\0';
 
           // TODO: na values
           p[i++] = Rf_StringTrue(buf);
