@@ -63,8 +63,12 @@ index_connection::index_connection(
 
   auto sz = R_ReadConnection(con, buf.data(), chunk_size);
 
+  auto first_nl = find_next_newline(buf, 0);
+  index_region(buf, idx_, delim, quote, 0, first_nl);
+  columns_ = idx_.size();
+
   while (sz > 0) {
-    index_region(buf, idx_, delim, quote, 0, sz);
+    index_region(buf, idx_, delim, quote, first_nl, sz);
     out.write(buf.data(), sz);
 
     sz = R_ReadConnection(con, buf.data(), chunk_size);

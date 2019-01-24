@@ -167,6 +167,17 @@ protected:
 
   void skip_lines();
 
+  template <typename T>
+  size_t find_next_newline(const T& source, size_t start) const {
+    auto begin = source.data() + start;
+    auto res =
+        static_cast<const char*>(memchr(begin, '\n', source.size() - start));
+    if (!res) {
+      return start;
+    }
+    return res - source.data();
+  }
+
   void trim_quotes(const char*& begin, const char*& end) const;
   void trim_whitespace(const char*& begin, const char*& end) const;
   std::string get_escaped_string(const char* begin, const char* end) const;
@@ -180,8 +191,7 @@ protected:
       const char delim,
       const char quote,
       const size_t start,
-      const size_t end,
-      const size_t id = 0) {
+      const size_t end) {
 
     // If there are no quotes quote will be '\0', so will just work
     std::array<char, 4> query = {delim, '\n', '\\', quote};
@@ -213,9 +223,6 @@ protected:
       }
 
       else if (c == '\n') { // no embedded quotes allowed
-        if (id == 0 && columns_ == 0) {
-          columns_ = destination.size();
-        }
         destination.push_back(i + 1);
       }
 
