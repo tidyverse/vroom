@@ -60,6 +60,14 @@ index::index(
   index_region(mmap_, values[0], delim, quote, 0, first_nl);
   columns_ = values[0].size();
 
+  auto second_nl = find_next_newline(mmap_, first_nl + 1);
+  auto one_row_size = second_nl - first_nl;
+  auto guessed_rows = (file_size - first_nl) / one_row_size * 1.1;
+
+#if DEBUG
+  Rcpp::Rcerr << "guessed_rows: " << guessed_rows << '\n';
+#endif
+
   // This should be enough to ensure the first line fits in one thread, I
   // hope...
   if (file_size < 32768) {
@@ -69,7 +77,8 @@ index::index(
   parallel_for(
       file_size - first_nl,
       [&](int start, int end, int id) {
-        values[id].reserve(128);
+        // values[id + 1].reserve((guessed_rows / num_threads) * columns_);
+        values[id + 1].reserve((guessed_rows / num_threads) * columns_);
         start = find_next_newline(mmap_, first_nl + start);
         end = find_next_newline(mmap_, first_nl + end);
         // Rcpp::Rcerr << "Indexing start: ", v.size() << '\n';
