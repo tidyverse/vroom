@@ -24,13 +24,13 @@ NULL
 #' setwd(.old_wd)
 #' }
 vroom <- function(file, delim = "\t", col_names = TRUE, skip = 0, na = c("", "NA"),
-  quote = '"', trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE, num_threads = parallel::detectCores()) {
+  quote = '"', comment = "", trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE, num_threads = parallel::detectCores()) {
 
   file <- standardise_path(file)
 
   out <- vroom_(file, delim = delim, col_names = col_names, skip = skip,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
-    escape_backslash = escape_backslash, num_threads = num_threads)
+    escape_backslash = escape_backslash, comment = comment, num_threads = num_threads)
 
   if (is.null(names(out))) {
     names(out) <- make.names(seq_along(out))

@@ -31,6 +31,7 @@ public:
       const bool escape_backslash,
       const bool has_header,
       const size_t skip,
+      const char comment,
       const size_t num_threads);
 
   index() : rows_(0), columns_(0){};
@@ -162,10 +163,42 @@ protected:
   bool trim_ws_;
   bool escape_double_;
   bool escape_backslash_;
+  size_t skip_;
+  char comment_;
   size_t rows_;
   size_t columns_;
 
   void skip_lines();
+
+  bool is_blank_or_comment_line(const char* begin) const {
+    if (*begin == '\n') {
+      return true;
+    }
+
+    while (*begin == ' ' || *begin == '\t') {
+      ++begin;
+      if (*begin == '\n' || *begin == comment_) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // This skips leading blank lines and comments (if needed)
+  template <typename T> size_t find_first_line(const T& source) {
+    auto begin = 0;
+
+    while (bool should_skip =
+               is_blank_or_comment_line(source.data() + begin) || skip_ > 0) {
+      begin = find_next_newline(source, begin) + 1;
+      if (skip_ > 0) {
+        --skip_;
+      }
+    }
+
+    return begin;
+  }
 
   template <typename T>
   size_t find_next_newline(const T& source, size_t start) const {

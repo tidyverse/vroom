@@ -5,8 +5,9 @@
 \title{Read a delimited file into a tibble}
 \usage{
 vroom(file, delim = "\\t", col_names = TRUE, skip = 0, na = c("",
-  "NA"), quote = "\\"", trim_ws = TRUE, escape_double = TRUE,
-  escape_backslash = FALSE, num_threads = parallel::detectCores())
+  "NA"), quote = "\\"", comment = "", trim_ws = TRUE,
+  escape_double = TRUE, escape_backslash = FALSE,
+  num_threads = parallel::detectCores())
 }
 \arguments{
 \item{file}{path to a local file.}
@@ -34,6 +35,9 @@ will generate a warning and be made unique with a numeric prefix.}
 option to \code{character()} to indicate no missing values.}
 
 \item{quote}{Single character used to quote strings.}
+
+\item{comment}{A string used to identify comments. Any text after the
+comment characters will be silently ignored.}
 
 \item{trim_ws}{Should leading and trailing whitespace be trimmed from
 each field before parsing it?}

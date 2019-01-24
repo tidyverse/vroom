@@ -31,6 +31,7 @@ SEXP vroom_(
     bool trim_ws,
     bool escape_double,
     bool escape_backslash,
+    const char comment,
     RObject col_names,
     size_t skip,
     CharacterVector na,
@@ -58,6 +59,7 @@ SEXP vroom_(
         escape_backslash,
         has_header,
         skip,
+        comment,
         1024 * 1024);
   } else {
     filename = CHAR(STRING_ELT(file, 0));
@@ -70,6 +72,7 @@ SEXP vroom_(
         escape_backslash,
         has_header,
         skip,
+        comment,
         num_threads);
   }
 

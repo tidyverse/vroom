@@ -38,6 +38,7 @@ index_connection::index_connection(
     const bool escape_backslash,
     const bool has_header,
     const size_t skip,
+    const char comment,
     const size_t chunk_size) {
 
   has_header_ = has_header;
@@ -45,6 +46,8 @@ index_connection::index_connection(
   trim_ws_ = trim_ws;
   escape_double_ = escape_double;
   escape_backslash_ = escape_backslash;
+  comment_ = comment;
+  skip_ = skip;
 
   auto tempfile =
       Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["tempfile"])();
@@ -59,13 +62,16 @@ index_connection::index_connection(
   std::vector<char> buf(chunk_size);
 
   idx_.reserve(128);
-  idx_.push_back(0);
 
   auto sz = R_ReadConnection(con, buf.data(), chunk_size);
 
   // Parse header
-  auto first_nl = find_next_newline(buf, 0);
-  index_region(buf, idx_, delim, quote, 0, first_nl);
+  auto start = find_first_line(buf);
+  idx_.push_back(start);
+
+  // Index the first row
+  auto first_nl = find_next_newline(buf, start);
+  index_region(buf, idx_, delim, quote, start, first_nl);
   columns_ = idx_.size();
 
   while (sz > 0) {

@@ -31,6 +31,7 @@ index::index(
     const bool escape_backslash,
     const bool has_header,
     const size_t skip,
+    const char comment,
     size_t num_threads)
     : filename_(filename),
       has_header_(has_header),
@@ -38,6 +39,8 @@ index::index(
       trim_ws_(trim_ws),
       escape_double_(escape_double),
       escape_backslash_(escape_backslash),
+      skip_(skip),
+      comment_(comment),
       rows_(0),
       columns_(0) {
 
@@ -53,11 +56,12 @@ index::index(
   // We read the values into a vector of vectors, then merge them afterwards
   std::vector<std::vector<size_t> > values(num_threads + 1);
 
+  auto start = find_first_line(mmap_);
+  values[0].push_back(start);
+
   // Index the first row
-  // TODO: skip leading blank lines / comments
-  auto first_nl = find_next_newline(mmap_, 0);
-  values[0].push_back(0);
-  index_region(mmap_, values[0], delim, quote, 0, first_nl);
+  auto first_nl = find_next_newline(mmap_, start);
+  index_region(mmap_, values[0], delim, quote, start, first_nl);
   columns_ = values[0].size();
 
   auto second_nl = find_next_newline(mmap_, first_nl + 1);

@@ -76,3 +76,32 @@ test_that("vroom escapes backslashes", {
   )
 })
 
+test_that("vroom ignores leading whitespace", {
+  test_vroom('\n\n   \t \t\n  \n\na,b,c\n1,2,3"', delim = ",",
+    equals = tibble::tibble(a = 1, b = 2, c = 3)
+  )
+})
+
+test_that("vroom ignores comments", {
+  test_vroom('\n\n \t #a,b,c\na,b,c\n1,2,3"', delim = ",", comment = "#",
+    equals = tibble::tibble(a = 1, b = 2, c = 3)
+  )
+})
+
+test_that("vroom respects skip", {
+  test_vroom('#a,b,c\na,b,c\n1,2,3"', delim = ",", skip = 1,
+    equals = tibble::tibble(a = 1, b = 2, c = 3)
+  )
+
+  test_vroom('#a,b,c\na,b,c\n1,2,3"', delim = ",", skip = 1, comment = "#",
+    equals = tibble::tibble(a = 1, b = 2, c = 3)
+  )
+
+  test_vroom('#a,b,c\nasdfasdf\na,b,c\n1,2,3"', delim = ",", skip = 2, comment = "#",
+    equals = tibble::tibble(a = 1, b = 2, c = 3)
+  )
+
+  test_vroom('\n\n#a,b,c\nasdfasdf\na,b,c\n1,2,3"', delim = ",", skip = 4, comment = "#",
+    equals = tibble::tibble(a = 1, b = 2, c = 3)
+  )
+})
