@@ -76,6 +76,15 @@ columns, see the [benchmark
 article](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)
 for details.
 
+## RStudio Caveats
+
+Until very recently (2019-01-23) RStudio’s environment pane caused
+Altrep objects to be automatically materialized, which removes most of
+the benefits (and can acutally make things much slower). This was fixed
+in [rstudio\#4210](https://github.com/rstudio/rstudio/pull/4210), so it
+is recommended you use a [daily version](https://dailies.rstudio.com/)
+if you are trying to use vroom inside RStudio.
+
 ## Thanks
 
   - [Gabe Becker](https://twitter.com/groundwalkergmb), [Luke
