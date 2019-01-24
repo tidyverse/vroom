@@ -155,9 +155,10 @@ public:
   row_iterator header() const { return row_iterator(-1, this); }
 
 protected:
+  using idx_t = std::vector<size_t>;
   std::string filename_;
   mio::mmap_source mmap_;
-  std::vector<size_t> idx_;
+  idx_t idx_;
   bool has_header_;
   char quote_;
   bool trim_ws_;
@@ -220,7 +221,7 @@ protected:
   template <typename T>
   void index_region(
       const T& source,
-      std::vector<size_t>& destination,
+      idx_t& destination,
       const char delim,
       const char quote,
       const size_t start,

@@ -54,7 +54,7 @@ index::index(
   auto file_size = mmap_.cend() - mmap_.cbegin();
 
   // We read the values into a vector of vectors, then merge them afterwards
-  std::vector<std::vector<size_t> > values(num_threads + 1);
+  std::vector<idx_t> values(num_threads + 1);
 
   auto start = find_first_line(mmap_);
   values[0].push_back(start);
@@ -91,10 +91,7 @@ index::index(
       true);
 
   auto total_size = std::accumulate(
-      values.begin(),
-      values.end(),
-      0,
-      [](size_t sum, const std::vector<size_t>& v) {
+      values.begin(), values.end(), 0, [](size_t sum, const idx_t& v) {
         sum += v.size();
 #if DEBUG
         Rcpp::Rcerr << v.size() << '\n';
