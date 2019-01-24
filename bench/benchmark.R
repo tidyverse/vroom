@@ -3,7 +3,7 @@ path <- "~/data/trip_fare_1.tsv"
 vroom_base <- function(file) {
   library(vroom)
   list(
-    bench::system_time(x <- vroom(file)),
+    bench::system_time(x <- vroom(file, quote = "", escape_double = FALSE, na = character())),
     bench::system_time(print(x)),
     bench::system_time(head(x)),
     bench::system_time(tail(x)),
@@ -16,7 +16,7 @@ vroom_dplyr <- function(file) {
   library(vroom)
   library(dplyr)
   list(
-    bench::system_time(x <- vroom(file)),
+    bench::system_time(x <- vroom(file, quote = "", escape_double = FALSE, na = character())),
     bench::system_time(print(x)),
     bench::system_time(head(x)),
     bench::system_time(tail(x)),
@@ -28,7 +28,7 @@ vroom_dplyr <- function(file) {
 data.table <- function(file) {
   library(data.table)
   list(
-    bench::system_time(x <- data.table::fread(file)),
+    bench::system_time(x <- data.table::fread(file, sep = "\t", quote = "", strip.white = FALSE, na.strings = NULL)),
     bench::system_time(print(x)),
     bench::system_time(head(x)),
     bench::system_time(tail(x)),
@@ -41,7 +41,7 @@ readr <- function(file) {
   library(readr)
   library(dplyr)
   list(
-    bench::system_time(x <- read_tsv(file)),
+    bench::system_time(x <- read_tsv(file, quote = "", trim_ws = FALSE, na = character())),
     bench::system_time(print(x)),
     bench::system_time(head(x)),
     bench::system_time(tail(x)),
@@ -52,7 +52,7 @@ readr <- function(file) {
 
 read.delim <- function(file) {
   list(
-    bench::system_time(x <- read.delim(file)),
+    bench::system_time(x <- read.delim(file, quote = "", strip.white = FALSE, na.strings = NULL)),
     bench::system_time(print(head(x, 25))),
     bench::system_time(head(x)),
     bench::system_time(tail(x)),
