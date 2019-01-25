@@ -15,7 +15,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 coverage](https://codecov.io/gh/jimhester/vroom/branch/master/graph/badge.svg)](https://codecov.io/gh/jimhester/vroom?branch=master)
 <!-- badges: end -->
 
-The fastest delimited reader for R, **650.54 MB/sec**.
+The fastest delimited reader for R, **971.70 MB/sec**.
 
 But that’s impossible\! How can it be [so
 fast](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)?
@@ -35,10 +35,10 @@ newlines or other niceties which can slow down and complicate parsing.
 
 | package    | time (sec) | speedup | throughput |
 | :--------- | ---------: | ------: | :--------- |
-| vroom      |       2.56 |   42.14 | 650.54 MB  |
-| data.table |      19.00 |    5.68 | 87.71 MB   |
-| readr      |      25.18 |    4.29 | 66.21 MB   |
-| read.delim |     107.97 |    1.00 | 15.44 MB   |
+| vroom      |       1.72 |   65.88 | 971.70 MB  |
+| data.table |      19.37 |    5.83 | 86.03 MB   |
+| readr      |      25.71 |    4.40 | 64.84 MB   |
+| read.delim |     113.02 |    1.00 | 14.75 MB   |
 
 ## Installation
 
@@ -55,7 +55,7 @@ devtools::install_github("jimhester/vroom")
 vroom::vroom("mtcars.tsv")
 #> # A tibble: 32 x 12
 #>    model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
-#>    <chr>  <dbl> <int> <dbl> <int> <dbl> <dbl> <dbl> <int> <int> <int> <int>
+#>    <chr>  <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
 #>  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1     4     4
 #>  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1     4     4
 #>  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1

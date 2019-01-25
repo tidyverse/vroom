@@ -61,21 +61,23 @@ index_connection::index_connection(
 
   std::vector<char> buf(chunk_size);
 
-  idx_.reserve(128);
+  idx_ = std::vector<idx_t>(1);
+
+  idx_[0].reserve(128);
 
   auto sz = R_ReadConnection(con, buf.data(), chunk_size);
 
   // Parse header
   auto start = find_first_line(buf);
-  idx_.push_back(start);
+  idx_[0].push_back(start);
 
   // Index the first row
   auto first_nl = find_next_newline(buf, start);
-  index_region(buf, idx_, delim, quote, start, first_nl);
-  columns_ = idx_.size();
+  index_region(buf, idx_[0], delim, quote, start, first_nl);
+  columns_ = idx_[0].size();
 
   while (sz > 0) {
-    index_region(buf, idx_, delim, quote, first_nl, sz);
+    index_region(buf, idx_[0], delim, quote, first_nl, sz);
     out.write(buf.data(), sz);
 
     sz = R_ReadConnection(con, buf.data(), chunk_size);
@@ -89,7 +91,7 @@ index_connection::index_connection(
     throw Rcpp::exception(error.message().c_str(), false);
   }
 
-  rows_ = idx_.size() / columns_;
+  rows_ = idx_[0].size() / columns_;
 
   if (has_header_) {
     --rows_;
@@ -99,7 +101,7 @@ index_connection::index_connection(
   std::ofstream log(
       "index_connection.idx",
       std::fstream::out | std::fstream::binary | std::fstream::trunc);
-  for (auto& v : idx_) {
+  for (auto& v : idx_[0]) {
     log << v << '\n';
   }
   log.close();

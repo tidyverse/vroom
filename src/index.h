@@ -77,7 +77,7 @@ public:
       return *this;
     }
     bool operator!=(row_iterator& other) const { return i_ != other.i_; }
-    std::string operator*() const { return idx_->get_trimmed_val(i_); }
+    const std::string operator*() { return idx_->get_trimmed_val(i_); }
   };
 
   class col_iterator {
@@ -128,7 +128,7 @@ public:
     }
     bool operator!=(col_iterator& other) const { return i_ != other.i_; }
 
-    std::string operator*() const { return idx_->get_trimmed_val(i_); }
+    std::string operator*() { return idx_->get_trimmed_val(i_); }
 
     col_iterator& operator+=(int n) {
       i_ += idx_->columns_ * n;
@@ -158,7 +158,7 @@ protected:
   using idx_t = std::vector<size_t>;
   std::string filename_;
   mio::mmap_source mmap_;
-  idx_t idx_;
+  std::vector<idx_t> idx_;
   bool has_header_;
   char quote_;
   bool trim_ws_;
@@ -214,9 +214,12 @@ protected:
 
   void trim_quotes(const char*& begin, const char*& end) const;
   void trim_whitespace(const char*& begin, const char*& end) const;
-  std::string get_escaped_string(const char* begin, const char* end) const;
+  const std::string
+  get_escaped_string(const char* begin, const char* end) const;
 
   const std::string get_trimmed_val(size_t i) const;
+
+  std::pair<const char*, const char*> get_cell(size_t i) const;
 
   template <typename T>
   void index_region(

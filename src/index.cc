@@ -53,23 +53,23 @@ index::index(
 
   auto file_size = mmap_.cend() - mmap_.cbegin();
 
-  // We read the values into a vector of vectors, then merge them afterwards
-  std::vector<idx_t> values(num_threads + 1);
+  idx_ = std::vector<idx_t>(num_threads + 1);
 
   auto start = find_first_line(mmap_);
-  values[0].push_back(start);
+  idx_[0].push_back(start);
 
   // Index the first row
   auto first_nl = find_next_newline(mmap_, start);
-  index_region(mmap_, values[0], delim, quote, start, first_nl);
-  columns_ = values[0].size();
+  index_region(mmap_, idx_[0], delim, quote, start, first_nl + 1);
+  columns_ = idx_[0].size() - 1;
 
   auto second_nl = find_next_newline(mmap_, first_nl + 1);
   auto one_row_size = second_nl - first_nl;
   auto guessed_rows = (file_size - first_nl) / one_row_size * 1.1;
 
 #if DEBUG
-  Rcpp::Rcerr << "guessed_rows: " << guessed_rows << '\n';
+  Rcpp::Rcerr << "columns: " << columns_ << " guessed_rows: " << guessed_rows
+              << '\n';
 #endif
 
   // This should be enough to ensure the first line fits in one thread, I
@@ -81,17 +81,17 @@ index::index(
   parallel_for(
       file_size - first_nl,
       [&](int start, int end, int id) {
-        values[id + 1].reserve((guessed_rows / num_threads) * columns_);
+        idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
         start = find_next_newline(mmap_, first_nl + start);
         end = find_next_newline(mmap_, first_nl + end);
         // Rcpp::Rcerr << "Indexing start: ", v.size() << '\n';
-        index_region(mmap_, values[id + 1], delim, quote, start, end);
+        index_region(mmap_, idx_[id + 1], delim, quote, start, end + 1);
       },
       num_threads,
       true);
 
   auto total_size = std::accumulate(
-      values.begin(), values.end(), 0, [](size_t sum, const idx_t& v) {
+      idx_.begin(), idx_.end(), 0, [](size_t sum, const idx_t& v) {
         sum += v.size();
 #if DEBUG
         Rcpp::Rcerr << v.size() << '\n';
@@ -99,36 +99,36 @@ index::index(
         return sum;
       });
 
-  idx_.reserve(total_size);
+  // idx_.reserve(total_size);
 
 #if DEBUG
   Rcpp::Rcerr << "combining vectors of size: " << total_size << "\n";
 #endif
 
-  for (auto& v : values) {
+  // for (auto& v : values) {
 
-    idx_.insert(
-        std::end(idx_),
-        std::make_move_iterator(std::begin(v)),
-        std::make_move_iterator(std::end(v)));
-  }
+  // idx_.insert(
+  // std::end(idx_),
+  // std::make_move_iterator(std::begin(v)),
+  // std::make_move_iterator(std::end(v)));
+  //}
 
-  rows_ = idx_.size() / columns_;
+  rows_ = total_size / columns_;
 
   if (has_header_) {
     --rows_;
   }
 
-#if DEBUG
-  std::ofstream log(
-      "index.idx",
-      std::fstream::out | std::fstream::binary | std::fstream::trunc);
-  for (auto& v : idx_) {
-    log << v << '\n';
-  }
-  log.close();
-  Rcpp::Rcerr << columns_ << ':' << rows_ << '\n';
-#endif
+  //#if DEBUG
+  // std::ofstream log(
+  //"index.idx",
+  // std::fstream::out | std::fstream::binary | std::fstream::trunc);
+  // for (auto& v : idx_) {
+  // log << v << '\n';
+  //}
+  // log.close();
+  // Rcpp::Rcerr << columns_ << ':' << rows_ << '\n';
+  //#endif
 }
 
 void index::trim_quotes(const char*& begin, const char*& end) const {
@@ -152,7 +152,7 @@ void index::trim_whitespace(const char*& begin, const char*& end) const {
   }
 }
 
-std::string
+const std::string
 index::get_escaped_string(const char* begin, const char* end) const {
   std::string out;
   out.reserve(end - begin);
@@ -169,9 +169,26 @@ index::get_escaped_string(const char* begin, const char* end) const {
   return out;
 }
 
+std::pair<const char*, const char*> index::get_cell(size_t i) const {
+
+  for (const auto& idx : idx_) {
+    auto sz = idx.size();
+    if (i + 1 < sz) {
+      return {mmap_.data() + idx[i], mmap_.data() + idx[i + 1] - 1};
+    }
+
+    i -= (sz - 1);
+  }
+
+  throw std::out_of_range("blah");
+  /* should never get here */
+  return {0, 0};
+}
+
 const std::string index::get_trimmed_val(size_t i) const {
-  auto begin = mmap_.data() + idx_[i];
-  auto end = mmap_.data() + idx_[i + 1] - 1;
+
+  const char *begin, *end;
+  std::tie(begin, end) = get_cell(i);
 
   if (trim_ws_) {
     trim_whitespace(begin, end);
