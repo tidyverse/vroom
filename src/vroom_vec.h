@@ -1,7 +1,7 @@
 #pragma once
 
 struct vroom_vec_info {
-  std::shared_ptr<vroom::index> idx;
+  std::shared_ptr<vroom::index_collection> idx;
   size_t column;
   size_t num_threads;
   std::shared_ptr<Rcpp::CharacterVector> na;

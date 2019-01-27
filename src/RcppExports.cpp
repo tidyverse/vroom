@@ -16,12 +16,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // vroom_
-SEXP vroom_(RObject file, const char delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char comment, RObject col_names, RObject col_types, size_t skip, CharacterVector na, size_t num_threads);
-RcppExport SEXP _vroom_vroom_(SEXP fileSEXP, SEXP delimSEXP, SEXP quoteSEXP, SEXP trim_wsSEXP, SEXP escape_doubleSEXP, SEXP escape_backslashSEXP, SEXP commentSEXP, SEXP col_namesSEXP, SEXP col_typesSEXP, SEXP skipSEXP, SEXP naSEXP, SEXP num_threadsSEXP) {
+SEXP vroom_(List inputs, const char delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char comment, RObject col_names, RObject col_types, size_t skip, CharacterVector na, size_t num_threads);
+RcppExport SEXP _vroom_vroom_(SEXP inputsSEXP, SEXP delimSEXP, SEXP quoteSEXP, SEXP trim_wsSEXP, SEXP escape_doubleSEXP, SEXP escape_backslashSEXP, SEXP commentSEXP, SEXP col_namesSEXP, SEXP col_typesSEXP, SEXP skipSEXP, SEXP naSEXP, SEXP num_threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< RObject >::type file(fileSEXP);
+    Rcpp::traits::input_parameter< List >::type inputs(inputsSEXP);
     Rcpp::traits::input_parameter< const char >::type delim(delimSEXP);
     Rcpp::traits::input_parameter< const char >::type quote(quoteSEXP);
     Rcpp::traits::input_parameter< bool >::type trim_ws(trim_wsSEXP);
@@ -33,7 +33,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< size_t >::type skip(skipSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type na(naSEXP);
     Rcpp::traits::input_parameter< size_t >::type num_threads(num_threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(vroom_(file, delim, quote, trim_ws, escape_double, escape_backslash, comment, col_names, col_types, skip, na, num_threads));
+    rcpp_result_gen = Rcpp::wrap(vroom_(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, col_names, col_types, skip, na, num_threads));
     return rcpp_result_gen;
 END_RCPP
 }

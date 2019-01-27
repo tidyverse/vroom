@@ -61,7 +61,7 @@ index_connection::index_connection(
 
   std::vector<char> buf(chunk_size);
 
-  idx_ = std::vector<idx_t>(1);
+  idx_ = std::vector<idx_t>(2);
 
   idx_[0].reserve(128);
 
@@ -69,15 +69,20 @@ index_connection::index_connection(
 
   // Parse header
   auto start = find_first_line(buf);
-  idx_[0].push_back(start);
+
+  auto first_nl = find_next_newline(buf, start);
 
   // Index the first row
-  auto first_nl = find_next_newline(buf, start);
-  index_region(buf, idx_[0], delim, quote, start, first_nl);
-  columns_ = idx_[0].size();
+  idx_[0].push_back(start - 1);
+  index_region(buf, idx_[0], delim, quote, start, first_nl + 1);
+  columns_ = idx_[0].size() - 1;
+
+#if DEBUG
+  Rcpp::Rcerr << "columns: " << columns_ << '\n';
+#endif
 
   while (sz > 0) {
-    index_region(buf, idx_[0], delim, quote, first_nl, sz);
+    index_region(buf, idx_[1], delim, quote, first_nl, sz);
     out.write(buf.data(), sz);
 
     sz = R_ReadConnection(con, buf.data(), chunk_size);
@@ -91,7 +96,16 @@ index_connection::index_connection(
     throw Rcpp::exception(error.message().c_str(), false);
   }
 
-  rows_ = idx_[0].size() / columns_;
+  auto total_size = std::accumulate(
+      idx_.begin(), idx_.end(), 0, [](size_t sum, const idx_t& v) {
+        sum += v.size() - 1;
+#if DEBUG
+        Rcpp::Rcerr << v.size() << '\n';
+#endif
+        return sum;
+      });
+
+  rows_ = total_size / columns_;
 
   if (has_header_) {
     --rows_;

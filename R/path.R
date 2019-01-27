@@ -1,12 +1,17 @@
-standardise_path <-function (path) {
+standardise_path <- function(path) {
+  if (inherits(path, "connection")) {
+    return(list(path))
+  }
+
+  lapply(path, standardise_one_path, envir = parent.frame())
+}
+
+standardise_one_path <-function (path, envir = parent.frame()) {
   if (!is.character(path)) {
     return(path)
   }
-  if (length(path) > 1) {
-    return(chr_to_file(path, parent.frame()))
-  }
   if (grepl("\n", path)) {
-    return(chr_to_file(sub("\n$", "", path), parent.frame()))
+    return(chr_to_file(sub("\n$", "", path), envir = envir))
   }
   path.expand(path)
 }

@@ -53,53 +53,58 @@ index::index(
 
   auto file_size = mmap_.cend() - mmap_.cbegin();
 
-  idx_ = std::vector<idx_t>(num_threads + 1);
-
   auto start = find_first_line(mmap_);
-  idx_[0].push_back(start);
 
-  // Index the first row
   auto first_nl = find_next_newline(mmap_, start);
-  index_region(mmap_, idx_[0], delim, quote, start, first_nl + 1);
-  columns_ = idx_[0].size() - 1;
-
   auto second_nl = find_next_newline(mmap_, first_nl + 1);
   auto one_row_size = second_nl - first_nl;
   auto guessed_rows = (file_size - first_nl) / one_row_size * 1.1;
+
+  //
+  // We want at least 10 lines per batch, otherwise threads aren't really
+  // useful
+  auto batch_size = file_size / num_threads;
+  auto line_size = second_nl - first_nl;
+  if (batch_size < line_size * 10) {
+    num_threads = 1;
+  }
+
+  idx_ = std::vector<idx_t>(num_threads + 1);
+
+  // Index the first row
+  idx_[0].push_back(start - 1);
+  index_region(mmap_, idx_[0], delim, quote, start, first_nl + 1);
+  columns_ = idx_[0].size() - 1;
 
 #if DEBUG
   Rcpp::Rcerr << "columns: " << columns_ << " guessed_rows: " << guessed_rows
               << '\n';
 #endif
 
-  // This should be enough to ensure the first line fits in one thread, I
-  // hope...
-  if (file_size < 32768) {
-    num_threads = 1;
-  }
-
   parallel_for(
       file_size - first_nl,
       [&](int start, int end, int id) {
         idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
         start = find_next_newline(mmap_, first_nl + start);
-        end = find_next_newline(mmap_, first_nl + end);
-        // Rcpp::Rcerr << "Indexing start: ", v.size() << '\n';
-        index_region(mmap_, idx_[id + 1], delim, quote, start, end + 1);
+        end = find_next_newline(mmap_, first_nl + end) + 1;
+#if DEBUG
+        Rcpp::Rcerr << "Indexing " << start << "-" << end << '\n';
+#endif
+        index_region(mmap_, idx_[id + 1], delim, quote, start, end);
       },
       num_threads,
       true);
 
   auto total_size = std::accumulate(
       idx_.begin(), idx_.end(), 0, [](size_t sum, const idx_t& v) {
-        sum += v.size();
+        sum += v.size() - 1;
 #if DEBUG
         Rcpp::Rcerr << v.size() << '\n';
 #endif
         return sum;
       });
 
-  // idx_.reserve(total_size);
+  // idx_->reserve(total_size);
 
 #if DEBUG
   Rcpp::Rcerr << "combining vectors of size: " << total_size << "\n";
@@ -107,7 +112,7 @@ index::index(
 
   // for (auto& v : values) {
 
-  // idx_.insert(
+  // idx_->insert(
   // std::end(idx_),
   // std::make_move_iterator(std::begin(v)),
   // std::make_move_iterator(std::end(v)));
@@ -119,16 +124,19 @@ index::index(
     --rows_;
   }
 
-  //#if DEBUG
-  // std::ofstream log(
-  //"index.idx",
-  // std::fstream::out | std::fstream::binary | std::fstream::trunc);
-  // for (auto& v : idx_) {
-  // log << v << '\n';
-  //}
-  // log.close();
-  // Rcpp::Rcerr << columns_ << ':' << rows_ << '\n';
-  //#endif
+#if DEBUG
+  std::ofstream log(
+      "index.idx",
+      std::fstream::out | std::fstream::binary | std::fstream::trunc);
+  for (auto& i : idx_) {
+    for (auto& v : i) {
+      log << v << '\n';
+    }
+    log << "---\n";
+  }
+  log.close();
+  Rcpp::Rcerr << columns_ << ':' << rows_ << '\n';
+#endif
 }
 
 void index::trim_quotes(const char*& begin, const char*& end) const {
@@ -171,13 +179,22 @@ index::get_escaped_string(const char* begin, const char* end) const {
 
 std::pair<const char*, const char*> index::get_cell(size_t i) const {
 
+#if DEBUG
+  auto oi = i;
+#endif
+
   for (const auto& idx : idx_) {
     auto sz = idx.size();
     if (i + 1 < sz) {
-      return {mmap_.data() + idx[i], mmap_.data() + idx[i + 1] - 1};
+      auto start = idx[i] + 1;
+      auto end = idx[i + 1];
+      return {mmap_.data() + start, mmap_.data() + end};
     }
 
     i -= (sz - 1);
+#if DEBUG
+    Rcpp::Rcerr << "oi: " << oi << " i: " << i << " sz: " << sz << '\n';
+#endif
   }
 
   throw std::out_of_range("blah");
@@ -213,4 +230,59 @@ const std::string index::get(size_t row, size_t col) const {
   auto i = (row + has_header_) * columns_ + col;
 
   return get_trimmed_val(i);
+}
+
+index::column::iterator::iterator(
+    const index& idx, size_t column, size_t start, size_t end)
+    : idx_(&idx),
+      column_(column),
+      start_(start + idx_->has_header_),
+      end_(end + idx_->has_header_) {
+  i_ = (start_ * idx_->columns_) + column_;
+}
+
+index::column::iterator index::column::iterator::operator++(int) /* postfix */ {
+  index::column::iterator copy(*this);
+  ++*this;
+  return copy;
+}
+index::column::iterator& index::column::iterator::operator++() /* prefix */ {
+  i_ += idx_->columns_;
+  return *this;
+}
+
+bool index::column::iterator::
+operator!=(const index::column::iterator& other) const {
+  return i_ != other.i_;
+}
+bool index::column::iterator::
+operator==(const index::column::iterator& other) const {
+  return i_ == other.i_;
+}
+
+std::string index::column::iterator::operator*() {
+  return idx_->get_trimmed_val(i_);
+}
+
+index::column::iterator& index::column::iterator::operator+=(int n) {
+  i_ += idx_->columns_ * n;
+  return *this;
+}
+
+index::column::iterator index::column::iterator::operator+(int n) {
+  index::column::iterator out(*this);
+  out += n;
+  return out;
+}
+
+// Class column
+index::column::column(const index& idx, size_t column)
+    : idx_(idx), column_(column){};
+
+index::column::iterator index::column::begin() {
+  return index::column::iterator(idx_, column_, 0, idx_.num_rows());
+}
+index::column::iterator index::column::end() {
+  return index::column::iterator(
+      idx_, column_, idx_.num_rows(), idx_.num_rows());
 }

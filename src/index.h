@@ -34,6 +34,40 @@ public:
       const char comment,
       const size_t num_threads);
 
+  class column {
+    const index& idx_;
+    size_t column_;
+
+  public:
+    column(const index& idx, size_t column);
+
+    class iterator {
+      size_t i_;
+      const index* idx_;
+      size_t column_;
+      size_t start_;
+      size_t end_;
+
+    public:
+      using iterator_category = std::forward_iterator_tag;
+      using value_type = std::string;
+      using pointer = std::string*;
+      using reference = std::string&;
+
+      iterator(const index& idx, size_t column, size_t start, size_t end);
+      iterator operator++(int); /* postfix */
+      iterator& operator++();   /* prefix */
+      bool operator!=(const iterator& other) const;
+      bool operator==(const iterator& other) const;
+
+      std::string operator*();
+      iterator& operator+=(int n);
+      iterator operator+(int n);
+    };
+    iterator begin();
+    iterator end();
+  };
+
   index() : rows_(0), columns_(0){};
 
   const std::string get(size_t row, size_t col) const;
@@ -80,81 +114,15 @@ public:
     const std::string operator*() { return idx_->get_trimmed_val(i_); }
   };
 
-  class col_iterator {
-    size_t i_;
-    size_t column_;
-    const index* idx_;
-    size_t start_;
-    size_t end_;
-
-  public:
-    using iterator_category = std::forward_iterator_tag;
-    using value_type = std::string;
-    using difference_type = std::string;
-    using pointer = std::string*;
-    using reference = std::string&;
-
-    col_iterator(size_t column, const index* idx)
-        : column_(column),
-          idx_(idx),
-          start_(idx_->has_header_),
-          end_(idx_->has_header_ + idx_->rows_) {
-      i_ = (start_ * idx_->columns_) + column_;
-    }
-
-    col_iterator(size_t column, const index* idx, size_t start, size_t end)
-        : column_(column),
-          idx_(idx),
-          start_(start + idx_->has_header_),
-          end_(end + idx_->has_header_) {
-      i_ = (start_ * idx_->columns_) + column_;
-    }
-    col_iterator& begin() {
-      i_ = (start_ * idx_->columns_) + column_;
-      return *this;
-    }
-    col_iterator& end() {
-      i_ = (end_)*idx_->columns_ + column_;
-      return *this;
-    }
-    col_iterator operator++(int) /* postfix */ {
-      col_iterator copy(*this);
-      ++*this;
-      return copy;
-    }
-    col_iterator& operator++() /* prefix */ {
-      i_ += idx_->columns_;
-      return *this;
-    }
-    bool operator!=(col_iterator& other) const { return i_ != other.i_; }
-
-    std::string operator*() { return idx_->get_trimmed_val(i_); }
-
-    col_iterator& operator+=(int n) {
-      i_ += idx_->columns_ * n;
-      return *this;
-    }
-
-    col_iterator operator+(int n) {
-      col_iterator out(*this);
-      out += n;
-      return out;
-    }
-  };
-
-  col_iterator column(size_t column) const {
-    return col_iterator(column, this);
-  }
-
-  col_iterator column(size_t column, size_t start, size_t end) const {
-    return col_iterator(column, this, start, end);
+  column get_column(size_t col) const {
+    return vroom::index::column(*this, col);
   }
 
   row_iterator row(size_t row) const { return row_iterator(row, this); }
 
   row_iterator header() const { return row_iterator(-1, this); }
 
-protected:
+public:
   using idx_t = std::vector<size_t>;
   std::string filename_;
   mio::mmap_source mmap_;
@@ -243,12 +211,17 @@ protected:
     auto begin = source.data();
 
     // The actual parsing is here
-    auto i = strcspn(begin + last, query.data()) + last;
+    auto result = strcspn(begin + last, query.data());
+    auto i = result + last;
+#if DEBUG
+    Rcpp::Rcerr << "last: " << last << " strcspn: " << result << " i: " << i
+                << '\n';
+#endif
     while (i < end) {
       auto c = source[i];
 
       if (c == delim && !in_quote) {
-        destination.push_back(i + 1);
+        destination.push_back(i);
       }
 
       else if (escape_backslash_ && c == '\\') {
@@ -260,11 +233,16 @@ protected:
       }
 
       else if (c == '\n') { // no embedded quotes allowed
-        destination.push_back(i + 1);
+        destination.push_back(i);
       }
 
       last = i;
-      i = strcspn(begin + last + 1, query.data()) + last + 1;
+      result = strcspn(begin + last + 1, query.data());
+      i = result + last + 1;
+#if DEBUG
+      Rcpp::Rcerr << "c: " << (int)c << " last: " << last
+                  << " strcspn: " << result << " i: " << i << '\n';
+#endif
     }
   }
 };

@@ -69,8 +69,7 @@ public:
 
     auto p = out.begin();
 
-    auto inf = Info(vec);
-    auto sep_locs = inf.idx;
+    auto info = Info(vec);
 
     parallel_for(
         n,
@@ -80,14 +79,21 @@ public:
           char buf[128];
 
           size_t i = start;
-          for (const auto& str : inf.idx->column(inf.column, start, end)) {
+          auto col = info.idx->get_column(info.column);
+          auto it = col.begin();
+          auto it_end = col.begin();
+          it += start;
+          it_end += end;
+          for (; it != it_end; ++it) {
+            const auto& str = *it;
             std::copy(str.begin(), str.end(), buf);
             buf[str.length()] = '\0';
 
             p[i++] = R_strtod(buf, NULL);
           }
         },
-        inf.num_threads);
+        info.num_threads,
+        true);
 
     R_set_altrep_data2(vec, out);
 

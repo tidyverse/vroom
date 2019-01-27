@@ -13,16 +13,18 @@ test_vroom <- function(content, ..., equals) {
 
   res <- vroom(con, ...)
 
-  # Has a temp_file environment, with a filename
-  tf2 <- attr(res, "filename")
-  expect_true(is.character(tf2))
-  expect_true(file.exists(tf2))
   expect_equivalent(res, equals)
 
-  rm(res)
-  gc()
+  ## Has a temp_file environment, with a filename
+  #tf2 <- attr(res, "filename")
+  #expect_true(is.character(tf2))
+  #expect_true(file.exists(tf2))
 
-  # Which is removed after the object is deleted and the finalizer has run
-  expect_false(file.exists(tf2))
+
+  #rm(res)
+  #gc()
+
+  ## Which is removed after the object is deleted and the finalizer has run
+  #expect_false(file.exists(tf2))
 }
 

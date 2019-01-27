@@ -1,6 +1,7 @@
 #include <mio/shared_mmap.hpp>
 
 #include "index.h"
+#include "index_collection.h"
 #include "index_connection.h"
 #include "read_normal.h"
 #include "vroom_numeric.h"
@@ -12,7 +13,8 @@ enum column_type { character = 0, real = 1, integer = 2, logical = 3 };
 
 inline int min(int a, int b) { return a < b ? a : b; }
 
-CharacterVector read_column_names(const std::shared_ptr<vroom::index>& idx) {
+CharacterVector
+read_column_names(const std::shared_ptr<vroom::index_collection>& idx) {
   CharacterVector nms(idx->num_columns());
 
   auto col = 0;
@@ -25,7 +27,7 @@ CharacterVector read_column_names(const std::shared_ptr<vroom::index>& idx) {
 
 // [[Rcpp::export]]
 SEXP vroom_(
-    RObject file,
+    List inputs,
     const char delim,
     const char quote,
     bool trim_ws,
@@ -40,42 +42,22 @@ SEXP vroom_(
 
   Rcpp::CharacterVector tempfile;
 
-  bool is_connection = file.sexp_type() != STRSXP;
-
-  std::string filename;
-
   bool has_header =
       col_names.sexp_type() == STRSXP ||
       (col_names.sexp_type() == LGLSXP && as<LogicalVector>(col_names)[0]);
 
-  std::shared_ptr<vroom::index> idx;
-
-  if (is_connection) {
-    idx = std::make_shared<vroom::index_connection>(
-        file,
-        delim,
-        quote,
-        trim_ws,
-        escape_double,
-        escape_backslash,
-        has_header,
-        skip,
-        comment,
-        1024 * 1024);
-  } else {
-    filename = CHAR(STRING_ELT(file, 0));
-    idx = std::make_shared<vroom::index>(
-        filename.c_str(),
-        delim,
-        quote,
-        trim_ws,
-        escape_double,
-        escape_backslash,
-        has_header,
-        skip,
-        comment,
-        num_threads);
-  }
+  std::shared_ptr<vroom::index_collection> idx =
+      std::make_shared<vroom::index_collection>(
+          inputs,
+          delim,
+          quote,
+          trim_ws,
+          escape_double,
+          escape_backslash,
+          has_header,
+          skip,
+          comment,
+          num_threads);
 
   auto total_columns = idx->num_columns();
 
@@ -161,7 +143,7 @@ SEXP vroom_(
   }
 
   res.attr("names") = res_nms;
-  res.attr("filename") = idx->filename();
+  // res.attr("filename") = idx->filename();
 
   return res;
 }

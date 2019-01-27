@@ -3,7 +3,7 @@
 #include <Rcpp.h>
 #include <mio/shared_mmap.hpp>
 
-#include "index.h"
+#include "index_collection.h"
 #include "vroom_vec.h"
 
 Rcpp::LogicalVector read_lgl(vroom_vec_info* info);
