@@ -72,12 +72,41 @@ tibble::rownames_to_column(mtcars, "model") %>%
 vroom::vroom("mtcars.tsv")
 ```
 
+## Reading multiple files
+
+vroom natively supports reading from multiple files (or even multiple
+connections).
+
+
+First we will create some files to read by splitting the nycflights dataset by
+airline.
+```{r}
+library(nycflights13)
+iwalk(
+  split(flights, flights$carrier),
+  ~ readr::write_tsv(.x, glue::glue("flights_{.y}.tsv"))
+)
+```
+
+Then we can efficiently read them into one tibble by passing the filenames
+directly to vroom.
+
+```{r}
+files <- fs::dir_ls(glob = "flights*tsv")
+files
+vroom(files)
+```
+
+```{r, include = FALSE}
+fs::file_delete(files)
+```
+
 ## Benchmarks
 
 The speed quoted above is from a dataset with 14,776,615 rows and 11 columns,
 see the [benchmark
 article](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)
-for details.
+for full details.
 
 ## RStudio Caveats
 

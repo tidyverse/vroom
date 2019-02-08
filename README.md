@@ -69,12 +69,58 @@ vroom::vroom("mtcars.tsv")
 #> # … with 22 more rows
 ```
 
+## Reading multiple files
+
+vroom natively supports reading from multiple files (or even multiple
+connections).
+
+First we will create some files to read by splitting the nycflights
+dataset by airline.
+
+``` r
+library(nycflights13)
+iwalk(
+  split(flights, flights$carrier),
+  ~ readr::write_tsv(.x, glue::glue("flights_{.y}.tsv"))
+)
+```
+
+Then we can efficiently read them into one tibble by passing the
+filenames directly to vroom.
+
+``` r
+files <- fs::dir_ls(glob = "flights*tsv")
+files
+#> flights_9E.tsv flights_AA.tsv flights_AS.tsv flights_B6.tsv flights_DL.tsv 
+#> flights_EV.tsv flights_F9.tsv flights_FL.tsv flights_HA.tsv flights_MQ.tsv 
+#> flights_OO.tsv flights_UA.tsv flights_US.tsv flights_VX.tsv flights_WN.tsv 
+#> flights_YV.tsv
+vroom(files)
+#> # A tibble: 336,776 x 19
+#>     year month   day dep_time sched_dep_time dep_delay arr_time
+#>    <dbl> <dbl> <dbl>    <dbl>          <dbl>     <dbl>    <dbl>
+#>  1  2013     1     1      810            810         0     1048
+#>  2  2013     1     1     1451           1500        -9     1634
+#>  3  2013     1     1     1452           1455        -3     1637
+#>  4  2013     1     1     1454           1500        -6     1635
+#>  5  2013     1     1     1507           1515        -8     1651
+#>  6  2013     1     1     1530           1530         0     1650
+#>  7  2013     1     1     1546           1540         6     1753
+#>  8  2013     1     1     1550           1550         0     1844
+#>  9  2013     1     1     1552           1600        -8     1749
+#> 10  2013     1     1     1554           1600        -6     1701
+#> # … with 336,766 more rows, and 12 more variables: sched_arr_time <dbl>,
+#> #   arr_delay <dbl>, carrier <chr>, flight <dbl>, tailnum <chr>,
+#> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
+#> #   minute <dbl>, time_hour <chr>
+```
+
 ## Benchmarks
 
 The speed quoted above is from a dataset with 14,776,615 rows and 11
 columns, see the [benchmark
 article](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)
-for details.
+for full details.
 
 ## RStudio Caveats
 
