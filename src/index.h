@@ -146,9 +146,10 @@ public:
 
     while (*begin == ' ' || *begin == '\t') {
       ++begin;
-      if (*begin == '\n' || *begin == comment_) {
-        return true;
-      }
+    }
+
+    if (*begin == '\n' || *begin == comment_) {
+      return true;
     }
 
     return false;

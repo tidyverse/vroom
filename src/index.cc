@@ -12,16 +12,6 @@ size_t guess_size(size_t records, size_t bytes, size_t file_size) {
 
 using namespace vroom;
 
-// const char index::skip_lines() {
-// auto start = mmap_.data();
-// while (skip > 0) {
-//--skip;
-// start = strchr(start + 1, '\n');
-//}
-
-// return start;
-//}
-
 index::index(
     const char* filename,
     const char delim,

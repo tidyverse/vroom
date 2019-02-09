@@ -59,6 +59,11 @@ index_connection::index_connection(
 
   auto con = R_GetConnection(in);
 
+  bool was_open = con->isopen;
+  if (!was_open) {
+    Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(in);
+  }
+
   std::vector<char> buf(chunk_size);
 
   idx_ = std::vector<idx_t>(2);
@@ -89,6 +94,10 @@ index_connection::index_connection(
   }
 
   out.close();
+
+  if (!was_open) {
+    Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["close"])(in);
+  }
 
   std::error_code error;
   mmap_ = mio::make_mmap_source(filename_, error);
