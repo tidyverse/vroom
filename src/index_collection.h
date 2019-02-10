@@ -31,9 +31,14 @@ public:
 
     const index_collection& idx_;
     size_t column_;
+    size_t start_;
+    size_t end_;
 
   public:
     column(const index_collection& idx, size_t column);
+
+    column(
+        const index_collection& idx, size_t column, size_t start, size_t end);
 
     class iterator {
       size_t i_;
@@ -64,6 +69,10 @@ public:
   };
 
   column get_column(size_t num) const { return column(*this, num); }
+
+  column get_column(size_t num, size_t start, size_t end) const {
+    return column(*this, num, start, end);
+  }
 
   index::row_iterator row(size_t row) const {
 

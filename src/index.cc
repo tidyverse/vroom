@@ -224,10 +224,7 @@ const std::string index::get(size_t row, size_t col) const {
 
 index::column::iterator::iterator(
     const index& idx, size_t column, size_t start, size_t end)
-    : idx_(&idx),
-      column_(column),
-      start_(start + idx_->has_header_),
-      end_(end + idx_->has_header_) {
+    : idx_(&idx), column_(column), start_(start + idx_->has_header_) {
   i_ = (start_ * idx_->columns_) + column_;
 }
 

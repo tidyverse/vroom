@@ -46,7 +46,6 @@ public:
       const index* idx_;
       size_t column_;
       size_t start_;
-      size_t end_;
 
     public:
       using iterator_category = std::forward_iterator_tag;

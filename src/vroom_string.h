@@ -109,13 +109,7 @@ public:
 
     auto i = 0;
 
-    auto col = inf.idx->get_column(inf.column);
-    auto end = col.end();
-
-    for (auto it = col.begin(); it != end; ++it) {
-      // for (const auto& str : inf.idx->column(inf.column)) {
-
-      auto str = *it;
+    for (const auto& str : inf.idx->get_column(inf.column)) {
       auto val = Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8);
 
       // Look for NAs

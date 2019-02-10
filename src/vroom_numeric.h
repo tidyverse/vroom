@@ -79,13 +79,8 @@ public:
           char buf[128];
 
           size_t i = start;
-          auto col = info.idx->get_column(info.column);
-          auto it = col.begin();
-          auto it_end = col.begin();
-          it += start;
-          it_end += end;
-          for (; it != it_end; ++it) {
-            const auto& str = *it;
+          for (const auto& str :
+               info.idx->get_column(info.column, start, end)) {
             std::copy(str.begin(), str.end(), buf);
             buf[str.length()] = '\0';
 

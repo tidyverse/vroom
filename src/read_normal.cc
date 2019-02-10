@@ -56,13 +56,8 @@ Rcpp::LogicalVector read_lgl(vroom_vec_info* info) {
         // how long the buffer is.
 
         auto i = start;
-        auto col = info->idx->get_column(info->column);
-        auto it = col.begin();
-        auto it_end = col.begin();
-        it += start;
-        it_end += end;
-        for (; it != it_end; ++it) {
-          const auto& str = *it;
+        for (const auto& str :
+             info->idx->get_column(info->column, start, end)) {
           p[i++] = parse_logical(str.c_str(), str.c_str() + str.length());
         }
       },
@@ -87,13 +82,7 @@ Rcpp::IntegerVector read_fctr(vroom_vec_info* info) {
   auto start = 0;
   auto end = n;
   auto i = start;
-  auto col = info->idx->get_column(info->column);
-  auto it = col.begin();
-  auto it_end = col.begin();
-  it += start;
-  it_end += end;
-  for (; it != it_end; ++it) {
-    const auto& str = *it;
+  for (const auto& str : info->idx->get_column(info->column, start, end)) {
     auto val = level_map.find(str);
     if (val != level_map.end()) {
       p[i++] = val->second;

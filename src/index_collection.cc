@@ -66,14 +66,18 @@ operator+(int n) {
 
 // Class index_collection::column
 index_collection::column::column(const index_collection& idx, size_t column)
-    : idx_(idx), column_(column){};
+    : idx_(idx), column_(column), start_(0), end_(idx.rows_){};
+
+index_collection::column::column(
+    const index_collection& idx, size_t column, size_t start, size_t end)
+    : idx_(idx), column_(column), start_(start), end_(end){};
 
 index_collection::column::iterator index_collection::column::begin() {
-  return index_collection::column::iterator(idx_, column_, 0);
+  return index_collection::column::iterator(idx_, column_, start_);
 }
 
 index_collection::column::iterator index_collection::column::end() {
-  return index_collection::column::iterator(idx_, column_, idx_.rows_);
+  return index_collection::column::iterator(idx_, column_, end_);
 }
 
 // Index_collection
