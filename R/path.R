@@ -116,3 +116,5 @@ chr_to_file <- function(x, envir = parent.frame()) {
 
   normalizePath(out)
 }
+
+is.connection <- function(x) inherits(x, "connection")
