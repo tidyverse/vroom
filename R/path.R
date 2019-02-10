@@ -95,15 +95,6 @@ zipfile <- function(path, open = "r") {
   unz(path, file, open = open)
 }
 
-#' Returns values from the clipboard
-#'
-#' This is useful in the [read_delim()] functions to read from the clipboard.
-#' @seealso read_delim
-#' @export
-clipboard <- function() {
-  clipr::read_clip()
-}
-
 utils::globalVariables("con")
 
 chr_to_file <- function(x, envir = parent.frame()) {

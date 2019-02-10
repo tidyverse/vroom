@@ -26,5 +26,4 @@ SystemRequirements: C++11
 Suggests: 
     testthat,
     covr,
-    curl,
-    clipr
+    curl
