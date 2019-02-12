@@ -1,5 +1,9 @@
 # These functions adapted from https://github.com/tidyverse/readr/blob/192cb1ca5c445e359f153d2259391e6d324fd0a2/R/source.R
 standardise_path <- function(path) {
+  if (is.raw(path)) {
+    return(list(rawConnection(path, "rb")))
+  }
+
   if (inherits(path, "connection")) {
     return(list(path))
   }
@@ -8,9 +12,14 @@ standardise_path <- function(path) {
 }
 
 standardise_one_path <- function (path, envir = parent.frame()) {
+  if (is.raw(path)) {
+    return(rawConnection(path, "rb"))
+  }
+
   if (!is.character(path)) {
     return(path)
   }
+
   if (grepl("\n", path)) {
     return(chr_to_file(sub("\n$", "", path), envir = envir))
   }
@@ -46,22 +55,6 @@ standardise_one_path <- function (path, envir = parent.frame()) {
     zip = zipfile(path, ""),
     path
   )
-}
-
-source_name <- function(x) {
-  if (is.connection(x)) {
-    "<connection>"
-  } else if (is.raw(x)) {
-    "<raw vector>"
-  } else if (is.character(x)) {
-    if (length(x) > 1 || grepl("\n", x)) {
-      "literal data"
-    } else {
-      paste0("'", x, "'")
-    }
-  } else {
-    "???"
-  }
 }
 
 is_url <- function(path) {
