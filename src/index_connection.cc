@@ -59,9 +59,9 @@ index_connection::index_connection(
 
   auto con = R_GetConnection(in);
 
-  bool was_open = con->isopen;
-  if (!was_open) {
-    Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(in);
+  bool should_open = !con->isopen;
+  if (should_open) {
+    Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(in, "rb");
   }
 
   std::vector<char> buf(chunk_size);
@@ -95,7 +95,10 @@ index_connection::index_connection(
 
   out.close();
 
-  if (!was_open) {
+  /* raw connections are always created as open, but we should close them */
+  bool should_close =
+      should_open || strcmp("rawConnection", con->class_name) == 0;
+  if (should_close) {
     Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["close"])(in);
   }
 

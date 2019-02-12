@@ -115,3 +115,68 @@ test_that("vroom respects col_types", {
     equals = tibble::tibble(a = TRUE, b = factor(2), c = "3")
   )
 })
+
+test_that("vroom handles UTF byte order marks", {
+  # UTF-8
+  expect_equal(
+    vroom(as.raw(c(0xef, 0xbb, 0xbf, # BOM
+                0x41, # A
+                0x0A # newline
+             )), col_names = FALSE
+    )[[1]],
+    "A")
+
+  # UTF-16 Big Endian
+  expect_equal(
+    vroom(as.raw(c(0xfe, 0xff, # BOM
+                0x41, # A
+                0x0A # newline
+             )), col_names = FALSE
+    )[[1]],
+    "A")
+
+  # UTF-16 Little Endian
+  expect_equal(
+    vroom(as.raw(c(0xff, 0xfe, # BOM
+                0x41, # A
+                0x0A # newline
+             )), col_names = FALSE
+    )[[1]],
+    "A")
+
+  # UTF-32 Big Endian
+  expect_equal(
+    vroom(as.raw(c(0x00, 0x00, 0xfe, 0xff, # BOM
+                0x41, # A
+                0x0A # newline
+             )), col_names = FALSE
+    )[[1]],
+    "A")
+
+  # UTF-32 Little Endian
+  expect_equal(
+    vroom(as.raw(c(0xff, 0xfe, 0x00, 0x00, # BOM
+                0x41, # A
+                0x0A # newline
+             )), col_names = FALSE
+    )[[1]],
+    "A")
+})
+
+test_that("vroom handles vectors shorter than the UTF byte order marks", {
+
+  expect_equal(
+    charToRaw(vroom(as.raw(c(0xef, 0xbb, 0x0A)), col_names = FALSE)[[1]]),
+    as.raw(c(0xef, 0xbb))
+  )
+
+  expect_equal(
+    charToRaw(vroom(as.raw(c(0xfe, 0x0A)), col_names = FALSE)[[1]]),
+    as.raw(c(0xfe))
+  )
+
+  expect_equal(
+    charToRaw(vroom(as.raw(c(0xff, 0x0A)), col_names = FALSE)[[1]]),
+    as.raw(c(0xff))
+  )
+})
