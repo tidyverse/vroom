@@ -131,6 +131,7 @@ public:
   bool trim_ws_;
   bool escape_double_;
   bool escape_backslash_;
+  bool windows_newlines_;
   size_t skip_;
   char comment_;
   size_t rows_;

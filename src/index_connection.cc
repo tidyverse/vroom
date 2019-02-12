@@ -77,6 +77,9 @@ index_connection::index_connection(
 
   auto first_nl = find_next_newline(buf, start);
 
+  // Check for windows newlines
+  windows_newlines_ = first_nl > 0 && buf[first_nl - 1] == '\r';
+
   // Index the first row
   idx_[0].push_back(start - 1);
   index_region(buf, idx_[0], delim, quote, start, first_nl + 1);

@@ -50,6 +50,9 @@ index::index(
   auto one_row_size = second_nl - first_nl;
   auto guessed_rows = (file_size - first_nl) / one_row_size * 1.1;
 
+  // Check for windows newlines
+  windows_newlines_ = first_nl > 0 && mmap_[first_nl - 1] == '\r';
+
   //
   // We want at least 10 lines per batch, otherwise threads aren't really
   // useful
@@ -196,6 +199,13 @@ const std::string index::get_trimmed_val(size_t i) const {
 
   const char *begin, *end;
   std::tie(begin, end) = get_cell(i);
+
+  if (windows_newlines_) {
+    bool is_last_column = i % columns_ == (columns_ - 1);
+    if (is_last_column) {
+      end--;
+    }
+  }
 
   if (trim_ws_) {
     trim_whitespace(begin, end);

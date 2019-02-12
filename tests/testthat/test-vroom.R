@@ -180,3 +180,11 @@ test_that("vroom handles vectors shorter than the UTF byte order marks", {
     as.raw(c(0xff))
   )
 })
+
+test_that("vroom handles windows newlines", {
+
+  expect_equal(
+    vroom("a\tb\r\n1\t2\r\n", trim_ws = FALSE)[[1]],
+    1
+  )
+})
