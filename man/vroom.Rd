@@ -7,7 +7,7 @@
 vroom(file, delim = "\\t", col_names = TRUE, col_types = NULL,
   skip = 0, na = c("", "NA"), quote = "\\"", comment = "",
   trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE,
-  num_threads = parallel::detectCores())
+  num_threads = parallel::detectCores(), progress = show_progress())
 }
 \arguments{
 \item{file}{path to a local file.}
@@ -69,6 +69,12 @@ can be used to escape the delimiter character, the quote character, or
 to add special characters like \code{\\n}.}
 
 \item{num_threads}{Number of threads to use when reading and materializing vectors.}
+
+\item{progress}{Display a progress bar? By default it will only display
+in an interactive session and not while knitting a document. The display
+is updated every 50,000 values and will only display if estimated reading
+time is 5 seconds or more. The automatic progress bar can be disabled by
+setting option \code{readr.show_progress} to \code{FALSE}.}
 }
 \description{
 Read a delimited file into a tibble

@@ -91,7 +91,8 @@ index_collection::index_collection(
     const bool has_header,
     const size_t skip,
     const char comment,
-    const size_t num_threads)
+    const size_t num_threads,
+    const bool progress)
     : rows_(0), columns_(0) {
 
   for (int i = 0; i < in.size(); ++i) {
@@ -111,7 +112,8 @@ index_collection::index_collection(
           has_header,
           skip,
           comment,
-          1024 * 1024));
+          1 << 24,
+          progress));
     } else {
       auto filename = as<std::string>(x);
       p = std::unique_ptr<vroom::index>(new vroom::index(
@@ -124,7 +126,8 @@ index_collection::index_collection(
           has_header,
           skip,
           comment,
-          num_threads));
+          num_threads,
+          progress));
     }
     rows_ += p->num_rows();
     columns_ = p->num_columns();
