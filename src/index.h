@@ -12,6 +12,7 @@
 
 #include <array>
 #include "RProgress.h"
+#include <mutex>
 
 namespace vroom {
 
