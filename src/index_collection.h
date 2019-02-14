@@ -11,7 +11,7 @@ class index_collection {
 public:
   index_collection(
       Rcpp::List in,
-      const char delim,
+      const char* delim,
       const char quote,
       const bool trim_ws,
       const bool escape_double,

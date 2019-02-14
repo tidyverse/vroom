@@ -7,7 +7,7 @@ class index_connection : public index {
 public:
   index_connection(
       SEXP in,
-      const char delim,
+      const char* delim,
       const char quote,
       const bool trim_ws,
       const bool escape_double,

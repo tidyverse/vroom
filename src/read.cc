@@ -28,7 +28,7 @@ read_column_names(const std::shared_ptr<vroom::index_collection>& idx) {
 // [[Rcpp::export]]
 SEXP vroom_(
     List inputs,
-    const char delim,
+    const char* delim,
     const char quote,
     bool trim_ws,
     bool escape_double,

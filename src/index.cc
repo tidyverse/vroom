@@ -15,7 +15,7 @@ using namespace vroom;
 
 index::index(
     const char* filename,
-    const char delim,
+    const char* delim,
     const char quote,
     const bool trim_ws,
     const bool escape_double,
@@ -35,7 +35,8 @@ index::index(
       comment_(comment),
       rows_(0),
       columns_(0),
-      progress_(progress) {
+      progress_(progress),
+      delim_len_(strlen(delim)) {
 
   std::error_code error;
   mmap_ = mio::make_mmap_source(filename, error);
@@ -186,7 +187,12 @@ std::pair<const char*, const char*> index::get_cell(size_t i) const {
   for (const auto& idx : idx_) {
     auto sz = idx.size();
     if (i + 1 < sz) {
-      auto start = idx[i] + 1;
+      size_t start;
+      if (i % columns_ == 0) {
+        start = idx[i] + 1;
+      } else {
+        start = idx[i] + delim_len_;
+      }
       auto end = idx[i + 1];
       return {mmap_.data() + start, mmap_.data() + end};
     }

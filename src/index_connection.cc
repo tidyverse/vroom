@@ -32,7 +32,7 @@ using namespace vroom;
 
 index_connection::index_connection(
     SEXP in,
-    const char delim,
+    const char* delim,
     const char quote,
     const bool trim_ws,
     const bool escape_double,
@@ -51,6 +51,7 @@ index_connection::index_connection(
   comment_ = comment;
   skip_ = skip;
   progress_ = progress;
+  delim_len_ = strlen(delim);
 
   auto tempfile =
       Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["tempfile"])();

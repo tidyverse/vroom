@@ -26,7 +26,7 @@ class index {
 public:
   index(
       const char* filename,
-      const char delim,
+      const char* delim,
       const char quote,
       const bool trim_ws,
       const bool escape_double,
@@ -140,6 +140,7 @@ public:
   size_t rows_;
   size_t columns_;
   bool progress_;
+  size_t delim_len_;
 
   void skip_lines();
 
@@ -253,7 +254,7 @@ public:
   void index_region(
       const T& source,
       idx_t& destination,
-      const char delim,
+      const char* delim,
       const char quote,
       const size_t start,
       const size_t end,
@@ -261,7 +262,7 @@ public:
       const size_t update_size = -1) {
 
     // If there are no quotes quote will be '\0', so will just work
-    std::array<char, 4> query = {delim, '\n', '\\', quote};
+    std::array<char, 4> query = {delim[0], '\n', '\\', quote};
 
     size_t last = start;
     auto last_tick = start;
@@ -277,7 +278,7 @@ public:
     while (i < end) {
       auto c = source[i];
 
-      if (c == delim && !in_quote) {
+      if (!in_quote && strncmp(delim, begin + i, delim_len_) == 0) {
         destination.push_back(i);
       }
 

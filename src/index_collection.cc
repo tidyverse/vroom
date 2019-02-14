@@ -83,7 +83,7 @@ index_collection::column::iterator index_collection::column::end() {
 // Index_collection
 index_collection::index_collection(
     Rcpp::List in,
-    const char delim,
+    const char* delim,
     const char quote,
     const bool trim_ws,
     const bool escape_double,

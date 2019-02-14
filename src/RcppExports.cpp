@@ -16,13 +16,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // vroom_
-SEXP vroom_(List inputs, const char delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char comment, RObject col_names, RObject col_types, size_t skip, CharacterVector na, size_t num_threads, bool progress);
+SEXP vroom_(List inputs, const char* delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char comment, RObject col_names, RObject col_types, size_t skip, CharacterVector na, size_t num_threads, bool progress);
 RcppExport SEXP _vroom_vroom_(SEXP inputsSEXP, SEXP delimSEXP, SEXP quoteSEXP, SEXP trim_wsSEXP, SEXP escape_doubleSEXP, SEXP escape_backslashSEXP, SEXP commentSEXP, SEXP col_namesSEXP, SEXP col_typesSEXP, SEXP skipSEXP, SEXP naSEXP, SEXP num_threadsSEXP, SEXP progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type inputs(inputsSEXP);
-    Rcpp::traits::input_parameter< const char >::type delim(delimSEXP);
+    Rcpp::traits::input_parameter< const char* >::type delim(delimSEXP);
     Rcpp::traits::input_parameter< const char >::type quote(quoteSEXP);
     Rcpp::traits::input_parameter< bool >::type trim_ws(trim_wsSEXP);
     Rcpp::traits::input_parameter< bool >::type escape_double(escape_doubleSEXP);
