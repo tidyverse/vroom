@@ -17,18 +17,19 @@
 /// @param use_threads : enable / disable threads.
 ///
 ///
-static void parallel_for(
+static std::vector<std::thread> parallel_for(
     unsigned nb_elements,
     std::function<void(int start, int end, int thread_id)> functor,
     unsigned nb_threads,
-    bool use_threads = true) {
+    bool use_threads = true,
+    bool cleanup = true) {
   // -------
 
   unsigned batch_size = nb_elements / nb_threads;
 
   unsigned batch_remainder = nb_elements % nb_threads;
 
-  std::vector<std::thread> my_threads(nb_threads);
+  auto my_threads = std::vector<std::thread>(nb_threads);
 
   if (use_threads) {
     // Multithread execution
@@ -50,10 +51,14 @@ static void parallel_for(
     // Last batch includes the remainder
     int start = (nb_threads - 1) * batch_size;
     functor(start, start + batch_size + batch_remainder, nb_threads - 1);
+
+    return std::vector<std::thread>();
   }
 
   // Wait for the other thread to finish their task
-  if (use_threads)
+  if (use_threads && cleanup) {
     std::for_each(
         my_threads.begin(), my_threads.end(), std::mem_fn(&std::thread::join));
+  }
+  return my_threads;
 }

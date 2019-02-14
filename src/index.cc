@@ -1,6 +1,7 @@
 #include "index.h"
 
 #include "parallel.h"
+#include "utils.h"
 
 #include <fstream>
 
@@ -22,7 +23,8 @@ index::index(
     const bool has_header,
     const size_t skip,
     const char comment,
-    size_t num_threads)
+    size_t num_threads,
+    bool progress)
     : filename_(filename),
       has_header_(has_header),
       quote_(quote),
@@ -32,7 +34,8 @@ index::index(
       skip_(skip),
       comment_(comment),
       rows_(0),
-      columns_(0) {
+      columns_(0),
+      progress_(progress) {
 
   std::error_code error;
   mmap_ = mio::make_mmap_source(filename, error);
@@ -53,6 +56,14 @@ index::index(
   // Check for windows newlines
   windows_newlines_ = first_nl > 0 && mmap_[first_nl - 1] == '\r';
 
+  std::unique_ptr<multi_progress> pb = nullptr;
+
+  if (progress_) {
+    pb = std::unique_ptr<multi_progress>(
+        new multi_progress(get_pb_format("file", filename), file_size));
+    pb->tick(0);
+  }
+
   //
   // We want at least 10 lines per batch, otherwise threads aren't really
   // useful
@@ -66,42 +77,38 @@ index::index(
 
   // Index the first row
   idx_[0].push_back(start - 1);
-  index_region(mmap_, idx_[0], delim, quote, start, first_nl + 1);
+  index_region(mmap_, idx_[0], delim, quote, start, first_nl + 1, pb, -1);
   columns_ = idx_[0].size() - 1;
 
-#if DEBUG
-  Rcpp::Rcerr << "columns: " << columns_ << " guessed_rows: " << guessed_rows
-              << '\n';
-#endif
-
-  parallel_for(
+  auto threads = parallel_for(
       file_size - first_nl,
       [&](int start, int end, int id) {
         idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
         start = find_next_newline(mmap_, first_nl + start);
         end = find_next_newline(mmap_, first_nl + end) + 1;
-#if DEBUG
-        Rcpp::Rcerr << "Indexing " << start << "-" << end << '\n';
-#endif
-        index_region(mmap_, idx_[id + 1], delim, quote, start, end);
+        index_region(
+            mmap_, idx_[id + 1], delim, quote, start, end, pb, file_size / 200);
       },
       num_threads,
-      true);
+      true,
+      false);
+
+  if (progress_) {
+    pb->display_progress();
+  }
+
+  for (auto& t : threads) {
+    t.join();
+  }
 
   auto total_size = std::accumulate(
       idx_.begin(), idx_.end(), 0, [](size_t sum, const idx_t& v) {
         sum += v.size() - 1;
-#if DEBUG
-        Rcpp::Rcerr << v.size() << '\n';
-#endif
         return sum;
       });
 
-  // idx_->reserve(total_size);
-
-#if DEBUG
-  Rcpp::Rcerr << "combining vectors of size: " << total_size << "\n";
-#endif
+  // std::for_each(
+  // threads.begin(), threads.end(), std::mem_fn(&std::thread::join));
 
   // for (auto& v : values) {
 

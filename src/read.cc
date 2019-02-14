@@ -38,7 +38,8 @@ SEXP vroom_(
     RObject col_types,
     size_t skip,
     CharacterVector na,
-    size_t num_threads) {
+    size_t num_threads,
+    bool progress) {
 
   Rcpp::CharacterVector tempfile;
 
@@ -57,7 +58,8 @@ SEXP vroom_(
           has_header,
           skip,
           comment,
-          num_threads);
+          num_threads,
+          progress);
 
   auto total_columns = idx->num_columns();
 

@@ -24,13 +24,13 @@ NULL
 #' setwd(.old_wd)
 #' }
 vroom <- function(file, delim = "\t", col_names = TRUE, col_types = NULL, skip = 0, na = c("", "NA"),
-  quote = '"', comment = "", trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE, num_threads = parallel::detectCores()) {
+  quote = '"', comment = "", trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE, num_threads = parallel::detectCores(), progress = show_progress()) {
 
   file <- standardise_path(file)
 
   out <- vroom_(file, delim = delim, col_names = col_names, col_types = col_types, skip = skip,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
-    escape_backslash = escape_backslash, comment = comment, num_threads = num_threads)
+    escape_backslash = escape_backslash, comment = comment, num_threads = num_threads, progress = progress)
 
   tibble::as_tibble(out)
 }
@@ -94,4 +94,23 @@ col_types_standardise <- function(col_types, col_names) {
 
 make_names <- function(len) {
   make.names(seq_len(len))
+}
+
+#' @inherit readr::show_progress
+#' @export
+show_progress <- function() {
+  isTRUE(getOption("vroom.show_progress", default = TRUE)) &&
+    interactive() &&
+    !isTRUE(getOption("knitr.in.progress")) &&
+    !isTRUE(getOption("rstudio.notebook.executing")) &&
+    !isTRUE(as.logical(Sys.getenv("TESTTHAT", "false")))
+}
+
+#' @importFrom crayon blue cyan green bold reset
+pb_file_format <- function(filename) {
+  glue::glue_col("{bold}indexing{reset} {blue}{basename(filename)}{reset} [:bar] {green}:rate{reset}, eta: {cyan}:eta{reset}")
+}
+
+pb_connection_format <- function(unused) {
+  glue::glue_col("{bold}indexed{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}")
 }

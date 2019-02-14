@@ -13,13 +13,17 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
 LinkingTo: 
-    Rcpp
+    Rcpp,
+    progress
 Depends: R (>= 3.5)
 Imports: 
     readr,
     tibble,
     withr,
-    Rcpp
+    Rcpp,
+    glue,
+    crayon,
+    progress
 URL: https://github.com/jimhester/vroom
 BugReports: https://github.com/jimhester/vroom/issues
 SystemRequirements: C++11

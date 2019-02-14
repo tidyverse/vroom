@@ -2,6 +2,7 @@
 
 #include <fstream>
 
+#include "utils.h"
 #include <Rcpp.h>
 
 // clang-format off
@@ -39,7 +40,8 @@ index_connection::index_connection(
     const bool has_header,
     const size_t skip,
     const char comment,
-    const size_t chunk_size) {
+    const size_t chunk_size,
+    const bool progress) {
 
   has_header_ = has_header;
   quote_ = quote;
@@ -48,6 +50,7 @@ index_connection::index_connection(
   escape_backslash_ = escape_backslash;
   comment_ = comment;
   skip_ = skip;
+  progress_ = progress;
 
   auto tempfile =
       Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["tempfile"])();
@@ -80,9 +83,16 @@ index_connection::index_connection(
   // Check for windows newlines
   windows_newlines_ = first_nl > 0 && buf[first_nl - 1] == '\r';
 
+  std::unique_ptr<RProgress::RProgress> pb = nullptr;
+  if (progress_) {
+    pb = std::unique_ptr<RProgress::RProgress>(
+        new RProgress::RProgress(get_pb_format("connection"), 1e12));
+    pb->update(0);
+  }
+
   // Index the first row
   idx_[0].push_back(start - 1);
-  index_region(buf, idx_[0], delim, quote, start, first_nl + 1);
+  index_region(buf, idx_[0], delim, quote, start, first_nl + 1, pb);
   columns_ = idx_[0].size() - 1;
 
 #if DEBUG
@@ -90,13 +100,17 @@ index_connection::index_connection(
 #endif
 
   while (sz > 0) {
-    index_region(buf, idx_[1], delim, quote, first_nl, sz);
+    index_region(buf, idx_[1], delim, quote, first_nl, sz, pb, sz / 10);
     out.write(buf.data(), sz);
 
     sz = R_ReadConnection(con, buf.data(), chunk_size);
   }
 
   out.close();
+
+  if (progress_) {
+    pb->update(1);
+  }
 
   /* raw connections are always created as open, but we should close them */
   bool should_close =

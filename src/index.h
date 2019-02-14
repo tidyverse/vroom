@@ -1,8 +1,6 @@
 #ifndef READIDX_IDX_HEADER
 #define READIDX_IDX_HEADER
 
-#include <Rcpp.h>
-
 // clang-format off
 # pragma clang diagnostic push
 # pragma clang diagnostic ignored "-Wsign-compare"
@@ -11,6 +9,10 @@
 // clang-format on
 
 #include <array>
+
+#include "multi_progress.h"
+
+#include <Rcpp.h>
 
 namespace vroom {
 
@@ -32,7 +34,8 @@ public:
       const bool has_header,
       const size_t skip,
       const char comment,
-      const size_t num_threads);
+      const size_t num_threads,
+      const bool progress);
 
   class column {
     const index& idx_;
@@ -136,6 +139,7 @@ public:
   char comment_;
   size_t rows_;
   size_t columns_;
+  bool progress_;
 
   void skip_lines();
 
@@ -245,22 +249,23 @@ public:
 
   std::pair<const char*, const char*> get_cell(size_t i) const;
 
-  template <typename T>
+  template <typename T, typename P>
   void index_region(
       const T& source,
       idx_t& destination,
       const char delim,
       const char quote,
       const size_t start,
-      const size_t end) {
+      const size_t end,
+      P& pb,
+      const size_t update_size = -1) {
 
     // If there are no quotes quote will be '\0', so will just work
     std::array<char, 4> query = {delim, '\n', '\\', quote};
 
     size_t last = start;
-#if DEBUG
-    Rcpp::Rcerr << "start:\t" << start << '\n' << "end:\t" << end << '\n';
-#endif
+    auto last_tick = start;
+    auto num_ticks = 0;
 
     bool in_quote = false;
 
@@ -269,10 +274,6 @@ public:
     // The actual parsing is here
     auto result = strcspn(begin + last, query.data());
     auto i = result + last;
-#if DEBUG
-    Rcpp::Rcerr << "last: " << last << " strcspn: " << result << " i: " << i
-                << '\n';
-#endif
     while (i < end) {
       auto c = source[i];
 
@@ -290,16 +291,25 @@ public:
 
       else if (c == '\n') { // no embedded quotes allowed
         destination.push_back(i);
+        if (progress_) {
+          auto tick_size = i - last_tick;
+          if (tick_size > update_size) {
+            pb->tick(i - last_tick);
+            last_tick = i;
+            ++num_ticks;
+          }
+        }
       }
 
       last = i;
       result = strcspn(begin + last + 1, query.data());
       i = result + last + 1;
-#if DEBUG
-      Rcpp::Rcerr << "c: " << (int)c << " last: " << last
-                  << " strcspn: " << result << " i: " << i << '\n';
-#endif
     }
+
+    if (progress_) {
+      pb->tick(end - last_tick);
+    }
+    // Rcpp::Rcerr << num_ticks << '\n';
   }
 };
 
