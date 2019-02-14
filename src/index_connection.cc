@@ -39,8 +39,7 @@ index_connection::index_connection(
     const bool has_header,
     const size_t skip,
     const char comment,
-    const size_t chunk_size,
-    const bool progress) {
+    const size_t chunk_size) {
 
   has_header_ = has_header;
   quote_ = quote;
@@ -49,7 +48,6 @@ index_connection::index_connection(
   escape_backslash_ = escape_backslash;
   comment_ = comment;
   skip_ = skip;
-  progress_ = progress;
 
   auto tempfile =
       Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["tempfile"])();
@@ -91,23 +89,14 @@ index_connection::index_connection(
   Rcpp::Rcerr << "columns: " << columns_ << '\n';
 #endif
 
-  if (progress_) {
-    pb_ = RProgress::RProgress("indexed :bytes in :elapsed, :rate", 1e12);
-    pb_.update(0);
-  }
-
   while (sz > 0) {
-    index_region(buf, idx_[1], delim, quote, first_nl, sz, sz / 10);
+    index_region(buf, idx_[1], delim, quote, first_nl, sz);
     out.write(buf.data(), sz);
 
     sz = R_ReadConnection(con, buf.data(), chunk_size);
   }
 
   out.close();
-
-  if (progress_) {
-    pb_.update(1);
-  }
 
   /* raw connections are always created as open, but we should close them */
   bool should_close =

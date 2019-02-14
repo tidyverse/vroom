@@ -22,8 +22,7 @@ index::index(
     const bool has_header,
     const size_t skip,
     const char comment,
-    size_t num_threads,
-    bool progress)
+    size_t num_threads)
     : filename_(filename),
       has_header_(has_header),
       quote_(quote),
@@ -33,8 +32,7 @@ index::index(
       skip_(skip),
       comment_(comment),
       rows_(0),
-      columns_(0),
-      progress_(progress) {
+      columns_(0) {
 
   std::error_code error;
   mmap_ = mio::make_mmap_source(filename, error);
@@ -55,16 +53,6 @@ index::index(
   // Check for windows newlines
   windows_newlines_ = first_nl > 0 && mmap_[first_nl - 1] == '\r';
 
-  if (progress_) {
-    std::string path = filename;
-    auto const pos = path.find_last_of("/");
-    const auto leaf = path.substr(pos + 1);
-    std::string format =
-        std::string("indexing ") + leaf + " [:bar] :rate, eta: :eta";
-    pb_ = RProgress::RProgress(format, file_size, Rf_GetOptionWidth() - 2, '=');
-    pb_.update(0);
-  }
-
   //
   // We want at least 10 lines per batch, otherwise threads aren't really
   // useful
@@ -78,8 +66,13 @@ index::index(
 
   // Index the first row
   idx_[0].push_back(start - 1);
-  index_region(mmap_, idx_[0], delim, quote, start, first_nl + 1, -1);
+  index_region(mmap_, idx_[0], delim, quote, start, first_nl + 1);
   columns_ = idx_[0].size() - 1;
+
+#if DEBUG
+  Rcpp::Rcerr << "columns: " << columns_ << " guessed_rows: " << guessed_rows
+              << '\n';
+#endif
 
   parallel_for(
       file_size - first_nl,
@@ -87,8 +80,10 @@ index::index(
         idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
         start = find_next_newline(mmap_, first_nl + start);
         end = find_next_newline(mmap_, first_nl + end) + 1;
-        index_region(
-            mmap_, idx_[id + 1], delim, quote, start, end, file_size / 200);
+#if DEBUG
+        Rcpp::Rcerr << "Indexing " << start << "-" << end << '\n';
+#endif
+        index_region(mmap_, idx_[id + 1], delim, quote, start, end);
       },
       num_threads,
       true);
@@ -96,12 +91,17 @@ index::index(
   auto total_size = std::accumulate(
       idx_.begin(), idx_.end(), 0, [](size_t sum, const idx_t& v) {
         sum += v.size() - 1;
+#if DEBUG
+        Rcpp::Rcerr << v.size() << '\n';
+#endif
         return sum;
       });
 
-  if (progress_) {
-    pb_.update(1);
-  }
+  // idx_->reserve(total_size);
+
+#if DEBUG
+  Rcpp::Rcerr << "combining vectors of size: " << total_size << "\n";
+#endif
 
   // for (auto& v : values) {
 

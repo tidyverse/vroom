@@ -11,8 +11,6 @@
 // clang-format on
 
 #include <array>
-#include "RProgress.h"
-#include <mutex>
 
 namespace vroom {
 
@@ -34,8 +32,7 @@ public:
       const bool has_header,
       const size_t skip,
       const char comment,
-      const size_t num_threads,
-      const bool progress);
+      const size_t num_threads);
 
   class column {
     const index& idx_;
@@ -139,9 +136,6 @@ public:
   char comment_;
   size_t rows_;
   size_t columns_;
-  bool progress_;
-  RProgress::RProgress pb_;
-  std::mutex pb_mutex_;
 
   void skip_lines();
 
@@ -258,15 +252,15 @@ public:
       const char delim,
       const char quote,
       const size_t start,
-      const size_t end,
-      const size_t update_size = -1) {
+      const size_t end) {
 
     // If there are no quotes quote will be '\0', so will just work
     std::array<char, 4> query = {delim, '\n', '\\', quote};
 
     size_t last = start;
-    auto last_tick = start;
-    auto num_ticks = 0;
+#if DEBUG
+    Rcpp::Rcerr << "start:\t" << start << '\n' << "end:\t" << end << '\n';
+#endif
 
     bool in_quote = false;
 
@@ -275,6 +269,10 @@ public:
     // The actual parsing is here
     auto result = strcspn(begin + last, query.data());
     auto i = result + last;
+#if DEBUG
+    Rcpp::Rcerr << "last: " << last << " strcspn: " << result << " i: " << i
+                << '\n';
+#endif
     while (i < end) {
       auto c = source[i];
 
@@ -292,23 +290,16 @@ public:
 
       else if (c == '\n') { // no embedded quotes allowed
         destination.push_back(i);
-        if (progress_) {
-          auto tick_size = i - last_tick;
-          if (tick_size > update_size) {
-            std::lock_guard<std::mutex> guard(pb_mutex_);
-            pb_.tick(i - last_tick);
-            last_tick = i;
-            ++num_ticks;
-          }
-        }
       }
 
       last = i;
       result = strcspn(begin + last + 1, query.data());
       i = result + last + 1;
+#if DEBUG
+      Rcpp::Rcerr << "c: " << (int)c << " last: " << last
+                  << " strcspn: " << result << " i: " << i << '\n';
+#endif
     }
-
-    // Rcpp::Rcerr << num_ticks << '\n';
   }
 };
 

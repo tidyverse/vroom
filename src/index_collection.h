@@ -19,8 +19,7 @@ public:
       const bool has_header,
       const size_t skip,
       const char comment,
-      const size_t num_threads,
-      const bool progress);
+      const size_t num_threads);
 
   const std::string get(size_t row, size_t col) const;
 
