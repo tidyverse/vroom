@@ -4,11 +4,15 @@ test_vroom <- function(content, ..., equals) {
     equals
   )
 
-  tf <- tempfile()
-  on.exit(unlink(tf))
-  readr::write_lines(content, tf)
+  if (!file.exists(content)) {
+    tf <- tempfile()
+    on.exit(unlink(tf))
+    readr::write_lines(content, tf)
 
-  con <- file(tf, "rb")
+    con <- file(tf, "rb")
+  } else {
+    con <- file(content, "rb")
+  }
   on.exit(close(con), add = TRUE)
 
   res <- vroom(con, ...)
