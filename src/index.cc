@@ -5,12 +5,6 @@
 
 #include <fstream>
 
-size_t guess_size(size_t records, size_t bytes, size_t file_size) {
-  double percent_complete = (double)(bytes) / file_size;
-  size_t total_records = records / percent_complete * 1.1;
-  return total_records;
-}
-
 using namespace vroom;
 
 index::index(
