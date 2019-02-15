@@ -8,4 +8,4 @@
 
 Rcpp::LogicalVector read_lgl(vroom_vec_info* info);
 
-Rcpp::IntegerVector read_fctr(vroom_vec_info* info);
+Rcpp::IntegerVector read_fctr(vroom_vec_info* info, bool include_na);

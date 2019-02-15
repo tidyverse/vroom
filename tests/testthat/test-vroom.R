@@ -13,105 +13,105 @@ test_that("vroom can read a csv", {
 })
 
 test_that("vroom guesses columns with NAs", {
-  test_vroom("a,b,c\nNA,2,3\n4,5,6", delim = ",",
+  test_vroom("a,b,c\nNA,2,3\n4,5,6\n", delim = ",",
     equals = tibble::tibble(a = c(NA, 4), b = c(2, 5), c = c(3, 6))
   )
 
-  test_vroom("a,b,c\nfoo,2,3\n4,5,6", delim = ",", na = "foo",
+  test_vroom("a,b,c\nfoo,2,3\n4,5,6\n", delim = ",", na = "foo",
     equals = tibble::tibble(a = c(NA, 4), b = c(2, 5), c = c(3, 6))
   )
 
-  test_vroom("a,b,c\nfoo,2,3\n4.0,5,6", delim = ",", na = "foo",
+  test_vroom("a,b,c\nfoo,2,3\n4.0,5,6\n", delim = ",", na = "foo",
     equals = tibble::tibble(a = c(NA, 4), b = c(2, 5), c = c(3, 6))
   )
 
-  test_vroom("a,b,c\nfoo,2,3\nbar,5,6", delim = ",", na = "foo",
+  test_vroom("a,b,c\nfoo,2,3\nbar,5,6\n", delim = ",", na = "foo",
     equals = tibble::tibble(a = c(NA, "bar"), b = c(2, 5), c = c(3, 6))
   )
 })
 
 test_that("vroom can trim whitespace", {
-  test_vroom('a,b,c\n foo ,  bar  ,baz', delim = ",",
+  test_vroom('a,b,c\n foo ,  bar  ,baz\n', delim = ",",
     equals = tibble::tibble(a = "foo", b = "bar", c = "baz")
   )
 
-  test_vroom('a,b,c\n\tfoo\t,\t\tbar\t\t,baz', delim = ",",
+  test_vroom('a,b,c\n\tfoo\t,\t\tbar\t\t,baz\n', delim = ",",
     equals = tibble::tibble(a = "foo", b = "bar", c = "baz")
   )
 
   # whitespace trimmed before quotes
-  test_vroom('a,b,c\n "foo" ,  "bar"  ,"baz"', delim = ",",
+  test_vroom('a,b,c\n "foo" ,  "bar"  ,"baz"\n', delim = ",",
     equals = tibble::tibble(a = "foo", b = "bar", c = "baz")
   )
 
   # whitespace kept inside quotes
-  test_vroom('a,b,c\n "foo" ,  " bar"  ,"\tbaz"', delim = ",",
+  test_vroom('a,b,c\n "foo" ,  " bar"  ,"\tbaz"\n', delim = ",",
     equals = tibble::tibble(a = "foo", b = " bar", c = "\tbaz")
   )
 })
 
 test_that("vroom can read files with quotes", {
-  test_vroom('"a","b","c"\n"foo","bar","baz"', delim = ",",
+  test_vroom('"a","b","c"\n"foo","bar","baz"\n', delim = ",",
     equals = tibble::tibble(a = "foo", b = "bar", c = "baz")
   )
 
-  test_vroom('"a","b","c"\n",foo","bar","baz"', delim = ",",
+  test_vroom('"a","b","c"\n",foo","bar","baz"\n', delim = ",",
     equals = tibble::tibble(a = ",foo", b = "bar", c = "baz")
   )
 
-  test_vroom("'a','b','c'\n',foo','bar','baz'", delim = ",", quote = "'",
+  test_vroom("'a','b','c'\n',foo','bar','baz'\n", delim = ",", quote = "'",
     equals = tibble::tibble(a = ",foo", b = "bar", c = "baz")
   )
 })
 
 test_that("vroom escapes double quotes", {
-  test_vroom('"a","b","c"\n"""fo""o","b""""ar","baz"""', delim = ",",
+  test_vroom('"a","b","c"\n"""fo""o","b""""ar","baz"""\n', delim = ",",
     equals = tibble::tibble(a = "\"fo\"o", b = "b\"\"ar", c = "baz\"")
   )
 })
 
 test_that("vroom escapes backslashes", {
-  test_vroom('a,b,c\n\\,foo,\\"ba\\"r,baz\\"', delim = ",", escape_backslash = TRUE,
+  test_vroom('a,b,c\n\\,foo,\\"ba\\"r,baz\\"\n', delim = ",", escape_backslash = TRUE,
     equals = tibble::tibble(a = ",foo", b = "\"ba\"r", c = "baz\"")
   )
 })
 
 test_that("vroom ignores leading whitespace", {
-  test_vroom('\n\n   \t \t\n  \n\na,b,c\n1,2,3"', delim = ",",
+  test_vroom('\n\n   \t \t\n  \n\na,b,c\n1,2,3"\n', delim = ",",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 })
 
 test_that("vroom ignores comments", {
-  test_vroom('\n\n \t #a,b,c\na,b,c\n1,2,3"', delim = ",", comment = "#",
+  test_vroom('\n\n \t #a,b,c\na,b,c\n1,2,3"\n', delim = ",", comment = "#",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 })
 
 test_that("vroom respects skip", {
-  test_vroom('#a,b,c\na,b,c\n1,2,3"', delim = ",", skip = 1,
+  test_vroom('#a,b,c\na,b,c\n1,2,3"\n', delim = ",", skip = 1,
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 
-  test_vroom('#a,b,c\na,b,c\n1,2,3"', delim = ",", skip = 1, comment = "#",
+  test_vroom('#a,b,c\na,b,c\n1,2,3"\n', delim = ",", skip = 1, comment = "#",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 
-  test_vroom('#a,b,c\nasdfasdf\na,b,c\n1,2,3"', delim = ",", skip = 2, comment = "#",
+  test_vroom('#a,b,c\nasdfasdf\na,b,c\n1,2,3"\n', delim = ",", skip = 2, comment = "#",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 
-  test_vroom('\n\n#a,b,c\nasdfasdf\na,b,c\n1,2,3"', delim = ",", skip = 4, comment = "#",
+  test_vroom('\n\n#a,b,c\nasdfasdf\na,b,c\n1,2,3"\n', delim = ",", skip = 4, comment = "#",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 })
 
 test_that("vroom respects col_types", {
-  test_vroom('a,b,c\n1,2,3"', delim = ",", col_types = "idc",
+  test_vroom('a,b,c\n1,2,3"\n', delim = ",", col_types = "idc",
     equals = tibble::tibble(a = 1L, b = 2, c = "3")
   )
 
-  test_vroom('a,b,c,d\nT,2,3,4"', delim = ",", col_types = "lfc_",
+  test_vroom('a,b,c,d\nT,2,3,4"\n', delim = ",", col_types = "lfc_",
     equals = tibble::tibble(a = TRUE, b = factor(2), c = "3")
   )
 })

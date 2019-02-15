@@ -4,6 +4,7 @@
 #include "index_collection.h"
 #include "index_connection.h"
 #include "read_normal.h"
+#include "vroom_factor.h"
 #include "vroom_numeric.h"
 #include "vroom_string.h"
 
@@ -130,7 +131,16 @@ SEXP vroom_(
     } else if (col_type == "collector_logical") {
       SET_VECTOR_ELT(res, i, read_lgl(info));
     } else if (col_type == "collector_factor") {
-      SET_VECTOR_ELT(res, i, read_fctr(info));
+      auto levels = collector["levels"];
+      if (Rf_isNull(levels)) {
+        SET_VECTOR_ELT(res, i, read_fctr(info, collector["include_na"]));
+      } else {
+        SET_VECTOR_ELT(
+            res,
+            i,
+            vroom_factor::Make(
+                info, levels, collector["ordered"], collector["include_na"]));
+      }
     } else {
       SET_VECTOR_ELT(res, i, vroom_string::Make(info));
     }

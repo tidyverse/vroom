@@ -7,7 +7,7 @@ test_vroom <- function(content, ..., equals) {
   if (!file.exists(content)) {
     tf <- tempfile()
     on.exit(unlink(tf))
-    readr::write_lines(content, tf)
+    readr::write_lines(content, tf, sep = "")
 
     con <- file(tf, "rb")
   } else {
@@ -22,6 +22,8 @@ test_vroom <- function(content, ..., equals) {
     force_materialization(res[[i]])
   }
   expect_equivalent(res, equals)
+
+  res
 
   ## Has a temp_file environment, with a filename
   #tf2 <- attr(res, "filename")

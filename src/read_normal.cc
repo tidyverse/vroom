@@ -68,12 +68,24 @@ Rcpp::LogicalVector read_lgl(vroom_vec_info* info) {
   return out;
 }
 
-Rcpp::IntegerVector read_fctr(vroom_vec_info* info) {
+bool matches(
+    const std::string& needle, const std::vector<std::string>& haystack) {
+  for (auto& hay : haystack) {
+    if (hay == needle) {
+      return true;
+    }
+  }
+  return false;
+}
+
+Rcpp::IntegerVector read_fctr(vroom_vec_info* info, bool include_na) {
   R_xlen_t n = info->idx->num_rows();
 
   Rcpp::IntegerVector out(n);
   std::vector<std::string> levels;
   std::unordered_map<std::string, int> level_map;
+
+  auto nas = Rcpp::as<std::vector<std::string> >(*info->na);
 
   auto p = out.begin();
 
@@ -83,17 +95,26 @@ Rcpp::IntegerVector read_fctr(vroom_vec_info* info) {
   auto end = n;
   auto i = start;
   for (const auto& str : info->idx->get_column(info->column, start, end)) {
-    auto val = level_map.find(str);
-    if (val != level_map.end()) {
-      p[i++] = val->second;
+    if (include_na && matches(str, nas)) {
+      p[i++] = NA_INTEGER;
     } else {
-      p[i++] = max_level;
-      level_map[str] = max_level++;
-      levels.emplace_back(str);
+      auto val = level_map.find(str);
+      if (val != level_map.end()) {
+        p[i++] = val->second;
+      } else {
+        p[i++] = max_level;
+        level_map[str] = max_level++;
+        levels.emplace_back(str);
+      }
     }
   }
 
-  out.attr("levels") = levels;
+  Rcpp::CharacterVector out_lvls = Rcpp::wrap(levels);
+  if (include_na) {
+    out_lvls.push_back(NA_STRING);
+  }
+
+  out.attr("levels") = out_lvls;
   out.attr("class") = "factor";
 
   delete info;
