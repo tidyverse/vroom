@@ -18,6 +18,10 @@ test_vroom <- function(content, ..., equals) {
   res <- vroom(con, ...)
 
   expect_equivalent(res, equals)
+  for (i in seq_along(res)) {
+    force_materialization(res[[i]])
+  }
+  expect_equivalent(res, equals)
 
   ## Has a temp_file environment, with a filename
   #tf2 <- attr(res, "filename")
