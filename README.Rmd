@@ -1,5 +1,7 @@
 ---
-output: github_document
+output:
+  github_document:
+    html_preview: false
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -12,7 +14,7 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# vroom vroom! <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
+# vroom vroom! 🏎💨 <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
 
 <!-- badges: start -->
 [![Travis build status](https://travis-ci.org/jimhester/vroom.svg?branch=master)](https://travis-ci.org/jimhester/vroom)
@@ -46,8 +48,21 @@ you use.
 vroom uses multiple threads for indexing and materializing non-character
 vectors, to further improve performance.
 
-However it has no (current) support for windows newlines, embedded newlines or other
-niceties which can slow down and complicate parsing.
+It now has most of the parsing features of [readr](https://readr.tidyverse.org), including
+
+- delimiter guessing\*
+- custom delimiters (including multi-byte\* and unicode delimiters\*)
+- specification of column types (including guessing of types)
+- skipping headers, comments and blank lines
+- quoted fields
+- double and backslashed escapes
+- whitespace trimming
+- windows newlines
+- [reading from multiple files\* / connections\*](#reading-multiple-files)
+
+\* these vroom features are not in readr
+
+However it does not currently support embedded newlines in headers or fields.
 
 ```{r, echo = FALSE}
 knitr::kable(tbl, digits = 2)
@@ -61,28 +76,32 @@ Install the development version from [GitHub](https://github.com/) with:
 # install.packages("devtools")
 devtools::install_github("jimhester/vroom")
 ```
-## Example
+## Usage
+
+vroom uses the same interface as readr to specify column types.
 
 ```{r, include = FALSE}
 tibble::rownames_to_column(mtcars, "model") %>%
-  write.table(sep = "\t", quote = FALSE, file = "mtcars.tsv", row.names = FALSE)
+  readr::write_tsv("mtcars.tsv")
 ```
 
 ```{r example}
-vroom::vroom("mtcars.tsv")
+vroom::vroom("mtcars.tsv",
+  col_types = list(cyl = "i", gear = "f",hp = "i", disp = "_",
+                   drat = "_", vs = "l", am = "l", carb = "i")
+)
 ```
 
 ## Reading multiple files
 
 vroom natively supports reading from multiple files (or even multiple
-connections).
-
+connections!).
 
 First we will create some files to read by splitting the nycflights dataset by
 airline.
 ```{r}
 library(nycflights13)
-iwalk(
+purrr::iwalk(
   split(flights, flights$carrier),
   ~ readr::write_tsv(.x, glue::glue("flights_{.y}.tsv"))
 )
@@ -94,7 +113,7 @@ directly to vroom.
 ```{r}
 files <- fs::dir_ls(glob = "flights*tsv")
 files
-vroom(files)
+vroom::vroom(files)
 ```
 
 ```{r, include = FALSE}
@@ -106,16 +125,20 @@ fs::file_delete(files)
 The speed quoted above is from a dataset with 14,776,615 rows and 11 columns,
 see the [benchmark
 article](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)
-for full details.
+for full details of the dataset and
+[bench/](https://github.com/jimhester/vroom/tree/master/bench) for the code
+used to retrieve the data and perform the benchmarks.
 
-## RStudio Caveats
+## RStudio caveats
 
-Until very recently (2019-01-23) RStudio's environment pane caused Altrep
-objects to be automatically materialized, which removes most of the benefits
+RStudio's environment pane auto-refresh behavior alls `object.size()` which for Altrep
+objects can be extremely slow.
 (and can acutally make things much slower). This was fixed in
-[rstudio#4210](https://github.com/rstudio/rstudio/pull/4210), so it is
+[rstudio#4210](https://github.com/rstudio/rstudio/pull/4210) and [rstudio#4292](https://github.com/rstudio/rstudio/pull/4292), so it is
 recommended you use a [daily version](https://dailies.rstudio.com/) if you are
-trying to use vroom inside RStudio.
+trying to use vroom inside RStudio. For older versions of RStudio a workaround is to turn off the auto-refresh in the environment pane.
+
+![](https://user-images.githubusercontent.com/470418/51357022-95a1f280-1a82-11e9-8035-3687c8fd5dd8.png)
 
 ## Thanks
 

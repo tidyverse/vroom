@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# vroom vroom\! <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
+# vroom vroom\! 🏎💨 <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
 
 <!-- badges: start -->
 
@@ -30,8 +30,24 @@ what you use.
 vroom uses multiple threads for indexing and materializing non-character
 vectors, to further improve performance.
 
-However it has no (current) support for windows newlines, embedded
-newlines or other niceties which can slow down and complicate parsing.
+It now has most of the parsing features of
+[readr](https://readr.tidyverse.org), including
+
+  - delimiter guessing\*
+  - custom delimiters (including multi-byte\* and unicode delimiters\*)
+  - specification of column types (including guessing of types)
+  - skipping headers, comments and blank lines
+  - quoted fields
+  - double and backslashed escapes
+  - whitespace trimming
+  - windows newlines
+  - [reading from multiple files\* /
+    connections\*](#reading-multiple-files)
+
+\* these vroom features are not in readr
+
+However it does not currently support embedded newlines in headers or
+fields.
 
 | package    | time (sec) | speedup | throughput |
 | :--------- | ---------: | ------: | :--------- |
@@ -49,37 +65,42 @@ Install the development version from [GitHub](https://github.com/) with:
 devtools::install_github("jimhester/vroom")
 ```
 
-## Example
+## Usage
+
+vroom uses the same interface as readr to specify column types.
 
 ``` r
-vroom::vroom("mtcars.tsv")
-#> # A tibble: 32 x 12
-#>    model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
-#>    <chr>  <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
-#>  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1     4     4
-#>  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1     4     4
-#>  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1
-#>  4 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1
-#>  5 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
-#>  6 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1
-#>  7 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4
-#>  8 Merc …  24.4     4  147.    62  3.69  3.19  20       1     0     4     2
-#>  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2
-#> 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4
+vroom::vroom("mtcars.tsv",
+  col_types = list(cyl = "i", gear = "f",hp = "i", disp = "_",
+                   drat = "_", vs = "l", am = "l", carb = "i")
+)
+#> # A tibble: 32 x 10
+#>    model               mpg   cyl    hp    wt  qsec vs    am    gear   carb
+#>    <chr>             <dbl> <int> <int> <dbl> <dbl> <lgl> <lgl> <fct> <int>
+#>  1 Mazda RX4          21       6   110  2.62  16.5 FALSE TRUE  4         4
+#>  2 Mazda RX4 Wag      21       6   110  2.88  17.0 FALSE TRUE  4         4
+#>  3 Datsun 710         22.8     4    93  2.32  18.6 TRUE  TRUE  4         1
+#>  4 Hornet 4 Drive     21.4     6   110  3.22  19.4 TRUE  FALSE 3         1
+#>  5 Hornet Sportabout  18.7     8   175  3.44  17.0 FALSE FALSE 3         2
+#>  6 Valiant            18.1     6   105  3.46  20.2 TRUE  FALSE 3         1
+#>  7 Duster 360         14.3     8   245  3.57  15.8 FALSE FALSE 3         4
+#>  8 Merc 240D          24.4     4    62  3.19  20   TRUE  FALSE 4         2
+#>  9 Merc 230           22.8     4    95  3.15  22.9 TRUE  FALSE 4         2
+#> 10 Merc 280           19.2     6   123  3.44  18.3 TRUE  FALSE 4         4
 #> # … with 22 more rows
 ```
 
 ## Reading multiple files
 
 vroom natively supports reading from multiple files (or even multiple
-connections).
+connections\!).
 
 First we will create some files to read by splitting the nycflights
 dataset by airline.
 
 ``` r
 library(nycflights13)
-iwalk(
+purrr::iwalk(
   split(flights, flights$carrier),
   ~ readr::write_tsv(.x, glue::glue("flights_{.y}.tsv"))
 )
@@ -95,7 +116,7 @@ files
 #> flights_EV.tsv flights_F9.tsv flights_FL.tsv flights_HA.tsv flights_MQ.tsv 
 #> flights_OO.tsv flights_UA.tsv flights_US.tsv flights_VX.tsv flights_WN.tsv 
 #> flights_YV.tsv
-vroom(files)
+vroom::vroom(files)
 #> # A tibble: 336,776 x 19
 #>     year month   day dep_time sched_dep_time dep_delay arr_time
 #>    <dbl> <dbl> <dbl>    <dbl>          <dbl>     <dbl>    <dbl>
@@ -120,16 +141,23 @@ vroom(files)
 The speed quoted above is from a dataset with 14,776,615 rows and 11
 columns, see the [benchmark
 article](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)
-for full details.
+for full details of the dataset and
+[bench/](https://github.com/jimhester/vroom/tree/master/bench) for the
+code used to retrieve the data and perform the benchmarks.
 
-## RStudio Caveats
+## RStudio caveats
 
-Until very recently (2019-01-23) RStudio’s environment pane caused
-Altrep objects to be automatically materialized, which removes most of
-the benefits (and can acutally make things much slower). This was fixed
-in [rstudio\#4210](https://github.com/rstudio/rstudio/pull/4210), so it
-is recommended you use a [daily version](https://dailies.rstudio.com/)
-if you are trying to use vroom inside RStudio.
+RStudio’s environment pane auto-refresh behavior alls `object.size()`
+which for Altrep objects can be extremely slow. (and can acutally make
+things much slower). This was fixed in
+[rstudio\#4210](https://github.com/rstudio/rstudio/pull/4210) and
+[rstudio\#4292](https://github.com/rstudio/rstudio/pull/4292), so it is
+recommended you use a [daily version](https://dailies.rstudio.com/) if
+you are trying to use vroom inside RStudio. For older versions of
+RStudio a workaround is to turn off the auto-refresh in the environment
+pane.
+
+![](https://user-images.githubusercontent.com/470418/51357022-95a1f280-1a82-11e9-8035-3687c8fd5dd8.png)
 
 ## Thanks
 
