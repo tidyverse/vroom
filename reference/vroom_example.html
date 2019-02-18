@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • vroom</title>
+<title>Get path to readr example — vroom_example • vroom</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,7 +30,12 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Get path to readr example — vroom_example" />
+
+<meta property="og:description" content="vroom comes bundled with a number of sample files in
+its 'inst/extdata' directory. This function make them
+easy to access" />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -47,7 +52,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -106,60 +111,45 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Get path to readr example</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jimhester/vroom/blob/master/R/examples.R'><code>R/examples.R</code></a></small>
+    <div class="hidden name"><code>vroom_example.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    
+    <p>vroom comes bundled with a number of sample files in
+its 'inst/extdata' directory. This function make them
+easy to access</p>
+    
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
-
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="guess_type.html">guess_type()</a></code> </p>
-        </td>
-        <td><p>Guess the type of a vector</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="show_progress.html">show_progress()</a></code> </p>
-        </td>
-        <td><p>Determine progress bars should be shown</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="vroom.html">vroom()</a></code> </p>
-        </td>
-        <td><p>Read a delimited file into a tibble</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="vroom_example.html">vroom_example()</a></code> </p>
-        </td>
-        <td><p>Get path to readr example</p></td>
-      </tr>
-    </tbody>
+    <pre class="usage"><span class='fu'>vroom_example</span>(<span class='kw'>path</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>path</th>
+      <td><p>Name of file. If 'NULL', all available example files will be
+listed.</p></td>
+    </tr>
     </table>
-  </div>
+    
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>vroom_example</span>()</div><div class='output co'>#&gt; [1] "mtcars.csv"</div><div class='input'><span class='fu'>vroom_example</span>(<span class='st'>"mtcars.csv"</span>)</div><div class='output co'>#&gt; [1] "/home/travis/build/jimhester/vroom/inst/extdata/mtcars.csv"</div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#arguments">Arguments</a></li>
+            
+      <li><a href="#examples">Examples</a></li>
     </ul>
+
   </div>
 </div>
 

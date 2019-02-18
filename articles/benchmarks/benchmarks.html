@@ -218,18 +218,32 @@ read.delim
 <a class="sourceLine" id="cb2-9" data-line-number="9"><span class="st">    </span>bench<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/bench/topics/scale_bench_time">scale_y_bench_time</a></span>(<span class="dt">base =</span> <span class="ot">NULL</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb2-10" data-line-number="10"><span class="st">    </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="dt">legend.position =</span> <span class="st">"bottom"</span>)</a></code></pre></div>
 <p><img src="benchmarks_files/figure-html/unnamed-chunk-3-1.png" width="960"></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">sessioninfo<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/sessioninfo/topics/package_info">package_info</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"vroom"</span>, <span class="st">"readr"</span>, <span class="st">"dplyr"</span>, <span class="st">"data.table"</span>), <span class="dt">dependencies =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt;  ! package    * version    date       lib source        </span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt;  R data.table   &lt;NA&gt;       &lt;NA&gt;       [?] &lt;NA&gt;          </span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt;    dplyr      * 0.7.8      2018-11-10 [1] CRAN (R 3.5.2)</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt;    readr        1.3.1      2018-12-21 [1] CRAN (R 3.5.2)</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt;    vroom        0.0.0.9000 2019-02-08 [1] local         </span></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; [1] /home/travis/R/Library</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; [2] /usr/local/lib/R/site-library</span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; [3] /home/travis/R-bin/lib/R/library</span></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt;  R ── Package was removed from disk.</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/readRDS">readRDS</a></span>(here<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/here/topics/here">here</a></span>(<span class="st">"bench"</span>, <span class="st">"sessioninfo.Rds"</span>))</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt;               package ondiskversion loadedversion</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt; data.table data.table        1.12.0          &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt; dplyr           dplyr         0.7.8         0.7.8</span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; readr           readr         1.3.1          &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; vroom           vroom    0.0.0.9000          &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt;                                                       path</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; data.table /Users/jhester/Library/R/3.5/library/data.table</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; dplyr           /Users/jhester/Library/R/3.5/library/dplyr</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; readr           /Users/jhester/Library/R/3.5/library/readr</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; vroom           /Users/jhester/Library/R/3.5/library/vroom</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt;                                            loadedpath attached is_base</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt; data.table                                       &lt;NA&gt;    FALSE   FALSE</span></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; dplyr      /Users/jhester/Library/R/3.5/library/dplyr     TRUE   FALSE</span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; readr                                            &lt;NA&gt;    FALSE   FALSE</span></a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; vroom                                            &lt;NA&gt;    FALSE   FALSE</span></a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt;                  date         source md5ok</span></a>
+<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt; data.table 2019-01-13 CRAN (R 3.5.2)    NA</span></a>
+<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co">#&gt; dplyr      2018-11-10 CRAN (R 3.5.0)    NA</span></a>
+<a class="sourceLine" id="cb3-20" data-line-number="20"><span class="co">#&gt; readr      2018-12-21 CRAN (R 3.5.0)    NA</span></a>
+<a class="sourceLine" id="cb3-21" data-line-number="21"><span class="co">#&gt; vroom      2019-02-15          local    NA</span></a>
+<a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co">#&gt;                                         library</span></a>
+<a class="sourceLine" id="cb3-23" data-line-number="23"><span class="co">#&gt; data.table /Users/jhester/Library/R/3.5/library</span></a>
+<a class="sourceLine" id="cb3-24" data-line-number="24"><span class="co">#&gt; dplyr      /Users/jhester/Library/R/3.5/library</span></a>
+<a class="sourceLine" id="cb3-25" data-line-number="25"><span class="co">#&gt; readr      /Users/jhester/Library/R/3.5/library</span></a>
+<a class="sourceLine" id="cb3-26" data-line-number="26"><span class="co">#&gt; vroom      /Users/jhester/Library/R/3.5/library</span></a></code></pre></div>
 </div>
   </div>
 
