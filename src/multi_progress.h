@@ -44,6 +44,7 @@ public:
       total_progress_ += progress_;
       progress_ = 0;
     }
+    pb_.update(1);
   }
 
 private:
