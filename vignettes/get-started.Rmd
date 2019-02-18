@@ -1,0 +1,43 @@
+---
+title: "Getting started with vroom"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{get-started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The vroom package contains one function `vroom()` which is used to
+read all types of delimited files. A delimited file is any file in
+which the data is separated (delimited) by one or more characters.
+
+The most common type of delimited files are CSV (Comma Separated
+Values) files, typically these files have a `.csv` suffix.
+
+## reading CSV files
+To read a CSV file with vroom specify `delim = ","` to the call to vroom.
+
+We have included an example CSV file in the vroom package. Access it with
+`vroom_example("mtcars.csv")`
+
+```{r setup}
+library(vroom)
+
+# See where the example file is stored on your machine
+file <- vroom_example("mtcars.csv")
+file
+
+# Read the file, by default vroom will guess the delimiter automatically.
+vroom(file)
+
+# You can also specify it explicitly, which is (slightly) faster, and safer if
+# you know how the file is delimited.
+vroom(file, delim = ",")
+```

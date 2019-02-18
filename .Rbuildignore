@@ -8,7 +8,6 @@
 ^LICENSE\.md$
 ^src/.clang-format$
 ^bench$
-^vignettes$
 ^script.R$
 ^.*\.Rproj$
 ^\.Rproj\.user$

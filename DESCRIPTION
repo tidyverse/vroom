@@ -30,4 +30,7 @@ SystemRequirements: C++11
 Suggests: 
     testthat,
     covr,
-    curl
+    curl,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
