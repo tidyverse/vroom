@@ -3,6 +3,7 @@
 export(guess_type)
 export(show_progress)
 export(vroom)
+export(vroom_example)
 importFrom(Rcpp,sourceCpp)
 importFrom(crayon,blue)
 importFrom(crayon,bold)
