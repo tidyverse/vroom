@@ -13,6 +13,7 @@
 #include "multi_progress.h"
 
 #include <Rcpp.h>
+#include "utils.h"
 
 namespace vroom {
 
@@ -228,17 +229,6 @@ public:
     }
 
     return begin;
-  }
-
-  template <typename T>
-  size_t find_next_newline(const T& source, size_t start) const {
-    auto begin = source.data() + start;
-    auto res =
-        static_cast<const char*>(memchr(begin, '\n', source.size() - start));
-    if (!res) {
-      return start;
-    }
-    return res - source.data();
   }
 
   void trim_quotes(const char*& begin, const char*& end) const;

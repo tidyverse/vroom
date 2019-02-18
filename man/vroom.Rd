@@ -4,7 +4,7 @@
 \alias{vroom}
 \title{Read a delimited file into a tibble}
 \usage{
-vroom(file, delim = "\\t", col_names = TRUE, col_types = NULL,
+vroom(file, delim = NULL, col_names = TRUE, col_types = NULL,
   skip = 0, na = c("", "NA"), quote = "\\"", comment = "",
   trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE,
   num_threads = parallel::detectCores(), progress = show_progress())
@@ -12,7 +12,9 @@ vroom(file, delim = "\\t", col_names = TRUE, col_types = NULL,
 \arguments{
 \item{file}{path to a local file.}
 
-\item{delim}{Single character used to separate fields within a record.}
+\item{delim}{One of more characters used to delimiter fields within a
+record. If `NULL` the delimiter is guessed from the set of (",", "\\t", " ",
+"|", ":", ";", "\\n").}
 
 \item{col_names}{Either \code{TRUE}, \code{FALSE} or a character vector
 of column names.

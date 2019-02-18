@@ -1,7 +1,6 @@
 #include "index.h"
 
 #include "parallel.h"
-#include "utils.h"
 
 #include <fstream>
 
@@ -30,7 +29,7 @@ index::index(
       rows_(0),
       columns_(0),
       progress_(progress),
-      delim_len_(strlen(delim)) {
+      delim_len_(0) {
 
   std::error_code error;
   mmap_ = mio::make_mmap_source(filename, error);
@@ -42,6 +41,16 @@ index::index(
   auto file_size = mmap_.cend() - mmap_.cbegin();
 
   auto start = find_first_line(mmap_);
+
+  std::string delim_;
+
+  if (delim == nullptr) {
+    delim_ = std::string(1, guess_delim(mmap_, start));
+  } else {
+    delim_ = delim;
+  }
+
+  delim_len_ = delim_.length();
 
   auto first_nl = find_next_newline(mmap_, start);
   auto second_nl = find_next_newline(mmap_, first_nl + 1);
@@ -72,7 +81,8 @@ index::index(
 
   // Index the first row
   idx_[0].push_back(start - 1);
-  index_region(mmap_, idx_[0], delim, quote, start, first_nl + 1, pb, -1);
+  index_region(
+      mmap_, idx_[0], delim_.c_str(), quote, start, first_nl + 1, pb, -1);
   columns_ = idx_[0].size() - 1;
 
   auto threads = parallel_for(
@@ -82,7 +92,14 @@ index::index(
         start = find_next_newline(mmap_, first_nl + start);
         end = find_next_newline(mmap_, first_nl + end) + 1;
         index_region(
-            mmap_, idx_[id + 1], delim, quote, start, end, pb, file_size / 200);
+            mmap_,
+            idx_[id + 1],
+            delim_.c_str(),
+            quote,
+            start,
+            end,
+            pb,
+            file_size / 200);
       },
       num_threads,
       true,

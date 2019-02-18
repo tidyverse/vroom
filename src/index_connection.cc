@@ -51,7 +51,6 @@ index_connection::index_connection(
   comment_ = comment;
   skip_ = skip;
   progress_ = progress;
-  delim_len_ = strlen(delim);
 
   auto tempfile =
       Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["tempfile"])();
@@ -79,6 +78,15 @@ index_connection::index_connection(
   // Parse header
   auto start = find_first_line(buf);
 
+  std::string delim_;
+  if (delim == nullptr) {
+    delim_ = std::string(1, guess_delim(buf, start));
+  } else {
+    delim_ = delim;
+  }
+
+  delim_len_ = delim_.length();
+
   auto first_nl = find_next_newline(buf, start);
 
   // Check for windows newlines
@@ -93,7 +101,7 @@ index_connection::index_connection(
 
   // Index the first row
   idx_[0].push_back(start - 1);
-  index_region(buf, idx_[0], delim, quote, start, first_nl + 1, pb);
+  index_region(buf, idx_[0], delim_.c_str(), quote, start, first_nl + 1, pb);
   columns_ = idx_[0].size() - 1;
 
 #if DEBUG
@@ -101,7 +109,8 @@ index_connection::index_connection(
 #endif
 
   while (sz > 0) {
-    index_region(buf, idx_[1], delim, quote, first_nl, sz, pb, sz / 10);
+    index_region(
+        buf, idx_[1], delim_.c_str(), quote, first_nl, sz, pb, sz / 10);
     out.write(buf.data(), sz);
 
     sz = R_ReadConnection(con, buf.data(), chunk_size);

@@ -29,7 +29,7 @@ read_column_names(const std::shared_ptr<vroom::index_collection>& idx) {
 // [[Rcpp::export]]
 SEXP vroom_(
     List inputs,
-    const char* delim,
+    SEXP delim,
     const char quote,
     bool trim_ws,
     bool escape_double,
@@ -51,7 +51,7 @@ SEXP vroom_(
   std::shared_ptr<vroom::index_collection> idx =
       std::make_shared<vroom::index_collection>(
           inputs,
-          delim,
+          Rf_isNull(delim) ? nullptr : Rcpp::as<const char*>(delim),
           quote,
           trim_ws,
           escape_double,

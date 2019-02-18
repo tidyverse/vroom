@@ -6,6 +6,9 @@ NULL
 #'
 #' @inheritParams readr::read_delim
 #' @param file path to a local file.
+#' @param delim One of more characters used to delimiter fields within a
+#'   record. If `NULL` the delimiter is guessed from the set of (",", "\\t", " ",
+#'   "|", ":", ";", "\\n").
 #' @param num_threads Number of threads to use when reading and materializing vectors.
 #' @param escape_double Does the file escape quotes by doubling them?
 #'   i.e. If this option is `TRUE`, the value `""` represents
@@ -23,7 +26,7 @@ NULL
 #' unlink("mtcars.tsv")
 #' setwd(.old_wd)
 #' }
-vroom <- function(file, delim = "\t", col_names = TRUE, col_types = NULL, skip = 0, na = c("", "NA"),
+vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL, skip = 0, na = c("", "NA"),
   quote = '"', comment = "", trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE, num_threads = parallel::detectCores(), progress = show_progress()) {
 
   file <- standardise_path(file)
@@ -113,4 +116,32 @@ pb_file_format <- function(filename) {
 
 pb_connection_format <- function(unused) {
   glue::glue_col("{bold}indexed{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}")
+}
+
+# Guess delimiter by splitting every line by each delimiter and choosing the
+# delimiter which splits the lines into the highest number of consistent fields
+guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";", "\n")) {
+  splits <- lapply(delims, strsplit, x = lines, useBytes = TRUE, fixed = TRUE)
+
+  counts <- lapply(splits, function(x) table(lengths(x)))
+
+  choose_best <- function(i, j) {
+    x <- counts[[i]]
+    y <- counts[[j]]
+
+    nx <- as.integer(names(counts[[i]]))
+    ny <- as.integer(names(counts[[j]]))
+
+    mx <- which.max(x)
+    my <- which.max(y)
+
+    if (x[[mx]] > y[[my]] ||
+      x[[mx]] == y[[my]] && nx > ny) {
+      i
+    } else {
+      j
+    }
+  }
+  res <- Reduce(choose_best, seq_along(counts))
+  delims[[res]]
 }
