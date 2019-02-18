@@ -27,27 +27,8 @@ framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html) to
 lazily load the data on-demand when it is accessed, so you only pay for
 what you use.
 
-vroom uses multiple threads for indexing and materializing non-character
-vectors, to further improve performance.
-
-It now has most of the parsing features of
-[readr](https://readr.tidyverse.org), including
-
-  - delimiter guessing\*
-  - custom delimiters (including multi-byte\* and unicode delimiters\*)
-  - specification of column types (including guessing of types)
-  - skipping headers, comments and blank lines
-  - quoted fields
-  - double and backslashed escapes
-  - whitespace trimming
-  - windows newlines
-  - [reading from multiple files\* /
-    connections\*](#reading-multiple-files)
-
-\* these vroom features are not in readr
-
-However it does not currently support embedded newlines in headers or
-fields.
+vroom also uses multiple threads for indexing and materializing
+non-character columns, to further improve performance.
 
 | package    | time (sec) | speedup | throughput |
 | :--------- | ---------: | ------: | :--------- |
@@ -55,6 +36,27 @@ fields.
 | data.table |      19.37 |    5.83 | 86.03 MB   |
 | readr      |      25.71 |    4.40 | 64.84 MB   |
 | read.delim |     113.02 |    1.00 | 14.75 MB   |
+
+## Features
+
+vroom has most of the parsing features of
+[readr](https://readr.tidyverse.org), including
+
+  - delimiter guessing\*
+  - custom delimiters (including multi-byte\* and unicode\* delimiters)
+  - specification of column types (including guessing of types)
+  - skipping headers, comments and blank lines
+  - quoted fields
+  - double and backslashed escapes
+  - whitespace trimming
+  - windows newlines
+  - [reading from multiple files or
+    connections\*](#reading-multiple-files)
+
+\* *these are additional features only in vroom.*
+
+However vroom does not currently support embedded newlines in headers or
+fields.
 
 ## Installation
 
@@ -147,14 +149,14 @@ code used to retrieve the data and perform the benchmarks.
 
 ## RStudio caveats
 
-RStudio’s environment pane auto-refresh behavior alls `object.size()`
-which for Altrep objects can be extremely slow. (and can acutally make
-things much slower). This was fixed in
+RStudio’s environment pane auto-refresh behavior calls `object.size()`
+which for Altrep objects can be extremely slow. This was fixed in
 [rstudio\#4210](https://github.com/rstudio/rstudio/pull/4210) and
 [rstudio\#4292](https://github.com/rstudio/rstudio/pull/4292), so it is
 recommended you use a [daily version](https://dailies.rstudio.com/) if
-you are trying to use vroom inside RStudio. For older versions of
-RStudio a workaround is to turn off the auto-refresh in the environment
+you are trying to use vroom inside RStudio. For older versions a
+workaround is to change the option to ‘Manual Refresh Only’ in the
+environment
 pane.
 
 ![](https://user-images.githubusercontent.com/470418/51357022-95a1f280-1a82-11e9-8035-3687c8fd5dd8.png)

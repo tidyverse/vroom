@@ -45,28 +45,30 @@ each record is located so it can be read later. The vectors returned use the
 lazily load the data on-demand when it is accessed, so you only pay for what
 you use.
 
-vroom uses multiple threads for indexing and materializing non-character
-vectors, to further improve performance.
+vroom also uses multiple threads for indexing and materializing non-character
+columns, to further improve performance.
 
-It now has most of the parsing features of [readr](https://readr.tidyverse.org), including
+```{r, echo = FALSE}
+knitr::kable(tbl, digits = 2)
+```
+
+## Features
+
+vroom has most of the parsing features of [readr](https://readr.tidyverse.org), including
 
 - delimiter guessing\*
-- custom delimiters (including multi-byte\* and unicode delimiters\*)
+- custom delimiters (including multi-byte\* and unicode\* delimiters)
 - specification of column types (including guessing of types)
 - skipping headers, comments and blank lines
 - quoted fields
 - double and backslashed escapes
 - whitespace trimming
 - windows newlines
-- [reading from multiple files\* / connections\*](#reading-multiple-files)
+- [reading from multiple files or connections\*](#reading-multiple-files)
 
-\* these vroom features are not in readr
+\* *these are additional features only in vroom.*
 
-However it does not currently support embedded newlines in headers or fields.
-
-```{r, echo = FALSE}
-knitr::kable(tbl, digits = 2)
-```
+However vroom does not currently support embedded newlines in headers or fields.
 
 ## Installation
 
@@ -131,12 +133,12 @@ used to retrieve the data and perform the benchmarks.
 
 ## RStudio caveats
 
-RStudio's environment pane auto-refresh behavior alls `object.size()` which for Altrep
-objects can be extremely slow.
-(and can acutally make things much slower). This was fixed in
+RStudio's environment pane auto-refresh behavior calls `object.size()` which for Altrep
+objects can be extremely slow. This was fixed in
 [rstudio#4210](https://github.com/rstudio/rstudio/pull/4210) and [rstudio#4292](https://github.com/rstudio/rstudio/pull/4292), so it is
 recommended you use a [daily version](https://dailies.rstudio.com/) if you are
-trying to use vroom inside RStudio. For older versions of RStudio a workaround is to turn off the auto-refresh in the environment pane.
+trying to use vroom inside RStudio. For older versions a workaround is to
+change the option to 'Manual Refresh Only' in the environment pane.
 
 ![](https://user-images.githubusercontent.com/470418/51357022-95a1f280-1a82-11e9-8035-3687c8fd5dd8.png)
 
