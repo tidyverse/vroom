@@ -125,5 +125,5 @@ tm_df %>%
 ```
 
 ```{r}
-sessioninfo::package_info(c("vroom", "readr", "dplyr", "data.table"), dependencies = FALSE)
+readRDS(here::here("bench", "sessioninfo.Rds"))
 ```

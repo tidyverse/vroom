@@ -89,3 +89,6 @@ tm_df <- map_dfr(times, function(x) {
   mutate(size = file.size("~/data/trip_fare_1.tsv"))
 
 saveRDS(tm_df, here::here("bench", "timings.Rds"))
+saveRDS(sessioninfo::package_info(c("vroom", "readr", "dplyr", "data.table"), dependencies = FALSE),
+  here::here("bench", "sessioninfo.Rds")
+)

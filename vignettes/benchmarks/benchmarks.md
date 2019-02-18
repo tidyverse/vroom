@@ -133,13 +133,13 @@ vroom\_base
 
 <td style="text-align:right;">
 
-2.6s
+1.7s
 
 </td>
 
 <td style="text-align:right;">
 
-5.3s
+4.4s
 
 </td>
 
@@ -155,13 +155,13 @@ vroom\_dplyr
 
 <td style="text-align:right;">
 
-2.6s
+1.7s
 
 </td>
 
 <td style="text-align:right;">
 
-12.4s
+7.1s
 
 </td>
 
@@ -177,13 +177,13 @@ data.table
 
 <td style="text-align:right;">
 
-19.7s
+19.4s
 
 </td>
 
 <td style="text-align:right;">
 
-19.9s
+19.6s
 
 </td>
 
@@ -199,13 +199,13 @@ readr
 
 <td style="text-align:right;">
 
-25.8s
+25.7s
 
 </td>
 
 <td style="text-align:right;">
 
-26.2s
+26.1s
 
 </td>
 
@@ -221,13 +221,13 @@ read.delim
 
 <td style="text-align:right;">
 
-1m 51.1s
+1m 53s
 
 </td>
 
 <td style="text-align:right;">
 
-1m 51.4s
+1m 53.3s
 
 </td>
 
@@ -257,12 +257,12 @@ tm_df %>%
 ![](benchmarks_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 ``` r
-sessioninfo::package_info(c("vroom", "readr", "dplyr", "data.table"), dependencies = FALSE)
+readRDS(here::here("bench", "sessioninfo.Rds"))
 #>  package    * version    date       lib source        
-#>  data.table   1.11.8     2018-09-30 [1] CRAN (R 3.5.0)
+#>  data.table   1.12.0     2019-01-13 [1] CRAN (R 3.5.2)
 #>  dplyr      * 0.7.8      2018-11-10 [1] CRAN (R 3.5.0)
 #>  readr        1.3.1      2018-12-21 [1] CRAN (R 3.5.0)
-#>  vroom        0.0.0.9000 2018-12-28 [1] local         
+#>  vroom        0.0.0.9000 2019-02-15 [1] local         
 #> 
 #> [1] /Users/jhester/Library/R/3.5/library
 #> [2] /Library/Frameworks/R.framework/Versions/3.5/Resources/library
