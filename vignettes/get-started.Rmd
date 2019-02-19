@@ -41,3 +41,40 @@ vroom(file)
 # you know how the file is delimited.
 vroom(file, delim = ",")
 ```
+
+## reading multiple CSV files
+
+If you are reading a set of (CSV or otherwise delimited) files which all have
+the same columns, you can pass all the filenames directly to `vroom()` and it
+will combine them into one result.
+
+First we will create some files to read by splitting the mtcars dataset by
+number of cylinders, (it is OK if you don't currently understand this code).
+```{r}
+mt <- rownames_to_column(mtcars, "model")
+purrr::iwalk(
+  split(mt, mt$cyl),
+  ~ readr::write_csv(.x, glue::glue("mtcars_{.y}.csv"))
+)
+```
+
+We can then efficiently read them into one result by passing the filenames directly
+to vroom.
+
+```{r}
+files <- fs::dir_ls(glob = "mtcars*csv")
+files
+vroom(files)
+```
+
+Often the filename or directory the files are in contains information about
+the contents, in this case the `id` parameter can be used to add an extra
+column (in this case named `path`) to the result that contains the file path.
+
+```{r}
+vroom(files, id = "path")
+```
+
+```{r, include = FALSE}
+fs::file_delete(files)
+```
