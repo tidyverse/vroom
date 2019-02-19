@@ -28,6 +28,14 @@ public:
 
   size_t num_rows() const { return rows_; }
 
+  std::vector<size_t> row_sizes() const {
+    std::vector<size_t> out;
+    for (const auto& index : indexes_) {
+      out.push_back(index->num_rows());
+    }
+    return out;
+  }
+
   class column {
 
     const index_collection& idx_;

@@ -5,9 +5,10 @@
 \title{Read a delimited file into a tibble}
 \usage{
 vroom(file, delim = NULL, col_names = TRUE, col_types = NULL,
-  skip = 0, na = c("", "NA"), quote = "\\"", comment = "",
-  trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE,
-  num_threads = parallel::detectCores(), progress = show_progress())
+  id = NULL, skip = 0, na = c("", "NA"), quote = "\\"",
+  comment = "", trim_ws = TRUE, escape_double = TRUE,
+  escape_backslash = FALSE, num_threads = parallel::detectCores(),
+  progress = show_progress())
 }
 \arguments{
 \item{file}{path to a local file.}
@@ -47,6 +48,10 @@ character represents one column:
 c = character, i = integer, n = number, d = double,
 l = logical, f = factor, D = date, T = date time, t = time, ? = guess, or
 \code{_}/\code{-} to skip the column.}
+
+\item{id}{Either a string or 'NULL'. If a string, the output will contain a
+variable with that name with the filename(s) as the value. If 'NULL', the
+default, no variable will be created.}
 
 \item{skip}{Number of lines to skip before reading data.}
 

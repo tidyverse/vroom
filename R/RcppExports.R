@@ -5,7 +5,7 @@ force_materialization <- function(x) {
     invisible(.Call(`_vroom_force_materialization`, x))
 }
 
-vroom_ <- function(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, col_names, col_types, skip, na, num_threads, progress) {
-    .Call(`_vroom_vroom_`, inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, col_names, col_types, skip, na, num_threads, progress)
+vroom_ <- function(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, col_names, col_types, id, skip, na, num_threads, progress) {
+    .Call(`_vroom_vroom_`, inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, col_names, col_types, id, skip, na, num_threads, progress)
 }
 

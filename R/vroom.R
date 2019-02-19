@@ -13,6 +13,9 @@ NULL
 #' @param escape_double Does the file escape quotes by doubling them?
 #'   i.e. If this option is `TRUE`, the value `""` represents
 #'   a single quote, `"`.
+#' @param id Either a string or 'NULL'. If a string, the output will contain a
+#'   variable with that name with the filename(s) as the value. If 'NULL', the
+#'   default, no variable will be created.
 #' @export
 #' @examples
 #' \dontshow{
@@ -26,12 +29,12 @@ NULL
 #' unlink("mtcars.tsv")
 #' setwd(.old_wd)
 #' }
-vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL, skip = 0, na = c("", "NA"),
+vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL, id = NULL, skip = 0, na = c("", "NA"),
   quote = '"', comment = "", trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE, num_threads = parallel::detectCores(), progress = show_progress()) {
 
   file <- standardise_path(file)
 
-  out <- vroom_(file, delim = delim, col_names = col_names, col_types = col_types, skip = skip,
+  out <- vroom_(file, delim = delim, col_names = col_names, col_types = col_types, id = id, skip = skip,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
     escape_backslash = escape_backslash, comment = comment, num_threads = num_threads, progress = progress)
 

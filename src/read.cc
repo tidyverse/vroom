@@ -26,6 +26,24 @@ read_column_names(const std::shared_ptr<vroom::index_collection>& idx) {
   return nms;
 }
 
+CharacterVector generate_filename_column(
+    List inputs, const std::vector<size_t> lengths, size_t rows) {
+  std::vector<std::string> out;
+  out.reserve(rows);
+
+  if (static_cast<size_t>(inputs.size()) != lengths.size()) {
+    Rcpp::stop("inputs and lengths inconsistent");
+  }
+
+  for (int i = 0; i < inputs.size(); ++i) {
+    for (size_t j = 0; j < lengths[i]; ++j) {
+      // CharacterVector filename = Rf_asChar(inputs[i]);
+      out.push_back(inputs[i]);
+    }
+  }
+  return Rcpp::wrap(out);
+}
+
 // [[Rcpp::export]]
 SEXP vroom_(
     List inputs,
@@ -37,6 +55,7 @@ SEXP vroom_(
     const char comment,
     RObject col_names,
     RObject col_types,
+    SEXP id,
     size_t skip,
     CharacterVector na,
     size_t num_threads,
@@ -64,7 +83,9 @@ SEXP vroom_(
 
   auto total_columns = idx->num_columns();
 
-  List res(total_columns);
+  bool add_filename = !Rf_isNull(id);
+
+  List res(total_columns + add_filename);
 
   CharacterVector col_nms;
 
@@ -146,6 +167,12 @@ SEXP vroom_(
     }
 
     ++i;
+  }
+
+  if (add_filename) {
+    res[i++] =
+        generate_filename_column(inputs, idx->row_sizes(), idx->num_rows());
+    res_nms.push_back(Rcpp::as<std::string>(id));
   }
 
   if (i < total_columns) {
