@@ -13,6 +13,7 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+options(tibble.print_min = 3)
 ```
 # vroom vroom! 🏎💨 <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
 

@@ -1,3 +1,5 @@
+^Meta$
+^doc$
 ^codecov\.yml$
 ^appveyor\.yml$
 ^pkgdown$

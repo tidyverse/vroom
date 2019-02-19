@@ -77,19 +77,12 @@ vroom::vroom("mtcars.tsv",
                    drat = "_", vs = "l", am = "l", carb = "i")
 )
 #> # A tibble: 32 x 10
-#>    model               mpg   cyl    hp    wt  qsec vs    am    gear   carb
-#>    <chr>             <dbl> <int> <int> <dbl> <dbl> <lgl> <lgl> <fct> <int>
-#>  1 Mazda RX4          21       6   110  2.62  16.5 FALSE TRUE  4         4
-#>  2 Mazda RX4 Wag      21       6   110  2.88  17.0 FALSE TRUE  4         4
-#>  3 Datsun 710         22.8     4    93  2.32  18.6 TRUE  TRUE  4         1
-#>  4 Hornet 4 Drive     21.4     6   110  3.22  19.4 TRUE  FALSE 3         1
-#>  5 Hornet Sportabout  18.7     8   175  3.44  17.0 FALSE FALSE 3         2
-#>  6 Valiant            18.1     6   105  3.46  20.2 TRUE  FALSE 3         1
-#>  7 Duster 360         14.3     8   245  3.57  15.8 FALSE FALSE 3         4
-#>  8 Merc 240D          24.4     4    62  3.19  20   TRUE  FALSE 4         2
-#>  9 Merc 230           22.8     4    95  3.15  22.9 TRUE  FALSE 4         2
-#> 10 Merc 280           19.2     6   123  3.44  18.3 TRUE  FALSE 4         4
-#> # … with 22 more rows
+#>   model           mpg   cyl    hp    wt  qsec vs    am    gear   carb
+#>   <chr>         <dbl> <int> <int> <dbl> <dbl> <lgl> <lgl> <fct> <int>
+#> 1 Mazda RX4      21       6   110  2.62  16.5 FALSE TRUE  4         4
+#> 2 Mazda RX4 Wag  21       6   110  2.88  17.0 FALSE TRUE  4         4
+#> 3 Datsun 710     22.8     4    93  2.32  18.6 TRUE  TRUE  4         1
+#> # … with 29 more rows
 ```
 
 ## Reading multiple files
@@ -120,19 +113,12 @@ files
 #> flights_YV.tsv
 vroom::vroom(files)
 #> # A tibble: 336,776 x 19
-#>     year month   day dep_time sched_dep_time dep_delay arr_time
-#>    <dbl> <dbl> <dbl>    <dbl>          <dbl>     <dbl>    <dbl>
-#>  1  2013     1     1      810            810         0     1048
-#>  2  2013     1     1     1451           1500        -9     1634
-#>  3  2013     1     1     1452           1455        -3     1637
-#>  4  2013     1     1     1454           1500        -6     1635
-#>  5  2013     1     1     1507           1515        -8     1651
-#>  6  2013     1     1     1530           1530         0     1650
-#>  7  2013     1     1     1546           1540         6     1753
-#>  8  2013     1     1     1550           1550         0     1844
-#>  9  2013     1     1     1552           1600        -8     1749
-#> 10  2013     1     1     1554           1600        -6     1701
-#> # … with 336,766 more rows, and 12 more variables: sched_arr_time <dbl>,
+#>    year month   day dep_time sched_dep_time dep_delay arr_time
+#>   <dbl> <dbl> <dbl>    <dbl>          <dbl>     <dbl>    <dbl>
+#> 1  2013     1     1      810            810         0     1048
+#> 2  2013     1     1     1451           1500        -9     1634
+#> 3  2013     1     1     1452           1455        -3     1637
+#> # … with 3.368e+05 more rows, and 12 more variables: sched_arr_time <dbl>,
 #> #   arr_delay <dbl>, carrier <chr>, flight <dbl>, tailnum <chr>,
 #> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
 #> #   minute <dbl>, time_hour <chr>

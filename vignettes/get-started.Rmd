@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+options(tibble.print_min = 3)
 ```
 
 The vroom package contains one function `vroom()` which is used to
