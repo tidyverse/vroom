@@ -44,7 +44,6 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL, id = N
 #' Guess the type of a vector
 #'
 #' @inheritParams readr::guess_parser
-#' @export
 guess_type <- function(x, na = c("", "NA"), locale = readr::default_locale(), guess_integer = FALSE) {
 
   x[x %in% na] <- NA
