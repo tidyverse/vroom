@@ -160,14 +160,14 @@ will generate a warning and be made unique with a numeric prefix.</p></td>
     </tr>
     <tr>
       <th>col_types</th>
-      <td><p>One of <code>NULL</code>, a <code>cols()</code> specification, or
+      <td><p>One of <code>NULL</code>, a <code><a href='https://readr.tidyverse.org/reference/cols.html'>cols()</a></code> specification, or
 a string. See <code>vignette("readr")</code> for more details.</p>
 <p>If <code>NULL</code>, all column types will be imputed from the first 1000 rows
 on the input. This is convenient (and fast), but not robust. If the
 imputation fails, you'll need to supply the correct types yourself.</p>
-<p>If a column specification created by <code>cols()</code>, it must contain
+<p>If a column specification created by <code><a href='https://readr.tidyverse.org/reference/cols.html'>cols()</a></code>, it must contain
 one column specification for each column. If you only want to read a
-subset of the columns, use <code>cols_only()</code>.</p>
+subset of the columns, use <code><a href='https://readr.tidyverse.org/reference/cols.html'>cols_only()</a></code>.</p>
 <p>Alternatively, you can use a compact string representation where each
 character represents one column:
 c = character, i = integer, n = number, d = double,
