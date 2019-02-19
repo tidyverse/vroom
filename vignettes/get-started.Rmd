@@ -163,7 +163,5 @@ vroom(
 
 ## Further reading
 
-[benchmarking] discusses the performance of vroom, how it compares to
-alternatives and how it achieves the results.
-
-benchmarking: https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html
+`vignette("benchmarks")` discusses the performance of vroom, how it compares to
+alternatives and how it achieves its results.

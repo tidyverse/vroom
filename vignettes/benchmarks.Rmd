@@ -1,6 +1,10 @@
 ---
 title: "Benchmarks"
-output: rmarkdown::github_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{benchmarks}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -100,7 +104,7 @@ The following operations are performed.
 
 ```{r, echo = FALSE, message = FALSE}
 library(dplyr)
-tm_df <- readRDS(here::here("bench", "timings.Rds"))
+tm_df <- readRDS(system.file("bench", "timings.Rds", package = "vroom"))
 read_times <- tm_df %>% dplyr::filter(op == "read", type == "real") %>% select(package, `Time to read file` = time)
 
 total_times <- tm_df %>% group_by(package) %>% dplyr::filter(type == "real") %>% tally(wt = time) %>% rename("Total time for all operations (sec)" = "n")
@@ -124,6 +128,6 @@ tm_df %>%
     theme(legend.position = "bottom")
 ```
 
-```{r}
-readRDS(here::here("bench", "sessioninfo.Rds"))
+```{r, echo = FALSE}
+readRDS(system.file("bench", "sessioninfo.Rds", package = "vroom"))
 ```

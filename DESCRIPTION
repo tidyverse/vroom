@@ -28,11 +28,17 @@ URL: https://github.com/jimhester/vroom
 BugReports: https://github.com/jimhester/vroom/issues
 SystemRequirements: C++11
 Suggests: 
-    testthat,
+    bench,
     covr,
     curl,
+    dplyr,
+    forcats,
     fs,
+    ggplot2,
+    here,
     knitr,
+    prettyunits,
     purrr,
-    rmarkdown
+    rmarkdown,
+    testthat
 VignetteBuilder: knitr

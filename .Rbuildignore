@@ -9,7 +9,6 @@
 ^README\.Rmd$
 ^LICENSE\.md$
 ^src/.clang-format$
-^bench$
 ^script.R$
 ^.*\.Rproj$
 ^\.Rproj\.user$
