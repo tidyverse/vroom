@@ -110,3 +110,59 @@ compressed formats).
 file <- "https://raw.githubusercontent.com/jimhester/vroom/master/inst/extdata/mtcars.csv.gz"
 vroom(file)
 ```
+
+## column types
+
+vroom guesses the data types of columns as they are read, however sometimes it
+is necessary to change the type of one or more columns.
+
+The available specifications are: (with single letter abbreviations in quotes)
+
+* `col_logical()` 'l', containing only `T`, `F`, `TRUE`, `FALSE`, `1` or `0`.
+* `col_integer()` 'i', integer values.
+* `col_double()` 'd', floating point values.
+* `col_character()` 'c', everything else.
+* `col_factor(levels, ordered)` 'f', a fixed set of values.
+* `col_skip()` '_, -', don't import this column.
+* `col_guess()` '?', parse using the "best" type based on the input.
+
+You can tell vroom what columns to use with the `col_types()` argument in a number of ways.
+
+If you only need to override a single column the most consise way is to use a named vector.
+
+```{r}
+# read the 'hp' columns as an integer
+vroom(vroom_example("mtcars.csv"), col_types = c(hp = "i"))
+
+# also skip reading the 'cyl' column
+vroom(vroom_example("mtcars.csv"), col_types = c(hp = "i", cyl = "_"))
+
+# also read the gears as a factor
+vroom(vroom_example("mtcars.csv"), col_types = c(hp = "i", cyl = "_", gear = "f"))
+```
+
+However you can also use the `col_*()` functions in a list.
+
+```{r}
+vroom(
+  vroom_example("mtcars.csv"),
+  col_types = list(hp = col_integer(), cyl = col_skip(), gear = col_factor())
+)
+```
+
+This is most useful when a column type needs additional information, such as
+for categorical data when you know all of the levels of a factor.
+
+```{r}
+vroom(
+  vroom_example("mtcars.csv"),
+  col_types = list(gear = col_factor(levels = c(gear = c("3", "4", "5"))))
+)
+```
+
+## Further reading
+
+[benchmarking] discusses the performance of vroom, how it compares to
+alternatives and how it achieves the results.
+
+benchmarking: https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html
