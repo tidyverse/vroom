@@ -7,11 +7,10 @@
 show_progress()
 }
 \description{
-Progress bars are shown \emph{unless} one of the following is \code{TRUE}
-\itemize{
-\item The bar is explicitly disabled by setting \code{options(readr.show_progress = FALSE)}
-\item The code is run in a non-interactive session (\code{interactive()} is \code{FALSE}).
-\item The code is run in an RStudio notebook chunk.
-\item The code is run by knitr / rmarkdown.
-}
+Progress bars are shown _unless_ one of the following is `TRUE`
+- The bar is explicitly disabled by setting `options(vroom.show_progress = FALSE)`
+- The code is run in a non-interactive session (`interactive()` is `FALSE`).
+- The code is run in an RStudio notebook chunk.
+- The code is run by knitr / rmarkdown.
+- The code is run by testthat (the `TESTTHAT` envvar is `true`).
 }
