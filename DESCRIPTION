@@ -31,6 +31,8 @@ Suggests:
     testthat,
     covr,
     curl,
+    fs,
     knitr,
+    purrr,
     rmarkdown
 VignetteBuilder: knitr
