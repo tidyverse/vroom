@@ -1,5 +1,5 @@
 test_vroom <- function(content, ..., equals) {
-  expect_equivalent(
+  expect_equal(
     vroom(content, ...),
     equals
   )
