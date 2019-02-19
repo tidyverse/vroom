@@ -21,8 +21,11 @@ which the data is separated (delimited) by one or more characters.
 The most common type of delimited files are CSV (Comma Separated
 Values) files, typically these files have a `.csv` suffix.
 
-## reading CSV files
-To read a CSV file with vroom specify `delim = ","` to the call to vroom.
+## reading files
+To read a CSV, or other type of delimited file with vroom pass the file to
+`vroom()`. The delimiter will be automatically guessed if it is a common
+delimiter. If the guessing fails or you are using a less common delimiter
+specify it with `delim = ","`.
 
 We have included an example CSV file in the vroom package. Access it with
 `vroom_example("mtcars.csv")`
@@ -42,7 +45,7 @@ vroom(file)
 vroom(file, delim = ",")
 ```
 
-## reading multiple CSV files
+## reading multiple files
 
 If you are reading a set of (CSV or otherwise delimited) files which all have
 the same columns, you can pass all the filenames directly to `vroom()` and it
@@ -51,7 +54,7 @@ will combine them into one result.
 First we will create some files to read by splitting the mtcars dataset by
 number of cylinders, (it is OK if you don't currently understand this code).
 ```{r}
-mt <- rownames_to_column(mtcars, "model")
+mt <- tibble::rownames_to_column(mtcars, "model")
 purrr::iwalk(
   split(mt, mt$cyl),
   ~ readr::write_csv(.x, glue::glue("mtcars_{.y}.csv"))
@@ -77,4 +80,33 @@ vroom(files, id = "path")
 
 ```{r, include = FALSE}
 fs::file_delete(files)
+```
+
+## reading compressed files
+
+vroom supports reading zip, gz, bz2 and xz compressed files automatically,
+just pass the filename of the compressed file to vroom.
+
+```{r}
+file <- vroom_example("mtcars.csv.gz")
+
+vroom(file)
+```
+
+## reading remote files
+
+vroom can read files from the internet as well by passing the URL of the file
+to vroom.
+
+```{r, eval = as.logical(Sys.getenv("NOT_CRAN", "false"))}
+file <- "https://raw.githubusercontent.com/jimhester/vroom/master/inst/extdata/mtcars.csv"
+vroom(file)
+```
+
+It can even read gzipped files from the internet (although currently not the other
+compressed formats).
+
+```{r, eval = as.logical(Sys.getenv("NOT_CRAN", "false"))}
+file <- "https://raw.githubusercontent.com/jimhester/vroom/master/inst/extdata/mtcars.csv.gz"
+vroom(file)
 ```
