@@ -240,6 +240,18 @@ public:
 
   std::pair<const char*, const char*> get_cell(size_t i) const;
 
+  /*
+   * @param source the source to index
+   * @param destination the index to push to
+   * @param delim the delimiter to use
+   * @param quote the quoting character
+   * @param start the start of the region to index
+   * @param end the end of the region to index
+   * @param offset an offset to add to the destination (this is needed when
+   * @param pb the progress bar to use
+   * @param update_size how often to update the progress bar
+   * reading blocks from a connection).
+   */
   template <typename T, typename P>
   void index_region(
       const T& source,
@@ -248,6 +260,7 @@ public:
       const char quote,
       const size_t start,
       const size_t end,
+      const size_t offset,
       P& pb,
       const size_t update_size = -1) {
 
@@ -269,7 +282,7 @@ public:
       auto c = source[i];
 
       if (!in_quote && strncmp(delim, begin + i, delim_len_) == 0) {
-        destination.push_back(i);
+        destination.push_back(i + offset);
       }
 
       else if (escape_backslash_ && c == '\\') {
@@ -281,7 +294,7 @@ public:
       }
 
       else if (c == '\n') { // no embedded quotes allowed
-        destination.push_back(i);
+        destination.push_back(i + offset);
         if (progress_) {
           auto tick_size = i - last_tick;
           if (tick_size > update_size) {

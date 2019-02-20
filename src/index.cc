@@ -82,7 +82,7 @@ index::index(
   // Index the first row
   idx_[0].push_back(start - 1);
   index_region(
-      mmap_, idx_[0], delim_.c_str(), quote, start, first_nl + 1, pb, -1);
+      mmap_, idx_[0], delim_.c_str(), quote, start, first_nl + 1, 0, pb, -1);
   columns_ = idx_[0].size() - 1;
 
   auto threads = parallel_for(
@@ -98,6 +98,7 @@ index::index(
             quote,
             start,
             end,
+            0,
             pb,
             file_size / 200);
       },

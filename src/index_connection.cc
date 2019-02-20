@@ -101,19 +101,30 @@ index_connection::index_connection(
 
   // Index the first row
   idx_[0].push_back(start - 1);
-  index_region(buf, idx_[0], delim_.c_str(), quote, start, first_nl + 1, pb);
+  index_region(buf, idx_[0], delim_.c_str(), quote, start, first_nl + 1, 0, pb);
   columns_ = idx_[0].size() - 1;
 
 #if DEBUG
   Rcpp::Rcerr << "columns: " << columns_ << '\n';
 #endif
 
+  auto total_read = 0;
   while (sz > 0) {
     index_region(
-        buf, idx_[1], delim_.c_str(), quote, first_nl, sz, pb, sz / 10);
+        buf,
+        idx_[1],
+        delim_.c_str(),
+        quote,
+        first_nl,
+        sz + 1,
+        total_read,
+        pb,
+        sz / 10);
     out.write(buf.data(), sz);
 
+    total_read += sz;
     sz = R_ReadConnection(con, buf.data(), chunk_size);
+    first_nl = 0;
   }
 
   out.close();
@@ -154,8 +165,10 @@ index_connection::index_connection(
   std::ofstream log(
       "index_connection.idx",
       std::fstream::out | std::fstream::binary | std::fstream::trunc);
-  for (auto& v : idx_[0]) {
-    log << v << '\n';
+  for (auto& i : idx_) {
+    for (auto& v : i) {
+      log << v << '\n';
+    }
   }
   log.close();
   Rcpp::Rcerr << columns_ << ':' << rows_ << '\n';
