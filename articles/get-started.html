@@ -53,7 +53,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/benchmarks/benchmarks.html">Benchmarks</a>
+      <a href="../articles/benchmarks.html">Benchmarks</a>
     </li>
     <li>
       <a href="../articles/get-started.html">Getting started with vroom</a>
@@ -107,37 +107,23 @@
 <a class="sourceLine" id="cb1-8" data-line-number="8"><span class="co"># Read the file, by default vroom will guess the delimiter automatically.</span></a>
 <a class="sourceLine" id="cb1-9" data-line-number="9"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file)</a>
 <a class="sourceLine" id="cb1-10" data-line-number="10"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
-<a class="sourceLine" id="cb1-11" data-line-number="11"><span class="co">#&gt;    model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
-<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="co">#&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb1-13" data-line-number="13"><span class="co">#&gt;  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1     4     4</span></a>
-<a class="sourceLine" id="cb1-14" data-line-number="14"><span class="co">#&gt;  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1     4     4</span></a>
-<a class="sourceLine" id="cb1-15" data-line-number="15"><span class="co">#&gt;  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span></a>
-<a class="sourceLine" id="cb1-16" data-line-number="16"><span class="co">#&gt;  4 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1</span></a>
-<a class="sourceLine" id="cb1-17" data-line-number="17"><span class="co">#&gt;  5 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2</span></a>
-<a class="sourceLine" id="cb1-18" data-line-number="18"><span class="co">#&gt;  6 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1</span></a>
-<a class="sourceLine" id="cb1-19" data-line-number="19"><span class="co">#&gt;  7 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4</span></a>
-<a class="sourceLine" id="cb1-20" data-line-number="20"><span class="co">#&gt;  8 Merc …  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span></a>
-<a class="sourceLine" id="cb1-21" data-line-number="21"><span class="co">#&gt;  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span></a>
-<a class="sourceLine" id="cb1-22" data-line-number="22"><span class="co">#&gt; 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4</span></a>
-<a class="sourceLine" id="cb1-23" data-line-number="23"><span class="co">#&gt; # … with 22 more rows</span></a>
-<a class="sourceLine" id="cb1-24" data-line-number="24"></a>
-<a class="sourceLine" id="cb1-25" data-line-number="25"><span class="co"># You can also specify it explicitly, which is (slightly) faster, and safer if</span></a>
-<a class="sourceLine" id="cb1-26" data-line-number="26"><span class="co"># you know how the file is delimited.</span></a>
-<a class="sourceLine" id="cb1-27" data-line-number="27"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">delim =</span> <span class="st">","</span>)</a>
-<a class="sourceLine" id="cb1-28" data-line-number="28"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
-<a class="sourceLine" id="cb1-29" data-line-number="29"><span class="co">#&gt;    model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
-<a class="sourceLine" id="cb1-30" data-line-number="30"><span class="co">#&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb1-31" data-line-number="31"><span class="co">#&gt;  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1     4     4</span></a>
-<a class="sourceLine" id="cb1-32" data-line-number="32"><span class="co">#&gt;  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1     4     4</span></a>
-<a class="sourceLine" id="cb1-33" data-line-number="33"><span class="co">#&gt;  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span></a>
-<a class="sourceLine" id="cb1-34" data-line-number="34"><span class="co">#&gt;  4 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1</span></a>
-<a class="sourceLine" id="cb1-35" data-line-number="35"><span class="co">#&gt;  5 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2</span></a>
-<a class="sourceLine" id="cb1-36" data-line-number="36"><span class="co">#&gt;  6 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1</span></a>
-<a class="sourceLine" id="cb1-37" data-line-number="37"><span class="co">#&gt;  7 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4</span></a>
-<a class="sourceLine" id="cb1-38" data-line-number="38"><span class="co">#&gt;  8 Merc …  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span></a>
-<a class="sourceLine" id="cb1-39" data-line-number="39"><span class="co">#&gt;  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span></a>
-<a class="sourceLine" id="cb1-40" data-line-number="40"><span class="co">#&gt; 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4</span></a>
-<a class="sourceLine" id="cb1-41" data-line-number="41"><span class="co">#&gt; # … with 22 more rows</span></a></code></pre></div>
+<a class="sourceLine" id="cb1-11" data-line-number="11"><span class="co">#&gt;   model     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
+<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb1-13" data-line-number="13"><span class="co">#&gt; 1 Mazda …  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></a>
+<a class="sourceLine" id="cb1-14" data-line-number="14"><span class="co">#&gt; 2 Mazda …  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></a>
+<a class="sourceLine" id="cb1-15" data-line-number="15"><span class="co">#&gt; 3 Datsun…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></a>
+<a class="sourceLine" id="cb1-16" data-line-number="16"><span class="co">#&gt; # … with 29 more rows</span></a>
+<a class="sourceLine" id="cb1-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb1-18" data-line-number="18"><span class="co"># You can also specify it explicitly, which is (slightly) faster, and safer if</span></a>
+<a class="sourceLine" id="cb1-19" data-line-number="19"><span class="co"># you know how the file is delimited.</span></a>
+<a class="sourceLine" id="cb1-20" data-line-number="20"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">delim =</span> <span class="st">","</span>)</a>
+<a class="sourceLine" id="cb1-21" data-line-number="21"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
+<a class="sourceLine" id="cb1-22" data-line-number="22"><span class="co">#&gt;   model     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
+<a class="sourceLine" id="cb1-23" data-line-number="23"><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb1-24" data-line-number="24"><span class="co">#&gt; 1 Mazda …  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></a>
+<a class="sourceLine" id="cb1-25" data-line-number="25"><span class="co">#&gt; 2 Mazda …  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></a>
+<a class="sourceLine" id="cb1-26" data-line-number="26"><span class="co">#&gt; 3 Datsun…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></a>
+<a class="sourceLine" id="cb1-27" data-line-number="27"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
 </div>
 <div id="reading-multiple-files" class="section level2">
 <h2 class="hasAnchor">
@@ -155,35 +141,21 @@
 <a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt; mtcars_4.csv mtcars_6.csv mtcars_8.csv</span></a>
 <a class="sourceLine" id="cb3-4" data-line-number="4"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(files)</a>
 <a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt;    model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt;  1 Datsu…  22.8     4 108      93  3.85  2.32  18.6     1     1     4     1</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt;  2 Merc …  24.4     4 147.     62  3.69  3.19  20       1     0     4     2</span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt;  3 Merc …  22.8     4 141.     95  3.92  3.15  22.9     1     0     4     2</span></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt;  4 Fiat …  32.4     4  78.7    66  4.08  2.2   19.5     1     1     4     1</span></a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt;  5 Honda…  30.4     4  75.7    52  4.93  1.62  18.5     1     1     4     2</span></a>
-<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt;  6 Toyot…  33.9     4  71.1    65  4.22  1.84  19.9     1     1     4     1</span></a>
-<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt;  7 Toyot…  21.5     4 120.     97  3.7   2.46  20.0     1     0     3     1</span></a>
-<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt;  8 Fiat …  27.3     4  79      66  4.08  1.94  18.9     1     1     4     1</span></a>
-<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt;  9 Porsc…  26       4 120.     91  4.43  2.14  16.7     0     1     5     2</span></a>
-<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt; 10 Lotus…  30.4     4  95.1   113  3.77  1.51  16.9     1     1     5     2</span></a>
-<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt; # … with 22 more rows</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt;   model     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; 1 Datsun…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; 2 Merc 2…  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; 3 Merc 2…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
 <p>Often the filename or directory the files are in contains information about the contents, in this case the <code>id</code> parameter can be used to add an extra column (in this case named <code>path</code>) to the result that contains the file path.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(files, <span class="dt">id =</span> <span class="st">"path"</span>)</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; # A tibble: 32 x 13</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt;    model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt;  1 Datsu…  22.8     4 108      93  3.85  2.32  18.6     1     1     4     1</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt;  2 Merc …  24.4     4 147.     62  3.69  3.19  20       1     0     4     2</span></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt;  3 Merc …  22.8     4 141.     95  3.92  3.15  22.9     1     0     4     2</span></a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt;  4 Fiat …  32.4     4  78.7    66  4.08  2.2   19.5     1     1     4     1</span></a>
-<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt;  5 Honda…  30.4     4  75.7    52  4.93  1.62  18.5     1     1     4     2</span></a>
-<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt;  6 Toyot…  33.9     4  71.1    65  4.22  1.84  19.9     1     1     4     1</span></a>
-<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt;  7 Toyot…  21.5     4 120.     97  3.7   2.46  20.0     1     0     3     1</span></a>
-<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt;  8 Fiat …  27.3     4  79      66  4.08  1.94  18.9     1     1     4     1</span></a>
-<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt;  9 Porsc…  26       4 120.     91  4.43  2.14  16.7     0     1     5     2</span></a>
-<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt; 10 Lotus…  30.4     4  95.1   113  3.77  1.51  16.9     1     1     5     2</span></a>
-<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt; # … with 22 more rows, and 1 more variable: path &lt;chr&gt;</span></a></code></pre></div>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt;   model     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; 1 Datsun…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; 2 Merc 2…  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt; 3 Merc 2…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; # … with 29 more rows, and 1 more variable: path &lt;chr&gt;</span></a></code></pre></div>
 </div>
 <div id="reading-compressed-files" class="section level2">
 <h2 class="hasAnchor">
@@ -193,19 +165,12 @@
 <a class="sourceLine" id="cb5-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb5-3" data-line-number="3"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file)</a>
 <a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
-<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt;    model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
-<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt;  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1     4     4</span></a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt;  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1     4     4</span></a>
-<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt;  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span></a>
-<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co">#&gt;  4 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1</span></a>
-<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="co">#&gt;  5 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2</span></a>
-<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt;  6 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1</span></a>
-<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="co">#&gt;  7 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4</span></a>
-<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt;  8 Merc …  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span></a>
-<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#&gt;  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span></a>
-<a class="sourceLine" id="cb5-16" data-line-number="16"><span class="co">#&gt; 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4</span></a>
-<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="co">#&gt; # … with 22 more rows</span></a></code></pre></div>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt;   model     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt; 1 Mazda …  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; 2 Mazda …  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt; 3 Datsun…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
 </div>
 <div id="reading-remote-files" class="section level2">
 <h2 class="hasAnchor">
@@ -214,36 +179,22 @@
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">file &lt;-<span class="st"> "https://raw.githubusercontent.com/jimhester/vroom/master/inst/extdata/mtcars.csv"</span></a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file)</a>
 <a class="sourceLine" id="cb6-3" data-line-number="3"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co">#&gt;    model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt;  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1     4     4</span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt;  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1     4     4</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt;  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt;  4 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1</span></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt;  5 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2</span></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt;  6 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1</span></a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt;  7 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4</span></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt;  8 Merc …  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span></a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt;  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span></a>
-<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4</span></a>
-<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; # … with 22 more rows</span></a></code></pre></div>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co">#&gt;   model     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; 1 Mazda …  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; 2 Mazda …  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; 3 Datsun…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
 <p>It can even read gzipped files from the internet (although currently not the other compressed formats).</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">file &lt;-<span class="st"> "https://raw.githubusercontent.com/jimhester/vroom/master/inst/extdata/mtcars.csv.gz"</span></a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file)</a>
 <a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt;    model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
-<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt;  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1     4     4</span></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt;  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1     4     4</span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt;  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt;  4 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt;  5 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2</span></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt;  6 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1</span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt;  7 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4</span></a>
-<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#&gt;  8 Merc …  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span></a>
-<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt;  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span></a>
-<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#&gt; 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4</span></a>
-<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">#&gt; # … with 22 more rows</span></a></code></pre></div>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt;   model     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt; 1 Mazda …  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; 2 Mazda …  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt; 3 Datsun…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
 </div>
 <div id="column-types" class="section level2">
 <h2 class="hasAnchor">
@@ -271,97 +222,61 @@
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co"># read the 'hp' columns as an integer</span></a>
 <a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>), <span class="dt">col_types =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dt">hp =</span> <span class="st">"i"</span>))</a>
 <a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#&gt;    model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
-<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#&gt;  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1     4     4</span></a>
-<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">#&gt;  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1     4     4</span></a>
-<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">#&gt;  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span></a>
-<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co">#&gt;  4 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1</span></a>
-<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="co">#&gt;  5 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2</span></a>
-<a class="sourceLine" id="cb8-11" data-line-number="11"><span class="co">#&gt;  6 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1</span></a>
-<a class="sourceLine" id="cb8-12" data-line-number="12"><span class="co">#&gt;  7 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4</span></a>
-<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="co">#&gt;  8 Merc …  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span></a>
-<a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co">#&gt;  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span></a>
-<a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co">#&gt; 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4</span></a>
-<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co">#&gt; # … with 22 more rows</span></a>
-<a class="sourceLine" id="cb8-17" data-line-number="17"></a>
-<a class="sourceLine" id="cb8-18" data-line-number="18"><span class="co"># also skip reading the 'cyl' column</span></a>
-<a class="sourceLine" id="cb8-19" data-line-number="19"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>), <span class="dt">col_types =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dt">hp =</span> <span class="st">"i"</span>, <span class="dt">cyl =</span> <span class="st">"_"</span>))</a>
-<a class="sourceLine" id="cb8-20" data-line-number="20"><span class="co">#&gt; # A tibble: 32 x 11</span></a>
-<a class="sourceLine" id="cb8-21" data-line-number="21"><span class="co">#&gt;    model          mpg  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
-<a class="sourceLine" id="cb8-22" data-line-number="22"><span class="co">#&gt;    &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb8-23" data-line-number="23"><span class="co">#&gt;  1 Mazda RX4     21    160    110  3.9   2.62  16.5     0     1     4     4</span></a>
-<a class="sourceLine" id="cb8-24" data-line-number="24"><span class="co">#&gt;  2 Mazda RX4 W…  21    160    110  3.9   2.88  17.0     0     1     4     4</span></a>
-<a class="sourceLine" id="cb8-25" data-line-number="25"><span class="co">#&gt;  3 Datsun 710    22.8  108     93  3.85  2.32  18.6     1     1     4     1</span></a>
-<a class="sourceLine" id="cb8-26" data-line-number="26"><span class="co">#&gt;  4 Hornet 4 Dr…  21.4  258    110  3.08  3.22  19.4     1     0     3     1</span></a>
-<a class="sourceLine" id="cb8-27" data-line-number="27"><span class="co">#&gt;  5 Hornet Spor…  18.7  360    175  3.15  3.44  17.0     0     0     3     2</span></a>
-<a class="sourceLine" id="cb8-28" data-line-number="28"><span class="co">#&gt;  6 Valiant       18.1  225    105  2.76  3.46  20.2     1     0     3     1</span></a>
-<a class="sourceLine" id="cb8-29" data-line-number="29"><span class="co">#&gt;  7 Duster 360    14.3  360    245  3.21  3.57  15.8     0     0     3     4</span></a>
-<a class="sourceLine" id="cb8-30" data-line-number="30"><span class="co">#&gt;  8 Merc 240D     24.4  147.    62  3.69  3.19  20       1     0     4     2</span></a>
-<a class="sourceLine" id="cb8-31" data-line-number="31"><span class="co">#&gt;  9 Merc 230      22.8  141.    95  3.92  3.15  22.9     1     0     4     2</span></a>
-<a class="sourceLine" id="cb8-32" data-line-number="32"><span class="co">#&gt; 10 Merc 280      19.2  168.   123  3.92  3.44  18.3     1     0     4     4</span></a>
-<a class="sourceLine" id="cb8-33" data-line-number="33"><span class="co">#&gt; # … with 22 more rows</span></a>
-<a class="sourceLine" id="cb8-34" data-line-number="34"></a>
-<a class="sourceLine" id="cb8-35" data-line-number="35"><span class="co"># also read the gears as a factor</span></a>
-<a class="sourceLine" id="cb8-36" data-line-number="36"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>), <span class="dt">col_types =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dt">hp =</span> <span class="st">"i"</span>, <span class="dt">cyl =</span> <span class="st">"_"</span>, <span class="dt">gear =</span> <span class="st">"f"</span>))</a>
-<a class="sourceLine" id="cb8-37" data-line-number="37"><span class="co">#&gt; # A tibble: 32 x 11</span></a>
-<a class="sourceLine" id="cb8-38" data-line-number="38"><span class="co">#&gt;    model          mpg  disp    hp  drat    wt  qsec    vs    am gear   carb</span></a>
-<a class="sourceLine" id="cb8-39" data-line-number="39"><span class="co">#&gt;    &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb8-40" data-line-number="40"><span class="co">#&gt;  1 Mazda RX4     21    160    110  3.9   2.62  16.5     0     1 4         4</span></a>
-<a class="sourceLine" id="cb8-41" data-line-number="41"><span class="co">#&gt;  2 Mazda RX4 W…  21    160    110  3.9   2.88  17.0     0     1 4         4</span></a>
-<a class="sourceLine" id="cb8-42" data-line-number="42"><span class="co">#&gt;  3 Datsun 710    22.8  108     93  3.85  2.32  18.6     1     1 4         1</span></a>
-<a class="sourceLine" id="cb8-43" data-line-number="43"><span class="co">#&gt;  4 Hornet 4 Dr…  21.4  258    110  3.08  3.22  19.4     1     0 3         1</span></a>
-<a class="sourceLine" id="cb8-44" data-line-number="44"><span class="co">#&gt;  5 Hornet Spor…  18.7  360    175  3.15  3.44  17.0     0     0 3         2</span></a>
-<a class="sourceLine" id="cb8-45" data-line-number="45"><span class="co">#&gt;  6 Valiant       18.1  225    105  2.76  3.46  20.2     1     0 3         1</span></a>
-<a class="sourceLine" id="cb8-46" data-line-number="46"><span class="co">#&gt;  7 Duster 360    14.3  360    245  3.21  3.57  15.8     0     0 3         4</span></a>
-<a class="sourceLine" id="cb8-47" data-line-number="47"><span class="co">#&gt;  8 Merc 240D     24.4  147.    62  3.69  3.19  20       1     0 4         2</span></a>
-<a class="sourceLine" id="cb8-48" data-line-number="48"><span class="co">#&gt;  9 Merc 230      22.8  141.    95  3.92  3.15  22.9     1     0 4         2</span></a>
-<a class="sourceLine" id="cb8-49" data-line-number="49"><span class="co">#&gt; 10 Merc 280      19.2  168.   123  3.92  3.44  18.3     1     0 4         4</span></a>
-<a class="sourceLine" id="cb8-50" data-line-number="50"><span class="co">#&gt; # … with 22 more rows</span></a></code></pre></div>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#&gt;   model     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#&gt; 1 Mazda …  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">#&gt; 2 Mazda …  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">#&gt; 3 Datsun…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co">#&gt; # … with 29 more rows</span></a>
+<a class="sourceLine" id="cb8-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb8-11" data-line-number="11"><span class="co"># also skip reading the 'cyl' column</span></a>
+<a class="sourceLine" id="cb8-12" data-line-number="12"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>), <span class="dt">col_types =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dt">hp =</span> <span class="st">"i"</span>, <span class="dt">cyl =</span> <span class="st">"_"</span>))</a>
+<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="co">#&gt; # A tibble: 32 x 11</span></a>
+<a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co">#&gt;   model           mpg  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
+<a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co">#&gt; 1 Mazda RX4      21     160   110  3.9   2.62  16.5     0     1     4     4</span></a>
+<a class="sourceLine" id="cb8-17" data-line-number="17"><span class="co">#&gt; 2 Mazda RX4 Wag  21     160   110  3.9   2.88  17.0     0     1     4     4</span></a>
+<a class="sourceLine" id="cb8-18" data-line-number="18"><span class="co">#&gt; 3 Datsun 710     22.8   108    93  3.85  2.32  18.6     1     1     4     1</span></a>
+<a class="sourceLine" id="cb8-19" data-line-number="19"><span class="co">#&gt; # … with 29 more rows</span></a>
+<a class="sourceLine" id="cb8-20" data-line-number="20"></a>
+<a class="sourceLine" id="cb8-21" data-line-number="21"><span class="co"># also read the gears as a factor</span></a>
+<a class="sourceLine" id="cb8-22" data-line-number="22"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>), <span class="dt">col_types =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dt">hp =</span> <span class="st">"i"</span>, <span class="dt">cyl =</span> <span class="st">"_"</span>, <span class="dt">gear =</span> <span class="st">"f"</span>))</a>
+<a class="sourceLine" id="cb8-23" data-line-number="23"><span class="co">#&gt; # A tibble: 32 x 11</span></a>
+<a class="sourceLine" id="cb8-24" data-line-number="24"><span class="co">#&gt;   model           mpg  disp    hp  drat    wt  qsec    vs    am gear   carb</span></a>
+<a class="sourceLine" id="cb8-25" data-line-number="25"><span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb8-26" data-line-number="26"><span class="co">#&gt; 1 Mazda RX4      21     160   110  3.9   2.62  16.5     0     1 4         4</span></a>
+<a class="sourceLine" id="cb8-27" data-line-number="27"><span class="co">#&gt; 2 Mazda RX4 Wag  21     160   110  3.9   2.88  17.0     0     1 4         4</span></a>
+<a class="sourceLine" id="cb8-28" data-line-number="28"><span class="co">#&gt; 3 Datsun 710     22.8   108    93  3.85  2.32  18.6     1     1 4         1</span></a>
+<a class="sourceLine" id="cb8-29" data-line-number="29"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
 <p>However you can also use the <code>col_*()</code> functions in a list.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(</a>
 <a class="sourceLine" id="cb9-2" data-line-number="2">  <span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>),</a>
 <a class="sourceLine" id="cb9-3" data-line-number="3">  <span class="dt">col_types =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">hp =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_integer</a></span>(), <span class="dt">cyl =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/col_skip.html">col_skip</a></span>(), <span class="dt">gear =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_factor.html">col_factor</a></span>())</a>
 <a class="sourceLine" id="cb9-4" data-line-number="4">)</a>
 <a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#&gt; # A tibble: 32 x 11</span></a>
-<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt;    model          mpg  disp    hp  drat    wt  qsec    vs    am gear   carb</span></a>
-<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt;    &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt;  1 Mazda RX4     21    160    110  3.9   2.62  16.5     0     1 4         4</span></a>
-<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt;  2 Mazda RX4 W…  21    160    110  3.9   2.88  17.0     0     1 4         4</span></a>
-<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">#&gt;  3 Datsun 710    22.8  108     93  3.85  2.32  18.6     1     1 4         1</span></a>
-<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co">#&gt;  4 Hornet 4 Dr…  21.4  258    110  3.08  3.22  19.4     1     0 3         1</span></a>
-<a class="sourceLine" id="cb9-12" data-line-number="12"><span class="co">#&gt;  5 Hornet Spor…  18.7  360    175  3.15  3.44  17.0     0     0 3         2</span></a>
-<a class="sourceLine" id="cb9-13" data-line-number="13"><span class="co">#&gt;  6 Valiant       18.1  225    105  2.76  3.46  20.2     1     0 3         1</span></a>
-<a class="sourceLine" id="cb9-14" data-line-number="14"><span class="co">#&gt;  7 Duster 360    14.3  360    245  3.21  3.57  15.8     0     0 3         4</span></a>
-<a class="sourceLine" id="cb9-15" data-line-number="15"><span class="co">#&gt;  8 Merc 240D     24.4  147.    62  3.69  3.19  20       1     0 4         2</span></a>
-<a class="sourceLine" id="cb9-16" data-line-number="16"><span class="co">#&gt;  9 Merc 230      22.8  141.    95  3.92  3.15  22.9     1     0 4         2</span></a>
-<a class="sourceLine" id="cb9-17" data-line-number="17"><span class="co">#&gt; 10 Merc 280      19.2  168.   123  3.92  3.44  18.3     1     0 4         4</span></a>
-<a class="sourceLine" id="cb9-18" data-line-number="18"><span class="co">#&gt; # … with 22 more rows</span></a></code></pre></div>
+<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt;   model           mpg  disp    hp  drat    wt  qsec    vs    am gear   carb</span></a>
+<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt; 1 Mazda RX4      21     160   110  3.9   2.62  16.5     0     1 4         4</span></a>
+<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; 2 Mazda RX4 Wag  21     160   110  3.9   2.88  17.0     0     1 4         4</span></a>
+<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">#&gt; 3 Datsun 710     22.8   108    93  3.85  2.32  18.6     1     1 4         1</span></a>
+<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
 <p>This is most useful when a column type needs additional information, such as for categorical data when you know all of the levels of a factor.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(</a>
 <a class="sourceLine" id="cb10-2" data-line-number="2">  <span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>),</a>
 <a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="dt">col_types =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">gear =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_factor.html">col_factor</a></span>(<span class="dt">levels =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dt">gear =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span>))))</a>
 <a class="sourceLine" id="cb10-4" data-line-number="4">)</a>
 <a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
-<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt;    model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am gear   carb</span></a>
-<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb10-8" data-line-number="8"><span class="co">#&gt;  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1 4         4</span></a>
-<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="co">#&gt;  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1 4         4</span></a>
-<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="co">#&gt;  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1 4         1</span></a>
-<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt;  4 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0 3         1</span></a>
-<a class="sourceLine" id="cb10-12" data-line-number="12"><span class="co">#&gt;  5 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0 3         2</span></a>
-<a class="sourceLine" id="cb10-13" data-line-number="13"><span class="co">#&gt;  6 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0 3         1</span></a>
-<a class="sourceLine" id="cb10-14" data-line-number="14"><span class="co">#&gt;  7 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0 3         4</span></a>
-<a class="sourceLine" id="cb10-15" data-line-number="15"><span class="co">#&gt;  8 Merc …  24.4     4  147.    62  3.69  3.19  20       1     0 4         2</span></a>
-<a class="sourceLine" id="cb10-16" data-line-number="16"><span class="co">#&gt;  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0 4         2</span></a>
-<a class="sourceLine" id="cb10-17" data-line-number="17"><span class="co">#&gt; 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0 4         4</span></a>
-<a class="sourceLine" id="cb10-18" data-line-number="18"><span class="co">#&gt; # … with 22 more rows</span></a></code></pre></div>
+<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt;   model     mpg   cyl  disp    hp  drat    wt  qsec    vs    am gear   carb</span></a>
+<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb10-8" data-line-number="8"><span class="co">#&gt; 1 Mazda …  21       6   160   110  3.9   2.62  16.5     0     1 4         4</span></a>
+<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="co">#&gt; 2 Mazda …  21       6   160   110  3.9   2.88  17.0     0     1 4         4</span></a>
+<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="co">#&gt; 3 Datsun…  22.8     4   108    93  3.85  2.32  18.6     1     1 4         1</span></a>
+<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
 </div>
 <div id="further-reading" class="section level2">
 <h2 class="hasAnchor">
 <a href="#further-reading" class="anchor"></a>Further reading</h2>
-<p>[benchmarking] discusses the performance of vroom, how it compares to alternatives and how it achieves the results.</p>
-<p>benchmarking: <a href="https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html" class="uri">https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html</a></p>
+<p><code><a href="../articles/benchmarks.html">vignette("benchmarks")</a></code> discusses the performance of vroom, how it compares to alternatives and how it achieves its results.</p>
 </div>
   </div>
 

@@ -2,6 +2,6 @@ pandoc: '2.2'
 pkgdown: 1.3.0
 pkgdown_sha: ~
 articles:
-  benchmarks: benchmarks/benchmarks.html
+  benchmarks: benchmarks.html
   get-started: get-started.html
 
