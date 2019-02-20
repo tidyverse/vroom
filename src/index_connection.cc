@@ -68,10 +68,11 @@ index_connection::index_connection(
     Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(in, "rb");
   }
 
-  std::array<std::vector<char>, 2> buf = {std::vector<char>(chunk_size),
+  std::array<std::vector<char>, 3> buf = {std::vector<char>(chunk_size),
+                                          std::vector<char>(chunk_size),
                                           std::vector<char>(chunk_size)};
 
-  // A buf index that alternates between 0 and 1
+  // A buf index that alternates between 0,1 and 2
   auto i = 0;
 
   idx_ = std::vector<idx_t>(2);
@@ -115,7 +116,8 @@ index_connection::index_connection(
 #endif
 
   auto total_read = 0;
-  std::future<void> fut;
+  std::future<size_t> read_fut;
+  std::future<void> write_fut;
   while (sz > 0) {
     index_region(
         buf[i],
@@ -128,16 +130,23 @@ index_connection::index_connection(
         pb,
         sz / 10);
 
-    if (fut.valid()) {
-      fut.wait();
+    if (write_fut.valid()) {
+      write_fut.wait();
     }
-    fut = std::async([&, i, sz] { out.write(buf[i].data(), sz); });
+    write_fut = std::async([&, i, sz] { out.write(buf[i].data(), sz); });
 
     total_read += sz;
-    i = ++i % 2;
-    sz = R_ReadConnection(con, buf[i].data(), chunk_size);
+    i = ++i % 3;
+
+    if (read_fut.valid()) {
+      sz = read_fut.get();
+    }
+    read_fut = std::async(
+        [&, i] { return R_ReadConnection(con, buf[i].data(), chunk_size); });
+    i = ++i % 3;
     first_nl = 0;
   }
+  write_fut.wait();
 
   out.close();
 
