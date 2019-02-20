@@ -19,7 +19,7 @@ read_column_names(const std::shared_ptr<vroom::index_collection>& idx) {
   CharacterVector nms(idx->num_columns());
 
   auto col = 0;
-  for (const auto& str : idx->header()) {
+  for (const auto& str : idx->get_header()) {
     nms[col++] = Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8);
   }
 

@@ -71,6 +71,39 @@ public:
     iterator end();
   };
 
+  class row {
+    const index& idx_;
+    size_t row_;
+
+  public:
+    row(const index& idx, size_t row);
+
+    class iterator {
+      size_t i_;
+      const index* idx_;
+      size_t row_;
+      size_t start_;
+
+    public:
+      using iterator_category = std::forward_iterator_tag;
+      using value_type = std::string;
+      using pointer = std::string*;
+      using reference = std::string&;
+
+      iterator(const index& idx, size_t row, size_t start, size_t end);
+      iterator operator++(int); /* postfix */
+      iterator& operator++();   /* prefix */
+      bool operator!=(const iterator& other) const;
+      bool operator==(const iterator& other) const;
+
+      std::string operator*();
+      iterator& operator+=(int n);
+      iterator operator+(int n);
+    };
+    iterator begin();
+    iterator end();
+  };
+
   index() : rows_(0), columns_(0){};
 
   const std::string get(size_t row, size_t col) const;
@@ -81,49 +114,13 @@ public:
 
   std::string filename() const { return filename_; }
 
-  class row_iterator {
-    size_t i_;
-    size_t row_;
-    const index* idx_;
-
-  public:
-    using iterator_category = std::forward_iterator_tag;
-    using value_type = std::string;
-    using difference_type = std::string;
-    using pointer = std::string*;
-    using reference = std::string&;
-
-    row_iterator(int row, const index* idx) : row_(row), idx_(idx) {
-      i_ = (row_ + idx_->has_header_) * idx_->columns_;
-    }
-    row_iterator& begin() {
-      i_ = (row_ + idx_->has_header_) * idx_->columns_;
-      return *this;
-    }
-    row_iterator& end() {
-      i_ = (row_ + idx_->has_header_ + 1) * idx_->columns_;
-      return *this;
-    }
-    row_iterator operator++(int) /* postfix */ {
-      row_iterator copy(*this);
-      ++*this;
-      return copy;
-    }
-    row_iterator& operator++() /* prefix */ {
-      ++i_;
-      return *this;
-    }
-    bool operator!=(row_iterator& other) const { return i_ != other.i_; }
-    const std::string operator*() { return idx_->get_trimmed_val(i_); }
-  };
-
   column get_column(size_t col) const {
     return vroom::index::column(*this, col);
   }
 
-  row_iterator row(size_t row) const { return row_iterator(row, this); }
+  row get_row(size_t row) const { return vroom::index::row(*this, row); }
 
-  row_iterator header() const { return row_iterator(-1, this); }
+  row get_header() const { return vroom::index::row(*this, -1); }
 
 public:
   using idx_t = std::vector<size_t>;

@@ -308,3 +308,53 @@ index::column::iterator index::column::end() {
   return index::column::iterator(
       idx_, column_, idx_.num_rows(), idx_.num_rows());
 }
+
+index::row::iterator::iterator(
+    const index& idx, size_t row, size_t start, size_t end)
+    : idx_(&idx), row_(row), start_(start) {
+
+  i_ = (row_ + idx_->has_header_) * idx_->columns_ + start_;
+}
+
+index::row::iterator index::row::iterator::operator++(int) /* postfix */ {
+  index::row::iterator copy(*this);
+  ++*this;
+  return copy;
+}
+index::row::iterator& index::row::iterator::operator++() /* prefix */ {
+  ++i_;
+  return *this;
+}
+
+bool index::row::iterator::operator!=(const index::row::iterator& other) const {
+  return i_ != other.i_;
+}
+bool index::row::iterator::operator==(const index::row::iterator& other) const {
+  return i_ == other.i_;
+}
+
+std::string index::row::iterator::operator*() {
+  return idx_->get_trimmed_val(i_);
+}
+
+index::row::iterator& index::row::iterator::operator+=(int n) {
+  i_ += n;
+  return *this;
+}
+
+index::row::iterator index::row::iterator::operator+(int n) {
+  index::row::iterator out(*this);
+  out += n;
+  return out;
+}
+
+// Class row
+index::row::row(const index& idx, size_t row) : idx_(idx), row_(row){};
+
+index::row::iterator index::row::begin() {
+  return index::row::iterator(idx_, row_, 0, idx_.num_rows());
+}
+index::row::iterator index::row::end() {
+  return index::row::iterator(
+      idx_, row_, idx_.num_columns(), idx_.num_columns());
+}

@@ -83,21 +83,21 @@ public:
     return column(*this, num, start, end);
   }
 
-  index::row_iterator row(size_t row) const {
+  index::row row(size_t row) const {
 
     for (const auto& idx : indexes_) {
 
       auto sz = idx->num_rows();
       if (row < sz) {
-        return idx->row(row);
+        return idx->get_row(row);
       }
       row -= sz;
     }
     /* should never get here */
-    return indexes_[0]->header();
+    return indexes_[0]->get_header();
   }
 
-  index::row_iterator header() const { return indexes_[0]->header(); }
+  index::row get_header() const { return indexes_[0]->get_header(); }
 
 private:
   std::vector<std::shared_ptr<index> > indexes_;
