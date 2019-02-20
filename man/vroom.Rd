@@ -7,8 +7,8 @@
 vroom(file, delim = NULL, col_names = TRUE, col_types = NULL,
   id = NULL, skip = 0, na = c("", "NA"), quote = "\\"",
   comment = "", trim_ws = TRUE, escape_double = TRUE,
-  escape_backslash = FALSE, num_threads = parallel::detectCores(),
-  progress = show_progress())
+  escape_backslash = FALSE, locale = readr::default_locale(),
+  num_threads = parallel::detectCores(), progress = show_progress())
 }
 \arguments{
 \item{file}{path to a local file.}
@@ -74,6 +74,12 @@ a single quote, `"`.}
 characters? This is more general than \code{escape_double} as backslashes
 can be used to escape the delimiter character, the quote character, or
 to add special characters like \code{\\n}.}
+
+\item{locale}{The locale controls defaults that vary from place to place.
+The default locale is US-centric (like R), but you can use
+\code{\link[=locale]{locale()}} to create your own locale that controls things like
+the default time zone, encoding, decimal mark, big mark, and day/month
+names.}
 
 \item{num_threads}{Number of threads to use when reading and materializing vectors.}
 

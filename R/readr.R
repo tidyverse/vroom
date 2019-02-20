@@ -14,6 +14,18 @@ readr::col_double
 #' @export
 readr::col_character
 
+#' @importFrom readr col_date
+#' @export
+readr::col_date
+
+#' @importFrom readr col_datetime
+#' @export
+readr::col_datetime
+
+#' @importFrom readr col_time
+#' @export
+readr::col_time
+
 #' @importFrom readr col_factor
 #' @export
 readr::col_factor

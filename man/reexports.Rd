@@ -7,6 +7,9 @@
 \alias{col_factor}
 \alias{col_double}
 \alias{col_character}
+\alias{col_date}
+\alias{col_datetime}
+\alias{col_time}
 \alias{col_skip}
 \alias{col_guess}
 \alias{cols}
@@ -19,6 +22,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{readr}{\code{\link[readr]{col_integer}}, \code{\link[readr]{col_factor}}, \code{\link[readr]{col_double}}, \code{\link[readr]{col_character}}, \code{\link[readr]{col_factor}}, \code{\link[readr]{col_skip}}, \code{\link[readr]{col_guess}}, \code{\link[readr]{cols}}, \code{\link[readr]{cols_only}}, \code{\link[readr]{cols_condense}}}
+  \item{readr}{\code{\link[readr]{col_integer}}, \code{\link[readr]{col_factor}}, \code{\link[readr]{col_double}}, \code{\link[readr]{col_character}}, \code{\link[readr]{col_date}}, \code{\link[readr]{col_datetime}}, \code{\link[readr]{col_time}}, \code{\link[readr]{col_factor}}, \code{\link[readr]{col_skip}}, \code{\link[readr]{col_guess}}, \code{\link[readr]{cols}}, \code{\link[readr]{cols_only}}, \code{\link[readr]{cols_condense}}}
 }}
 

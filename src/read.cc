@@ -58,6 +58,7 @@ SEXP vroom_(
     SEXP id,
     size_t skip,
     CharacterVector na,
+    List locale,
     size_t num_threads,
     bool progress) {
 
@@ -162,6 +163,12 @@ SEXP vroom_(
             vroom_factor::Make(
                 info, levels, collector["ordered"], collector["include_na"]));
       }
+    } else if (col_type == "collector_date") {
+      SET_VECTOR_ELT(res, i, read_date(info, locale, collector["format"]));
+    } else if (col_type == "collector_datetime") {
+      SET_VECTOR_ELT(res, i, read_datetime(info, locale, collector["format"]));
+    } else if (col_type == "collector_time") {
+      SET_VECTOR_ELT(res, i, read_time(info, locale, collector["format"]));
     } else {
       SET_VECTOR_ELT(res, i, vroom_string::Make(info));
     }

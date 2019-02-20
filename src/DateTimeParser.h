@@ -3,10 +3,58 @@
 
 #include "DateTime.h"
 #include "LocaleInfo.h"
+#include <Rcpp.h>
 #include <algorithm>
 #include <ctime>
 
 // Parsing ---------------------------------------------------------------------
+
+template <typename Iterator, typename Attr>
+inline bool parseInt(Iterator& first, Iterator& last, Attr& res) {
+
+  char buf[64];
+
+  std::copy(first, last, buf);
+  buf[last - first] = '\0';
+
+  long lres;
+  char* endp;
+
+  errno = 0;
+  lres = strtol(buf, &endp, 10);
+  if (*endp != '\0')
+    lres = NA_INTEGER;
+  /* next can happen on a 64-bit platform */
+  if (res > INT_MAX || res < INT_MIN)
+    lres = NA_INTEGER;
+  if (errno == ERANGE)
+    lres = NA_INTEGER;
+
+  res = static_cast<int>(lres);
+
+  first += last - first;
+  return res != NA_INTEGER;
+}
+
+template <typename Iterator, typename Attr>
+inline bool parseDouble(
+    const char decimalMark, Iterator& first, Iterator& last, Attr& res) {
+
+  char buf[64];
+
+  std::copy(first, last, buf);
+  buf[last - first] = '\0';
+
+  char* endp;
+
+  errno = 0;
+  res = strtol(buf, &endp, 10);
+  if (errno > 0)
+    res = NA_REAL;
+
+  first += endp - buf;
+  return res != NA_REAL;
+}
 
 class DateTimeParser {
   int year_, mon_, day_, hour_, min_, sec_;

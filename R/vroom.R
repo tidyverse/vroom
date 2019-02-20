@@ -30,13 +30,14 @@ NULL
 #' setwd(.old_wd)
 #' }
 vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL, id = NULL, skip = 0, na = c("", "NA"),
-  quote = '"', comment = "", trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE, num_threads = parallel::detectCores(), progress = show_progress()) {
+  quote = '"', comment = "", trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE, locale = readr::default_locale(),
+  num_threads = parallel::detectCores(), progress = show_progress()) {
 
   file <- standardise_path(file)
 
   out <- vroom_(file, delim = delim, col_names = col_names, col_types = col_types, id = id, skip = skip,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
-    escape_backslash = escape_backslash, comment = comment, num_threads = num_threads, progress = progress)
+    escape_backslash = escape_backslash, comment = comment, locale = locale, num_threads = num_threads, progress = progress)
 
   tibble::as_tibble(out)
 }
@@ -49,7 +50,7 @@ guess_type <- function(x, na = c("", "NA"), locale = readr::default_locale(), gu
   x[x %in% na] <- NA
 
   type <- readr::guess_parser(x, locale = locale, guess_integer = guess_integer)
-  get("collector", asNamespace("readr"))(type)
+  get(paste0("col_", type), asNamespace("readr"))()
 }
 
 col_types_standardise <- function(col_types, col_names) {
@@ -154,3 +155,4 @@ guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";", "\n")) 
   res <- Reduce(choose_best, seq_along(counts))
   delims[[res]]
 }
+

@@ -1,4 +1,5 @@
 #include "read_normal.h"
+#include "DateTimeParser.h"
 #include "parallel.h"
 
 const static char* const true_values[] = {
@@ -122,7 +123,8 @@ Rcpp::IntegerVector read_fctr(vroom_vec_info* info, bool include_na) {
   return out;
 }
 
-Rcpp::NumericVector read_datetime(vroom_vec_info* info) {
+Rcpp::NumericVector
+read_datetime(vroom_vec_info* info, Rcpp::List locale, std::string format) {
 
   R_xlen_t n = info->idx->num_rows();
 
@@ -130,23 +132,124 @@ Rcpp::NumericVector read_datetime(vroom_vec_info* info) {
 
   auto p = out.begin();
 
+  LocaleInfo li(locale);
+
   parallel_for(
       n,
       [&](int start, int end, int id) {
-        // Need to copy to a temp buffer since we have no way to tell strtod
-        // how long the buffer is.
-
         auto i = start;
+        DateTimeParser parser(&li);
         for (const auto& str :
              info->idx->get_column(info->column, start, end)) {
-          p[i++] = parse_logical(str.c_str(), str.c_str() + str.length());
+          parser.setDate(str.c_str());
+          bool res =
+              (format == "") ? parser.parseISO8601() : parser.parse(format);
+
+          if (res) {
+            DateTime dt = parser.makeDateTime();
+            if (!dt.validDateTime()) {
+              p[i++] = NA_REAL;
+            }
+            p[i++] = dt.datetime();
+          } else {
+            p[i++] = NA_REAL;
+          }
         }
       },
-      info->num_threads);
+      info->num_threads,
+      true);
 
   delete info;
+
+  out.attr("class") = Rcpp::CharacterVector::create("POSIXct", "POSIXt");
+  out.attr("tzone") = li.tz_;
 
   return out;
 }
 
-Rcpp::IntegerVector read_datetime(vroom_vec_info* info, bool include_na) {
+Rcpp::NumericVector
+read_date(vroom_vec_info* info, Rcpp::List locale, std::string format) {
+
+  R_xlen_t n = info->idx->num_rows();
+
+  Rcpp::NumericVector out(n);
+
+  auto p = out.begin();
+
+  LocaleInfo li(locale);
+
+  parallel_for(
+      n,
+      [&](int start, int end, int id) {
+        auto i = start;
+        DateTimeParser parser(&li);
+        for (const auto& str :
+             info->idx->get_column(info->column, start, end)) {
+          parser.setDate(str.c_str());
+          bool res =
+              (format == "") ? parser.parseLocaleDate() : parser.parse(format);
+
+          if (res) {
+            DateTime dt = parser.makeDate();
+            if (!dt.validDate()) {
+              p[i++] = NA_REAL;
+            }
+            p[i++] = dt.date();
+          } else {
+            p[i++] = NA_REAL;
+          }
+        }
+      },
+      info->num_threads,
+      true);
+
+  delete info;
+
+  out.attr("class") = "Date";
+
+  return out;
+}
+
+Rcpp::NumericVector
+read_time(vroom_vec_info* info, Rcpp::List locale, std::string format) {
+
+  R_xlen_t n = info->idx->num_rows();
+
+  Rcpp::NumericVector out(n);
+
+  auto p = out.begin();
+
+  LocaleInfo li(locale);
+
+  parallel_for(
+      n,
+      [&](int start, int end, int id) {
+        auto i = start;
+        DateTimeParser parser(&li);
+        for (const auto& str :
+             info->idx->get_column(info->column, start, end)) {
+          parser.setDate(str.c_str());
+          bool res =
+              (format == "") ? parser.parseLocaleTime() : parser.parse(format);
+
+          if (res) {
+            DateTime dt = parser.makeTime();
+            if (!dt.validTime()) {
+              p[i++] = NA_REAL;
+            }
+            p[i++] = dt.time();
+          } else {
+            p[i++] = NA_REAL;
+          }
+        }
+      },
+      info->num_threads,
+      true);
+
+  delete info;
+
+  out.attr("class") = Rcpp::CharacterVector::create("hms", "difftime");
+  out.attr("units") = "secs";
+
+  return out;
+}
