@@ -121,3 +121,32 @@ Rcpp::IntegerVector read_fctr(vroom_vec_info* info, bool include_na) {
 
   return out;
 }
+
+Rcpp::NumericVector read_datetime(vroom_vec_info* info) {
+
+  R_xlen_t n = info->idx->num_rows();
+
+  Rcpp::NumericVector out(n);
+
+  auto p = out.begin();
+
+  parallel_for(
+      n,
+      [&](int start, int end, int id) {
+        // Need to copy to a temp buffer since we have no way to tell strtod
+        // how long the buffer is.
+
+        auto i = start;
+        for (const auto& str :
+             info->idx->get_column(info->column, start, end)) {
+          p[i++] = parse_logical(str.c_str(), str.c_str() + str.length());
+        }
+      },
+      info->num_threads);
+
+  delete info;
+
+  return out;
+}
+
+Rcpp::IntegerVector read_datetime(vroom_vec_info* info, bool include_na) {
