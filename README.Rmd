@@ -25,7 +25,7 @@ options(tibble.print_min = 3)
 <!-- badges: end -->
 
 ```{r echo = FALSE, message = FALSE}
-tm <- readRDS(here::here("bench", "timings.Rds"))
+tm <- readRDS(system.file("bench", "timings.Rds", package = "vroom"))
 library(dplyr)
 tbl <- tm %>% dplyr::filter(type == "real", op == "read", package != "vroom_dplyr") %>%
   mutate(package = sub("_base", "", package)) %>%
