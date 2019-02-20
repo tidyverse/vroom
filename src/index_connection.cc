@@ -1,6 +1,7 @@
 #include "index_connection.h"
 
 #include <fstream>
+#include <future> // std::async, std::future
 
 #include "utils.h"
 #include <Rcpp.h>
@@ -67,30 +68,34 @@ index_connection::index_connection(
     Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(in, "rb");
   }
 
-  std::vector<char> buf(chunk_size);
+  std::array<std::vector<char>, 2> buf = {std::vector<char>(chunk_size),
+                                          std::vector<char>(chunk_size)};
+
+  // A buf index that alternates between 0 and 1
+  auto i = 0;
 
   idx_ = std::vector<idx_t>(2);
 
   idx_[0].reserve(128);
 
-  auto sz = R_ReadConnection(con, buf.data(), chunk_size);
+  auto sz = R_ReadConnection(con, buf[i].data(), chunk_size);
 
   // Parse header
-  auto start = find_first_line(buf);
+  auto start = find_first_line(buf[i]);
 
   std::string delim_;
   if (delim == nullptr) {
-    delim_ = std::string(1, guess_delim(buf, start));
+    delim_ = std::string(1, guess_delim(buf[i], start));
   } else {
     delim_ = delim;
   }
 
   delim_len_ = delim_.length();
 
-  auto first_nl = find_next_newline(buf, start);
+  auto first_nl = find_next_newline(buf[i], start);
 
   // Check for windows newlines
-  windows_newlines_ = first_nl > 0 && buf[first_nl - 1] == '\r';
+  windows_newlines_ = first_nl > 0 && buf[i][first_nl - 1] == '\r';
 
   std::unique_ptr<RProgress::RProgress> pb = nullptr;
   if (progress_) {
@@ -101,7 +106,8 @@ index_connection::index_connection(
 
   // Index the first row
   idx_[0].push_back(start - 1);
-  index_region(buf, idx_[0], delim_.c_str(), quote, start, first_nl + 1, 0, pb);
+  index_region(
+      buf[i], idx_[0], delim_.c_str(), quote, start, first_nl + 1, 0, pb);
   columns_ = idx_[0].size() - 1;
 
 #if DEBUG
@@ -109,9 +115,10 @@ index_connection::index_connection(
 #endif
 
   auto total_read = 0;
+  std::future<void> fut;
   while (sz > 0) {
     index_region(
-        buf,
+        buf[i],
         idx_[1],
         delim_.c_str(),
         quote,
@@ -120,10 +127,15 @@ index_connection::index_connection(
         total_read,
         pb,
         sz / 10);
-    out.write(buf.data(), sz);
+
+    if (fut.valid()) {
+      fut.wait();
+    }
+    fut = std::async([&, i, sz] { out.write(buf[i].data(), sz); });
 
     total_read += sz;
-    sz = R_ReadConnection(con, buf.data(), chunk_size);
+    i = ++i % 2;
+    sz = R_ReadConnection(con, buf[i].data(), chunk_size);
     first_nl = 0;
   }
 
