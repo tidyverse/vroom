@@ -2,6 +2,7 @@
 #define READ_ICONV_H_
 
 #include "R_ext/Riconv.h"
+#include <Rcpp.h>
 #include <errno.h>
 
 class Iconv {

@@ -1,19 +1,16 @@
 #include "DateTimeParser.h"
 #include "parallel.h"
 
-Rcpp::NumericVector
-read_datetime(vroom_vec_info* info, Rcpp::List locale, std::string format) {
+Rcpp::NumericVector read_datetime(vroom_vec_info* info, std::string format) {
   R_xlen_t n = info->idx->num_rows();
 
   Rcpp::NumericVector out(n);
-
-  LocaleInfo li(locale);
 
   parallel_for(
       n,
       [&](int start, int end, int id) {
         auto i = start;
-        DateTimeParser parser(&li);
+        DateTimeParser parser(&*info->locale);
         for (const auto& str :
              info->idx->get_column(info->column, start, end)) {
           parser.setDate(str.c_str());
@@ -35,24 +32,21 @@ read_datetime(vroom_vec_info* info, Rcpp::List locale, std::string format) {
       true);
 
   out.attr("class") = Rcpp::CharacterVector::create("POSIXct", "POSIXt");
-  out.attr("tzone") = li.tz_;
+  out.attr("tzone") = info->locale->tz_;
 
   return out;
 }
 
-Rcpp::NumericVector
-read_date(vroom_vec_info* info, Rcpp::List locale, std::string format) {
+Rcpp::NumericVector read_date(vroom_vec_info* info, std::string format) {
   R_xlen_t n = info->idx->num_rows();
 
   Rcpp::NumericVector out(n);
-
-  LocaleInfo li(locale);
 
   parallel_for(
       n,
       [&](int start, int end, int id) {
         auto i = start;
-        DateTimeParser parser(&li);
+        DateTimeParser parser(&*info->locale);
         for (const auto& str :
              info->idx->get_column(info->column, start, end)) {
           parser.setDate(str.c_str());
@@ -78,19 +72,16 @@ read_date(vroom_vec_info* info, Rcpp::List locale, std::string format) {
   return out;
 }
 
-Rcpp::NumericVector
-read_time(vroom_vec_info* info, Rcpp::List locale, std::string format) {
+Rcpp::NumericVector read_time(vroom_vec_info* info, std::string format) {
   R_xlen_t n = info->idx->num_rows();
 
   Rcpp::NumericVector out(n);
-
-  LocaleInfo li(locale);
 
   parallel_for(
       n,
       [&](int start, int end, int id) {
         auto i = start;
-        DateTimeParser parser(&li);
+        DateTimeParser parser(&*info->locale);
         for (const auto& str :
              info->idx->get_column(info->column, start, end)) {
           parser.setDate(str.c_str());

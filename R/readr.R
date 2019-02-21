@@ -49,3 +49,11 @@ readr::cols_only
 #' @importFrom readr cols_condense
 #' @export
 readr::cols_condense
+
+#' @importFrom readr default_locale
+#' @export
+readr::default_locale
+
+#' @importFrom readr locale
+#' @export
+readr::locale

@@ -5,6 +5,7 @@ struct vroom_vec_info {
   size_t column;
   size_t num_threads;
   std::shared_ptr<Rcpp::CharacterVector> na;
+  std::shared_ptr<LocaleInfo> locale;
 };
 
 class vroom_vec {

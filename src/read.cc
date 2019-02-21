@@ -1,5 +1,6 @@
 #include <mio/shared_mmap.hpp>
 
+#include "LocaleInfo.h"
 #include "index.h"
 #include "index_collection.h"
 #include "index_connection.h"
@@ -16,13 +17,15 @@ enum column_type { character = 0, real = 1, integer = 2, logical = 3 };
 
 inline int min(int a, int b) { return a < b ? a : b; }
 
-CharacterVector
-read_column_names(const std::shared_ptr<vroom::index_collection>& idx) {
+CharacterVector read_column_names(
+    std::shared_ptr<vroom::index_collection> idx,
+    std::shared_ptr<LocaleInfo> locale) {
   CharacterVector nms(idx->num_columns());
 
   auto col = 0;
   for (const auto& str : idx->get_header()) {
-    nms[col++] = Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8);
+    nms[col++] = locale->encoder_.makeSEXP(
+        str.c_str(), str.c_str() + str.length(), false);
   }
 
   return nms;
@@ -89,6 +92,8 @@ SEXP vroom_(
 
   bool add_filename = !Rf_isNull(id);
 
+  auto locale_info = std::make_shared<LocaleInfo>(locale);
+
   List res(total_columns + add_filename);
 
   CharacterVector col_nms;
@@ -99,7 +104,7 @@ SEXP vroom_(
     col_nms = col_names;
   } else if (
       col_names.sexp_type() == LGLSXP && as<LogicalVector>(col_names)[0]) {
-    col_nms = read_column_names(idx);
+    col_nms = read_column_names(idx, locale_info);
   } else {
     Rcpp::Function make_names = vroom["make_names"];
     col_nms = make_names(total_columns);
@@ -135,7 +140,8 @@ SEXP vroom_(
       for (auto j = 0; j < guess_num; ++j) {
         auto row = j * guess_step;
         auto str = idx->get(row, col);
-        col_vals[j] = Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8);
+        col_vals[j] = locale_info->encoder_.makeSEXP(
+            str.c_str(), str.c_str() + str.length(), false);
       }
       collector = guess_type(
           col_vals, Named("guess_integer") = false, Named("na") = na);
@@ -144,8 +150,11 @@ SEXP vroom_(
     }
 
     // This is deleted in the finalizers when the vectors are GC'd by R
-    auto info = new vroom_vec_info{
-        idx, col, num_threads, std::make_shared<Rcpp::CharacterVector>(na)};
+    auto info = new vroom_vec_info{idx,
+                                   col,
+                                   num_threads,
+                                   std::make_shared<Rcpp::CharacterVector>(na),
+                                   locale_info};
 
     res_nms.push_back(Rcpp::as<std::string>(col_nms[col]));
 
@@ -180,13 +189,13 @@ SEXP vroom_(
         }
       }
     } else if (col_type == "collector_date") {
-      res[i] = read_date(info, locale, collector["format"]);
+      res[i] = read_date(info, collector["format"]);
       delete info;
     } else if (col_type == "collector_datetime") {
-      res[i] = read_datetime(info, locale, collector["format"]);
+      res[i] = read_datetime(info, collector["format"]);
       delete info;
     } else if (col_type == "collector_time") {
-      res[i] = read_time(info, locale, collector["format"]);
+      res[i] = read_time(info, collector["format"]);
       delete info;
     } else {
       if (use_altrep) {

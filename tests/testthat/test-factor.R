@@ -108,3 +108,21 @@ test_that("Can parse a factor with levels of NA and empty string", {
     equals = tibble::tibble(X1 = factor(x, levels = c("NA", "NB", "NC", "")))
   )
 })
+
+
+test_that("encodings are respected", {
+  loc <- locale(encoding = "ISO-8859-1")
+  expected <- c("fran\u00e7ais", "\u00e9l\u00e8ve")
+
+  x <- vroom(test_path("enc-iso-8859-1.txt"), locale = loc, col_types = c(X1 = "f"), col_names = FALSE)
+  expect_equal(y[[1]], factor(expected, levels = expected))
+
+  y <- vroom(
+    test_path("enc-iso-8859-1.txt"),
+    locale = loc,
+    col_types = list(X1 = col_factor(levels = expected)),
+    col_names = FALSE
+  )
+
+  expect_equal(y[[1]], factor(expected, levels = expected))
+})

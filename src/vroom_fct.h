@@ -30,8 +30,8 @@ Rcpp::IntegerVector read_fctr_explicit(
         size_t i = start;
         for (const auto& str :
              info->idx->get_column(info->column, start, end)) {
-          auto search = level_map.find(
-              Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8));
+          auto search = level_map.find(info->locale->encoder_.makeSEXP(
+              str.c_str(), str.c_str() + str.length(), false));
           if (search != level_map.end()) {
             out[i++] = search->second;
           } else {
@@ -80,7 +80,11 @@ Rcpp::IntegerVector read_fctr_implicit(vroom_vec_info* info, bool include_na) {
     }
   }
 
-  Rcpp::CharacterVector out_lvls = Rcpp::wrap(levels);
+  Rcpp::CharacterVector out_lvls(levels.size());
+  for (size_t i = 0; i < levels.size(); ++i) {
+    out_lvls[i] = info->locale->encoder_.makeSEXP(
+        levels[i].c_str(), levels[i].c_str() + levels[i].size(), false);
+  }
   if (include_na) {
     out_lvls.push_back(NA_STRING);
   }
@@ -181,8 +185,8 @@ public:
 
     auto str = Get(vec, i);
 
-    auto search =
-        inf.levels.find(Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8));
+    auto search = inf.levels.find(inf.info->locale->encoder_.makeSEXP(
+        str.c_str(), str.c_str() + str.length(), false));
     if (search != inf.levels.end()) {
       return search->second;
     }
