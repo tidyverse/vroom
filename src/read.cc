@@ -147,7 +147,7 @@ SEXP vroom_(
     res_nms.push_back(Rcpp::as<std::string>(col_nms[col]));
 
     if (col_type == "collector_double") {
-      // SET_VECTOR_ELT(res, i, vroom_real::Make(info));
+      // SET_VECTOR_ELT(res, i, vroom_dbl::Make(info));
       SET_VECTOR_ELT(res, i, read_dbl(info));
       delete info;
     } else if (col_type == "collector_integer") {

@@ -16,7 +16,7 @@ using namespace Rcpp;
 // inspired by Luke Tierney and the R Core Team
 // https://github.com/ALTREP-examples/Rpkg-mutable/blob/master/src/mutable.c
 // and Romain François
-// https://purrple.cat/blog/2018/10/21/lazy-abs-altrep-cplusplus/ and Dirk
+// https://purrple.cat/blog/2018/10/21/lazy-abs-altrep-cplusplus/
 
 struct vroom_string : vroom_vec {
 
