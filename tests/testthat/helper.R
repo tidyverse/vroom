@@ -4,6 +4,13 @@ test_vroom <- function(content, ..., equals) {
     equals
   )
 
+  withr::with_options(c("vroom.use_altrep" = FALSE), {
+    expect_equal(
+      vroom(content, ...),
+      equals
+    )
+  })
+
   if (!file.exists(content)) {
     tf <- tempfile()
     on.exit(unlink(tf))

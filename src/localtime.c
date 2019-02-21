@@ -1,4 +1,4 @@
-/*
+/* # nocov start
  *  R : A Computer Language for Statistical Data Analysis
  *  Modifications copyright (C) 2007-2015  The R Core Team
  *
@@ -1844,3 +1844,4 @@ static int tzdir(char* buf) {
   }
   return -1;
 }
+/* # nocov end */

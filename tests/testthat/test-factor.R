@@ -115,7 +115,7 @@ test_that("encodings are respected", {
   expected <- c("fran\u00e7ais", "\u00e9l\u00e8ve")
 
   x <- vroom(test_path("enc-iso-8859-1.txt"), locale = loc, col_types = c(X1 = "f"), col_names = FALSE)
-  expect_equal(y[[1]], factor(expected, levels = expected))
+  expect_equal(x[[1]], factor(expected, levels = expected))
 
   y <- vroom(
     test_path("enc-iso-8859-1.txt"),
