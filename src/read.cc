@@ -157,7 +157,6 @@ SEXP vroom_(
     } else if (col_type == "collector_logical") {
       SET_VECTOR_ELT(res, i, read_lgl(info));
       delete info;
-      delete info;
     } else if (col_type == "collector_factor") {
       auto levels = collector["levels"];
       if (Rf_isNull(levels)) {
