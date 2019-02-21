@@ -1,7 +1,46 @@
 #include "altrep.h"
 
-#include "read_normal.h"
 #include "vroom_vec.h"
+
+#include <Rcpp.h>
+
+// https://github.com/wch/r-source/blob/efed16c945b6e31f8e345d2f18e39a014d2a57ae/src/main/scan.c#L145-L157
+int Strtoi(const char* nptr, int base) {
+  long res;
+  char* endp;
+
+  errno = 0;
+  res = strtol(nptr, &endp, base);
+  if (*endp != '\0')
+    res = NA_INTEGER;
+  /* next can happen on a 64-bit platform */
+  if (res > INT_MAX || res < INT_MIN)
+    res = NA_INTEGER;
+  if (errno == ERANGE)
+    res = NA_INTEGER;
+  return (int)res;
+}
+
+// Normal reading of integer vectors
+Rcpp::IntegerVector read_int(vroom_vec_info* info) {
+
+  R_xlen_t n = info->idx->num_rows();
+
+  Rcpp::IntegerVector out(n);
+
+  parallel_for(
+      n,
+      [&](int start, int end, int id) {
+        size_t i = start;
+        for (const auto& str :
+             info->idx->get_column(info->column, start, end)) {
+          out[i++] = Strtoi(str.c_str(), 10);
+        }
+      },
+      info->num_threads);
+
+  return out;
+}
 
 class vroom_int : public vroom_vec {
 

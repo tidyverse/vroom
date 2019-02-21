@@ -1,15 +1,95 @@
 #include "altrep.h"
-
-// clang-format off
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Wsign-compare"
-#include <mio/shared_mmap.hpp>
-# pragma clang diagnostic pop
-// clang-format on
-
 #include "vroom_vec.h"
 
 #include <Rcpp.h>
+
+bool matches(
+    const std::string& needle, const std::vector<std::string>& haystack) {
+  for (auto& hay : haystack) {
+    if (hay == needle) {
+      return true;
+    }
+  }
+  return false;
+}
+
+Rcpp::IntegerVector read_fctr_explicit(
+    vroom_vec_info* info, Rcpp::CharacterVector levels, bool ordered) {
+  R_xlen_t n = info->idx->num_rows();
+
+  Rcpp::IntegerVector out(n);
+  std::unordered_map<SEXP, int> level_map;
+
+  for (auto i = 0; i < levels.size(); ++i) {
+    level_map[levels[i]] = i + 1;
+  }
+
+  parallel_for(
+      n,
+      [&](int start, int end, int id) {
+        size_t i = start;
+        for (const auto& str :
+             info->idx->get_column(info->column, start, end)) {
+          auto search = level_map.find(
+              Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8));
+          if (search != level_map.end()) {
+            out[i++] = search->second;
+          } else {
+            out[i++] = NA_INTEGER;
+          }
+        }
+      },
+      info->num_threads);
+
+  out.attr("levels") = levels;
+  if (ordered) {
+    out.attr("class") = Rcpp::CharacterVector::create("ordered", "factor");
+  } else {
+    out.attr("class") = "factor";
+  }
+
+  return out;
+}
+
+Rcpp::IntegerVector read_fctr_implicit(vroom_vec_info* info, bool include_na) {
+  R_xlen_t n = info->idx->num_rows();
+
+  Rcpp::IntegerVector out(n);
+  std::vector<std::string> levels;
+  std::unordered_map<std::string, int> level_map;
+
+  auto nas = Rcpp::as<std::vector<std::string> >(*info->na);
+
+  int max_level = 1;
+
+  auto start = 0;
+  auto end = n;
+  auto i = start;
+  for (const auto& str : info->idx->get_column(info->column, start, end)) {
+    if (include_na && matches(str, nas)) {
+      out[i++] = NA_INTEGER;
+    } else {
+      auto val = level_map.find(str);
+      if (val != level_map.end()) {
+        out[i++] = val->second;
+      } else {
+        out[i++] = max_level;
+        level_map[str] = max_level++;
+        levels.emplace_back(str);
+      }
+    }
+  }
+
+  Rcpp::CharacterVector out_lvls = Rcpp::wrap(levels);
+  if (include_na) {
+    out_lvls.push_back(NA_STRING);
+  }
+
+  out.attr("levels") = out_lvls;
+  out.attr("class") = "factor";
+
+  return out;
+}
 
 using namespace Rcpp;
 

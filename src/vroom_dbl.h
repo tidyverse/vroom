@@ -1,7 +1,29 @@
 #include "altrep.h"
 
-#include "read_normal.h"
 #include "vroom_vec.h"
+#include <Rcpp.h>
+
+#include "parallel.h"
+
+Rcpp::NumericVector read_dbl(vroom_vec_info* info) {
+
+  R_xlen_t n = info->idx->num_rows();
+
+  Rcpp::NumericVector out(n);
+
+  parallel_for(
+      n,
+      [&](int start, int end, int id) {
+        size_t i = start;
+        for (const auto& str :
+             info->idx->get_column(info->column, start, end)) {
+          out[i++] = R_strtod(str.c_str(), NULL);
+        }
+      },
+      info->num_threads);
+
+  return out;
+}
 
 /* Vroom Dbl */
 

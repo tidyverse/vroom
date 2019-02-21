@@ -1,23 +1,35 @@
 #include "altrep.h"
-
-// clang-format off
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Wsign-compare"
-#include <mio/shared_mmap.hpp>
-# pragma clang diagnostic pop
-// clang-format on
-
 #include "vroom_vec.h"
-#include "read_normal.h"
 
 #include <Rcpp.h>
 
-using namespace Rcpp;
+Rcpp::CharacterVector read_chr(vroom_vec_info* info) {
 
-// inspired by Luke Tierney and the R Core Team
-// https://github.com/ALTREP-examples/Rpkg-mutable/blob/master/src/mutable.c
-// and Romain François
-// https://purrple.cat/blog/2018/10/21/lazy-abs-altrep-cplusplus/
+  R_xlen_t n = info->idx->num_rows();
+
+  Rcpp::CharacterVector out(n);
+
+  auto i = 0;
+  for (const auto& str : info->idx->get_column(info->column)) {
+    auto val = Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8);
+
+    // Look for NAs
+    for (const auto& v : *info->na) {
+      // We can just compare the addresses directly because they should now
+      // both be in the global string cache.
+      if (v == val) {
+        val = NA_STRING;
+        break;
+      }
+    }
+
+    out[i++] = val;
+  }
+
+  return out;
+}
+
+using namespace Rcpp;
 
 struct vroom_string : vroom_vec {
 

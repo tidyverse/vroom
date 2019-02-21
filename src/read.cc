@@ -3,11 +3,12 @@
 #include "index.h"
 #include "index_collection.h"
 #include "index_connection.h"
-#include "read_normal.h"
+#include "vroom_chr.h"
 #include "vroom_dbl.h"
-#include "vroom_factor.h"
+#include "vroom_dttm.h"
+#include "vroom_fct.h"
 #include "vroom_int.h"
-#include "vroom_string.h"
+#include "vroom_lgl.h"
 
 #include <Rcpp.h>
 
