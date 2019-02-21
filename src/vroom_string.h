@@ -8,6 +8,7 @@
 // clang-format on
 
 #include "vroom_vec.h"
+#include "read_normal.h"
 
 #include <Rcpp.h>
 
@@ -101,33 +102,10 @@ public:
       return data2;
     }
 
-    // allocate a standard character vector for data2
-    R_xlen_t n = Length(vec);
-    data2 = PROTECT(Rf_allocVector(STRSXP, n));
+    auto out = read_chr(&Info(vec));
+    R_set_altrep_data2(vec, out);
 
-    auto inf = Info(vec);
-
-    auto i = 0;
-
-    for (const auto& str : inf.idx->get_column(inf.column)) {
-      auto val = Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8);
-
-      // Look for NAs
-      for (const auto& v : *Info(vec).na) {
-        // We can just compare the addresses directly because they should now
-        // both be in the global string cache.
-        if (v == val) {
-          val = NA_STRING;
-          break;
-        }
-      }
-
-      SET_STRING_ELT(data2, i++, val);
-    }
-
-    R_set_altrep_data2(vec, data2);
-    UNPROTECT(1);
-    return data2;
+    return out;
   }
 
   static void* Dataptr(SEXP vec, Rboolean writeable) {
