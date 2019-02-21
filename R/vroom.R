@@ -37,7 +37,8 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL, id = N
 
   out <- vroom_(file, delim = delim, col_names = col_names, col_types = col_types, id = id, skip = skip,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
-    escape_backslash = escape_backslash, comment = comment, locale = locale, num_threads = num_threads, progress = progress)
+    escape_backslash = escape_backslash, comment = comment, locale = locale,
+    use_altrep = getOption("vroom.use_altrep", TRUE), num_threads = num_threads, progress = progress)
 
   tibble::as_tibble(out)
 }

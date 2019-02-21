@@ -65,15 +65,13 @@ Rcpp::IntegerVector read_int(vroom_vec_info* info) {
 
   Rcpp::IntegerVector out(n);
 
-  auto p = out.begin();
-
   parallel_for(
       n,
       [&](int start, int end, int id) {
         size_t i = start;
         for (const auto& str :
              info->idx->get_column(info->column, start, end)) {
-          p[i++] = Strtoi(str.c_str(), 10);
+          out[i++] = Strtoi(str.c_str(), 10);
         }
       },
       info->num_threads);
@@ -87,15 +85,13 @@ Rcpp::NumericVector read_dbl(vroom_vec_info* info) {
 
   Rcpp::NumericVector out(n);
 
-  auto p = out.begin();
-
   parallel_for(
       n,
       [&](int start, int end, int id) {
         size_t i = start;
         for (const auto& str :
              info->idx->get_column(info->column, start, end)) {
-          p[i++] = R_strtod(str.c_str(), NULL);
+          out[i++] = R_strtod(str.c_str(), NULL);
         }
       },
       info->num_threads);
@@ -109,15 +105,13 @@ Rcpp::LogicalVector read_lgl(vroom_vec_info* info) {
 
   Rcpp::LogicalVector out(n);
 
-  auto p = out.begin();
-
   parallel_for(
       n,
       [&](int start, int end, int id) {
         auto i = start;
         for (const auto& str :
              info->idx->get_column(info->column, start, end)) {
-          p[i++] = parse_logical(str.c_str(), str.c_str() + str.length());
+          out[i++] = parse_logical(str.c_str(), str.c_str() + str.length());
         }
       },
       info->num_threads);
@@ -130,8 +124,6 @@ Rcpp::CharacterVector read_chr(vroom_vec_info* info) {
   R_xlen_t n = info->idx->num_rows();
 
   Rcpp::CharacterVector out(n);
-
-  auto p = out.begin();
 
   auto i = 0;
   for (const auto& str : info->idx->get_column(info->column)) {
@@ -147,7 +139,7 @@ Rcpp::CharacterVector read_chr(vroom_vec_info* info) {
       }
     }
 
-    p[i++] = val;
+    out[i++] = val;
   }
 
   return out;
@@ -163,7 +155,45 @@ bool matches(
   return false;
 }
 
-Rcpp::IntegerVector read_fctr(vroom_vec_info* info, bool include_na) {
+Rcpp::IntegerVector read_fctr_explicit(
+    vroom_vec_info* info, Rcpp::CharacterVector levels, bool ordered) {
+  R_xlen_t n = info->idx->num_rows();
+
+  Rcpp::IntegerVector out(n);
+  std::unordered_map<SEXP, int> level_map;
+
+  for (auto i = 0; i < levels.size(); ++i) {
+    level_map[levels[i]] = i + 1;
+  }
+
+  parallel_for(
+      n,
+      [&](int start, int end, int id) {
+        size_t i = start;
+        for (const auto& str :
+             info->idx->get_column(info->column, start, end)) {
+          auto search = level_map.find(
+              Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8));
+          if (search != level_map.end()) {
+            out[i++] = search->second;
+          } else {
+            out[i++] = NA_INTEGER;
+          }
+        }
+      },
+      info->num_threads);
+
+  out.attr("levels") = levels;
+  if (ordered) {
+    out.attr("class") = Rcpp::CharacterVector::create("ordered", "factor");
+  } else {
+    out.attr("class") = "factor";
+  }
+
+  return out;
+}
+
+Rcpp::IntegerVector read_fctr_implicit(vroom_vec_info* info, bool include_na) {
   R_xlen_t n = info->idx->num_rows();
 
   Rcpp::IntegerVector out(n);
@@ -172,8 +202,6 @@ Rcpp::IntegerVector read_fctr(vroom_vec_info* info, bool include_na) {
 
   auto nas = Rcpp::as<std::vector<std::string> >(*info->na);
 
-  auto p = out.begin();
-
   int max_level = 1;
 
   auto start = 0;
@@ -181,13 +209,13 @@ Rcpp::IntegerVector read_fctr(vroom_vec_info* info, bool include_na) {
   auto i = start;
   for (const auto& str : info->idx->get_column(info->column, start, end)) {
     if (include_na && matches(str, nas)) {
-      p[i++] = NA_INTEGER;
+      out[i++] = NA_INTEGER;
     } else {
       auto val = level_map.find(str);
       if (val != level_map.end()) {
-        p[i++] = val->second;
+        out[i++] = val->second;
       } else {
-        p[i++] = max_level;
+        out[i++] = max_level;
         level_map[str] = max_level++;
         levels.emplace_back(str);
       }
@@ -207,12 +235,9 @@ Rcpp::IntegerVector read_fctr(vroom_vec_info* info, bool include_na) {
 
 Rcpp::NumericVector
 read_datetime(vroom_vec_info* info, Rcpp::List locale, std::string format) {
-
   R_xlen_t n = info->idx->num_rows();
 
   Rcpp::NumericVector out(n);
-
-  auto p = out.begin();
 
   LocaleInfo li(locale);
 
@@ -230,11 +255,11 @@ read_datetime(vroom_vec_info* info, Rcpp::List locale, std::string format) {
           if (res) {
             DateTime dt = parser.makeDateTime();
             if (!dt.validDateTime()) {
-              p[i++] = NA_REAL;
+              out[i++] = NA_REAL;
             }
-            p[i++] = dt.datetime();
+            out[i++] = dt.datetime();
           } else {
-            p[i++] = NA_REAL;
+            out[i++] = NA_REAL;
           }
         }
       },
@@ -249,12 +274,9 @@ read_datetime(vroom_vec_info* info, Rcpp::List locale, std::string format) {
 
 Rcpp::NumericVector
 read_date(vroom_vec_info* info, Rcpp::List locale, std::string format) {
-
   R_xlen_t n = info->idx->num_rows();
 
   Rcpp::NumericVector out(n);
-
-  auto p = out.begin();
 
   LocaleInfo li(locale);
 
@@ -272,11 +294,11 @@ read_date(vroom_vec_info* info, Rcpp::List locale, std::string format) {
           if (res) {
             DateTime dt = parser.makeDate();
             if (!dt.validDate()) {
-              p[i++] = NA_REAL;
+              out[i++] = NA_REAL;
             }
-            p[i++] = dt.date();
+            out[i++] = dt.date();
           } else {
-            p[i++] = NA_REAL;
+            out[i++] = NA_REAL;
           }
         }
       },
@@ -290,12 +312,9 @@ read_date(vroom_vec_info* info, Rcpp::List locale, std::string format) {
 
 Rcpp::NumericVector
 read_time(vroom_vec_info* info, Rcpp::List locale, std::string format) {
-
   R_xlen_t n = info->idx->num_rows();
 
   Rcpp::NumericVector out(n);
-
-  auto p = out.begin();
 
   LocaleInfo li(locale);
 
@@ -313,11 +332,11 @@ read_time(vroom_vec_info* info, Rcpp::List locale, std::string format) {
           if (res) {
             DateTime dt = parser.makeTime();
             if (!dt.validTime()) {
-              p[i++] = NA_REAL;
+              out[i++] = NA_REAL;
             }
-            p[i++] = dt.time();
+            out[i++] = dt.time();
           } else {
-            p[i++] = NA_REAL;
+            out[i++] = NA_REAL;
           }
         }
       },

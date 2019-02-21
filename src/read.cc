@@ -59,6 +59,7 @@ SEXP vroom_(
     size_t skip,
     CharacterVector na,
     List locale,
+    bool use_altrep,
     size_t num_threads,
     bool progress) {
 
@@ -147,24 +148,34 @@ SEXP vroom_(
     res_nms.push_back(Rcpp::as<std::string>(col_nms[col]));
 
     if (col_type == "collector_double") {
-      // res[i] = vroom_dbl::Make(info);
-      res[i] = read_dbl(info);
-      delete info;
+      if (use_altrep) {
+        res[i] = vroom_dbl::Make(info);
+      } else {
+        res[i] = read_dbl(info);
+        delete info;
+      }
     } else if (col_type == "collector_integer") {
-      // res[i] = vroom_int::Make(info);
-      res[i] = read_int(info);
-      delete info;
+      if (use_altrep) {
+        res[i] = vroom_int::Make(info);
+      } else {
+        res[i] = read_int(info);
+        delete info;
+      }
     } else if (col_type == "collector_logical") {
+      // No altrep for logicals as of R 3.5
       res[i] = read_lgl(info);
       delete info;
     } else if (col_type == "collector_factor") {
       auto levels = collector["levels"];
       if (Rf_isNull(levels)) {
-        res[i] = read_fctr(info, collector["include_na"]);
+        res[i] = read_fctr_implicit(info, collector["include_na"]);
         delete info;
       } else {
-        res[i] = vroom_factor::Make(
-            info, levels, collector["ordered"], collector["include_na"]);
+        if (use_altrep) {
+          res[i] = vroom_factor::Make(info, levels, collector["ordered"]);
+        } else {
+          res[i] = read_fctr_explicit(info, levels, collector["ordered"]);
+        }
       }
     } else if (col_type == "collector_date") {
       res[i] = read_date(info, locale, collector["format"]);
@@ -176,9 +187,12 @@ SEXP vroom_(
       res[i] = read_time(info, locale, collector["format"]);
       delete info;
     } else {
-      // res[i] = vroom_string::Make(info);
-      res[i] = read_chr(info);
-      delete info;
+      if (use_altrep) {
+        res[i] = vroom_string::Make(info);
+      } else {
+        res[i] = read_chr(info);
+        delete info;
+      }
     }
 
     ++i;

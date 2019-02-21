@@ -29,11 +29,7 @@ public:
   static R_altrep_class_t class_t;
 
   // Make an altrep object of class `vroom_factor::class_t`
-  static SEXP Make(
-      vroom_vec_info* info,
-      CharacterVector levels,
-      bool ordered,
-      bool include_na) {
+  static SEXP Make(vroom_vec_info* info, CharacterVector levels, bool ordered) {
 
     vroom_factor_info* fct_info = new vroom_factor_info;
     fct_info->info = info;

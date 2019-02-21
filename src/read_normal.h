@@ -14,7 +14,10 @@ Rcpp::NumericVector read_dbl(vroom_vec_info* info);
 
 Rcpp::IntegerVector read_int(vroom_vec_info* info);
 
-Rcpp::IntegerVector read_fctr(vroom_vec_info* info, bool include_na);
+Rcpp::IntegerVector read_fctr_implicit(vroom_vec_info* info, bool include_na);
+
+Rcpp::IntegerVector read_fctr_explicit(
+    vroom_vec_info* info, Rcpp::CharacterVector levels, bool ordered);
 
 Rcpp::NumericVector
 read_date(vroom_vec_info* info, Rcpp::List locale, std::string format);
