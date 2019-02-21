@@ -190,7 +190,8 @@ index::get_escaped_string(const char* begin, const char* end) const {
   return out;
 }
 
-std::pair<const char*, const char*> index::get_cell(size_t i) const {
+std::pair<const char*, const char*>
+index::get_cell(size_t i, bool is_first) const {
 
 #if DEBUG
   auto oi = i;
@@ -200,7 +201,7 @@ std::pair<const char*, const char*> index::get_cell(size_t i) const {
     auto sz = idx.size();
     if (i + 1 < sz) {
       size_t start;
-      if (i % columns_ == 0) {
+      if (is_first) {
         start = idx[i] + 1;
       } else {
         start = idx[i] + delim_len_;
@@ -220,16 +221,14 @@ std::pair<const char*, const char*> index::get_cell(size_t i) const {
   return {0, 0};
 }
 
-const std::string index::get_trimmed_val(size_t i) const {
+const std::string
+index::get_trimmed_val(size_t i, bool is_first, bool is_last) const {
 
   const char *begin, *end;
-  std::tie(begin, end) = get_cell(i);
+  std::tie(begin, end) = get_cell(i, is_first);
 
-  if (windows_newlines_) {
-    bool is_last_column = i % columns_ == (columns_ - 1);
-    if (is_last_column) {
-      end--;
-    }
+  if (is_last && windows_newlines_) {
+    end--;
   }
 
   if (trim_ws_) {
@@ -254,13 +253,15 @@ const std::string index::get_trimmed_val(size_t i) const {
 const std::string index::get(size_t row, size_t col) const {
   auto i = (row + has_header_) * columns_ + col;
 
-  return get_trimmed_val(i);
+  return get_trimmed_val(i, col == 0, col == (columns_ - 1));
 }
 
 index::column::iterator::iterator(
     const index& idx, size_t column, size_t start, size_t end)
     : idx_(&idx), column_(column), start_(start + idx_->has_header_) {
   i_ = (start_ * idx_->columns_) + column_;
+  is_first_ = column == 0;
+  is_last_ = column == (idx_->columns_ - 1);
 }
 
 index::column::iterator index::column::iterator::operator++(int) /* postfix */ {
@@ -283,7 +284,7 @@ operator==(const index::column::iterator& other) const {
 }
 
 std::string index::column::iterator::operator*() {
-  return idx_->get_trimmed_val(i_);
+  return idx_->get_trimmed_val(i_, is_first_, is_last_);
 }
 
 index::column::iterator& index::column::iterator::operator+=(int n) {
@@ -334,7 +335,7 @@ bool index::row::iterator::operator==(const index::row::iterator& other) const {
 }
 
 std::string index::row::iterator::operator*() {
-  return idx_->get_trimmed_val(i_);
+  return idx_->get_trimmed_val(i_, i_ == 0, i_ == (idx_->columns_ - 1));
 }
 
 index::row::iterator& index::row::iterator::operator+=(int n) {

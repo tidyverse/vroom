@@ -50,6 +50,8 @@ public:
       const index* idx_;
       size_t column_;
       size_t start_;
+      bool is_first_;
+      bool is_last_;
 
     public:
       using iterator_category = std::forward_iterator_tag;
@@ -233,9 +235,10 @@ public:
   const std::string
   get_escaped_string(const char* begin, const char* end) const;
 
-  const std::string get_trimmed_val(size_t i) const;
+  const std::string
+  get_trimmed_val(size_t i, bool is_first, bool is_last) const;
 
-  std::pair<const char*, const char*> get_cell(size_t i) const;
+  std::pair<const char*, const char*> get_cell(size_t i, bool is_first) const;
 
   /*
    * @param source the source to index
