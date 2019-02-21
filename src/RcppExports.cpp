@@ -48,15 +48,15 @@ static const R_CallMethodDef CallEntries[] = {
     {NULL, NULL, 0}
 };
 
-void init_vroom_factor(DllInfo* dll);
 void init_vroom_dbl(DllInfo* dll);
+void init_vroom_factor(DllInfo* dll);
 void init_vroom_int(DllInfo* dll);
 void init_vroom_string(DllInfo* dll);
 RcppExport void R_init_vroom(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
-    init_vroom_factor(dll);
     init_vroom_dbl(dll);
+    init_vroom_factor(dll);
     init_vroom_int(dll);
     init_vroom_string(dll);
 }
