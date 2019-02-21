@@ -128,8 +128,8 @@
     <pre class="usage"><span class='fu'>vroom</span>(<span class='no'>file</span>, <span class='kw'>delim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>col_names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>id</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>na</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>""</span>, <span class='st'>"NA"</span>), <span class='kw'>quote</span> <span class='kw'>=</span> <span class='st'>"\""</span>,
   <span class='kw'>comment</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>trim_ws</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>escape_double</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>escape_backslash</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='kw pkg'>parallel</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/parallel/topics/detectCores'>detectCores</a></span>(),
-  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='show_progress.html'>show_progress</a></span>())</pre>
+  <span class='kw'>escape_backslash</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>locale</span> <span class='kw'>=</span> <span class='kw pkg'>readr</span><span class='kw ns'>::</span><span class='fu'><a href='https://readr.tidyverse.org/reference/locale.html'>default_locale</a></span>(),
+  <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='kw pkg'>parallel</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/parallel/topics/detectCores'>detectCores</a></span>(), <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='show_progress.html'>show_progress</a></span>())</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -215,6 +215,14 @@ a single quote, `"`.</p></td>
 characters? This is more general than <code>escape_double</code> as backslashes
 can be used to escape the delimiter character, the quote character, or
 to add special characters like <code>\n</code>.</p></td>
+    </tr>
+    <tr>
+      <th>locale</th>
+      <td><p>The locale controls defaults that vary from place to place.
+The default locale is US-centric (like R), but you can use
+<code><a href='https://readr.tidyverse.org/reference/locale.html'>locale()</a></code> to create your own locale that controls things like
+the default time zone, encoding, decimal mark, big mark, and day/month
+names.</p></td>
     </tr>
     <tr>
       <th>num_threads</th>
