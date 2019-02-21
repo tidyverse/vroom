@@ -11,6 +11,7 @@
 // clang-format on
 
 #include <Rcpp.h>
+#include "read_normal.h"
 
 using namespace Rcpp;
 
@@ -139,23 +140,6 @@ void init_vroom_real(DllInfo* dll) {
 typedef vroom_numeric<IntegerVector> vroom_int;
 
 template <> R_altrep_class_t vroom_int::class_t{};
-
-// https://github.com/wch/r-source/blob/efed16c945b6e31f8e345d2f18e39a014d2a57ae/src/main/scan.c#L145-L157
-static int Strtoi(const char* nptr, int base) {
-  long res;
-  char* endp;
-
-  errno = 0;
-  res = strtol(nptr, &endp, base);
-  if (*endp != '\0')
-    res = NA_INTEGER;
-  /* next can happen on a 64-bit platform */
-  if (res > INT_MAX || res < INT_MIN)
-    res = NA_INTEGER;
-  if (errno == ERANGE)
-    res = NA_INTEGER;
-  return (int)res;
-}
 
 // the element at the index `i`
 int int_Elt(SEXP vec, R_xlen_t i) {

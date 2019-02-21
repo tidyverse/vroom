@@ -8,6 +8,12 @@
 
 Rcpp::LogicalVector read_lgl(vroom_vec_info* info);
 
+Rcpp::CharacterVector read_chr(vroom_vec_info* info);
+
+Rcpp::NumericVector read_dbl(vroom_vec_info* info);
+
+Rcpp::IntegerVector read_int(vroom_vec_info* info);
+
 Rcpp::IntegerVector read_fctr(vroom_vec_info* info, bool include_na);
 
 Rcpp::NumericVector
@@ -18,3 +24,5 @@ read_datetime(vroom_vec_info* info, Rcpp::List locale, std::string format);
 
 Rcpp::NumericVector
 read_time(vroom_vec_info* info, Rcpp::List locale, std::string format);
+
+int Strtoi(const char* nptr, int base);

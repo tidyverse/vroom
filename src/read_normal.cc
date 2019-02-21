@@ -42,6 +42,67 @@ inline int parse_logical(const char* start, const char* end) {
   return NA_LOGICAL;
 }
 
+// https://github.com/wch/r-source/blob/efed16c945b6e31f8e345d2f18e39a014d2a57ae/src/main/scan.c#L145-L157
+int Strtoi(const char* nptr, int base) {
+  long res;
+  char* endp;
+
+  errno = 0;
+  res = strtol(nptr, &endp, base);
+  if (*endp != '\0')
+    res = NA_INTEGER;
+  /* next can happen on a 64-bit platform */
+  if (res > INT_MAX || res < INT_MIN)
+    res = NA_INTEGER;
+  if (errno == ERANGE)
+    res = NA_INTEGER;
+  return (int)res;
+}
+
+Rcpp::IntegerVector read_int(vroom_vec_info* info) {
+
+  R_xlen_t n = info->idx->num_rows();
+
+  Rcpp::IntegerVector out(n);
+
+  auto p = out.begin();
+
+  parallel_for(
+      n,
+      [&](int start, int end, int id) {
+        size_t i = start;
+        for (const auto& str :
+             info->idx->get_column(info->column, start, end)) {
+          p[i++] = Strtoi(str.c_str(), 10);
+        }
+      },
+      info->num_threads);
+
+  return out;
+}
+
+Rcpp::NumericVector read_dbl(vroom_vec_info* info) {
+
+  R_xlen_t n = info->idx->num_rows();
+
+  Rcpp::NumericVector out(n);
+
+  auto p = out.begin();
+
+  parallel_for(
+      n,
+      [&](int start, int end, int id) {
+        size_t i = start;
+        for (const auto& str :
+             info->idx->get_column(info->column, start, end)) {
+          p[i++] = R_strtod(str.c_str(), NULL);
+        }
+      },
+      info->num_threads);
+
+  return out;
+}
+
 Rcpp::LogicalVector read_lgl(vroom_vec_info* info) {
 
   R_xlen_t n = info->idx->num_rows();
@@ -53,9 +114,6 @@ Rcpp::LogicalVector read_lgl(vroom_vec_info* info) {
   parallel_for(
       n,
       [&](int start, int end, int id) {
-        // Need to copy to a temp buffer since we have no way to tell strtod
-        // how long the buffer is.
-
         auto i = start;
         for (const auto& str :
              info->idx->get_column(info->column, start, end)) {
@@ -64,7 +122,33 @@ Rcpp::LogicalVector read_lgl(vroom_vec_info* info) {
       },
       info->num_threads);
 
-  delete info;
+  return out;
+}
+
+Rcpp::CharacterVector read_chr(vroom_vec_info* info) {
+
+  R_xlen_t n = info->idx->num_rows();
+
+  Rcpp::CharacterVector out(n);
+
+  auto p = out.begin();
+
+  auto i = 0;
+  for (const auto& str : info->idx->get_column(info->column)) {
+    auto val = Rf_mkCharLenCE(str.c_str(), str.length(), CE_UTF8);
+
+    // Look for NAs
+    for (const auto& v : *info->na) {
+      // We can just compare the addresses directly because they should now
+      // both be in the global string cache.
+      if (v == val) {
+        val = NA_STRING;
+        break;
+      }
+    }
+
+    p[i++] = val;
+  }
 
   return out;
 }
@@ -118,8 +202,6 @@ Rcpp::IntegerVector read_fctr(vroom_vec_info* info, bool include_na) {
   out.attr("levels") = out_lvls;
   out.attr("class") = "factor";
 
-  delete info;
-
   return out;
 }
 
@@ -158,8 +240,6 @@ read_datetime(vroom_vec_info* info, Rcpp::List locale, std::string format) {
       },
       info->num_threads,
       true);
-
-  delete info;
 
   out.attr("class") = Rcpp::CharacterVector::create("POSIXct", "POSIXt");
   out.attr("tzone") = li.tz_;
@@ -203,8 +283,6 @@ read_date(vroom_vec_info* info, Rcpp::List locale, std::string format) {
       info->num_threads,
       true);
 
-  delete info;
-
   out.attr("class") = "Date";
 
   return out;
@@ -245,8 +323,6 @@ read_time(vroom_vec_info* info, Rcpp::List locale, std::string format) {
       },
       info->num_threads,
       true);
-
-  delete info;
 
   out.attr("class") = Rcpp::CharacterVector::create("hms", "difftime");
   out.attr("units") = "secs";

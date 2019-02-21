@@ -147,15 +147,22 @@ SEXP vroom_(
     res_nms.push_back(Rcpp::as<std::string>(col_nms[col]));
 
     if (col_type == "collector_double") {
-      SET_VECTOR_ELT(res, i, vroom_real::Make(info));
+      // SET_VECTOR_ELT(res, i, vroom_real::Make(info));
+      SET_VECTOR_ELT(res, i, read_dbl(info));
+      delete info;
     } else if (col_type == "collector_integer") {
-      SET_VECTOR_ELT(res, i, vroom_int::Make(info));
+      // SET_VECTOR_ELT(res, i, vroom_int::Make(info));
+      SET_VECTOR_ELT(res, i, read_int(info));
+      delete info;
     } else if (col_type == "collector_logical") {
       SET_VECTOR_ELT(res, i, read_lgl(info));
+      delete info;
+      delete info;
     } else if (col_type == "collector_factor") {
       auto levels = collector["levels"];
       if (Rf_isNull(levels)) {
         SET_VECTOR_ELT(res, i, read_fctr(info, collector["include_na"]));
+        delete info;
       } else {
         SET_VECTOR_ELT(
             res,
@@ -165,12 +172,17 @@ SEXP vroom_(
       }
     } else if (col_type == "collector_date") {
       SET_VECTOR_ELT(res, i, read_date(info, locale, collector["format"]));
+      delete info;
     } else if (col_type == "collector_datetime") {
       SET_VECTOR_ELT(res, i, read_datetime(info, locale, collector["format"]));
+      delete info;
     } else if (col_type == "collector_time") {
       SET_VECTOR_ELT(res, i, read_time(info, locale, collector["format"]));
+      delete info;
     } else {
-      SET_VECTOR_ELT(res, i, vroom_string::Make(info));
+      SET_VECTOR_ELT(res, i, read_chr(info));
+      delete info;
+      // SET_VECTOR_ELT(res, i, vroom_string::Make(info));
     }
 
     ++i;
