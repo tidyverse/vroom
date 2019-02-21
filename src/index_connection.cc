@@ -136,14 +136,14 @@ index_connection::index_connection(
     write_fut = std::async([&, i, sz] { out.write(buf[i].data(), sz); });
 
     total_read += sz;
-    i = ++i % 3;
+    i = (i + 1) % 3;
 
     if (read_fut.valid()) {
       sz = read_fut.get();
     }
     read_fut = std::async(
         [&, i] { return R_ReadConnection(con, buf[i].data(), chunk_size); });
-    i = ++i % 3;
+    i = (i + 1) % 3;
     first_nl = 0;
   }
   write_fut.wait();
