@@ -192,8 +192,12 @@ SEXP vroom_(
       res[i] = read_date(info, collector["format"]);
       delete info;
     } else if (col_type == "collector_datetime") {
-      res[i] = read_datetime(info, collector["format"]);
-      delete info;
+      if (use_altrep) {
+        res[i] = vroom_dttm::Make(info, collector["format"]);
+      } else {
+        res[i] = read_datetime(info, collector["format"]);
+        delete info;
+      }
     } else if (col_type == "collector_time") {
       res[i] = read_time(info, collector["format"]);
       delete info;

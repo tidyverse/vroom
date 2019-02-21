@@ -50,6 +50,7 @@ static const R_CallMethodDef CallEntries[] = {
 
 void init_vroom_string(DllInfo* dll);
 void init_vroom_dbl(DllInfo* dll);
+void init_vroom_dttm(DllInfo* dll);
 void init_vroom_factor(DllInfo* dll);
 void init_vroom_int(DllInfo* dll);
 RcppExport void R_init_vroom(DllInfo *dll) {
@@ -57,6 +58,7 @@ RcppExport void R_init_vroom(DllInfo *dll) {
     R_useDynamicSymbols(dll, FALSE);
     init_vroom_string(dll);
     init_vroom_dbl(dll);
+    init_vroom_dttm(dll);
     init_vroom_factor(dll);
     init_vroom_int(dll);
 }
