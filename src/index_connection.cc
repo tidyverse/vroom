@@ -118,19 +118,26 @@ index_connection::index_connection(
 #endif
 
   auto total_read = 0;
-  std::future<size_t> read_fut;
+  std::future<void> parse_fut;
   std::future<void> write_fut;
   while (sz > 0) {
-    index_region(
-        buf[i],
-        idx_[1],
-        delim_.c_str(),
-        quote,
-        first_nl,
-        sz + 1,
-        total_read,
-        pb,
-        sz / 10);
+    if (parse_fut.valid()) {
+      parse_fut.wait();
+    }
+    parse_fut = std::async([&, i, sz] {
+      // We don't actually want any progress bar, so just pass a dummy one.
+      std::unique_ptr<RProgress::RProgress> empty_pb = nullptr;
+
+      index_region(
+          buf[i],
+          idx_[1],
+          delim_.c_str(),
+          quote,
+          first_nl,
+          sz + 1,
+          total_read,
+          empty_pb);
+    });
 
     if (write_fut.valid()) {
       write_fut.wait();
@@ -140,11 +147,9 @@ index_connection::index_connection(
     total_read += sz;
     i = (i + 1) % 3;
 
-    if (read_fut.valid()) {
-      sz = read_fut.get();
-    }
-    read_fut = std::async(
-        [&, i] { return R_ReadConnection(con, buf[i].data(), chunk_size); });
+    pb->tick(sz);
+    sz = R_ReadConnection(con, buf[i].data(), chunk_size);
+
     i = (i + 1) % 3;
     first_nl = 0;
   }

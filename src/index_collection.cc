@@ -112,7 +112,7 @@ index_collection::index_collection(
           has_header,
           skip,
           comment,
-          1 << 20,
+          1 << 17,
           progress));
     } else {
       auto filename = as<std::string>(x);

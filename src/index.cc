@@ -63,8 +63,10 @@ index::index(
   std::unique_ptr<multi_progress> pb = nullptr;
 
   if (progress_) {
+    auto format = get_pb_format("file", filename);
+    auto width = get_pb_width(format);
     pb = std::unique_ptr<multi_progress>(
-        new multi_progress(get_pb_format("file", filename), file_size));
+        new multi_progress(format, file_size, width));
     pb->tick(0);
   }
 

@@ -121,9 +121,14 @@ show_progress <- function() {
     !isTRUE(as.logical(Sys.getenv("TESTTHAT", "false")))
 }
 
-#' @importFrom crayon blue cyan green bold reset
+#' @importFrom crayon blue cyan green bold reset col_nchar
 pb_file_format <- function(filename) {
   glue::glue_col("{bold}indexing{reset} {blue}{basename(filename)}{reset} [:bar] {green}:rate{reset}, eta: {cyan}:eta{reset}")
+}
+
+pb_width <- function(format) {
+  ansii_chars <- nchar(format) - col_nchar(format)
+  getOption("width", 80L) + ansii_chars
 }
 
 pb_connection_format <- function(unused) {

@@ -2,10 +2,16 @@
 
 #include <Rcpp.h>
 
-inline std::string get_pb_format(std::string which, std::string filename = "") {
+inline std::string
+get_pb_format(const std::string& which, const std::string& filename = "") {
   Rcpp::Function fun = Rcpp::Environment::namespace_env(
       "vroom")[std::string("pb_") + which + "_format"];
   return Rcpp::as<std::string>(fun(filename));
+}
+
+inline int get_pb_width(const std::string& format) {
+  Rcpp::Function fun = Rcpp::Environment::namespace_env("vroom")["pb_width"];
+  return Rcpp::as<int>(fun(format));
 }
 
 template <typename T>

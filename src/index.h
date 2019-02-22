@@ -295,7 +295,7 @@ public:
 
       else if (c == '\n') { // no embedded quotes allowed
         destination.push_back(i + offset);
-        if (progress_) {
+        if (progress_ && pb) {
           auto tick_size = i - last_tick;
           if (tick_size > update_size) {
             pb->tick(i - last_tick);
@@ -310,7 +310,7 @@ public:
       i = result + last + 1;
     }
 
-    if (progress_) {
+    if (progress_ && pb) {
       pb->tick(end - last_tick);
     }
     // Rcpp::Rcerr << num_ticks << '\n';
