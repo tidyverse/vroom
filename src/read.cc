@@ -5,11 +5,13 @@
 #include "index_collection.h"
 #include "index_connection.h"
 #include "vroom_chr.h"
+#include "vroom_date.h"
 #include "vroom_dbl.h"
 #include "vroom_dttm.h"
 #include "vroom_fct.h"
 #include "vroom_int.h"
 #include "vroom_lgl.h"
+#include "vroom_time.h"
 
 #include <Rcpp.h>
 
