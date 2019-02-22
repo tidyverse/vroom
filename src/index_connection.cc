@@ -147,7 +147,9 @@ index_connection::index_connection(
     total_read += sz;
     i = (i + 1) % 3;
 
-    pb->tick(sz);
+    if (progress_) {
+      pb->tick(sz);
+    }
     sz = R_ReadConnection(con, buf[i].data(), chunk_size);
 
     i = (i + 1) % 3;
