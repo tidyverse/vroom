@@ -155,8 +155,8 @@ index_connection::index_connection(
     i = (i + 1) % 3;
     first_nl = 0;
   }
+  parse_fut.wait();
   write_fut.wait();
-
   out.close();
 
   if (progress_) {
