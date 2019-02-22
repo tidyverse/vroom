@@ -199,7 +199,7 @@ SEXP vroom_(
       if (use_altrep) {
         res[i] = vroom_dttm::Make(info, collector["format"]);
       } else {
-        res[i] = read_datetime(info, collector["format"]);
+        res[i] = read_dttm(info, collector["format"]);
         delete info;
       }
     } else if (col_type == "collector_time") {

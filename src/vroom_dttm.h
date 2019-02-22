@@ -3,8 +3,21 @@
 #include "DateTimeParser.h"
 #include "parallel.h"
 
-Rcpp::NumericVector
-read_datetime(vroom_vec_info* info, const std::string& format) {
+double parse_dttm(
+    const std::string& str, DateTimeParser& parser, const std::string& format) {
+  parser.setDate(str.c_str());
+  bool res = (format == "") ? parser.parseISO8601() : parser.parse(format);
+
+  if (res) {
+    DateTime dt = parser.makeDateTime();
+    if (dt.validDateTime()) {
+      return dt.datetime();
+    }
+  }
+  return NA_REAL;
+}
+
+Rcpp::NumericVector read_dttm(vroom_vec_info* info, const std::string& format) {
   R_xlen_t n = info->idx->num_rows();
 
   Rcpp::NumericVector out(n);
@@ -16,19 +29,7 @@ read_datetime(vroom_vec_info* info, const std::string& format) {
         DateTimeParser parser(&*info->locale);
         for (const auto& str :
              info->idx->get_column(info->column, start, end)) {
-          parser.setDate(str.c_str());
-          bool res =
-              (format == "") ? parser.parseISO8601() : parser.parse(format);
-
-          if (res) {
-            DateTime dt = parser.makeDateTime();
-            if (!dt.validDateTime()) {
-              out[i++] = NA_REAL;
-            }
-            out[i++] = dt.datetime();
-          } else {
-            out[i++] = NA_REAL;
-          }
+          out[i++] = parse_dttm(str, parser, format);
         }
       },
       info->num_threads,
@@ -121,20 +122,9 @@ public:
     }
 
     auto str = Get(vec, i);
-
     auto inf = Info(vec);
 
-    inf->parser->setDate(str.c_str());
-    bool res = (inf->format == "") ? inf->parser->parseISO8601()
-                                   : inf->parser->parse(inf->format);
-
-    if (res) {
-      DateTime dt = inf->parser->makeDateTime();
-      if (dt.validDateTime()) {
-        return dt.datetime();
-      }
-    }
-    return NA_REAL;
+    return parse_dttm(str, *inf->parser, inf->format);
   }
 
   // --- Altvec
@@ -146,7 +136,7 @@ public:
 
     auto inf = Info(vec);
 
-    auto out = read_datetime(inf->info, inf->format);
+    auto out = read_dttm(inf->info, inf->format);
 
     R_set_altrep_data2(vec, out);
 
