@@ -27,17 +27,24 @@ options(tibble.print_min = 3)
 
 ```{r echo = FALSE, message = FALSE}
 tm <- readRDS(system.file("bench", "timings.Rds", package = "vroom"))
+versions <- readRDS(system.file("bench", "sessioninfo.Rds", package = "vroom"))
+
+# Use the base version number for read.delim
+versions$package[versions$package == "base"] <- "read.delim"
+
 library(dplyr)
 tbl <- tm %>% dplyr::filter(type == "real", op == "read", package != "vroom_dplyr") %>%
   mutate(package = sub("_base", "", package)) %>%
+  left_join(versions) %>%
   transmute(
     package = package,
+    version = ondiskversion,
     "time (sec)" = time,
     speedup = max(time) / time,
     "throughput" = prettyunits::pretty_bytes(size / time))
 ```
 
-The fastest delimited reader for R, **`r dplyr::filter(tbl, package == "vroom") %>% pull("throughput") %>% paste0("/sec")`**.
+The fastest delimited reader for R, **`r dplyr::filter(tbl, package == "vroom") %>% pull("throughput") %>% paste0("/sec") %>% trimws()`**.
 
 But that's impossible! How can it be [so fast](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)?
 
@@ -56,11 +63,16 @@ knitr::kable(tbl, digits = 2)
 
 ## Features
 
-vroom has most of the parsing features of [readr](https://readr.tidyverse.org), including
+vroom has nearly all of the parsing features of
+[readr](https://readr.tidyverse.org) for delimited files, including
 
 - delimiter guessing\*
 - custom delimiters (including multi-byte\* and unicode\* delimiters)
-- specification of column types (including guessing of types)
+- specification of column types (including type guessing)
+  - numeric types (double, integer, number)
+  - logical types
+  - datetime types (datetime, date, time)
+  - categorical types (characters, factors)
 - skipping headers, comments and blank lines
 - quoted fields
 - double and backslashed escapes
@@ -140,7 +152,7 @@ objects can be extremely slow. This was fixed in
 [rstudio#4210](https://github.com/rstudio/rstudio/pull/4210) and [rstudio#4292](https://github.com/rstudio/rstudio/pull/4292), so it is
 recommended you use a [daily version](https://dailies.rstudio.com/) if you are
 trying to use vroom inside RStudio. For older versions a workaround is to
-change the option to 'Manual Refresh Only' in the environment pane.
+use the 'Manual Refresh Only' option in the environment pane.
 
 ![](https://user-images.githubusercontent.com/470418/51357022-95a1f280-1a82-11e9-8035-3687c8fd5dd8.png)
 

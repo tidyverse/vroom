@@ -15,7 +15,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 coverage](https://codecov.io/gh/jimhester/vroom/branch/master/graph/badge.svg)](https://codecov.io/gh/jimhester/vroom?branch=master)
 <!-- badges: end -->
 
-The fastest delimited reader for R, **971.70 MB/sec**.
+The fastest delimited reader for R, **1.05 GB/sec**.
 
 But that’s impossible\! How can it be [so
 fast](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)?
@@ -30,21 +30,25 @@ what you use.
 vroom also uses multiple threads for indexing and materializing
 non-character columns, to further improve performance.
 
-| package    | time (sec) | speedup | throughput |
-| :--------- | ---------: | ------: | :--------- |
-| vroom      |       1.72 |   65.88 | 971.70 MB  |
-| data.table |      19.37 |    5.83 | 86.03 MB   |
-| readr      |      25.71 |    4.40 | 64.84 MB   |
-| read.delim |     113.02 |    1.00 | 14.75 MB   |
+| package    | version    | time (sec) | speedup | throughput |
+| :--------- | :--------- | ---------: | ------: | :--------- |
+| vroom      | 0.0.0.9000 |       1.58 |   67.74 | 1.05 GB    |
+| data.table | 1.12.0     |      19.35 |    5.53 | 86.12 MB   |
+| readr      | 1.3.1      |      24.72 |    4.33 | 67.43 MB   |
+| read.delim | 3.5.1      |     107.07 |    1.00 | 15.57 MB   |
 
 ## Features
 
-vroom has most of the parsing features of
-[readr](https://readr.tidyverse.org), including
+vroom has nearly all of the parsing features of
+[readr](https://readr.tidyverse.org) for delimited files, including
 
   - delimiter guessing\*
   - custom delimiters (including multi-byte\* and unicode\* delimiters)
-  - specification of column types (including guessing of types)
+  - specification of column types (including type guessing)
+      - numeric types (double, integer, number)
+      - logical types
+      - datetime types (datetime, date, time)
+      - categorical types (characters, factors)
   - skipping headers, comments and blank lines
   - quoted fields
   - double and backslashed escapes
@@ -121,7 +125,7 @@ vroom::vroom(files)
 #> # … with 3.368e+05 more rows, and 12 more variables: sched_arr_time <dbl>,
 #> #   arr_delay <dbl>, carrier <chr>, flight <dbl>, tailnum <chr>,
 #> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
-#> #   minute <dbl>, time_hour <chr>
+#> #   minute <dbl>, time_hour <dttm>
 ```
 
 ## Benchmarks
@@ -141,8 +145,7 @@ which for Altrep objects can be extremely slow. This was fixed in
 [rstudio\#4292](https://github.com/rstudio/rstudio/pull/4292), so it is
 recommended you use a [daily version](https://dailies.rstudio.com/) if
 you are trying to use vroom inside RStudio. For older versions a
-workaround is to change the option to ‘Manual Refresh Only’ in the
-environment
+workaround is to use the ‘Manual Refresh Only’ option in the environment
 pane.
 
 ![](https://user-images.githubusercontent.com/470418/51357022-95a1f280-1a82-11e9-8035-3687c8fd5dd8.png)
