@@ -42,3 +42,5 @@ Suggests:
     rmarkdown,
     testthat
 VignetteBuilder: knitr
+Remotes:
+  r-lib/bench
