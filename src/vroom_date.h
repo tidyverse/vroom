@@ -2,6 +2,46 @@
 
 #include "vroom_dttm.h"
 
+double parse_date(
+    const std::string& str, DateTimeParser& parser, const std::string& format) {
+  parser.setDate(str.c_str());
+  bool res = (format == "") ? parser.parseLocaleDate() : parser.parse(format);
+
+  if (res) {
+    DateTime dt = parser.makeDate();
+    if (dt.validDate()) {
+      return dt.date();
+    }
+  }
+  return NA_REAL;
+}
+
+Rcpp::NumericVector read_date(vroom_vec_info* info, const std::string& format) {
+  R_xlen_t n = info->idx->num_rows();
+
+  Rcpp::NumericVector out(n);
+
+  parallel_for(
+      n,
+      [&](int start, int end, int id) {
+        auto i = start;
+        DateTimeParser parser(&*info->locale);
+        for (const auto& str :
+             info->idx->get_column(info->column, start, end)) {
+          out[i++] = parse_date(str, parser, format);
+        }
+      },
+      info->num_threads,
+      true);
+
+  out.attr("class") = "Date";
+
+  return out;
+}
+
+#if R_VERSION >= R_Version(3, 5, 0)
+/* no support for altrep before 3.5 */
+
 class vroom_date : public vroom_dttm {
 
 public:
@@ -96,3 +136,7 @@ R_altrep_class_t vroom_date::class_t;
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
 void init_vroom_date(DllInfo* dll) { vroom_date::Init(dll); }
+
+#else
+void init_vroom_date(DllInfo* dll) {}
+#endif

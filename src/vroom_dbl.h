@@ -25,6 +25,8 @@ Rcpp::NumericVector read_dbl(vroom_vec_info* info) {
   return out;
 }
 
+#ifdef HAS_ALTREP
+
 /* Vroom Dbl */
 
 class vroom_dbl : public vroom_vec {
@@ -113,3 +115,7 @@ R_altrep_class_t vroom_dbl::class_t;
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
 void init_vroom_dbl(DllInfo* dll) { vroom_dbl::Init(dll); }
+
+#else
+void init_vroom_dbl(DllInfo* dll) {}
+#endif

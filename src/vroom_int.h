@@ -42,6 +42,8 @@ Rcpp::IntegerVector read_int(vroom_vec_info* info) {
   return out;
 }
 
+#ifdef HAS_ALTREP
+
 class vroom_int : public vroom_vec {
 
 public:
@@ -127,3 +129,7 @@ R_altrep_class_t vroom_int::class_t;
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
 void init_vroom_int(DllInfo* dll) { vroom_int::Init(dll); }
+
+#else
+void init_vroom_int(DllInfo* dll) {}
+#endif

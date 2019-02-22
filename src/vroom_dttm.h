@@ -41,6 +41,8 @@ Rcpp::NumericVector read_dttm(vroom_vec_info* info, const std::string& format) {
   return out;
 }
 
+#ifdef HAS_ALTREP
+
 /* Vroom dttm */
 
 struct vroom_dttm_info {
@@ -170,77 +172,6 @@ R_altrep_class_t vroom_dttm::class_t;
 // [[Rcpp::init]]
 void init_vroom_dttm(DllInfo* dll) { vroom_dttm::Init(dll); }
 
-double parse_date(
-    const std::string& str, DateTimeParser& parser, const std::string& format) {
-  parser.setDate(str.c_str());
-  bool res = (format == "") ? parser.parseLocaleDate() : parser.parse(format);
-
-  if (res) {
-    DateTime dt = parser.makeDate();
-    if (dt.validDate()) {
-      return dt.date();
-    }
-  }
-  return NA_REAL;
-}
-
-Rcpp::NumericVector read_date(vroom_vec_info* info, const std::string& format) {
-  R_xlen_t n = info->idx->num_rows();
-
-  Rcpp::NumericVector out(n);
-
-  parallel_for(
-      n,
-      [&](int start, int end, int id) {
-        auto i = start;
-        DateTimeParser parser(&*info->locale);
-        for (const auto& str :
-             info->idx->get_column(info->column, start, end)) {
-          out[i++] = parse_date(str, parser, format);
-        }
-      },
-      info->num_threads,
-      true);
-
-  out.attr("class") = "Date";
-
-  return out;
-}
-
-double parse_time(
-    const std::string& str, DateTimeParser& parser, const std::string& format) {
-  parser.setDate(str.c_str());
-  bool res = (format == "") ? parser.parseLocaleTime() : parser.parse(format);
-
-  if (res) {
-    DateTime dt = parser.makeTime();
-    if (dt.validTime()) {
-      return dt.time();
-    }
-  }
-  return NA_REAL;
-}
-
-Rcpp::NumericVector read_time(vroom_vec_info* info, std::string format) {
-  R_xlen_t n = info->idx->num_rows();
-
-  Rcpp::NumericVector out(n);
-
-  parallel_for(
-      n,
-      [&](int start, int end, int id) {
-        auto i = start;
-        DateTimeParser parser(&*info->locale);
-        for (const auto& str :
-             info->idx->get_column(info->column, start, end)) {
-          out[i++] = parse_time(str, parser, format);
-        }
-      },
-      info->num_threads,
-      true);
-
-  out.attr("class") = Rcpp::CharacterVector::create("hms", "difftime");
-  out.attr("units") = "secs";
-
-  return out;
-}
+#else
+void init_vroom_dttm(DllInfo* dll) {}
+#endif

@@ -2,6 +2,46 @@
 
 #include "vroom_dttm.h"
 
+double parse_time(
+    const std::string& str, DateTimeParser& parser, const std::string& format) {
+  parser.setDate(str.c_str());
+  bool res = (format == "") ? parser.parseLocaleTime() : parser.parse(format);
+
+  if (res) {
+    DateTime dt = parser.makeTime();
+    if (dt.validTime()) {
+      return dt.time();
+    }
+  }
+  return NA_REAL;
+}
+
+Rcpp::NumericVector read_time(vroom_vec_info* info, std::string format) {
+  R_xlen_t n = info->idx->num_rows();
+
+  Rcpp::NumericVector out(n);
+
+  parallel_for(
+      n,
+      [&](int start, int end, int id) {
+        auto i = start;
+        DateTimeParser parser(&*info->locale);
+        for (const auto& str :
+             info->idx->get_column(info->column, start, end)) {
+          out[i++] = parse_time(str, parser, format);
+        }
+      },
+      info->num_threads,
+      true);
+
+  out.attr("class") = Rcpp::CharacterVector::create("hms", "difftime");
+  out.attr("units") = "secs";
+
+  return out;
+}
+
+#ifdef HAS_ALTREP
+
 class vroom_time : public vroom_dttm {
 
 public:
@@ -97,3 +137,7 @@ R_altrep_class_t vroom_time::class_t;
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
 void init_vroom_time(DllInfo* dll) { vroom_time::Init(dll); }
+
+#else
+void init_vroom_time(DllInfo* dll) {}
+#endif

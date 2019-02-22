@@ -30,6 +30,8 @@ Rcpp::CharacterVector read_chr(vroom_vec_info* info) {
   return out;
 }
 
+#ifdef HAS_ALTREP
+
 using namespace Rcpp;
 
 struct vroom_string : vroom_vec {
@@ -149,3 +151,7 @@ R_altrep_class_t vroom_string::class_t;
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
 void init_vroom_string(DllInfo* dll) { vroom_string::Init(dll); }
+
+#else
+void init_vroom_string(DllInfo* dll) {}
+#endif

@@ -23,9 +23,11 @@
 
 #if R_VERSION < R_Version(3, 3, 0)
 /* R before 3.3.0 didn't have R_GetConnection() */
+extern "C" {
 extern Rconnection getConnection(int n);
 static Rconnection R_GetConnection(SEXP sConn) {
-  return getConnection(asInteger(sConn));
+  return getConnection(Rf_asInteger(sConn));
+}
 }
 #endif
 

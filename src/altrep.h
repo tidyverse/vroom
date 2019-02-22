@@ -1,4 +1,10 @@
-#if R_VERSION < R_Version(3, 6, 0)
+#if R_VERSION >= R_Version(3, 5, 0)
+#define HAS_ALTREP
+#endif
+
+#ifndef HAS_ALTREP
+/* no support for altrep before 3.5 */
+#elif R_VERSION < R_Version(3, 6, 0)
 
 // workaround because R's <R_ext/Altrep.h> not so conveniently uses `class`
 // as a variable name, and C++ is not happy about that

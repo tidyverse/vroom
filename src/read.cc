@@ -20,6 +20,8 @@ enum column_type { character = 0, real = 1, integer = 2, logical = 3 };
 
 inline int min(int a, int b) { return a < b ? a : b; }
 
+using namespace Rcpp;
+
 CharacterVector read_column_names(
     std::shared_ptr<vroom::index_collection> idx,
     std::shared_ptr<LocaleInfo> locale) {
@@ -40,7 +42,7 @@ CharacterVector generate_filename_column(
   out.reserve(rows);
 
   if (static_cast<size_t>(inputs.size()) != lengths.size()) {
-    Rcpp::stop("inputs and lengths inconsistent");
+    stop("inputs and lengths inconsistent");
   }
 
   for (int i = 0; i < inputs.size(); ++i) {
@@ -49,7 +51,7 @@ CharacterVector generate_filename_column(
       out.push_back(inputs[i]);
     }
   }
-  return Rcpp::wrap(out);
+  return wrap(out);
 }
 
 // [[Rcpp::export]]
@@ -163,21 +165,27 @@ SEXP vroom_(
 
     if (col_type == "collector_double") {
       if (use_altrep) {
+#ifdef HAS_ALTREP
         res[i] = vroom_dbl::Make(info);
+#endif
       } else {
         res[i] = read_dbl(info);
         delete info;
       }
     } else if (col_type == "collector_integer") {
       if (use_altrep) {
+#ifdef HAS_ALTREP
         res[i] = vroom_int::Make(info);
+#endif
       } else {
         res[i] = read_int(info);
         delete info;
       }
     } else if (col_type == "collector_number") {
       if (use_altrep) {
+#ifdef HAS_ALTREP
         res[i] = vroom_num::Make(info);
+#endif
       } else {
         res[i] = read_num(info);
         delete info;
@@ -193,35 +201,45 @@ SEXP vroom_(
         delete info;
       } else {
         if (use_altrep) {
+#ifdef HAS_ALTREP
           res[i] = vroom_factor::Make(info, levels, collector["ordered"]);
+#endif
         } else {
           res[i] = read_fctr_explicit(info, levels, collector["ordered"]);
         }
       }
     } else if (col_type == "collector_date") {
       if (use_altrep) {
+#ifdef HAS_ALTREP
         res[i] = vroom_date::Make(info, collector["format"]);
+#endif
       } else {
         res[i] = read_date(info, collector["format"]);
         delete info;
       }
     } else if (col_type == "collector_datetime") {
       if (use_altrep) {
+#ifdef HAS_ALTREP
         res[i] = vroom_dttm::Make(info, collector["format"]);
+#endif
       } else {
         res[i] = read_dttm(info, collector["format"]);
         delete info;
       }
     } else if (col_type == "collector_time") {
       if (use_altrep) {
+#ifdef HAS_ALTREP
         res[i] = vroom_time::Make(info, collector["format"]);
+#endif
       } else {
         res[i] = read_time(info, collector["format"]);
         delete info;
       }
     } else {
       if (use_altrep) {
+#ifdef HAS_ALTREP
         res[i] = vroom_string::Make(info);
+#endif
       } else {
         res[i] = read_chr(info);
         delete info;

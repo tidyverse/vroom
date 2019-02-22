@@ -153,6 +153,8 @@ Rcpp::NumericVector read_num(vroom_vec_info* info) {
   return out;
 }
 
+#ifdef HAS_ALTREP
+
 /* Vroom number */
 
 class vroom_num : public vroom_vec {
@@ -242,3 +244,7 @@ R_altrep_class_t vroom_num::class_t;
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
 void init_vroom_num(DllInfo* dll) { vroom_num::Init(dll); }
+
+#else
+void init_vroom_num(DllInfo* dll) {}
+#endif

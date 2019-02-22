@@ -95,6 +95,8 @@ Rcpp::IntegerVector read_fctr_implicit(vroom_vec_info* info, bool include_na) {
   return out;
 }
 
+#ifdef HAS_ALTREP
+
 using namespace Rcpp;
 
 // inspired by Luke Tierney and the R Core Team
@@ -255,3 +257,7 @@ R_altrep_class_t vroom_factor::class_t;
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
 void init_vroom_factor(DllInfo* dll) { vroom_factor::Init(dll); }
+
+#else
+void init_vroom_factor(DllInfo* dll) {}
+#endif

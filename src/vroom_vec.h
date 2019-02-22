@@ -1,5 +1,9 @@
 #pragma once
 
+#include "altrep.h"
+
+#include <Rcpp.h>
+
 struct vroom_vec_info {
   std::shared_ptr<vroom::index_collection> idx;
   size_t column;
@@ -7,6 +11,8 @@ struct vroom_vec_info {
   std::shared_ptr<Rcpp::CharacterVector> na;
   std::shared_ptr<LocaleInfo> locale;
 };
+
+#ifdef HAS_ALTREP
 
 class vroom_vec {
 
@@ -45,3 +51,5 @@ public:
     return STDVEC_DATAPTR(data2);
   }
 };
+
+#endif

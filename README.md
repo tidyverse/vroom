@@ -5,12 +5,14 @@
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/package=vroom)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Travis build
 status](https://travis-ci.org/jimhester/vroom.svg?branch=master)](https://travis-ci.org/jimhester/vroom)
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/jimhester/vroom?branch=master&svg=true)](https://ci.appveyor.com/project/jimhester/vroom)
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Codecov test
 coverage](https://codecov.io/gh/jimhester/vroom/branch/master/graph/badge.svg)](https://codecov.io/gh/jimhester/vroom?branch=master)
 <!-- badges: end -->
@@ -30,12 +32,12 @@ what you use.
 vroom also uses multiple threads for indexing and materializing
 non-character columns, to further improve performance.
 
-| package    | version    | time (sec) | speedup | throughput |
-| :--------- | :--------- | ---------: | ------: | :--------- |
-| vroom      | 0.0.0.9000 |       1.58 |   67.74 | 1.05 GB    |
-| data.table | 1.12.0     |      19.35 |    5.53 | 86.12 MB   |
-| readr      | 1.3.1      |      24.72 |    4.33 | 67.43 MB   |
-| read.delim | 3.5.1      |     107.07 |    1.00 | 15.57 MB   |
+| package    |    version | time (sec) | speedup | throughput |
+| :--------- | ---------: | ---------: | ------: | ---------: |
+| vroom      | 0.0.0.9000 |       1.58 |   67.74 |    1.05 GB |
+| data.table |     1.12.0 |      19.35 |    5.53 |   86.12 MB |
+| readr      |      1.3.1 |      24.72 |    4.33 |   67.43 MB |
+| read.delim |      3.5.1 |     107.07 |    1.00 |   15.57 MB |
 
 ## Features
 
