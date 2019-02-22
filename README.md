@@ -17,7 +17,7 @@ status](https://ci.appveyor.com/api/projects/status/github/jimhester/vroom?branc
 coverage](https://codecov.io/gh/jimhester/vroom/branch/master/graph/badge.svg)](https://codecov.io/gh/jimhester/vroom?branch=master)
 <!-- badges: end -->
 
-The fastest delimited reader for R, **1.05 GB/sec**.
+The fastest delimited reader for R, **1.04 GB/sec**.
 
 But that’s impossible\! How can it be [so
 fast](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)?
@@ -34,10 +34,10 @@ non-character columns, to further improve performance.
 
 | package    |    version | time (sec) | speedup | throughput |
 | :--------- | ---------: | ---------: | ------: | ---------: |
-| vroom      | 0.0.0.9000 |       1.58 |   67.74 |    1.05 GB |
-| data.table |     1.12.0 |      19.35 |    5.53 |   86.12 MB |
-| readr      |      1.3.1 |      24.72 |    4.33 |   67.43 MB |
-| read.delim |      3.5.1 |     107.07 |    1.00 |   15.57 MB |
+| vroom      | 0.0.0.9000 |       1.60 |   67.42 |    1.04 GB |
+| data.table |     1.12.0 |      19.75 |    5.47 |   84.38 MB |
+| readr      |      1.3.1 |      26.61 |    4.06 |   62.64 MB |
+| read.delim |      3.5.1 |     108.13 |    1.00 |   15.42 MB |
 
 ## Features
 

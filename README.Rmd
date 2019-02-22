@@ -27,8 +27,8 @@ options(tibble.print_min = 3)
 <!-- badges: end -->
 
 ```{r echo = FALSE, message = FALSE}
-tm <- readRDS(system.file("bench", "timings.Rds", package = "vroom"))
-versions <- readRDS(system.file("bench", "sessioninfo.Rds", package = "vroom"))
+tm <- vroom::vroom(system.file("bench", "timings.tsv", package = "vroom"))
+versions <- vroom::vroom(system.file("bench", "sessioninfo.tsv", package = "vroom"))
 
 # Use the base version number for read.delim
 versions$package[versions$package == "base"] <- "read.delim"

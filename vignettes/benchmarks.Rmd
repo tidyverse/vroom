@@ -104,7 +104,7 @@ The following operations are performed.
 
 ```{r, echo = FALSE, message = FALSE}
 library(dplyr)
-tm_df <- readRDS(system.file("bench", "timings.Rds", package = "vroom"))
+tm_df <- vroom::vroom(system.file("bench", "timings.tsv", package = "vroom"))
 read_times <- tm_df %>% dplyr::filter(op == "read", type == "real") %>% select(package, `Time to read file` = time)
 
 total_times <- tm_df %>% group_by(package) %>% dplyr::filter(type == "real") %>% tally(wt = time) %>% rename("Total time for all operations (sec)" = "n")
@@ -128,6 +128,8 @@ tm_df %>%
     theme(legend.position = "bottom")
 ```
 
-```{r, echo = FALSE}
-readRDS(system.file("bench", "sessioninfo.Rds", package = "vroom"))
+```{r, echo = FALSE, warning = FALSE}
+si <- vroom::vroom(system.file("bench", "sessioninfo.tsv", package = "vroom"))
+class(si) <- c("packages_info", "data.frame")
+si
 ```
