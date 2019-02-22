@@ -11,6 +11,7 @@
 #include "vroom_fct.h"
 #include "vroom_int.h"
 #include "vroom_lgl.h"
+#include "vroom_num.h"
 #include "vroom_time.h"
 
 #include <Rcpp.h>
@@ -172,6 +173,13 @@ SEXP vroom_(
         res[i] = vroom_int::Make(info);
       } else {
         res[i] = read_int(info);
+        delete info;
+      }
+    } else if (col_type == "collector_number") {
+      if (use_altrep) {
+        res[i] = vroom_num::Make(info);
+      } else {
+        res[i] = read_num(info);
         delete info;
       }
     } else if (col_type == "collector_logical") {

@@ -30,5 +30,12 @@ test_vroom <- function(content, ..., equals) {
   }
   expect_equal(res, equals)
 
-  res
+  invisible(res)
+}
+
+test_parse_number <- function(x, expected, ...) {
+  test_vroom(paste0(paste0(x, collapse = "\n"), "\n"), delim = "\n",
+    col_names = FALSE, col_types = "n", ...,
+    equals = tibble::tibble(X1 = expected)
+  )
 }

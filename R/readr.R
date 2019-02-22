@@ -26,6 +26,10 @@ readr::col_datetime
 #' @export
 readr::col_time
 
+#' @importFrom readr col_number
+#' @export
+readr::col_number
+
 #' @importFrom readr col_factor
 #' @export
 readr::col_factor
