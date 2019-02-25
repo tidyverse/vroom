@@ -16,6 +16,10 @@ inline int get_pb_width(const std::string& format) {
 
 template <typename T>
 static size_t find_next_newline(const T& source, size_t start) {
+  if (start > (source.size() - 1)) {
+    return source.size() - 1;
+  }
+
   auto begin = source.data() + start;
   auto res =
       static_cast<const char*>(memchr(begin, '\n', source.size() - start));

@@ -212,3 +212,19 @@ test_that("vroom adds the id column from the filename for multiple files", {
 
   expect_equal(basename(res$filename), filenames)
 })
+
+test_that("vroom can read a file with only headers", {
+  test_vroom("a\n",
+    equals = tibble::tibble(a = character())
+  )
+
+  test_vroom("a,b,c\n",
+    equals = tibble::tibble(a = character(), b = character(), c = character())
+  )
+})
+
+test_that("vroom can read an empty file", {
+  test_vroom("\n",
+    equals = tibble::tibble()
+  )
+})

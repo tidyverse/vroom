@@ -125,7 +125,7 @@ SEXP vroom_(
   auto guess_num = min(num_rows, 100);
 
   // Guess based on values throughout the data
-  auto guess_step = num_rows / guess_num;
+  auto guess_step = guess_num > 0 ? num_rows / guess_num : 0;
 
   std::vector<std::string> res_nms;
 

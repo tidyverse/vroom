@@ -55,7 +55,8 @@ index::index(
   auto first_nl = find_next_newline(mmap_, start);
   auto second_nl = find_next_newline(mmap_, first_nl + 1);
   auto one_row_size = second_nl - first_nl;
-  auto guessed_rows = (file_size - first_nl) / one_row_size * 1.1;
+  auto guessed_rows =
+      one_row_size > 0 ? (file_size - first_nl) / one_row_size * 1.1 : 0;
 
   // Check for windows newlines
   windows_newlines_ = first_nl > 0 && mmap_[first_nl - 1] == '\r';
@@ -122,9 +123,9 @@ index::index(
         return sum;
       });
 
-  rows_ = total_size / columns_;
+  rows_ = columns_ > 0 ? total_size / columns_ : 0;
 
-  if (has_header_) {
+  if (rows_ > 0 && has_header_) {
     --rows_;
   }
 

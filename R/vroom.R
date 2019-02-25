@@ -138,6 +138,10 @@ pb_connection_format <- function(unused) {
 # Guess delimiter by splitting every line by each delimiter and choosing the
 # delimiter which splits the lines into the highest number of consistent fields
 guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";", "\n")) {
+  if (length(lines) == 0) {
+    return("")
+  }
+
   splits <- lapply(delims, strsplit, x = lines, useBytes = TRUE, fixed = TRUE)
 
   counts <- lapply(splits, function(x) table(lengths(x)))

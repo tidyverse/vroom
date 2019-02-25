@@ -221,7 +221,9 @@ public:
     /* Skip skip parameters, comments and blank lines */
 
     while (bool should_skip =
-               is_blank_or_comment_line(source.data() + begin) || skip_ > 0) {
+               begin < source.size() &&
+                   is_blank_or_comment_line(source.data() + begin) ||
+               skip_ > 0) {
       begin = find_next_newline(source, begin) + 1;
       if (skip_ > 0) {
         --skip_;
@@ -284,7 +286,8 @@ public:
       auto c = buf[pos];
 
 #if DEBUG
-      Rcpp::Rcerr << "o_pos: " << pos << " buf_offset: " << buf_offset << " pos: " << pos << " c: " << c << '\n';
+      Rcpp::Rcerr << "o_pos: " << pos << " buf_offset: " << buf_offset
+                  << " pos: " << pos << " c: " << c << '\n';
 #endif
 
       if (!in_quote && strncmp(delim, buf + pos, delim_len_) == 0) {

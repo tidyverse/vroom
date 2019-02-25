@@ -114,7 +114,8 @@ index_connection::index_connection(
   columns_ = idx_[0].size() - 1;
 
 #if DEBUG
-  Rcpp::Rcerr << "columns: " << columns_ << " first_nl:" << first_nl << " sz:" << sz << '\n';
+  Rcpp::Rcerr << "columns: " << columns_ << " first_nl:" << first_nl
+              << " sz:" << sz << '\n';
 #endif
 
   auto total_read = 0;
@@ -189,9 +190,9 @@ index_connection::index_connection(
         return sum;
       });
 
-  rows_ = total_size / columns_;
+  rows_ = columns_ > 0 ? total_size / columns_ : 0;
 
-  if (has_header_) {
+  if (rows_ > 0 && has_header_) {
     --rows_;
   }
 
