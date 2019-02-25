@@ -1,4 +1,4 @@
-context("num")
+context("test-num.R")
 
 # Flexible number parsing -------------------------------------------------
 test_that("col_number only takes first number", {
