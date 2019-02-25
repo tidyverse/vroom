@@ -22,18 +22,20 @@ Rcpp::NumericVector read_dttm(vroom_vec_info* info, const std::string& format) {
 
   Rcpp::NumericVector out(n);
 
-  parallel_for(
-      n,
-      [&](int start, int end, int id) {
-        auto i = start;
-        DateTimeParser parser(&*info->locale);
-        for (const auto& str :
-             info->idx->get_column(info->column, start, end)) {
-          out[i++] = parse_dttm(str, parser, format);
-        }
-      },
-      info->num_threads,
-      true);
+  DateTimeParser parser(&*info->locale);
+  R_xlen_t i = 0;
+  // parallel_for(
+  // n,
+  //[&](int start, int end, int id) {
+  // auto i = start;
+  // DateTimeParser parser(&*info->locale);
+  for (const auto& str : info->idx->get_column(info->column)) {
+    out[i++] = parse_dttm(str, parser, format);
+  }
+  //}
+  //,
+  // info->num_threads,
+  // true);
 
   out.attr("class") = Rcpp::CharacterVector::create("POSIXct", "POSIXt");
   out.attr("tzone") = info->locale->tz_;
