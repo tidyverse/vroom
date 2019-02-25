@@ -221,8 +221,8 @@ public:
     /* Skip skip parameters, comments and blank lines */
 
     while (bool should_skip =
-               begin < source.size() &&
-                   is_blank_or_comment_line(source.data() + begin) ||
+               (begin < source.size() &&
+                is_blank_or_comment_line(source.data() + begin)) ||
                skip_ > 0) {
       begin = find_next_newline(source, begin) + 1;
       if (skip_ > 0) {

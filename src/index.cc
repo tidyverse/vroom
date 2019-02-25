@@ -35,13 +35,11 @@ index::index(
   mmap_ = mio::make_mmap_source(filename, error);
 
   if (error) {
-    // mio returns an invalid argument error when the file is empty, so just
-    // return in that case rather than throwing an error.
-    if (error == std::errc::invalid_argument) {
-      return;
-    }
-
-    throw Rcpp::exception(std::string(error.message()).c_str(), false);
+    // We cannot actually portably compare error messages due to a bug in
+    // libstdc++ (https://stackoverflow.com/a/54316671/2055486), so just print
+    // the message on stderr return
+    Rcpp::Rcerr << "mmaping error: " << error.message() << '\n';
+    return;
   }
 
   auto file_size = mmap_.cend() - mmap_.cbegin();
