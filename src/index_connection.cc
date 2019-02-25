@@ -114,20 +114,20 @@ index_connection::index_connection(
   columns_ = idx_[0].size() - 1;
 
 #if DEBUG
-  Rcpp::Rcerr << "columns: " << columns_ << '\n';
+  Rcpp::Rcerr << "columns: " << columns_ << " first_nl:" << first_nl << " sz:" << sz << '\n';
 #endif
 
   auto total_read = 0;
   std::future<void> parse_fut;
   std::future<void> write_fut;
+  // We don't actually want any progress bar, so just pass a dummy one.
+  std::unique_ptr<RProgress::RProgress> empty_pb = nullptr;
+
   while (sz > 0) {
     if (parse_fut.valid()) {
       parse_fut.wait();
     }
-    parse_fut = std::async([&, i, sz, total_read] {
-      // We don't actually want any progress bar, so just pass a dummy one.
-      std::unique_ptr<RProgress::RProgress> empty_pb = nullptr;
-
+    parse_fut = std::async([&, i, sz, first_nl, total_read] {
       index_region(
           buf[i],
           idx_[1],
@@ -184,7 +184,7 @@ index_connection::index_connection(
       idx_.begin(), idx_.end(), 0, [](size_t sum, const idx_t& v) {
         sum += v.size() - 1;
 #if DEBUG
-        Rcpp::Rcerr << v.size() << '\n';
+//        Rcpp::Rcerr << v.size() << '\n';
 #endif
         return sum;
       });

@@ -3,3 +3,6 @@ doc
 inst/doc
 docs
 .Rproj.user
+vroom.Rcheck/
+vroom*.tar.gz
+vroom*.tgz
