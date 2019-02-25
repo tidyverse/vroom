@@ -35,7 +35,13 @@ index::index(
   mmap_ = mio::make_mmap_source(filename, error);
 
   if (error) {
-    throw Rcpp::exception(error.message().c_str(), false);
+    // mio returns an invalid argument error when the file is empty, so just
+    // return in that case rather than throwing an error.
+    if (error == std::errc::invalid_argument) {
+      return;
+    }
+
+    throw Rcpp::exception(std::string(error.message()).c_str(), false);
   }
 
   auto file_size = mmap_.cend() - mmap_.cbegin();

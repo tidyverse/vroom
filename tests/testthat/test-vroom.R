@@ -227,4 +227,8 @@ test_that("vroom can read an empty file", {
   test_vroom("\n",
     equals = tibble::tibble()
   )
+
+  file.create("foo")
+  on.exit(unlink("foo"))
+  expect_equal(vroom("foo"), tibble::tibble())
 })
