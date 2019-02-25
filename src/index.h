@@ -141,6 +141,7 @@ public:
   size_t columns_;
   bool progress_;
   size_t delim_len_;
+  std::locale loc_;
 
   void skip_lines();
 
@@ -260,33 +261,33 @@ public:
       const char quote,
       const size_t start,
       const size_t end,
-      const size_t offset,
+      const size_t file_offset,
       P& pb,
       const size_t update_size = -1) {
 
     // If there are no quotes quote will be '\0', so will just work
-    std::array<char, 4> query = {delim[0], '\n', '\\', quote};
+    std::array<char, 5> query = {delim[0], '\n', '\\', quote, '\0'};
 
-    size_t last = start;
     auto last_tick = start;
     auto num_ticks = 0;
 
     bool in_quote = false;
 
-    auto begin = source.data();
+    auto buf = source.data();
 
     // The actual parsing is here
-    auto result = strcspn(begin + last, query.data());
-    auto i = result + last;
-    while (i < end) {
-      auto c = source[i];
+    auto pos = start;
+    while (pos < end) {
+      auto buf_offset = strcspn(buf + pos, query.data());
+      pos = pos + buf_offset;
+      auto c = buf[pos];
 
-      if (!in_quote && strncmp(delim, begin + i, delim_len_) == 0) {
-        destination.push_back(i + offset);
+      if (!in_quote && strncmp(delim, buf + pos, delim_len_) == 0) {
+        destination.push_back(pos + file_offset);
       }
 
       else if (escape_backslash_ && c == '\\') {
-        ++i;
+        ++pos;
       }
 
       else if (c == quote) {
@@ -294,20 +295,18 @@ public:
       }
 
       else if (c == '\n') { // no embedded quotes allowed
-        destination.push_back(i + offset);
+        destination.push_back(pos + file_offset);
         if (progress_ && pb) {
-          auto tick_size = i - last_tick;
+          auto tick_size = pos - last_tick;
           if (tick_size > update_size) {
-            pb->tick(i - last_tick);
-            last_tick = i;
+            pb->tick(pos - last_tick);
+            last_tick = pos;
             ++num_ticks;
           }
         }
       }
 
-      last = i;
-      result = strcspn(begin + last + 1, query.data());
-      i = result + last + 1;
+      ++pos;
     }
 
     if (progress_ && pb) {

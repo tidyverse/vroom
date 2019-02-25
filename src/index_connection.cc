@@ -70,18 +70,18 @@ index_connection::index_connection(
     Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(in, "rb");
   }
 
-  std::array<std::vector<char>, 3> buf = {std::vector<char>(chunk_size),
-                                          std::vector<char>(chunk_size),
+  std::array<std::vector<char>, 2> buf = {std::vector<char>(chunk_size),
                                           std::vector<char>(chunk_size)};
 
-  // A buf index that alternates between 0,1 and 2
+  // A buf index that alternates between 0,1
   auto i = 0;
 
   idx_ = std::vector<idx_t>(2);
 
   idx_[0].reserve(128);
 
-  auto sz = R_ReadConnection(con, buf[i].data(), chunk_size);
+  auto sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
+  buf[i][sz] = '\0';
 
   // Parse header
   auto start = find_first_line(buf[i]);
@@ -124,7 +124,7 @@ index_connection::index_connection(
     if (parse_fut.valid()) {
       parse_fut.wait();
     }
-    parse_fut = std::async([&, i, sz] {
+    parse_fut = std::async([&, i, sz, total_read] {
       // We don't actually want any progress bar, so just pass a dummy one.
       std::unique_ptr<RProgress::RProgress> empty_pb = nullptr;
 
@@ -134,7 +134,7 @@ index_connection::index_connection(
           delim_.c_str(),
           quote,
           first_nl,
-          sz + 1,
+          sz,
           total_read,
           empty_pb);
     });
@@ -144,15 +144,19 @@ index_connection::index_connection(
     }
     write_fut = std::async([&, i, sz] { out.write(buf[i].data(), sz); });
 
-    total_read += sz;
-    i = (i + 1) % 3;
-
     if (progress_) {
       pb->tick(sz);
     }
-    sz = R_ReadConnection(con, buf[i].data(), chunk_size);
 
-    i = (i + 1) % 3;
+    total_read += sz;
+
+    i = (i + 1) % 2;
+    sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
+    if (sz > 0) {
+      buf[i][sz] = '\0';
+    }
+
+    i = (i + 1) % 2;
     first_nl = 0;
   }
   parse_fut.wait();
@@ -199,6 +203,7 @@ index_connection::index_connection(
     for (auto& v : i) {
       log << v << '\n';
     }
+    log << "---\n";
   }
   log.close();
   Rcpp::Rcerr << columns_ << ':' << rows_ << '\n';

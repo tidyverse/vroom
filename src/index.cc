@@ -122,17 +122,6 @@ index::index(
         return sum;
       });
 
-  // std::for_each(
-  // threads.begin(), threads.end(), std::mem_fn(&std::thread::join));
-
-  // for (auto& v : values) {
-
-  // idx_->insert(
-  // std::end(idx_),
-  // std::make_move_iterator(std::begin(v)),
-  // std::make_move_iterator(std::end(v)));
-  //}
-
   rows_ = total_size / columns_;
 
   if (has_header_) {
@@ -164,13 +153,14 @@ void index::trim_quotes(const char*& begin, const char*& end) const {
   }
 }
 
+inline bool isspace(const char* c) { return *c == ' ' || *c == '\t'; }
+
 void index::trim_whitespace(const char*& begin, const char*& end) const {
-  static const std::locale loc("");
-  while (begin != end && std::isspace(*begin, loc)) {
+  while (begin != end && isspace(*begin)) {
     ++begin;
   }
 
-  while (end != begin && std::isspace(*(end - 1), loc)) {
+  while (end != begin && isspace(*(end - 1))) {
     --end;
   }
 }
@@ -302,7 +292,7 @@ index::column::iterator index::column::iterator::operator+(int n) {
 
 // Class column
 index::column::column(const index& idx, size_t column)
-    : idx_(idx), column_(column){};
+    : idx_(idx), column_(column) {}
 
 index::column::iterator index::column::begin() {
   return index::column::iterator(idx_, column_, 0, idx_.num_rows());
@@ -352,7 +342,7 @@ index::row::iterator index::row::iterator::operator+(int n) {
 }
 
 // Class row
-index::row::row(const index& idx, size_t row) : idx_(idx), row_(row){};
+index::row::row(const index& idx, size_t row) : idx_(idx), row_(row) {}
 
 index::row::iterator index::row::begin() {
   return index::row::iterator(idx_, row_, 0, idx_.num_rows());
