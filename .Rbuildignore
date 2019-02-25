@@ -13,3 +13,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^.covrignore$
+^vroom\.Rcheck$
+^vroom.*\.tar\.gz$
+^vroom.*\.tgz$
