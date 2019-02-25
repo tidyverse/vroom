@@ -281,14 +281,8 @@ public:
     auto pos = start;
     while (pos < end) {
       auto buf_offset = strcspn(buf + pos, query.data());
-      auto o_pos = pos;
       pos = pos + buf_offset;
       auto c = buf[pos];
-
-#if DEBUG
-      Rcpp::Rcerr << "o_pos: " << pos << " buf_offset: " << buf_offset
-                  << " pos: " << pos << " c: " << c << '\n';
-#endif
 
       if (!in_quote && strncmp(delim, buf + pos, delim_len_) == 0) {
         destination.push_back(pos + file_offset);
