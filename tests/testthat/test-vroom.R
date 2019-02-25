@@ -211,3 +211,14 @@ test_that("vroom can read an empty file", {
     expect_equal(vroom("foo"), tibble::tibble())
   )
 })
+
+test_that("vroom_example() returns the example files", {
+  expect_equal(vroom_example(), list.files(system.file("extdata", package = "vroom")))
+})
+
+# Figure out a better way to test progress bars...
+#test_that("progress bars work", {
+  #withr::with_options(c("vroom.show_after" = 0), {
+    #expect_output_file(vroom(vroom_example("mtcars.csv"), progress = TRUE), "mtcars-progress")
+  #})
+#})
