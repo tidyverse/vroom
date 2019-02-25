@@ -22,6 +22,7 @@ readr::col_date
 #' @export
 readr::col_datetime
 
+#' @importFrom hms as.hms
 #' @importFrom readr col_time
 #' @export
 readr::col_time
