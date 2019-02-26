@@ -15,10 +15,9 @@
 #include "vroom_time.h"
 
 #include <Rcpp.h>
+#include <algorithm>
 
 enum column_type { character = 0, real = 1, integer = 2, logical = 3 };
-
-template <typename T> inline T min(T a, T b) { return a < b ? a : b; }
 
 using namespace Rcpp;
 
@@ -70,6 +69,7 @@ SEXP vroom_(
     CharacterVector na,
     List locale,
     bool use_altrep,
+    size_t guess_max,
     size_t num_threads,
     bool progress) {
 
@@ -122,7 +122,7 @@ SEXP vroom_(
 
   auto num_rows = idx->num_rows();
 
-  auto guess_num = min(num_rows, 100ul);
+  auto guess_num = std::min(num_rows, guess_max);
 
   // Guess based on values throughout the data
   auto guess_step = guess_num > 0 ? num_rows / guess_num : 0;

@@ -31,13 +31,14 @@ NULL
 #' }
 vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL, id = NULL, skip = 0, na = c("", "NA"),
   quote = '"', comment = "", trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE, locale = readr::default_locale(),
-  num_threads = parallel::detectCores(), progress = show_progress()) {
+  guess_max = 100, num_threads = parallel::detectCores(), progress = show_progress()) {
 
   file <- standardise_path(file)
 
   out <- vroom_(file, delim = delim, col_names = col_names, col_types = col_types, id = id, skip = skip,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
     escape_backslash = escape_backslash, comment = comment, locale = locale,
+    guess_max = guess_max,
     use_altrep = getRversion() > "3.5.0" && as.logical(getOption("vroom.use_altrep", TRUE)),
     num_threads = num_threads, progress = progress)
 

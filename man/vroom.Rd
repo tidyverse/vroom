@@ -8,7 +8,8 @@ vroom(file, delim = NULL, col_names = TRUE, col_types = NULL,
   id = NULL, skip = 0, na = c("", "NA"), quote = "\\"",
   comment = "", trim_ws = TRUE, escape_double = TRUE,
   escape_backslash = FALSE, locale = readr::default_locale(),
-  num_threads = parallel::detectCores(), progress = show_progress())
+  guess_max = 100, num_threads = parallel::detectCores(),
+  progress = show_progress())
 }
 \arguments{
 \item{file}{path to a local file.}
@@ -80,6 +81,8 @@ The default locale is US-centric (like R), but you can use
 \code{\link[=locale]{locale()}} to create your own locale that controls things like
 the default time zone, encoding, decimal mark, big mark, and day/month
 names.}
+
+\item{guess_max}{Maximum number of records to use for guessing column types.}
 
 \item{num_threads}{Number of threads to use when reading and materializing vectors.}
 
