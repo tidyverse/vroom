@@ -20,8 +20,8 @@
 ///
 ///
 static std::vector<std::thread> parallel_for(
-    unsigned nb_elements,
-    std::function<void(size_t start, size_t end, int thread_id)> functor,
+    size_t nb_elements,
+    std::function<void(size_t start, size_t end, size_t thread_id)> functor,
     unsigned nb_threads,
     bool use_threads = true,
     bool cleanup = true) {
