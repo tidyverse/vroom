@@ -114,7 +114,7 @@ vroom::vroom("mtcars.tsv",
 vroom natively supports reading from multiple files (or even multiple
 connections!).
 
-First we will create some files to read by splitting the nycflights dataset by
+First we generate some files to read by splitting the nycflights dataset by
 airline.
 ```{r}
 library(nycflights13)
