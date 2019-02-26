@@ -35,6 +35,10 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL, id = N
 
   file <- standardise_path(file)
 
+  if (length(file) == 0) {
+    return(tibble::tibble())
+  }
+
   out <- vroom_(file, delim = delim, col_names = col_names, col_types = col_types, id = id, skip = skip,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
     escape_backslash = escape_backslash, comment = comment, locale = locale,

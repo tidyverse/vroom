@@ -210,6 +210,8 @@ test_that("vroom can read an empty file", {
   capture.output(type = "message",
     expect_equal(vroom("foo"), tibble::tibble())
   )
+
+  expect_equal(vroom(character()), tibble::tibble())
 })
 
 test_that("vroom_example() returns the example files", {
