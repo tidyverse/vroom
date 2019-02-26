@@ -49,6 +49,7 @@ all_col_types <- tibble::tribble(
 #' @param rows Number of rows to generate
 #' @param cols Number of columns to generate
 #' @inheritParams vroom
+#' @export
 gen_tbl <- function(rows, cols, col_types = NULL) {
   nms <- paste0("V", seq_len(cols))
   specs <- col_types_standardise(col_types, nms)
