@@ -112,7 +112,7 @@ index_collection::index_collection(
           has_header,
           skip,
           comment,
-          1 << 17,
+          get_option("vroom.connection_size", 1 << 17),
           progress));
     } else {
       auto filename = as<std::string>(x);

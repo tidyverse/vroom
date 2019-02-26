@@ -28,6 +28,14 @@ public:
 
   size_t num_rows() const { return rows_; }
 
+  std::vector<std::string> filenames() const {
+    std::vector<std::string> out;
+    for (const auto& index : indexes_) {
+      out.push_back(index->filename());
+    }
+    return out;
+  }
+
   std::vector<size_t> row_sizes() const {
     std::vector<size_t> out;
     for (const auto& index : indexes_) {

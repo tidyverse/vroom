@@ -262,7 +262,7 @@ SEXP vroom_(
   }
 
   res.attr("names") = res_nms;
-  // res.attr("filename") = idx->filename();
+  // res.attr("filename") = idx->filenames();
 
   return res;
 }

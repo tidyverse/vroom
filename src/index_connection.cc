@@ -70,8 +70,8 @@ index_connection::index_connection(
     Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(in, "rb");
   }
 
-  std::array<std::vector<char>, 2> buf = {std::vector<char>(chunk_size),
-                                          std::vector<char>(chunk_size)};
+  std::array<std::vector<char>, 2> buf = {std::vector<char>(chunk_size)};
+  // std::vector<char>(chunk_size)};
 
   // A buf index that alternates between 0,1
   auto i = 0;
@@ -128,22 +128,25 @@ index_connection::index_connection(
     if (parse_fut.valid()) {
       parse_fut.wait();
     }
-    parse_fut = std::async([&, i, sz, first_nl, total_read] {
-      index_region(
-          buf[i],
-          idx_[1],
-          delim_.c_str(),
-          quote,
-          first_nl,
-          sz,
-          total_read,
-          empty_pb);
-    });
+    // parse_fut = std::async([&, i, sz, first_nl, total_read] {
+    index_region(
+        buf[i],
+        idx_[1],
+        delim_.c_str(),
+        quote,
+        first_nl,
+        sz,
+        total_read,
+        empty_pb);
+    //});
 
     if (write_fut.valid()) {
       write_fut.wait();
     }
-    write_fut = std::async([&, i, sz] { out.write(buf[i].data(), sz); });
+    // write_fut = std::async([&, i, sz] {
+    out.write(buf[i].data(), sz);
+    out.flush();
+    //});
 
     if (progress_) {
       pb->tick(sz);
@@ -151,17 +154,16 @@ index_connection::index_connection(
 
     total_read += sz;
 
-    i = (i + 1) % 2;
+    // i = (i + 1) % 2;
     sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
     if (sz > 0) {
       buf[i][sz] = '\0';
     }
 
-    i = (i + 1) % 2;
     first_nl = 0;
   }
-  parse_fut.wait();
-  write_fut.wait();
+  // parse_fut.wait();
+  // write_fut.wait();
   out.close();
 
   if (progress_) {

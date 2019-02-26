@@ -44,3 +44,12 @@ static char guess_delim(const T& source, size_t start, size_t guess_max = 5) {
   Rcpp::Function fun = Rcpp::Environment::namespace_env("vroom")["guess_delim"];
   return Rcpp::as<char>(fun(lines));
 }
+
+template <typename T> T get_option(const std::string& name, T default_value) {
+  SEXP val = Rf_GetOption(Rf_install(name.c_str()), R_BaseEnv);
+  if (Rf_isNull(val)) {
+    return default_value;
+  }
+
+  return Rcpp::as<T>(val);
+}
