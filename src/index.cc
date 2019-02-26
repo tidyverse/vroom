@@ -42,9 +42,9 @@ index::index(
     return;
   }
 
-  auto file_size = mmap_.cend() - mmap_.cbegin();
+  size_t file_size = mmap_.cend() - mmap_.cbegin();
 
-  auto start = find_first_line(mmap_);
+  size_t start = find_first_line(mmap_);
 
   std::string delim_;
 
@@ -56,10 +56,10 @@ index::index(
 
   delim_len_ = delim_.length();
 
-  auto first_nl = find_next_newline(mmap_, start);
-  auto second_nl = find_next_newline(mmap_, first_nl + 1);
-  auto one_row_size = second_nl - first_nl;
-  auto guessed_rows =
+  size_t first_nl = find_next_newline(mmap_, start);
+  size_t second_nl = find_next_newline(mmap_, first_nl + 1);
+  size_t one_row_size = second_nl - first_nl;
+  size_t guessed_rows =
       one_row_size > 0 ? (file_size - first_nl) / one_row_size * 1.1 : 0;
 
   // Check for windows newlines
@@ -78,8 +78,8 @@ index::index(
   //
   // We want at least 10 lines per batch, otherwise threads aren't really
   // useful
-  auto batch_size = file_size / num_threads;
-  auto line_size = second_nl - first_nl;
+  size_t batch_size = file_size / num_threads;
+  size_t line_size = second_nl - first_nl;
   if (batch_size < line_size * 10) {
     num_threads = 1;
   }
@@ -94,7 +94,7 @@ index::index(
 
   auto threads = parallel_for(
       file_size - first_nl,
-      [&](int start, int end, int id) {
+      [&](size_t start, size_t end, size_t id) {
         idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
         start = find_next_newline(mmap_, first_nl + start);
         end = find_next_newline(mmap_, first_nl + end) + 1;
@@ -121,7 +121,7 @@ index::index(
     t.join();
   }
 
-  auto total_size = std::accumulate(
+  size_t total_size = std::accumulate(
       idx_.begin(), idx_.end(), 0, [](size_t sum, const idx_t& v) {
         sum += v.size() - 1;
         return sum;

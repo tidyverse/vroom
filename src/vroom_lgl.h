@@ -48,7 +48,7 @@ Rcpp::LogicalVector read_lgl(vroom_vec_info* info) {
 
   parallel_for(
       n,
-      [&](int start, int end, int id) {
+      [&](size_t start, size_t end, size_t id) {
         auto i = start;
         for (const auto& str :
              info->idx->get_column(info->column, start, end)) {

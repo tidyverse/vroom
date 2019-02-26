@@ -18,7 +18,7 @@ Rcpp::IntegerVector read_fctr_explicit(
   R_xlen_t n = info->idx->num_rows();
 
   Rcpp::IntegerVector out(n);
-  std::unordered_map<SEXP, int> level_map;
+  std::unordered_map<SEXP, size_t> level_map;
 
   for (auto i = 0; i < levels.size(); ++i) {
     level_map[levels[i]] = i + 1;
@@ -26,7 +26,7 @@ Rcpp::IntegerVector read_fctr_explicit(
 
   parallel_for(
       n,
-      [&](int start, int end, int id) {
+      [&](size_t start, size_t end, size_t id) {
         size_t i = start;
         for (const auto& str :
              info->idx->get_column(info->column, start, end)) {
@@ -56,11 +56,11 @@ Rcpp::IntegerVector read_fctr_implicit(vroom_vec_info* info, bool include_na) {
 
   Rcpp::IntegerVector out(n);
   std::vector<std::string> levels;
-  std::unordered_map<std::string, int> level_map;
+  std::unordered_map<std::string, size_t> level_map;
 
   auto nas = Rcpp::as<std::vector<std::string> >(*info->na);
 
-  int max_level = 1;
+  size_t max_level = 1;
 
   auto start = 0;
   auto end = n;
@@ -106,7 +106,7 @@ using namespace Rcpp;
 
 struct vroom_factor_info {
   vroom_vec_info* info;
-  std::map<SEXP, int> levels;
+  std::map<SEXP, size_t> levels;
 };
 
 struct vroom_factor : vroom_vec {

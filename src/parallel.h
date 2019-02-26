@@ -21,7 +21,7 @@
 ///
 static std::vector<std::thread> parallel_for(
     unsigned nb_elements,
-    std::function<void(int start, int end, int thread_id)> functor,
+    std::function<void(size_t start, size_t end, int thread_id)> functor,
     unsigned nb_threads,
     bool use_threads = true,
     bool cleanup = true) {
@@ -36,22 +36,22 @@ static std::vector<std::thread> parallel_for(
   if (use_threads) {
     // Multithread execution
     for (unsigned i = 0; i < (nb_threads - 1); ++i) {
-      int start = i * batch_size;
+      size_t start = i * batch_size;
       my_threads[i] = std::thread(functor, start, start + batch_size, i);
     }
 
     // Last batch includes the remainder
-    int start = (nb_threads - 1) * batch_size;
+    size_t start = (nb_threads - 1) * batch_size;
     my_threads[nb_threads - 1] = std::thread(
         functor, start, start + batch_size + batch_remainder, nb_threads - 1);
   } else {
     // Single thread execution (for easy debugging)
     for (unsigned i = 0; i < (nb_threads - 1); ++i) {
-      int start = i * batch_size;
+      size_t start = i * batch_size;
       functor(start, start + batch_size, i);
     }
     // Last batch includes the remainder
-    int start = (nb_threads - 1) * batch_size;
+    size_t start = (nb_threads - 1) * batch_size;
     functor(start, start + batch_size + batch_remainder, nb_threads - 1);
 
     return std::vector<std::thread>();

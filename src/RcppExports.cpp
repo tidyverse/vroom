@@ -15,6 +15,20 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// gen_character_
+CharacterVector gen_character_(int n, int min, int max, std::string values);
+RcppExport SEXP _vroom_gen_character_(SEXP nSEXP, SEXP minSEXP, SEXP maxSEXP, SEXP valuesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type min(minSEXP);
+    Rcpp::traits::input_parameter< int >::type max(maxSEXP);
+    Rcpp::traits::input_parameter< std::string >::type values(valuesSEXP);
+    rcpp_result_gen = Rcpp::wrap(gen_character_(n, min, max, values));
+    return rcpp_result_gen;
+END_RCPP
+}
 // vroom_
 SEXP vroom_(List inputs, SEXP delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char comment, RObject col_names, RObject col_types, SEXP id, size_t skip, CharacterVector na, List locale, bool use_altrep, size_t num_threads, bool progress);
 RcppExport SEXP _vroom_vroom_(SEXP inputsSEXP, SEXP delimSEXP, SEXP quoteSEXP, SEXP trim_wsSEXP, SEXP escape_doubleSEXP, SEXP escape_backslashSEXP, SEXP commentSEXP, SEXP col_namesSEXP, SEXP col_typesSEXP, SEXP idSEXP, SEXP skipSEXP, SEXP naSEXP, SEXP localeSEXP, SEXP use_altrepSEXP, SEXP num_threadsSEXP, SEXP progressSEXP) {
@@ -44,6 +58,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_vroom_force_materialization", (DL_FUNC) &_vroom_force_materialization, 1},
+    {"_vroom_gen_character_", (DL_FUNC) &_vroom_gen_character_, 4},
     {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 16},
     {NULL, NULL, 0}
 };

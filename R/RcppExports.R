@@ -5,6 +5,10 @@ force_materialization <- function(x) {
     invisible(.Call(`_vroom_force_materialization`, x))
 }
 
+gen_character_ <- function(n, min, max, values) {
+    .Call(`_vroom_gen_character_`, n, min, max, values)
+}
+
 vroom_ <- function(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, col_names, col_types, id, skip, na, locale, use_altrep, num_threads, progress) {
     .Call(`_vroom_vroom_`, inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, col_names, col_types, id, skip, na, locale, use_altrep, num_threads, progress)
 }

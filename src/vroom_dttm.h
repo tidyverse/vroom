@@ -26,7 +26,7 @@ Rcpp::NumericVector read_dttm(vroom_vec_info* info, const std::string& format) {
   R_xlen_t i = 0;
   // parallel_for(
   // n,
-  //[&](int start, int end, int id) {
+  //[&](size_t start, size_t end, size_t id) {
   // auto i = start;
   // DateTimeParser parser(&*info->locale);
   for (const auto& str : info->idx->get_column(info->column)) {

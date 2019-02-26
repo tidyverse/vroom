@@ -141,7 +141,7 @@ Rcpp::NumericVector read_num(vroom_vec_info* info) {
 
   parallel_for(
       n,
-      [&](int start, int end, int id) {
+      [&](size_t start, size_t end, size_t id) {
         size_t i = start;
         for (const auto& str :
              info->idx->get_column(info->column, start, end)) {

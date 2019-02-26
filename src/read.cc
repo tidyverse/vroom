@@ -18,7 +18,7 @@
 
 enum column_type { character = 0, real = 1, integer = 2, logical = 3 };
 
-inline int min(int a, int b) { return a < b ? a : b; }
+template <typename T> inline T min(T a, T b) { return a < b ? a : b; }
 
 using namespace Rcpp;
 
@@ -122,7 +122,7 @@ SEXP vroom_(
 
   auto num_rows = idx->num_rows();
 
-  auto guess_num = min(num_rows, 100);
+  auto guess_num = min(num_rows, 100ul);
 
   // Guess based on values throughout the data
   auto guess_step = guess_num > 0 ? num_rows / guess_num : 0;
@@ -142,7 +142,7 @@ SEXP vroom_(
 
     if (col_type == "collector_guess") {
       CharacterVector col_vals(guess_num);
-      for (auto j = 0; j < guess_num; ++j) {
+      for (size_t j = 0; j < guess_num; ++j) {
         auto row = j * guess_step;
         auto str = idx->get(row, col);
         col_vals[j] = locale_info->encoder_.makeSEXP(

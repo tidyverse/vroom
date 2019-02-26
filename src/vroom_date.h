@@ -23,7 +23,7 @@ Rcpp::NumericVector read_date(vroom_vec_info* info, const std::string& format) {
 
   parallel_for(
       n,
-      [&](int start, int end, int id) {
+      [&](size_t start, size_t end, size_t id) {
         auto i = start;
         DateTimeParser parser(&*info->locale);
         for (const auto& str :

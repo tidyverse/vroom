@@ -278,9 +278,9 @@ public:
     auto buf = source.data();
 
     // The actual parsing is here
-    auto pos = start;
+    size_t pos = start;
     while (pos < end) {
-      auto buf_offset = strcspn(buf + pos, query.data());
+      size_t buf_offset = strcspn(buf + pos, query.data());
       pos = pos + buf_offset;
       auto c = buf[pos];
 
