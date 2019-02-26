@@ -186,7 +186,7 @@
 <h2 class="hasAnchor">
 <a href="#reading-multiple-files" class="anchor"></a>Reading multiple files</h2>
 <p>vroom natively supports reading from multiple files (or even multiple connections!).</p>
-<p>First we will create some files to read by splitting the nycflights dataset by airline.</p>
+<p>First we generate some files to read by splitting the nycflights dataset by airline.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(nycflights13)</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/imap.html">iwalk</a></span>(</a>
 <a class="sourceLine" id="cb3-3" data-line-number="3">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/split">split</a></span>(flights, flights<span class="op">$</span>carrier),</a>
