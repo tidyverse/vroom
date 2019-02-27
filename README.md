@@ -160,7 +160,7 @@ pane.
     maintaining the [Altrep
     framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html)
   - [Romain François](https://twitter.com/romain_francois), whose
-    [Altrepisode](https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
+    [Altrepisode](https://github.com/romainfrancois/altrepisode)
     package and [related
     blog-posts](https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
     were a great guide for creating new Altrep objects in C++.
