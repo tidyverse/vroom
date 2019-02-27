@@ -3,7 +3,7 @@ gen_character <- function(n, min = 5, max = 25, values = c(letters, LETTERS, 0:9
   #replicate(n, paste(sample(values, sample.int(max - min) + min, replace = TRUE), collapse = ""), simplify = "vector")
 }
 
-gen_double <- function(n, f = rnorm, ...) {
+gen_double <- function(n, f = stats::rnorm, ...) {
   f(n, ...)
 }
 
