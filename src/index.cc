@@ -170,13 +170,18 @@ void index::trim_whitespace(const char*& begin, const char*& end) const {
   }
 }
 
-const string
-index::get_escaped_string(const char* begin, const char* end) const {
+const string index::get_escaped_string(
+    const char* begin, const char* end, bool has_quote) const {
+  // If not escaping just return without a copy
+  if (!(escape_double_ && has_quote || escape_backslash_)) {
+    return {begin, end};
+  }
+
   std::string out;
   out.reserve(end - begin);
 
   while (begin < end) {
-    if ((escape_double_ && *begin == quote_) ||
+    if ((escape_double_ && has_quote && *begin == quote_) ||
         (escape_backslash_ && *begin == '\\')) {
       ++begin;
     }
@@ -237,14 +242,10 @@ index::get_trimmed_val(size_t i, bool is_first, bool is_last) const {
     has_quote = *begin == quote_;
     if (has_quote) {
       trim_quotes(begin, end);
-      return get_escaped_string(begin, end);
     }
   }
 
-  if (escape_backslash_) {
-    return get_escaped_string(begin, end);
-  }
-  return {begin, end};
+  return get_escaped_string(begin, end, has_quote);
 }
 
 const string index::get(size_t row, size_t col) const {
