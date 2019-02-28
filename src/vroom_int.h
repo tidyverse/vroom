@@ -1,24 +1,27 @@
+#pragma once
+
 #include "altrep.h"
 
 #include "vroom_vec.h"
 
 #include <Rcpp.h>
 
-// https://github.com/wch/r-source/blob/efed16c945b6e31f8e345d2f18e39a014d2a57ae/src/main/scan.c#L145-L157
-int Strtoi(const char* nptr, int base) {
-  long res;
-  char* endp;
+// A version of strtoi that doesn't need null terminated strings, to avoid
+// needing to copy the data
+int strtoi(const char* begin, const char* end) {
+  int val = 0;
+  bool is_neg = false;
 
-  errno = 0;
-  res = strtol(nptr, &endp, base);
-  if (*endp != '\0')
-    res = NA_INTEGER;
-  /* next can happen on a 64-bit platform */
-  if (res > INT_MAX || res < INT_MIN)
-    res = NA_INTEGER;
-  if (errno == ERANGE)
-    res = NA_INTEGER;
-  return (int)res;
+  if (begin != end && *begin == '-') {
+    is_neg = true;
+    ++begin;
+  }
+
+  while (begin != end && isdigit(*begin)) {
+    val = val * 10 + ((*begin++) - '0');
+  }
+
+  return is_neg ? -val : val;
 }
 
 // Normal reading of integer vectors
@@ -34,7 +37,7 @@ Rcpp::IntegerVector read_int(vroom_vec_info* info) {
         size_t i = start;
         for (const auto& str :
              info->idx->get_column(info->column, start, end)) {
-          out[i++] = Strtoi(str.c_str(), 10);
+          out[i++] = strtoi(str.begin(), str.end());
         }
       },
       info->num_threads);
@@ -100,7 +103,7 @@ public:
 
     auto str = vroom_vec::Get(vec, i);
 
-    return Strtoi(str.c_str(), 10);
+    return strtoi(str.begin(), str.end());
   }
 
   static void* Dataptr(SEXP vec, Rboolean writeable) {

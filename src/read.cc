@@ -28,8 +28,7 @@ CharacterVector read_column_names(
 
   auto col = 0;
   for (const auto& str : idx->get_header()) {
-    nms[col++] = locale->encoder_.makeSEXP(
-        str.c_str(), str.c_str() + str.length(), false);
+    nms[col++] = locale->encoder_.makeSEXP(str.begin(), str.end(), false);
   }
 
   return nms;
@@ -145,8 +144,8 @@ SEXP vroom_(
       for (size_t j = 0; j < guess_num; ++j) {
         auto row = j * guess_step;
         auto str = idx->get(row, col);
-        col_vals[j] = locale_info->encoder_.makeSEXP(
-            str.c_str(), str.c_str() + str.length(), false);
+        col_vals[j] =
+            locale_info->encoder_.makeSEXP(str.begin(), str.end(), false);
       }
       collector = guess_type(
           col_vals, Named("guess_integer") = false, Named("na") = na);

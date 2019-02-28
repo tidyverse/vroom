@@ -3,10 +3,11 @@
 
 #include <Rcpp.h>
 
-bool matches(
-    const std::string& needle, const std::vector<std::string>& haystack) {
+using namespace vroom;
+
+bool matches(const string& needle, const std::vector<std::string>& haystack) {
   for (auto& hay : haystack) {
-    if (hay == needle) {
+    if (needle == hay) {
       return true;
     }
   }
@@ -30,8 +31,8 @@ Rcpp::IntegerVector read_fctr_explicit(
         size_t i = start;
         for (const auto& str :
              info->idx->get_column(info->column, start, end)) {
-          auto search = level_map.find(info->locale->encoder_.makeSEXP(
-              str.c_str(), str.c_str() + str.length(), false));
+          auto search = level_map.find(
+              info->locale->encoder_.makeSEXP(str.begin(), str.end(), false));
           if (search != level_map.end()) {
             out[i++] = search->second;
           } else {
@@ -55,8 +56,8 @@ Rcpp::IntegerVector read_fctr_implicit(vroom_vec_info* info, bool include_na) {
   R_xlen_t n = info->idx->num_rows();
 
   Rcpp::IntegerVector out(n);
-  std::vector<std::string> levels;
-  std::unordered_map<std::string, size_t> level_map;
+  std::vector<string> levels;
+  std::unordered_map<string, size_t> level_map;
 
   auto nas = Rcpp::as<std::vector<std::string> >(*info->na);
 
@@ -83,7 +84,7 @@ Rcpp::IntegerVector read_fctr_implicit(vroom_vec_info* info, bool include_na) {
   Rcpp::CharacterVector out_lvls(levels.size());
   for (size_t i = 0; i < levels.size(); ++i) {
     out_lvls[i] = info->locale->encoder_.makeSEXP(
-        levels[i].c_str(), levels[i].c_str() + levels[i].size(), false);
+        levels[i].begin(), levels[i].end(), false);
   }
   if (include_na) {
     out_lvls.push_back(NA_STRING);
@@ -175,7 +176,7 @@ public:
     return inf.info->idx->num_rows();
   }
 
-  static inline std::string Get(SEXP vec, R_xlen_t i) {
+  static inline string Get(SEXP vec, R_xlen_t i) {
     auto inf = Info(vec);
     return inf.info->idx->get(i, inf.info->column);
   }
@@ -187,8 +188,8 @@ public:
 
     auto str = Get(vec, i);
 
-    auto search = inf.levels.find(inf.info->locale->encoder_.makeSEXP(
-        str.c_str(), str.c_str() + str.length(), false));
+    auto search = inf.levels.find(
+        inf.info->locale->encoder_.makeSEXP(str.begin(), str.end(), false));
     if (search != inf.levels.end()) {
       return search->second;
     }

@@ -170,13 +170,13 @@ void index::trim_whitespace(const char*& begin, const char*& end) const {
   }
 }
 
-const std::string
+const string
 index::get_escaped_string(const char* begin, const char* end) const {
   std::string out;
   out.reserve(end - begin);
 
   while (begin < end) {
-    if ((escape_double_ && *begin == '"') ||
+    if ((escape_double_ && *begin == quote_) ||
         (escape_backslash_ && *begin == '\\')) {
       ++begin;
     }
@@ -218,7 +218,7 @@ index::get_cell(size_t i, bool is_first) const {
   return {0, 0};
 }
 
-const std::string
+const string
 index::get_trimmed_val(size_t i, bool is_first, bool is_last) const {
 
   const char *begin, *end;
@@ -232,22 +232,22 @@ index::get_trimmed_val(size_t i, bool is_first, bool is_last) const {
     trim_whitespace(begin, end);
   }
 
+  bool has_quote = false;
   if (quote_ != '\0') {
-    trim_quotes(begin, end);
+    has_quote = *begin == quote_;
+    if (has_quote) {
+      trim_quotes(begin, end);
+      return get_escaped_string(begin, end);
+    }
   }
 
-  std::string out;
-
-  if (escape_double_ || escape_backslash_) {
-    out = get_escaped_string(begin, end);
-  } else {
-    out = std::string(begin, end - begin);
+  if (escape_backslash_) {
+    return get_escaped_string(begin, end);
   }
-
-  return out;
+  return {begin, end};
 }
 
-const std::string index::get(size_t row, size_t col) const {
+const string index::get(size_t row, size_t col) const {
   auto i = (row + has_header_) * columns_ + col;
 
   return get_trimmed_val(i, col == 0, col == (columns_ - 1));
@@ -280,7 +280,7 @@ operator==(const index::column::iterator& other) const {
   return i_ == other.i_;
 }
 
-std::string index::column::iterator::operator*() {
+string index::column::iterator::operator*() {
   return idx_->get_trimmed_val(i_, is_first_, is_last_);
 }
 
@@ -331,7 +331,7 @@ bool index::row::iterator::operator==(const index::row::iterator& other) const {
   return i_ == other.i_;
 }
 
-std::string index::row::iterator::operator*() {
+string index::row::iterator::operator*() {
   return idx_->get_trimmed_val(i_, i_ == 0, i_ == (idx_->columns_ - 1));
 }
 

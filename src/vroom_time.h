@@ -2,9 +2,11 @@
 
 #include "vroom_dttm.h"
 
+using namespace vroom;
+
 double parse_time(
-    const std::string& str, DateTimeParser& parser, const std::string& format) {
-  parser.setDate(str.c_str());
+    const string& str, DateTimeParser& parser, const std::string& format) {
+  parser.setDate(str.begin(), str.end());
   bool res = (format == "") ? parser.parseLocaleTime() : parser.parse(format);
 
   if (res) {

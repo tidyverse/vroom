@@ -52,7 +52,7 @@ Rcpp::LogicalVector read_lgl(vroom_vec_info* info) {
         auto i = start;
         for (const auto& str :
              info->idx->get_column(info->column, start, end)) {
-          out[i++] = parse_logical(str.c_str(), str.c_str() + str.length());
+          out[i++] = parse_logical(str.begin(), str.end());
         }
       },
       info->num_threads);

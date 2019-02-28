@@ -166,10 +166,10 @@ public:
 
   bool isComplete() { return dateItr_ == dateEnd_; }
 
-  void setDate(const char* date) {
+  void setDate(const char* start, const char* end) {
     reset();
-    dateItr_ = date;
-    dateEnd_ = date + strlen(date);
+    dateItr_ = start;
+    dateEnd_ = end;
   }
 
   bool parse(const std::string& format) {

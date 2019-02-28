@@ -55,7 +55,7 @@ operator==(const index_collection::column::iterator& other) const {
   return !(i_ != other.i_);
 }
 
-std::string index_collection::column::iterator::operator*() { return *it_; }
+string index_collection::column::iterator::operator*() { return *it_; }
 
 index_collection::column::iterator index_collection::column::iterator::
 operator+(int n) {
@@ -136,7 +136,7 @@ index_collection::index_collection(
   }
 }
 
-const std::string index_collection::get(size_t row, size_t column) const {
+const string index_collection::get(size_t row, size_t column) const {
   for (const auto& idx : indexes_) {
     if (row < idx->num_rows()) {
       return idx->get(row, column);
@@ -144,5 +144,5 @@ const std::string index_collection::get(size_t row, size_t column) const {
     row -= idx->num_rows();
   }
   /* should never get here */
-  return "";
+  return std::string("");
 }

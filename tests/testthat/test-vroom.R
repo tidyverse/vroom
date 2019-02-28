@@ -77,41 +77,41 @@ test_that("vroom escapes backslashes", {
 })
 
 test_that("vroom ignores leading whitespace", {
-  test_vroom('\n\n   \t \t\n  \n\na,b,c\n1,2,3"\n', delim = ",",
+  test_vroom('\n\n   \t \t\n  \n\na,b,c\n1,2,3\n', delim = ",",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 })
 
 test_that("vroom ignores comments", {
-  test_vroom('\n\n \t #a,b,c\na,b,c\n1,2,3"\n', delim = ",", comment = "#",
+  test_vroom('\n\n \t #a,b,c\na,b,c\n1,2,3\n', delim = ",", comment = "#",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 })
 
 test_that("vroom respects skip", {
-  test_vroom('#a,b,c\na,b,c\n1,2,3"\n', delim = ",", skip = 1,
+  test_vroom('#a,b,c\na,b,c\n1,2,3\n', delim = ",", skip = 1,
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 
-  test_vroom('#a,b,c\na,b,c\n1,2,3"\n', delim = ",", skip = 1, comment = "#",
+  test_vroom('#a,b,c\na,b,c\n1,2,3\n', delim = ",", skip = 1, comment = "#",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 
-  test_vroom('#a,b,c\nasdfasdf\na,b,c\n1,2,3"\n', delim = ",", skip = 2, comment = "#",
+  test_vroom('#a,b,c\nasdfasdf\na,b,c\n1,2,3\n', delim = ",", skip = 2, comment = "#",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 
-  test_vroom('\n\n#a,b,c\nasdfasdf\na,b,c\n1,2,3"\n', delim = ",", skip = 4, comment = "#",
+  test_vroom('\n\n#a,b,c\nasdfasdf\na,b,c\n1,2,3\n', delim = ",", skip = 4, comment = "#",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 })
 
 test_that("vroom respects col_types", {
-  test_vroom('a,b,c\n1,2,3"\n', delim = ",", col_types = "idc",
+  test_vroom('a,b,c\n1,2,3\n', delim = ",", col_types = "idc",
     equals = tibble::tibble(a = 1L, b = 2, c = "3")
   )
 
-  test_vroom('a,b,c,d\nT,2,3,4"\n', delim = ",", col_types = "lfc_",
+  test_vroom('a,b,c,d\nT,2,3,4\n', delim = ",", col_types = "lfc_",
     equals = tibble::tibble(a = TRUE, b = factor(2), c = "3")
   )
 })

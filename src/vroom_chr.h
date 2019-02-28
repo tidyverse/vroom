@@ -11,8 +11,7 @@ Rcpp::CharacterVector read_chr(vroom_vec_info* info) {
 
   auto i = 0;
   for (const auto& str : info->idx->get_column(info->column)) {
-    auto val = info->locale->encoder_.makeSEXP(
-        str.c_str(), str.c_str() + str.length(), false);
+    auto val = info->locale->encoder_.makeSEXP(str.begin(), str.end(), false);
 
     // Look for NAs
     for (const auto& v : *info->na) {
@@ -76,8 +75,7 @@ public:
 
     auto str = Get(vec, i);
 
-    auto val = inf.locale->encoder_.makeSEXP(
-        str.c_str(), str.c_str() + str.length(), false);
+    auto val = inf.locale->encoder_.makeSEXP(str.begin(), str.end(), false);
     val = check_na(vec, val);
 
     return val;

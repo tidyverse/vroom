@@ -22,7 +22,7 @@ public:
       const size_t num_threads,
       const bool progress);
 
-  const std::string get(size_t row, size_t col) const;
+  const string get(size_t row, size_t col) const;
 
   size_t num_columns() const { return columns_; }
 
@@ -67,9 +67,9 @@ public:
 
     public:
       using iterator_category = std::forward_iterator_tag;
-      using value_type = std::string;
-      using pointer = std::string*;
-      using reference = std::string&;
+      using value_type = string;
+      using pointer = string*;
+      using reference = string&;
 
       iterator(const index_collection& idx, size_t column, size_t start);
       iterator operator++(int); /* postfix */
@@ -77,7 +77,7 @@ public:
       bool operator!=(const iterator& other) const;
       bool operator==(const iterator& other) const;
 
-      std::string operator*();
+      string operator*();
       iterator& operator+=(int n);
       iterator operator+(int n);
     };

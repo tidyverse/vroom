@@ -22,6 +22,40 @@ struct cell {
   const char* end;
 };
 
+// A custom string wrapper that avoids constructing a string object unless
+// needed because of escapes.
+class string {
+public:
+  string(std::string str) : str_(str) {
+    begin_ = str_.c_str();
+    end_ = begin_ + str_.length();
+  }
+  string(const char* begin, const char* end) : begin_(begin), end_(end) {}
+
+  const char* begin() const { return begin_; }
+
+  const char* end() const { return end_; }
+
+  size_t length() const { return end_ - begin_; }
+
+  size_t size() const { return end_ - begin_; }
+
+  bool operator==(const string& other) const {
+    return length() == other.length() &&
+           strncmp(begin_, other.begin_, length()) == 0;
+  }
+
+  bool operator==(const std::string& other) const {
+    return length() == other.length() &&
+           strncmp(begin_, other.data(), length()) == 0;
+  }
+
+private:
+  const char* begin_;
+  const char* end_;
+  std::string str_;
+};
+
 class index {
 
 public:
@@ -55,9 +89,9 @@ public:
 
     public:
       using iterator_category = std::forward_iterator_tag;
-      using value_type = std::string;
-      using pointer = std::string*;
-      using reference = std::string&;
+      using value_type = string;
+      using pointer = string*;
+      using reference = string&;
 
       iterator(const index& idx, size_t column, size_t start, size_t end);
       iterator operator++(int); /* postfix */
@@ -65,7 +99,7 @@ public:
       bool operator!=(const iterator& other) const;
       bool operator==(const iterator& other) const;
 
-      std::string operator*();
+      string operator*();
       iterator& operator+=(int n);
       iterator operator+(int n);
     };
@@ -88,9 +122,9 @@ public:
 
     public:
       using iterator_category = std::forward_iterator_tag;
-      using value_type = std::string;
-      using pointer = std::string*;
-      using reference = std::string&;
+      using value_type = string;
+      using pointer = string*;
+      using reference = string&;
 
       iterator(const index& idx, size_t row, size_t start, size_t end);
       iterator operator++(int); /* postfix */
@@ -98,7 +132,7 @@ public:
       bool operator!=(const iterator& other) const;
       bool operator==(const iterator& other) const;
 
-      std::string operator*();
+      string operator*();
       iterator& operator+=(int n);
       iterator operator+(int n);
     };
@@ -108,7 +142,7 @@ public:
 
   index() : rows_(0), columns_(0){};
 
-  const std::string get(size_t row, size_t col) const;
+  const string get(size_t row, size_t col) const;
 
   size_t num_columns() const { return columns_; }
 
@@ -235,11 +269,9 @@ public:
 
   void trim_quotes(const char*& begin, const char*& end) const;
   void trim_whitespace(const char*& begin, const char*& end) const;
-  const std::string
-  get_escaped_string(const char* begin, const char* end) const;
+  const string get_escaped_string(const char* begin, const char* end) const;
 
-  const std::string
-  get_trimmed_val(size_t i, bool is_first, bool is_last) const;
+  const string get_trimmed_val(size_t i, bool is_first, bool is_last) const;
 
   std::pair<const char*, const char*> get_cell(size_t i, bool is_first) const;
 
@@ -319,5 +351,27 @@ public:
 };
 
 } // namespace vroom
+
+// Specialization for our custom strings, needed so we can use them in
+// unordered_maps
+// [1]: https://stackoverflow.com/a/17017281/2055486
+// [2]: https://stackoverflow.com/a/34597485/2055486
+namespace std {
+
+template <> struct hash<vroom::string> {
+  std::size_t operator()(const vroom::string& k) const {
+    const char* begin = k.begin();
+    const char* end = k.end();
+
+    size_t result = 0;
+    const size_t prime = 31;
+    while (begin != end) {
+      result = *begin++ + (result * prime);
+    }
+    return result;
+  }
+};
+
+} // namespace std
 
 #endif /* READIDX_IDX_HEADER */

@@ -3,9 +3,11 @@
 #include "DateTimeParser.h"
 #include "parallel.h"
 
+using namespace vroom;
+
 double parse_dttm(
-    const std::string& str, DateTimeParser& parser, const std::string& format) {
-  parser.setDate(str.c_str());
+    const string& str, DateTimeParser& parser, const std::string& format) {
+  parser.setDate(str.begin(), str.end());
   bool res = (format == "") ? parser.parseISO8601() : parser.parse(format);
 
   if (res) {
@@ -111,7 +113,7 @@ public:
     return inf->info->idx->num_rows();
   }
 
-  static inline std::string Get(SEXP vec, R_xlen_t i) {
+  static inline string Get(SEXP vec, R_xlen_t i) {
     auto inf = Info(vec);
     return inf->info->idx->get(i, inf->info->column);
   }

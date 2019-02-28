@@ -7,6 +7,8 @@
 
 #include "parallel.h"
 
+using namespace vroom;
+
 enum NumberState { STATE_INIT, STATE_LHS, STATE_RHS, STATE_EXP, STATE_FIN };
 
 // First and last are updated to point to first/last successfully parsed
@@ -121,10 +123,10 @@ end:
   return seenNumber;
 }
 
-double parse_num(const std::string& str, const LocaleInfo& loc) {
+double parse_num(const string& str, const LocaleInfo& loc) {
   double ret;
-  auto start = str.c_str();
-  auto end = str.c_str() + str.length();
+  auto start = str.begin();
+  auto end = str.end();
   bool ok = parseNumber(loc.decimalMark_, loc.groupingMark_, start, end, ret);
   if (ok) {
     return ret;
