@@ -15,6 +15,16 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// vroom_materialize
+void vroom_materialize(Rcpp::List x);
+RcppExport SEXP _vroom_vroom_materialize(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type x(xSEXP);
+    vroom_materialize(x);
+    return R_NilValue;
+END_RCPP
+}
 // gen_character_
 CharacterVector gen_character_(int n, int min, int max, std::string values);
 RcppExport SEXP _vroom_gen_character_(SEXP nSEXP, SEXP minSEXP, SEXP maxSEXP, SEXP valuesSEXP) {
@@ -59,12 +69,13 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_vroom_force_materialization", (DL_FUNC) &_vroom_force_materialization, 1},
+    {"_vroom_vroom_materialize", (DL_FUNC) &_vroom_vroom_materialize, 1},
     {"_vroom_gen_character_", (DL_FUNC) &_vroom_gen_character_, 4},
     {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 17},
     {NULL, NULL, 0}
 };
 
-void init_vroom_string(DllInfo* dll);
+void init_vroom_chr(DllInfo* dll);
 void init_vroom_date(DllInfo* dll);
 void init_vroom_dbl(DllInfo* dll);
 void init_vroom_dttm(DllInfo* dll);
@@ -75,7 +86,7 @@ void init_vroom_time(DllInfo* dll);
 RcppExport void R_init_vroom(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
-    init_vroom_string(dll);
+    init_vroom_chr(dll);
     init_vroom_date(dll);
     init_vroom_dbl(dll);
     init_vroom_dttm(dll);
