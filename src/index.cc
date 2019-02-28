@@ -173,7 +173,7 @@ void index::trim_whitespace(const char*& begin, const char*& end) const {
 const string index::get_escaped_string(
     const char* begin, const char* end, bool has_quote) const {
   // If not escaping just return without a copy
-  if (!(escape_double_ && has_quote || escape_backslash_)) {
+  if (!((escape_double_ && has_quote) || escape_backslash_)) {
     return {begin, end};
   }
 
