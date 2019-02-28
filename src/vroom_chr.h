@@ -33,7 +33,7 @@ Rcpp::CharacterVector read_chr(vroom_vec_info* info) {
 
 using namespace Rcpp;
 
-struct vroom_string : vroom_vec {
+struct vroom_chr : vroom_vec {
 
 public:
   static R_altrep_class_t class_t;
@@ -44,7 +44,7 @@ public:
     SEXP out = PROTECT(R_MakeExternalPtr(info, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(out, vroom_vec::Finalize, FALSE);
 
-    // make a new altrep object of class `vroom_string::class_t`
+    // make a new altrep object of class `vroom_chr::class_t`
     SEXP res = R_new_altrep(class_t, out, R_NilValue);
 
     UNPROTECT(1);
@@ -62,7 +62,7 @@ public:
       int pvec,
       void (*inspect_subtree)(SEXP, int, int, int)) {
     Rprintf(
-        "vroom_string (len=%d, materialized=%s)\n",
+        "vroom_chr (len=%d, materialized=%s)\n",
         Length(x),
         R_altrep_data2(x) != R_NilValue ? "T" : "F");
     return TRUE;
@@ -129,7 +129,7 @@ public:
   // -------- initialize the altrep class with the methods above
 
   static void Init(DllInfo* dll) {
-    class_t = R_make_altstring_class("vroom_string", "vroom", dll);
+    class_t = R_make_altstring_class("vroom_chr", "vroom", dll);
 
     // altrep
     R_set_altrep_Length_method(class_t, Length);
@@ -144,12 +144,12 @@ public:
   }
 };
 
-R_altrep_class_t vroom_string::class_t;
+R_altrep_class_t vroom_chr::class_t;
 
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
-void init_vroom_string(DllInfo* dll) { vroom_string::Init(dll); }
+void init_vroom_chr(DllInfo* dll) { vroom_chr::Init(dll); }
 
 #else
-void init_vroom_string(DllInfo* dll) {}
+void init_vroom_chr(DllInfo* dll) {}
 #endif

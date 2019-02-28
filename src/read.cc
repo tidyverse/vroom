@@ -237,7 +237,7 @@ SEXP vroom_(
     } else {
       if (use_altrep) {
 #ifdef HAS_ALTREP
-        res[i] = vroom_string::Make(info);
+        res[i] = vroom_chr::Make(info);
 #endif
       } else {
         res[i] = read_chr(info);
