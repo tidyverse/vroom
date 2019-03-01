@@ -46,6 +46,10 @@ gen_datetime <- function(n, min = as.POSIXct("2001-01-01"), max = as.POSIXct("20
   structure(runif(n, min = min, max = max), class = c("POSIXct", "POSIXt"), tzone = tz)
 }
 
+gen_logical <- function(n, ...) {
+  c(TRUE, FALSE)[sample.int(n = 2, n, replace = TRUE)]
+}
+
 all_col_types <- tibble::tribble(
   ~ type, ~ class,
   "character", "character",
@@ -94,9 +98,11 @@ gen_write <- function(x, path, delim, na = "NA", append = FALSE, col_names =
 
   for (i in seq_along(x)) {
     if (inherits(x[[i]], "hms")) {
-      x[[i]] <- do.call(format, c(list(as.POSIXlt(x[[i]])), specs$cols[[i]]))
+      if (nzchar(specs$cols[[i]]$format)) {
+        x[[i]] <- do.call(as.character, c(list(as.POSIXlt(x[[i]])), specs$cols[[i]]))
+      }
     }
-    x[[i]] <- do.call(format, c(list(x[[i]]), specs$cols[[i]]))
+    x[[i]] <- do.call(as.character, c(list(x[[i]]), specs$cols[[i]]))
   }
   readr::write_delim(x, path, delim, na = na, append = append, col_names = col_names)
 }
