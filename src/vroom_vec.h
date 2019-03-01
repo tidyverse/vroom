@@ -20,10 +20,14 @@ class vroom_vec {
 
 public:
   // finalizer for the external pointer
-  static void Finalize(SEXP xp) {
-    auto info_p = static_cast<vroom_vec_info*>(R_ExternalPtrAddr(xp));
-
+  static void Finalize(SEXP ptr) {
+    if (ptr == nullptr || R_ExternalPtrAddr(ptr) == nullptr) {
+      return;
+    }
+    auto info_p = static_cast<vroom_vec_info*>(R_ExternalPtrAddr(ptr));
     delete info_p;
+    info_p = nullptr;
+    R_ClearExternalPtr(ptr);
   }
 
   static inline vroom_vec_info& Info(SEXP x) {
@@ -34,6 +38,11 @@ public:
 
   // The length of the object
   static inline R_xlen_t Length(SEXP vec) {
+    SEXP data2 = R_altrep_data2(vec);
+    if (data2 != R_NilValue) {
+      return Rf_xlength(data2);
+    }
+
     auto inf = Info(vec);
     return inf.idx->num_rows();
   }

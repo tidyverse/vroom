@@ -97,11 +97,15 @@ public:
     return TRUE;
   }
 
-  static void Finalize(SEXP xp) {
-    auto info_p = static_cast<vroom_dttm_info*>(R_ExternalPtrAddr(xp));
-
+  static void Finalize(SEXP ptr) {
+    if (ptr == nullptr || R_ExternalPtrAddr(ptr) == nullptr) {
+      return;
+    }
+    auto info_p = static_cast<vroom_dttm_info*>(R_ExternalPtrAddr(ptr));
     delete info_p->info;
     delete info_p;
+    info_p = nullptr;
+    R_ClearExternalPtr(ptr);
   }
 
   static inline vroom_dttm_info* Info(SEXP x) {
@@ -109,6 +113,11 @@ public:
   }
 
   static inline R_xlen_t Length(SEXP vec) {
+    SEXP data2 = R_altrep_data2(vec);
+    if (data2 != R_NilValue) {
+      return Rf_xlength(data2);
+    }
+
     auto inf = Info(vec);
     return inf->info->idx->num_rows();
   }
@@ -145,6 +154,9 @@ public:
     auto out = read_dttm(inf->info, inf->format);
 
     R_set_altrep_data2(vec, out);
+
+    // Once we have materialized we no longer need the info
+    Finalize(R_altrep_data1(vec));
 
     return out;
   }

@@ -119,6 +119,9 @@ public:
     auto out = read_chr(&Info(vec));
     R_set_altrep_data2(vec, out);
 
+    // Once we have materialized we no longer need the info
+    Finalize(R_altrep_data1(vec));
+
     return out;
   }
 

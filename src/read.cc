@@ -78,19 +78,18 @@ SEXP vroom_(
       col_names.sexp_type() == STRSXP ||
       (col_names.sexp_type() == LGLSXP && as<LogicalVector>(col_names)[0]);
 
-  std::shared_ptr<vroom::index_collection> idx =
-      std::make_shared<vroom::index_collection>(
-          inputs,
-          Rf_isNull(delim) ? nullptr : Rcpp::as<const char*>(delim),
-          quote,
-          trim_ws,
-          escape_double,
-          escape_backslash,
-          has_header,
-          skip,
-          comment,
-          num_threads,
-          progress);
+  auto idx = std::make_shared<vroom::index_collection>(
+      inputs,
+      Rf_isNull(delim) ? nullptr : Rcpp::as<const char*>(delim),
+      quote,
+      trim_ws,
+      escape_double,
+      escape_backslash,
+      has_header,
+      skip,
+      comment,
+      num_threads,
+      progress);
 
   auto total_columns = idx->num_columns();
 
@@ -205,6 +204,7 @@ SEXP vroom_(
 #endif
         } else {
           res[i] = read_fctr_explicit(info, levels, collector["ordered"]);
+          delete info;
         }
       }
     } else if (col_type == "collector_date") {
