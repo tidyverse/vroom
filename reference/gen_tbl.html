@@ -127,7 +127,7 @@ share the real dataset.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>gen_tbl</span>(<span class='no'>rows</span>, <span class='no'>cols</span>, <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>gen_tbl</span>(<span class='no'>rows</span>, <span class='no'>cols</span>, <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>locale</span> <span class='kw'>=</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/locale.html'>default_locale</a></span>())</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -155,6 +155,14 @@ character represents one column:
 c = character, i = integer, n = number, d = double,
 l = logical, f = factor, D = date, T = date time, t = time, ? = guess, or
 <code>_</code>/<code>-</code> to skip the column.</p></td>
+    </tr>
+    <tr>
+      <th>locale</th>
+      <td><p>The locale controls defaults that vary from place to place.
+The default locale is US-centric (like R), but you can use
+<code><a href='https://readr.tidyverse.org/reference/locale.html'>locale()</a></code> to create your own locale that controls things like
+the default time zone, encoding, decimal mark, big mark, and day/month
+names.</p></td>
     </tr>
     </table>
     
