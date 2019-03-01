@@ -4,7 +4,7 @@
 \alias{gen_tbl}
 \title{Generate a random tibble}
 \usage{
-gen_tbl(rows, cols, col_types = NULL)
+gen_tbl(rows, cols, col_types = NULL, locale = default_locale())
 }
 \arguments{
 \item{rows}{Number of rows to generate}
@@ -27,6 +27,12 @@ character represents one column:
 c = character, i = integer, n = number, d = double,
 l = logical, f = factor, D = date, T = date time, t = time, ? = guess, or
 \code{_}/\code{-} to skip the column.}
+
+\item{locale}{The locale controls defaults that vary from place to place.
+The default locale is US-centric (like R), but you can use
+\code{\link[=locale]{locale()}} to create your own locale that controls things like
+the default time zone, encoding, decimal mark, big mark, and day/month
+names.}
 }
 \description{
 This is useful for benchmarking, but also for bug reports when you cannot
