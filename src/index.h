@@ -321,14 +321,6 @@ public:
         destination.push_back(pos + file_offset);
       }
 
-      else if (escape_backslash_ && c == '\\') {
-        ++pos;
-      }
-
-      else if (c == quote) {
-        in_quote = !in_quote;
-      }
-
       else if (c == '\n') { // no embedded quotes allowed
         destination.push_back(pos + file_offset);
         if (progress_ && pb) {
@@ -339,6 +331,14 @@ public:
             ++num_ticks;
           }
         }
+      }
+
+      else if (c == quote) {
+        in_quote = !in_quote;
+      }
+
+      else if (escape_backslash_ && c == '\\') {
+        ++pos;
       }
 
       ++pos;

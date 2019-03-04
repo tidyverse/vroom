@@ -107,7 +107,7 @@ index::index(
             end,
             0,
             pb,
-            file_size / 200);
+            file_size / 100);
       },
       num_threads,
       true,
