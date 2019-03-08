@@ -5,12 +5,12 @@
 
 Rcpp::CharacterVector read_chr(vroom_vec_info* info) {
 
-  R_xlen_t n = info->idx->num_rows();
+  R_xlen_t n = info->column.size();
 
   Rcpp::CharacterVector out(n);
 
   auto i = 0;
-  for (const auto& str : info->idx->get_column(info->column)) {
+  for (const auto& str : info->column) {
     auto val = info->locale->encoder_.makeSEXP(str.begin(), str.end(), false);
 
     // Look for NAs

@@ -192,7 +192,7 @@ done:
 
 Rcpp::NumericVector read_dbl(vroom_vec_info* info) {
 
-  R_xlen_t n = info->idx->num_rows();
+  R_xlen_t n = info->column.size();
 
   Rcpp::NumericVector out(n);
 
@@ -200,8 +200,7 @@ Rcpp::NumericVector read_dbl(vroom_vec_info* info) {
       n,
       [&](size_t start, size_t end, size_t id) {
         size_t i = start;
-        for (const auto& str :
-             info->idx->get_column(info->column).slice(start, end)) {
+        for (const auto& str : info->column.slice(start, end)) {
           out[i++] = bsd_strtod(str.begin(), str.end());
         }
       },

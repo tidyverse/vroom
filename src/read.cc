@@ -153,8 +153,7 @@ SEXP vroom_(
     }
 
     // This is deleted in the finalizers when the vectors are GC'd by R
-    auto info = new vroom_vec_info{idx,
-                                   col,
+    auto info = new vroom_vec_info{idx->get_column(col),
                                    num_threads,
                                    std::make_shared<Rcpp::CharacterVector>(na),
                                    locale_info};

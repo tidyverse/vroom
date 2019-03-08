@@ -16,7 +16,7 @@ bool matches(const string& needle, const std::vector<std::string>& haystack) {
 
 Rcpp::IntegerVector read_fctr_explicit(
     vroom_vec_info* info, Rcpp::CharacterVector levels, bool ordered) {
-  R_xlen_t n = info->idx->num_rows();
+  R_xlen_t n = info->column.size();
 
   Rcpp::IntegerVector out(n);
   std::unordered_map<SEXP, size_t> level_map;
@@ -29,8 +29,7 @@ Rcpp::IntegerVector read_fctr_explicit(
       n,
       [&](size_t start, size_t end, size_t id) {
         size_t i = start;
-        for (const auto& str :
-             info->idx->get_column(info->column).slice(start, end)) {
+        for (const auto& str : info->column.slice(start, end)) {
           auto search = level_map.find(
               info->locale->encoder_.makeSEXP(str.begin(), str.end(), false));
           if (search != level_map.end()) {
@@ -53,7 +52,7 @@ Rcpp::IntegerVector read_fctr_explicit(
 }
 
 Rcpp::IntegerVector read_fctr_implicit(vroom_vec_info* info, bool include_na) {
-  R_xlen_t n = info->idx->num_rows();
+  R_xlen_t n = info->column.size();
 
   Rcpp::IntegerVector out(n);
   std::vector<string> levels;
@@ -66,8 +65,7 @@ Rcpp::IntegerVector read_fctr_implicit(vroom_vec_info* info, bool include_na) {
   auto start = 0;
   auto end = n;
   auto i = start;
-  for (const auto& str :
-       info->idx->get_column(info->column).slice(start, end)) {
+  for (const auto& str : info->column.slice(start, end)) {
     if (include_na && matches(str, nas)) {
       out[i++] = NA_INTEGER;
     } else {
@@ -183,12 +181,12 @@ public:
     }
 
     auto inf = Info(vec);
-    return inf.info->idx->num_rows();
+    return inf.info->column.size();
   }
 
   static inline string Get(SEXP vec, R_xlen_t i) {
     auto inf = Info(vec);
-    return inf.info->idx->get(i, inf.info->column);
+    return inf.info->column[i];
   }
 
   // ALTSTRING methods -----------------
