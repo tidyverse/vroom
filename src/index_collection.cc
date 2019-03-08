@@ -9,14 +9,14 @@ using namespace Rcpp;
 // Class index_collection::column::iterator
 
 index_collection::column::iterator::iterator(
-    const index_collection& idx, size_t column, size_t start)
+    std::shared_ptr<const index_collection> idx, size_t column, size_t start)
     : i_(0),
       idx_(idx),
       column_(column),
       // start_(0),
-      end_(idx_.indexes_.size() - 1),
-      it_(idx_.indexes_[i_]->get_column(column_).begin()),
-      it_end_(idx_.indexes_[i_]->get_column(column_).end()) {
+      end_(idx_->indexes_.size() - 1),
+      it_(idx_->indexes_[i_]->get_column(column_).begin()),
+      it_end_(idx_->indexes_[i_]->get_column(column_).end()) {
   *this += start;
 }
 
@@ -31,8 +31,8 @@ operator++() /* prefix */ {
   ++it_;
   if (it_ == it_end_ && i_ < end_) {
     ++i_;
-    it_ = idx_.indexes_[i_]->get_column(column_).begin();
-    it_end_ = idx_.indexes_[i_]->get_column(column_).end();
+    it_ = idx_->indexes_[i_]->get_column(column_).begin();
+    it_end_ = idx_->indexes_[i_]->get_column(column_).end();
   }
   return *this;
 }
@@ -65,11 +65,15 @@ operator+(int n) {
 }
 
 // Class index_collection::column
-index_collection::column::column(const index_collection& idx, size_t column)
-    : idx_(idx), column_(column), start_(0), end_(idx.rows_) {}
+index_collection::column::column(
+    std::shared_ptr<const index_collection> idx, size_t column)
+    : idx_(idx), column_(column), start_(0), end_(idx->rows_) {}
 
 index_collection::column::column(
-    const index_collection& idx, size_t column, size_t start, size_t end)
+    std::shared_ptr<const index_collection> idx,
+    size_t column,
+    size_t start,
+    size_t end)
     : idx_(idx), column_(column), start_(start), end_(end) {}
 
 index_collection::column::iterator index_collection::column::begin() {

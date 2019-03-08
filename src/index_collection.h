@@ -4,9 +4,11 @@
 
 #include "Rcpp.h"
 
+#include <memory>
+
 namespace vroom {
 
-class index_collection {
+class index_collection : public std::enable_shared_from_this<index_collection> {
 
 public:
   index_collection(
@@ -46,20 +48,23 @@ public:
 
   class column {
 
-    const index_collection& idx_;
+    std::shared_ptr<const index_collection> idx_;
     size_t column_;
     size_t start_;
     size_t end_;
 
   public:
-    column(const index_collection& idx, size_t column);
+    column(std::shared_ptr<const index_collection> idx, size_t column);
 
     column(
-        const index_collection& idx, size_t column, size_t start, size_t end);
+        std::shared_ptr<const index_collection> idx,
+        size_t column,
+        size_t start,
+        size_t end);
 
     class iterator {
       size_t i_;
-      const index_collection& idx_;
+      std::shared_ptr<const index_collection> idx_;
       size_t column_;
       size_t end_;
       index::column::iterator it_;
@@ -71,7 +76,10 @@ public:
       using pointer = string*;
       using reference = string&;
 
-      iterator(const index_collection& idx, size_t column, size_t start);
+      iterator(
+          std::shared_ptr<const index_collection> idx,
+          size_t column,
+          size_t start);
       iterator operator++(int); /* postfix */
       iterator& operator++();   /* prefix */
       bool operator!=(const iterator& other) const;
@@ -85,10 +93,12 @@ public:
     iterator end();
   };
 
-  column get_column(size_t num) const { return column(*this, num); }
+  column get_column(size_t num) const {
+    return column(shared_from_this(), num);
+  }
 
   column get_column(size_t num, size_t start, size_t end) const {
-    return column(*this, num, start, end);
+    return column(shared_from_this(), num, start, end);
   }
 
   index::row row(size_t row) const {
