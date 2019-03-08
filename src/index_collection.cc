@@ -74,11 +74,11 @@ index_collection::column::iterator index_collection::column::end() {
   return index_collection::column::iterator(idx_, column_) += end_;
 }
 
-index_collection::column
+std::shared_ptr<index_collection::column>
 index_collection::column::slice(size_t start, size_t end) {
-  index_collection::column copy(*this);
-  copy.start_ = start;
-  copy.end_ = end;
+  auto copy = std::make_shared<index_collection::column>(*this);
+  copy->start_ = start;
+  copy->end_ = end;
   return copy;
 }
 

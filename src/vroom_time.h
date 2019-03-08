@@ -28,7 +28,7 @@ Rcpp::NumericVector read_time(vroom_vec_info* info, std::string format) {
       [&](size_t start, size_t end, size_t id) {
         auto i = start;
         DateTimeParser parser(&*info->locale);
-        for (const auto& str : info->column->slice(start, end)) {
+        for (const auto& str : *info->column->slice(start, end)) {
           out[i++] = parse_time(str, parser, format);
         }
       },

@@ -83,7 +83,7 @@ public:
     iterator begin();
     iterator end();
 
-    column slice(size_t start, size_t end);
+    std::shared_ptr<column> slice(size_t start, size_t end);
     size_t size() const;
     string operator[](size_t i) const;
   };
