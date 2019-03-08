@@ -82,6 +82,73 @@ index_collection::column::slice(size_t start, size_t end) {
   return copy;
 }
 
+// Class index_collection::column_subset::iterator
+
+index_collection::column_subset::iterator::iterator(
+    std::shared_ptr<column> col, std::shared_ptr<std::vector<size_t> > idx)
+    : col_(col), idx_(idx), i_(0) {}
+
+index_collection::column_subset::iterator
+index_collection::column_subset::iterator::operator++(int) /* postfix */ {
+  index_collection::column_subset::iterator copy(*this);
+  ++*this;
+  return copy;
+}
+index_collection::column_subset::iterator&
+index_collection::column_subset::iterator::operator++() /* prefix */ {
+  ++i_;
+  return *this;
+}
+
+index_collection::column_subset::iterator&
+index_collection::column_subset::iterator::operator+=(int n) {
+  i_ += n;
+  return *this;
+}
+
+bool index_collection::column_subset::iterator::
+operator!=(const index_collection::column_subset::iterator& other) const {
+  return i_ != other.i_;
+}
+bool index_collection::column_subset::iterator::
+operator==(const index_collection::column_subset::iterator& other) const {
+  return !(i_ != other.i_);
+}
+
+string index_collection::column_subset::iterator::operator*() {
+  return (*col_)[(*idx_)[i_]];
+}
+
+index_collection::column_subset::iterator
+index_collection::column_subset::iterator::operator+(int n) {
+  index_collection::column_subset::iterator out(*this);
+  out += n;
+  return out;
+}
+
+// Class index_collection::column_subset
+index_collection::column_subset::column_subset(
+    std::shared_ptr<column> col, std::shared_ptr<std::vector<size_t> > idx)
+    : col_(col), idx_(idx), start_(0), end_(idx->size()) {}
+
+index_collection::column_subset::iterator
+index_collection::column_subset::begin() {
+  return index_collection::column_subset::iterator(col_, idx_) + start_;
+}
+
+index_collection::column_subset::iterator
+index_collection::column_subset::end() {
+  return index_collection::column_subset::iterator(col_, idx_) += end_;
+}
+
+std::shared_ptr<vroom::index_collection::column_subset>
+index_collection::column_subset::slice(size_t start, size_t end) {
+  auto copy = std::make_shared<index_collection::column_subset>(*this);
+  copy->start_ = start;
+  copy->end_ = end;
+  return copy;
+}
+
 // Index_collection
 index_collection::index_collection(
     Rcpp::List in,

@@ -54,6 +54,7 @@ public:
     size_t end_;
 
   public:
+    column() = default;
     column(std::shared_ptr<const index_collection> idx, size_t column);
 
     class iterator {
@@ -71,6 +72,47 @@ public:
       using reference = string&;
 
       iterator(std::shared_ptr<const index_collection> idx, size_t column);
+      virtual iterator operator++(int); /* postfix */
+      virtual iterator& operator++();   /* prefix */
+      virtual bool operator!=(const iterator& other) const;
+      virtual bool operator==(const iterator& other) const;
+
+      virtual string operator*();
+      virtual iterator& operator+=(int n);
+      virtual iterator operator+(int n);
+    };
+    virtual iterator begin();
+    virtual iterator end();
+
+    virtual std::shared_ptr<column> slice(size_t start, size_t end);
+    virtual size_t size() const;
+    virtual string operator[](size_t i) const;
+  };
+
+  class column_subset : public column {
+    std::shared_ptr<column> col_;
+    std::shared_ptr<std::vector<size_t> > idx_;
+    size_t start_;
+    size_t end_;
+
+  public:
+    column_subset(
+        std::shared_ptr<column> col, std::shared_ptr<std::vector<size_t> > idx);
+
+    class iterator {
+      using iterator_category = std::forward_iterator_tag;
+      using value_type = string;
+      using pointer = string*;
+      using reference = string&;
+
+      std::shared_ptr<column> col_;
+      std::shared_ptr<std::vector<size_t> > idx_;
+      size_t i_;
+
+    public:
+      iterator(
+          std::shared_ptr<column> col,
+          std::shared_ptr<std::vector<size_t> > idx);
       iterator operator++(int); /* postfix */
       iterator& operator++();   /* prefix */
       bool operator!=(const iterator& other) const;
@@ -83,7 +125,7 @@ public:
     iterator begin();
     iterator end();
 
-    std::shared_ptr<column> slice(size_t start, size_t end);
+    std::shared_ptr<column_subset> slice(size_t start, size_t end);
     size_t size() const;
     string operator[](size_t i) const;
   };
