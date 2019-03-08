@@ -88,8 +88,8 @@ public:
     string operator[](size_t i) const;
   };
 
-  column get_column(size_t num) const {
-    return column(shared_from_this(), num);
+  std::shared_ptr<column> get_column(size_t num) const {
+    return std::make_shared<column>(shared_from_this(), num);
   }
 
   index::row row(size_t row) const {

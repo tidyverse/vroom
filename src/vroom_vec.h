@@ -7,7 +7,7 @@
 using namespace vroom;
 
 struct vroom_vec_info {
-  index_collection::column column;
+  std::shared_ptr<index_collection::column> column;
   size_t num_threads;
   std::shared_ptr<Rcpp::CharacterVector> na;
   std::shared_ptr<LocaleInfo> locale;
@@ -43,12 +43,12 @@ public:
     }
 
     auto inf = Info(vec);
-    return inf.column.size();
+    return inf.column->size();
   }
 
   static inline string Get(SEXP vec, R_xlen_t i) {
     auto inf = Info(vec);
-    return inf.column[i];
+    return (*inf.column)[i];
   }
 
   // ALTVec methods -------------------
