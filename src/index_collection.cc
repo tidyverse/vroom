@@ -148,3 +148,9 @@ const string index_collection::get(size_t row, size_t column) const {
   /* should never get here */
   return std::string("");
 }
+
+size_t index_collection::column::size() const { return end_ - start_; }
+
+string index_collection::column::operator[](size_t i) const {
+  return idx_->get(i, column_);
+}

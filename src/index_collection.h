@@ -84,6 +84,8 @@ public:
     iterator end();
 
     column slice(size_t start, size_t end);
+    size_t size() const;
+    string operator[](size_t i) const;
   };
 
   column get_column(size_t num) const {
