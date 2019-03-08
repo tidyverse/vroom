@@ -51,7 +51,7 @@ Rcpp::LogicalVector read_lgl(vroom_vec_info* info) {
       [&](size_t start, size_t end, size_t id) {
         auto i = start;
         for (const auto& str :
-             info->idx->get_column(info->column, start, end)) {
+             info->idx->get_column(info->column).slice(start, end)) {
           out[i++] = parse_logical(str.begin(), str.end());
         }
       },

@@ -146,7 +146,7 @@ Rcpp::NumericVector read_num(vroom_vec_info* info) {
       [&](size_t start, size_t end, size_t id) {
         size_t i = start;
         for (const auto& str :
-             info->idx->get_column(info->column, start, end)) {
+             info->idx->get_column(info->column).slice(start, end)) {
           out[i++] = parse_num(str, *info->locale);
         }
       },

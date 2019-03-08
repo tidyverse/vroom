@@ -56,12 +56,6 @@ public:
   public:
     column(std::shared_ptr<const index_collection> idx, size_t column);
 
-    column(
-        std::shared_ptr<const index_collection> idx,
-        size_t column,
-        size_t start,
-        size_t end);
-
     class iterator {
       size_t i_;
       std::shared_ptr<const index_collection> idx_;
@@ -76,10 +70,7 @@ public:
       using pointer = string*;
       using reference = string&;
 
-      iterator(
-          std::shared_ptr<const index_collection> idx,
-          size_t column,
-          size_t start);
+      iterator(std::shared_ptr<const index_collection> idx, size_t column);
       iterator operator++(int); /* postfix */
       iterator& operator++();   /* prefix */
       bool operator!=(const iterator& other) const;
@@ -91,14 +82,12 @@ public:
     };
     iterator begin();
     iterator end();
+
+    column slice(size_t start, size_t end);
   };
 
   column get_column(size_t num) const {
     return column(shared_from_this(), num);
-  }
-
-  column get_column(size_t num, size_t start, size_t end) const {
-    return column(shared_from_this(), num, start, end);
   }
 
   index::row row(size_t row) const {

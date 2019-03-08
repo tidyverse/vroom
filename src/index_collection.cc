@@ -9,16 +9,13 @@ using namespace Rcpp;
 // Class index_collection::column::iterator
 
 index_collection::column::iterator::iterator(
-    std::shared_ptr<const index_collection> idx, size_t column, size_t start)
+    std::shared_ptr<const index_collection> idx, size_t column)
     : i_(0),
       idx_(idx),
       column_(column),
-      // start_(0),
       end_(idx_->indexes_.size() - 1),
       it_(idx_->indexes_[i_]->get_column(column_).begin()),
-      it_end_(idx_->indexes_[i_]->get_column(column_).end()) {
-  *this += start;
-}
+      it_end_(idx_->indexes_[i_]->get_column(column_).end()) {}
 
 index_collection::column::iterator index_collection::column::iterator::
 operator++(int) /* postfix */ {
@@ -69,19 +66,20 @@ index_collection::column::column(
     std::shared_ptr<const index_collection> idx, size_t column)
     : idx_(idx), column_(column), start_(0), end_(idx->rows_) {}
 
-index_collection::column::column(
-    std::shared_ptr<const index_collection> idx,
-    size_t column,
-    size_t start,
-    size_t end)
-    : idx_(idx), column_(column), start_(start), end_(end) {}
-
 index_collection::column::iterator index_collection::column::begin() {
-  return index_collection::column::iterator(idx_, column_, start_);
+  return index_collection::column::iterator(idx_, column_) + start_;
 }
 
 index_collection::column::iterator index_collection::column::end() {
-  return index_collection::column::iterator(idx_, column_, end_);
+  return index_collection::column::iterator(idx_, column_) += end_;
+}
+
+index_collection::column
+index_collection::column::slice(size_t start, size_t end) {
+  index_collection::column copy(*this);
+  copy.start_ = start;
+  copy.end_ = end;
+  return copy;
 }
 
 // Index_collection
