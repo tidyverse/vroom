@@ -43,7 +43,7 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL, id = N
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
     escape_backslash = escape_backslash, comment = comment, locale = locale,
     guess_max = guess_max,
-    use_altrep = getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP", TRUE),
+    use_altrep = vroom_use_altrep(),
     num_threads = num_threads, progress = progress)
 
   tibble::as_tibble(out)
@@ -175,4 +175,16 @@ guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";", "\n")) 
 
 vroom_threads <- function() {
   as.integer(Sys.getenv("VROOM_THREADS", parallel::detectCores()))
+}
+
+vroom_tempfile <- function() {
+  dir <- Sys.getenv("VROOM_TEMP_PATH")
+  if (!nzchar(dir)) {
+    dir <- tempdir()
+  }
+  tempfile(pattern = "vroom-", tmpdir = dir)
+}
+
+vroom_use_altrep <- function() {
+  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP", TRUE)
 }

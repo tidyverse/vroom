@@ -55,9 +55,8 @@ index_connection::index_connection(
   skip_ = skip;
   progress_ = progress;
 
-  auto tempfile =
-      Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["tempfile"])();
-  filename_ = std::string(CHAR(STRING_ELT(tempfile, 0)));
+  filename_ = Rcpp::as<std::string>(Rcpp::as<Rcpp::Function>(
+      Rcpp::Environment::namespace_env("vroom")["pb_width"])());
 
   std::ofstream out(
       filename_.c_str(),
