@@ -51,7 +51,7 @@ void index_collection::column::full_iterator::advance(int n) {
 bool index_collection::column::full_iterator::equal_to(
     const base_iterator& other) {
   auto other_ = dynamic_cast<const full_iterator&>(other);
-  return i_ != other_.i_ || (i_ == other_.i_ && it_ != other_.it_);
+  return i_ == other_.i_ && it_ == other_.it_;
 }
 
 ptrdiff_t index_collection::column::full_iterator::distance_to(
@@ -93,7 +93,8 @@ string index_collection::column::full_iterator::value() { return *it_; }
 
 index_collection::column::full_iterator*
 index_collection::column::full_iterator::clone() const {
-  return new index_collection::column::full_iterator(*this);
+  auto copy = new index_collection::column::full_iterator(*this);
+  return copy;
 }
 
 // Class index_collection::column_subset::iterator

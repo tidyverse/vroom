@@ -291,7 +291,7 @@ operator==(const index::column::iterator& other) const {
   return i_ == other.i_;
 }
 
-string index::column::iterator::operator*() {
+string index::column::iterator::operator*() const {
   return idx_->get_trimmed_val(i_, is_first_, is_last_);
 }
 

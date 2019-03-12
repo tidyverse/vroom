@@ -103,7 +103,8 @@ public:
         return it_->equal_to(*other.it_);
       }
 
-      string operator*() { return it_->value(); }
+      string operator*() const { return it_->value(); }
+
       iterator& operator+=(int n) {
         it_->advance(n);
         return *this;
@@ -210,10 +211,12 @@ public:
   //};
 
   std::shared_ptr<column> get_column(size_t num) const {
-    return std::make_shared<column>(
-        column::iterator(new column::full_iterator(shared_from_this(), num)),
+    auto begin =
+        column::iterator(new column::full_iterator(shared_from_this(), num));
+    auto end =
         column::iterator(new column::full_iterator(shared_from_this(), num)) +
-            rows_);
+        rows_;
+    return std::make_shared<column>(begin, end);
   }
 
   index::row row(size_t row) const {

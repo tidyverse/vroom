@@ -196,15 +196,15 @@ Rcpp::NumericVector read_dbl(vroom_vec_info* info) {
 
   Rcpp::NumericVector out(n);
 
-  // parallel_for(
-  // n,
-  //[&](size_t start, size_t end, size_t id) {
-  size_t i = 0;
-  for (const auto& str : *info->column) {
-    out[i++] = bsd_strtod(str.begin(), str.end());
-  }
-  //},
-  // info->num_threads);
+  parallel_for(
+      n,
+      [&](size_t start, size_t end, size_t id) {
+        size_t i = start;
+        for (const auto& str : *info->column->slice(start, end)) {
+          out[i++] = bsd_strtod(str.begin(), str.end());
+        }
+      },
+      info->num_threads);
 
   return out;
 }

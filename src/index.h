@@ -102,7 +102,7 @@ public:
       bool operator!=(const iterator& other) const;
       bool operator==(const iterator& other) const;
 
-      string operator*();
+      string operator*() const;
       iterator& operator+=(int n);
       iterator operator+(int n);
       iterator& operator-=(int n);
