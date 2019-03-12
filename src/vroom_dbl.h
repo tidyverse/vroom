@@ -11,7 +11,8 @@
     which is based on Berkeley UNIX.
     This function and this function only is BSD license.
 
-    https://retrobsd.googlecode.com/svn/stable/src/libc/stdlib/strtod.c
+    https://retrobsd.googlecode.com/svn/stable/vroom_time.h|31 col 32| for
+   (const autosrc str : info->column.slice(start, end)) {/libc/stdlib/strtod.c
    */
 template <class Iterator> double bsd_strtod(Iterator begin, Iterator end) {
   if (begin == end) {
@@ -192,7 +193,7 @@ done:
 
 Rcpp::NumericVector read_dbl(vroom_vec_info* info) {
 
-  R_xlen_t n = info->column->size();
+  R_xlen_t n = info->column.size();
 
   Rcpp::NumericVector out(n);
 
@@ -200,7 +201,7 @@ Rcpp::NumericVector read_dbl(vroom_vec_info* info) {
       n,
       [&](size_t start, size_t end, size_t id) {
         size_t i = start;
-        for (const auto& str : *info->column->slice(start, end)) {
+        for (const auto& str : info->column.slice(start, end)) {
           out[i++] = bsd_strtod(str.begin(), str.end());
         }
       },

@@ -153,8 +153,8 @@ public:
     iterator begin() const { return begin_; }
     iterator end() const { return end_; }
 
-    std::shared_ptr<column> slice(size_t start, size_t end) const {
-      return std::make_shared<column>(begin_ + start, begin_ + end);
+    column slice(size_t start, size_t end) const {
+      return column(begin_ + start, begin_ + end);
     }
 
     size_t size() const { return end_ - begin_; }
@@ -169,13 +169,13 @@ public:
     iterator end_;
   };
 
-  std::shared_ptr<column> get_column(size_t num) const {
+  column get_column(size_t num) const {
     auto begin =
         column::iterator(new column::full_iterator(shared_from_this(), num));
     auto end =
         column::iterator(new column::full_iterator(shared_from_this(), num)) +
         rows_;
-    return std::make_shared<column>(begin, end);
+    return column(begin, end);
   }
 
   index::row row(size_t row) const {

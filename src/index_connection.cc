@@ -56,7 +56,7 @@ index_connection::index_connection(
   progress_ = progress;
 
   filename_ = Rcpp::as<std::string>(Rcpp::as<Rcpp::Function>(
-      Rcpp::Environment::namespace_env("vroom")["pb_width"])());
+      Rcpp::Environment::namespace_env("vroom")["vroom_tempfile"])());
 
   std::ofstream out(
       filename_.c_str(),

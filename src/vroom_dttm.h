@@ -20,7 +20,7 @@ double parse_dttm(
 }
 
 Rcpp::NumericVector read_dttm(vroom_vec_info* info, const std::string& format) {
-  R_xlen_t n = info->column->size();
+  R_xlen_t n = info->column.size();
 
   Rcpp::NumericVector out(n);
 
@@ -31,7 +31,7 @@ Rcpp::NumericVector read_dttm(vroom_vec_info* info, const std::string& format) {
   //[&](size_t start, size_t end, size_t id) {
   // auto i = start;
   // DateTimeParser parser(&*info->locale);
-  for (const auto& str : *info->column) {
+  for (const auto& str : info->column) {
     out[i++] = parse_dttm(str, parser, format);
   }
   //}
@@ -119,12 +119,12 @@ public:
     }
 
     auto inf = Info(vec);
-    return inf->info->column->size();
+    return inf->info->column.size();
   }
 
   static inline string Get(SEXP vec, R_xlen_t i) {
     auto inf = Info(vec);
-    return (*inf->info->column)[i];
+    return inf->info->column[i];
   }
 
   // ALTREAL methods -----------------
