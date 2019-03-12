@@ -31,7 +31,7 @@ NULL
 #' }
 vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL, id = NULL, skip = 0, na = c("", "NA"),
   quote = '"', comment = "", trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE, locale = readr::default_locale(),
-  guess_max = 100, num_threads = parallel::detectCores(), progress = show_progress()) {
+  guess_max = 100, num_threads = vroom_threads(), progress = vroom_progress()) {
 
   file <- standardise_path(file)
 
@@ -43,7 +43,7 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL, id = N
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
     escape_backslash = escape_backslash, comment = comment, locale = locale,
     guess_max = guess_max,
-    use_altrep = getRversion() > "3.5.0" && as.logical(getOption("vroom.use_altrep", TRUE)),
+    use_altrep = getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP", TRUE),
     num_threads = num_threads, progress = progress)
 
   tibble::as_tibble(out)
@@ -112,14 +112,14 @@ make_names <- function(len) {
 #' Determine progress bars should be shown
 #'
 #' Progress bars are shown _unless_ one of the following is `TRUE`
-#' - The bar is explicitly disabled by setting `options(vroom.show_progress = FALSE)`
+#' - The bar is explicitly disabled by setting `Sys.getenv("VROOM_SHOW_PROGRESS"="false")`
 #' - The code is run in a non-interactive session (`interactive()` is `FALSE`).
 #' - The code is run in an RStudio notebook chunk.
 #' - The code is run by knitr / rmarkdown.
 #' - The code is run by testthat (the `TESTTHAT` envvar is `true`).
 #' @export
-show_progress <- function() {
-  isTRUE(getOption("vroom.show_progress", default = TRUE)) &&
+vroom_progress <- function() {
+  env_to_logical("VROOM_SHOW_PROGRESS", TRUE) &&
     interactive() &&
     !isTRUE(getOption("knitr.in.progress")) &&
     !isTRUE(getOption("rstudio.notebook.executing")) &&
@@ -172,3 +172,7 @@ guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";", "\n")) 
   delims[[res]]
 }
 
+
+vroom_threads <- function() {
+  as.integer(Sys.getenv("VROOM_THREADS", parallel::detectCores()))
+}

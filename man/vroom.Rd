@@ -8,8 +8,8 @@ vroom(file, delim = NULL, col_names = TRUE, col_types = NULL,
   id = NULL, skip = 0, na = c("", "NA"), quote = "\\"",
   comment = "", trim_ws = TRUE, escape_double = TRUE,
   escape_backslash = FALSE, locale = readr::default_locale(),
-  guess_max = 100, num_threads = parallel::detectCores(),
-  progress = show_progress())
+  guess_max = 100, num_threads = vroom_threads(),
+  progress = vroom_progress())
 }
 \arguments{
 \item{file}{path to a local file.}
