@@ -49,13 +49,13 @@ void index_collection::column::full_iterator::advance(int n) {
 }
 
 bool index_collection::column::full_iterator::equal_to(
-    const base_iterator& other) {
+    const base_iterator& other) const {
   auto other_ = dynamic_cast<const full_iterator&>(other);
   return i_ == other_.i_ && it_ == other_.it_;
 }
 
 ptrdiff_t index_collection::column::full_iterator::distance_to(
-    const base_iterator& that) {
+    const base_iterator& that) const {
 
   auto that_ = dynamic_cast<const full_iterator&>(that);
 
@@ -89,80 +89,13 @@ ptrdiff_t index_collection::column::full_iterator::distance_to(
   return count;
 }
 
-string index_collection::column::full_iterator::value() { return *it_; }
+string index_collection::column::full_iterator::value() const { return *it_; }
 
 index_collection::column::full_iterator*
 index_collection::column::full_iterator::clone() const {
   auto copy = new index_collection::column::full_iterator(*this);
   return copy;
 }
-
-// Class index_collection::column_subset::iterator
-
-// index_collection::column_subset::iterator::iterator(
-// std::shared_ptr<column> col, std::shared_ptr<std::vector<size_t> > idx)
-//: col_(col), idx_(idx), i_(0) {}
-
-// index_collection::column_subset::iterator
-// index_collection::column_subset::iterator::operator++(int) [> postfix <] {
-// index_collection::column_subset::iterator copy(*this);
-//++*this;
-// return copy;
-//}
-// index_collection::column_subset::iterator&
-// index_collection::column_subset::iterator::operator++() [> prefix <] {
-//++i_;
-// return *this;
-//}
-
-// index_collection::column_subset::iterator&
-// index_collection::column_subset::iterator::operator+=(int n) {
-// i_ += n;
-// return *this;
-//}
-
-// bool index_collection::column_subset::iterator::
-// operator!=(const index_collection::column_subset::iterator& other) const {
-// return i_ != other.i_;
-//}
-// bool index_collection::column_subset::iterator::
-// operator==(const index_collection::column_subset::iterator& other) const {
-// return !(i_ != other.i_);
-//}
-
-// string index_collection::column_subset::iterator::operator*() {
-// return (*col_)[(*idx_)[i_]];
-//}
-
-// index_collection::column_subset::iterator
-// index_collection::column_subset::iterator::operator+(int n) {
-// index_collection::column_subset::iterator out(*this);
-// out += n;
-// return out;
-//}
-
-//// Class index_collection::column_subset
-// index_collection::column_subset::column_subset(
-// std::shared_ptr<column> col, std::shared_ptr<std::vector<size_t> > idx)
-//: col_(col), idx_(idx), start_(0), end_(idx->size()) {}
-
-// index_collection::column_subset::iterator
-// index_collection::column_subset::begin() {
-// return index_collection::column_subset::iterator(col_, idx_) + start_;
-//}
-
-// index_collection::column_subset::iterator
-// index_collection::column_subset::end() {
-// return index_collection::column_subset::iterator(col_, idx_) += end_;
-//}
-
-// std::shared_ptr<vroom::index_collection::column_subset>
-// index_collection::column_subset::slice(size_t start, size_t end) {
-// auto copy = std::make_shared<index_collection::column_subset>(*this);
-// copy->start_ = start;
-// copy->end_ = end;
-// return copy;
-//}
 
 // Index_collection
 index_collection::index_collection(

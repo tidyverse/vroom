@@ -54,9 +54,9 @@ public:
       virtual void next() = 0;
       virtual void prev() = 0;
       virtual void advance(int n) = 0;
-      virtual bool equal_to(const base_iterator& it) = 0;
-      virtual ptrdiff_t distance_to(const base_iterator& it) = 0;
-      virtual string value() = 0;
+      virtual bool equal_to(const base_iterator& it) const = 0;
+      virtual ptrdiff_t distance_to(const base_iterator& it) const = 0;
+      virtual string value() const = 0;
       virtual base_iterator* clone() const = 0;
       virtual ~base_iterator() = default;
     };
@@ -109,13 +109,13 @@ public:
         it_->advance(n);
         return *this;
       }
-      iterator operator+(int n) {
+      iterator operator+(int n) const {
         iterator copy(*this);
         copy.it_->advance(n);
         return copy;
       }
 
-      iterator operator-(int n) {
+      iterator operator-(int n) const {
         iterator copy(*this);
         copy.it_->advance(-n);
         return copy;
@@ -143,22 +143,22 @@ public:
       void next();
       void prev();
       void advance(int n);
-      bool equal_to(const base_iterator& it);
-      ptrdiff_t distance_to(const base_iterator& it);
-      string value();
+      bool equal_to(const base_iterator& it) const;
+      ptrdiff_t distance_to(const base_iterator& it) const;
+      string value() const;
       full_iterator* clone() const;
       virtual ~full_iterator() = default;
     };
 
-    iterator begin() { return begin_; }
-    iterator end() { return end_; }
+    iterator begin() const { return begin_; }
+    iterator end() const { return end_; }
 
-    std::shared_ptr<column> slice(size_t start, size_t end) {
+    std::shared_ptr<column> slice(size_t start, size_t end) const {
       return std::make_shared<column>(begin_ + start, begin_ + end);
     }
 
-    size_t size() { return end_ - begin_; }
-    string operator[](int i) { return *(begin_ + i); }
+    size_t size() const { return end_ - begin_; }
+    string operator[](int i) const { return *(begin_ + i); }
 
     column() = delete;
     column(const iterator& begin, const iterator& end)
@@ -168,47 +168,6 @@ public:
     iterator begin_;
     iterator end_;
   };
-
-  // class column_subset : public column {
-  // std::shared_ptr<column> col_;
-  // std::shared_ptr<std::vector<size_t> > idx_;
-  // size_t start_;
-  // size_t end_;
-
-  // public:
-  // column_subset(
-  // std::shared_ptr<column> col, std::shared_ptr<std::vector<size_t> > idx);
-
-  // class iterator {
-  // using iterator_category = std::forward_iterator_tag;
-  // using value_type = string;
-  // using pointer = string*;
-  // using reference = string&;
-
-  // std::shared_ptr<column> col_;
-  // std::shared_ptr<std::vector<size_t> > idx_;
-  // size_t i_;
-
-  // public:
-  // iterator(
-  // std::shared_ptr<column> col,
-  // std::shared_ptr<std::vector<size_t> > idx);
-  // iterator operator++(int); [> postfix <]
-  // iterator& operator++();   [> prefix <]
-  // bool operator!=(const iterator& other) const;
-  // bool operator==(const iterator& other) const;
-
-  // string operator*();
-  // iterator& operator+=(int n);
-  // iterator operator+(int n);
-  //};
-  // iterator begin();
-  // iterator end();
-
-  // std::shared_ptr<column_subset> slice(size_t start, size_t end);
-  // size_t size() const;
-  // string operator[](size_t i) const;
-  //};
 
   std::shared_ptr<column> get_column(size_t num) const {
     auto begin =
