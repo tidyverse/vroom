@@ -53,7 +53,7 @@ public:
     public:
       virtual void next() = 0;
       virtual void prev() = 0;
-      virtual void advance(int n) = 0;
+      virtual void advance(ptrdiff_t n) = 0;
       virtual bool equal_to(const base_iterator& it) const = 0;
       virtual ptrdiff_t distance_to(const base_iterator& it) const = 0;
       virtual string value() const = 0;
@@ -105,17 +105,17 @@ public:
 
       string operator*() const { return it_->value(); }
 
-      iterator& operator+=(int n) {
+      iterator& operator+=(ptrdiff_t n) {
         it_->advance(n);
         return *this;
       }
-      iterator operator+(int n) const {
+      iterator operator+(ptrdiff_t n) const {
         iterator copy(*this);
         copy.it_->advance(n);
         return copy;
       }
 
-      iterator operator-(int n) const {
+      iterator operator-(ptrdiff_t n) const {
         iterator copy(*this);
         copy.it_->advance(-n);
         return copy;
@@ -142,7 +142,7 @@ public:
       full_iterator(std::shared_ptr<const index_collection> idx, size_t column);
       void next();
       void prev();
-      void advance(int n);
+      void advance(ptrdiff_t n);
       bool equal_to(const base_iterator& it) const;
       ptrdiff_t distance_to(const base_iterator& it) const;
       string value() const;
@@ -158,7 +158,7 @@ public:
     }
 
     size_t size() const { return end_ - begin_; }
-    string operator[](int i) const { return *(begin_ + i); }
+    string operator[](size_t i) const { return *(begin_ + i); }
 
     column() = delete;
     column(const iterator& begin, const iterator& end)
