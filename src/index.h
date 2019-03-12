@@ -92,16 +92,22 @@ public:
       using value_type = string;
       using pointer = string*;
       using reference = string&;
+      using difference_type = ptrdiff_t;
 
       iterator(const index& idx, size_t column, size_t start, size_t end);
       iterator operator++(int); /* postfix */
       iterator& operator++();   /* prefix */
+      iterator operator--(int); /* postfix */
+      iterator& operator--();   /* prefix */
       bool operator!=(const iterator& other) const;
       bool operator==(const iterator& other) const;
 
       string operator*();
       iterator& operator+=(int n);
       iterator operator+(int n);
+      iterator& operator-=(int n);
+      iterator operator-(int n);
+      ptrdiff_t operator-(const iterator& other) const;
     };
     iterator begin();
     iterator end();

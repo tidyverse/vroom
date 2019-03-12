@@ -272,6 +272,16 @@ index::column::iterator& index::column::iterator::operator++() /* prefix */ {
   return *this;
 }
 
+index::column::iterator index::column::iterator::operator--(int) /* postfix */ {
+  index::column::iterator copy(*this);
+  --*this;
+  return copy;
+}
+index::column::iterator& index::column::iterator::operator--() /* prefix */ {
+  i_ -= idx_->columns_;
+  return *this;
+}
+
 bool index::column::iterator::
 operator!=(const index::column::iterator& other) const {
   return i_ != other.i_;
@@ -294,6 +304,22 @@ index::column::iterator index::column::iterator::operator+(int n) {
   index::column::iterator out(*this);
   out += n;
   return out;
+}
+
+index::column::iterator& index::column::iterator::operator-=(int n) {
+  i_ -= idx_->columns_ * n;
+  return *this;
+}
+
+index::column::iterator index::column::iterator::operator-(int n) {
+  index::column::iterator out(*this);
+  out -= n;
+  return out;
+}
+
+ptrdiff_t index::column::iterator::
+operator-(const index::column::iterator& other) const {
+  return (ptrdiff_t(i_) - ptrdiff_t(other.i_)) / ptrdiff_t(idx_->columns_);
 }
 
 // Class column

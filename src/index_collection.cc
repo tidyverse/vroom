@@ -8,146 +8,160 @@ using namespace Rcpp;
 
 // Class index_collection::column::iterator
 
-index_collection::column::iterator::iterator(
+index_collection::column::full_iterator::full_iterator(
     std::shared_ptr<const index_collection> idx, size_t column)
     : i_(0),
       idx_(idx),
       column_(column),
+      start_(0),
       end_(idx_->indexes_.size() - 1),
       it_(idx_->indexes_[i_]->get_column(column_).begin()),
-      it_end_(idx_->indexes_[i_]->get_column(column_).end()) {}
+      it_end_(idx_->indexes_[i_]->get_column(column_).end()),
+      it_start_(idx_->indexes_[i_]->get_column(column_).begin()) {}
 
-index_collection::column::iterator index_collection::column::iterator::
-operator++(int) /* postfix */ {
-  index_collection::column::iterator copy(*this);
-  ++*this;
-  return copy;
-}
-index_collection::column::iterator& index_collection::column::iterator::
-operator++() /* prefix */ {
+void index_collection::column::full_iterator::next() {
   ++it_;
   if (it_ == it_end_ && i_ < end_) {
     ++i_;
     it_ = idx_->indexes_[i_]->get_column(column_).begin();
     it_end_ = idx_->indexes_[i_]->get_column(column_).end();
   }
-  return *this;
 }
 
-index_collection::column::iterator& index_collection::column::iterator::
-operator+=(int n) {
+void index_collection::column::full_iterator::prev() {
+  --it_;
+  if (it_ == it_start_ && i_ > start_) {
+    --i_;
+    it_ = idx_->indexes_[i_]->get_column(column_).end();
+    it_start_ = idx_->indexes_[i_]->get_column(column_).begin();
+  }
+}
+
+void index_collection::column::full_iterator::advance(int n) {
   while (n > 0) {
-    ++(*this);
+    next();
     --n;
   }
-  return *this;
+  while (n < 0) {
+    prev();
+    ++n;
+  }
 }
 
-bool index_collection::column::iterator::
-operator!=(const index_collection::column::iterator& other) const {
-  return i_ != other.i_ || (i_ == other.i_ && it_ != other.it_);
-}
-bool index_collection::column::iterator::
-operator==(const index_collection::column::iterator& other) const {
-  return !(i_ != other.i_);
+bool index_collection::column::full_iterator::equal_to(
+    const base_iterator& other) {
+  auto other_ = dynamic_cast<const full_iterator&>(other);
+  return i_ != other_.i_ || (i_ == other_.i_ && it_ != other_.it_);
 }
 
-string index_collection::column::iterator::operator*() { return *it_; }
+ptrdiff_t index_collection::column::full_iterator::distance_to(
+    const base_iterator& that) {
 
-index_collection::column::iterator index_collection::column::iterator::
-operator+(int n) {
-  index_collection::column::iterator out(*this);
-  out += n;
-  return out;
+  auto that_ = dynamic_cast<const full_iterator&>(that);
+
+  if (i_ == that_.i_) {
+    ptrdiff_t res = that_.it_ - it_;
+    return res;
+  }
+  ptrdiff_t count = 0;
+  size_t i = i_;
+
+  if (i_ < that_.i_) {
+    count = it_end_ - it_;
+    ++i;
+    while (i < that_.i_) {
+      count += idx_->indexes_[i]->num_rows();
+      ++i;
+    }
+    auto begin = idx_->indexes_[i]->get_column(column_).begin();
+    count += that_.it_ - begin;
+    return count;
+  }
+
+  count = it_start_ - it_;
+  --i;
+  while (i > that_.i_) {
+    count -= idx_->indexes_[i]->num_rows();
+    --i;
+  }
+  auto end = idx_->indexes_[i]->get_column(column_).end();
+  count += that_.it_ - end;
+  return count;
 }
 
-// Class index_collection::column
-index_collection::column::column(
-    std::shared_ptr<const index_collection> idx, size_t column)
-    : idx_(idx), column_(column), start_(0), end_(idx->rows_) {}
+string index_collection::column::full_iterator::value() { return *it_; }
 
-index_collection::column::iterator index_collection::column::begin() {
-  return index_collection::column::iterator(idx_, column_) + start_;
-}
-
-index_collection::column::iterator index_collection::column::end() {
-  return index_collection::column::iterator(idx_, column_) += end_;
-}
-
-std::shared_ptr<index_collection::column>
-index_collection::column::slice(size_t start, size_t end) {
-  auto copy = std::make_shared<index_collection::column>(*this);
-  copy->start_ = start;
-  copy->end_ = end;
-  return copy;
+index_collection::column::full_iterator*
+index_collection::column::full_iterator::clone() const {
+  return new index_collection::column::full_iterator(*this);
 }
 
 // Class index_collection::column_subset::iterator
 
-index_collection::column_subset::iterator::iterator(
-    std::shared_ptr<column> col, std::shared_ptr<std::vector<size_t> > idx)
-    : col_(col), idx_(idx), i_(0) {}
+// index_collection::column_subset::iterator::iterator(
+// std::shared_ptr<column> col, std::shared_ptr<std::vector<size_t> > idx)
+//: col_(col), idx_(idx), i_(0) {}
 
-index_collection::column_subset::iterator
-index_collection::column_subset::iterator::operator++(int) /* postfix */ {
-  index_collection::column_subset::iterator copy(*this);
-  ++*this;
-  return copy;
-}
-index_collection::column_subset::iterator&
-index_collection::column_subset::iterator::operator++() /* prefix */ {
-  ++i_;
-  return *this;
-}
+// index_collection::column_subset::iterator
+// index_collection::column_subset::iterator::operator++(int) [> postfix <] {
+// index_collection::column_subset::iterator copy(*this);
+//++*this;
+// return copy;
+//}
+// index_collection::column_subset::iterator&
+// index_collection::column_subset::iterator::operator++() [> prefix <] {
+//++i_;
+// return *this;
+//}
 
-index_collection::column_subset::iterator&
-index_collection::column_subset::iterator::operator+=(int n) {
-  i_ += n;
-  return *this;
-}
+// index_collection::column_subset::iterator&
+// index_collection::column_subset::iterator::operator+=(int n) {
+// i_ += n;
+// return *this;
+//}
 
-bool index_collection::column_subset::iterator::
-operator!=(const index_collection::column_subset::iterator& other) const {
-  return i_ != other.i_;
-}
-bool index_collection::column_subset::iterator::
-operator==(const index_collection::column_subset::iterator& other) const {
-  return !(i_ != other.i_);
-}
+// bool index_collection::column_subset::iterator::
+// operator!=(const index_collection::column_subset::iterator& other) const {
+// return i_ != other.i_;
+//}
+// bool index_collection::column_subset::iterator::
+// operator==(const index_collection::column_subset::iterator& other) const {
+// return !(i_ != other.i_);
+//}
 
-string index_collection::column_subset::iterator::operator*() {
-  return (*col_)[(*idx_)[i_]];
-}
+// string index_collection::column_subset::iterator::operator*() {
+// return (*col_)[(*idx_)[i_]];
+//}
 
-index_collection::column_subset::iterator
-index_collection::column_subset::iterator::operator+(int n) {
-  index_collection::column_subset::iterator out(*this);
-  out += n;
-  return out;
-}
+// index_collection::column_subset::iterator
+// index_collection::column_subset::iterator::operator+(int n) {
+// index_collection::column_subset::iterator out(*this);
+// out += n;
+// return out;
+//}
 
-// Class index_collection::column_subset
-index_collection::column_subset::column_subset(
-    std::shared_ptr<column> col, std::shared_ptr<std::vector<size_t> > idx)
-    : col_(col), idx_(idx), start_(0), end_(idx->size()) {}
+//// Class index_collection::column_subset
+// index_collection::column_subset::column_subset(
+// std::shared_ptr<column> col, std::shared_ptr<std::vector<size_t> > idx)
+//: col_(col), idx_(idx), start_(0), end_(idx->size()) {}
 
-index_collection::column_subset::iterator
-index_collection::column_subset::begin() {
-  return index_collection::column_subset::iterator(col_, idx_) + start_;
-}
+// index_collection::column_subset::iterator
+// index_collection::column_subset::begin() {
+// return index_collection::column_subset::iterator(col_, idx_) + start_;
+//}
 
-index_collection::column_subset::iterator
-index_collection::column_subset::end() {
-  return index_collection::column_subset::iterator(col_, idx_) += end_;
-}
+// index_collection::column_subset::iterator
+// index_collection::column_subset::end() {
+// return index_collection::column_subset::iterator(col_, idx_) += end_;
+//}
 
-std::shared_ptr<vroom::index_collection::column_subset>
-index_collection::column_subset::slice(size_t start, size_t end) {
-  auto copy = std::make_shared<index_collection::column_subset>(*this);
-  copy->start_ = start;
-  copy->end_ = end;
-  return copy;
-}
+// std::shared_ptr<vroom::index_collection::column_subset>
+// index_collection::column_subset::slice(size_t start, size_t end) {
+// auto copy = std::make_shared<index_collection::column_subset>(*this);
+// copy->start_ = start;
+// copy->end_ = end;
+// return copy;
+//}
 
 // Index_collection
 index_collection::index_collection(
@@ -214,10 +228,4 @@ const string index_collection::get(size_t row, size_t column) const {
   }
   /* should never get here */
   return std::string("");
-}
-
-size_t index_collection::column::size() const { return end_ - start_; }
-
-string index_collection::column::operator[](size_t i) const {
-  return idx_->get(i, column_);
 }
