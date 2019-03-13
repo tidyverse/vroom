@@ -79,7 +79,7 @@ void init_vroom_chr(DllInfo* dll);
 void init_vroom_date(DllInfo* dll);
 void init_vroom_dbl(DllInfo* dll);
 void init_vroom_dttm(DllInfo* dll);
-void init_vroom_factor(DllInfo* dll);
+void init_vroom_fct(DllInfo* dll);
 void init_vroom_int(DllInfo* dll);
 void init_vroom_num(DllInfo* dll);
 void init_vroom_time(DllInfo* dll);
@@ -90,7 +90,7 @@ RcppExport void R_init_vroom(DllInfo *dll) {
     init_vroom_date(dll);
     init_vroom_dbl(dll);
     init_vroom_dttm(dll);
-    init_vroom_factor(dll);
+    init_vroom_fct(dll);
     init_vroom_int(dll);
     init_vroom_num(dll);
     init_vroom_time(dll);

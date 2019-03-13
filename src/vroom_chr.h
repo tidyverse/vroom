@@ -141,6 +141,7 @@ public:
     // altvec
     R_set_altvec_Dataptr_method(class_t, Dataptr);
     R_set_altvec_Dataptr_or_null_method(class_t, Dataptr_or_null);
+    R_set_altvec_Extract_subset_method(class_t, Extract_subset<vroom_chr>);
 
     // altstring
     R_set_altstring_Elt_method(class_t, string_Elt);

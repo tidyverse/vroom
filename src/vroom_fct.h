@@ -110,7 +110,7 @@ struct vroom_factor_info {
   std::map<SEXP, size_t> levels;
 };
 
-struct vroom_factor : vroom_vec {
+struct vroom_fct : vroom_vec {
 
 public:
   static R_altrep_class_t class_t;
@@ -247,10 +247,36 @@ public:
     return STDVEC_DATAPTR(Materialize(vec));
   }
 
+  static SEXP Extract_subset(SEXP x, SEXP indx, SEXP call) {
+    RObject x_(x);
+
+    Rcpp::IntegerVector in(indx);
+
+    auto idx = std::make_shared<std::vector<size_t> >();
+    auto size = in.size();
+    idx->resize(size);
+
+    for (R_xlen_t i = 0; i < size; ++i) {
+      (*idx)[i] = in[i];
+    }
+
+    auto inf = Info(x);
+
+    auto info = new vroom_vec_info{inf.info->column.subset(idx),
+                                   inf.info->num_threads,
+                                   inf.info->na,
+                                   inf.info->locale};
+
+    return Make(
+        info,
+        x_.attr("levels"),
+        Rcpp::as<CharacterVector>(x_.attr("class"))[0] == "ordered");
+  }
+
   // -------- initialize the altrep class with the methods above
 
   static void Init(DllInfo* dll) {
-    class_t = R_make_altinteger_class("vroom_factor", "vroom", dll);
+    class_t = R_make_altinteger_class("vroom_fct", "vroom", dll);
 
     // altrep
     R_set_altrep_Length_method(class_t, Length);
@@ -259,18 +285,19 @@ public:
     // altvec
     R_set_altvec_Dataptr_method(class_t, Dataptr);
     R_set_altvec_Dataptr_or_null_method(class_t, Dataptr_or_null);
+    R_set_altvec_Extract_subset_method(class_t, Extract_subset);
 
     // altinteger
     R_set_altinteger_Elt_method(class_t, factor_Elt);
   }
 };
 
-R_altrep_class_t vroom_factor::class_t;
+R_altrep_class_t vroom_fct::class_t;
 
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
-void init_vroom_factor(DllInfo* dll) { vroom_factor::Init(dll); }
+void init_vroom_fct(DllInfo* dll) { vroom_fct::Init(dll); }
 
 #else
-void init_vroom_factor(DllInfo* dll) {}
+void init_vroom_fct(DllInfo* dll) {}
 #endif

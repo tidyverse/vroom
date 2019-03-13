@@ -11,6 +11,7 @@ struct vroom_vec_info {
   size_t num_threads;
   std::shared_ptr<Rcpp::CharacterVector> na;
   std::shared_ptr<LocaleInfo> locale;
+  std::string format;
 };
 
 #ifdef HAS_ALTREP
@@ -59,6 +60,26 @@ public:
       return nullptr;
 
     return STDVEC_DATAPTR(data2);
+  }
+
+  template <typename T>
+  static SEXP Extract_subset(SEXP x, SEXP indx, SEXP call) {
+    Rcpp::IntegerVector in(indx);
+
+    auto idx = std::make_shared<std::vector<size_t> >();
+    auto size = in.size();
+    idx->resize(size);
+
+    for (R_xlen_t i = 0; i < size; ++i) {
+      (*idx)[i] = in[i];
+    }
+
+    auto inf = Info(x);
+
+    auto info = new vroom_vec_info{
+        inf.column.subset(idx), inf.num_threads, inf.na, inf.locale};
+
+    return T::Make(info);
   }
 };
 

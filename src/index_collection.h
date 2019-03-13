@@ -150,11 +150,46 @@ public:
       virtual ~full_iterator() = default;
     };
 
+    class subset_iterator : public base_iterator {
+      size_t i_;
+      iterator it_;
+      std::shared_ptr<std::vector<size_t> > indexes_;
+
+    public:
+      subset_iterator(
+          iterator it, const std::shared_ptr<std::vector<size_t> >& indexes)
+          : i_(0), it_(it), indexes_(indexes) {}
+      void next() { ++i_; }
+      void prev() { --i_; }
+      void advance(ptrdiff_t n) { i_ += n; }
+      bool equal_to(const base_iterator& other) const {
+        auto other_ = dynamic_cast<const subset_iterator&>(other);
+        return i_ == other_.i_;
+      };
+      ptrdiff_t distance_to(const base_iterator& that) const {
+        auto that_ = dynamic_cast<const subset_iterator&>(that);
+        return that_.i_ - i_;
+      };
+      string value() const { return *(it_ + (*indexes_)[i_]); };
+      subset_iterator* clone() const {
+        auto copy = new index_collection::column::subset_iterator(*this);
+        return copy;
+      };
+      virtual ~subset_iterator() = default;
+    };
+
     iterator begin() const { return begin_; }
     iterator end() const { return end_; }
 
     column slice(size_t start, size_t end) const {
       return column(begin_ + start, begin_ + end);
+    }
+
+    column subset(const std::shared_ptr<std::vector<size_t> >& idx) const {
+      auto begin = new subset_iterator(begin_, idx);
+      auto end = new subset_iterator(begin_, idx);
+      end->advance(idx->size());
+      return column(begin, end);
     }
 
     size_t size() const { return end_ - begin_; }
@@ -199,5 +234,5 @@ private:
 
   size_t rows_;
   size_t columns_;
-}; // namespace vroom
+};
 } // namespace vroom
