@@ -71,7 +71,7 @@ public:
   // ALTSTRING methods -----------------
 
   static SEXP Val(SEXP vec, R_xlen_t i) {
-    auto inf = Info(vec);
+    auto& inf = Info(vec);
 
     auto str = Get(vec, i);
 
@@ -82,10 +82,10 @@ public:
   }
 
   static SEXP check_na(SEXP vec, SEXP val) {
-    auto inf = Info(vec);
+    auto& inf = Info(vec);
 
     // Look for NAs
-    for (const auto& v : *Info(vec).na) {
+    for (const auto& v : *inf.na) {
       // We can just compare the addresses directly because they should now
       // both be in the global string cache.
       if (v == val) {

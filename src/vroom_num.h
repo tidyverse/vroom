@@ -201,7 +201,7 @@ public:
     }
 
     auto str = vroom_vec::Get(vec, i);
-    auto inf = vroom_vec::Info(vec);
+    auto& inf = vroom_vec::Info(vec);
 
     return parse_num(str, *inf.locale);
   }

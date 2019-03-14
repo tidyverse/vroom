@@ -58,7 +58,10 @@ public:
       virtual ptrdiff_t distance_to(const base_iterator& it) const = 0;
       virtual string value() const = 0;
       virtual base_iterator* clone() const = 0;
-      virtual ~base_iterator() = default;
+      virtual string at(ptrdiff_t n) const = 0;
+      virtual ~base_iterator() {
+        Rcpp::Rcerr << this << ": base_iterator dtor\n";
+      }
     };
 
     class iterator {
@@ -70,8 +73,12 @@ public:
       using pointer = string*;
       using reference = string&;
 
-      iterator(base_iterator* it) : it_(it) {}
-      iterator(const iterator& other) : it_(other.it_->clone()) {}
+      iterator(base_iterator* it) : it_(it) {
+        Rcpp::Rcerr << this << ": iterator ctor\n";
+      }
+      iterator(const iterator& other) : it_(other.it_->clone()) {
+        Rcpp::Rcerr << this << ": iterator cctor\n";
+      }
 
       iterator operator++(int) { /* postfix */
         iterator copy(*this);
@@ -125,7 +132,12 @@ public:
         return -it_->distance_to(*other.it_);
       }
 
-      ~iterator() { delete it_; }
+      string operator[](ptrdiff_t n) const { return it_->at(n); }
+
+      ~iterator() {
+        Rcpp::Rcerr << this << ": iterator dtor\n";
+        delete it_;
+      }
     };
 
     class full_iterator : public base_iterator {
@@ -147,7 +159,10 @@ public:
       ptrdiff_t distance_to(const base_iterator& it) const;
       string value() const;
       full_iterator* clone() const;
-      virtual ~full_iterator() = default;
+      string at(ptrdiff_t n) const;
+      virtual ~full_iterator() {
+        Rcpp::Rcerr << this << ": full_iterator dtor\n";
+      }
     };
 
     class subset_iterator : public base_iterator {
@@ -158,7 +173,9 @@ public:
     public:
       subset_iterator(
           iterator it, const std::shared_ptr<std::vector<size_t> >& indexes)
-          : i_(0), it_(it), indexes_(indexes) {}
+          : i_(0), it_(it), indexes_(indexes) {
+        Rcpp::Rcerr << this << ":subset_iterator ctor\n";
+      }
       void next() { ++i_; }
       void prev() { --i_; }
       void advance(ptrdiff_t n) { i_ += n; }
@@ -172,32 +189,38 @@ public:
       };
       string value() const { return *(it_ + (*indexes_)[i_]); };
       subset_iterator* clone() const {
+        Rcpp::Rcerr << this << ": subset_iterator clone\n";
         auto copy = new index_collection::column::subset_iterator(*this);
         return copy;
       };
-      virtual ~subset_iterator() = default;
+
+      string at(ptrdiff_t n) const { return it_[(*indexes_)[n]]; }
+
+      virtual ~subset_iterator() {
+        Rcpp::Rcerr << this << ": subset_iterator dtor\n";
+      }
     };
 
     iterator begin() const { return begin_; }
     iterator end() const { return end_; }
 
     column slice(size_t start, size_t end) const {
-      return column(begin_ + start, begin_ + end);
+      return {begin_ + start, begin_ + end};
     }
 
     column subset(const std::shared_ptr<std::vector<size_t> >& idx) const {
-      auto begin = new subset_iterator(begin_, idx);
-      auto end = new subset_iterator(begin_, idx);
-      end->advance(idx->size());
-      return column(begin, end);
+      auto begin = iterator(new subset_iterator(begin_, idx));
+      auto end = iterator(new subset_iterator(begin_, idx));
+      end += idx->size();
+      return {std::move(begin), std::move(end)};
     }
 
     size_t size() const { return end_ - begin_; }
-    string operator[](size_t i) const { return *(begin_ + i); }
+    string operator[](size_t i) const { return begin_[i]; }
 
     column() = delete;
-    column(const iterator& begin, const iterator& end)
-        : begin_(begin), end_(end){};
+    column(iterator&& begin, iterator&& end)
+        : begin_(std::move(begin)), end_(std::move(end)){};
 
   private:
     iterator begin_;
@@ -207,10 +230,8 @@ public:
   column get_column(size_t num) const {
     auto begin =
         column::iterator(new column::full_iterator(shared_from_this(), num));
-    auto end =
-        column::iterator(new column::full_iterator(shared_from_this(), num)) +
-        rows_;
-    return column(begin, end);
+    auto end = begin + rows_;
+    return {std::move(begin), std::move(end)};
   }
 
   index::row row(size_t row) const {
@@ -234,5 +255,5 @@ private:
 
   size_t rows_;
   size_t columns_;
-};
+}; // namespace vroom
 } // namespace vroom

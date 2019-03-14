@@ -43,12 +43,12 @@ public:
       return Rf_xlength(data2);
     }
 
-    auto inf = Info(vec);
+    auto& inf = Info(vec);
     return inf.column.size();
   }
 
   static inline string Get(SEXP vec, R_xlen_t i) {
-    auto inf = Info(vec);
+    auto& inf = Info(vec);
     return inf.column[i];
   }
 
@@ -72,7 +72,7 @@ public:
       return i - 1;
     });
 
-    auto inf = Info(x);
+    auto& inf = Info(x);
 
     auto info = new vroom_vec_info{
         inf.column.subset(idx), inf.num_threads, inf.na, inf.locale};
