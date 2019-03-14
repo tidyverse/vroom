@@ -195,9 +195,7 @@ const string index::get_escaped_string(
 std::pair<const char*, const char*>
 index::get_cell(size_t i, bool is_first) const {
 
-#if DEBUG
   auto oi = i;
-#endif
 
   for (const auto& idx : idx_) {
     auto sz = idx.size();
@@ -218,7 +216,10 @@ index::get_cell(size_t i, bool is_first) const {
 #endif
   }
 
-  throw std::out_of_range("blah");
+  std::stringstream ss;
+  ss.imbue(std::locale(""));
+  ss << "Failure to retrieve index " << std::fixed << oi << " / " << rows_;
+  throw std::out_of_range(ss.str());
   /* should never get here */
   return {0, 0};
 }

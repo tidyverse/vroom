@@ -67,12 +67,10 @@ public:
     Rcpp::IntegerVector in(indx);
 
     auto idx = std::make_shared<std::vector<size_t> >();
-    auto size = in.size();
-    idx->resize(size);
 
-    for (R_xlen_t i = 0; i < size; ++i) {
-      (*idx)[i] = in[i];
-    }
+    std::transform(in.begin(), in.end(), std::back_inserter(*idx), [](int i) {
+      return i - 1;
+    });
 
     auto inf = Info(x);
 

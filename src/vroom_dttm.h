@@ -159,6 +159,27 @@ public:
     return out;
   }
 
+  template <typename T>
+  static SEXP Extract_subset(SEXP x, SEXP indx, SEXP call) {
+    Rcpp::IntegerVector in(indx);
+
+    auto idx = std::make_shared<std::vector<size_t> >();
+
+    std::transform(in.begin(), in.end(), std::back_inserter(*idx), [](int i) {
+      return i - 1;
+    });
+
+    auto inf = Info(x);
+
+    auto info = new vroom_vec_info{inf->info->column.subset(idx),
+                                   inf->info->num_threads,
+                                   inf->info->na,
+                                   inf->info->locale,
+                                   inf->info->format};
+
+    return T::Make(info);
+  }
+
   static void* Dataptr(SEXP vec, Rboolean writeable) {
     return STDVEC_DATAPTR(Materialize(vec));
   }
