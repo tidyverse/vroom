@@ -218,6 +218,14 @@ test_that("vroom_example() returns the example files", {
   expect_equal(vroom_example(), list.files(system.file("extdata", package = "vroom")))
 })
 
+test_that("subsets work", {
+  res <- vroom("1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14", col_names = FALSE)
+  expect_equal(head(res[[1]]), c(1:6))
+  expect_equal(tail(res[[1]]), c(9:14))
+
+  expect_equal(tail(res[[1]][3:8]), c(3:8))
+})
+
 # Figure out a better way to test progress bars...
 #test_that("progress bars work", {
   #withr::with_options(c("vroom.show_after" = 0), {
