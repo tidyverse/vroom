@@ -18,7 +18,7 @@ index_collection::column::full_iterator::full_iterator(
       it_(idx_->indexes_[i_]->get_column(column_).begin()),
       it_end_(idx_->indexes_[i_]->get_column(column_).end()),
       it_start_(idx_->indexes_[i_]->get_column(column_).begin()) {
-  Rcpp::Rcerr << this << ": full_iterator ctor\n";
+  SPDLOG_TRACE("{0:x}: full_iterator ctor", (size_t)this);
 }
 
 void index_collection::column::full_iterator::next() {
@@ -117,7 +117,7 @@ string index_collection::column::full_iterator::value() const { return *it_; }
 index_collection::column::full_iterator*
 index_collection::column::full_iterator::clone() const {
 
-  Rcpp::Rcerr << this << ": full_iterator clone\n";
+  SPDLOG_TRACE("{0:x}: full_iterator clone", (size_t)this);
   auto copy = new index_collection::column::full_iterator(*this);
   return copy;
 }

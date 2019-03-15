@@ -353,7 +353,6 @@ public:
     if (progress_ && pb) {
       pb->tick(end - last_tick);
     }
-    // Rcpp::Rcerr << num_ticks << '\n';
   }
 };
 

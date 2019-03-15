@@ -6,6 +6,8 @@
 
 #include <memory>
 
+#include "spdlog/spdlog.h"
+
 namespace vroom {
 
 class index_collection : public std::enable_shared_from_this<index_collection> {
@@ -60,7 +62,7 @@ public:
       virtual base_iterator* clone() const = 0;
       virtual string at(ptrdiff_t n) const = 0;
       virtual ~base_iterator() {
-        Rcpp::Rcerr << this << ": base_iterator dtor\n";
+        SPDLOG_TRACE("{0:x}: base_iterator dtor", (size_t)this);
       }
     };
 
@@ -74,10 +76,10 @@ public:
       using reference = string&;
 
       iterator(base_iterator* it) : it_(it) {
-        Rcpp::Rcerr << this << ": iterator ctor\n";
+        SPDLOG_TRACE("{0:x}: iterator ctor", (size_t)this);
       }
       iterator(const iterator& other) : it_(other.it_->clone()) {
-        Rcpp::Rcerr << this << ": iterator cctor\n";
+        SPDLOG_TRACE("{0:x}: iterator cctor", (size_t)this);
       }
 
       iterator operator++(int) { /* postfix */
@@ -135,7 +137,7 @@ public:
       string operator[](ptrdiff_t n) const { return it_->at(n); }
 
       ~iterator() {
-        Rcpp::Rcerr << this << ": iterator dtor\n";
+        SPDLOG_TRACE("{0:x}: iterator dtor", (size_t)this);
         delete it_;
       }
     };
@@ -161,7 +163,7 @@ public:
       full_iterator* clone() const;
       string at(ptrdiff_t n) const;
       virtual ~full_iterator() {
-        Rcpp::Rcerr << this << ": full_iterator dtor\n";
+        SPDLOG_TRACE("{0:x}: full_iterator dtor", (size_t)this);
       }
     };
 
@@ -174,7 +176,7 @@ public:
       subset_iterator(
           iterator it, const std::shared_ptr<std::vector<size_t> >& indexes)
           : i_(0), it_(it), indexes_(indexes) {
-        Rcpp::Rcerr << this << ":subset_iterator ctor\n";
+        SPDLOG_TRACE("{0:x}: subset_iterator ctor", (size_t)this);
       }
       void next() { ++i_; }
       void prev() { --i_; }
@@ -189,7 +191,7 @@ public:
       };
       string value() const { return *(it_ + (*indexes_)[i_]); };
       subset_iterator* clone() const {
-        Rcpp::Rcerr << this << ": subset_iterator clone\n";
+        SPDLOG_TRACE("{0:x}: subset_iterator clone", (size_t)this);
         auto copy = new index_collection::column::subset_iterator(*this);
         return copy;
       };
@@ -197,7 +199,7 @@ public:
       string at(ptrdiff_t n) const { return it_[(*indexes_)[n]]; }
 
       virtual ~subset_iterator() {
-        Rcpp::Rcerr << this << ": subset_iterator dtor\n";
+        SPDLOG_TRACE("{0:x}: subset_iterator dtor", (size_t)this);
       }
     };
 

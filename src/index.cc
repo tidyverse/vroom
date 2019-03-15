@@ -4,6 +4,9 @@
 
 #include <fstream>
 
+#include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
+#include "spdlog/spdlog.h"
+
 using namespace vroom;
 
 index::index(
@@ -133,19 +136,18 @@ index::index(
     --rows_;
   }
 
-#if DEBUG
-  std::ofstream log(
-      "index.idx",
-      std::fstream::out | std::fstream::binary | std::fstream::trunc);
+#if SPDLOG_ACTIVE_LEVEL <= SPD_LOG_LEVEL_DEBUG
+  auto log = spdlog::basic_logger_mt("basic_logger", "logs/index.idx", true);
   for (auto& i : idx_) {
     for (auto& v : i) {
-      log << v << '\n';
+      SPDLOG_LOGGER_DEBUG(log, "{}", v);
     }
-    log << "---\n";
+    SPDLOG_LOGGER_DEBUG(log, "end of idx {0:x}", (size_t)&i);
   }
-  log.close();
-  Rcpp::Rcerr << columns_ << ':' << rows_ << '\n';
+  spdlog::drop("basic_logger");
 #endif
+
+  SPDLOG_INFO("columns: {0} rows: {1}", columns_, rows_);
 }
 
 void index::trim_quotes(const char*& begin, const char*& end) const {
@@ -211,9 +213,7 @@ index::get_cell(size_t i, bool is_first) const {
     }
 
     i -= (sz - 1);
-#if DEBUG
-    Rcpp::Rcerr << "oi: " << oi << " i: " << i << " sz: " << sz << '\n';
-#endif
+    SPDLOG_INFO("oi: {0} i: {1} sz: {2}", oi, i, sz);
   }
 
   std::stringstream ss;
