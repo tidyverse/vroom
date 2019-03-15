@@ -128,6 +128,13 @@ SEXP vroom_(
   std::vector<std::string> res_nms;
 
   size_t i = 0;
+
+  if (add_filename) {
+    res[i++] =
+        generate_filename_column(inputs, idx->row_sizes(), idx->num_rows());
+    res_nms.push_back(Rcpp::as<std::string>(id));
+  }
+
   for (size_t col = 0; col < total_columns; ++col) {
     Rcpp::List collector =
         Rcpp::as<List>(Rcpp::as<List>(col_types)["cols"])[col];
@@ -246,12 +253,6 @@ SEXP vroom_(
     }
 
     ++i;
-  }
-
-  if (add_filename) {
-    res[i++] =
-        generate_filename_column(inputs, idx->row_sizes(), idx->num_rows());
-    res_nms.push_back(Rcpp::as<std::string>(id));
   }
 
   if (i < total_columns) {
