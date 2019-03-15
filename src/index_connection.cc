@@ -115,7 +115,7 @@ index_connection::index_connection(
       buf[i], idx_[0], delim_.c_str(), quote, start, first_nl + 1, 0, pb);
   columns_ = idx_[0].size() - 1;
 
-  SPDLOG_INFO(
+  SPDLOG_DEBUG(
       "first_line_columns: {0:i} first_nl_loc: {1:i} size: {2:i}",
       columns_,
       first_nl,
@@ -210,5 +210,5 @@ index_connection::index_connection(
   spdlog::drop("basic_logger");
 #endif
 
-  SPDLOG_INFO("columns: {0} rows: {1}", columns_, rows_);
+  SPDLOG_DEBUG("columns: {0} rows: {1}", columns_, rows_);
 }

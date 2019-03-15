@@ -147,7 +147,7 @@ index::index(
   spdlog::drop("basic_logger");
 #endif
 
-  SPDLOG_INFO("columns: {0} rows: {1}", columns_, rows_);
+  SPDLOG_DEBUG("columns: {0} rows: {1}", columns_, rows_);
 }
 
 void index::trim_quotes(const char*& begin, const char*& end) const {
