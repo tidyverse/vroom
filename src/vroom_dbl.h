@@ -228,6 +228,8 @@ public:
 
     UNPROTECT(1);
 
+    MARK_NOT_MUTABLE(res); /* force duplicate on modify */
+
     return res;
   }
 
