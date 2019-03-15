@@ -64,6 +64,13 @@ public:
 
   template <typename T>
   static SEXP Extract_subset(SEXP x, SEXP indx, SEXP call) {
+    SEXP data2 = R_altrep_data2(x);
+    // If the vector is already materialized, just fall back to the default
+    // implementation
+    if (data2 != R_NilValue) {
+      return nullptr;
+    }
+
     Rcpp::IntegerVector in(indx);
 
     auto idx = std::make_shared<std::vector<size_t> >();

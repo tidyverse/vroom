@@ -248,6 +248,13 @@ public:
   }
 
   static SEXP Extract_subset(SEXP x, SEXP indx, SEXP call) {
+    SEXP data2 = R_altrep_data2(x);
+    // If the vector is already materialized, just fall back to the default
+    // implementation
+    if (data2 != R_NilValue) {
+      return nullptr;
+    }
+
     RObject x_(x);
 
     Rcpp::IntegerVector in(indx);
