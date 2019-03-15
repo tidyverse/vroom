@@ -78,6 +78,18 @@ public:
       iterator(base_iterator* it) : it_(it) {
         SPDLOG_TRACE("{0:x}: iterator ctor", (size_t)this);
       }
+
+      iterator& operator=(const iterator& other) = delete;
+      //{
+      // SPDLOG_TRACE("{0:x}: iterator assignment", (size_t)this);
+
+      // base_iterator* original = it_;
+      // it_ = other.it_->clone();
+      // delete original;
+
+      // return *this;
+      //}
+
       iterator(const iterator& other) : it_(other.it_->clone()) {
         SPDLOG_TRACE("{0:x}: iterator cctor", (size_t)this);
       }
@@ -119,6 +131,9 @@ public:
         return *this;
       }
       iterator operator+(ptrdiff_t n) const {
+
+        SPDLOG_TRACE("{0:x}: iterator operator+({1})", (size_t)this, n);
+
         iterator copy(*this);
         copy.it_->advance(n);
         return copy;
@@ -174,7 +189,8 @@ public:
 
     public:
       subset_iterator(
-          iterator it, const std::shared_ptr<std::vector<size_t> >& indexes)
+          const iterator& it,
+          const std::shared_ptr<std::vector<size_t> >& indexes)
           : i_(0), it_(it), indexes_(indexes) {
         SPDLOG_TRACE("{0:x}: subset_iterator ctor", (size_t)this);
       }
@@ -211,18 +227,25 @@ public:
     }
 
     column subset(const std::shared_ptr<std::vector<size_t> >& idx) const {
-      auto begin = iterator(new subset_iterator(begin_, idx));
-      auto end = iterator(new subset_iterator(begin_, idx));
-      end += idx->size();
-      return {std::move(begin), std::move(end)};
+      auto begin = new subset_iterator(begin_, idx);
+      auto end = new subset_iterator(begin_, idx);
+      end->advance(idx->size());
+      return {begin, end};
     }
 
     size_t size() const { return end_ - begin_; }
     string operator[](size_t i) const { return begin_[i]; }
 
     column() = delete;
-    column(iterator&& begin, iterator&& end)
-        : begin_(std::move(begin)), end_(std::move(end)){};
+    column(base_iterator* begin, base_iterator* end)
+        : begin_(begin), end_(end) {
+      SPDLOG_TRACE("{0:x}: column ctor 1", (size_t)this);
+    };
+
+    column(const iterator& begin, const iterator& end)
+        : begin_(begin), end_(end) {
+      SPDLOG_TRACE("{0:x}: column ctor 2", (size_t)this);
+    };
 
   private:
     iterator begin_;
@@ -230,10 +253,10 @@ public:
   };
 
   column get_column(size_t num) const {
-    auto begin =
-        column::iterator(new column::full_iterator(shared_from_this(), num));
-    auto end = begin + rows_;
-    return {std::move(begin), std::move(end)};
+    SPDLOG_TRACE("{0:x}: get_column()", (size_t)this);
+    auto end = new column::full_iterator(shared_from_this(), num);
+    end->advance(rows_);
+    return {new column::full_iterator(shared_from_this(), num), end};
   }
 
   index::row row(size_t row) const {

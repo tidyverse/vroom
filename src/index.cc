@@ -213,7 +213,7 @@ index::get_cell(size_t i, bool is_first) const {
     }
 
     i -= (sz - 1);
-    SPDLOG_INFO("oi: {0} i: {1} sz: {2}", oi, i, sz);
+    // SPDLOG_INFO("oi: {0} i: {1} sz: {2}", oi, i, sz);
   }
 
   std::stringstream ss;
