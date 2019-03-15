@@ -150,12 +150,12 @@
 <p>Often the filename or directory the files are in contains information about the contents, in this case the <code>id</code> parameter can be used to add an extra column (in this case named <code>path</code>) to the result that contains the file path.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(files, <span class="dt">id =</span> <span class="st">"path"</span>)</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; # A tibble: 32 x 13</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt;   model     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; 1 Datsun…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; 2 Merc 2…  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt; 3 Merc 2…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span></a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; # … with 29 more rows, and 1 more variable: path &lt;chr&gt;</span></a></code></pre></div>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt;   path    model   mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; 1 /home/… Dats…  22.8     4  108     93  3.85  2.32  18.6     1     1     4</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; 2 /home/… Merc…  24.4     4  147.    62  3.69  3.19  20       1     0     4</span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt; 3 /home/… Merc…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; # … with 29 more rows, and 1 more variable: carb &lt;dbl&gt;</span></a></code></pre></div>
 </div>
 <div id="reading-compressed-files" class="section level2">
 <h2 class="hasAnchor">
