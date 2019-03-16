@@ -226,6 +226,64 @@ test_that("subsets work", {
   expect_equal(tail(res[[1]][3:8]), c(3:8))
 })
 
+test_that("col_keep works", {
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_keep = 1)), "model")
+
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_keep = 1:3)), c("model", "mpg", "cyl"))
+
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_keep = c(1, 5, 7))), c("model", "hp", "wt"))
+
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_keep = c("model", "hp", "wt"))), c("model", "hp", "wt"))
+
+  expect_equal(
+    colnames(vroom(vroom_example("mtcars.csv"), col_keep = c(TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE))),
+    c("model", "hp", "wt")
+  )
+
+  expect_equal(
+    colnames(vroom(vroom_example("mtcars.csv"), col_keep = c(TRUE, FALSE))),
+    c("model", "cyl", "hp", "wt", "vs", "gear")
+  )
+})
+
+test_that("col_skip works", {
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_skip = 1)),
+    c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")
+  )
+
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_skip = 1:3)),
+    c("disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")
+  )
+
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_skip = c(1, 5, 7))),
+    c("mpg", "cyl", "disp", "drat", "qsec", "vs", "am", "gear", "carb")
+  )
+
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_skip = c("model", "hp", "wt"))),
+    c("mpg", "cyl", "disp", "drat", "qsec", "vs", "am", "gear", "carb")
+  )
+
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_skip = c("model", "hp", "wt"))),
+    c("mpg", "cyl", "disp", "drat", "qsec", "vs", "am", "gear", "carb")
+  )
+
+  expect_equal(
+    colnames(vroom(vroom_example("mtcars.csv"), col_skip = c(TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE))),
+    c("mpg", "cyl", "disp", "drat", "qsec", "vs", "am", "gear", "carb")
+  )
+
+  expect_equal(
+    colnames(vroom(vroom_example("mtcars.csv"), col_skip = c(FALSE, TRUE))),
+    c("model", "cyl", "hp", "wt", "vs", "gear")
+  )
+})
+
+test_that("error if both col_skip and col_keep", {
+  expect_error(
+    vroom(vroom_example("mtcars.csv"), col_keep = 1, col_skip = 2),
+    "Only one of `col_keep` and `col_skip` can be set")
+})
+
 # Figure out a better way to test progress bars...
 #test_that("progress bars work", {
   #withr::with_options(c("vroom.show_after" = 0), {

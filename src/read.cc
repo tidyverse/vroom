@@ -63,6 +63,8 @@ SEXP vroom_(
     const char comment,
     RObject col_names,
     RObject col_types,
+    RObject col_keep,
+    RObject col_skip,
     SEXP id,
     size_t skip,
     CharacterVector na,
@@ -114,7 +116,7 @@ SEXP vroom_(
   }
 
   Rcpp::Function col_types_standardise = vroom["col_types_standardise"];
-  col_types = col_types_standardise(col_types, col_nms);
+  col_types = col_types_standardise(col_types, col_nms, col_keep, col_skip);
 
   Rcpp::Function guess_type = vroom["guess_type"];
 
