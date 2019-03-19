@@ -11,7 +11,8 @@
     which is based on Berkeley UNIX.
     This function and this function only is BSD license.
 
-    https://retrobsd.googlecode.com/svn/stable/src/libc/stdlib/strtod.c
+    https://retrobsd.googlecode.com/svn/stable/vroom_time.h|31 col 32| for
+   (const autosrc str : info->column.slice(start, end)) {/libc/stdlib/strtod.c
    */
 template <class Iterator> double bsd_strtod(Iterator begin, Iterator end) {
   if (begin == end) {
@@ -192,7 +193,7 @@ done:
 
 Rcpp::NumericVector read_dbl(vroom_vec_info* info) {
 
-  R_xlen_t n = info->idx->num_rows();
+  R_xlen_t n = info->column.size();
 
   Rcpp::NumericVector out(n);
 
@@ -200,8 +201,7 @@ Rcpp::NumericVector read_dbl(vroom_vec_info* info) {
       n,
       [&](size_t start, size_t end, size_t id) {
         size_t i = start;
-        for (const auto& str :
-             info->idx->get_column(info->column, start, end)) {
+        for (const auto& str : info->column.slice(start, end)) {
           out[i++] = bsd_strtod(str.begin(), str.end());
         }
       },
@@ -227,6 +227,8 @@ public:
     SEXP res = R_new_altrep(class_t, out, R_NilValue);
 
     UNPROTECT(1);
+
+    MARK_NOT_MUTABLE(res); /* force duplicate on modify */
 
     return res;
   }
@@ -292,6 +294,7 @@ public:
     // altvec
     R_set_altvec_Dataptr_method(class_t, Dataptr);
     R_set_altvec_Dataptr_or_null_method(class_t, Dataptr_or_null);
+    R_set_altvec_Extract_subset_method(class_t, Extract_subset<vroom_dbl>);
 
     // altinteger
     R_set_altreal_Elt_method(class_t, real_Elt);

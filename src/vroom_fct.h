@@ -16,7 +16,7 @@ bool matches(const string& needle, const std::vector<std::string>& haystack) {
 
 Rcpp::IntegerVector read_fctr_explicit(
     vroom_vec_info* info, Rcpp::CharacterVector levels, bool ordered) {
-  R_xlen_t n = info->idx->num_rows();
+  R_xlen_t n = info->column.size();
 
   Rcpp::IntegerVector out(n);
   std::unordered_map<SEXP, size_t> level_map;
@@ -29,8 +29,7 @@ Rcpp::IntegerVector read_fctr_explicit(
       n,
       [&](size_t start, size_t end, size_t id) {
         size_t i = start;
-        for (const auto& str :
-             info->idx->get_column(info->column, start, end)) {
+        for (const auto& str : info->column.slice(start, end)) {
           auto search = level_map.find(
               info->locale->encoder_.makeSEXP(str.begin(), str.end(), false));
           if (search != level_map.end()) {
@@ -53,7 +52,7 @@ Rcpp::IntegerVector read_fctr_explicit(
 }
 
 Rcpp::IntegerVector read_fctr_implicit(vroom_vec_info* info, bool include_na) {
-  R_xlen_t n = info->idx->num_rows();
+  R_xlen_t n = info->column.size();
 
   Rcpp::IntegerVector out(n);
   std::vector<string> levels;
@@ -66,7 +65,7 @@ Rcpp::IntegerVector read_fctr_implicit(vroom_vec_info* info, bool include_na) {
   auto start = 0;
   auto end = n;
   auto i = start;
-  for (const auto& str : info->idx->get_column(info->column, start, end)) {
+  for (const auto& str : info->column.slice(start, end)) {
     if (include_na && matches(str, nas)) {
       out[i++] = NA_INTEGER;
     } else {
@@ -101,7 +100,8 @@ Rcpp::IntegerVector read_fctr_implicit(vroom_vec_info* info, bool include_na) {
 using namespace Rcpp;
 
 // inspired by Luke Tierney and the R Core Team
-// https://github.com/ALTREP-examples/Rpkg-mutable/blob/master/src/mutable.c
+// https://github.com/ALTREP-examples/Rpkg-mutable/blob/master/vroom_time.h|31
+// col 32| for (const autosrc str : info->column.slice(start, end)) {/mutable.c
 // and Romain François
 // https://purrple.cat/blog/2018/10/21/lazy-abs-altrep-cplusplus/ and Dirk
 
@@ -110,7 +110,7 @@ struct vroom_factor_info {
   std::map<SEXP, size_t> levels;
 };
 
-struct vroom_factor : vroom_vec {
+struct vroom_fct : vroom_vec {
 
 public:
   static R_altrep_class_t class_t;
@@ -139,6 +139,8 @@ public:
     }
 
     UNPROTECT(1);
+
+    MARK_NOT_MUTABLE(res); /* force duplicate on modify */
 
     return res;
   }
@@ -182,12 +184,12 @@ public:
     }
 
     auto inf = Info(vec);
-    return inf.info->idx->num_rows();
+    return inf.info->column.size();
   }
 
   static inline string Get(SEXP vec, R_xlen_t i) {
     auto inf = Info(vec);
-    return inf.info->idx->get(i, inf.info->column);
+    return inf.info->column[i];
   }
 
   // ALTSTRING methods -----------------
@@ -247,10 +249,41 @@ public:
     return STDVEC_DATAPTR(Materialize(vec));
   }
 
+  static SEXP Extract_subset(SEXP x, SEXP indx, SEXP call) {
+    SEXP data2 = R_altrep_data2(x);
+    // If the vector is already materialized, just fall back to the default
+    // implementation
+    if (data2 != R_NilValue) {
+      return nullptr;
+    }
+
+    RObject x_(x);
+
+    Rcpp::IntegerVector in(indx);
+
+    auto idx = std::make_shared<std::vector<size_t> >();
+
+    std::transform(in.begin(), in.end(), std::back_inserter(*idx), [](int i) {
+      return i - 1;
+    });
+
+    auto inf = Info(x);
+
+    auto info = new vroom_vec_info{inf.info->column.subset(idx),
+                                   inf.info->num_threads,
+                                   inf.info->na,
+                                   inf.info->locale};
+
+    return Make(
+        info,
+        x_.attr("levels"),
+        Rcpp::as<CharacterVector>(x_.attr("class"))[0] == "ordered");
+  }
+
   // -------- initialize the altrep class with the methods above
 
   static void Init(DllInfo* dll) {
-    class_t = R_make_altinteger_class("vroom_factor", "vroom", dll);
+    class_t = R_make_altinteger_class("vroom_fct", "vroom", dll);
 
     // altrep
     R_set_altrep_Length_method(class_t, Length);
@@ -259,18 +292,19 @@ public:
     // altvec
     R_set_altvec_Dataptr_method(class_t, Dataptr);
     R_set_altvec_Dataptr_or_null_method(class_t, Dataptr_or_null);
+    R_set_altvec_Extract_subset_method(class_t, Extract_subset);
 
     // altinteger
     R_set_altinteger_Elt_method(class_t, factor_Elt);
   }
 };
 
-R_altrep_class_t vroom_factor::class_t;
+R_altrep_class_t vroom_fct::class_t;
 
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
-void init_vroom_factor(DllInfo* dll) { vroom_factor::Init(dll); }
+void init_vroom_fct(DllInfo* dll) { vroom_fct::Init(dll); }
 
 #else
-void init_vroom_factor(DllInfo* dll) {}
+void init_vroom_fct(DllInfo* dll) {}
 #endif

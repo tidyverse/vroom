@@ -137,7 +137,7 @@ double parse_num(const string& str, const LocaleInfo& loc) {
 
 Rcpp::NumericVector read_num(vroom_vec_info* info) {
 
-  R_xlen_t n = info->idx->num_rows();
+  R_xlen_t n = info->column.size();
 
   Rcpp::NumericVector out(n);
 
@@ -145,8 +145,7 @@ Rcpp::NumericVector read_num(vroom_vec_info* info) {
       n,
       [&](size_t start, size_t end, size_t id) {
         size_t i = start;
-        for (const auto& str :
-             info->idx->get_column(info->column, start, end)) {
+        for (const auto& str : info->column.slice(start, end)) {
           out[i++] = parse_num(str, *info->locale);
         }
       },
@@ -172,6 +171,8 @@ public:
     SEXP res = R_new_altrep(class_t, out, R_NilValue);
 
     UNPROTECT(1);
+
+    MARK_NOT_MUTABLE(res); /* force duplicate on modify */
 
     return res;
   }
@@ -202,7 +203,7 @@ public:
     }
 
     auto str = vroom_vec::Get(vec, i);
-    auto inf = vroom_vec::Info(vec);
+    auto& inf = vroom_vec::Info(vec);
 
     return parse_num(str, *inf.locale);
   }
@@ -238,6 +239,7 @@ public:
     // altvec
     R_set_altvec_Dataptr_method(class_t, Dataptr);
     R_set_altvec_Dataptr_or_null_method(class_t, Dataptr_or_null);
+    R_set_altvec_Extract_subset_method(class_t, Extract_subset<vroom_num>);
 
     // altinteger
     R_set_altreal_Elt_method(class_t, real_Elt);

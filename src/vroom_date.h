@@ -18,8 +18,8 @@ double parse_date(
   return NA_REAL;
 }
 
-Rcpp::NumericVector read_date(vroom_vec_info* info, const std::string& format) {
-  R_xlen_t n = info->idx->num_rows();
+Rcpp::NumericVector read_date(vroom_vec_info* info) {
+  R_xlen_t n = info->column.size();
 
   Rcpp::NumericVector out(n);
 
@@ -28,9 +28,8 @@ Rcpp::NumericVector read_date(vroom_vec_info* info, const std::string& format) {
       [&](size_t start, size_t end, size_t id) {
         auto i = start;
         DateTimeParser parser(&*info->locale);
-        for (const auto& str :
-             info->idx->get_column(info->column, start, end)) {
-          out[i++] = parse_date(str, parser, format);
+        for (const auto& str : info->column.slice(start, end)) {
+          out[i++] = parse_date(str, parser, info->format);
         }
       },
       info->num_threads,
@@ -49,13 +48,12 @@ class vroom_date : public vroom_dttm {
 public:
   static R_altrep_class_t class_t;
 
-  static SEXP Make(vroom_vec_info* info, const std::string& format) {
+  static SEXP Make(vroom_vec_info* info) {
 
     vroom_dttm_info* dttm_info = new vroom_dttm_info;
     dttm_info->info = info;
     dttm_info->parser =
         std::unique_ptr<DateTimeParser>(new DateTimeParser(&*info->locale));
-    dttm_info->format = format;
 
     SEXP out = PROTECT(R_MakeExternalPtr(dttm_info, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(out, vroom_dttm::Finalize, FALSE);
@@ -65,6 +63,8 @@ public:
     res.attr("class") = Rcpp::CharacterVector::create("Date");
 
     UNPROTECT(1);
+
+    MARK_NOT_MUTABLE(res); /* force duplicate on modify */
 
     return res;
   }
@@ -93,7 +93,7 @@ public:
     auto str = Get(vec, i);
     auto inf = Info(vec);
 
-    return parse_date(str, *inf->parser, inf->format);
+    return parse_date(str, *inf->parser, inf->info->format);
   }
 
   // --- Altvec
@@ -105,7 +105,7 @@ public:
 
     auto inf = Info(vec);
 
-    auto out = read_date(inf->info, inf->format);
+    auto out = read_date(inf->info);
 
     R_set_altrep_data2(vec, out);
 
@@ -130,6 +130,7 @@ public:
     // altvec
     R_set_altvec_Dataptr_method(class_t, Dataptr);
     R_set_altvec_Dataptr_or_null_method(class_t, Dataptr_or_null);
+    R_set_altvec_Extract_subset_method(class_t, Extract_subset<vroom_date>);
 
     // altreal
     R_set_altreal_Elt_method(class_t, date_Elt);

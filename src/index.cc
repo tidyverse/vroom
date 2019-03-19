@@ -4,6 +4,9 @@
 
 #include <fstream>
 
+#include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
+#include "spdlog/spdlog.h"
+
 using namespace vroom;
 
 index::index(
@@ -133,19 +136,18 @@ index::index(
     --rows_;
   }
 
-#if DEBUG
-  std::ofstream log(
-      "index.idx",
-      std::fstream::out | std::fstream::binary | std::fstream::trunc);
+#if SPDLOG_ACTIVE_LEVEL <= SPD_LOG_LEVEL_DEBUG
+  auto log = spdlog::basic_logger_mt("basic_logger", "logs/index.idx", true);
   for (auto& i : idx_) {
     for (auto& v : i) {
-      log << v << '\n';
+      SPDLOG_LOGGER_DEBUG(log, "{}", v);
     }
-    log << "---\n";
+    SPDLOG_LOGGER_DEBUG(log, "end of idx {0:x}", (size_t)&i);
   }
-  log.close();
-  Rcpp::Rcerr << columns_ << ':' << rows_ << '\n';
+  spdlog::drop("basic_logger");
 #endif
+
+  SPDLOG_DEBUG("columns: {0} rows: {1}", columns_, rows_);
 }
 
 void index::trim_quotes(const char*& begin, const char*& end) const {
@@ -195,9 +197,7 @@ const string index::get_escaped_string(
 std::pair<const char*, const char*>
 index::get_cell(size_t i, bool is_first) const {
 
-#if DEBUG
   auto oi = i;
-#endif
 
   for (const auto& idx : idx_) {
     auto sz = idx.size();
@@ -213,12 +213,13 @@ index::get_cell(size_t i, bool is_first) const {
     }
 
     i -= (sz - 1);
-#if DEBUG
-    Rcpp::Rcerr << "oi: " << oi << " i: " << i << " sz: " << sz << '\n';
-#endif
+    // SPDLOG_INFO("oi: {0} i: {1} sz: {2}", oi, i, sz);
   }
 
-  throw std::out_of_range("blah");
+  std::stringstream ss;
+  ss.imbue(std::locale(""));
+  ss << "Failure to retrieve index " << std::fixed << oi << " / " << rows_;
+  throw std::out_of_range(ss.str());
   /* should never get here */
   return {0, 0};
 }
@@ -272,6 +273,16 @@ index::column::iterator& index::column::iterator::operator++() /* prefix */ {
   return *this;
 }
 
+index::column::iterator index::column::iterator::operator--(int) /* postfix */ {
+  index::column::iterator copy(*this);
+  --*this;
+  return copy;
+}
+index::column::iterator& index::column::iterator::operator--() /* prefix */ {
+  i_ -= idx_->columns_;
+  return *this;
+}
+
 bool index::column::iterator::
 operator!=(const index::column::iterator& other) const {
   return i_ != other.i_;
@@ -281,7 +292,7 @@ operator==(const index::column::iterator& other) const {
   return i_ == other.i_;
 }
 
-string index::column::iterator::operator*() {
+string index::column::iterator::operator*() const {
   return idx_->get_trimmed_val(i_, is_first_, is_last_);
 }
 
@@ -294,6 +305,22 @@ index::column::iterator index::column::iterator::operator+(int n) {
   index::column::iterator out(*this);
   out += n;
   return out;
+}
+
+index::column::iterator& index::column::iterator::operator-=(int n) {
+  i_ -= idx_->columns_ * n;
+  return *this;
+}
+
+index::column::iterator index::column::iterator::operator-(int n) {
+  index::column::iterator out(*this);
+  out -= n;
+  return out;
+}
+
+ptrdiff_t index::column::iterator::
+operator-(const index::column::iterator& other) const {
+  return (ptrdiff_t(i_) - ptrdiff_t(other.i_)) / ptrdiff_t(idx_->columns_);
 }
 
 // Class column

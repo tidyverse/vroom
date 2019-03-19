@@ -31,6 +31,9 @@ static Rconnection R_GetConnection(SEXP sConn) {
 }
 #endif
 
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
+
 using namespace vroom;
 
 index_connection::index_connection(
@@ -55,9 +58,8 @@ index_connection::index_connection(
   skip_ = skip;
   progress_ = progress;
 
-  auto tempfile =
-      Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["tempfile"])();
-  filename_ = std::string(CHAR(STRING_ELT(tempfile, 0)));
+  filename_ = Rcpp::as<std::string>(Rcpp::as<Rcpp::Function>(
+      Rcpp::Environment::namespace_env("vroom")["vroom_tempfile"])());
 
   std::ofstream out(
       filename_.c_str(),
@@ -113,10 +115,11 @@ index_connection::index_connection(
       buf[i], idx_[0], delim_.c_str(), quote, start, first_nl + 1, 0, pb);
   columns_ = idx_[0].size() - 1;
 
-#if DEBUG
-  Rcpp::Rcerr << "columns: " << columns_ << " first_nl:" << first_nl
-              << " sz:" << sz << '\n';
-#endif
+  SPDLOG_DEBUG(
+      "first_line_columns: {0:i} first_nl_loc: {1:i} size: {2:i}",
+      columns_,
+      first_nl,
+      sz);
 
   auto total_read = 0;
   std::future<void> parse_fut;
@@ -186,9 +189,6 @@ index_connection::index_connection(
   auto total_size = std::accumulate(
       idx_.begin(), idx_.end(), 0, [](size_t sum, const idx_t& v) {
         sum += v.size() - 1;
-#if DEBUG
-//        Rcpp::Rcerr << v.size() << '\n';
-#endif
         return sum;
       });
 
@@ -198,17 +198,17 @@ index_connection::index_connection(
     --rows_;
   }
 
-#if DEBUG
-  std::ofstream log(
-      "index_connection.idx",
-      std::fstream::out | std::fstream::binary | std::fstream::trunc);
+#if SPDLOG_ACTIVE_LEVEL <= SPD_LOG_LEVEL_DEBUG
+  auto log = spdlog::basic_logger_mt(
+      "basic_logger", "logs/index_connection.idx", true);
   for (auto& i : idx_) {
     for (auto& v : i) {
-      log << v << '\n';
+      SPDLOG_LOGGER_DEBUG(log, "{}", v);
     }
-    log << "---\n";
+    SPDLOG_LOGGER_DEBUG(log, "end of idx {0:x}", (size_t)&i);
   }
-  log.close();
-  Rcpp::Rcerr << columns_ << ':' << rows_ << '\n';
+  spdlog::drop("basic_logger");
 #endif
+
+  SPDLOG_DEBUG("columns: {0} rows: {1}", columns_, rows_);
 }

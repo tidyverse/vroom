@@ -8,76 +8,122 @@ using namespace Rcpp;
 
 // Class index_collection::column::iterator
 
-index_collection::column::iterator::iterator(
-    const index_collection& idx, size_t column, size_t start)
+index_collection::column::full_iterator::full_iterator(
+    std::shared_ptr<const index_collection> idx, size_t column)
     : i_(0),
       idx_(idx),
       column_(column),
-      // start_(0),
-      end_(idx_.indexes_.size() - 1),
-      it_(idx_.indexes_[i_]->get_column(column_).begin()),
-      it_end_(idx_.indexes_[i_]->get_column(column_).end()) {
-  *this += start;
+      start_(0),
+      end_(idx_->indexes_.size() - 1),
+      it_(idx_->indexes_[i_]->get_column(column_).begin()),
+      it_end_(idx_->indexes_[i_]->get_column(column_).end()),
+      it_start_(idx_->indexes_[i_]->get_column(column_).begin()) {
+  SPDLOG_TRACE("{0:x}: full_iterator ctor", (size_t)this);
 }
 
-index_collection::column::iterator index_collection::column::iterator::
-operator++(int) /* postfix */ {
-  index_collection::column::iterator copy(*this);
-  ++*this;
-  return copy;
-}
-index_collection::column::iterator& index_collection::column::iterator::
-operator++() /* prefix */ {
+void index_collection::column::full_iterator::next() {
   ++it_;
   if (it_ == it_end_ && i_ < end_) {
     ++i_;
-    it_ = idx_.indexes_[i_]->get_column(column_).begin();
-    it_end_ = idx_.indexes_[i_]->get_column(column_).end();
+    it_ = idx_->indexes_[i_]->get_column(column_).begin();
+    it_end_ = idx_->indexes_[i_]->get_column(column_).end();
   }
-  return *this;
 }
 
-index_collection::column::iterator& index_collection::column::iterator::
-operator+=(int n) {
-  while (n > 0) {
-    ++(*this);
-    --n;
+void index_collection::column::full_iterator::prev() {
+  --it_;
+  if (it_ == it_start_ && i_ > start_) {
+    --i_;
+    it_ = idx_->indexes_[i_]->get_column(column_).end();
+    it_start_ = idx_->indexes_[i_]->get_column(column_).begin();
   }
-  return *this;
 }
 
-bool index_collection::column::iterator::
-operator!=(const index_collection::column::iterator& other) const {
-  return i_ != other.i_ || (i_ == other.i_ && it_ != other.it_);
+void index_collection::column::full_iterator::advance(ptrdiff_t n) {
+  if (n == 0) {
+    return;
+  }
+  if (n > 0) {
+    while (n > 0) {
+      auto diff = it_end_ - it_;
+      if (n <= diff) {
+        it_ += n;
+        return;
+      }
+      it_ += (diff - 1);
+      n -= diff;
+      next();
+    }
+    return;
+  }
+  if (n < 0) {
+    while (n < 0) {
+      auto diff = it_start_ - it_;
+      if (n >= diff) {
+        it_ -= n;
+        return;
+      }
+      it_ -= (diff + 1);
+      n += diff;
+      prev();
+    }
+    return;
+  }
 }
-bool index_collection::column::iterator::
-operator==(const index_collection::column::iterator& other) const {
-  return !(i_ != other.i_);
+
+bool index_collection::column::full_iterator::equal_to(
+    const base_iterator& other) const {
+  auto other_ = dynamic_cast<const full_iterator&>(other);
+  return i_ == other_.i_ && it_ == other_.it_;
 }
 
-string index_collection::column::iterator::operator*() { return *it_; }
+ptrdiff_t index_collection::column::full_iterator::distance_to(
+    const base_iterator& that) const {
 
-index_collection::column::iterator index_collection::column::iterator::
-operator+(int n) {
-  index_collection::column::iterator out(*this);
-  out += n;
-  return out;
+  auto that_ = dynamic_cast<const full_iterator&>(that);
+
+  if (i_ == that_.i_) {
+    ptrdiff_t res = that_.it_ - it_;
+    return res;
+  }
+  ptrdiff_t count = 0;
+  size_t i = i_;
+
+  if (i_ < that_.i_) {
+    count = it_end_ - it_;
+    ++i;
+    while (i < that_.i_) {
+      count += idx_->indexes_[i]->num_rows();
+      ++i;
+    }
+    auto begin = idx_->indexes_[i]->get_column(column_).begin();
+    count += that_.it_ - begin;
+    return count;
+  }
+
+  count = it_start_ - it_;
+  --i;
+  while (i > that_.i_) {
+    count -= idx_->indexes_[i]->num_rows();
+    --i;
+  }
+  auto end = idx_->indexes_[i]->get_column(column_).end();
+  count += that_.it_ - end;
+  return count;
 }
 
-// Class index_collection::column
-index_collection::column::column(const index_collection& idx, size_t column)
-    : idx_(idx), column_(column), start_(0), end_(idx.rows_) {}
+string index_collection::column::full_iterator::value() const { return *it_; }
 
-index_collection::column::column(
-    const index_collection& idx, size_t column, size_t start, size_t end)
-    : idx_(idx), column_(column), start_(start), end_(end) {}
+index_collection::column::full_iterator*
+index_collection::column::full_iterator::clone() const {
 
-index_collection::column::iterator index_collection::column::begin() {
-  return index_collection::column::iterator(idx_, column_, start_);
+  SPDLOG_TRACE("{0:x}: full_iterator clone", (size_t)this);
+  auto copy = new index_collection::column::full_iterator(*this);
+  return copy;
 }
 
-index_collection::column::iterator index_collection::column::end() {
-  return index_collection::column::iterator(idx_, column_, end_);
+string index_collection::column::full_iterator::at(ptrdiff_t n) const {
+  return idx_->get(n, column_);
 }
 
 // Index_collection
@@ -112,7 +158,7 @@ index_collection::index_collection(
           has_header,
           skip,
           comment,
-          get_option("vroom.connection_size", 1 << 17),
+          get_env("vroom.connection_size", 1 << 17),
           progress));
     } else {
       auto filename = as<std::string>(x);

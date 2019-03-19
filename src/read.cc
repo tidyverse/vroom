@@ -63,6 +63,8 @@ SEXP vroom_(
     const char comment,
     RObject col_names,
     RObject col_types,
+    RObject col_keep,
+    RObject col_skip,
     SEXP id,
     size_t skip,
     CharacterVector na,
@@ -114,7 +116,7 @@ SEXP vroom_(
   }
 
   Rcpp::Function col_types_standardise = vroom["col_types_standardise"];
-  col_types = col_types_standardise(col_types, col_nms);
+  col_types = col_types_standardise(col_types, col_nms, col_keep, col_skip);
 
   Rcpp::Function guess_type = vroom["guess_type"];
 
@@ -160,8 +162,7 @@ SEXP vroom_(
     }
 
     // This is deleted in the finalizers when the vectors are GC'd by R
-    auto info = new vroom_vec_info{idx,
-                                   col,
+    auto info = new vroom_vec_info{idx->get_column(col),
                                    num_threads,
                                    std::make_shared<Rcpp::CharacterVector>(na),
                                    locale_info};
@@ -207,7 +208,7 @@ SEXP vroom_(
       } else {
         if (use_altrep) {
 #ifdef HAS_ALTREP
-          res[i] = vroom_factor::Make(info, levels, collector["ordered"]);
+          res[i] = vroom_fct::Make(info, levels, collector["ordered"]);
 #endif
         } else {
           res[i] = read_fctr_explicit(info, levels, collector["ordered"]);
@@ -215,30 +216,33 @@ SEXP vroom_(
         }
       }
     } else if (col_type == "collector_date") {
+      info->format = Rcpp::as<std::string>(collector["format"]);
       if (use_altrep) {
 #ifdef HAS_ALTREP
-        res[i] = vroom_date::Make(info, collector["format"]);
+        res[i] = vroom_date::Make(info);
 #endif
       } else {
-        res[i] = read_date(info, collector["format"]);
+        res[i] = read_date(info);
         delete info;
       }
     } else if (col_type == "collector_datetime") {
+      info->format = Rcpp::as<std::string>(collector["format"]);
       if (use_altrep) {
 #ifdef HAS_ALTREP
-        res[i] = vroom_dttm::Make(info, collector["format"]);
+        res[i] = vroom_dttm::Make(info);
 #endif
       } else {
-        res[i] = read_dttm(info, collector["format"]);
+        res[i] = read_dttm(info);
         delete info;
       }
     } else if (col_type == "collector_time") {
+      info->format = Rcpp::as<std::string>(collector["format"]);
       if (use_altrep) {
 #ifdef HAS_ALTREP
-        res[i] = vroom_time::Make(info, collector["format"]);
+        res[i] = vroom_time::Make(info);
 #endif
       } else {
-        res[i] = read_time(info, collector["format"]);
+        res[i] = read_time(info);
         delete info;
       }
     } else {

@@ -5,12 +5,12 @@
 
 Rcpp::CharacterVector read_chr(vroom_vec_info* info) {
 
-  R_xlen_t n = info->idx->num_rows();
+  R_xlen_t n = info->column.size();
 
   Rcpp::CharacterVector out(n);
 
   auto i = 0;
-  for (const auto& str : info->idx->get_column(info->column)) {
+  for (const auto& str : info->column) {
     auto val = info->locale->encoder_.makeSEXP(str.begin(), str.end(), false);
 
     // Look for NAs
@@ -49,6 +49,8 @@ public:
 
     UNPROTECT(1);
 
+    MARK_NOT_MUTABLE(res); /* force duplicate on modify */
+
     return res;
   }
 
@@ -71,7 +73,7 @@ public:
   // ALTSTRING methods -----------------
 
   static SEXP Val(SEXP vec, R_xlen_t i) {
-    auto inf = Info(vec);
+    auto& inf = Info(vec);
 
     auto str = Get(vec, i);
 
@@ -82,10 +84,10 @@ public:
   }
 
   static SEXP check_na(SEXP vec, SEXP val) {
-    auto inf = Info(vec);
+    auto& inf = Info(vec);
 
     // Look for NAs
-    for (const auto& v : *Info(vec).na) {
+    for (const auto& v : *inf.na) {
       // We can just compare the addresses directly because they should now
       // both be in the global string cache.
       if (v == val) {
@@ -141,6 +143,7 @@ public:
     // altvec
     R_set_altvec_Dataptr_method(class_t, Dataptr);
     R_set_altvec_Dataptr_or_null_method(class_t, Dataptr_or_null);
+    R_set_altvec_Extract_subset_method(class_t, Extract_subset<vroom_chr>);
 
     // altstring
     R_set_altstring_Elt_method(class_t, string_Elt);

@@ -7,11 +7,11 @@
 using namespace vroom;
 
 struct vroom_vec_info {
-  std::shared_ptr<index_collection> idx;
-  size_t column;
+  index_collection::column column;
   size_t num_threads;
   std::shared_ptr<Rcpp::CharacterVector> na;
   std::shared_ptr<LocaleInfo> locale;
+  std::string format;
 };
 
 #ifdef HAS_ALTREP
@@ -43,13 +43,13 @@ public:
       return Rf_xlength(data2);
     }
 
-    auto inf = Info(vec);
-    return inf.idx->num_rows();
+    auto& inf = Info(vec);
+    return inf.column.size();
   }
 
   static inline string Get(SEXP vec, R_xlen_t i) {
-    auto inf = Info(vec);
-    return inf.idx->get(i, inf.column);
+    auto& inf = Info(vec);
+    return inf.column[i];
   }
 
   // ALTVec methods -------------------
@@ -60,6 +60,31 @@ public:
       return nullptr;
 
     return STDVEC_DATAPTR(data2);
+  }
+
+  template <typename T>
+  static SEXP Extract_subset(SEXP x, SEXP indx, SEXP call) {
+    SEXP data2 = R_altrep_data2(x);
+    // If the vector is already materialized, just fall back to the default
+    // implementation
+    if (data2 != R_NilValue) {
+      return nullptr;
+    }
+
+    Rcpp::IntegerVector in(indx);
+
+    auto idx = std::make_shared<std::vector<size_t> >();
+
+    std::transform(in.begin(), in.end(), std::back_inserter(*idx), [](int i) {
+      return i - 1;
+    });
+
+    auto& inf = Info(x);
+
+    auto info = new vroom_vec_info{
+        inf.column.subset(idx), inf.num_threads, inf.na, inf.locale};
+
+    return T::Make(info);
   }
 };
 
