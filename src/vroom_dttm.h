@@ -3,6 +3,8 @@
 #include "DateTimeParser.h"
 #include "parallel.h"
 
+#include "spdlog/spdlog.h"
+
 using namespace vroom;
 
 double parse_dttm(
@@ -189,6 +191,31 @@ public:
     return T::Make(info);
   }
 
+  static SEXP Duplicate(SEXP x, Rboolean deep) {
+    SEXP data2 = R_altrep_data2(x);
+
+    SPDLOG_TRACE(
+        "Duplicate dttm: deep = {0}, materialized={1}",
+        deep,
+        data2 != R_NilValue);
+
+    /* If deep or already materialized, do the default behavior */
+    if (deep || data2 != R_NilValue) {
+      return nullptr;
+    }
+
+    /* otherwise copy the metadata */
+
+    auto inf = Info(x);
+
+    auto info = new vroom_vec_info{inf->info->column,
+                                   inf->info->num_threads,
+                                   inf->info->na,
+                                   inf->info->locale,
+                                   inf->info->format};
+    return Make(info);
+  }
+
   static void* Dataptr(SEXP vec, Rboolean writeable) {
     return STDVEC_DATAPTR(Materialize(vec));
   }
@@ -200,6 +227,7 @@ public:
     // altrep
     R_set_altrep_Length_method(class_t, Length);
     R_set_altrep_Inspect_method(class_t, Inspect);
+    R_set_altrep_Duplicate_method(class_t, Duplicate);
 
     // altvec
     R_set_altvec_Dataptr_method(class_t, Dataptr);
