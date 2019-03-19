@@ -1,72 +1,81 @@
 path <- "~/data/trip_fare_1.tsv"
+desc <- c("library", "read", "print", "head", "tail", "sample", "filter")
 
-vroom_base <- function(file) {
-  library(vroom)
-  list(
-    bench::system_time(x <- vroom(file, col_types = c(pickup_datetime = "c"), quote = "", escape_double = FALSE, na = character())),
-    bench::system_time(print(x)),
-    bench::system_time(head(x)),
-    bench::system_time(tail(x)),
-    bench::system_time(x[sample(NROW(x), 100), ]),
-    bench::system_time(x[x$payment_type == "UNK", ])
+vroom_base <- function(file, desc) {
+  bench::watch(description = desc,
+    {
+      library(vroom)
+      x <- vroom(file, col_types = c(pickup_datetime = "c"), quote = "", escape_double = FALSE, na = character())
+      print(x)
+      head(x)
+      tail(x)
+      x[sample(NROW(x), 100), ]
+      x[x$payment_type == "UNK", ]
+    }
   )
 }
 
-vroom_dplyr <- function(file) {
-  library(vroom)
-  library(dplyr)
-  list(
-    bench::system_time(x <- vroom(file, col_types = c(pickup_datetime = "c"), quote = "", escape_double = FALSE, na = character())),
-    bench::system_time(print(x)),
-    bench::system_time(head(x)),
-    bench::system_time(tail(x)),
-    bench::system_time(sample_n(x, 100)),
-    bench::system_time(filter(x, payment_type == "UNK"))
+vroom_dplyr <- function(file, desc) {
+  bench::watch(description = desc,
+    {
+      { library(vroom); library(dplyr) }
+      x <- vroom(file, col_types = c(pickup_datetime = "c"), quote = "", escape_double = FALSE, na = character())
+      print(x)
+      head(x)
+      tail(x)
+      sample_n(x, 100)
+      filter(x, payment_type == "UNK")
+    }
   )
 }
 
-data.table <- function(file) {
-  library(data.table)
-  list(
-    bench::system_time(x <- data.table::fread(file, sep = "\t", quote = "", strip.white = FALSE, na.strings = NULL)),
-    bench::system_time(print(x)),
-    bench::system_time(head(x)),
-    bench::system_time(tail(x)),
-    bench::system_time(x[sample(NROW(x), 100), ]),
-    bench::system_time(x[x$payment_type == "UNK", ])
+data.table <- function(file, desc) {
+  bench::watch(description = desc,
+    {
+      library(data.table)
+      x <- fread(file, sep = "\t", quote = "", strip.white = FALSE, na.strings = NULL)
+      print(x)
+      head(x)
+      tail(x)
+      x[sample(NROW(x), 100), ]
+      x[payment_type == "UNK", ]
+    }
   )
 }
 
-readr <- function(file) {
-  library(readr)
-  library(dplyr)
-  list(
-    bench::system_time(x <- read_tsv(file, col_types = c(pickup_datetime = "c"), quote = "", trim_ws = FALSE, na = character())),
-    bench::system_time(print(x)),
-    bench::system_time(head(x)),
-    bench::system_time(tail(x)),
-    bench::system_time(sample_n(x, 100)),
-    bench::system_time(filter(x, payment_type == "UNK"))
+readr <- function(file, desc) {
+  bench::watch(description = desc,
+    {
+    { library(readr); library(dplyr) }
+      x <- read_tsv(file, col_types = c(pickup_datetime = "c"), quote = "", trim_ws = FALSE, na = character())
+      print(x)
+      head(x)
+      tail(x)
+      sample_n(x, 100)
+      filter(x, payment_type == "UNK")
+    }
   )
 }
 
-read.delim <- function(file) {
-  list(
-    bench::system_time(x <- read.delim(file, quote = "", strip.white = FALSE, na.strings = NULL)),
-    bench::system_time(print(head(x, 25))),
-    bench::system_time(head(x)),
-    bench::system_time(tail(x)),
-    bench::system_time(x[sample(NROW(x), 100), ]),
-    bench::system_time(x[x$payment_type == "UNK", ])
+read.delim <- function(file, desc) {
+  bench::watch(description = desc,
+    {
+      x <- read.delim(file, quote = "", na.strings = NULL)
+      print(x)
+      head(x)
+      tail(x)
+      x[sample(NROW(x), 100), ]
+      x[x$payment_type == "UNK", ]
+    }
   )
 }
 
 times <- list(
-  vroom_base = callr::r(vroom_base, list(file = path)),
-  vroom_dplyr = callr::r(vroom_dplyr, list(file = path)),
-  data.table = callr::r(data.table, list(file = path)),
-  readr = callr::r(readr, list(file = path)),
-  read.delim = callr::r(read.delim, list(file = path))
+  vroom_base = callr::r(vroom_base, list(file = path, desc = desc)),
+  vroom_dplyr = callr::r(vroom_dplyr, list(file = path, desc = desc)),
+  data.table = callr::r(data.table, list(file = path, desc = desc)),
+  readr = callr::r(readr, list(file = path, desc = desc)),
+  read.delim = callr::r(read.delim, list(file = path, desc = desc))
 )
 
 library(purrr)
