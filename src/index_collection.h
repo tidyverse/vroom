@@ -172,7 +172,10 @@ public:
       void next();
       void prev();
       void advance(ptrdiff_t n);
-      bool equal_to(const base_iterator& it) const;
+      inline bool equal_to(const base_iterator& other) const {
+        return i_ == static_cast<const full_iterator&>(other).i_ &&
+               it_ == static_cast<const full_iterator&>(other).it_;
+      }
       ptrdiff_t distance_to(const base_iterator& it) const;
       string value() const;
       full_iterator* clone() const;
