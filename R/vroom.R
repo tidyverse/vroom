@@ -55,8 +55,17 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL, col_ke
     col_keep = col_keep, col_skip = col_skip, id = id, skip = skip,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
     escape_backslash = escape_backslash, comment = comment, locale = locale,
-    guess_max = guess_max, use_altrep = vroom_use_altrep(), num_threads = num_threads,
-    progress = progress)
+    guess_max = guess_max,
+    use_altrep_chr = vroom_use_altrep_chr(),
+    use_altrep_fct = vroom_use_altrep_fct(),
+    use_altrep_int = vroom_use_altrep_int(),
+    use_altrep_dbl = vroom_use_altrep_dbl(),
+    use_altrep_num = vroom_use_altrep_num(),
+    use_altrep_lgl = vroom_use_altrep_lgl(),
+    use_altrep_dttm = vroom_use_altrep_dttm(),
+    use_altrep_date = vroom_use_altrep_date(),
+    use_altrep_time = vroom_use_altrep_time(),
+    num_threads = num_threads, progress = progress)
 
   tibble::as_tibble(out)
 }
@@ -216,6 +225,38 @@ vroom_tempfile <- function() {
   tempfile(pattern = "vroom-", tmpdir = dir)
 }
 
-vroom_use_altrep <- function() {
-  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP", TRUE)
+vroom_use_altrep_chr <- function() {
+  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_CHR", TRUE)
+}
+
+vroom_use_altrep_fct <- function() {
+  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_FCT", TRUE)
+}
+
+vroom_use_altrep_int <- function() {
+  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_INT", FALSE)
+}
+
+vroom_use_altrep_dbl <- function() {
+  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_DBL", FALSE)
+}
+
+vroom_use_altrep_num <- function() {
+  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_NUM", FALSE)
+}
+
+vroom_use_altrep_lgl <- function() {
+  getRversion() > "3.6.0" && env_to_logical("VROOM_USE_ALTREP_LGL", FALSE)
+}
+
+vroom_use_altrep_dttm <- function() {
+  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_DTTM", FALSE)
+}
+
+vroom_use_altrep_date <- function() {
+  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_DATE", FALSE)
+}
+
+vroom_use_altrep_time <- function() {
+  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_TIME", FALSE)
 }

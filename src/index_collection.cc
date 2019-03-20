@@ -71,16 +71,10 @@ void index_collection::column::full_iterator::advance(ptrdiff_t n) {
   }
 }
 
-bool index_collection::column::full_iterator::equal_to(
-    const base_iterator& other) const {
-  auto other_ = dynamic_cast<const full_iterator&>(other);
-  return i_ == other_.i_ && it_ == other_.it_;
-}
-
 ptrdiff_t index_collection::column::full_iterator::distance_to(
     const base_iterator& that) const {
 
-  auto that_ = dynamic_cast<const full_iterator&>(that);
+  auto that_ = static_cast<const full_iterator&>(that);
 
   if (i_ == that_.i_) {
     ptrdiff_t res = that_.it_ - it_;
