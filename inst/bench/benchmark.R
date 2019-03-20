@@ -3,7 +3,7 @@ path <- "~/data/trip_fare_1.tsv"
 vroom_base <- function(file) {
   library(vroom)
   list(
-    bench::system_time(x <- vroom(file, quote = "", escape_double = FALSE, na = character())),
+    bench::system_time(x <- vroom(file, col_types = c(pickup_datetime = "c"), quote = "", escape_double = FALSE, na = character())),
     bench::system_time(print(x)),
     bench::system_time(head(x)),
     bench::system_time(tail(x)),
@@ -16,7 +16,7 @@ vroom_dplyr <- function(file) {
   library(vroom)
   library(dplyr)
   list(
-    bench::system_time(x <- vroom(file, quote = "", escape_double = FALSE, na = character())),
+    bench::system_time(x <- vroom(file, col_types = c(pickup_datetime = "c"), quote = "", escape_double = FALSE, na = character())),
     bench::system_time(print(x)),
     bench::system_time(head(x)),
     bench::system_time(tail(x)),
@@ -41,7 +41,7 @@ readr <- function(file) {
   library(readr)
   library(dplyr)
   list(
-    bench::system_time(x <- read_tsv(file, quote = "", trim_ws = FALSE, na = character())),
+    bench::system_time(x <- read_tsv(file, col_types = c(pickup_datetime = "c"), quote = "", trim_ws = FALSE, na = character())),
     bench::system_time(print(x)),
     bench::system_time(head(x)),
     bench::system_time(tail(x)),
