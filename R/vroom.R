@@ -230,33 +230,34 @@ vroom_use_altrep_chr <- function() {
 }
 
 vroom_use_altrep_fct <- function() {
-  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_FCT", TRUE)
+  # fct is a numeric internally
+  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_FCT", FALSE))
 }
 
 vroom_use_altrep_int <- function() {
-  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_INT", FALSE)
+  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_INT", FALSE))
 }
 
 vroom_use_altrep_dbl <- function() {
-  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_DBL", FALSE)
+  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_DBL", FALSE))
 }
 
 vroom_use_altrep_num <- function() {
-  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_NUM", FALSE)
+  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_NUM", FALSE))
 }
 
 vroom_use_altrep_lgl <- function() {
-  getRversion() > "3.6.0" && env_to_logical("VROOM_USE_ALTREP_LGL", FALSE)
+  getRversion() > "3.6.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_LGL", FALSE))
 }
 
 vroom_use_altrep_dttm <- function() {
-  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_DTTM", FALSE)
+  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_DTTM", FALSE))
 }
 
 vroom_use_altrep_date <- function() {
-  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_DATE", FALSE)
+  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_DATE", FALSE))
 }
 
 vroom_use_altrep_time <- function() {
-  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_TIME", FALSE)
+  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_TIME", FALSE))
 }
