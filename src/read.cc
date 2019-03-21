@@ -34,19 +34,38 @@ CharacterVector read_column_names(
   return nms;
 }
 
+std::vector<std::string> get_filenames(SEXP in) {
+  auto n = Rf_xlength(in);
+  std::vector<std::string> out;
+  out.reserve(n);
+
+  for (R_xlen_t i = 0; i < n; ++i) {
+    SEXP x = VECTOR_ELT(in, i);
+    if (TYPEOF(x) == STRSXP) {
+      out.emplace_back(Rcpp::as<std::string>(x));
+    } else {
+      auto con = R_GetConnection(x);
+      out.emplace_back(con->description);
+    }
+  }
+
+  return out;
+}
+
 CharacterVector generate_filename_column(
-    List inputs, const std::vector<size_t> lengths, size_t rows) {
+    const std::vector<std::string>& filenames,
+    const std::vector<size_t>& lengths,
+    size_t rows) {
   std::vector<std::string> out;
   out.reserve(rows);
 
-  if (static_cast<size_t>(inputs.size()) != lengths.size()) {
+  if (static_cast<size_t>(filenames.size()) != lengths.size()) {
     stop("inputs and lengths inconsistent");
   }
 
-  for (int i = 0; i < inputs.size(); ++i) {
+  for (int i = 0; i < filenames.size(); ++i) {
     for (size_t j = 0; j < lengths[i]; ++j) {
-      // CharacterVector filename = Rf_asChar(inputs[i]);
-      out.push_back(inputs[i]);
+      out.push_back(filenames[i]);
     }
   }
   return wrap(out);
@@ -88,6 +107,16 @@ SEXP vroom_(
       col_names.sexp_type() == STRSXP ||
       (col_names.sexp_type() == LGLSXP && as<LogicalVector>(col_names)[0]);
 
+  std::vector<std::string> filenames;
+
+  bool add_filename = !Rf_isNull(id);
+
+  // We need to retrieve filenames now before the connection objects are read,
+  // as they are invalid afterwards.
+  if (add_filename) {
+    filenames = get_filenames(inputs);
+  }
+
   auto idx = std::make_shared<vroom::index_collection>(
       inputs,
       Rf_isNull(delim) ? nullptr : Rcpp::as<const char*>(delim),
@@ -102,8 +131,6 @@ SEXP vroom_(
       progress);
 
   auto total_columns = idx->num_columns();
-
-  bool add_filename = !Rf_isNull(id);
 
   auto locale_info = std::make_shared<LocaleInfo>(locale);
 
@@ -141,7 +168,7 @@ SEXP vroom_(
 
   if (add_filename) {
     res[i++] =
-        generate_filename_column(inputs, idx->row_sizes(), idx->num_rows());
+        generate_filename_column(filenames, idx->row_sizes(), idx->num_rows());
     res_nms.push_back(Rcpp::as<std::string>(id));
   }
 
