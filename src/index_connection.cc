@@ -61,9 +61,7 @@ index_connection::index_connection(
   filename_ = Rcpp::as<std::string>(Rcpp::as<Rcpp::Function>(
       Rcpp::Environment::namespace_env("vroom")["vroom_tempfile"])());
 
-  std::ofstream out(
-      filename_.c_str(),
-      std::fstream::out | std::fstream::binary | std::fstream::trunc);
+  std::FILE* out = std::fopen(filename_.c_str(), "wb");
 
   auto con = R_GetConnection(in);
 
@@ -72,7 +70,8 @@ index_connection::index_connection(
     Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(in, "rb");
   }
 
-  std::array<std::vector<char>, 2> buf = {std::vector<char>(chunk_size)};
+  std::array<std::vector<char>, 2> buf = {std::vector<char>(chunk_size),
+                                          std::vector<char>(chunk_size)};
   // std::vector<char>(chunk_size)};
 
   // A buf index that alternates between 0,1
@@ -116,7 +115,7 @@ index_connection::index_connection(
   columns_ = idx_[0].size() - 1;
 
   SPDLOG_DEBUG(
-      "first_line_columns: {0:i} first_nl_loc: {1:i} size: {2:i}",
+      "first_line_columns: {0} first_nl_loc: {1} size: {2}",
       columns_,
       first_nl,
       sz);
@@ -131,25 +130,23 @@ index_connection::index_connection(
     if (parse_fut.valid()) {
       parse_fut.wait();
     }
-    // parse_fut = std::async([&, i, sz, first_nl, total_read] {
-    index_region(
-        buf[i],
-        idx_[1],
-        delim_.c_str(),
-        quote,
-        first_nl,
-        sz,
-        total_read,
-        empty_pb);
-    //});
+    parse_fut = std::async([&, i, sz, first_nl, total_read] {
+      index_region(
+          buf[i],
+          idx_[1],
+          delim_.c_str(),
+          quote,
+          first_nl,
+          sz,
+          total_read,
+          empty_pb);
+    });
 
     if (write_fut.valid()) {
       write_fut.wait();
     }
-    // write_fut = std::async([&, i, sz] {
-    out.write(buf[i].data(), sz);
-    out.flush();
-    //});
+    write_fut = std::async(
+        [&, i, sz] { std::fwrite(buf[i].data(), sizeof(char), sz, out); });
 
     if (progress_) {
       pb->tick(sz);
@@ -157,17 +154,23 @@ index_connection::index_connection(
 
     total_read += sz;
 
-    // i = (i + 1) % 2;
+    i = (i + 1) % 2;
     sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
     if (sz > 0) {
       buf[i][sz] = '\0';
     }
 
     first_nl = 0;
+
+    SPDLOG_DEBUG("first_nl_loc: {0} size: {1}", first_nl, sz);
   }
-  // parse_fut.wait();
-  // write_fut.wait();
-  out.close();
+  if (parse_fut.valid()) {
+    parse_fut.wait();
+  }
+  if (write_fut.valid()) {
+    write_fut.wait();
+  }
+  std::fclose(out);
 
   if (progress_) {
     pb->update(1);
