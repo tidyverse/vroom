@@ -1,5 +1,10 @@
 gen_character <- function(n, min = 5, max = 25, values = c(letters, LETTERS, 0:9), ...) {
   #replicate(n, paste(sample(values, sample.int(max - min) + min, replace = TRUE), collapse = ""), simplify = "vector")
+
+  if (min > max) {
+    max <- min
+  }
+
   gen_character_(n, min, max, paste(values, collapse = ""))
 }
 
