@@ -284,6 +284,56 @@ test_that("error if both col_skip and col_keep", {
     "Only one of `col_keep` and `col_skip` can be set")
 })
 
+test_that("n_max works with normal files", {
+    expect_equal(
+      NROW(vroom(vroom_example("mtcars.csv"), n_max = 2)),
+      2
+    )
+
+    # headers don't count
+    expect_equal(
+      NROW(vroom(vroom_example("mtcars.csv"), n_max = 2, col_names = FALSE)),
+      2
+    )
+
+    # Zero rows with headers should just have the headers
+    expect_equal(
+      dim(vroom(vroom_example("mtcars.csv"), n_max = 0)),
+      c(0, 12)
+    )
+
+    # If you don't read the header or any rows it must be empty
+    expect_equal(
+      dim(vroom(vroom_example("mtcars.csv"), n_max = 0, col_names = FALSE)),
+      c(0, 0)
+    )
+})
+
+test_that("n_max works with connections files", {
+    expect_equal(
+      NROW(vroom(vroom_example("mtcars.csv.gz"), n_max = 2)),
+      2
+    )
+
+    # headers don't count
+    expect_equal(
+      NROW(vroom(vroom_example("mtcars.csv.gz"), n_max = 2, col_names = FALSE)),
+      2
+    )
+
+    # Zero rows with headers should just have the headers
+    expect_equal(
+      dim(vroom(vroom_example("mtcars.csv.gz"), n_max = 0)),
+      c(0, 12)
+    )
+
+    # If you don't read the header or any rows it must be empty
+    expect_equal(
+      dim(vroom(vroom_example("mtcars.csv.gz"), n_max = 0, col_names = FALSE)),
+      c(0, 0)
+    )
+})
+
 # Figure out a better way to test progress bars...
 #test_that("progress bars work", {
   #withr::with_options(c("vroom.show_after" = 0), {

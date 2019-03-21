@@ -63,7 +63,7 @@ CharacterVector generate_filename_column(
     stop("inputs and lengths inconsistent");
   }
 
-  for (int i = 0; i < filenames.size(); ++i) {
+  for (size_t i = 0; i < filenames.size(); ++i) {
     for (size_t j = 0; j < lengths[i]; ++j) {
       out.push_back(filenames[i]);
     }
@@ -86,6 +86,7 @@ SEXP vroom_(
     RObject col_skip,
     SEXP id,
     size_t skip,
+    size_t n_max,
     CharacterVector na,
     List locale,
     bool use_altrep_chr,
@@ -126,6 +127,7 @@ SEXP vroom_(
       escape_backslash,
       has_header,
       skip,
+      n_max,
       comment,
       num_threads,
       progress);

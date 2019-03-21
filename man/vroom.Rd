@@ -6,8 +6,8 @@
 \usage{
 vroom(file, delim = NULL, col_names = TRUE, col_types = NULL,
   col_keep = NULL, col_skip = NULL, id = NULL, skip = 0,
-  na = c("", "NA"), quote = "\\"", comment = "", trim_ws = TRUE,
-  escape_double = TRUE, escape_backslash = FALSE,
+  n_max = Inf, na = c("", "NA"), quote = "\\"", comment = "",
+  trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE,
   locale = readr::default_locale(), guess_max = 100,
   num_threads = vroom_threads(), progress = vroom_progress())
 }
@@ -65,6 +65,8 @@ variable with that name with the filename(s) as the value. If 'NULL', the
 default, no variable will be created.}
 
 \item{skip}{Number of lines to skip before reading data.}
+
+\item{n_max}{Maximum number of records to read.}
 
 \item{na}{Character vector of strings to interpret as missing values. Set this
 option to \code{character()} to indicate no missing values.}

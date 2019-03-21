@@ -40,8 +40,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // vroom_
-SEXP vroom_(List inputs, SEXP delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char comment, RObject col_names, RObject col_types, RObject col_keep, RObject col_skip, SEXP id, size_t skip, CharacterVector na, List locale, bool use_altrep_chr, bool use_altrep_fct, bool use_altrep_int, bool use_altrep_dbl, bool use_altrep_num, bool use_altrep_lgl, bool use_altrep_dttm, bool use_altrep_date, bool use_altrep_time, size_t guess_max, size_t num_threads, bool progress);
-RcppExport SEXP _vroom_vroom_(SEXP inputsSEXP, SEXP delimSEXP, SEXP quoteSEXP, SEXP trim_wsSEXP, SEXP escape_doubleSEXP, SEXP escape_backslashSEXP, SEXP commentSEXP, SEXP col_namesSEXP, SEXP col_typesSEXP, SEXP col_keepSEXP, SEXP col_skipSEXP, SEXP idSEXP, SEXP skipSEXP, SEXP naSEXP, SEXP localeSEXP, SEXP use_altrep_chrSEXP, SEXP use_altrep_fctSEXP, SEXP use_altrep_intSEXP, SEXP use_altrep_dblSEXP, SEXP use_altrep_numSEXP, SEXP use_altrep_lglSEXP, SEXP use_altrep_dttmSEXP, SEXP use_altrep_dateSEXP, SEXP use_altrep_timeSEXP, SEXP guess_maxSEXP, SEXP num_threadsSEXP, SEXP progressSEXP) {
+SEXP vroom_(List inputs, SEXP delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char comment, RObject col_names, RObject col_types, RObject col_keep, RObject col_skip, SEXP id, size_t skip, size_t n_max, CharacterVector na, List locale, bool use_altrep_chr, bool use_altrep_fct, bool use_altrep_int, bool use_altrep_dbl, bool use_altrep_num, bool use_altrep_lgl, bool use_altrep_dttm, bool use_altrep_date, bool use_altrep_time, size_t guess_max, size_t num_threads, bool progress);
+RcppExport SEXP _vroom_vroom_(SEXP inputsSEXP, SEXP delimSEXP, SEXP quoteSEXP, SEXP trim_wsSEXP, SEXP escape_doubleSEXP, SEXP escape_backslashSEXP, SEXP commentSEXP, SEXP col_namesSEXP, SEXP col_typesSEXP, SEXP col_keepSEXP, SEXP col_skipSEXP, SEXP idSEXP, SEXP skipSEXP, SEXP n_maxSEXP, SEXP naSEXP, SEXP localeSEXP, SEXP use_altrep_chrSEXP, SEXP use_altrep_fctSEXP, SEXP use_altrep_intSEXP, SEXP use_altrep_dblSEXP, SEXP use_altrep_numSEXP, SEXP use_altrep_lglSEXP, SEXP use_altrep_dttmSEXP, SEXP use_altrep_dateSEXP, SEXP use_altrep_timeSEXP, SEXP guess_maxSEXP, SEXP num_threadsSEXP, SEXP progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -58,6 +58,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< RObject >::type col_skip(col_skipSEXP);
     Rcpp::traits::input_parameter< SEXP >::type id(idSEXP);
     Rcpp::traits::input_parameter< size_t >::type skip(skipSEXP);
+    Rcpp::traits::input_parameter< size_t >::type n_max(n_maxSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type na(naSEXP);
     Rcpp::traits::input_parameter< List >::type locale(localeSEXP);
     Rcpp::traits::input_parameter< bool >::type use_altrep_chr(use_altrep_chrSEXP);
@@ -72,7 +73,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< size_t >::type guess_max(guess_maxSEXP);
     Rcpp::traits::input_parameter< size_t >::type num_threads(num_threadsSEXP);
     Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(vroom_(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, col_names, col_types, col_keep, col_skip, id, skip, na, locale, use_altrep_chr, use_altrep_fct, use_altrep_int, use_altrep_dbl, use_altrep_num, use_altrep_lgl, use_altrep_dttm, use_altrep_date, use_altrep_time, guess_max, num_threads, progress));
+    rcpp_result_gen = Rcpp::wrap(vroom_(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, col_names, col_types, col_keep, col_skip, id, skip, n_max, na, locale, use_altrep_chr, use_altrep_fct, use_altrep_int, use_altrep_dbl, use_altrep_num, use_altrep_lgl, use_altrep_dttm, use_altrep_date, use_altrep_time, guess_max, num_threads, progress));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -81,7 +82,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_force_materialization", (DL_FUNC) &_vroom_force_materialization, 1},
     {"_vroom_vroom_materialize", (DL_FUNC) &_vroom_vroom_materialize, 1},
     {"_vroom_gen_character_", (DL_FUNC) &_vroom_gen_character_, 4},
-    {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 27},
+    {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 28},
     {NULL, NULL, 0}
 };
 

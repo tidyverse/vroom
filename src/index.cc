@@ -18,6 +18,7 @@ index::index(
     const bool escape_backslash,
     const bool has_header,
     const size_t skip,
+    size_t n_max,
     const char comment,
     size_t num_threads,
     bool progress)
@@ -89,32 +90,68 @@ index::index(
 
   idx_ = std::vector<idx_t>(num_threads + 1);
 
+  bool nmax_set = n_max != static_cast<size_t>(-1);
+
+  if (nmax_set) {
+    n_max = n_max + has_header_;
+  }
+
   // Index the first row
   idx_[0].push_back(start - 1);
-  index_region(
-      mmap_, idx_[0], delim_.c_str(), quote, start, first_nl + 1, 0, pb, -1);
+  size_t lines_read = index_region(
+      mmap_,
+      idx_[0],
+      delim_.c_str(),
+      quote,
+      start,
+      first_nl + 1,
+      0,
+      n_max,
+      pb,
+      -1);
   columns_ = idx_[0].size() - 1;
 
-  auto threads = parallel_for(
-      file_size - first_nl,
-      [&](size_t start, size_t end, size_t id) {
-        idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
-        start = find_next_newline(mmap_, first_nl + start);
-        end = find_next_newline(mmap_, first_nl + end) + 1;
-        index_region(
-            mmap_,
-            idx_[id + 1],
-            delim_.c_str(),
-            quote,
-            start,
-            end,
-            0,
-            pb,
-            file_size / 100);
-      },
-      num_threads,
-      true,
-      false);
+  std::vector<std::thread> threads;
+
+  if (nmax_set) {
+
+    threads.emplace_back([&] {
+      n_max -= lines_read;
+      index_region(
+          mmap_,
+          idx_[1],
+          delim_.c_str(),
+          quote,
+          first_nl,
+          file_size,
+          0,
+          n_max,
+          pb,
+          file_size / 100);
+    });
+  } else {
+    threads = parallel_for(
+        file_size - first_nl,
+        [&](size_t start, size_t end, size_t id) {
+          idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
+          start = find_next_newline(mmap_, first_nl + start);
+          end = find_next_newline(mmap_, first_nl + end) + 1;
+          index_region(
+              mmap_,
+              idx_[id + 1],
+              delim_.c_str(),
+              quote,
+              start,
+              end,
+              0,
+              n_max,
+              pb,
+              file_size / 100);
+        },
+        num_threads,
+        true,
+        false);
+  }
 
   if (progress_) {
     pb->display_progress();

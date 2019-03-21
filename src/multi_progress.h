@@ -36,6 +36,13 @@ public:
     cv_.notify_one();
   }
 
+  void finish() {
+    std::lock_guard<std::mutex> guard(mutex_);
+    total_progress_ = total_;
+    mutex_.unlock();
+    cv_.notify_one();
+  }
+
   void display_progress() {
     while (total_progress_ < total_) {
       std::unique_lock<std::mutex> lk(mutex_);

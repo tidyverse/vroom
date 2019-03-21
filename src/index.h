@@ -68,6 +68,7 @@ public:
       const bool escape_backslash,
       const bool has_header,
       const size_t skip,
+      size_t n_max,
       const char comment,
       const size_t num_threads,
       const bool progress);
@@ -295,7 +296,7 @@ public:
    * reading blocks from a connection).
    */
   template <typename T, typename P>
-  void index_region(
+  size_t index_region(
       const T& source,
       idx_t& destination,
       const char* delim,
@@ -303,6 +304,7 @@ public:
       const size_t start,
       const size_t end,
       const size_t file_offset,
+      const size_t n_max,
       P& pb,
       const size_t update_size = -1) {
 
@@ -318,6 +320,7 @@ public:
 
     // The actual parsing is here
     size_t pos = start;
+    size_t lines_read = 0;
     while (pos < end) {
       size_t buf_offset = strcspn(buf + pos, query.data());
       pos = pos + buf_offset;
@@ -329,6 +332,13 @@ public:
 
       else if (c == '\n') { // no embedded quotes allowed
         destination.push_back(pos + file_offset);
+        if (lines_read >= n_max) {
+          if (progress_ && pb) {
+            pb->finish();
+          }
+          return lines_read;
+        }
+        ++lines_read;
         if (progress_ && pb) {
           auto tick_size = pos - last_tick;
           if (tick_size > update_size) {
@@ -353,6 +363,7 @@ public:
     if (progress_ && pb) {
       pb->tick(end - last_tick);
     }
+    return lines_read;
   }
 };
 

@@ -39,6 +39,7 @@ public:
       const bool escape_backslash,
       const bool has_header,
       const size_t skip,
+      const size_t n_max,
       const char comment,
       const size_t chunk_size,
       const bool progress);

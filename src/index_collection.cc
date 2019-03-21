@@ -130,6 +130,7 @@ index_collection::index_collection(
     const bool escape_backslash,
     const bool has_header,
     const size_t skip,
+    const size_t n_max,
     const char comment,
     const size_t num_threads,
     const bool progress)
@@ -151,6 +152,7 @@ index_collection::index_collection(
           escape_backslash,
           has_header,
           skip,
+          n_max,
           comment,
           get_env("vroom.connection_size", 1 << 17),
           progress));
@@ -165,6 +167,7 @@ index_collection::index_collection(
           escape_backslash,
           has_header,
           skip,
+          n_max,
           comment,
           num_threads,
           progress));

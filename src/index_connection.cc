@@ -20,6 +20,7 @@ index_connection::index_connection(
     const bool escape_backslash,
     const bool has_header,
     const size_t skip,
+    size_t n_max,
     const char comment,
     const size_t chunk_size,
     const bool progress) {
@@ -83,10 +84,23 @@ index_connection::index_connection(
     pb->update(0);
   }
 
+  n_max = n_max != static_cast<size_t>(-1) ? n_max + has_header_ : n_max;
+
+  std::unique_ptr<multi_progress> empty_pb = nullptr;
+
   // Index the first row
   idx_[0].push_back(start - 1);
-  index_region(
-      buf[i], idx_[0], delim_.c_str(), quote, start, first_nl + 1, 0, pb);
+  size_t lines_read = index_region(
+      buf[i],
+      idx_[0],
+      delim_.c_str(),
+      quote,
+      start,
+      first_nl + 1,
+      0,
+      n_max,
+      empty_pb);
+
   columns_ = idx_[0].size() - 1;
 
   SPDLOG_DEBUG(
@@ -99,14 +113,15 @@ index_connection::index_connection(
   std::future<void> parse_fut;
   std::future<void> write_fut;
   // We don't actually want any progress bar, so just pass a dummy one.
-  std::unique_ptr<RProgress::RProgress> empty_pb = nullptr;
 
   while (sz > 0) {
     if (parse_fut.valid()) {
       parse_fut.wait();
     }
     parse_fut = std::async([&, i, sz, first_nl, total_read] {
-      index_region(
+      n_max -= lines_read;
+
+      lines_read = index_region(
           buf[i],
           idx_[1],
           delim_.c_str(),
@@ -114,6 +129,7 @@ index_connection::index_connection(
           first_nl,
           sz,
           total_read,
+          n_max,
           empty_pb);
     });
 

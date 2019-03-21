@@ -37,9 +37,11 @@ NULL
 #' unlink("mtcars.tsv")
 #' setwd(.old_wd)
 #' }
-vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL, col_keep = NULL, col_skip = NULL, id = NULL, skip = 0, na = c("", "NA"),
-  quote = '"', comment = "", trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE, locale = readr::default_locale(),
-  guess_max = 100, num_threads = vroom_threads(), progress = vroom_progress()) {
+vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
+  col_keep = NULL, col_skip = NULL, id = NULL, skip = 0, n_max = Inf, na =
+    c("", "NA"), quote = '"', comment = "", trim_ws = TRUE, escape_double =
+    TRUE, escape_backslash = FALSE, locale = readr::default_locale(), guess_max
+  = 100, num_threads = vroom_threads(), progress = vroom_progress()) {
 
   if (!is.null(col_keep) && !is.null(col_skip)) {
     stop("Only one of `col_keep` and `col_skip` can be set", call. = FALSE)
@@ -47,15 +49,25 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL, col_ke
 
   file <- standardise_path(file)
 
-  if (length(file) == 0) {
+  if (length(file) == 0 || (n_max == 0 & identical(col_names, FALSE))) {
+    # close any open connections
+    for (x in file) {
+      if (inherits(x, "connection")) {
+        close(x)
+      }
+    }
     return(tibble::tibble())
+  }
+
+  if (n_max < 0 || is.infinite(n_max)) {
+    n_max <- -1
   }
 
   out <- vroom_(file, delim = delim, col_names = col_names, col_types = col_types,
     col_keep = col_keep, col_skip = col_skip, id = id, skip = skip,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
     escape_backslash = escape_backslash, comment = comment, locale = locale,
-    guess_max = guess_max,
+    guess_max = guess_max, n_max = n_max,
     use_altrep_chr = vroom_use_altrep_chr(),
     use_altrep_fct = vroom_use_altrep_fct(),
     use_altrep_int = vroom_use_altrep_int(),
