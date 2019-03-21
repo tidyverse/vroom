@@ -194,7 +194,7 @@ const string index::get_escaped_string(
   return out;
 }
 
-std::pair<const char*, const char*>
+inline std::pair<const char*, const char*>
 index::get_cell(size_t i, bool is_first) const {
 
   auto oi = i;
@@ -202,14 +202,12 @@ index::get_cell(size_t i, bool is_first) const {
   for (const auto& idx : idx_) {
     auto sz = idx.size();
     if (i + 1 < sz) {
-      size_t start;
-      if (is_first) {
-        start = idx[i] + 1;
-      } else {
-        start = idx[i] + delim_len_;
-      }
-      auto end = idx[i + 1];
-      return {mmap_.data() + start, mmap_.data() + end};
+
+      // By relying on 0 and 1 being true and false we can remove a branch
+      // here, which improves performance a bit, as this function is called a
+      // lot.
+      return {mmap_.data() + idx[i] + (!is_first * delim_len_) + is_first,
+              mmap_.data() + idx[i + 1]};
     }
 
     i -= (sz - 1);
@@ -227,7 +225,9 @@ index::get_cell(size_t i, bool is_first) const {
 const string
 index::get_trimmed_val(size_t i, bool is_first, bool is_last) const {
 
-  const char *begin, *end;
+  const char* begin;
+  const char* end;
+
   std::tie(begin, end) = get_cell(i, is_first);
 
   if (is_last && windows_newlines_) {
