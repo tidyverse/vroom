@@ -6,8 +6,10 @@
 #include "utils.h"
 #include <Rcpp.h>
 
+#ifdef VROOM_LOG
 #include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
 #include "spdlog/spdlog.h"
+#endif
 
 using namespace vroom;
 
@@ -192,6 +194,7 @@ index_connection::index_connection(
     --rows_;
   }
 
+#ifdef VROOM_LOG
 #if SPDLOG_ACTIVE_LEVEL <= SPD_LOG_LEVEL_DEBUG
   auto log = spdlog::basic_logger_mt(
       "basic_logger", "logs/index_connection.idx", true);
@@ -202,6 +205,7 @@ index_connection::index_connection(
     SPDLOG_LOGGER_DEBUG(log, "end of idx {0:x}", (size_t)&i);
   }
   spdlog::drop("basic_logger");
+#endif
 #endif
 
   SPDLOG_DEBUG("columns: {0} rows: {1}", columns_, rows_);

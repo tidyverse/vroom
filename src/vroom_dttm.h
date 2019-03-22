@@ -3,7 +3,9 @@
 #include "DateTimeParser.h"
 #include "parallel.h"
 
+#ifdef VROOM_LOG
 #include "spdlog/spdlog.h"
+#endif
 
 using namespace vroom;
 

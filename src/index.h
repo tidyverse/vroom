@@ -15,6 +15,12 @@
 #include <Rcpp.h>
 #include "utils.h"
 
+#ifndef VROOM_LOG
+#define SPDLOG_TRACE(...) (void)0
+#define SPDLOG_DEBUG(...) (void)0
+#define SPDLOG_INFO(...) (void)0
+#endif
+
 namespace vroom {
 
 struct cell {

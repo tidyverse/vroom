@@ -4,8 +4,10 @@
 
 #include <fstream>
 
+#ifdef VROOM_LOG
 #include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
 #include "spdlog/spdlog.h"
+#endif
 
 using namespace vroom;
 
@@ -173,6 +175,7 @@ index::index(
     --rows_;
   }
 
+#ifdef VROOM_LOG
 #if SPDLOG_ACTIVE_LEVEL <= SPD_LOG_LEVEL_DEBUG
   auto log = spdlog::basic_logger_mt("basic_logger", "logs/index.idx", true);
   for (auto& i : idx_) {
@@ -182,6 +185,7 @@ index::index(
     SPDLOG_LOGGER_DEBUG(log, "end of idx {0:x}", (size_t)&i);
   }
   spdlog::drop("basic_logger");
+#endif
 #endif
 
   SPDLOG_DEBUG("columns: {0} rows: {1}", columns_, rows_);

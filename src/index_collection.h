@@ -6,7 +6,9 @@
 
 #include <memory>
 
+#ifdef VROOM_LOG
 #include "spdlog/spdlog.h"
+#endif
 
 namespace vroom {
 
