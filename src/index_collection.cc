@@ -46,7 +46,7 @@ void index_collection::column::full_iterator::advance(ptrdiff_t n) {
   if (n > 0) {
     while (n > 0) {
       auto diff = it_end_ - it_;
-      if (n <= diff) {
+      if (n < diff) {
         it_ += n;
         return;
       }
@@ -59,7 +59,7 @@ void index_collection::column::full_iterator::advance(ptrdiff_t n) {
   if (n < 0) {
     while (n < 0) {
       auto diff = it_start_ - it_;
-      if (n >= diff) {
+      if (n > diff) {
         it_ -= n;
         return;
       }
