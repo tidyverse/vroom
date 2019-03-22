@@ -36,7 +36,7 @@ gen_factor <- function(n, levels = NULL, ordered = FALSE, include_na = FALSE, nu
 }
 
 gen_time <- function(n, min = 0, max = hms::hms(days = 1), fractional = FALSE, ...) {
-  res <- hms::hms(seconds = runif(n, min = min, max = max))
+  res <- hms::hms(seconds = stats::runif(n, min = min, max = max))
   if (!fractional) {
     res <- hms::as.hms(floor(res))
   }
@@ -48,7 +48,7 @@ gen_date <- function(n, min = as.Date("2001-01-01"), max = as.Date("2021-01-01")
 }
 
 gen_datetime <- function(n, min = as.POSIXct("2001-01-01"), max = as.POSIXct("2021-01-01"), tz = "UTC", ...) {
-  structure(runif(n, min = min, max = max), class = c("POSIXct", "POSIXt"), tzone = tz)
+  structure(stats::runif(n, min = min, max = max), class = c("POSIXct", "POSIXt"), tzone = tz)
 }
 
 gen_logical <- function(n, ...) {
