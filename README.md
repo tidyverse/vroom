@@ -136,8 +136,8 @@ The speed quoted above is from a dataset with 14,776,615 rows and 11
 columns, see the [benchmark
 article](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)
 for full details of the dataset and
-[bench/](https://github.com/jimhester/vroom/tree/master/bench) for the
-code used to retrieve the data and perform the benchmarks.
+[bench/](https://github.com/jimhester/vroom/blob/master/inst/bench) for
+the code used to retrieve the data and perform the benchmarks.
 
 ## RStudio caveats
 
