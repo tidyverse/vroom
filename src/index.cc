@@ -247,7 +247,7 @@ index::get_cell(size_t i, bool is_first) const {
       // By relying on 0 and 1 being true and false we can remove a branch
       // here, which improves performance a bit, as this function is called a
       // lot.
-      return {mmap_.data() + idx[i] + (!is_first * delim_len_) + is_first,
+      return {mmap_.data() + (idx[i] + (!is_first * delim_len_) + is_first),
               mmap_.data() + idx[i + 1]};
     }
 
