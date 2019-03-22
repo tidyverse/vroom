@@ -44,3 +44,51 @@ test_that("vroom adds the id column from the filename for multiple connections",
 
   expect_equal(basename(res$filename), filenames)
 })
+
+test_that("vroom works with many files", {
+
+  dir <- tempfile()
+  dir.create(dir)
+  on.exit(unlink(dir, recursive = TRUE))
+
+  for (i in seq_len(200)) {
+    readr::write_csv(
+      tibble::tibble(
+        x = rnorm(10),
+        y = rnorm(10),
+      ),
+      file.path(dir, paste0(i, ".csv"))
+    )
+  }
+
+  files <- list.files(dir, pattern = ".*[.]csv", full.names = TRUE)
+
+  res <- vroom::vroom(files)
+
+  expect_equal(colnames(res), c("x", "y"))
+  expect_equal(NROW(res), 2000)
+})
+
+test_that("vroom works with many connections", {
+
+  dir <- tempfile()
+  dir.create(dir)
+  on.exit(unlink(dir, recursive = TRUE))
+
+  for (i in seq_len(200)) {
+    readr::write_csv(
+      tibble::tibble(
+        x = rnorm(10),
+        y = rnorm(10),
+      ),
+      file.path(dir, paste0(i, ".csv.gz"))
+    )
+  }
+
+  files <- list.files(dir, pattern = ".*[.]csv[.]gz", full.names = TRUE)
+
+  res <- vroom::vroom(files)
+
+  expect_equal(colnames(res), c("x", "y"))
+  expect_equal(NROW(res), 2000)
+})

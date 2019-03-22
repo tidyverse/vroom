@@ -202,11 +202,11 @@ public:
       void prev() { --i_; }
       void advance(ptrdiff_t n) { i_ += n; }
       bool equal_to(const base_iterator& other) const {
-        auto other_ = dynamic_cast<const subset_iterator&>(other);
+        auto other_ = static_cast<const subset_iterator&>(other);
         return i_ == other_.i_;
       };
       ptrdiff_t distance_to(const base_iterator& that) const {
-        auto that_ = dynamic_cast<const subset_iterator&>(that);
+        auto that_ = static_cast<const subset_iterator&>(that);
         return that_.i_ - i_;
       };
       string value() const { return *(it_ + (*indexes_)[i_]); };
@@ -252,8 +252,8 @@ public:
     };
 
   private:
-    iterator begin_;
-    iterator end_;
+    const iterator begin_;
+    const iterator end_;
   };
 
   column get_column(size_t num) const {

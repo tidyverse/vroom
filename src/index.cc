@@ -135,7 +135,7 @@ index::index(
         [&](size_t start, size_t end, size_t id) {
           idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
           start = find_next_newline(mmap_, first_nl + start);
-          end = find_next_newline(mmap_, first_nl + end) + 1;
+          end = find_next_newline(mmap_, first_nl + end);
           index_region(
               mmap_,
               idx_[id + 1],
@@ -248,7 +248,6 @@ index::get_cell(size_t i, bool is_first) const {
     }
 
     i -= (sz - 1);
-    // SPDLOG_INFO("oi: {0} i: {1} sz: {2}", oi, i, sz);
   }
 
   std::stringstream ss;

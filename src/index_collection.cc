@@ -136,8 +136,11 @@ index_collection::index_collection(
     const bool progress)
     : rows_(0), columns_(0) {
 
+  Rcpp::Function standardise_one_path =
+      Rcpp::Environment::namespace_env("vroom")["standardise_one_path"];
+
   for (int i = 0; i < in.size(); ++i) {
-    auto x = in[i];
+    RObject x = standardise_one_path(in[i]);
 
     bool is_connection = TYPEOF(x) != STRSXP;
 
@@ -174,6 +177,7 @@ index_collection::index_collection(
     }
     rows_ += p->num_rows();
     columns_ = p->num_columns();
+    SPDLOG_DEBUG("rows_: {}", rows_);
 
     indexes_.push_back(std::move(p));
   }

@@ -202,10 +202,12 @@ Rcpp::NumericVector read_dbl(vroom_vec_info* info) {
       [&](size_t start, size_t end, size_t id) {
         size_t i = start;
         for (const auto& str : info->column.slice(start, end)) {
+          SPDLOG_DEBUG("read_dbl(start: {} end: {} i: {})", start, end, i);
           out[i++] = bsd_strtod(str.begin(), str.end());
         }
       },
-      info->num_threads);
+      info->num_threads,
+      true);
 
   return out;
 }

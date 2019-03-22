@@ -50,12 +50,6 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
   file <- standardise_path(file)
 
   if (length(file) == 0 || (n_max == 0 & identical(col_names, FALSE))) {
-    # close any open connections
-    for (x in file) {
-      if (inherits(x, "connection")) {
-        close(x)
-      }
-    }
     return(tibble::tibble())
   }
 
