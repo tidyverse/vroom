@@ -15,11 +15,51 @@
 #include <Rcpp.h>
 #include "utils.h"
 
+#ifndef VROOM_LOG
+#define SPDLOG_TRACE(...) (void)0
+#define SPDLOG_DEBUG(...) (void)0
+#define SPDLOG_INFO(...) (void)0
+#endif
+
 namespace vroom {
 
 struct cell {
   const char* begin;
   const char* end;
+};
+
+// A custom string wrapper that avoids constructing a string object unless
+// needed because of escapes.
+class string {
+public:
+  string(std::string str) : str_(str) {
+    begin_ = str_.c_str();
+    end_ = begin_ + str_.length();
+  }
+  string(const char* begin, const char* end) : begin_(begin), end_(end) {}
+
+  const char* begin() const { return begin_; }
+
+  const char* end() const { return end_; }
+
+  size_t length() const { return end_ - begin_; }
+
+  size_t size() const { return end_ - begin_; }
+
+  bool operator==(const string& other) const {
+    return length() == other.length() &&
+           strncmp(begin_, other.begin_, length()) == 0;
+  }
+
+  bool operator==(const std::string& other) const {
+    return length() == other.length() &&
+           strncmp(begin_, other.data(), length()) == 0;
+  }
+
+private:
+  const char* begin_;
+  const char* end_;
+  std::string str_;
 };
 
 class index {
@@ -34,6 +74,7 @@ public:
       const bool escape_backslash,
       const bool has_header,
       const size_t skip,
+      size_t n_max,
       const char comment,
       const size_t num_threads,
       const bool progress);
@@ -55,19 +96,25 @@ public:
 
     public:
       using iterator_category = std::forward_iterator_tag;
-      using value_type = std::string;
-      using pointer = std::string*;
-      using reference = std::string&;
+      using value_type = string;
+      using pointer = string*;
+      using reference = string&;
+      using difference_type = ptrdiff_t;
 
       iterator(const index& idx, size_t column, size_t start, size_t end);
       iterator operator++(int); /* postfix */
       iterator& operator++();   /* prefix */
+      iterator operator--(int); /* postfix */
+      iterator& operator--();   /* prefix */
       bool operator!=(const iterator& other) const;
       bool operator==(const iterator& other) const;
 
-      std::string operator*();
+      string operator*() const;
       iterator& operator+=(int n);
       iterator operator+(int n);
+      iterator& operator-=(int n);
+      iterator operator-(int n);
+      ptrdiff_t operator-(const iterator& other) const;
     };
     iterator begin();
     iterator end();
@@ -88,9 +135,9 @@ public:
 
     public:
       using iterator_category = std::forward_iterator_tag;
-      using value_type = std::string;
-      using pointer = std::string*;
-      using reference = std::string&;
+      using value_type = string;
+      using pointer = string*;
+      using reference = string&;
 
       iterator(const index& idx, size_t row, size_t start, size_t end);
       iterator operator++(int); /* postfix */
@@ -98,7 +145,7 @@ public:
       bool operator!=(const iterator& other) const;
       bool operator==(const iterator& other) const;
 
-      std::string operator*();
+      string operator*();
       iterator& operator+=(int n);
       iterator operator+(int n);
     };
@@ -108,7 +155,7 @@ public:
 
   index() : rows_(0), columns_(0){};
 
-  const std::string get(size_t row, size_t col) const;
+  const string get(size_t row, size_t col) const;
 
   size_t num_columns() const { return columns_; }
 
@@ -235,11 +282,10 @@ public:
 
   void trim_quotes(const char*& begin, const char*& end) const;
   void trim_whitespace(const char*& begin, const char*& end) const;
-  const std::string
-  get_escaped_string(const char* begin, const char* end) const;
+  const string
+  get_escaped_string(const char* begin, const char* end, bool has_quote) const;
 
-  const std::string
-  get_trimmed_val(size_t i, bool is_first, bool is_last) const;
+  const string get_trimmed_val(size_t i, bool is_first, bool is_last) const;
 
   std::pair<const char*, const char*> get_cell(size_t i, bool is_first) const;
 
@@ -256,7 +302,7 @@ public:
    * reading blocks from a connection).
    */
   template <typename T, typename P>
-  void index_region(
+  size_t index_region(
       const T& source,
       idx_t& destination,
       const char* delim,
@@ -264,6 +310,7 @@ public:
       const size_t start,
       const size_t end,
       const size_t file_offset,
+      const size_t n_max,
       P& pb,
       const size_t update_size = -1) {
 
@@ -279,6 +326,7 @@ public:
 
     // The actual parsing is here
     size_t pos = start;
+    size_t lines_read = 0;
     while (pos < end) {
       size_t buf_offset = strcspn(buf + pos, query.data());
       pos = pos + buf_offset;
@@ -288,16 +336,15 @@ public:
         destination.push_back(pos + file_offset);
       }
 
-      else if (escape_backslash_ && c == '\\') {
-        ++pos;
-      }
-
-      else if (c == quote) {
-        in_quote = !in_quote;
-      }
-
       else if (c == '\n') { // no embedded quotes allowed
         destination.push_back(pos + file_offset);
+        if (lines_read >= n_max) {
+          if (progress_ && pb) {
+            pb->finish();
+          }
+          return lines_read;
+        }
+        ++lines_read;
         if (progress_ && pb) {
           auto tick_size = pos - last_tick;
           if (tick_size > update_size) {
@@ -308,16 +355,46 @@ public:
         }
       }
 
+      else if (c == quote) {
+        in_quote = !in_quote;
+      }
+
+      else if (escape_backslash_ && c == '\\') {
+        ++pos;
+      }
+
       ++pos;
     }
 
     if (progress_ && pb) {
       pb->tick(end - last_tick);
     }
-    // Rcpp::Rcerr << num_ticks << '\n';
+    return lines_read;
   }
 };
 
 } // namespace vroom
+
+// Specialization for our custom strings, needed so we can use them in
+// unordered_maps
+// [1]: https://stackoverflow.com/a/17017281/2055486
+// [2]: https://stackoverflow.com/a/34597485/2055486
+namespace std {
+
+template <> struct hash<vroom::string> {
+  std::size_t operator()(const vroom::string& k) const {
+    const char* begin = k.begin();
+    const char* end = k.end();
+
+    size_t result = 0;
+    const size_t prime = 31;
+    while (begin != end) {
+      result = *begin++ + (result * prime);
+    }
+    return result;
+  }
+};
+
+} // namespace std
 
 #endif /* READIDX_IDX_HEADER */

@@ -1,10 +1,14 @@
 test_vroom <- function(content, ..., equals) {
-  expect_equal(
-    vroom(content, ...),
-    equals
-  )
+  # with altrep
+  withr::with_envvar(c("VROOM_USE_ALTREP_CHR" = "true", "VROOM_USE_ALTREP_NUMERICS" = "true"), {
+    expect_equal(
+      vroom(content, ...),
+      equals
+    )
+  })
 
-  withr::with_options(c("vroom.use_altrep" = FALSE), {
+  # without altrep
+  withr::with_envvar(c("VROOM_USE_ALTREP_CHR" = "false", "VROOM_USE_ALTREP_NUMERICS" = "false"), {
     expect_equal(
       vroom(content, ...),
       equals

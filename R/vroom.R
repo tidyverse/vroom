@@ -16,6 +16,14 @@ NULL
 #' @param id Either a string or 'NULL'. If a string, the output will contain a
 #'   variable with that name with the filename(s) as the value. If 'NULL', the
 #'   default, no variable will be created.
+#' @param col_keep Columns to keep in the output, all other columns will be
+#'   skipped. Input can be a character vector of column names, a logical vector
+#'   or a numeric vector of column indexes. Only one of `col_keep` or
+#'   `col_drop` can be used.
+#' @param col_skip Columns to skip in the output, all other columns will be
+#'   kept. Input can be a character vector of column names, a logical vector
+#'   or a numeric vector of column indexes. Only one of `col_keep` or
+#'   `col_drop` can be used.
 #' @export
 #' @examples
 #' \dontshow{
@@ -29,21 +37,40 @@ NULL
 #' unlink("mtcars.tsv")
 #' setwd(.old_wd)
 #' }
-vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL, id = NULL, skip = 0, na = c("", "NA"),
-  quote = '"', comment = "", trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE, locale = readr::default_locale(),
-  guess_max = 100, num_threads = parallel::detectCores(), progress = show_progress()) {
+vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
+  col_keep = NULL, col_skip = NULL, id = NULL, skip = 0, n_max = Inf, na =
+    c("", "NA"), quote = '"', comment = "", trim_ws = TRUE, escape_double =
+    TRUE, escape_backslash = FALSE, locale = readr::default_locale(), guess_max
+  = 100, num_threads = vroom_threads(), progress = vroom_progress()) {
+
+  if (!is.null(col_keep) && !is.null(col_skip)) {
+    stop("Only one of `col_keep` and `col_skip` can be set", call. = FALSE)
+  }
 
   file <- standardise_path(file)
 
-  if (length(file) == 0) {
+  if (length(file) == 0 || (n_max == 0 & identical(col_names, FALSE))) {
     return(tibble::tibble())
   }
 
-  out <- vroom_(file, delim = delim, col_names = col_names, col_types = col_types, id = id, skip = skip,
+  if (n_max < 0 || is.infinite(n_max)) {
+    n_max <- -1
+  }
+
+  out <- vroom_(file, delim = delim, col_names = col_names, col_types = col_types,
+    col_keep = col_keep, col_skip = col_skip, id = id, skip = skip,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
     escape_backslash = escape_backslash, comment = comment, locale = locale,
-    guess_max = guess_max,
-    use_altrep = getRversion() > "3.5.0" && as.logical(getOption("vroom.use_altrep", TRUE)),
+    guess_max = guess_max, n_max = n_max,
+    use_altrep_chr = vroom_use_altrep_chr(),
+    use_altrep_fct = vroom_use_altrep_fct(),
+    use_altrep_int = vroom_use_altrep_int(),
+    use_altrep_dbl = vroom_use_altrep_dbl(),
+    use_altrep_num = vroom_use_altrep_num(),
+    use_altrep_lgl = vroom_use_altrep_lgl(),
+    use_altrep_dttm = vroom_use_altrep_dttm(),
+    use_altrep_date = vroom_use_altrep_date(),
+    use_altrep_time = vroom_use_altrep_time(),
     num_threads = num_threads, progress = progress)
 
   tibble::as_tibble(out)
@@ -60,7 +87,7 @@ guess_type <- function(x, na = c("", "NA"), locale = readr::default_locale(), gu
   get(paste0("col_", type), asNamespace("readr"))()
 }
 
-col_types_standardise <- function(col_types, col_names) {
+col_types_standardise <- function(col_types, col_names, col_keep = NULL, col_skip = NULL) {
   spec <- readr::as.col_spec(col_types)
   type_names <- names(spec$cols)
 
@@ -102,6 +129,25 @@ col_types_standardise <- function(col_types, col_names) {
     spec$cols <- spec$cols[col_names]
   }
 
+  if (!is.null(col_keep)) {
+    if (is.character(col_keep)) {
+      col_keep <- names(spec$cols) %in% col_keep
+    } else if (is.numeric(col_keep)) {
+      col_keep <- seq_along(spec$cols) %in% col_keep
+    }
+    col_skip <- !col_keep
+  }
+
+  if (!is.null(col_skip)) {
+    if (is.character(col_skip)) {
+      col_skip <- names(spec$cols) %in% col_skip
+    } else if (is.numeric(col_skip)) {
+      col_skip <- seq_along(spec$cols) %in% col_skip
+    }
+
+    spec$cols[col_skip] <- rep(list(col_skip()), sum(col_skip))
+  }
+
   spec
 }
 
@@ -112,14 +158,14 @@ make_names <- function(len) {
 #' Determine progress bars should be shown
 #'
 #' Progress bars are shown _unless_ one of the following is `TRUE`
-#' - The bar is explicitly disabled by setting `options(vroom.show_progress = FALSE)`
+#' - The bar is explicitly disabled by setting `Sys.getenv("VROOM_SHOW_PROGRESS"="false")`
 #' - The code is run in a non-interactive session (`interactive()` is `FALSE`).
 #' - The code is run in an RStudio notebook chunk.
 #' - The code is run by knitr / rmarkdown.
 #' - The code is run by testthat (the `TESTTHAT` envvar is `true`).
 #' @export
-show_progress <- function() {
-  isTRUE(getOption("vroom.show_progress", default = TRUE)) &&
+vroom_progress <- function() {
+  env_to_logical("VROOM_SHOW_PROGRESS", TRUE) &&
     interactive() &&
     !isTRUE(getOption("knitr.in.progress")) &&
     !isTRUE(getOption("rstudio.notebook.executing")) &&
@@ -172,3 +218,52 @@ guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";", "\n")) 
   delims[[res]]
 }
 
+
+vroom_threads <- function() {
+  as.integer(Sys.getenv("VROOM_THREADS", parallel::detectCores()))
+}
+
+vroom_tempfile <- function() {
+  dir <- Sys.getenv("VROOM_TEMP_PATH")
+  if (!nzchar(dir)) {
+    dir <- tempdir()
+  }
+  tempfile(pattern = "vroom-", tmpdir = dir)
+}
+
+vroom_use_altrep_chr <- function() {
+  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_CHR", TRUE)
+}
+
+vroom_use_altrep_fct <- function() {
+  # fct is a numeric internally
+  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_FCT", FALSE))
+}
+
+vroom_use_altrep_int <- function() {
+  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_INT", FALSE))
+}
+
+vroom_use_altrep_dbl <- function() {
+  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_DBL", FALSE))
+}
+
+vroom_use_altrep_num <- function() {
+  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_NUM", FALSE))
+}
+
+vroom_use_altrep_lgl <- function() {
+  getRversion() > "3.6.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_LGL", FALSE))
+}
+
+vroom_use_altrep_dttm <- function() {
+  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_DTTM", FALSE))
+}
+
+vroom_use_altrep_date <- function() {
+  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_DATE", FALSE))
+}
+
+vroom_use_altrep_time <- function() {
+  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_TIME", FALSE))
+}

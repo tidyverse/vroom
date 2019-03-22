@@ -4,6 +4,11 @@
 
 #include <fstream>
 
+#ifdef VROOM_LOG
+#include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
+#include "spdlog/spdlog.h"
+#endif
+
 using namespace vroom;
 
 index::index(
@@ -15,6 +20,7 @@ index::index(
     const bool escape_backslash,
     const bool has_header,
     const size_t skip,
+    size_t n_max,
     const char comment,
     size_t num_threads,
     bool progress)
@@ -86,32 +92,68 @@ index::index(
 
   idx_ = std::vector<idx_t>(num_threads + 1);
 
+  bool nmax_set = n_max != static_cast<size_t>(-1);
+
+  if (nmax_set) {
+    n_max = n_max + has_header_;
+  }
+
   // Index the first row
   idx_[0].push_back(start - 1);
-  index_region(
-      mmap_, idx_[0], delim_.c_str(), quote, start, first_nl + 1, 0, pb, -1);
+  size_t lines_read = index_region(
+      mmap_,
+      idx_[0],
+      delim_.c_str(),
+      quote,
+      start,
+      first_nl + 1,
+      0,
+      n_max,
+      pb,
+      -1);
   columns_ = idx_[0].size() - 1;
 
-  auto threads = parallel_for(
-      file_size - first_nl,
-      [&](size_t start, size_t end, size_t id) {
-        idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
-        start = find_next_newline(mmap_, first_nl + start);
-        end = find_next_newline(mmap_, first_nl + end) + 1;
-        index_region(
-            mmap_,
-            idx_[id + 1],
-            delim_.c_str(),
-            quote,
-            start,
-            end,
-            0,
-            pb,
-            file_size / 200);
-      },
-      num_threads,
-      true,
-      false);
+  std::vector<std::thread> threads;
+
+  if (nmax_set) {
+
+    threads.emplace_back([&] {
+      n_max -= lines_read;
+      index_region(
+          mmap_,
+          idx_[1],
+          delim_.c_str(),
+          quote,
+          first_nl,
+          file_size,
+          0,
+          n_max,
+          pb,
+          file_size / 100);
+    });
+  } else {
+    threads = parallel_for(
+        file_size - first_nl,
+        [&](size_t start, size_t end, size_t id) {
+          idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
+          start = find_next_newline(mmap_, first_nl + start);
+          end = find_next_newline(mmap_, first_nl + end);
+          index_region(
+              mmap_,
+              idx_[id + 1],
+              delim_.c_str(),
+              quote,
+              start,
+              end,
+              0,
+              n_max,
+              pb,
+              file_size / 100);
+        },
+        num_threads,
+        true,
+        false);
+  }
 
   if (progress_) {
     pb->display_progress();
@@ -133,19 +175,20 @@ index::index(
     --rows_;
   }
 
-#if DEBUG
-  std::ofstream log(
-      "index.idx",
-      std::fstream::out | std::fstream::binary | std::fstream::trunc);
+#ifdef VROOM_LOG
+#if SPDLOG_ACTIVE_LEVEL <= SPD_LOG_LEVEL_DEBUG
+  auto log = spdlog::basic_logger_mt("basic_logger", "logs/index.idx", true);
   for (auto& i : idx_) {
     for (auto& v : i) {
-      log << v << '\n';
+      SPDLOG_LOGGER_DEBUG(log, "{}", v);
     }
-    log << "---\n";
+    SPDLOG_LOGGER_DEBUG(log, "end of idx {0:x}", (size_t)&i);
   }
-  log.close();
-  Rcpp::Rcerr << columns_ << ':' << rows_ << '\n';
+  spdlog::drop("basic_logger");
 #endif
+#endif
+
+  SPDLOG_DEBUG("columns: {0} rows: {1}", columns_, rows_);
 }
 
 void index::trim_quotes(const char*& begin, const char*& end) const {
@@ -170,13 +213,18 @@ void index::trim_whitespace(const char*& begin, const char*& end) const {
   }
 }
 
-const std::string
-index::get_escaped_string(const char* begin, const char* end) const {
+const string index::get_escaped_string(
+    const char* begin, const char* end, bool has_quote) const {
+  // If not escaping just return without a copy
+  if (!((escape_double_ && has_quote) || escape_backslash_)) {
+    return {begin, end};
+  }
+
   std::string out;
   out.reserve(end - begin);
 
   while (begin < end) {
-    if ((escape_double_ && *begin == '"') ||
+    if ((escape_double_ && has_quote && *begin == quote_) ||
         (escape_backslash_ && *begin == '\\')) {
       ++begin;
     }
@@ -187,41 +235,39 @@ index::get_escaped_string(const char* begin, const char* end) const {
   return out;
 }
 
-std::pair<const char*, const char*>
+inline std::pair<const char*, const char*>
 index::get_cell(size_t i, bool is_first) const {
 
-#if DEBUG
   auto oi = i;
-#endif
 
   for (const auto& idx : idx_) {
     auto sz = idx.size();
     if (i + 1 < sz) {
-      size_t start;
-      if (is_first) {
-        start = idx[i] + 1;
-      } else {
-        start = idx[i] + delim_len_;
-      }
-      auto end = idx[i + 1];
-      return {mmap_.data() + start, mmap_.data() + end};
+
+      // By relying on 0 and 1 being true and false we can remove a branch
+      // here, which improves performance a bit, as this function is called a
+      // lot.
+      return {mmap_.data() + idx[i] + (!is_first * delim_len_) + is_first,
+              mmap_.data() + idx[i + 1]};
     }
 
     i -= (sz - 1);
-#if DEBUG
-    Rcpp::Rcerr << "oi: " << oi << " i: " << i << " sz: " << sz << '\n';
-#endif
   }
 
-  throw std::out_of_range("blah");
+  std::stringstream ss;
+  ss.imbue(std::locale(""));
+  ss << "Failure to retrieve index " << std::fixed << oi << " / " << rows_;
+  throw std::out_of_range(ss.str());
   /* should never get here */
   return {0, 0};
 }
 
-const std::string
+const string
 index::get_trimmed_val(size_t i, bool is_first, bool is_last) const {
 
-  const char *begin, *end;
+  const char* begin;
+  const char* end;
+
   std::tie(begin, end) = get_cell(i, is_first);
 
   if (is_last && windows_newlines_) {
@@ -232,22 +278,18 @@ index::get_trimmed_val(size_t i, bool is_first, bool is_last) const {
     trim_whitespace(begin, end);
   }
 
+  bool has_quote = false;
   if (quote_ != '\0') {
-    trim_quotes(begin, end);
+    has_quote = *begin == quote_;
+    if (has_quote) {
+      trim_quotes(begin, end);
+    }
   }
 
-  std::string out;
-
-  if (escape_double_ || escape_backslash_) {
-    out = get_escaped_string(begin, end);
-  } else {
-    out = std::string(begin, end - begin);
-  }
-
-  return out;
+  return get_escaped_string(begin, end, has_quote);
 }
 
-const std::string index::get(size_t row, size_t col) const {
+const string index::get(size_t row, size_t col) const {
   auto i = (row + has_header_) * columns_ + col;
 
   return get_trimmed_val(i, col == 0, col == (columns_ - 1));
@@ -271,6 +313,16 @@ index::column::iterator& index::column::iterator::operator++() /* prefix */ {
   return *this;
 }
 
+index::column::iterator index::column::iterator::operator--(int) /* postfix */ {
+  index::column::iterator copy(*this);
+  --*this;
+  return copy;
+}
+index::column::iterator& index::column::iterator::operator--() /* prefix */ {
+  i_ -= idx_->columns_;
+  return *this;
+}
+
 bool index::column::iterator::
 operator!=(const index::column::iterator& other) const {
   return i_ != other.i_;
@@ -280,7 +332,7 @@ operator==(const index::column::iterator& other) const {
   return i_ == other.i_;
 }
 
-std::string index::column::iterator::operator*() {
+string index::column::iterator::operator*() const {
   return idx_->get_trimmed_val(i_, is_first_, is_last_);
 }
 
@@ -293,6 +345,22 @@ index::column::iterator index::column::iterator::operator+(int n) {
   index::column::iterator out(*this);
   out += n;
   return out;
+}
+
+index::column::iterator& index::column::iterator::operator-=(int n) {
+  i_ -= idx_->columns_ * n;
+  return *this;
+}
+
+index::column::iterator index::column::iterator::operator-(int n) {
+  index::column::iterator out(*this);
+  out -= n;
+  return out;
+}
+
+ptrdiff_t index::column::iterator::
+operator-(const index::column::iterator& other) const {
+  return (ptrdiff_t(i_) - ptrdiff_t(other.i_)) / ptrdiff_t(idx_->columns_);
 }
 
 // Class column
@@ -331,7 +399,7 @@ bool index::row::iterator::operator==(const index::row::iterator& other) const {
   return i_ == other.i_;
 }
 
-std::string index::row::iterator::operator*() {
+string index::row::iterator::operator*() {
   return idx_->get_trimmed_val(i_, i_ == 0, i_ == (idx_->columns_ - 1));
 }
 

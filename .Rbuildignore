@@ -16,3 +16,5 @@
 ^vroom\.Rcheck$
 ^vroom.*\.tar\.gz$
 ^vroom.*\.tgz$
+^src/spdlog$
+^Makefile$

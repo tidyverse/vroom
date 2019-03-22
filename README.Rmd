@@ -157,11 +157,44 @@ use the 'Manual Refresh Only' option in the environment pane.
 
 ![](https://user-images.githubusercontent.com/470418/51357022-95a1f280-1a82-11e9-8035-3687c8fd5dd8.png)
 
+# Environment variables
+
+In addition to the arguments to the `vroom()` function, you can control the
+behavior of vroom with a few environment variables. Generally these will not
+need to be set by most users.
+
+- `VROOM_TEMP_PATH` - Path to the directory used to store temporary files when
+  reading from a R connection. If unset defaults to the R session's temporary
+  directory (`tempdir()`).
+- `VROOM_THREADS` - The number of processor threads to use when indexing and
+  parsing. If unset defaults to `parallel::detectCores()`.
+- `VROOM_SHOW_PROGRESS` - Whether to show the progress bar when indexing.
+  Regardless of this setting the progress bar is disabled in non-interactive
+  settings, R notebooks, when running tests with testthat and when knitting
+  documents.
+
+There are also a family of variables to control whether the altrep framework is used fo
+
+- `VROOM_USE_ALTREP_NUMERICS` - If set use altrep for _all_ numeric types (default `FALSE`).
+
+There are also individual variables for each type. Currently only
+`VROOM_USE_ALTREP_CHR` defaults to `TRUE`.
+
+- `VROOM_USE_ALTREP_CHR`
+- `VROOM_USE_ALTREP_FCT`
+- `VROOM_USE_ALTREP_INT`
+- `VROOM_USE_ALTREP_DBL`
+- `VROOM_USE_ALTREP_NUM`
+- `VROOM_USE_ALTREP_LGL`
+- `VROOM_USE_ALTREP_DTTM`
+- `VROOM_USE_ALTREP_DATE`
+- `VROOM_USE_ALTREP_TIME`
+
 ## Thanks
 
 - [Gabe Becker](https://twitter.com/groundwalkergmb), [Luke
   Tierney](https://stat.uiowa.edu/~luke/) and [Tomas Kalibera](https://github.com/kalibera) for
-  implementing and maintaining the [Altrep
+  conceiving, Implementing and maintaining the [Altrep
   framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html)
 - [Romain François](https://twitter.com/romain_francois), whose
   [Altrepisode](https://purrple.cat/blog/2018/10/14/altrep-and-cpp/) package

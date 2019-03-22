@@ -5,14 +5,13 @@
 
 Rcpp::CharacterVector read_chr(vroom_vec_info* info) {
 
-  R_xlen_t n = info->idx->num_rows();
+  R_xlen_t n = info->column.size();
 
   Rcpp::CharacterVector out(n);
 
   auto i = 0;
-  for (const auto& str : info->idx->get_column(info->column)) {
-    auto val = info->locale->encoder_.makeSEXP(
-        str.c_str(), str.c_str() + str.length(), false);
+  for (const auto& str : info->column) {
+    auto val = info->locale->encoder_.makeSEXP(str.begin(), str.end(), false);
 
     // Look for NAs
     for (const auto& v : *info->na) {
@@ -34,7 +33,7 @@ Rcpp::CharacterVector read_chr(vroom_vec_info* info) {
 
 using namespace Rcpp;
 
-struct vroom_string : vroom_vec {
+struct vroom_chr : vroom_vec {
 
 public:
   static R_altrep_class_t class_t;
@@ -45,10 +44,12 @@ public:
     SEXP out = PROTECT(R_MakeExternalPtr(info, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(out, vroom_vec::Finalize, FALSE);
 
-    // make a new altrep object of class `vroom_string::class_t`
+    // make a new altrep object of class `vroom_chr::class_t`
     SEXP res = R_new_altrep(class_t, out, R_NilValue);
 
     UNPROTECT(1);
+
+    MARK_NOT_MUTABLE(res); /* force duplicate on modify */
 
     return res;
   }
@@ -63,7 +64,7 @@ public:
       int pvec,
       void (*inspect_subtree)(SEXP, int, int, int)) {
     Rprintf(
-        "vroom_string (len=%d, materialized=%s)\n",
+        "vroom_chr (len=%d, materialized=%s)\n",
         Length(x),
         R_altrep_data2(x) != R_NilValue ? "T" : "F");
     return TRUE;
@@ -72,22 +73,21 @@ public:
   // ALTSTRING methods -----------------
 
   static SEXP Val(SEXP vec, R_xlen_t i) {
-    auto inf = Info(vec);
+    auto& inf = Info(vec);
 
     auto str = Get(vec, i);
 
-    auto val = inf.locale->encoder_.makeSEXP(
-        str.c_str(), str.c_str() + str.length(), false);
+    auto val = inf.locale->encoder_.makeSEXP(str.begin(), str.end(), false);
     val = check_na(vec, val);
 
     return val;
   }
 
   static SEXP check_na(SEXP vec, SEXP val) {
-    auto inf = Info(vec);
+    auto& inf = Info(vec);
 
     // Look for NAs
-    for (const auto& v : *Info(vec).na) {
+    for (const auto& v : *inf.na) {
       // We can just compare the addresses directly because they should now
       // both be in the global string cache.
       if (v == val) {
@@ -121,6 +121,9 @@ public:
     auto out = read_chr(&Info(vec));
     R_set_altrep_data2(vec, out);
 
+    // Once we have materialized we no longer need the info
+    Finalize(R_altrep_data1(vec));
+
     return out;
   }
 
@@ -131,7 +134,7 @@ public:
   // -------- initialize the altrep class with the methods above
 
   static void Init(DllInfo* dll) {
-    class_t = R_make_altstring_class("vroom_string", "vroom", dll);
+    class_t = R_make_altstring_class("vroom_chr", "vroom", dll);
 
     // altrep
     R_set_altrep_Length_method(class_t, Length);
@@ -140,18 +143,19 @@ public:
     // altvec
     R_set_altvec_Dataptr_method(class_t, Dataptr);
     R_set_altvec_Dataptr_or_null_method(class_t, Dataptr_or_null);
+    R_set_altvec_Extract_subset_method(class_t, Extract_subset<vroom_chr>);
 
     // altstring
     R_set_altstring_Elt_method(class_t, string_Elt);
   }
 };
 
-R_altrep_class_t vroom_string::class_t;
+R_altrep_class_t vroom_chr::class_t;
 
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
-void init_vroom_string(DllInfo* dll) { vroom_string::Init(dll); }
+void init_vroom_chr(DllInfo* dll) { vroom_chr::Init(dll); }
 
 #else
-void init_vroom_string(DllInfo* dll) {}
+void init_vroom_chr(DllInfo* dll) {}
 #endif

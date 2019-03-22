@@ -6,29 +6,9 @@
 #include "utils.h"
 #include <Rcpp.h>
 
-// clang-format off
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Wkeyword-macro"
-#define class class_name
-#define private private_ptr
-#include <R_ext/Connections.h>
-#undef class
-#undef private
-# pragma clang diagnostic pop
-// clang-format on
-
-#if R_CONNECTIONS_VERSION != 1
-#error "Missing or unsupported connection API in R"
-#endif
-
-#if R_VERSION < R_Version(3, 3, 0)
-/* R before 3.3.0 didn't have R_GetConnection() */
-extern "C" {
-extern Rconnection getConnection(int n);
-static Rconnection R_GetConnection(SEXP sConn) {
-  return getConnection(Rf_asInteger(sConn));
-}
-}
+#ifdef VROOM_LOG
+#include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
+#include "spdlog/spdlog.h"
 #endif
 
 using namespace vroom;
@@ -42,6 +22,7 @@ index_connection::index_connection(
     const bool escape_backslash,
     const bool has_header,
     const size_t skip,
+    size_t n_max,
     const char comment,
     const size_t chunk_size,
     const bool progress) {
@@ -55,13 +36,10 @@ index_connection::index_connection(
   skip_ = skip;
   progress_ = progress;
 
-  auto tempfile =
-      Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["tempfile"])();
-  filename_ = std::string(CHAR(STRING_ELT(tempfile, 0)));
+  filename_ = Rcpp::as<std::string>(Rcpp::as<Rcpp::Function>(
+      Rcpp::Environment::namespace_env("vroom")["vroom_tempfile"])());
 
-  std::ofstream out(
-      filename_.c_str(),
-      std::fstream::out | std::fstream::binary | std::fstream::trunc);
+  std::FILE* out = std::fopen(filename_.c_str(), "wb");
 
   auto con = R_GetConnection(in);
 
@@ -70,7 +48,8 @@ index_connection::index_connection(
     Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(in, "rb");
   }
 
-  std::array<std::vector<char>, 2> buf = {std::vector<char>(chunk_size)};
+  std::array<std::vector<char>, 2> buf = {std::vector<char>(chunk_size),
+                                          std::vector<char>(chunk_size)};
   // std::vector<char>(chunk_size)};
 
   // A buf index that alternates between 0,1
@@ -107,46 +86,60 @@ index_connection::index_connection(
     pb->update(0);
   }
 
+  n_max = n_max != static_cast<size_t>(-1) ? n_max + has_header_ : n_max;
+
+  std::unique_ptr<multi_progress> empty_pb = nullptr;
+
   // Index the first row
   idx_[0].push_back(start - 1);
-  index_region(
-      buf[i], idx_[0], delim_.c_str(), quote, start, first_nl + 1, 0, pb);
+  size_t lines_read = index_region(
+      buf[i],
+      idx_[0],
+      delim_.c_str(),
+      quote,
+      start,
+      first_nl + 1,
+      0,
+      n_max,
+      empty_pb);
+
   columns_ = idx_[0].size() - 1;
 
-#if DEBUG
-  Rcpp::Rcerr << "columns: " << columns_ << " first_nl:" << first_nl
-              << " sz:" << sz << '\n';
-#endif
+  SPDLOG_DEBUG(
+      "first_line_columns: {0} first_nl_loc: {1} size: {2}",
+      columns_,
+      first_nl,
+      sz);
 
   auto total_read = 0;
   std::future<void> parse_fut;
   std::future<void> write_fut;
   // We don't actually want any progress bar, so just pass a dummy one.
-  std::unique_ptr<RProgress::RProgress> empty_pb = nullptr;
 
   while (sz > 0) {
     if (parse_fut.valid()) {
       parse_fut.wait();
     }
-    // parse_fut = std::async([&, i, sz, first_nl, total_read] {
-    index_region(
-        buf[i],
-        idx_[1],
-        delim_.c_str(),
-        quote,
-        first_nl,
-        sz,
-        total_read,
-        empty_pb);
-    //});
+    parse_fut = std::async([&, i, sz, first_nl, total_read] {
+      n_max -= lines_read;
+
+      lines_read = index_region(
+          buf[i],
+          idx_[1],
+          delim_.c_str(),
+          quote,
+          first_nl,
+          sz,
+          total_read,
+          n_max,
+          empty_pb);
+    });
 
     if (write_fut.valid()) {
       write_fut.wait();
     }
-    // write_fut = std::async([&, i, sz] {
-    out.write(buf[i].data(), sz);
-    out.flush();
-    //});
+    write_fut = std::async(
+        [&, i, sz] { std::fwrite(buf[i].data(), sizeof(char), sz, out); });
 
     if (progress_) {
       pb->tick(sz);
@@ -154,17 +147,23 @@ index_connection::index_connection(
 
     total_read += sz;
 
-    // i = (i + 1) % 2;
+    i = (i + 1) % 2;
     sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
     if (sz > 0) {
       buf[i][sz] = '\0';
     }
 
     first_nl = 0;
+
+    SPDLOG_DEBUG("first_nl_loc: {0} size: {1}", first_nl, sz);
   }
-  // parse_fut.wait();
-  // write_fut.wait();
-  out.close();
+  if (parse_fut.valid()) {
+    parse_fut.wait();
+  }
+  if (write_fut.valid()) {
+    write_fut.wait();
+  }
+  std::fclose(out);
 
   if (progress_) {
     pb->update(1);
@@ -186,9 +185,6 @@ index_connection::index_connection(
   auto total_size = std::accumulate(
       idx_.begin(), idx_.end(), 0, [](size_t sum, const idx_t& v) {
         sum += v.size() - 1;
-#if DEBUG
-//        Rcpp::Rcerr << v.size() << '\n';
-#endif
         return sum;
       });
 
@@ -198,17 +194,19 @@ index_connection::index_connection(
     --rows_;
   }
 
-#if DEBUG
-  std::ofstream log(
-      "index_connection.idx",
-      std::fstream::out | std::fstream::binary | std::fstream::trunc);
+#ifdef VROOM_LOG
+#if SPDLOG_ACTIVE_LEVEL <= SPD_LOG_LEVEL_DEBUG
+  auto log = spdlog::basic_logger_mt(
+      "basic_logger", "logs/index_connection.idx", true);
   for (auto& i : idx_) {
     for (auto& v : i) {
-      log << v << '\n';
+      SPDLOG_LOGGER_DEBUG(log, "{}", v);
     }
-    log << "---\n";
+    SPDLOG_LOGGER_DEBUG(log, "end of idx {0:x}", (size_t)&i);
   }
-  log.close();
-  Rcpp::Rcerr << columns_ << ':' << rows_ << '\n';
+  spdlog::drop("basic_logger");
 #endif
+#endif
+
+  SPDLOG_DEBUG("columns: {0} rows: {1}", columns_, rows_);
 }

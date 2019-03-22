@@ -5,11 +5,11 @@
 \title{Read a delimited file into a tibble}
 \usage{
 vroom(file, delim = NULL, col_names = TRUE, col_types = NULL,
-  id = NULL, skip = 0, na = c("", "NA"), quote = "\\"",
-  comment = "", trim_ws = TRUE, escape_double = TRUE,
-  escape_backslash = FALSE, locale = readr::default_locale(),
-  guess_max = 100, num_threads = parallel::detectCores(),
-  progress = show_progress())
+  col_keep = NULL, col_skip = NULL, id = NULL, skip = 0,
+  n_max = Inf, na = c("", "NA"), quote = "\\"", comment = "",
+  trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE,
+  locale = readr::default_locale(), guess_max = 100,
+  num_threads = vroom_threads(), progress = vroom_progress())
 }
 \arguments{
 \item{file}{path to a local file.}
@@ -50,11 +50,23 @@ c = character, i = integer, n = number, d = double,
 l = logical, f = factor, D = date, T = date time, t = time, ? = guess, or
 \code{_}/\code{-} to skip the column.}
 
+\item{col_keep}{Columns to keep in the output, all other columns will be
+skipped. Input can be a character vector of column names, a logical vector
+or a numeric vector of column indexes. Only one of `col_keep` or
+`col_drop` can be used.}
+
+\item{col_skip}{Columns to skip in the output, all other columns will be
+kept. Input can be a character vector of column names, a logical vector
+or a numeric vector of column indexes. Only one of `col_keep` or
+`col_drop` can be used.}
+
 \item{id}{Either a string or 'NULL'. If a string, the output will contain a
 variable with that name with the filename(s) as the value. If 'NULL', the
 default, no variable will be created.}
 
 \item{skip}{Number of lines to skip before reading data.}
+
+\item{n_max}{Maximum number of records to read.}
 
 \item{na}{Character vector of strings to interpret as missing values. Set this
 option to \code{character()} to indicate no missing values.}

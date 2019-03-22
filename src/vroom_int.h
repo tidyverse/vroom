@@ -1,30 +1,33 @@
+#pragma once
+
 #include "altrep.h"
 
 #include "vroom_vec.h"
 
 #include <Rcpp.h>
 
-// https://github.com/wch/r-source/blob/efed16c945b6e31f8e345d2f18e39a014d2a57ae/src/main/scan.c#L145-L157
-int Strtoi(const char* nptr, int base) {
-  long res;
-  char* endp;
+// A version of strtoi that doesn't need null terminated strings, to avoid
+// needing to copy the data
+int strtoi(const char* begin, const char* end) {
+  int val = 0;
+  bool is_neg = false;
 
-  errno = 0;
-  res = strtol(nptr, &endp, base);
-  if (*endp != '\0')
-    res = NA_INTEGER;
-  /* next can happen on a 64-bit platform */
-  if (res > INT_MAX || res < INT_MIN)
-    res = NA_INTEGER;
-  if (errno == ERANGE)
-    res = NA_INTEGER;
-  return (int)res;
+  if (begin != end && *begin == '-') {
+    is_neg = true;
+    ++begin;
+  }
+
+  while (begin != end && isdigit(*begin)) {
+    val = val * 10 + ((*begin++) - '0');
+  }
+
+  return is_neg ? -val : val;
 }
 
 // Normal reading of integer vectors
 Rcpp::IntegerVector read_int(vroom_vec_info* info) {
 
-  R_xlen_t n = info->idx->num_rows();
+  R_xlen_t n = info->column.size();
 
   Rcpp::IntegerVector out(n);
 
@@ -32,9 +35,8 @@ Rcpp::IntegerVector read_int(vroom_vec_info* info) {
       n,
       [&](size_t start, size_t end, size_t id) {
         size_t i = start;
-        for (const auto& str :
-             info->idx->get_column(info->column, start, end)) {
-          out[i++] = Strtoi(str.c_str(), 10);
+        for (const auto& str : info->column.slice(start, end)) {
+          out[i++] = strtoi(str.begin(), str.end());
         }
       },
       info->num_threads);
@@ -57,6 +59,8 @@ public:
     SEXP res = R_new_altrep(class_t, out, R_NilValue);
 
     UNPROTECT(1);
+
+    MARK_NOT_MUTABLE(res); /* force duplicate on modify */
 
     return res;
   }
@@ -88,6 +92,9 @@ public:
     auto out = read_int(&Info(vec));
     R_set_altrep_data2(vec, out);
 
+    // Once we have materialized we no longer need the info
+    Finalize(R_altrep_data1(vec));
+
     return out;
   }
 
@@ -100,7 +107,7 @@ public:
 
     auto str = vroom_vec::Get(vec, i);
 
-    return Strtoi(str.c_str(), 10);
+    return strtoi(str.begin(), str.end());
   }
 
   static void* Dataptr(SEXP vec, Rboolean writeable) {
@@ -118,6 +125,7 @@ public:
     // altvec
     R_set_altvec_Dataptr_method(class_t, Dataptr);
     R_set_altvec_Dataptr_or_null_method(class_t, Dataptr_or_null);
+    R_set_altvec_Extract_subset_method(class_t, Extract_subset<vroom_int>);
 
     // altinteger
     R_set_altinteger_Elt_method(class_t, int_Elt);

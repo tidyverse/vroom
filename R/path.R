@@ -8,20 +8,20 @@ standardise_path <- function(path) {
     return(list(path))
   }
 
-  lapply(path, standardise_one_path, envir = parent.frame())
+  if (is.character(path) && any(grepl("\n", path))) {
+    return(list(chr_to_file(path, envir = parent.frame())))
+  }
+
+  as.list(path)
 }
 
-standardise_one_path <- function (path, envir = parent.frame()) {
+standardise_one_path <- function (path) {
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))
   }
 
   if (!is.character(path)) {
     return(path)
-  }
-
-  if (grepl("\n", path)) {
-    return(chr_to_file(sub("\n$", "", path), envir = envir))
   }
 
   if (is_url(path)) {

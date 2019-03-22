@@ -77,41 +77,41 @@ test_that("vroom escapes backslashes", {
 })
 
 test_that("vroom ignores leading whitespace", {
-  test_vroom('\n\n   \t \t\n  \n\na,b,c\n1,2,3"\n', delim = ",",
+  test_vroom('\n\n   \t \t\n  \n\na,b,c\n1,2,3\n', delim = ",",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 })
 
 test_that("vroom ignores comments", {
-  test_vroom('\n\n \t #a,b,c\na,b,c\n1,2,3"\n', delim = ",", comment = "#",
+  test_vroom('\n\n \t #a,b,c\na,b,c\n1,2,3\n', delim = ",", comment = "#",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 })
 
 test_that("vroom respects skip", {
-  test_vroom('#a,b,c\na,b,c\n1,2,3"\n', delim = ",", skip = 1,
+  test_vroom('#a,b,c\na,b,c\n1,2,3\n', delim = ",", skip = 1,
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 
-  test_vroom('#a,b,c\na,b,c\n1,2,3"\n', delim = ",", skip = 1, comment = "#",
+  test_vroom('#a,b,c\na,b,c\n1,2,3\n', delim = ",", skip = 1, comment = "#",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 
-  test_vroom('#a,b,c\nasdfasdf\na,b,c\n1,2,3"\n', delim = ",", skip = 2, comment = "#",
+  test_vroom('#a,b,c\nasdfasdf\na,b,c\n1,2,3\n', delim = ",", skip = 2, comment = "#",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 
-  test_vroom('\n\n#a,b,c\nasdfasdf\na,b,c\n1,2,3"\n', delim = ",", skip = 4, comment = "#",
+  test_vroom('\n\n#a,b,c\nasdfasdf\na,b,c\n1,2,3\n', delim = ",", skip = 4, comment = "#",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 })
 
 test_that("vroom respects col_types", {
-  test_vroom('a,b,c\n1,2,3"\n', delim = ",", col_types = "idc",
+  test_vroom('a,b,c\n1,2,3\n', delim = ",", col_types = "idc",
     equals = tibble::tibble(a = 1L, b = 2, c = "3")
   )
 
-  test_vroom('a,b,c,d\nT,2,3,4"\n', delim = ",", col_types = "lfc_",
+  test_vroom('a,b,c,d\nT,2,3,4\n', delim = ",", col_types = "lfc_",
     equals = tibble::tibble(a = TRUE, b = factor(2), c = "3")
   )
 })
@@ -216,6 +216,122 @@ test_that("vroom can read an empty file", {
 
 test_that("vroom_example() returns the example files", {
   expect_equal(vroom_example(), list.files(system.file("extdata", package = "vroom")))
+})
+
+test_that("subsets work", {
+  res <- vroom("1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14", col_names = FALSE)
+  expect_equal(head(res[[1]]), c(1:6))
+  expect_equal(tail(res[[1]]), c(9:14))
+
+  expect_equal(tail(res[[1]][3:8]), c(3:8))
+})
+
+test_that("col_keep works", {
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_keep = 1)), "model")
+
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_keep = 1:3)), c("model", "mpg", "cyl"))
+
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_keep = c(1, 5, 7))), c("model", "hp", "wt"))
+
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_keep = c("model", "hp", "wt"))), c("model", "hp", "wt"))
+
+  expect_equal(
+    colnames(vroom(vroom_example("mtcars.csv"), col_keep = c(TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE))),
+    c("model", "hp", "wt")
+  )
+
+  expect_equal(
+    colnames(vroom(vroom_example("mtcars.csv"), col_keep = c(TRUE, FALSE))),
+    c("model", "cyl", "hp", "wt", "vs", "gear")
+  )
+})
+
+test_that("col_skip works", {
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_skip = 1)),
+    c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")
+  )
+
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_skip = 1:3)),
+    c("disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")
+  )
+
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_skip = c(1, 5, 7))),
+    c("mpg", "cyl", "disp", "drat", "qsec", "vs", "am", "gear", "carb")
+  )
+
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_skip = c("model", "hp", "wt"))),
+    c("mpg", "cyl", "disp", "drat", "qsec", "vs", "am", "gear", "carb")
+  )
+
+  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_skip = c("model", "hp", "wt"))),
+    c("mpg", "cyl", "disp", "drat", "qsec", "vs", "am", "gear", "carb")
+  )
+
+  expect_equal(
+    colnames(vroom(vroom_example("mtcars.csv"), col_skip = c(TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE))),
+    c("mpg", "cyl", "disp", "drat", "qsec", "vs", "am", "gear", "carb")
+  )
+
+  expect_equal(
+    colnames(vroom(vroom_example("mtcars.csv"), col_skip = c(FALSE, TRUE))),
+    c("model", "cyl", "hp", "wt", "vs", "gear")
+  )
+})
+
+test_that("error if both col_skip and col_keep", {
+  expect_error(
+    vroom(vroom_example("mtcars.csv"), col_keep = 1, col_skip = 2),
+    "Only one of `col_keep` and `col_skip` can be set")
+})
+
+test_that("n_max works with normal files", {
+    expect_equal(
+      NROW(vroom(vroom_example("mtcars.csv"), n_max = 2)),
+      2
+    )
+
+    # headers don't count
+    expect_equal(
+      NROW(vroom(vroom_example("mtcars.csv"), n_max = 2, col_names = FALSE)),
+      2
+    )
+
+    # Zero rows with headers should just have the headers
+    expect_equal(
+      dim(vroom(vroom_example("mtcars.csv"), n_max = 0)),
+      c(0, 12)
+    )
+
+    # If you don't read the header or any rows it must be empty
+    expect_equal(
+      dim(vroom(vroom_example("mtcars.csv"), n_max = 0, col_names = FALSE)),
+      c(0, 0)
+    )
+})
+
+test_that("n_max works with connections files", {
+    expect_equal(
+      NROW(vroom(vroom_example("mtcars.csv.gz"), n_max = 2)),
+      2
+    )
+
+    # headers don't count
+    expect_equal(
+      NROW(vroom(vroom_example("mtcars.csv.gz"), n_max = 2, col_names = FALSE)),
+      2
+    )
+
+    # Zero rows with headers should just have the headers
+    expect_equal(
+      dim(vroom(vroom_example("mtcars.csv.gz"), n_max = 0)),
+      c(0, 12)
+    )
+
+    # If you don't read the header or any rows it must be empty
+    expect_equal(
+      dim(vroom(vroom_example("mtcars.csv.gz"), n_max = 0, col_names = FALSE)),
+      c(0, 0)
+    )
 })
 
 # Figure out a better way to test progress bars...

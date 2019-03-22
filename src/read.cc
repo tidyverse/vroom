@@ -28,26 +28,44 @@ CharacterVector read_column_names(
 
   auto col = 0;
   for (const auto& str : idx->get_header()) {
-    nms[col++] = locale->encoder_.makeSEXP(
-        str.c_str(), str.c_str() + str.length(), false);
+    nms[col++] = locale->encoder_.makeSEXP(str.begin(), str.end(), false);
   }
 
   return nms;
 }
 
+std::vector<std::string> get_filenames(SEXP in) {
+  auto n = Rf_xlength(in);
+  std::vector<std::string> out;
+  out.reserve(n);
+
+  for (R_xlen_t i = 0; i < n; ++i) {
+    SEXP x = VECTOR_ELT(in, i);
+    if (TYPEOF(x) == STRSXP) {
+      out.emplace_back(Rcpp::as<std::string>(x));
+    } else {
+      auto con = R_GetConnection(x);
+      out.emplace_back(con->description);
+    }
+  }
+
+  return out;
+}
+
 CharacterVector generate_filename_column(
-    List inputs, const std::vector<size_t> lengths, size_t rows) {
+    const std::vector<std::string>& filenames,
+    const std::vector<size_t>& lengths,
+    size_t rows) {
   std::vector<std::string> out;
   out.reserve(rows);
 
-  if (static_cast<size_t>(inputs.size()) != lengths.size()) {
+  if (static_cast<size_t>(filenames.size()) != lengths.size()) {
     stop("inputs and lengths inconsistent");
   }
 
-  for (int i = 0; i < inputs.size(); ++i) {
+  for (size_t i = 0; i < filenames.size(); ++i) {
     for (size_t j = 0; j < lengths[i]; ++j) {
-      // CharacterVector filename = Rf_asChar(inputs[i]);
-      out.push_back(inputs[i]);
+      out.push_back(filenames[i]);
     }
   }
   return wrap(out);
@@ -64,11 +82,22 @@ SEXP vroom_(
     const char comment,
     RObject col_names,
     RObject col_types,
+    RObject col_keep,
+    RObject col_skip,
     SEXP id,
     size_t skip,
+    size_t n_max,
     CharacterVector na,
     List locale,
-    bool use_altrep,
+    bool use_altrep_chr,
+    bool use_altrep_fct,
+    bool use_altrep_int,
+    bool use_altrep_dbl,
+    bool use_altrep_num,
+    bool use_altrep_lgl,
+    bool use_altrep_dttm,
+    bool use_altrep_date,
+    bool use_altrep_time,
     size_t guess_max,
     size_t num_threads,
     bool progress) {
@@ -79,23 +108,31 @@ SEXP vroom_(
       col_names.sexp_type() == STRSXP ||
       (col_names.sexp_type() == LGLSXP && as<LogicalVector>(col_names)[0]);
 
-  std::shared_ptr<vroom::index_collection> idx =
-      std::make_shared<vroom::index_collection>(
-          inputs,
-          Rf_isNull(delim) ? nullptr : Rcpp::as<const char*>(delim),
-          quote,
-          trim_ws,
-          escape_double,
-          escape_backslash,
-          has_header,
-          skip,
-          comment,
-          num_threads,
-          progress);
-
-  auto total_columns = idx->num_columns();
+  std::vector<std::string> filenames;
 
   bool add_filename = !Rf_isNull(id);
+
+  // We need to retrieve filenames now before the connection objects are read,
+  // as they are invalid afterwards.
+  if (add_filename) {
+    filenames = get_filenames(inputs);
+  }
+
+  auto idx = std::make_shared<vroom::index_collection>(
+      inputs,
+      Rf_isNull(delim) ? nullptr : Rcpp::as<const char*>(delim),
+      quote,
+      trim_ws,
+      escape_double,
+      escape_backslash,
+      has_header,
+      skip,
+      n_max,
+      comment,
+      num_threads,
+      progress);
+
+  auto total_columns = idx->num_columns();
 
   auto locale_info = std::make_shared<LocaleInfo>(locale);
 
@@ -116,7 +153,7 @@ SEXP vroom_(
   }
 
   Rcpp::Function col_types_standardise = vroom["col_types_standardise"];
-  col_types = col_types_standardise(col_types, col_nms);
+  col_types = col_types_standardise(col_types, col_nms, col_keep, col_skip);
 
   Rcpp::Function guess_type = vroom["guess_type"];
 
@@ -130,6 +167,13 @@ SEXP vroom_(
   std::vector<std::string> res_nms;
 
   size_t i = 0;
+
+  if (add_filename) {
+    res[i++] =
+        generate_filename_column(filenames, idx->row_sizes(), idx->num_rows());
+    res_nms.push_back(Rcpp::as<std::string>(id));
+  }
+
   for (size_t col = 0; col < total_columns; ++col) {
     Rcpp::List collector =
         Rcpp::as<List>(Rcpp::as<List>(col_types)["cols"])[col];
@@ -145,8 +189,8 @@ SEXP vroom_(
       for (size_t j = 0; j < guess_num; ++j) {
         auto row = j * guess_step;
         auto str = idx->get(row, col);
-        col_vals[j] = locale_info->encoder_.makeSEXP(
-            str.c_str(), str.c_str() + str.length(), false);
+        col_vals[j] =
+            locale_info->encoder_.makeSEXP(str.begin(), str.end(), false);
       }
       collector = guess_type(
           col_vals, Named("guess_integer") = false, Named("na") = na);
@@ -155,8 +199,7 @@ SEXP vroom_(
     }
 
     // This is deleted in the finalizers when the vectors are GC'd by R
-    auto info = new vroom_vec_info{idx,
-                                   col,
+    auto info = new vroom_vec_info{idx->get_column(col),
                                    num_threads,
                                    std::make_shared<Rcpp::CharacterVector>(na),
                                    locale_info};
@@ -164,7 +207,7 @@ SEXP vroom_(
     res_nms.push_back(Rcpp::as<std::string>(col_nms[col]));
 
     if (col_type == "collector_double") {
-      if (use_altrep) {
+      if (use_altrep_dbl) {
 #ifdef HAS_ALTREP
         res[i] = vroom_dbl::Make(info);
 #endif
@@ -173,7 +216,7 @@ SEXP vroom_(
         delete info;
       }
     } else if (col_type == "collector_integer") {
-      if (use_altrep) {
+      if (use_altrep_int) {
 #ifdef HAS_ALTREP
         res[i] = vroom_int::Make(info);
 #endif
@@ -182,7 +225,7 @@ SEXP vroom_(
         delete info;
       }
     } else if (col_type == "collector_number") {
-      if (use_altrep) {
+      if (use_altrep_num) {
 #ifdef HAS_ALTREP
         res[i] = vroom_num::Make(info);
 #endif
@@ -200,45 +243,49 @@ SEXP vroom_(
         res[i] = read_fctr_implicit(info, collector["include_na"]);
         delete info;
       } else {
-        if (use_altrep) {
+        if (use_altrep_fct) {
 #ifdef HAS_ALTREP
-          res[i] = vroom_factor::Make(info, levels, collector["ordered"]);
+          res[i] = vroom_fct::Make(info, levels, collector["ordered"]);
 #endif
         } else {
           res[i] = read_fctr_explicit(info, levels, collector["ordered"]);
+          delete info;
         }
       }
     } else if (col_type == "collector_date") {
-      if (use_altrep) {
+      info->format = Rcpp::as<std::string>(collector["format"]);
+      if (use_altrep_date) {
 #ifdef HAS_ALTREP
-        res[i] = vroom_date::Make(info, collector["format"]);
+        res[i] = vroom_date::Make(info);
 #endif
       } else {
-        res[i] = read_date(info, collector["format"]);
+        res[i] = read_date(info);
         delete info;
       }
     } else if (col_type == "collector_datetime") {
-      if (use_altrep) {
+      info->format = Rcpp::as<std::string>(collector["format"]);
+      if (use_altrep_dttm) {
 #ifdef HAS_ALTREP
-        res[i] = vroom_dttm::Make(info, collector["format"]);
+        res[i] = vroom_dttm::Make(info);
 #endif
       } else {
-        res[i] = read_dttm(info, collector["format"]);
+        res[i] = read_dttm(info);
         delete info;
       }
     } else if (col_type == "collector_time") {
-      if (use_altrep) {
+      info->format = Rcpp::as<std::string>(collector["format"]);
+      if (use_altrep_time) {
 #ifdef HAS_ALTREP
-        res[i] = vroom_time::Make(info, collector["format"]);
+        res[i] = vroom_time::Make(info);
 #endif
       } else {
-        res[i] = read_time(info, collector["format"]);
+        res[i] = read_time(info);
         delete info;
       }
     } else {
-      if (use_altrep) {
+      if (use_altrep_chr) {
 #ifdef HAS_ALTREP
-        res[i] = vroom_string::Make(info);
+        res[i] = vroom_chr::Make(info);
 #endif
       } else {
         res[i] = read_chr(info);
@@ -247,12 +294,6 @@ SEXP vroom_(
     }
 
     ++i;
-  }
-
-  if (add_filename) {
-    res[i++] =
-        generate_filename_column(inputs, idx->row_sizes(), idx->num_rows());
-    res_nms.push_back(Rcpp::as<std::string>(id));
   }
 
   if (i < total_columns) {
