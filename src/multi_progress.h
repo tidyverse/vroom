@@ -17,7 +17,7 @@ public:
       const char incomplete_char = '-',
       bool clear = true,
       double show_after = 0.2)
-      : pb_(RProgress::RProgress(
+      : pb_(new RProgress::RProgress(
             format,
             total,
             width,
@@ -47,15 +47,15 @@ public:
     while (total_progress_ < total_) {
       std::unique_lock<std::mutex> lk(mutex_);
       cv_.wait(lk);
-      pb_.tick(progress_);
+      pb_->tick(progress_);
       total_progress_ += progress_;
       progress_ = 0;
     }
-    pb_.update(1);
+    pb_->update(1);
   }
 
 private:
-  RProgress::RProgress pb_;
+  std::unique_ptr<RProgress::RProgress> pb_;
   size_t progress_;
   size_t total_progress_;
   size_t total_;
