@@ -57,6 +57,14 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
     n_max <- -1
   }
 
+  # Workaround weird RStudio / Progress bug: https://github.com/r-lib/progress/issues/56#issuecomment-384232184
+  if (
+    isTRUE(progress) &&
+    is_windows() &&
+    identical(Sys.getenv("RSTUDIO"), "1")) {
+    Sys.setenv("RSTUDIO" = "1")
+  }
+
   out <- vroom_(file, delim = delim, col_names = col_names, col_types = col_types,
     col_keep = col_keep, col_skip = col_skip, id = id, skip = skip,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,

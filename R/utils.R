@@ -8,3 +8,7 @@ env_to_logical <- function (var, default = TRUE) {
     default
   }
 }
+
+is_windows <- function() {
+  identical(tolower(Sys.info()[["sysname"]]), "windows")
+}
