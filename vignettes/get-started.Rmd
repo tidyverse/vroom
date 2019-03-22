@@ -80,6 +80,7 @@ vroom(files, id = "path")
 ```
 
 ```{r, include = FALSE}
+gc()
 fs::file_delete(files)
 ```
 
