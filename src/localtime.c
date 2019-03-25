@@ -376,11 +376,11 @@ tzload(const char * name, struct state * const sp, const int doextend)
             name = fullname;
         }
         if (doaccess && access(name, R_OK) != 0) {
-            Rf_warning("unknown timezone '%s'", sname);
+            /*Rf_warning("unknown timezone '%s'", sname);*/
             return -1;
         }
         if ((fid = open(name, OPEN_MODE)) == -1) {
-            Rf_warning("unknown timezone '%s'", sname);
+            /*Rf_warning("unknown timezone '%s'", sname);*/
             return -1;
         }
 
@@ -1180,7 +1180,7 @@ void tzset_name(const char * name) {
   } else {
     int ok = tzload(name, lclptr, TRUE);
     if (ok != 0) {
-      Rf_warning("Failed to load tz %s: falling back to %s", name, gmt);
+      /*Rf_warning("Failed to load tz %s: falling back to %s", name, gmt);*/
 
       if (name[0] == ':' || tzparse(name, lclptr, FALSE) != 0)
         (void) gmtload(lclptr);
