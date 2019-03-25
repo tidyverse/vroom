@@ -9,7 +9,8 @@ vroom(file, delim = NULL, col_names = TRUE, col_types = NULL,
   n_max = Inf, na = c("", "NA"), quote = "\\"", comment = "",
   trim_ws = TRUE, escape_double = TRUE, escape_backslash = FALSE,
   locale = readr::default_locale(), guess_max = 100,
-  num_threads = vroom_threads(), progress = vroom_progress())
+  num_threads = vroom_threads(), progress = vroom_progress(),
+  .name_repair = "unique")
 }
 \arguments{
 \item{file}{path to a local file.}
@@ -103,6 +104,11 @@ in an interactive session and not while knitting a document. The display
 is updated every 50,000 values and will only display if estimated reading
 time is 5 seconds or more. The automatic progress bar can be disabled by
 setting option \code{readr.show_progress} to \code{FALSE}.}
+
+\item{.name_repair}{Handling of column names. By default, vroom ensures
+column names are not empty and unique. See `.name_repair` as documented in
+[tibble::tibble()] for additional options including supplying user defined
+name repair functions.}
 }
 \description{
 Read a delimited file into a tibble

@@ -24,6 +24,10 @@ NULL
 #'   kept. Input can be a character vector of column names, a logical vector
 #'   or a numeric vector of column indexes. Only one of `col_keep` or
 #'   `col_drop` can be used.
+#' @param .name_repair Handling of column names. By default, vroom ensures
+#'   column names are not empty and unique. See `.name_repair` as documented in
+#'   [tibble::tibble()] for additional options including supplying user defined
+#'   name repair functions.
 #' @export
 #' @examples
 #' \dontshow{
@@ -38,10 +42,11 @@ NULL
 #' setwd(.old_wd)
 #' }
 vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
-  col_keep = NULL, col_skip = NULL, id = NULL, skip = 0, n_max = Inf, na =
-    c("", "NA"), quote = '"', comment = "", trim_ws = TRUE, escape_double =
-    TRUE, escape_backslash = FALSE, locale = readr::default_locale(), guess_max
-  = 100, num_threads = vroom_threads(), progress = vroom_progress()) {
+  col_keep = NULL, col_skip = NULL, id = NULL, skip = 0, n_max = Inf,
+  na = c("", "NA"), quote = '"', comment = "", trim_ws = TRUE,
+  escape_double = TRUE, escape_backslash = FALSE, locale = readr::default_locale(),
+  guess_max = 100, num_threads = vroom_threads(), progress = vroom_progress(),
+  .name_repair = "unique") {
 
   if (!is.null(col_keep) && !is.null(col_skip)) {
     stop("Only one of `col_keep` and `col_skip` can be set", call. = FALSE)
@@ -81,7 +86,7 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
     use_altrep_time = vroom_use_altrep_time(),
     num_threads = num_threads, progress = progress)
 
-  tibble::as_tibble(out)
+  tibble::as_tibble(out, .name_repair = .name_repair)
 }
 
 #' Guess the type of a vector
