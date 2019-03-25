@@ -201,6 +201,9 @@ guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";", "\n")) 
     return("")
   }
 
+  # blank text within quotes
+  lines <- gsub('"[^"]+"', "", lines)
+
   splits <- lapply(delims, strsplit, x = lines, useBytes = TRUE, fixed = TRUE)
 
   counts <- lapply(splits, function(x) table(lengths(x)))
