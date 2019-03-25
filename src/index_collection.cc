@@ -157,7 +157,7 @@ index_collection::index_collection(
           skip,
           n_max,
           comment,
-          get_env("vroom.connection_size", 1 << 17),
+          get_env("VROOM_CONNECTION_SIZE", 1 << 17),
           progress));
     } else {
       auto filename = as<std::string>(x);

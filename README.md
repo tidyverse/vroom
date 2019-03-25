@@ -168,15 +168,20 @@ will not need to be set by most users.
     indexing. Regardless of this setting the progress bar is disabled in
     non-interactive settings, R notebooks, when running tests with
     testthat and when knitting documents.
+  - `VROOM_CONNECTION_SIZE` - The size (in bytes) of the connection
+    buffer when reading from connections (default is 128 KiB).
 
-There are also a family of variables to control whether the altrep
-framework is used fo
+There are also a family of variables to control use of the Altrep
+framework. For versions of R where the Altrep framework is unavailable
+(R \< 3.5.0) they are automatically turned off and the variables have no
+effect. The variables can take one of `true`, `false`, `TRUE`, `FALSE`,
+`1`, or `0`.
 
   - `VROOM_USE_ALTREP_NUMERICS` - If set use altrep for *all* numeric
-    types (default `FALSE`).
+    types (default `false`).
 
 There are also individual variables for each type. Currently only
-`VROOM_USE_ALTREP_CHR` defaults to `TRUE`.
+`VROOM_USE_ALTREP_CHR` defaults to `true`.
 
   - `VROOM_USE_ALTREP_CHR`
   - `VROOM_USE_ALTREP_FCT`
