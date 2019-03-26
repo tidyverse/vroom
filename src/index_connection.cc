@@ -184,7 +184,7 @@ index_connection::index_connection(
 
   auto total_size = std::accumulate(
       idx_.begin(), idx_.end(), 0, [](size_t sum, const idx_t& v) {
-        sum += v.size() - 1;
+        sum += v.size() > 0 ? v.size() - 1 : 0;
         return sum;
       });
 
