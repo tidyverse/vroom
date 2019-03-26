@@ -81,22 +81,23 @@ index::index(
     pb->tick(0);
   }
 
-  //
+  bool nmax_set = n_max != static_cast<size_t>(-1);
+
+  if (nmax_set) {
+    n_max = n_max + has_header_;
+    num_threads = 1;
+  }
+
   // We want at least 10 lines per batch, otherwise threads aren't really
   // useful
   size_t batch_size = file_size / num_threads;
   size_t line_size = second_nl - first_nl;
+
   if (batch_size < line_size * 10) {
     num_threads = 1;
   }
 
   idx_ = std::vector<idx_t>(num_threads + 1);
-
-  bool nmax_set = n_max != static_cast<size_t>(-1);
-
-  if (nmax_set) {
-    n_max = n_max + has_header_;
-  }
 
   // Index the first row
   idx_[0].push_back(start - 1);
@@ -176,7 +177,7 @@ index::index(
   }
 
 #ifdef VROOM_LOG
-#if SPDLOG_ACTIVE_LEVEL <= SPD_LOG_LEVEL_DEBUG
+  //#if SPDLOG_ACTIVE_LEVEL <= SPD_LOG_LEVEL_DEBUG
   auto log = spdlog::basic_logger_mt("basic_logger", "logs/index.idx", true);
   for (auto& i : idx_) {
     for (auto& v : i) {
@@ -185,10 +186,11 @@ index::index(
     SPDLOG_LOGGER_DEBUG(log, "end of idx {0:x}", (size_t)&i);
   }
   spdlog::drop("basic_logger");
-#endif
+//#endif
 #endif
 
-  SPDLOG_DEBUG("columns: {0} rows: {1}", columns_, rows_);
+  SPDLOG_DEBUG(
+      "columns: {0} rows: {1} total_size: {2}", columns_, rows_, total_size);
 }
 
 void index::trim_quotes(const char*& begin, const char*& end) const {
