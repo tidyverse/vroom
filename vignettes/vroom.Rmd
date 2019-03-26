@@ -1,5 +1,5 @@
 ---
-title: "Getting started with vroom"
+title: "Get started with vroom"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{get-started}
@@ -15,25 +15,38 @@ knitr::opts_chunk$set(
 options(tibble.print_min = 3)
 ```
 
-The vroom package contains one function `vroom()` which is used to
+The vroom package contains one main function `vroom()` which is used to
 read all types of delimited files. A delimited file is any file in
 which the data is separated (delimited) by one or more characters.
 
 The most common type of delimited files are CSV (Comma Separated
 Values) files, typically these files have a `.csv` suffix.
 
-## reading files
+```{r}
+library(vroom)
+```
+
+This vignette covers the following topics:
+
+- The basics of reading files, including
+  - single files
+  - multiple files
+  - compressed files
+  - remote files
+- Skipping particular columns.
+- Specifying column types, for additional safety and when the automatic guessing
+  fails.
+
+## Reading files
 To read a CSV, or other type of delimited file with vroom pass the file to
 `vroom()`. The delimiter will be automatically guessed if it is a common
 delimiter. If the guessing fails or you are using a less common delimiter
-specify it with `delim = ","`.
+specify it with the `delim` parameter. (e.g. `delim = ","`).
 
-We have included an example CSV file in the vroom package. Access it with
-`vroom_example("mtcars.csv")`
+We have included an example CSV file in the vroom package for use in examples
+and tests. Access it with `vroom_example("mtcars.csv")`
 
-```{r setup}
-library(vroom)
-
+```{r}
 # See where the example file is stored on your machine
 file <- vroom_example("mtcars.csv")
 file
@@ -46,11 +59,11 @@ vroom(file)
 vroom(file, delim = ",")
 ```
 
-## reading multiple files
+## Reading multiple files
 
-If you are reading a set of (CSV or otherwise delimited) files which all have
-the same columns, you can pass all the filenames directly to `vroom()` and it
-will combine them into one result.
+If you are reading a set of files which all have the same columns, you can pass
+the filenames directly to `vroom()` and it will combine them into one
+result.
 
 First we will create some files to read by splitting the mtcars dataset by
 number of cylinders, (it is OK if you don't currently understand this code).
@@ -62,7 +75,7 @@ purrr::iwalk(
 )
 ```
 
-We can then efficiently read them into one result by passing the filenames directly
+We can then efficiently read them into one table by passing the filenames directly
 to vroom.
 
 ```{r}
@@ -71,9 +84,9 @@ files
 vroom(files)
 ```
 
-Often the filename or directory the files are in contains information about
-the contents, in this case the `id` parameter can be used to add an extra
-column (in this case named `path`) to the result that contains the file path.
+Often the filename or directory where the files are stored contains
+information, in this case the `id` parameter can be used to add an extra column
+to the result with the full path to each file. (in this case named `path`).
 
 ```{r}
 vroom(files, id = "path")
@@ -84,7 +97,7 @@ gc()
 fs::file_delete(files)
 ```
 
-## reading compressed files
+## Reading compressed files
 
 vroom supports reading zip, gz, bz2 and xz compressed files automatically,
 just pass the filename of the compressed file to vroom.
@@ -95,7 +108,7 @@ file <- vroom_example("mtcars.csv.gz")
 vroom(file)
 ```
 
-## reading remote files
+## Reading remote files
 
 vroom can read files from the internet as well by passing the URL of the file
 to vroom.
@@ -113,20 +126,20 @@ file <- "https://raw.githubusercontent.com/jimhester/vroom/master/inst/extdata/m
 vroom(file)
 ```
 
-## column skipping
+## Column skipping
 
 vroom uses the `col_keep` and `col_skip` parameters to control which columns to
 keep or skip in the output. Both parameters can take input in 3 different ways.
 
-- character vector of column names
+- A character vector of column names
 ```{r}
 vroom(file, col_keep = c("model", "cyl", "gear"))
 ```
-- numeric vector of column indexes, e.g. `c(1, 2, 5)`
+- A numeric vector of column indexes, e.g. `c(1, 2, 5)`
 ```{r}
 vroom(file, col_keep = c(1, 3, 11))
 ```
-- logical vector
+- A logical vector
 ```{r}
 vroom(file, col_keep = c(TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE))
 ```
@@ -137,7 +150,7 @@ vroom(file, col_keep = c(TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, F
 vroom(file, col_skip = 5:12)
 ```
 
-## column types
+## Column types
 
 vroom guesses the data types of columns as they are read, however sometimes it
 is necessary to change the type of one or more columns.
@@ -147,8 +160,12 @@ The available specifications are: (with single letter abbreviations in quotes)
 * `col_logical()` 'l', containing only `T`, `F`, `TRUE`, `FALSE`, `1` or `0`.
 * `col_integer()` 'i', integer values.
 * `col_double()` 'd', floating point values.
-* `col_character()` 'c', everything else.
+* `col_number()` [n], numbers containing the `grouping_mark`
+* `col_date(format = "")` [D]: with the locale's `date_format`.
+* `col_time(format = "")` [t]: with the locale's `time_format`.
+* `col_datetime(format = "")` [T]: ISO8601 date times.
 * `col_factor(levels, ordered)` 'f', a fixed set of values.
+* `col_character()` 'c', everything else.
 * `col_skip()` '_, -', don't import this column.
 * `col_guess()` '?', parse using the "best" type based on the input.
 
