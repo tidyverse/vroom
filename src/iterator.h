@@ -1,5 +1,7 @@
 #pragma once
 
+#include "vroom.h"
+
 namespace vroom {
 
 class base_iterator {
