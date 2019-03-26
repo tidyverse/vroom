@@ -83,7 +83,7 @@ index_connection::index_connection(
   if (progress_) {
     pb = std::unique_ptr<RProgress::RProgress>(
         new RProgress::RProgress(get_pb_format("connection"), 1e12));
-    pb->update(0);
+    pb->tick(start);
   }
 
   n_max = n_max != static_cast<size_t>(-1) ? n_max + has_header_ : n_max;

@@ -26,8 +26,8 @@ public:
             clear,
             show_after)),
         progress_(0),
-        total_progress_(0),
-        total_(total) {}
+        total_(total),
+        last_progress_(0) {}
 
   void tick(size_t progress) {
     std::lock_guard<std::mutex> guard(mutex_);
@@ -38,18 +38,21 @@ public:
 
   void finish() {
     std::lock_guard<std::mutex> guard(mutex_);
-    total_progress_ = total_;
+    progress_ = total_;
     mutex_.unlock();
     cv_.notify_one();
   }
 
   void display_progress() {
-    while (total_progress_ < total_) {
+    while (true) {
       std::unique_lock<std::mutex> lk(mutex_);
-      cv_.wait(lk);
-      pb_->tick(progress_);
-      total_progress_ += progress_;
-      progress_ = 0;
+      if (progress_ < total_) {
+        cv_.wait(lk);
+        pb_->tick(progress_ - last_progress_);
+        last_progress_ = progress_;
+      } else {
+        break;
+      }
     }
     pb_->update(1);
   }
@@ -57,8 +60,8 @@ public:
 private:
   std::unique_ptr<RProgress::RProgress> pb_;
   size_t progress_;
-  size_t total_progress_;
   size_t total_;
+  size_t last_progress_;
   std::mutex mutex_;
   std::condition_variable cv_;
 };

@@ -78,7 +78,7 @@ index::index(
     auto width = get_pb_width(format);
     pb = std::unique_ptr<multi_progress>(
         new multi_progress(format, file_size, width));
-    pb->tick(0);
+    pb->tick(start);
   }
 
   bool nmax_set = n_max != static_cast<size_t>(-1);

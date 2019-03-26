@@ -215,6 +215,7 @@ test_that("vroom can read an empty file", {
 })
 
 test_that("vroom_example() returns the example files", {
+
   expect_equal(vroom_example(), list.files(system.file("extdata", package = "vroom")))
 })
 
