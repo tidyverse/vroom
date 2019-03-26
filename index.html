@@ -44,6 +44,9 @@
   </a>
 </li>
 <li>
+  <a href="articles/vroom.html">Get started</a>
+</li>
+<li>
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -55,9 +58,6 @@
   <ul class="dropdown-menu" role="menu">
 <li>
       <a href="articles/benchmarks.html">Benchmarks</a>
-    </li>
-    <li>
-      <a href="articles/get-started.html">Getting started with vroom</a>
     </li>
   </ul>
 </li>
@@ -214,7 +214,7 @@
 <div id="benchmarks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#benchmarks" class="anchor"></a>Benchmarks</h2>
-<p>The speed quoted above is from a dataset with 14,776,615 rows and 11 columns, see the <a href="https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html">benchmark article</a> for full details of the dataset and <a href="https://github.com/jimhester/vroom/tree/master/bench">bench/</a> for the code used to retrieve the data and perform the benchmarks.</p>
+<p>The speed quoted above is from a dataset with 14,776,615 rows and 11 columns, see the <a href="https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html">benchmark article</a> for full details of the dataset and <a href="https://github.com/jimhester/vroom/blob/master/inst/bench">bench/</a> for the code used to retrieve the data and perform the benchmarks.</p>
 </div>
 <div id="rstudio-caveats" class="section level2">
 <h2 class="hasAnchor">
@@ -222,12 +222,44 @@
 <p>RStudio’s environment pane auto-refresh behavior calls <code><a href="https://www.rdocumentation.org/packages/utils/topics/object.size">object.size()</a></code> which for Altrep objects can be extremely slow. This was fixed in <a href="https://github.com/rstudio/rstudio/pull/4210">rstudio#4210</a> and <a href="https://github.com/rstudio/rstudio/pull/4292">rstudio#4292</a>, so it is recommended you use a <a href="https://dailies.rstudio.com/">daily version</a> if you are trying to use vroom inside RStudio. For older versions a workaround is to use the ‘Manual Refresh Only’ option in the environment pane.</p>
 <p><img src="https://user-images.githubusercontent.com/470418/51357022-95a1f280-1a82-11e9-8035-3687c8fd5dd8.png"></p>
 </div>
+</div>
+<div id="environment-variables" class="section level1">
+<h1 class="hasAnchor">
+<a href="#environment-variables" class="anchor"></a>Environment variables</h1>
+<p>In addition to the arguments to the <code><a href="reference/vroom.html">vroom()</a></code> function, you can control the behavior of vroom with a few environment variables. Generally these will not need to be set by most users.</p>
+<ul>
+<li>
+<code>VROOM_TEMP_PATH</code> - Path to the directory used to store temporary files when reading from a R connection. If unset defaults to the R session’s temporary directory (<code><a href="https://www.rdocumentation.org/packages/base/topics/tempfile">tempdir()</a></code>).</li>
+<li>
+<code>VROOM_THREADS</code> - The number of processor threads to use when indexing and parsing. If unset defaults to <code><a href="https://www.rdocumentation.org/packages/parallel/topics/detectCores">parallel::detectCores()</a></code>.</li>
+<li>
+<code>VROOM_SHOW_PROGRESS</code> - Whether to show the progress bar when indexing. Regardless of this setting the progress bar is disabled in non-interactive settings, R notebooks, when running tests with testthat and when knitting documents.</li>
+<li>
+<code>VROOM_CONNECTION_SIZE</code> - The size (in bytes) of the connection buffer when reading from connections (default is 128 KiB).</li>
+</ul>
+<p>There are also a family of variables to control use of the Altrep framework. For versions of R where the Altrep framework is unavailable (R &lt; 3.5.0) they are automatically turned off and the variables have no effect. The variables can take one of <code>true</code>, <code>false</code>, <code>TRUE</code>, <code>FALSE</code>, <code>1</code>, or <code>0</code>.</p>
+<ul>
+<li>
+<code>VROOM_USE_ALTREP_NUMERICS</code> - If set use altrep for <em>all</em> numeric types (default <code>false</code>).</li>
+</ul>
+<p>There are also individual variables for each type. Currently only <code>VROOM_USE_ALTREP_CHR</code> defaults to <code>true</code>.</p>
+<ul>
+<li><code>VROOM_USE_ALTREP_CHR</code></li>
+<li><code>VROOM_USE_ALTREP_FCT</code></li>
+<li><code>VROOM_USE_ALTREP_INT</code></li>
+<li><code>VROOM_USE_ALTREP_DBL</code></li>
+<li><code>VROOM_USE_ALTREP_NUM</code></li>
+<li><code>VROOM_USE_ALTREP_LGL</code></li>
+<li><code>VROOM_USE_ALTREP_DTTM</code></li>
+<li><code>VROOM_USE_ALTREP_DATE</code></li>
+<li><code>VROOM_USE_ALTREP_TIME</code></li>
+</ul>
 <div id="thanks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#thanks" class="anchor"></a>Thanks</h2>
 <ul>
 <li>
-<a href="https://twitter.com/groundwalkergmb">Gabe Becker</a>, <a href="https://stat.uiowa.edu/~luke/">Luke Tierney</a> and <a href="https://github.com/kalibera">Tomas Kalibera</a> for implementing and maintaining the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a>
+<a href="https://twitter.com/groundwalkergmb">Gabe Becker</a>, <a href="https://stat.uiowa.edu/~luke/">Luke Tierney</a> and <a href="https://github.com/kalibera">Tomas Kalibera</a> for conceiving, Implementing and maintaining the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a>
 </li>
 <li>
 <a href="https://twitter.com/romain_francois">Romain François</a>, whose <a href="https://purrple.cat/blog/2018/10/14/altrep-and-cpp/">Altrepisode</a> package and <a href="https://purrple.cat/blog/2018/10/14/altrep-and-cpp/">related blog-posts</a> were a great guide for creating new Altrep objects in C++.</li>

@@ -43,6 +43,9 @@
   </a>
 </li>
 <li>
+  <a href="../articles/vroom.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -54,9 +57,6 @@
   <ul class="dropdown-menu" role="menu">
 <li>
       <a href="../articles/benchmarks.html">Benchmarks</a>
-    </li>
-    <li>
-      <a href="../articles/get-started.html">Getting started with vroom</a>
     </li>
   </ul>
 </li>
@@ -126,7 +126,7 @@
 <div id="benchmarks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#benchmarks" class="anchor"></a>Benchmarks</h2>
-<p>The code used to run the benchmarks is in <a href="https://github.com/jimhester/vroom/blob/master/bench/benchmark.R">bench/benchmark.R</a>.</p>
+<p>The code used to run the benchmarks is in <a href="https://github.com/jimhester/vroom/blob/master/inst/bench/benchmark.R">bench/benchmark.R</a>.</p>
 <p>The benchmark <code>base</code> uses <code>vroom</code> with base functions for subsetting. <code>dplyr</code> uses <code>vroom</code> to read the file and dplyr functions to subset. <code>data.table</code> uses <code>fread()</code> to read the file and <code>data.table</code> functions to subset and <code>readr</code> uses <code>readr</code> to read the file and <code>dplyr</code> to subset.</p>
 <p>The following operations are performed.</p>
 <ul>
@@ -214,12 +214,12 @@ read.delim
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(forcats)</a>
 <a class="sourceLine" id="cb2-3" data-line-number="3">tm_df <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb2-4" data-line-number="4"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">package =</span> <span class="kw"><a href="https://forcats.tidyverse.org/reference/fct_inorder.html">fct_inorder</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/grep">sub</a></span>(<span class="st">"_"</span>, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>, package))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span>(<span class="dt">y =</span> <span class="dv">0</span>, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> package, <span class="dt">xend =</span> package, <span class="dt">yend =</span> time, <span class="dt">alpha =</span> type), <span class="dt">color =</span> <span class="st">"grey50"</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="st">    </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> package, <span class="dt">y =</span> time, <span class="dt">color =</span> type)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="st">    </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="kw"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(op), <span class="dt">scales =</span> <span class="st">"free"</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/ggplot">ggplot</a></span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/geom_segment">geom_segment</a></span>(<span class="dt">y =</span> <span class="dv">0</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(<span class="dt">x =</span> package, <span class="dt">xend =</span> package, <span class="dt">yend =</span> time, <span class="dt">alpha =</span> type), <span class="dt">color =</span> <span class="st">"grey50"</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="st">    </span><span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/geom_point">geom_point</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(<span class="dt">x =</span> package, <span class="dt">y =</span> time, <span class="dt">color =</span> type)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="st">    </span><span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/facet_wrap">facet_wrap</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/vars">vars</a></span>(op), <span class="dt">scales =</span> <span class="st">"free"</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb2-9" data-line-number="9"><span class="st">    </span>bench<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/bench/topics/scale_bench_time">scale_y_bench_time</a></span>(<span class="dt">base =</span> <span class="ot">NULL</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="st">    </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="dt">legend.position =</span> <span class="st">"bottom"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="st">    </span><span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/theme">theme</a></span>(<span class="dt">legend.position =</span> <span class="st">"bottom"</span>)</a></code></pre></div>
 <p><img src="benchmarks_files/figure-html/unnamed-chunk-3-1.png" width="960"></p>
 <pre><code>#&gt;      package ondiskversion loadedversion
 #&gt; 1       base         3.5.1          &lt;NA&gt;

@@ -76,6 +76,9 @@
   </a>
 </li>
 <li>
+  <a href="../articles/vroom.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -87,9 +90,6 @@
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/benchmarks.html">Benchmarks</a>
-    </li>
-    <li>
-      <a href="../articles/get-started.html">Getting started with vroom</a>
     </li>
   </ul>
 </li>
@@ -126,11 +126,12 @@
     </div>
 
     <pre class="usage"><span class='fu'>vroom</span>(<span class='no'>file</span>, <span class='kw'>delim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>col_names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>id</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>na</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>""</span>, <span class='st'>"NA"</span>), <span class='kw'>quote</span> <span class='kw'>=</span> <span class='st'>"\""</span>,
-  <span class='kw'>comment</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>trim_ws</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>escape_double</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>escape_backslash</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>locale</span> <span class='kw'>=</span> <span class='kw pkg'>readr</span><span class='kw ns'>::</span><span class='fu'><a href='https://readr.tidyverse.org/reference/locale.html'>default_locale</a></span>(),
-  <span class='kw'>guess_max</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='kw pkg'>parallel</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/parallel/topics/detectCores'>detectCores</a></span>(),
-  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='show_progress.html'>show_progress</a></span>())</pre>
+  <span class='kw'>col_keep</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>col_skip</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>Inf</span>, <span class='kw'>na</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>""</span>, <span class='st'>"NA"</span>), <span class='kw'>quote</span> <span class='kw'>=</span> <span class='st'>"\""</span>, <span class='kw'>comment</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>trim_ws</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>escape_double</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>escape_backslash</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>locale</span> <span class='kw'>=</span> <span class='kw pkg'>readr</span><span class='kw ns'>::</span><span class='fu'><a href='https://readr.tidyverse.org/reference/locale.html'>default_locale</a></span>(), <span class='kw'>guess_max</span> <span class='kw'>=</span> <span class='fl'>100</span>,
+  <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(), <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>(),
+  <span class='kw'>.name_repair</span> <span class='kw'>=</span> <span class='st'>"unique"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -176,6 +177,20 @@ l = logical, f = factor, D = date, T = date time, t = time, ? = guess, or
 <code>_</code>/<code>-</code> to skip the column.</p></td>
     </tr>
     <tr>
+      <th>col_keep</th>
+      <td><p>Columns to keep in the output, all other columns will be
+skipped. Input can be a character vector of column names, a logical vector
+or a numeric vector of column indexes. Only one of `col_keep` or
+`col_drop` can be used.</p></td>
+    </tr>
+    <tr>
+      <th>col_skip</th>
+      <td><p>Columns to skip in the output, all other columns will be
+kept. Input can be a character vector of column names, a logical vector
+or a numeric vector of column indexes. Only one of `col_keep` or
+`col_drop` can be used.</p></td>
+    </tr>
+    <tr>
       <th>id</th>
       <td><p>Either a string or 'NULL'. If a string, the output will contain a
 variable with that name with the filename(s) as the value. If 'NULL', the
@@ -184,6 +199,10 @@ default, no variable will be created.</p></td>
     <tr>
       <th>skip</th>
       <td><p>Number of lines to skip before reading data.</p></td>
+    </tr>
+    <tr>
+      <th>n_max</th>
+      <td><p>Maximum number of records to read.</p></td>
     </tr>
     <tr>
       <th>na</th>
@@ -240,6 +259,13 @@ in an interactive session and not while knitting a document. The display
 is updated every 50,000 values and will only display if estimated reading
 time is 5 seconds or more. The automatic progress bar can be disabled by
 setting option <code>readr.show_progress</code> to <code>FALSE</code>.</p></td>
+    </tr>
+    <tr>
+      <th>.name_repair</th>
+      <td><p>Handling of column names. By default, vroom ensures
+column names are not empty and unique. See `.name_repair` as documented in
+[tibble::tibble()] for additional options including supplying user defined
+name repair functions.</p></td>
     </tr>
     </table>
     
