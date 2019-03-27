@@ -74,35 +74,35 @@ void index_collection::column::full_iterator::advance(ptrdiff_t n) {
 ptrdiff_t index_collection::column::full_iterator::distance_to(
     const base_iterator& that) const {
 
-  auto that_ = static_cast<const full_iterator&>(that);
+  auto that_ = static_cast<const full_iterator*>(&that);
 
-  if (i_ == that_.i_) {
-    ptrdiff_t res = that_.it_ - it_;
+  if (i_ == that_->i_) {
+    ptrdiff_t res = that_->it_ - it_;
     return res;
   }
   ptrdiff_t count = 0;
   size_t i = i_;
 
-  if (i_ < that_.i_) {
+  if (i_ < that_->i_) {
     count = it_end_ - it_;
     ++i;
-    while (i < that_.i_) {
+    while (i < that_->i_) {
       count += idx_->indexes_[i]->num_rows();
       ++i;
     }
     auto begin = idx_->indexes_[i]->get_column(column_).begin();
-    count += that_.it_ - begin;
+    count += that_->it_ - begin;
     return count;
   }
 
   count = it_start_ - it_;
   --i;
-  while (i > that_.i_) {
+  while (i > that_->i_) {
     count -= idx_->indexes_[i]->num_rows();
     --i;
   }
   auto end = idx_->indexes_[i]->get_column(column_).end();
-  count += that_.it_ - end;
+  count += that_->it_ - end;
   return count;
 }
 
