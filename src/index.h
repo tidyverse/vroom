@@ -299,6 +299,12 @@ public:
       }
 
       else if (c == '\n') { // no embedded quotes allowed
+        if (in_quote) {
+          if (progress_ && pb) {
+            pb->finish();
+          }
+          throw std::runtime_error("Embedded newline found!");
+        }
         destination.push_back(pos + file_offset);
         if (lines_read >= n_max) {
           if (progress_ && pb) {

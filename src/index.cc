@@ -114,11 +114,11 @@ index::index(
       -1);
   columns_ = idx_[0].size() - 1;
 
-  std::vector<std::thread> threads;
+  std::vector<std::future<void> > threads;
 
   if (nmax_set) {
 
-    threads.emplace_back([&] {
+    threads.emplace_back(std::async([&] {
       n_max -= lines_read;
       index_region(
           mmap_,
@@ -131,7 +131,7 @@ index::index(
           n_max,
           pb,
           file_size / 100);
-    });
+    }));
   } else {
     threads = parallel_for(
         file_size - first_nl,
@@ -161,7 +161,7 @@ index::index(
   }
 
   for (auto& t : threads) {
-    t.join();
+    t.get();
   }
 
   size_t total_size = std::accumulate(
