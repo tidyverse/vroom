@@ -16,6 +16,7 @@
 #include "utils.h"
 
 #include "vroom.h"
+#include "iterator.h"
 
 namespace vroom {
 
@@ -24,7 +25,7 @@ struct cell {
   const char* end;
 };
 
-class index {
+class index : public std::enable_shared_from_this<index> {
 
 public:
   index(
@@ -83,36 +84,47 @@ public:
   };
 
   class row {
-    const index& idx_;
+    std::shared_ptr<const index> idx_;
     size_t row_;
 
   public:
-    row(const index& idx, size_t row);
+    row(std::shared_ptr<const index> idx, size_t row) : idx_(idx), row_(row) {}
 
-    class iterator {
-      size_t i_;
-      const index* idx_;
+    class row_iterator : public base_iterator {
+      std::shared_ptr<const index> idx_;
       size_t row_;
-      size_t start_;
+      size_t i_;
 
     public:
-      using iterator_category = std::forward_iterator_tag;
-      using value_type = string;
-      using pointer = string*;
-      using reference = string&;
-
-      iterator(const index& idx, size_t row, size_t start, size_t end);
-      iterator operator++(int); /* postfix */
-      iterator& operator++();   /* prefix */
-      bool operator!=(const iterator& other) const;
-      bool operator==(const iterator& other) const;
-
-      string operator*();
-      iterator& operator+=(int n);
-      iterator operator+(int n);
+      row_iterator(std::shared_ptr<const index> idx, size_t row)
+          : idx_(idx), row_(row) {
+        i_ = (row_ + idx_->has_header_) * idx_->columns_;
+      }
+      void next() { ++i_; }
+      void prev() { --i_; }
+      void advance(ptrdiff_t n) { i_ += n; }
+      bool equal_to(const base_iterator& it) const {
+        return i_ == static_cast<const row_iterator*>(&it)->i_;
+      }
+      ptrdiff_t distance_to(const base_iterator& it) const {
+        return static_cast<const row_iterator*>(&it)->i_ - i_;
+      }
+      string value() const {
+        return idx_->get_trimmed_val(i_, i_ == 0, i_ == (idx_->columns_ - 1));
+      }
+      row_iterator* clone() const { return new row_iterator(*this); }
+      string at(ptrdiff_t n) const {
+        size_t i = (row_ + idx_->has_header_) * idx_->columns_ + n;
+        return idx_->get_trimmed_val(i, i == 0, i == (idx_->columns_ - 1));
+      }
+      virtual ~row_iterator() = default;
     };
-    iterator begin();
-    iterator end();
+    vroom::iterator begin() { return new row_iterator(idx_, row_); }
+    vroom::iterator end() {
+      auto res = new row_iterator(idx_, row_);
+      res->advance(idx_->num_columns());
+      return res;
+    };
   };
 
   index() : rows_(0), columns_(0){};
@@ -129,9 +141,11 @@ public:
     return vroom::index::column(*this, col);
   }
 
-  row get_row(size_t row) const { return vroom::index::row(*this, row); }
+  row get_row(size_t row) const {
+    return vroom::index::row(shared_from_this(), row);
+  }
 
-  row get_header() const { return vroom::index::row(*this, -1); }
+  row get_header() const { return vroom::index::row(shared_from_this(), -1); }
 
 public:
   using idx_t = std::vector<size_t>;
