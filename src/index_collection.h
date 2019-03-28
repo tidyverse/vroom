@@ -61,9 +61,9 @@ public:
       size_t column_;
       size_t start_;
       size_t end_;
-      index::column::iterator it_;
-      index::column::iterator it_end_;
-      index::column::iterator it_start_;
+      iterator it_;
+      iterator it_end_;
+      iterator it_start_;
 
     public:
       full_iterator(std::shared_ptr<const index_collection> idx, size_t column);

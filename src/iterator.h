@@ -82,6 +82,12 @@ public:
     it_->advance(n);
     return *this;
   }
+
+  iterator& operator-=(ptrdiff_t n) {
+    it_->advance(-n);
+    return *this;
+  }
+
   iterator operator+(ptrdiff_t n) const {
 
     SPDLOG_TRACE("{0:x}: iterator operator+({1})", (size_t)this, n);
