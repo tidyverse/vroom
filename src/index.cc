@@ -1,4 +1,4 @@
-#include "index.h"
+#include "delimited_index.h"
 
 #include "parallel.h"
 
@@ -11,7 +11,7 @@
 
 using namespace vroom;
 
-index::index(
+delimited_index::delimited_index(
     const char* filename,
     const char* delim,
     const char quote,
@@ -193,7 +193,7 @@ index::index(
       "columns: {0} rows: {1} total_size: {2}", columns_, rows_, total_size);
 }
 
-void index::trim_quotes(const char*& begin, const char*& end) const {
+void delimited_index::trim_quotes(const char*& begin, const char*& end) const {
   if (begin != end && (*begin == quote_)) {
     ++begin;
   }
@@ -205,7 +205,8 @@ void index::trim_quotes(const char*& begin, const char*& end) const {
 
 inline bool isspace(const char* c) { return *c == ' ' || *c == '\t'; }
 
-void index::trim_whitespace(const char*& begin, const char*& end) const {
+void delimited_index::trim_whitespace(
+    const char*& begin, const char*& end) const {
   while (begin != end && isspace(*begin)) {
     ++begin;
   }
@@ -215,7 +216,7 @@ void index::trim_whitespace(const char*& begin, const char*& end) const {
   }
 }
 
-const string index::get_escaped_string(
+const string delimited_index::get_escaped_string(
     const char* begin, const char* end, bool has_quote) const {
   // If not escaping just return without a copy
   if (!((escape_double_ && has_quote) || escape_backslash_)) {
@@ -238,7 +239,7 @@ const string index::get_escaped_string(
 }
 
 inline std::pair<const char*, const char*>
-index::get_cell(size_t i, bool is_first) const {
+delimited_index::get_cell(size_t i, bool is_first) const {
 
   auto oi = i;
 
@@ -265,7 +266,7 @@ index::get_cell(size_t i, bool is_first) const {
 }
 
 const string
-index::get_trimmed_val(size_t i, bool is_first, bool is_last) const {
+delimited_index::get_trimmed_val(size_t i, bool is_first, bool is_last) const {
 
   const char* begin;
   const char* end;
@@ -291,7 +292,7 @@ index::get_trimmed_val(size_t i, bool is_first, bool is_last) const {
   return get_escaped_string(begin, end, has_quote);
 }
 
-const string index::get(size_t row, size_t col) const {
+string delimited_index::get(size_t row, size_t col) const {
   auto i = (row + has_header_) * columns_ + col;
 
   return get_trimmed_val(i, col == 0, col == (columns_ - 1));

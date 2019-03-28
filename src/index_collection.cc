@@ -3,6 +3,8 @@
 #include "index_connection.h"
 #include <memory>
 
+#include "utils.h"
+
 using namespace vroom;
 using namespace Rcpp;
 
@@ -14,10 +16,11 @@ index_collection::column::full_iterator::full_iterator(
       idx_(idx),
       column_(column),
       start_(0),
-      end_(idx_->indexes_.size() - 1),
-      it_(idx_->indexes_[i_]->get_column(column_).begin()),
-      it_end_(idx_->indexes_[i_]->get_column(column_).end()),
-      it_start_(idx_->indexes_[i_]->get_column(column_).begin()) {
+      end_(idx_->indexes_.size() - 1) {
+  auto col = idx_->indexes_[i_]->get_column(column_);
+  it_ = col->begin();
+  it_end_ = col->end();
+  it_start_ = col->begin();
   SPDLOG_TRACE("{0:x}: full_iterator ctor", (size_t)this);
 }
 
@@ -25,8 +28,8 @@ void index_collection::column::full_iterator::next() {
   ++it_;
   if (it_ == it_end_ && i_ < end_) {
     ++i_;
-    it_ = idx_->indexes_[i_]->get_column(column_).begin();
-    it_end_ = idx_->indexes_[i_]->get_column(column_).end();
+    it_ = idx_->indexes_[i_]->get_column(column_)->begin();
+    it_end_ = idx_->indexes_[i_]->get_column(column_)->end();
   }
 }
 
@@ -34,8 +37,8 @@ void index_collection::column::full_iterator::prev() {
   --it_;
   if (it_ == it_start_ && i_ > start_) {
     --i_;
-    it_ = idx_->indexes_[i_]->get_column(column_).end();
-    it_start_ = idx_->indexes_[i_]->get_column(column_).begin();
+    it_ = idx_->indexes_[i_]->get_column(column_)->end();
+    it_start_ = idx_->indexes_[i_]->get_column(column_)->begin();
   }
 }
 
@@ -90,7 +93,7 @@ ptrdiff_t index_collection::column::full_iterator::distance_to(
       count += idx_->indexes_[i]->num_rows();
       ++i;
     }
-    auto begin = idx_->indexes_[i]->get_column(column_).begin();
+    auto begin = idx_->indexes_[i]->get_column(column_)->begin();
     count += that_->it_ - begin;
     return count;
   }
@@ -101,7 +104,7 @@ ptrdiff_t index_collection::column::full_iterator::distance_to(
     count -= idx_->indexes_[i]->num_rows();
     --i;
   }
-  auto end = idx_->indexes_[i]->get_column(column_).end();
+  auto end = idx_->indexes_[i]->get_column(column_)->end();
   count += that_->it_ - end;
   return count;
 }
@@ -144,9 +147,9 @@ index_collection::index_collection(
 
     bool is_connection = TYPEOF(x) != STRSXP;
 
-    std::unique_ptr<vroom::index> p;
+    std::shared_ptr<vroom::index> p;
     if (is_connection) {
-      p = std::unique_ptr<vroom::index>(new vroom::index_connection(
+      p = std::make_shared<vroom::index_connection>(
           x,
           delim,
           quote,
@@ -158,10 +161,10 @@ index_collection::index_collection(
           n_max,
           comment,
           get_env("VROOM_CONNECTION_SIZE", 1 << 17),
-          progress));
+          progress);
     } else {
       auto filename = as<std::string>(x);
-      p = std::unique_ptr<vroom::index>(new vroom::index(
+      p = std::make_shared<vroom::delimited_index>(
           filename.c_str(),
           delim,
           quote,
@@ -173,7 +176,7 @@ index_collection::index_collection(
           n_max,
           comment,
           num_threads,
-          progress));
+          progress);
     }
     rows_ += p->num_rows();
     columns_ = p->num_columns();

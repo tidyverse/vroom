@@ -28,6 +28,8 @@ public:
   using pointer = string*;
   using reference = string&;
 
+  iterator() : it_(nullptr){};
+
   iterator(base_iterator* it) : it_(it) {
     SPDLOG_TRACE("{0:x}: iterator ctor", (size_t)this);
   }
@@ -111,7 +113,9 @@ public:
 
   ~iterator() {
     SPDLOG_TRACE("{0:x}: iterator dtor", (size_t)this);
-    delete it_;
+    if (it_ != nullptr) {
+      delete it_;
+    }
   }
 };
 

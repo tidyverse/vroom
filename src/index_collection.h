@@ -36,14 +36,6 @@ public:
 
   size_t num_rows() const { return rows_; }
 
-  std::vector<std::string> filenames() const {
-    std::vector<std::string> out;
-    for (const auto& index : indexes_) {
-      out.push_back(index->filename());
-    }
-    return out;
-  }
-
   std::vector<size_t> row_sizes() const {
     std::vector<size_t> out;
     for (const auto& index : indexes_) {
@@ -160,7 +152,7 @@ public:
     return {new column::full_iterator(shared_from_this(), num), end};
   }
 
-  index::row row(size_t row) const {
+  std::shared_ptr<index::row> row(size_t row) const {
 
     for (const auto& idx : indexes_) {
 
@@ -174,7 +166,9 @@ public:
     return indexes_[0]->get_header();
   }
 
-  index::row get_header() const { return indexes_[0]->get_header(); }
+  std::shared_ptr<index::row> get_header() const {
+    return indexes_[0]->get_header();
+  }
 
 private:
   std::vector<std::shared_ptr<index> > indexes_;

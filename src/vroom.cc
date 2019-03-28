@@ -27,7 +27,7 @@ CharacterVector read_column_names(
   CharacterVector nms(idx->num_columns());
 
   auto col = 0;
-  for (const auto& str : idx->get_header()) {
+  for (const auto& str : *idx->get_header()) {
     nms[col++] = locale->encoder_.makeSEXP(str.begin(), str.end(), false);
   }
 

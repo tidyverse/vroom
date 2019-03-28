@@ -1,4 +1,6 @@
-#include "index.h"
+#include "delimited_index.h"
+
+#include <stdio.h>
 
 // clang-format off
 # pragma clang diagnostic push
@@ -27,7 +29,8 @@ static Rconnection R_GetConnection(SEXP sConn) {
 
 namespace vroom {
 
-class index_connection : public index {
+class index_connection : public delimited_index {
+  std::string filename_;
 
 public:
   index_connection(
@@ -44,7 +47,7 @@ public:
       const size_t chunk_size,
       const bool progress);
 
-  ~index_connection() { unlink(filename_.c_str()); }
+  ~index_connection() { remove(filename_.c_str()); }
 };
 
 } // namespace vroom
