@@ -24,7 +24,7 @@ double parse_dttm(
 }
 
 Rcpp::NumericVector read_dttm(vroom_vec_info* info) {
-  R_xlen_t n = info->column.size();
+  R_xlen_t n = info->column->size();
 
   Rcpp::NumericVector out(n);
 
@@ -33,7 +33,7 @@ Rcpp::NumericVector read_dttm(vroom_vec_info* info) {
       [&](size_t start, size_t end, size_t id) {
         R_xlen_t i = start;
         DateTimeParser parser(&*info->locale);
-        for (const auto& str : info->column.slice(start, end)) {
+        for (const auto& str : *info->column->slice(start, end)) {
           SPDLOG_DEBUG("read_dttm(start: {} end: {} i: {})", start, end, i);
           out[i++] = parse_dttm(str, parser, info->format);
         }
@@ -121,12 +121,12 @@ public:
     }
 
     auto inf = Info(vec);
-    return inf->info->column.size();
+    return inf->info->column->size();
   }
 
   static inline string Get(SEXP vec, R_xlen_t i) {
     auto inf = Info(vec);
-    return inf->info->column[i];
+    return inf->info->column->at(i);
   }
 
   // ALTREAL methods -----------------
@@ -182,7 +182,7 @@ public:
 
     auto inf = Info(x);
 
-    auto info = new vroom_vec_info{inf->info->column.subset(idx),
+    auto info = new vroom_vec_info{inf->info->column->subset(idx),
                                    inf->info->num_threads,
                                    inf->info->na,
                                    inf->info->locale,

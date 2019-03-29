@@ -10,7 +10,7 @@ using namespace Rcpp;
 
 // Class index_collection::column::iterator
 
-index_collection::column::full_iterator::full_iterator(
+index_collection::full_iterator::full_iterator(
     std::shared_ptr<const index_collection> idx, size_t column)
     : i_(0),
       idx_(idx),
@@ -24,7 +24,7 @@ index_collection::column::full_iterator::full_iterator(
   SPDLOG_TRACE("{0:x}: full_iterator ctor", (size_t)this);
 }
 
-void index_collection::column::full_iterator::next() {
+void index_collection::full_iterator::next() {
   ++it_;
   if (it_ == it_end_ && i_ < end_) {
     ++i_;
@@ -33,7 +33,7 @@ void index_collection::column::full_iterator::next() {
   }
 }
 
-void index_collection::column::full_iterator::prev() {
+void index_collection::full_iterator::prev() {
   --it_;
   if (it_ == it_start_ && i_ > start_) {
     --i_;
@@ -42,7 +42,7 @@ void index_collection::column::full_iterator::prev() {
   }
 }
 
-void index_collection::column::full_iterator::advance(ptrdiff_t n) {
+void index_collection::full_iterator::advance(ptrdiff_t n) {
   if (n == 0) {
     return;
   }
@@ -74,8 +74,8 @@ void index_collection::column::full_iterator::advance(ptrdiff_t n) {
   }
 }
 
-ptrdiff_t index_collection::column::full_iterator::distance_to(
-    const base_iterator& that) const {
+ptrdiff_t
+index_collection::full_iterator::distance_to(const base_iterator& that) const {
 
   auto that_ = static_cast<const full_iterator*>(&that);
 
@@ -109,17 +109,17 @@ ptrdiff_t index_collection::column::full_iterator::distance_to(
   return count;
 }
 
-string index_collection::column::full_iterator::value() const { return *it_; }
+string index_collection::full_iterator::value() const { return *it_; }
 
-index_collection::column::full_iterator*
-index_collection::column::full_iterator::clone() const {
+index_collection::full_iterator*
+index_collection::full_iterator::clone() const {
 
   SPDLOG_TRACE("{0:x}: full_iterator clone", (size_t)this);
-  auto copy = new index_collection::column::full_iterator(*this);
+  auto copy = new index_collection::full_iterator(*this);
   return copy;
 }
 
-string index_collection::column::full_iterator::at(ptrdiff_t n) const {
+string index_collection::full_iterator::at(ptrdiff_t n) const {
   return idx_->get(n, column_);
 }
 
@@ -186,7 +186,7 @@ index_collection::index_collection(
   }
 }
 
-const string index_collection::get(size_t row, size_t column) const {
+string index_collection::get(size_t row, size_t column) const {
   for (const auto& idx : indexes_) {
     if (row < idx->num_rows()) {
       return idx->get(row, column);

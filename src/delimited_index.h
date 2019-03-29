@@ -40,61 +40,41 @@ public:
       const size_t num_threads,
       const bool progress);
 
-  class column : public index::column {
+  class column_iterator : public base_iterator {
     std::shared_ptr<const delimited_index> idx_;
     size_t column_;
+    bool is_first_;
+    bool is_last_;
+    size_t i_;
 
   public:
-    column(std::shared_ptr<const delimited_index> idx, size_t column)
-        : idx_(idx), column_(column) {}
-
-    class column_iterator : public base_iterator {
-      std::shared_ptr<const delimited_index> idx_;
-      size_t column_;
-      bool is_first_;
-      bool is_last_;
-      size_t i_;
-
-    public:
-      column_iterator(std::shared_ptr<const delimited_index> idx, size_t column)
-          : idx_(idx),
-            column_(column),
-            is_first_(column == 0),
-            is_last_(is_last_ = column == (idx_->columns_ - 1)),
-            i_((idx_->has_header_ * idx_->columns_) + column_) {}
-      void next() { i_ += idx_->columns_; }
-      void prev() { i_ -= idx_->columns_; }
-      void advance(ptrdiff_t n) { i_ += idx_->columns_ * n; }
-      bool equal_to(const base_iterator& it) const {
-        return i_ == static_cast<const column_iterator*>(&it)->i_;
-      }
-      ptrdiff_t distance_to(const base_iterator& it) const {
-        return (static_cast<ptrdiff_t>(
-                    static_cast<const column_iterator*>(&it)->i_) -
-                static_cast<ptrdiff_t>(i_)) /
-               ptrdiff_t(idx_->columns_);
-      }
-      string value() const {
-        return idx_->get_trimmed_val(i_, is_first_, is_last_);
-      }
-      column_iterator* clone() const { return new column_iterator(*this); }
-      string at(ptrdiff_t n) const {
-        size_t i = ((n + idx_->has_header_) * idx_->columns_) + column_;
-        return idx_->get_trimmed_val(i, is_first_, is_last_);
-      }
-      virtual ~column_iterator() = default;
-    };
-    vroom::iterator begin() const { return new column_iterator(idx_, column_); }
-    vroom::iterator end() const {
-      auto res = new column_iterator(idx_, column_);
-      res->advance(idx_->num_rows());
-      return res;
-    };
-    string at(size_t i) const { return idx_->get(i, column_); }
-    size_t size() const { return idx_->num_rows(); }
-    std::shared_ptr<vroom::index::column> slice() const { return nullptr; }
-    std::shared_ptr<vroom::index::column> subset() const { return nullptr; }
-    ~column() = default;
+    column_iterator(std::shared_ptr<const delimited_index> idx, size_t column)
+        : idx_(idx),
+          column_(column),
+          is_first_(column == 0),
+          is_last_(is_last_ = column == (idx_->columns_ - 1)),
+          i_((idx_->has_header_ * idx_->columns_) + column_) {}
+    void next() { i_ += idx_->columns_; }
+    void prev() { i_ -= idx_->columns_; }
+    void advance(ptrdiff_t n) { i_ += idx_->columns_ * n; }
+    bool equal_to(const base_iterator& it) const {
+      return i_ == static_cast<const column_iterator*>(&it)->i_;
+    }
+    ptrdiff_t distance_to(const base_iterator& it) const {
+      return (static_cast<ptrdiff_t>(
+                  static_cast<const column_iterator*>(&it)->i_) -
+              static_cast<ptrdiff_t>(i_)) /
+             ptrdiff_t(idx_->columns_);
+    }
+    string value() const {
+      return idx_->get_trimmed_val(i_, is_first_, is_last_);
+    }
+    column_iterator* clone() const { return new column_iterator(*this); }
+    string at(ptrdiff_t n) const {
+      size_t i = ((n + idx_->has_header_) * idx_->columns_) + column_;
+      return idx_->get_trimmed_val(i, is_first_, is_last_);
+    }
+    virtual ~column_iterator() = default;
   };
 
   class row : public index::row {
@@ -154,8 +134,10 @@ public:
   std::string filename() const { return filename_; }
 
   std::shared_ptr<vroom::index::column> get_column(size_t column) const {
-    return std::make_shared<vroom::delimited_index::column>(
-        shared_from_this(), column);
+    auto begin = new column_iterator(shared_from_this(), column);
+    auto end = new column_iterator(shared_from_this(), column);
+    end->advance(num_rows());
+    return std::make_shared<vroom::delimited_index::column>(begin, end);
   }
 
   std::shared_ptr<vroom::index::row> get_row(size_t row) const {

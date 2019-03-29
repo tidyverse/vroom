@@ -193,7 +193,7 @@ done:
 
 Rcpp::NumericVector read_dbl(vroom_vec_info* info) {
 
-  R_xlen_t n = info->column.size();
+  R_xlen_t n = info->column->size();
 
   Rcpp::NumericVector out(n);
 
@@ -201,7 +201,7 @@ Rcpp::NumericVector read_dbl(vroom_vec_info* info) {
       n,
       [&](size_t start, size_t end, size_t id) {
         size_t i = start;
-        for (const auto& str : info->column.slice(start, end)) {
+        for (const auto& str : *info->column->slice(start, end)) {
           SPDLOG_TRACE("read_dbl(start: {} end: {} i: {})", start, end, i);
           out[i++] = bsd_strtod(str.begin(), str.end());
         }
