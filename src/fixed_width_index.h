@@ -35,7 +35,7 @@ public:
       // We cannot actually portably compare error messages due to a bug in
       // libstdc++ (https://stackoverflow.com/a/54316671/2055486), so just print
       // the message on stderr return
-      Rcpp::stop("mapping error: %s");
+      Rcpp::stop("mapping error: %s", error.message());
     }
 
     size_t file_size = mmap_.size();
