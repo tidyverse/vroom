@@ -17,6 +17,7 @@ class index_collection : public index,
                          public std::enable_shared_from_this<index_collection> {
 
 public:
+  // For delimited files
   index_collection(
       Rcpp::List in,
       const char* delim,
@@ -30,6 +31,19 @@ public:
       const char comment,
       const size_t num_threads,
       const bool progress);
+
+  // For fixed width files
+  index_collection(
+      Rcpp::List in, std::vector<int> col_starts, std::vector<int> col_ends);
+  // const char quote,
+  // const bool trim_ws,
+  // const bool escape_double,
+  // const bool escape_backslash,
+  // const bool has_header,
+  // const size_t skip,
+  // const size_t n_max,
+  // const char comment,
+  // const bool progress);
 
   string get(size_t row, size_t col) const;
 

@@ -14,9 +14,8 @@
 namespace vroom {
 
 class fixed_width_index
-    : public std::enable_shared_from_this<fixed_width_index> {
-  //: public index,
-  // public std::enable_shared_from_this<fixed_width_index> {
+    : public index,
+      public std::enable_shared_from_this<fixed_width_index> {
   std::vector<size_t> newlines_;
   std::vector<int> col_starts_;
   std::vector<int> col_ends_;
@@ -97,6 +96,15 @@ public:
     end->advance(num_rows());
 
     return std::make_shared<vroom::index::column>(begin, end);
+  }
+
+  std::shared_ptr<vroom::index::row> get_row(size_t row) const {
+    // TODO: implement
+    return nullptr;
+  }
+  std::shared_ptr<vroom::index::row> get_header() const {
+    // TODO: implement
+    return nullptr;
   }
 };
 } // namespace vroom

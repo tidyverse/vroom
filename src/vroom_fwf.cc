@@ -8,12 +8,12 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 List vroom_fwf_(
-    std::string filename,
+    List inputs,
     std::vector<int> col_starts,
     std::vector<int> col_ends,
     List locale) {
-  auto idx = std::make_shared<vroom::fixed_width_index>(
-      filename.c_str(), col_starts, col_ends);
+  auto idx =
+      std::make_shared<vroom::index_collection>(inputs, col_starts, col_ends);
 
   size_t n_col = idx->num_columns();
   List out(n_col);

@@ -78,16 +78,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // vroom_fwf_
-List vroom_fwf_(std::string filename, std::vector<int> col_starts, std::vector<int> col_ends, List locale);
-RcppExport SEXP _vroom_vroom_fwf_(SEXP filenameSEXP, SEXP col_startsSEXP, SEXP col_endsSEXP, SEXP localeSEXP) {
+List vroom_fwf_(List inputs, std::vector<int> col_starts, std::vector<int> col_ends, List locale);
+RcppExport SEXP _vroom_vroom_fwf_(SEXP inputsSEXP, SEXP col_startsSEXP, SEXP col_endsSEXP, SEXP localeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< List >::type inputs(inputsSEXP);
     Rcpp::traits::input_parameter< std::vector<int> >::type col_starts(col_startsSEXP);
     Rcpp::traits::input_parameter< std::vector<int> >::type col_ends(col_endsSEXP);
     Rcpp::traits::input_parameter< List >::type locale(localeSEXP);
-    rcpp_result_gen = Rcpp::wrap(vroom_fwf_(filename, col_starts, col_ends, locale));
+    rcpp_result_gen = Rcpp::wrap(vroom_fwf_(inputs, col_starts, col_ends, locale));
     return rcpp_result_gen;
 END_RCPP
 }

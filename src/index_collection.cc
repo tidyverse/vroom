@@ -1,4 +1,5 @@
 #include "index_collection.h"
+#include "fixed_width_index.h"
 #include "index.h"
 #include "index_connection.h"
 #include <memory>
@@ -181,6 +182,50 @@ index_collection::index_collection(
     rows_ += p->num_rows();
     columns_ = p->num_columns();
     SPDLOG_DEBUG("rows_: {}", rows_);
+
+    indexes_.push_back(std::move(p));
+  }
+}
+
+index_collection::index_collection(
+    Rcpp::List in, std::vector<int> col_starts, std::vector<int> col_ends)
+    : rows_(0), columns_(0) {
+  // const char quote,
+  // const bool trim_ws,
+  // const bool escape_double,
+  // const bool escape_backslash,
+  // const bool has_header,
+  // const size_t skip,
+  // const size_t n_max,
+  // const char comment,
+  // const bool progress) {
+
+  Rcpp::Function standardise_one_path =
+      Rcpp::Environment::namespace_env("vroom")["standardise_one_path"];
+
+  for (int i = 0; i < in.size(); ++i) {
+    RObject x = standardise_one_path(in[i]);
+
+    bool is_connection = TYPEOF(x) != STRSXP;
+
+    std::shared_ptr<vroom::index> p;
+    if (is_connection) {
+      Rcpp::stop("connections not yet supported!");
+    } else {
+      auto filename = as<std::string>(x);
+      p = std::make_shared<vroom::fixed_width_index>(
+          filename.c_str(), col_starts, col_ends);
+      // trim_ws,
+      // escape_double,
+      // escape_backslash,
+      // has_header,
+      // skip,
+      // n_max,
+      // comment,
+      // progress);
+    }
+    rows_ += p->num_rows();
+    columns_ = p->num_columns();
 
     indexes_.push_back(std::move(p));
   }
