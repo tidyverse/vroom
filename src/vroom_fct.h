@@ -29,7 +29,8 @@ Rcpp::IntegerVector read_fctr_explicit(
       n,
       [&](size_t start, size_t end, size_t id) {
         size_t i = start;
-        for (const auto& str : *info->column->slice(start, end)) {
+        auto col = info->column->slice(start, end);
+        for (const auto& str : *col) {
           auto search = level_map.find(
               info->locale->encoder_.makeSEXP(str.begin(), str.end(), false));
           if (search != level_map.end()) {
@@ -65,7 +66,8 @@ Rcpp::IntegerVector read_fctr_implicit(vroom_vec_info* info, bool include_na) {
   auto start = 0;
   auto end = n;
   auto i = start;
-  for (const auto& str : *info->column->slice(start, end)) {
+  auto col = info->column->slice(start, end);
+  for (const auto& str : *col) {
     if (include_na && matches(str, nas)) {
       out[i++] = NA_INTEGER;
     } else {
