@@ -1,23 +1,37 @@
 #include "fixed_width_index.h"
 
+#include "LocaleInfo.h"
+
+#include "vroom_chr.h"
+
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List vroom_fwf(
+List vroom_fwf_(
     std::string filename,
-    std::vector<size_t> col_starts,
-    std::vector<size_t> col_ends) {
-  vroom::fixed_width_index idx(filename.c_str(), col_starts, col_ends);
+    std::vector<int> col_starts,
+    std::vector<int> col_ends,
+    List locale) {
+  auto idx = std::make_shared<vroom::fixed_width_index>(
+      filename.c_str(), col_starts, col_ends);
 
-  size_t n_col = idx.num_columns();
-  size_t n_row = idx.num_rows();
+  size_t n_col = idx->num_columns();
+  size_t n_row = idx->num_rows();
   List out(n_col);
 
+  auto locale_info = std::make_shared<LocaleInfo>(locale);
+
   for (size_t col = 0; col < n_col; ++col) {
+
+    // auto info = new vroom_vec_info{idx->get_column(col),
+    // 1,
+    // std::make_shared<Rcpp::CharacterVector>(""),
+    // nullptr};
+    // out[col] = vroom_chr::Make(info);
     CharacterVector c(n_row);
-    for (size_t row = 0; row < n_row; ++row) {
-      auto str = idx.get(row, col);
-      c[row] = std::string(str.begin(), str.end());
+    size_t row = 0;
+    for (const auto& str : *idx->get_column(col)) {
+      c[row++] = std::string(str.begin(), str.end());
     }
     out[col] = c;
   }

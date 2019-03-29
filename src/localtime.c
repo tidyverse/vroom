@@ -352,7 +352,7 @@ tzload(const char * name, struct state * const sp, const int doextend)
         ** guarantees can be opened."
         */
         char fullname[FILENAME_MAX + 1];
-        const char *sname = name;
+        /*const char *sname = name;*/
 
         if (name[0] == ':')
             ++name;

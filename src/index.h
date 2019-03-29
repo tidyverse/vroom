@@ -11,6 +11,10 @@ public:
   public:
     virtual iterator begin() const = 0;
     virtual iterator end() const = 0;
+    virtual size_t size() const = 0;
+    virtual std::shared_ptr<column> slice() const = 0;
+    virtual std::shared_ptr<column> subset() const = 0;
+    virtual string at(size_t i) const = 0;
     virtual ~column() {}
   };
 

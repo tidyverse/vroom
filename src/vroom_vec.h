@@ -2,6 +2,10 @@
 
 #include "altrep.h"
 
+#include "index_collection.h"
+
+#include "LocaleInfo.h"
+
 #include <Rcpp.h>
 
 using namespace vroom;

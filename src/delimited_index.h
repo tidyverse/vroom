@@ -90,6 +90,10 @@ public:
       res->advance(idx_->num_rows());
       return res;
     };
+    string at(size_t i) const { return idx_->get(i, column_); }
+    size_t size() const { return idx_->num_rows(); }
+    std::shared_ptr<vroom::index::column> slice() const { return nullptr; }
+    std::shared_ptr<vroom::index::column> subset() const { return nullptr; }
     ~column() = default;
   };
 
