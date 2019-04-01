@@ -44,7 +44,7 @@ delimited_index::delimited_index(
     // We cannot actually portably compare error messages due to a bug in
     // libstdc++ (https://stackoverflow.com/a/54316671/2055486), so just print
     // the message on stderr return
-    Rcpp::stop("mapping error: %s");
+    Rcpp::Rcerr << "mapping error: " << error.message();
     return;
   }
 

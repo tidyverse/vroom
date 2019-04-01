@@ -67,7 +67,7 @@ index_connection::index_connection(
 
   std::string delim_;
   if (delim == nullptr) {
-    delim_ = std::string(1, guess_delim(buf[i], start));
+    delim_ = std::string(1, guess_delim(buf[i], start, 5, sz));
   } else {
     delim_ = delim;
   }

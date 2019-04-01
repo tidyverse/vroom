@@ -35,7 +35,8 @@ public:
       // We cannot actually portably compare error messages due to a bug in
       // libstdc++ (https://stackoverflow.com/a/54316671/2055486), so just print
       // the message on stderr return
-      Rcpp::stop("mapping error: %s", error.message());
+      Rcpp::Rcerr << "mapping error: " << error.message();
+      return;
     }
 
     size_t file_size = mmap_.size();
@@ -43,10 +44,11 @@ public:
     newlines_.push_back(-1);
 
     size_t newline = find_next_newline(mmap_, 0);
-    while (newline < file_size) {
+    while (newline < file_size - 1) {
       newlines_.push_back(newline);
       newline = find_next_newline(mmap_, newline + 1);
     }
+    newlines_.push_back(newline);
     // Rcpp::Rcerr << "rows: " << newlines_.size() << '\n';
   }
 
