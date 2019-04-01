@@ -18,7 +18,7 @@ vroom_fwf <- function(file, col_positions, col_types = NULL,
     n_max <- -1
   }
 
-  out <- vroom_fwf_(file, col_positions$begin, col_positions$end, locale = default_locale())
+  out <- vroom_fwf_(file, col_positions$begin, col_positions$end, trim_ws = trim_ws, locale = locale)
 
   tibble::as_tibble(out, .name_repair = .name_repair)
 }

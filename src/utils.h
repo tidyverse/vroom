@@ -2,6 +2,8 @@
 
 #include <Rcpp.h>
 
+namespace vroom {
+
 inline std::string
 get_pb_format(const std::string& which, const std::string& filename = "") {
   Rcpp::Function fun = Rcpp::Environment::namespace_env(
@@ -65,3 +67,17 @@ template <typename T> T get_env(const char* name, T default_value) {
   ss >> out;
   return out;
 }
+
+inline bool is_space(const char* c) { return *c == ' ' || *c == '\t'; }
+
+inline void trim_whitespace(const char*& begin, const char*& end) {
+  while (begin != end && is_space(begin)) {
+    ++begin;
+  }
+
+  while (end != begin && is_space((end - 1))) {
+    --end;
+  }
+}
+
+} // namespace vroom

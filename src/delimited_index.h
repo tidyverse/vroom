@@ -250,7 +250,6 @@ public:
   }
 
   void trim_quotes(const char*& begin, const char*& end) const;
-  void trim_whitespace(const char*& begin, const char*& end) const;
   const string
   get_escaped_string(const char* begin, const char* end, bool has_quote) const;
 

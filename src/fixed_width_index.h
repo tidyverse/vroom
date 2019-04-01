@@ -20,13 +20,15 @@ class fixed_width_index
   std::vector<int> col_starts_;
   std::vector<int> col_ends_;
   mio::mmap_source mmap_;
+  const bool trim_ws_;
 
 public:
   fixed_width_index(
       const char* filename,
       std::vector<int> col_starts,
-      std::vector<int> col_ends)
-      : col_starts_(col_starts), col_ends_(col_ends) {
+      std::vector<int> col_ends,
+      bool trim_ws)
+      : col_starts_(col_starts), col_ends_(col_ends), trim_ws_(trim_ws) {
 
     std::error_code error;
     mmap_ = mio::make_mmap_source(filename, error);
@@ -63,6 +65,9 @@ public:
       end = mmap_.data() + newlines_[row + 1];
     } else {
       end = mmap_.data() + (newlines_[row] + nl_size + col_ends_[col]);
+    }
+    if (trim_ws_) {
+      trim_whitespace(begin, end);
     }
     return {begin, end};
   }

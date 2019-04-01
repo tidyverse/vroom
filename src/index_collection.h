@@ -34,7 +34,10 @@ public:
 
   // For fixed width files
   index_collection(
-      Rcpp::List in, std::vector<int> col_starts, std::vector<int> col_ends);
+      Rcpp::List in,
+      std::vector<int> col_starts,
+      std::vector<int> col_ends,
+      const bool trim_ws);
   // const char quote,
   // const bool trim_ws,
   // const bool escape_double,

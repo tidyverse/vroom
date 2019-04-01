@@ -11,9 +11,10 @@ List vroom_fwf_(
     List inputs,
     std::vector<int> col_starts,
     std::vector<int> col_ends,
+    bool trim_ws,
     List locale) {
-  auto idx =
-      std::make_shared<vroom::index_collection>(inputs, col_starts, col_ends);
+  auto idx = std::make_shared<vroom::index_collection>(
+      inputs, col_starts, col_ends, trim_ws);
 
   size_t n_col = idx->num_columns();
   List out(n_col);

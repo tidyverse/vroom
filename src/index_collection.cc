@@ -188,10 +188,12 @@ index_collection::index_collection(
 }
 
 index_collection::index_collection(
-    Rcpp::List in, std::vector<int> col_starts, std::vector<int> col_ends)
+    Rcpp::List in,
+    std::vector<int> col_starts,
+    std::vector<int> col_ends,
+    const bool trim_ws)
     : rows_(0), columns_(0) {
   // const char quote,
-  // const bool trim_ws,
   // const bool escape_double,
   // const bool escape_backslash,
   // const bool has_header,
@@ -214,8 +216,7 @@ index_collection::index_collection(
     } else {
       auto filename = as<std::string>(x);
       p = std::make_shared<vroom::fixed_width_index>(
-          filename.c_str(), col_starts, col_ends);
-      // trim_ws,
+          filename.c_str(), col_starts, col_ends, trim_ws);
       // escape_double,
       // escape_backslash,
       // has_header,

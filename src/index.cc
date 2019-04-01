@@ -203,19 +203,6 @@ void delimited_index::trim_quotes(const char*& begin, const char*& end) const {
   }
 }
 
-inline bool isspace(const char* c) { return *c == ' ' || *c == '\t'; }
-
-void delimited_index::trim_whitespace(
-    const char*& begin, const char*& end) const {
-  while (begin != end && isspace(*begin)) {
-    ++begin;
-  }
-
-  while (end != begin && isspace(*(end - 1))) {
-    --end;
-  }
-}
-
 const string delimited_index::get_escaped_string(
     const char* begin, const char* end, bool has_quote) const {
   // If not escaping just return without a copy
