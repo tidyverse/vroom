@@ -12,3 +12,5 @@ env_to_logical <- function (var, default = TRUE) {
 is_windows <- function() {
   identical(tolower(Sys.info()[["sysname"]]), "windows")
 }
+
+`%||%` <- function(x, y) if (is.null(x)) y else x

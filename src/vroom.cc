@@ -17,8 +17,6 @@
 #include <Rcpp.h>
 #include <algorithm>
 
-enum column_type { character = 0, real = 1, integer = 2, logical = 3 };
-
 using namespace Rcpp;
 
 CharacterVector read_column_names(
@@ -81,27 +79,19 @@ SEXP vroom_(
     bool escape_double,
     bool escape_backslash,
     const char comment,
+    size_t skip,
+    size_t n_max,
+    bool progress,
     RObject col_names,
     RObject col_types,
     RObject col_keep,
     RObject col_skip,
     SEXP id,
-    size_t skip,
-    size_t n_max,
     CharacterVector na,
     List locale,
-    bool use_altrep_chr,
-    bool use_altrep_fct,
-    bool use_altrep_int,
-    bool use_altrep_dbl,
-    bool use_altrep_num,
-    bool use_altrep_lgl,
-    bool use_altrep_dttm,
-    bool use_altrep_date,
-    bool use_altrep_time,
     size_t guess_max,
     size_t num_threads,
-    bool progress) {
+    size_t altrep_opts) {
 
   Rcpp::CharacterVector tempfile;
 
@@ -208,7 +198,7 @@ SEXP vroom_(
     res_nms.push_back(Rcpp::as<std::string>(col_nms[col]));
 
     if (col_type == "collector_double") {
-      if (use_altrep_dbl) {
+      if (altrep_opts & column_type::DBL) {
 #ifdef HAS_ALTREP
         res[i] = vroom_dbl::Make(info);
 #endif
@@ -217,7 +207,7 @@ SEXP vroom_(
         delete info;
       }
     } else if (col_type == "collector_integer") {
-      if (use_altrep_int) {
+      if (altrep_opts & column_type::INT) {
 #ifdef HAS_ALTREP
         res[i] = vroom_int::Make(info);
 #endif
@@ -226,7 +216,7 @@ SEXP vroom_(
         delete info;
       }
     } else if (col_type == "collector_number") {
-      if (use_altrep_num) {
+      if (altrep_opts & column_type::NUM) {
 #ifdef HAS_ALTREP
         res[i] = vroom_num::Make(info);
 #endif
@@ -244,7 +234,7 @@ SEXP vroom_(
         res[i] = read_fctr_implicit(info, collector["include_na"]);
         delete info;
       } else {
-        if (use_altrep_fct) {
+        if (altrep_opts & column_type::FCT) {
 #ifdef HAS_ALTREP
           res[i] = vroom_fct::Make(info, levels, collector["ordered"]);
 #endif
@@ -255,7 +245,7 @@ SEXP vroom_(
       }
     } else if (col_type == "collector_date") {
       info->format = Rcpp::as<std::string>(collector["format"]);
-      if (use_altrep_date) {
+      if (altrep_opts & column_type::DATE) {
 #ifdef HAS_ALTREP
         res[i] = vroom_date::Make(info);
 #endif
@@ -265,7 +255,7 @@ SEXP vroom_(
       }
     } else if (col_type == "collector_datetime") {
       info->format = Rcpp::as<std::string>(collector["format"]);
-      if (use_altrep_dttm) {
+      if (altrep_opts & column_type::DTTM) {
 #ifdef HAS_ALTREP
         res[i] = vroom_dttm::Make(info);
 #endif
@@ -275,7 +265,7 @@ SEXP vroom_(
       }
     } else if (col_type == "collector_time") {
       info->format = Rcpp::as<std::string>(collector["format"]);
-      if (use_altrep_time) {
+      if (altrep_opts & column_type::TIME) {
 #ifdef HAS_ALTREP
         res[i] = vroom_time::Make(info);
 #endif
@@ -284,7 +274,7 @@ SEXP vroom_(
         delete info;
       }
     } else {
-      if (use_altrep_chr) {
+      if (altrep_opts & column_type::CHR) {
 #ifdef HAS_ALTREP
         res[i] = vroom_chr::Make(info);
 #endif

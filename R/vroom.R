@@ -74,16 +74,7 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
     col_keep = col_keep, col_skip = col_skip, id = id, skip = skip,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
     escape_backslash = escape_backslash, comment = comment, locale = locale,
-    guess_max = guess_max, n_max = n_max,
-    use_altrep_chr = vroom_use_altrep_chr(),
-    use_altrep_fct = vroom_use_altrep_fct(),
-    use_altrep_int = vroom_use_altrep_int(),
-    use_altrep_dbl = vroom_use_altrep_dbl(),
-    use_altrep_num = vroom_use_altrep_num(),
-    use_altrep_lgl = vroom_use_altrep_lgl(),
-    use_altrep_dttm = vroom_use_altrep_dttm(),
-    use_altrep_date = vroom_use_altrep_date(),
-    use_altrep_time = vroom_use_altrep_time(),
+    guess_max = guess_max, n_max = n_max, altrep_opts = vroom_altrep_opts(),
     num_threads = num_threads, progress = progress)
 
   tibble::as_tibble(out, .name_repair = .name_repair)
@@ -245,6 +236,57 @@ vroom_tempfile <- function() {
     dir <- tempdir()
   }
   tempfile(pattern = "vroom-", tmpdir = dir)
+}
+
+#' Show which column types are using Altrep
+#'
+#' @param which A character vector of column types to use Altrep for.
+#' @export
+vroom_altrep_opts <- function(which = NULL) {
+  which <- match.arg(which, names(altrep_opt_vals()), several.ok = TRUE)
+  which <- as.list(stats::setNames(rep(TRUE, length(which)), which))
+
+  args <- list(
+    which$chr %||% vroom_use_altrep_chr(),
+    which$fct %||% vroom_use_altrep_fct(),
+    which$int %||% vroom_use_altrep_int(),
+    which$dbl %||% vroom_use_altrep_dbl(),
+    which$num %||% vroom_use_altrep_num(),
+    which$lgl %||% vroom_use_altrep_lgl(),
+    which$dttm %||% vroom_use_altrep_dttm(),
+    which$date %||% vroom_use_altrep_date(),
+    which$time %||% vroom_use_altrep_time()
+  )
+
+  out <-  0L
+  for (i in seq_along(args)) {
+    out <- bitwOr(out, bitwShiftL(as.integer(args[[i]]), i - 1L))
+  }
+  structure(out, class = "vroom_altrep_opts")
+}
+
+altrep_opt_vals <- function() c(
+  "none" = 0L,
+  "chr" = 1L,
+  "fct" = 2L,
+  "int" = 4L,
+  "dbl" = 8L,
+  "num" = 16L,
+  "lgl" = 32L,
+  "dttm" = 64L,
+  "date" = 128L,
+  "time" = 256L
+)
+
+#' @export
+print.vroom_altrep_opts <- function(x, ...) {
+  vals <- altrep_opt_vals()
+  reps <- names(vals)[bitwAnd(vals, x) > 0]
+
+  cat(glue::glue(
+      "Using Altrep representations for:
+        * {reps}
+       ", reps = glue::glue_collapse(reps, "\n * ")), sep = "")
 }
 
 vroom_use_altrep_chr <- function() {

@@ -40,8 +40,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // vroom_
-SEXP vroom_(List inputs, SEXP delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char comment, RObject col_names, RObject col_types, RObject col_keep, RObject col_skip, SEXP id, size_t skip, size_t n_max, CharacterVector na, List locale, bool use_altrep_chr, bool use_altrep_fct, bool use_altrep_int, bool use_altrep_dbl, bool use_altrep_num, bool use_altrep_lgl, bool use_altrep_dttm, bool use_altrep_date, bool use_altrep_time, size_t guess_max, size_t num_threads, bool progress);
-RcppExport SEXP _vroom_vroom_(SEXP inputsSEXP, SEXP delimSEXP, SEXP quoteSEXP, SEXP trim_wsSEXP, SEXP escape_doubleSEXP, SEXP escape_backslashSEXP, SEXP commentSEXP, SEXP col_namesSEXP, SEXP col_typesSEXP, SEXP col_keepSEXP, SEXP col_skipSEXP, SEXP idSEXP, SEXP skipSEXP, SEXP n_maxSEXP, SEXP naSEXP, SEXP localeSEXP, SEXP use_altrep_chrSEXP, SEXP use_altrep_fctSEXP, SEXP use_altrep_intSEXP, SEXP use_altrep_dblSEXP, SEXP use_altrep_numSEXP, SEXP use_altrep_lglSEXP, SEXP use_altrep_dttmSEXP, SEXP use_altrep_dateSEXP, SEXP use_altrep_timeSEXP, SEXP guess_maxSEXP, SEXP num_threadsSEXP, SEXP progressSEXP) {
+SEXP vroom_(List inputs, SEXP delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char comment, size_t skip, size_t n_max, bool progress, RObject col_names, RObject col_types, RObject col_keep, RObject col_skip, SEXP id, CharacterVector na, List locale, size_t guess_max, size_t num_threads, size_t altrep_opts);
+RcppExport SEXP _vroom_vroom_(SEXP inputsSEXP, SEXP delimSEXP, SEXP quoteSEXP, SEXP trim_wsSEXP, SEXP escape_doubleSEXP, SEXP escape_backslashSEXP, SEXP commentSEXP, SEXP skipSEXP, SEXP n_maxSEXP, SEXP progressSEXP, SEXP col_namesSEXP, SEXP col_typesSEXP, SEXP col_keepSEXP, SEXP col_skipSEXP, SEXP idSEXP, SEXP naSEXP, SEXP localeSEXP, SEXP guess_maxSEXP, SEXP num_threadsSEXP, SEXP altrep_optsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -52,28 +52,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type escape_double(escape_doubleSEXP);
     Rcpp::traits::input_parameter< bool >::type escape_backslash(escape_backslashSEXP);
     Rcpp::traits::input_parameter< const char >::type comment(commentSEXP);
+    Rcpp::traits::input_parameter< size_t >::type skip(skipSEXP);
+    Rcpp::traits::input_parameter< size_t >::type n_max(n_maxSEXP);
+    Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
     Rcpp::traits::input_parameter< RObject >::type col_names(col_namesSEXP);
     Rcpp::traits::input_parameter< RObject >::type col_types(col_typesSEXP);
     Rcpp::traits::input_parameter< RObject >::type col_keep(col_keepSEXP);
     Rcpp::traits::input_parameter< RObject >::type col_skip(col_skipSEXP);
     Rcpp::traits::input_parameter< SEXP >::type id(idSEXP);
-    Rcpp::traits::input_parameter< size_t >::type skip(skipSEXP);
-    Rcpp::traits::input_parameter< size_t >::type n_max(n_maxSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type na(naSEXP);
     Rcpp::traits::input_parameter< List >::type locale(localeSEXP);
-    Rcpp::traits::input_parameter< bool >::type use_altrep_chr(use_altrep_chrSEXP);
-    Rcpp::traits::input_parameter< bool >::type use_altrep_fct(use_altrep_fctSEXP);
-    Rcpp::traits::input_parameter< bool >::type use_altrep_int(use_altrep_intSEXP);
-    Rcpp::traits::input_parameter< bool >::type use_altrep_dbl(use_altrep_dblSEXP);
-    Rcpp::traits::input_parameter< bool >::type use_altrep_num(use_altrep_numSEXP);
-    Rcpp::traits::input_parameter< bool >::type use_altrep_lgl(use_altrep_lglSEXP);
-    Rcpp::traits::input_parameter< bool >::type use_altrep_dttm(use_altrep_dttmSEXP);
-    Rcpp::traits::input_parameter< bool >::type use_altrep_date(use_altrep_dateSEXP);
-    Rcpp::traits::input_parameter< bool >::type use_altrep_time(use_altrep_timeSEXP);
     Rcpp::traits::input_parameter< size_t >::type guess_max(guess_maxSEXP);
     Rcpp::traits::input_parameter< size_t >::type num_threads(num_threadsSEXP);
-    Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(vroom_(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, col_names, col_types, col_keep, col_skip, id, skip, n_max, na, locale, use_altrep_chr, use_altrep_fct, use_altrep_int, use_altrep_dbl, use_altrep_num, use_altrep_lgl, use_altrep_dttm, use_altrep_date, use_altrep_time, guess_max, num_threads, progress));
+    Rcpp::traits::input_parameter< size_t >::type altrep_opts(altrep_optsSEXP);
+    rcpp_result_gen = Rcpp::wrap(vroom_(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip, n_max, progress, col_names, col_types, col_keep, col_skip, id, na, locale, guess_max, num_threads, altrep_opts));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -97,7 +89,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_force_materialization", (DL_FUNC) &_vroom_force_materialization, 1},
     {"_vroom_vroom_materialize", (DL_FUNC) &_vroom_vroom_materialize, 1},
     {"_vroom_gen_character_", (DL_FUNC) &_vroom_gen_character_, 4},
-    {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 28},
+    {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 20},
     {"_vroom_vroom_fwf_", (DL_FUNC) &_vroom_vroom_fwf_, 5},
     {NULL, NULL, 0}
 };
