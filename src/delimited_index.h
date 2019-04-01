@@ -359,25 +359,3 @@ public:
 };
 
 } // namespace vroom
-
-// Specialization for our custom strings, needed so we can use them in
-// unordered_maps
-// [1]: https://stackoverflow.com/a/17017281/2055486
-// [2]: https://stackoverflow.com/a/34597485/2055486
-namespace std {
-
-template <> struct hash<vroom::string> {
-  std::size_t operator()(const vroom::string& k) const {
-    const char* begin = k.begin();
-    const char* end = k.end();
-
-    size_t result = 0;
-    const size_t prime = 31;
-    while (begin != end) {
-      result = *begin++ + (result * prime);
-    }
-    return result;
-  }
-};
-
-} // namespace std

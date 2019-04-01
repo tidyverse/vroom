@@ -1,9 +1,9 @@
 #include <mio/shared_mmap.hpp>
 
 #include "LocaleInfo.h"
+#include "connection.h"
 #include "index.h"
 #include "index_collection.h"
-#include "index_connection.h"
 #include "vroom_chr.h"
 #include "vroom_date.h"
 #include "vroom_dbl.h"

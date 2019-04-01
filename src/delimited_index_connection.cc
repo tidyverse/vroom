@@ -1,4 +1,6 @@
-#include "index_connection.h"
+#include "delimited_index_connection.h"
+
+#include "connection.h"
 
 #include <fstream>
 #include <future> // std::async, std::future
@@ -13,7 +15,7 @@
 
 using namespace vroom;
 
-index_connection::index_connection(
+delimited_index_connection::delimited_index_connection(
     SEXP in,
     const char* delim,
     const char quote,

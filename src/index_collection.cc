@@ -1,7 +1,7 @@
 #include "index_collection.h"
+#include "delimited_index_connection.h"
 #include "fixed_width_index.h"
 #include "index.h"
-#include "index_connection.h"
 #include <memory>
 
 #include "utils.h"
@@ -150,7 +150,7 @@ index_collection::index_collection(
 
     std::shared_ptr<vroom::index> p;
     if (is_connection) {
-      p = std::make_shared<vroom::index_connection>(
+      p = std::make_shared<vroom::delimited_index_connection>(
           x,
           delim,
           quote,

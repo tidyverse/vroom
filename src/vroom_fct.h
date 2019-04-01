@@ -1,4 +1,5 @@
 #include "altrep.h"
+#include "vroom.h"
 #include "vroom_vec.h"
 
 #include <Rcpp.h>
