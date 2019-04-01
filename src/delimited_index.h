@@ -77,50 +77,36 @@ public:
     virtual ~column_iterator() = default;
   };
 
-  class row : public index::row {
+  class row_iterator : public base_iterator {
     std::shared_ptr<const delimited_index> idx_;
     size_t row_;
+    size_t i_;
 
   public:
-    row(std::shared_ptr<const delimited_index> idx, size_t row)
-        : idx_(idx), row_(row) {}
-
-    class row_iterator : public base_iterator {
-      std::shared_ptr<const delimited_index> idx_;
-      size_t row_;
-      size_t i_;
-
-    public:
-      row_iterator(std::shared_ptr<const delimited_index> idx, size_t row)
-          : idx_(idx), row_(row) {
-        i_ = (row_ + idx_->has_header_) * idx_->columns_;
-      }
-      void next() { ++i_; }
-      void prev() { --i_; }
-      void advance(ptrdiff_t n) { i_ += n; }
-      bool equal_to(const base_iterator& it) const {
-        return i_ == static_cast<const row_iterator*>(&it)->i_;
-      }
-      ptrdiff_t distance_to(const base_iterator& it) const {
-        return static_cast<const row_iterator*>(&it)->i_ - i_;
-      }
-      string value() const {
-        return idx_->get_trimmed_val(i_, i_ == 0, i_ == (idx_->columns_ - 1));
-      }
-      row_iterator* clone() const { return new row_iterator(*this); }
-      string at(ptrdiff_t n) const {
-        size_t i = (row_ + idx_->has_header_) * idx_->columns_ + n;
-        return idx_->get_trimmed_val(i, i == 0, i == (idx_->columns_ - 1));
-      }
-      virtual ~row_iterator() = default;
-    };
-    vroom::iterator begin() const { return new row_iterator(idx_, row_); }
-    vroom::iterator end() const {
-      auto res = new row_iterator(idx_, row_);
-      res->advance(idx_->num_columns());
-      return res;
-    };
-    ~row() = default;
+    row_iterator(std::shared_ptr<const delimited_index> idx, size_t row)
+        : idx_(idx),
+          row_(row),
+          i_((row_ + idx_->has_header_) * idx_->columns_) {}
+    void next() { ++i_; }
+    void prev() { --i_; }
+    void advance(ptrdiff_t n) { i_ += n; }
+    bool equal_to(const base_iterator& it) const {
+      return i_ == static_cast<const row_iterator*>(&it)->i_;
+    }
+    ptrdiff_t distance_to(const base_iterator& it) const {
+      return (
+          static_cast<ptrdiff_t>(static_cast<const row_iterator*>(&it)->i_) -
+          static_cast<ptrdiff_t>(i_));
+    }
+    string value() const {
+      return idx_->get_trimmed_val(i_, i_ == 0, i_ == (idx_->columns_ - 1));
+    }
+    row_iterator* clone() const { return new row_iterator(*this); }
+    string at(ptrdiff_t n) const {
+      size_t i = (row_ + idx_->has_header_) * idx_->columns_ + n;
+      return idx_->get_trimmed_val(i, i == 0, i == (idx_->columns_ - 1));
+    }
+    virtual ~row_iterator() = default;
   };
 
   delimited_index() : rows_(0), columns_(0){};
@@ -141,13 +127,17 @@ public:
   }
 
   std::shared_ptr<vroom::index::row> get_row(size_t row) const {
-    return std::make_shared<vroom::delimited_index::row>(
-        shared_from_this(), row);
+    auto begin = new row_iterator(shared_from_this(), row);
+    auto end = new row_iterator(shared_from_this(), row);
+    end->advance(num_columns());
+    return std::make_shared<vroom::delimited_index::row>(begin, end);
   }
 
   std::shared_ptr<vroom::index::row> get_header() const {
-    return std::make_shared<vroom::delimited_index::row>(
-        shared_from_this(), -1);
+    auto begin = new row_iterator(shared_from_this(), -1);
+    auto end = new row_iterator(shared_from_this(), -1);
+    end->advance(num_columns());
+    return std::make_shared<vroom::delimited_index::row>(begin, end);
   }
 
 public:
@@ -356,6 +346,6 @@ public:
     }
     return lines_read;
   }
-};
+}; // namespace vroom
 
 } // namespace vroom

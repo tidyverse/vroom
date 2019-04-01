@@ -46,39 +46,34 @@ public:
     }
   };
 
-  class column {
+  class range {
     const iterator begin_;
     const iterator end_;
 
   public:
-    column(const iterator& begin, const iterator& end)
+    range(const iterator& begin, const iterator& end)
         : begin_(begin), end_(end) {}
-    column(base_iterator* begin, base_iterator* end)
+    range(base_iterator* begin, base_iterator* end)
         : begin_(begin), end_(end) {}
     iterator begin() { return begin_; }
     iterator end() { return end_; }
     size_t size() const { return end_ - begin_; }
     string at(size_t i) const { return begin_[i]; }
-    std::shared_ptr<vroom::index::column>
+    std::shared_ptr<vroom::index::range>
     subset(const std::shared_ptr<std::vector<size_t> >& idx) const {
       auto begin = new subset_iterator(begin_, idx);
       auto end = new subset_iterator(begin_, idx);
       end->advance(idx->size());
-      return std::make_shared<vroom::index::column>(begin, end);
+      return std::make_shared<vroom::index::range>(begin, end);
     }
-    std::shared_ptr<vroom::index::column>
-    slice(size_t start, size_t end) const {
-      return std::make_shared<vroom::index::column>(
+    std::shared_ptr<vroom::index::range> slice(size_t start, size_t end) const {
+      return std::make_shared<vroom::index::range>(
           begin_ + start, begin_ + end);
     }
   };
 
-  class row {
-  public:
-    virtual iterator begin() const = 0;
-    virtual iterator end() const = 0;
-    virtual ~row() {}
-  };
+  using column = range;
+  using row = range;
 
   virtual std::shared_ptr<row> get_row(size_t row) const = 0;
   virtual std::shared_ptr<row> get_header() const = 0;
@@ -91,4 +86,5 @@ public:
   virtual string get(size_t row, size_t col) const = 0;
   virtual ~index() {}
 };
+
 } // namespace vroom
