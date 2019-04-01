@@ -5,41 +5,9 @@
 using namespace vroom;
 
 double parse_date(
-    const string& str, DateTimeParser& parser, const std::string& format) {
-  parser.setDate(str.begin(), str.end());
-  bool res = (format == "") ? parser.parseLocaleDate() : parser.parse(format);
+    const string& str, DateTimeParser& parser, const std::string& format);
 
-  if (res) {
-    DateTime dt = parser.makeDate();
-    if (dt.validDate()) {
-      return dt.date();
-    }
-  }
-  return NA_REAL;
-}
-
-Rcpp::NumericVector read_date(vroom_vec_info* info) {
-  R_xlen_t n = info->column->size();
-
-  Rcpp::NumericVector out(n);
-
-  parallel_for(
-      n,
-      [&](size_t start, size_t end, size_t id) {
-        auto i = start;
-        DateTimeParser parser(&*info->locale);
-        auto col = info->column->slice(start, end);
-        for (const auto& str : *col) {
-          out[i++] = parse_date(str, parser, info->format);
-        }
-      },
-      info->num_threads,
-      true);
-
-  out.attr("class") = "Date";
-
-  return out;
-}
+Rcpp::NumericVector read_date(vroom_vec_info* info);
 
 #if R_VERSION >= R_Version(3, 5, 0)
 /* no support for altrep before 3.5 */
@@ -59,7 +27,7 @@ public:
     SEXP out = PROTECT(R_MakeExternalPtr(dttm_info, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(out, vroom_dttm::Finalize, FALSE);
 
-    RObject res = R_new_altrep(class_t, out, R_NilValue);
+    Rcpp::RObject res = R_new_altrep(class_t, out, R_NilValue);
 
     res.attr("class") = Rcpp::CharacterVector::create("Date");
 
@@ -137,13 +105,8 @@ public:
     R_set_altreal_Elt_method(class_t, date_Elt);
   }
 };
-
-R_altrep_class_t vroom_date::class_t;
+#endif
 
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
-void init_vroom_date(DllInfo* dll) { vroom_date::Init(dll); }
-
-#else
-void init_vroom_date(DllInfo* dll) {}
-#endif
+void init_vroom_date(DllInfo* dll);

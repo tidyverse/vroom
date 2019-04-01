@@ -2,7 +2,7 @@
 % Please edit documentation in R/vroom.R
 \name{vroom_altrep_opts}
 \alias{vroom_altrep_opts}
-\title{Control which column types use Altrep}
+\title{Show which column types are using Altrep}
 \usage{
 vroom_altrep_opts(which = NULL)
 }
@@ -10,5 +10,5 @@ vroom_altrep_opts(which = NULL)
 \item{which}{A character vector of column types to use Altrep for.}
 }
 \description{
-Control which column types use Altrep
+Show which column types are using Altrep
 }

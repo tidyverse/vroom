@@ -40,7 +40,7 @@ inline int parse_logical(const char* start, const char* end) {
   return NA_LOGICAL;
 }
 
-Rcpp::LogicalVector read_lgl(vroom_vec_info* info) {
+inline Rcpp::LogicalVector read_lgl(vroom_vec_info* info) {
 
   R_xlen_t n = info->column->size();
 

@@ -17,7 +17,7 @@ vroom_ <- function(inputs, delim, quote, trim_ws, escape_double, escape_backslas
     .Call(`_vroom_vroom_`, inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip, n_max, progress, col_names, col_types, col_keep, col_skip, id, na, locale, guess_max, num_threads, altrep_opts)
 }
 
-vroom_fwf_ <- function(inputs, col_starts, col_ends, trim_ws, locale) {
-    .Call(`_vroom_vroom_fwf_`, inputs, col_starts, col_ends, trim_ws, locale)
+vroom_fwf_ <- function(inputs, col_starts, col_ends, trim_ws, col_names, col_types, col_keep, col_skip, id, na, locale, guess_max, num_threads, altrep_opts) {
+    .Call(`_vroom_vroom_fwf_`, inputs, col_starts, col_ends, trim_ws, col_names, col_types, col_keep, col_skip, id, na, locale, guess_max, num_threads, altrep_opts)
 }
 

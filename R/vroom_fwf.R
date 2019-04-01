@@ -3,10 +3,13 @@
 #' @inheritParams vroom
 #' @export
 vroom_fwf <- function(file, col_positions, col_types = NULL,
-                     locale = default_locale(), na = c("", "NA"),
-                     comment = "", trim_ws = TRUE, skip = 0, n_max = Inf,
-                     guess_max = min(n_max, 100), progress = show_progress(),
-                     .name_repair = "unique") {
+                      col_keep = NULL, col_skip = NULL, id = NULL,
+                      locale = default_locale(), na = c("", "NA"),
+                      comment = "", trim_ws = TRUE, skip = 0, n_max = Inf,
+                      guess_max = min(n_max, 100),
+                      num_threads = vroom_threads(),
+                      progress = show_progress(),
+                      .name_repair = "unique") {
 
   file <- standardise_path(file)
 
@@ -18,7 +21,12 @@ vroom_fwf <- function(file, col_positions, col_types = NULL,
     n_max <- -1
   }
 
-  out <- vroom_fwf_(file, col_positions$begin, col_positions$end, trim_ws = trim_ws, locale = locale)
+  out <- vroom_fwf_(file, col_positions$begin, col_positions$end,
+    trim_ws = trim_ws, col_names = col_positions$col_names,
+    col_types = col_types, col_keep = col_keep, col_skip = col_skip,
+    id = id, na = na, guess_max = guess_max,
+    num_threads = num_threads, altrep_opts = vroom_altrep_opts(),
+    locale = locale)
 
   tibble::as_tibble(out, .name_repair = .name_repair)
 }

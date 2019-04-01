@@ -4,10 +4,11 @@
 \alias{vroom_fwf}
 \title{Read a fixed width file into a tibble}
 \usage{
-vroom_fwf(file, col_positions, col_types = NULL,
-  locale = default_locale(), na = c("", "NA"), comment = "",
-  trim_ws = TRUE, skip = 0, n_max = Inf, guess_max = min(n_max,
-  100), progress = show_progress(), .name_repair = "unique")
+vroom_fwf(file, col_positions, col_types = NULL, col_keep = NULL,
+  col_skip = NULL, id = NULL, locale = default_locale(), na = c("",
+  "NA"), comment = "", trim_ws = TRUE, skip = 0, n_max = Inf,
+  guess_max = min(n_max, 100), num_threads = vroom_threads(),
+  progress = show_progress(), .name_repair = "unique")
 }
 \arguments{
 \item{file}{path to a local file.}
@@ -29,6 +30,20 @@ c = character, i = integer, n = number, d = double,
 l = logical, f = factor, D = date, T = date time, t = time, ? = guess, or
 \code{_}/\code{-} to skip the column.}
 
+\item{col_keep}{Columns to keep in the output, all other columns will be
+skipped. Input can be a character vector of column names, a logical vector
+or a numeric vector of column indexes. Only one of `col_keep` or
+`col_drop` can be used.}
+
+\item{col_skip}{Columns to skip in the output, all other columns will be
+kept. Input can be a character vector of column names, a logical vector
+or a numeric vector of column indexes. Only one of `col_keep` or
+`col_drop` can be used.}
+
+\item{id}{Either a string or 'NULL'. If a string, the output will contain a
+variable with that name with the filename(s) as the value. If 'NULL', the
+default, no variable will be created.}
+
 \item{locale}{The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
 \code{\link[=locale]{locale()}} to create your own locale that controls things like
@@ -49,6 +64,8 @@ each field before parsing it?}
 \item{n_max}{Maximum number of records to read.}
 
 \item{guess_max}{Maximum number of records to use for guessing column types.}
+
+\item{num_threads}{Number of threads to use when reading and materializing vectors.}
 
 \item{progress}{Display a progress bar? By default it will only display
 in an interactive session and not while knitting a document. The display

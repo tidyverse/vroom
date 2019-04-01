@@ -1,46 +1,13 @@
 #pragma once
 
+#include "vroom.h"
 #include "vroom_dttm.h"
 
 using namespace vroom;
 
 double parse_time(
-    const string& str, DateTimeParser& parser, const std::string& format) {
-  parser.setDate(str.begin(), str.end());
-  bool res = (format == "") ? parser.parseLocaleTime() : parser.parse(format);
-
-  if (res) {
-    DateTime dt = parser.makeTime();
-    if (dt.validTime()) {
-      return dt.time();
-    }
-  }
-  return NA_REAL;
-}
-
-Rcpp::NumericVector read_time(vroom_vec_info* info) {
-  R_xlen_t n = info->column->size();
-
-  Rcpp::NumericVector out(n);
-
-  parallel_for(
-      n,
-      [&](size_t start, size_t end, size_t id) {
-        auto i = start;
-        DateTimeParser parser(&*info->locale);
-        auto col = info->column->slice(start, end);
-        for (const auto& str : *col) {
-          out[i++] = parse_time(str, parser, info->format);
-        }
-      },
-      info->num_threads,
-      true);
-
-  out.attr("class") = Rcpp::CharacterVector::create("hms", "difftime");
-  out.attr("units") = "secs";
-
-  return out;
-}
+    const string& str, DateTimeParser& parser, const std::string& format);
+Rcpp::NumericVector read_time(vroom_vec_info* info);
 
 #ifdef HAS_ALTREP
 
@@ -59,7 +26,7 @@ public:
     SEXP out = PROTECT(R_MakeExternalPtr(dttm_info, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(out, vroom_dttm::Finalize, FALSE);
 
-    RObject res = R_new_altrep(class_t, out, R_NilValue);
+    Rcpp::RObject res = R_new_altrep(class_t, out, R_NilValue);
 
     res.attr("class") = Rcpp::CharacterVector::create("hms", "difftime");
     res.attr("units") = "secs";
@@ -138,13 +105,8 @@ public:
     R_set_altreal_Elt_method(class_t, time_Elt);
   }
 };
-
-R_altrep_class_t vroom_time::class_t;
+#endif
 
 // Called the package is loaded (needs Rcpp 0.12.18.3)
 // [[Rcpp::init]]
-void init_vroom_time(DllInfo* dll) { vroom_time::Init(dll); }
-
-#else
-void init_vroom_time(DllInfo* dll) {}
-#endif
+void init_vroom_time(DllInfo* dll);

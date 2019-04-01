@@ -70,8 +70,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // vroom_fwf_
-List vroom_fwf_(List inputs, std::vector<int> col_starts, std::vector<int> col_ends, bool trim_ws, List locale);
-RcppExport SEXP _vroom_vroom_fwf_(SEXP inputsSEXP, SEXP col_startsSEXP, SEXP col_endsSEXP, SEXP trim_wsSEXP, SEXP localeSEXP) {
+List vroom_fwf_(List inputs, std::vector<int> col_starts, std::vector<int> col_ends, bool trim_ws, RObject col_names, RObject col_types, RObject col_keep, RObject col_skip, SEXP id, CharacterVector na, List locale, size_t guess_max, size_t num_threads, size_t altrep_opts);
+RcppExport SEXP _vroom_vroom_fwf_(SEXP inputsSEXP, SEXP col_startsSEXP, SEXP col_endsSEXP, SEXP trim_wsSEXP, SEXP col_namesSEXP, SEXP col_typesSEXP, SEXP col_keepSEXP, SEXP col_skipSEXP, SEXP idSEXP, SEXP naSEXP, SEXP localeSEXP, SEXP guess_maxSEXP, SEXP num_threadsSEXP, SEXP altrep_optsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -79,8 +79,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::vector<int> >::type col_starts(col_startsSEXP);
     Rcpp::traits::input_parameter< std::vector<int> >::type col_ends(col_endsSEXP);
     Rcpp::traits::input_parameter< bool >::type trim_ws(trim_wsSEXP);
+    Rcpp::traits::input_parameter< RObject >::type col_names(col_namesSEXP);
+    Rcpp::traits::input_parameter< RObject >::type col_types(col_typesSEXP);
+    Rcpp::traits::input_parameter< RObject >::type col_keep(col_keepSEXP);
+    Rcpp::traits::input_parameter< RObject >::type col_skip(col_skipSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type id(idSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type na(naSEXP);
     Rcpp::traits::input_parameter< List >::type locale(localeSEXP);
-    rcpp_result_gen = Rcpp::wrap(vroom_fwf_(inputs, col_starts, col_ends, trim_ws, locale));
+    Rcpp::traits::input_parameter< size_t >::type guess_max(guess_maxSEXP);
+    Rcpp::traits::input_parameter< size_t >::type num_threads(num_threadsSEXP);
+    Rcpp::traits::input_parameter< size_t >::type altrep_opts(altrep_optsSEXP);
+    rcpp_result_gen = Rcpp::wrap(vroom_fwf_(inputs, col_starts, col_ends, trim_ws, col_names, col_types, col_keep, col_skip, id, na, locale, guess_max, num_threads, altrep_opts));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -90,7 +99,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_vroom_materialize", (DL_FUNC) &_vroom_vroom_materialize, 1},
     {"_vroom_gen_character_", (DL_FUNC) &_vroom_gen_character_, 4},
     {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 20},
-    {"_vroom_vroom_fwf_", (DL_FUNC) &_vroom_vroom_fwf_, 5},
+    {"_vroom_vroom_fwf_", (DL_FUNC) &_vroom_vroom_fwf_, 14},
     {NULL, NULL, 0}
 };
 

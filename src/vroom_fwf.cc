@@ -2,7 +2,7 @@
 
 #include "LocaleInfo.h"
 
-#include "vroom_chr.h"
+#include "columns.h"
 
 using namespace Rcpp;
 
@@ -12,29 +12,41 @@ List vroom_fwf_(
     std::vector<int> col_starts,
     std::vector<int> col_ends,
     bool trim_ws,
-    List locale) {
+    RObject col_names,
+    RObject col_types,
+    RObject col_keep,
+    RObject col_skip,
+    SEXP id,
+    CharacterVector na,
+    List locale,
+    size_t guess_max,
+    size_t num_threads,
+    size_t altrep_opts) {
+
+  std::vector<std::string> filenames;
+
+  bool add_filename = !Rf_isNull(id);
+
+  // We need to retrieve filenames now before the connection objects are read,
+  // as they are invalid afterwards.
+  if (add_filename) {
+    filenames = get_filenames(inputs);
+  }
+
   auto idx = std::make_shared<vroom::index_collection>(
       inputs, col_starts, col_ends, trim_ws);
 
-  size_t n_col = idx->num_columns();
-  List out(n_col);
-
-  auto locale_info = std::make_shared<LocaleInfo>(locale);
-
-  for (size_t col = 0; col < n_col; ++col) {
-
-    auto info = new vroom_vec_info{idx->get_column(col),
-                                   1,
-                                   std::make_shared<Rcpp::CharacterVector>(""),
-                                   locale_info};
-    out[col] = vroom_chr::Make(info);
-    // CharacterVector c(n_row);
-    // size_t row = 0;
-    // for (const auto& str : *idx->get_column(col)) {
-    // c[row++] = std::string(str.begin(), str.end());
-    //}
-    // out[col] = c;
-  }
-
-  return out;
+  return create_columns(
+      idx,
+      col_names,
+      col_types,
+      col_keep,
+      col_skip,
+      id,
+      filenames,
+      na,
+      locale,
+      altrep_opts,
+      guess_max,
+      num_threads);
 }

@@ -19,7 +19,7 @@ using namespace Rcpp;
 
 namespace vroom {
 
-CharacterVector read_column_names(
+inline CharacterVector read_column_names(
     std::shared_ptr<vroom::index_collection> idx,
     std::shared_ptr<LocaleInfo> locale) {
   CharacterVector nms(idx->num_columns());
@@ -33,7 +33,7 @@ CharacterVector read_column_names(
   return nms;
 }
 
-std::vector<std::string> get_filenames(SEXP in) {
+inline std::vector<std::string> get_filenames(SEXP in) {
   auto n = Rf_xlength(in);
   std::vector<std::string> out;
   out.reserve(n);
@@ -51,7 +51,7 @@ std::vector<std::string> get_filenames(SEXP in) {
   return out;
 }
 
-CharacterVector generate_filename_column(
+inline CharacterVector generate_filename_column(
     const std::vector<std::string>& filenames,
     const std::vector<size_t>& lengths,
     size_t rows) {
@@ -70,7 +70,7 @@ CharacterVector generate_filename_column(
   return wrap(out);
 }
 
-List create_columns(
+inline List create_columns(
     std::shared_ptr<index_collection> idx,
     RObject col_names,
     RObject col_types,
