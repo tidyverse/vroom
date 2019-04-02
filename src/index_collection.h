@@ -81,13 +81,10 @@ public:
     string value() const;
     full_iterator* clone() const;
     string at(ptrdiff_t n) const;
-    virtual ~full_iterator() {
-      SPDLOG_TRACE("{0:x}: full_iterator dtor", (size_t)this);
-    }
+    virtual ~full_iterator() {}
   };
 
   std::shared_ptr<vroom::index::column> get_column(size_t column) const {
-    SPDLOG_TRACE("{0:x}: get_column()", (size_t)this);
     auto begin = new full_iterator(shared_from_this(), column);
     auto end = new full_iterator(shared_from_this(), column);
     end->advance(rows_);

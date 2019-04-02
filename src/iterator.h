@@ -16,9 +16,7 @@ public:
   virtual string value() const = 0;
   virtual base_iterator* clone() const = 0;
   virtual string at(ptrdiff_t n) const = 0;
-  virtual ~base_iterator() {
-    SPDLOG_TRACE("{0:x}: base_iterator dtor", (size_t)this);
-  }
+  virtual ~base_iterator() {}
 };
 
 class iterator {
@@ -32,12 +30,9 @@ public:
 
   iterator() : it_(nullptr){};
 
-  iterator(base_iterator* it) : it_(it) {
-    SPDLOG_TRACE("{0:x}: iterator ctor", (size_t)this);
-  }
+  iterator(base_iterator* it) : it_(it) {}
 
   iterator& operator=(const iterator& other) {
-    SPDLOG_TRACE("{0:x}: iterator assignment", (size_t)this);
 
     base_iterator* original = it_;
     it_ = other.it_->clone();
@@ -46,9 +41,7 @@ public:
     return *this;
   }
 
-  iterator(const iterator& other) : it_(other.it_->clone()) {
-    SPDLOG_TRACE("{0:x}: iterator cctor", (size_t)this);
-  }
+  iterator(const iterator& other) : it_(other.it_->clone()) {}
 
   iterator operator++(int) { /* postfix */
     iterator copy(*this);
@@ -93,9 +86,6 @@ public:
   }
 
   iterator operator+(ptrdiff_t n) const {
-
-    SPDLOG_TRACE("{0:x}: iterator operator+({1})", (size_t)this, n);
-
     iterator copy(*this);
     copy.it_->advance(n);
     return copy;
@@ -114,7 +104,6 @@ public:
   string operator[](ptrdiff_t n) const { return it_->at(n); }
 
   ~iterator() {
-    SPDLOG_TRACE("{0:x}: iterator dtor", (size_t)this);
     if (it_ != nullptr) {
       delete it_;
     }

@@ -19,9 +19,7 @@ public:
     subset_iterator(
         const iterator& it,
         const std::shared_ptr<std::vector<size_t> >& indexes)
-        : i_(0), it_(it), indexes_(indexes) {
-      SPDLOG_TRACE("{0:x}: subset_iterator ctor", (size_t)this);
-    }
+        : i_(0), it_(it), indexes_(indexes) {}
     void next() { ++i_; }
     void prev() { --i_; }
     void advance(ptrdiff_t n) { i_ += n; }
@@ -35,16 +33,13 @@ public:
     };
     string value() const { return *(it_ + (*indexes_)[i_]); };
     subset_iterator* clone() const {
-      SPDLOG_TRACE("{0:x}: subset_iterator clone", (size_t)this);
       auto copy = new subset_iterator(*this);
       return copy;
     };
 
     string at(ptrdiff_t n) const { return it_[(*indexes_)[n]]; }
 
-    virtual ~subset_iterator() {
-      SPDLOG_TRACE("{0:x}: subset_iterator dtor", (size_t)this);
-    }
+    virtual ~subset_iterator() {}
   };
 
   class range {

@@ -23,7 +23,6 @@ index_collection::full_iterator::full_iterator(
   it_ = col->begin();
   it_end_ = col->end();
   it_start_ = col->begin();
-  SPDLOG_TRACE("{0:x}: full_iterator ctor", (size_t)this);
 }
 
 void index_collection::full_iterator::next() {
@@ -115,8 +114,6 @@ string index_collection::full_iterator::value() const { return *it_; }
 
 index_collection::full_iterator*
 index_collection::full_iterator::clone() const {
-
-  SPDLOG_TRACE("{0:x}: full_iterator clone", (size_t)this);
   auto copy = new index_collection::full_iterator(*this);
   return copy;
 }
