@@ -1,3 +1,5 @@
+#pragma once
+
 // clang-format off
 #ifdef __clang__
 # pragma clang diagnostic push
