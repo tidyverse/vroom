@@ -64,12 +64,7 @@ public:
 
     size_t start = find_first_line(mmap_, skip, comment);
 
-    if (n_max > 0) {
-      newlines_.push_back(start - 1);
-    }
-
     std::unique_ptr<RProgress::RProgress> pb = nullptr;
-    size_t tick_size = file_size / 1000;
     if (progress) {
       auto format = get_pb_format("file", filename);
       auto width = get_pb_width(format);
@@ -78,25 +73,14 @@ public:
       pb->tick(start);
     }
 
-    size_t lines_read = 0;
-    size_t last_tick = start;
-
-    size_t newline = find_next_newline(mmap_, start);
-    while (newline < file_size - 1) {
-      ++lines_read;
-      if (lines_read >= n_max) {
-        break;
-      }
-      newlines_.push_back(newline);
-
-      if (progress && newline > last_tick + tick_size) {
-        pb->tick(newline - last_tick);
-        last_tick = newline;
-      }
-
-      newline = find_next_newline(mmap_, newline + 1);
+    if (n_max > 0) {
+      newlines_.push_back(start - 1);
     }
-    newlines_.push_back(newline);
+
+    index_region(
+        mmap_, newlines_, start, file_size - 1, 0, n_max, pb, file_size / 1000);
+
+    newlines_.push_back(file_size - 1);
 
     if (progress) {
       pb->update(1);
