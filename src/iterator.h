@@ -2,6 +2,8 @@
 
 #include "vroom.h"
 
+#include <stddef.h>
+
 namespace vroom {
 
 class base_iterator {
