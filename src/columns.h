@@ -156,7 +156,8 @@ inline List create_columns(
     auto info = new vroom_vec_info{idx->get_column(col),
                                    num_threads,
                                    std::make_shared<Rcpp::CharacterVector>(na),
-                                   locale_info};
+                                   locale_info,
+                                   std::string()};
 
     res_nms.push_back(Rcpp::as<std::string>(col_nms[col]));
 

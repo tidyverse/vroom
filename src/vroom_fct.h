@@ -188,7 +188,8 @@ public:
     auto info = new vroom_vec_info{inf.info->column->subset(idx),
                                    inf.info->num_threads,
                                    inf.info->na,
-                                   inf.info->locale};
+                                   inf.info->locale,
+                                   inf.info->format};
 
     return Make(
         info,

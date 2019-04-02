@@ -15,10 +15,14 @@
 //
 
 // clang-format off
+#ifdef __clang__
 # pragma clang diagnostic push
 # pragma clang diagnostic ignored "-Wkeyword-macro"
 #define class klass
 # pragma clang diagnostic pop
+#else
+#define class klass
+#endif
 // clang-format on
 
 // Because functions declared in <R_ext/Altrep.h> have C linkage

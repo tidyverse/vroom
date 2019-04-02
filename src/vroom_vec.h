@@ -85,8 +85,11 @@ public:
 
     auto& inf = Info(x);
 
-    auto info = new vroom_vec_info{
-        inf.column->subset(idx), inf.num_threads, inf.na, inf.locale};
+    auto info = new vroom_vec_info{inf.column->subset(idx),
+                                   inf.num_threads,
+                                   inf.na,
+                                   inf.locale,
+                                   inf.format};
 
     return T::Make(info);
   }

@@ -8,6 +8,7 @@
 #include "spdlog/spdlog.h"
 #endif
 
+#include <cstring>
 #include <string>
 
 namespace vroom {

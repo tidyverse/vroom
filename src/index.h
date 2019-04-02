@@ -3,6 +3,7 @@
 #include "iterator.h"
 #include "vroom.h"
 
+#include <memory>
 #include <vector>
 
 namespace vroom {

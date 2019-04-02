@@ -3,10 +3,14 @@
 #include "index.h"
 
 // clang-format off
+#ifdef __clang__
 # pragma clang diagnostic push
 # pragma clang diagnostic ignored "-Wsign-compare"
 #include <mio/shared_mmap.hpp>
 # pragma clang diagnostic pop
+#else
+#include <mio/shared_mmap.hpp>
+#endif
 // clang-format on
 
 #include "utils.h"

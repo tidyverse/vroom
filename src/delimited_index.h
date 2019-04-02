@@ -1,10 +1,14 @@
 #pragma once
 
 // clang-format off
+#ifdef __clang__
 # pragma clang diagnostic push
 # pragma clang diagnostic ignored "-Wsign-compare"
 #include <mio/shared_mmap.hpp>
 # pragma clang diagnostic pop
+#else
+#include <mio/shared_mmap.hpp>
+#endif
 // clang-format on
 
 #include "index.h"
@@ -52,7 +56,7 @@ public:
         : idx_(idx),
           column_(column),
           is_first_(column == 0),
-          is_last_(is_last_ = column == (idx_->columns_ - 1)),
+          is_last_(column == (idx_->columns_ - 1)),
           i_((idx_->has_header_ * idx_->columns_) + column_) {}
     void next() { i_ += idx_->columns_; }
     void prev() { i_ -= idx_->columns_; }
