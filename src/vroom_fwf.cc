@@ -24,7 +24,8 @@ List vroom_fwf_(
     List locale,
     size_t guess_max,
     size_t num_threads,
-    size_t altrep_opts) {
+    size_t altrep_opts,
+    bool progress) {
 
   std::vector<std::string> filenames;
 
@@ -37,7 +38,7 @@ List vroom_fwf_(
   }
 
   auto idx = std::make_shared<vroom::index_collection>(
-      inputs, col_starts, col_ends, trim_ws, skip, comment, n_max);
+      inputs, col_starts, col_ends, trim_ws, skip, comment, n_max, progress);
 
   return create_columns(
       idx,

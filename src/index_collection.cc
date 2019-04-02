@@ -194,13 +194,9 @@ index_collection::index_collection(
     const bool trim_ws,
     const size_t skip,
     const char comment,
-    const size_t n_max)
+    const size_t n_max,
+    const bool progress)
     : rows_(0), columns_(0) {
-  // const char quote,
-  // const bool escape_double,
-  // const bool escape_backslash,
-  // const bool has_header,
-  // const bool progress) {
 
   Rcpp::Function standardise_one_path =
       Rcpp::Environment::namespace_env("vroom")["standardise_one_path"];
@@ -216,9 +212,14 @@ index_collection::index_collection(
     } else {
       auto filename = as<std::string>(x);
       p = std::make_shared<vroom::fixed_width_index>(
-          filename.c_str(), col_starts, col_ends, trim_ws, skip, comment, n_max
-          // progress);
-      );
+          filename.c_str(),
+          col_starts,
+          col_ends,
+          trim_ws,
+          skip,
+          comment,
+          n_max,
+          progress);
     }
     rows_ += p->num_rows();
     columns_ = p->num_columns();

@@ -10,6 +10,7 @@
 // clang-format on
 
 #include "utils.h"
+#include "RProgress.h"
 
 namespace vroom {
 
@@ -30,7 +31,8 @@ public:
       bool trim_ws,
       const size_t skip,
       const char comment,
-      const size_t n_max)
+      const size_t n_max,
+      const bool progress)
       : col_starts_(col_starts), col_ends_(col_ends), trim_ws_(trim_ws) {
 
     std::error_code error;
@@ -52,7 +54,18 @@ public:
       newlines_.push_back(start - 1);
     }
 
+    std::unique_ptr<RProgress::RProgress> pb = nullptr;
+    size_t tick_size = file_size / 1000;
+    if (progress) {
+      auto format = get_pb_format("file", filename);
+      auto width = get_pb_width(format);
+      pb = std::unique_ptr<RProgress::RProgress>(
+          new RProgress::RProgress(format, file_size, width));
+      pb->tick(start);
+    }
+
     size_t lines_read = 0;
+    size_t last_tick = start;
 
     size_t newline = find_next_newline(mmap_, start);
     while (newline < file_size - 1) {
@@ -61,10 +74,19 @@ public:
         break;
       }
       newlines_.push_back(newline);
+
+      if (progress && newline > last_tick + tick_size) {
+        pb->tick(newline - last_tick);
+        last_tick = newline;
+      }
+
       newline = find_next_newline(mmap_, newline + 1);
     }
     newlines_.push_back(newline);
-    // Rcpp::Rcerr << "rows: " << newlines_.size() << '\n';
+
+    if (progress) {
+      pb->update(1);
+    }
   }
 
   size_t num_rows() const { return newlines_.size() - 1; }
