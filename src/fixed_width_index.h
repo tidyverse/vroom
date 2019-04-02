@@ -29,7 +29,8 @@ public:
       std::vector<int> col_ends,
       bool trim_ws,
       const size_t skip,
-      const char comment)
+      const char comment,
+      const size_t n_max)
       : col_starts_(col_starts), col_ends_(col_ends), trim_ws_(trim_ws) {
 
     std::error_code error;
@@ -47,10 +48,18 @@ public:
 
     size_t start = find_first_line(mmap_, skip, comment);
 
-    newlines_.push_back(start - 1);
+    if (n_max > 0) {
+      newlines_.push_back(start - 1);
+    }
+
+    size_t lines_read = 0;
 
     size_t newline = find_next_newline(mmap_, start);
     while (newline < file_size - 1) {
+      ++lines_read;
+      if (lines_read >= n_max) {
+        break;
+      }
       newlines_.push_back(newline);
       newline = find_next_newline(mmap_, newline + 1);
     }

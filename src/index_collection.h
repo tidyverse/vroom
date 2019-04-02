@@ -39,13 +39,13 @@ public:
       std::vector<int> col_ends,
       const bool trim_ws,
       const size_t skip,
-      const char comment);
+      const char comment,
+      const size_t n_max);
   // const char quote,
   // const bool trim_ws,
   // const bool escape_double,
   // const bool escape_backslash,
   // const bool has_header,
-  // const size_t n_max,
   // const bool progress);
 
   string get(size_t row, size_t col) const;
