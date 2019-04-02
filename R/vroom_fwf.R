@@ -2,7 +2,9 @@
 #'
 #' @inheritParams vroom
 #' @export
-vroom_fwf <- function(file, col_positions, col_types = NULL,
+vroom_fwf <- function(file,
+                      col_positions = fwf_empty(file[[1]], skip, n = guess_max),
+                      col_types = NULL,
                       col_keep = NULL, col_skip = NULL, id = NULL,
                       locale = default_locale(), na = c("", "NA"),
                       comment = "", trim_ws = TRUE, skip = 0, n_max = Inf,
@@ -30,3 +32,19 @@ vroom_fwf <- function(file, col_positions, col_types = NULL,
 
   tibble::as_tibble(out, .name_repair = .name_repair)
 }
+
+#' @importFrom readr fwf_cols
+#' @export
+
+readr::fwf_cols
+#' @importFrom readr fwf_empty
+#' @export
+readr::fwf_empty
+
+#' @importFrom readr fwf_positions
+#' @export
+readr::fwf_positions
+
+#' @importFrom readr fwf_widths
+#' @export
+readr::fwf_widths
