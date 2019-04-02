@@ -50,7 +50,7 @@ delimited_index::delimited_index(
 
   size_t file_size = mmap_.cend() - mmap_.cbegin();
 
-  size_t start = find_first_line(mmap_);
+  size_t start = find_first_line(mmap_, skip_, comment_);
 
   std::string delim_;
 

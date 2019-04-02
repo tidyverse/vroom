@@ -65,7 +65,7 @@ delimited_index_connection::delimited_index_connection(
   buf[i][sz] = '\0';
 
   // Parse header
-  auto start = find_first_line(buf[i]);
+  auto start = find_first_line(buf[i], skip_, comment_);
 
   std::string delim_;
   if (delim == nullptr) {

@@ -80,4 +80,91 @@ inline void trim_whitespace(const char*& begin, const char*& end) {
   }
 }
 
+inline bool is_blank_or_comment_line(const char* begin, const char comment) {
+  if (*begin == '\n') {
+    return true;
+  }
+
+  while (*begin == ' ' || *begin == '\t') {
+    ++begin;
+  }
+
+  if (*begin == '\n' || *begin == comment) {
+    return true;
+  }
+
+  return false;
+}
+
+template <typename T> size_t skip_bom(const T& source) {
+  /* Skip Unicode Byte Order Marks
+https://en.wikipedia.org/wiki/Byte_order_mark#Representations_of_byte_order_marks_by_encoding
+00 00 FE FF: UTF-32BE
+FF FE 00 00: UTF-32LE
+FE FF:       UTF-16BE
+FF FE:       UTF-16LE
+EF BB BF:    UTF-8
+*/
+
+  auto size = source.size();
+  auto begin = source.data();
+
+  switch (begin[0]) {
+  // UTF-32BE
+  case '\x00':
+    if (size >= 4 && begin[1] == '\x00' && begin[2] == '\xFE' &&
+        begin[3] == '\xFF') {
+      return 4;
+    }
+    break;
+
+    // UTF-8
+  case '\xEF':
+    if (size >= 3 && begin[1] == '\xBB' && begin[2] == '\xBF') {
+      return 3;
+    }
+    break;
+
+    // UTF-16BE
+  case '\xfe':
+    if (size >= 2 && begin[1] == '\xff') {
+      return 2;
+    }
+    break;
+
+  case '\xff':
+    if (size >= 2 && begin[1] == '\xfe') {
+
+      // UTF-32 LE
+      if (size >= 4 && begin[2] == '\x00' && begin[3] == '\x00') {
+        return 4;
+      } else {
+        // UTF-16 LE
+        return 2;
+      }
+    }
+    break;
+  }
+
+  return 0;
+}
+
+// This skips leading blank lines and comments (if needed)
+template <typename T>
+size_t find_first_line(const T& source, size_t skip, const char comment) {
+
+  auto begin = skip_bom(source);
+  /* Skip skip parameters, comments and blank lines */
+
+  while (bool should_skip =
+             (begin < source.size() &&
+              is_blank_or_comment_line(source.data() + begin, comment)) ||
+             skip > 0) {
+    begin = find_next_newline(source, begin) + 1;
+    skip = skip > 0 ? skip - 1 : skip;
+  }
+
+  return begin;
+}
+
 } // namespace vroom

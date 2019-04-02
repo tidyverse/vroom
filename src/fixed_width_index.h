@@ -27,7 +27,9 @@ public:
       const char* filename,
       std::vector<int> col_starts,
       std::vector<int> col_ends,
-      bool trim_ws)
+      bool trim_ws,
+      const size_t skip,
+      const char comment)
       : col_starts_(col_starts), col_ends_(col_ends), trim_ws_(trim_ws) {
 
     std::error_code error;
@@ -43,9 +45,11 @@ public:
 
     size_t file_size = mmap_.size();
 
-    newlines_.push_back(-1);
+    size_t start = find_first_line(mmap_, skip, comment);
 
-    size_t newline = find_next_newline(mmap_, 0);
+    newlines_.push_back(start - 1);
+
+    size_t newline = find_next_newline(mmap_, start);
     while (newline < file_size - 1) {
       newlines_.push_back(newline);
       newline = find_next_newline(mmap_, newline + 1);

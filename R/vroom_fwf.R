@@ -24,7 +24,7 @@ vroom_fwf <- function(file, col_positions, col_types = NULL,
   out <- vroom_fwf_(file, col_positions$begin, col_positions$end,
     trim_ws = trim_ws, col_names = col_positions$col_names,
     col_types = col_types, col_keep = col_keep, col_skip = col_skip,
-    id = id, na = na, guess_max = guess_max,
+    id = id, na = na, guess_max = guess_max, skip = skip, comment = comment,
     num_threads = num_threads, altrep_opts = vroom_altrep_opts(),
     locale = locale)
 

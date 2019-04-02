@@ -16,6 +16,8 @@ List vroom_fwf_(
     RObject col_types,
     RObject col_keep,
     RObject col_skip,
+    size_t skip,
+    const char comment,
     SEXP id,
     CharacterVector na,
     List locale,
@@ -34,7 +36,7 @@ List vroom_fwf_(
   }
 
   auto idx = std::make_shared<vroom::index_collection>(
-      inputs, col_starts, col_ends, trim_ws);
+      inputs, col_starts, col_ends, trim_ws, skip, comment);
 
   return create_columns(
       idx,
