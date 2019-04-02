@@ -4,12 +4,12 @@
 \alias{vroom_fwf}
 \title{Read a fixed width file into a tibble}
 \usage{
-vroom_fwf(file, col_positions = fwf_empty(file, skip, n = guess_max),
-  col_types = NULL, col_keep = NULL, col_skip = NULL, id = NULL,
-  locale = default_locale(), na = c("", "NA"), comment = "",
-  trim_ws = TRUE, skip = 0, n_max = Inf, guess_max = 100,
-  num_threads = vroom_threads(), progress = vroom_progress(),
-  .name_repair = "unique")
+vroom_fwf(file, col_positions = fwf_empty(file[[1]], skip, n =
+  guess_max), col_types = NULL, col_keep = NULL, col_skip = NULL,
+  id = NULL, locale = default_locale(), na = c("", "NA"),
+  comment = "", trim_ws = TRUE, skip = 0, n_max = Inf,
+  guess_max = 100, num_threads = vroom_threads(),
+  progress = vroom_progress(), .name_repair = "unique")
 }
 \arguments{
 \item{file}{path to a local file.}
