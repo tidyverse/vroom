@@ -1,5 +1,6 @@
 #' Read a fixed width file into a tibble
 #'
+#' @inheritParams readr::read_fwf
 #' @inheritParams vroom
 #' @export
 vroom_fwf <- function(file,
