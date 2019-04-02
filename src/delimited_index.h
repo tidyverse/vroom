@@ -202,7 +202,6 @@ public:
     std::array<char, 5> query = {delim[0], '\n', '\\', quote, '\0'};
 
     auto last_tick = start;
-    auto num_ticks = 0;
 
     bool in_quote = false;
 
@@ -240,7 +239,6 @@ public:
           if (tick_size > update_size) {
             pb->tick(pos - last_tick);
             last_tick = pos;
-            ++num_ticks;
           }
         }
       }
