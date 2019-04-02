@@ -1,8 +1,8 @@
+#include "columns.h"
+
 #include "fixed_width_index.h"
 
 #include "LocaleInfo.h"
-
-#include "columns.h"
 
 using namespace Rcpp;
 

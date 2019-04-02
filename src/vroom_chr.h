@@ -1,9 +1,9 @@
 #pragma once
 
+#include <Rcpp.h>
+
 #include "altrep.h"
 #include "vroom_vec.h"
-
-#include <Rcpp.h>
 
 Rcpp::CharacterVector read_chr(vroom_vec_info* info);
 

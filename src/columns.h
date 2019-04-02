@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Rcpp.h"
-#include "connection.h"
-#include "index_collection.h"
 #include "vroom.h"
 #include "vroom_chr.h"
 #include "vroom_date.h"
@@ -14,6 +12,9 @@
 #include "vroom_num.h"
 #include "vroom_time.h"
 #include "vroom_vec.h"
+
+#include "connection.h"
+#include "index_collection.h"
 
 using namespace Rcpp;
 
@@ -162,7 +163,7 @@ inline List create_columns(
     res_nms.push_back(Rcpp::as<std::string>(col_nms[col]));
 
     if (col_type == "collector_double") {
-      if (altrep_opts & column_type::DBL) {
+      if (altrep_opts & column_type::Dbl) {
 #ifdef HAS_ALTREP
         res[i] = vroom_dbl::Make(info);
 #endif
@@ -171,7 +172,7 @@ inline List create_columns(
         delete info;
       }
     } else if (col_type == "collector_integer") {
-      if (altrep_opts & column_type::INT) {
+      if (altrep_opts & column_type::Int) {
 #ifdef HAS_ALTREP
         res[i] = vroom_int::Make(info);
 #endif
@@ -180,7 +181,7 @@ inline List create_columns(
         delete info;
       }
     } else if (col_type == "collector_number") {
-      if (altrep_opts & column_type::NUM) {
+      if (altrep_opts & column_type::Num) {
 #ifdef HAS_ALTREP
         res[i] = vroom_num::Make(info);
 #endif
@@ -198,7 +199,7 @@ inline List create_columns(
         res[i] = read_fctr_implicit(info, collector["include_na"]);
         delete info;
       } else {
-        if (altrep_opts & column_type::FCT) {
+        if (altrep_opts & column_type::Fct) {
 #ifdef HAS_ALTREP
           res[i] = vroom_fct::Make(info, levels, collector["ordered"]);
 #endif
@@ -209,7 +210,7 @@ inline List create_columns(
       }
     } else if (col_type == "collector_date") {
       info->format = Rcpp::as<std::string>(collector["format"]);
-      if (altrep_opts & column_type::DATE) {
+      if (altrep_opts & column_type::Date) {
 #ifdef HAS_ALTREP
         res[i] = vroom_date::Make(info);
 #endif
@@ -219,7 +220,7 @@ inline List create_columns(
       }
     } else if (col_type == "collector_datetime") {
       info->format = Rcpp::as<std::string>(collector["format"]);
-      if (altrep_opts & column_type::DTTM) {
+      if (altrep_opts & column_type::Dttm) {
 #ifdef HAS_ALTREP
         res[i] = vroom_dttm::Make(info);
 #endif
@@ -229,7 +230,7 @@ inline List create_columns(
       }
     } else if (col_type == "collector_time") {
       info->format = Rcpp::as<std::string>(collector["format"]);
-      if (altrep_opts & column_type::TIME) {
+      if (altrep_opts & column_type::Time) {
 #ifdef HAS_ALTREP
         res[i] = vroom_time::Make(info);
 #endif
@@ -238,7 +239,7 @@ inline List create_columns(
         delete info;
       }
     } else {
-      if (altrep_opts & column_type::CHR) {
+      if (altrep_opts & column_type::Chr) {
 #ifdef HAS_ALTREP
         res[i] = vroom_chr::Make(info);
 #endif

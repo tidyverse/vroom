@@ -14,15 +14,15 @@
 namespace vroom {
 
 enum column_type {
-  CHR = 1,
-  FCT = 2,
-  INT = 4,
-  DBL = 8,
-  NUM = 16,
-  LGL = 32,
-  DTTM = 64,
-  DATE = 128,
-  TIME = 256
+  Chr = 1,
+  Fct = 2,
+  Int = 4,
+  Dbl = 8,
+  Num = 16,
+  Lgl = 32,
+  Dttm = 64,
+  Date = 128,
+  Time = 256
 };
 
 // A custom string wrapper that avoids constructing a string object unless
