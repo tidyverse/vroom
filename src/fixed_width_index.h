@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Rcpp.h"
 
 #include "index.h"
@@ -16,16 +18,24 @@
 #include "utils.h"
 #include "RProgress.h"
 
+#ifdef VROOM_LOG
+#include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
+#include "spdlog/spdlog.h"
+#endif
+
 namespace vroom {
 
 class fixed_width_index
     : public index,
       public std::enable_shared_from_this<fixed_width_index> {
+
+protected:
+  fixed_width_index() : trim_ws_(0) {}
   std::vector<size_t> newlines_;
   std::vector<int> col_starts_;
   std::vector<int> col_ends_;
   mio::mmap_source mmap_;
-  const bool trim_ws_;
+  bool trim_ws_;
 
 public:
   fixed_width_index(
@@ -91,6 +101,18 @@ public:
     if (progress) {
       pb->update(1);
     }
+
+#ifdef VROOM_LOG
+#if SPDLOG_ACTIVE_LEVEL <= SPD_LOG_LEVEL_DEBUG
+    auto log = spdlog::basic_logger_mt(
+        "basic_logger", "logs/fixed_width_index.idx", true);
+    for (auto& v : newlines_) {
+      SPDLOG_LOGGER_DEBUG(log, "{}", v);
+    }
+    SPDLOG_LOGGER_DEBUG(log, "end of idx {0:x}", (size_t)&newlines_);
+    spdlog::drop("basic_logger");
+#endif
+#endif
   }
 
   size_t num_rows() const { return newlines_.size() - 1; }
@@ -144,12 +166,53 @@ public:
     return std::make_shared<vroom::index::column>(begin, end);
   }
 
+  template <typename T>
+  size_t index_region(
+      const T& source,
+      std::vector<size_t>& destination,
+      size_t start,
+      size_t end,
+      size_t offset,
+      size_t n_max,
+      std::unique_ptr<RProgress::RProgress>& pb,
+      size_t update_size = -1) {
+
+    size_t pos = find_next_newline(source, start);
+    size_t lines_read = 0;
+    auto last_tick = start;
+
+    while (pos < end) {
+      ++lines_read;
+      if (lines_read >= n_max) {
+        return lines_read;
+      }
+
+      destination.push_back(offset + pos);
+
+      if (pb) {
+        auto tick_size = pos - last_tick;
+        if (tick_size > update_size) {
+          pb->tick(pos - last_tick);
+          last_tick = pos;
+        }
+      }
+
+      pos = find_next_newline(source, pos + 1);
+    }
+
+    if (pb) {
+      pb->tick(end - last_tick);
+    }
+
+    return lines_read;
+  }
+
   std::shared_ptr<vroom::index::row> get_row(size_t row) const {
-    // TODO: implement
+    // TODO: UNUSED
     return nullptr;
   }
   std::shared_ptr<vroom::index::row> get_header() const {
-    // TODO: implement
+    // TODO: UNUSED
     return nullptr;
   }
 };

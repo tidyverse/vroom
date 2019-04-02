@@ -1,6 +1,7 @@
 #include "index_collection.h"
 #include "delimited_index_connection.h"
 #include "fixed_width_index.h"
+#include "fixed_width_index_connection.h"
 #include "index.h"
 #include <memory>
 
@@ -208,7 +209,16 @@ index_collection::index_collection(
 
     std::shared_ptr<vroom::index> p;
     if (is_connection) {
-      Rcpp::stop("connections not yet supported!");
+      p = std::make_shared<vroom::fixed_width_index_connection>(
+          x,
+          col_starts,
+          col_ends,
+          trim_ws,
+          skip,
+          comment,
+          n_max,
+          progress,
+          get_env("VROOM_CONNECTION_SIZE", 1 << 17));
     } else {
       auto filename = as<std::string>(x);
       p = std::make_shared<vroom::fixed_width_index>(
