@@ -74,6 +74,7 @@ inline List create_columns(
     size_t num_threads) {
 
   auto num_cols = idx->num_columns();
+  auto num_rows = idx->num_rows();
 
   auto locale_info = std::make_shared<LocaleInfo>(locale);
 
@@ -99,13 +100,23 @@ inline List create_columns(
       idx,
       na,
       locale_info,
-      guess_max);
+      guess_max,
+      altrep_opts);
+
+  size_t to_parse = 0;
+  for (size_t col = 0; col < num_cols; ++col) {
+    auto collector = my_collectors[col];
+    if (collector.use_altrep()) {
+      to_parse += num_rows;
+    }
+  }
+  // Rcpp::Rcerr << to_parse << '\n';
 
   for (size_t col = 0; col < num_cols; ++col) {
     auto collector = my_collectors[col];
     auto col_type = collector.type();
 
-    if (col_type == "collector_skip") {
+    if (col_type == column_type::Skip) {
       continue;
     }
 
@@ -118,8 +129,9 @@ inline List create_columns(
 
     res_nms.push_back(collector.name());
 
-    if (col_type == "collector_double") {
-      if (altrep_opts & column_type::Dbl) {
+    switch (collector.type()) {
+    case column_type::Dbl:
+      if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
         res[i] = vroom_dbl::Make(info);
 #endif
@@ -127,8 +139,9 @@ inline List create_columns(
         res[i] = read_dbl(info);
         delete info;
       }
-    } else if (col_type == "collector_integer") {
-      if (altrep_opts & column_type::Int) {
+      break;
+    case column_type::Int:
+      if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
         res[i] = vroom_int::Make(info);
 #endif
@@ -136,8 +149,9 @@ inline List create_columns(
         res[i] = read_int(info);
         delete info;
       }
-    } else if (col_type == "collector_number") {
-      if (altrep_opts & column_type::Num) {
+      break;
+    case column_type::Num:
+      if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
         res[i] = vroom_num::Make(info);
 #endif
@@ -145,11 +159,13 @@ inline List create_columns(
         res[i] = read_num(info);
         delete info;
       }
-    } else if (col_type == "collector_logical") {
+      break;
+    case column_type::Lgl:
       // No altrep for logicals as of R 3.5
       res[i] = read_lgl(info);
       delete info;
-    } else if (col_type == "collector_factor") {
+      break;
+    case column_type::Fct: {
       auto levels = collector["levels"];
       if (Rf_isNull(levels)) {
         res[i] =
@@ -157,7 +173,7 @@ inline List create_columns(
         delete info;
       } else {
         bool ordered = Rcpp::as<bool>(collector["ordered"]);
-        if (altrep_opts & column_type::Fct) {
+        if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
           res[i] = vroom_fct::Make(info, levels, ordered);
 #endif
@@ -166,9 +182,11 @@ inline List create_columns(
           delete info;
         }
       }
-    } else if (col_type == "collector_date") {
+      break;
+    }
+    case column_type::Date:
       info->format = Rcpp::as<std::string>(collector["format"]);
-      if (altrep_opts & column_type::Date) {
+      if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
         res[i] = vroom_date::Make(info);
 #endif
@@ -176,9 +194,10 @@ inline List create_columns(
         res[i] = read_date(info);
         delete info;
       }
-    } else if (col_type == "collector_datetime") {
+      break;
+    case column_type::Dttm:
       info->format = Rcpp::as<std::string>(collector["format"]);
-      if (altrep_opts & column_type::Dttm) {
+      if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
         res[i] = vroom_dttm::Make(info);
 #endif
@@ -186,9 +205,10 @@ inline List create_columns(
         res[i] = read_dttm(info);
         delete info;
       }
-    } else if (col_type == "collector_time") {
+      break;
+    case column_type::Time:
       info->format = Rcpp::as<std::string>(collector["format"]);
-      if (altrep_opts & column_type::Time) {
+      if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
         res[i] = vroom_time::Make(info);
 #endif
@@ -196,8 +216,9 @@ inline List create_columns(
         res[i] = read_time(info);
         delete info;
       }
-    } else {
-      if (altrep_opts & column_type::Chr) {
+      break;
+    default:
+      if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
         res[i] = vroom_chr::Make(info);
 #endif
@@ -220,5 +241,5 @@ inline List create_columns(
   // res.attr("filename") = idx->filenames();
 
   return res;
-}
+} // namespace vroom
 } // namespace vroom
