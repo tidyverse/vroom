@@ -16,23 +16,11 @@
 #include "connection.h"
 #include "index_collection.h"
 
+#include "collectors.h"
+
 using namespace Rcpp;
 
 namespace vroom {
-
-inline CharacterVector read_column_names(
-    std::shared_ptr<vroom::index_collection> idx,
-    std::shared_ptr<LocaleInfo> locale) {
-  CharacterVector nms(idx->num_columns());
-
-  auto col = 0;
-  auto header = idx->get_header();
-  for (const auto& str : *header) {
-    nms[col++] = locale->encoder_.makeSEXP(str.begin(), str.end(), false);
-  }
-
-  return nms;
-}
 
 inline std::vector<std::string> get_filenames(SEXP in) {
   auto n = Rf_xlength(in);
@@ -85,35 +73,9 @@ inline List create_columns(
     size_t guess_max,
     size_t num_threads) {
 
-  auto num_col = idx->num_columns();
+  auto num_cols = idx->num_columns();
 
   auto locale_info = std::make_shared<LocaleInfo>(locale);
-
-  CharacterVector col_nms;
-
-  auto vroom = Rcpp::Environment::namespace_env("vroom");
-
-  if (col_names.sexp_type() == STRSXP) {
-    col_nms = col_names;
-  } else if (
-      col_names.sexp_type() == LGLSXP && as<LogicalVector>(col_names)[0]) {
-    col_nms = read_column_names(idx, locale_info);
-  } else {
-    Rcpp::Function make_names = vroom["make_names"];
-    col_nms = make_names(num_col);
-  }
-
-  Rcpp::Function col_types_standardise = vroom["col_types_standardise"];
-  col_types = col_types_standardise(col_types, col_nms, col_keep, col_skip);
-
-  Rcpp::Function guess_type = vroom["guess_type"];
-
-  auto num_rows = idx->num_rows();
-
-  auto guess_num = std::min(num_rows, guess_max);
-
-  // Guess based on values throughout the data
-  auto guess_step = guess_num > 0 ? num_rows / guess_num : 0;
 
   std::vector<std::string> res_nms;
 
@@ -121,7 +83,7 @@ inline List create_columns(
 
   bool add_filename = !Rf_isNull(id);
 
-  List res(num_col + add_filename);
+  List res(num_cols + add_filename);
 
   if (add_filename) {
     res[i++] =
@@ -129,28 +91,22 @@ inline List create_columns(
     res_nms.push_back(Rcpp::as<std::string>(id));
   }
 
-  for (size_t col = 0; col < num_col; ++col) {
-    Rcpp::List collector =
-        Rcpp::as<List>(Rcpp::as<List>(col_types)["cols"])[col];
-    std::string col_type = Rcpp::as<std::string>(
-        Rcpp::as<CharacterVector>(collector.attr("class"))[0]);
+  auto my_collectors = resolve_collectors(
+      col_names,
+      col_types,
+      col_keep,
+      col_skip,
+      idx,
+      na,
+      locale_info,
+      guess_max);
+
+  for (size_t col = 0; col < num_cols; ++col) {
+    auto collector = my_collectors[col];
+    auto col_type = collector.type();
 
     if (col_type == "collector_skip") {
       continue;
-    }
-
-    if (col_type == "collector_guess") {
-      CharacterVector col_vals(guess_num);
-      for (size_t j = 0; j < guess_num; ++j) {
-        auto row = j * guess_step;
-        auto str = idx->get(row, col);
-        col_vals[j] =
-            locale_info->encoder_.makeSEXP(str.begin(), str.end(), false);
-      }
-      collector = guess_type(
-          col_vals, Named("guess_integer") = false, Named("na") = na);
-      col_type = Rcpp::as<std::string>(
-          Rcpp::as<CharacterVector>(collector.attr("class"))[0]);
     }
 
     // This is deleted in the finalizers when the vectors are GC'd by R
@@ -160,7 +116,7 @@ inline List create_columns(
                                    locale_info,
                                    std::string()};
 
-    res_nms.push_back(Rcpp::as<std::string>(col_nms[col]));
+    res_nms.push_back(collector.name());
 
     if (col_type == "collector_double") {
       if (altrep_opts & column_type::Dbl) {
@@ -196,15 +152,17 @@ inline List create_columns(
     } else if (col_type == "collector_factor") {
       auto levels = collector["levels"];
       if (Rf_isNull(levels)) {
-        res[i] = read_fctr_implicit(info, collector["include_na"]);
+        res[i] =
+            read_fctr_implicit(info, Rcpp::as<bool>(collector["include_na"]));
         delete info;
       } else {
+        bool ordered = Rcpp::as<bool>(collector["ordered"]);
         if (altrep_opts & column_type::Fct) {
 #ifdef HAS_ALTREP
-          res[i] = vroom_fct::Make(info, levels, collector["ordered"]);
+          res[i] = vroom_fct::Make(info, levels, ordered);
 #endif
         } else {
-          res[i] = read_fctr_explicit(info, levels, collector["ordered"]);
+          res[i] = read_fctr_explicit(info, levels, ordered);
           delete info;
         }
       }
@@ -252,7 +210,7 @@ inline List create_columns(
     ++i;
   }
 
-  if (i < num_col) {
+  if (i < num_cols) {
     // Resize the list appropriately
     SETLENGTH(res, i);
     SET_TRUELENGTH(res, i);
