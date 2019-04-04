@@ -36,8 +36,7 @@ SEXP vroom_(
   Rcpp::CharacterVector tempfile;
 
   bool has_header =
-      col_names.sexp_type() == STRSXP ||
-      (col_names.sexp_type() == LGLSXP && as<LogicalVector>(col_names)[0]);
+      col_names.sexp_type() == LGLSXP && as<LogicalVector>(col_names)[0];
 
   std::vector<std::string> filenames;
 

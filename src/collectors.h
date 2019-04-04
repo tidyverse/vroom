@@ -123,14 +123,15 @@ inline collectors resolve_collectors(
 
   CharacterVector col_nms;
 
+  Rcpp::Function make_names = vroom["make_names"];
+
   if (col_names.sexp_type() == STRSXP) {
-    col_nms = col_names;
+    col_nms = make_names(col_names, num_cols);
   } else if (
       col_names.sexp_type() == LGLSXP && as<LogicalVector>(col_names)[0]) {
     col_nms = read_column_names(idx, locale_info);
   } else {
-    Rcpp::Function make_names = vroom["make_names"];
-    col_nms = make_names(num_cols);
+    col_nms = make_names(R_NilValue, num_cols);
   }
 
   Rcpp::Function col_types_standardise = vroom["col_types_standardise"];

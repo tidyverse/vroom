@@ -335,6 +335,18 @@ test_that("n_max works with connections files", {
     )
 })
 
+test_that("vroom truncates col_names if it is too long", {
+  test_vroom("1\n2\n", col_names = c("a", "b"),
+    equals = tibble::tibble(a = c(1, 2))
+  )
+})
+
+test_that("vroom makes additional col_names if it is too short", {
+  test_vroom("1,2,3\n4,5,6\n", col_names = c("a", "b"),
+    equals = tibble::tibble(a = c(1, 4), b = c(2, 5), X3 = c(3, 6))
+  )
+})
+
 # Figure out a better way to test progress bars...
 #test_that("progress bars work", {
   #withr::with_options(c("vroom.show_after" = 0), {

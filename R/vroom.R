@@ -155,8 +155,18 @@ col_types_standardise <- function(col_types, col_names, col_keep = NULL, col_ski
   spec
 }
 
-make_names <- function(len) {
-  make.names(seq_len(len))
+make_names <- function(x, len) {
+  if (length(x) == len) {
+    return(x)
+  }
+
+  if (length(x) > len) {
+    return(x[seq_len(len)])
+  }
+
+  nms <- make.names(seq_len(len))
+  nms[seq_along(x)] <- x
+  nms
 }
 
 #' Determine progress bars should be shown
