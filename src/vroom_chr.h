@@ -85,6 +85,7 @@ public:
     if (data2 != R_NilValue) {
       return STRING_ELT(data2, i);
     }
+    SPDLOG_TRACE("{0:x}: vroom_chr string_Elt", (size_t)vec);
 
     return Val(vec, i);
   }
@@ -96,6 +97,7 @@ public:
       return data2;
     }
 
+    SPDLOG_TRACE("{0:x}: vroom_chr Materialize", (size_t)vec);
     auto out = read_chr(&Info(vec));
     R_set_altrep_data2(vec, out);
 
