@@ -219,12 +219,10 @@ public:
         destination.push_back(pos + file_offset);
       }
 
-      else if (c == '\n') { // no embedded quotes allowed
-        if (in_quote) {
-          if (progress_ && pb) {
-            pb->finish();
-          }
-          throw std::runtime_error("Embedded newline found!");
+      else if (c == '\n') {
+        if (in_quote) { // This will work as long as num_threads = 1
+          ++pos;
+          continue;
         }
         destination.push_back(pos + file_offset);
         if (lines_read >= n_max) {

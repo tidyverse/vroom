@@ -2,6 +2,8 @@
 
 #include <Rcpp.h>
 
+#include <array>
+
 namespace vroom {
 
 inline std::string
@@ -17,18 +19,39 @@ inline int get_pb_width(const std::string& format) {
 }
 
 template <typename T>
-static size_t find_next_newline(const T& source, size_t start) {
+static size_t
+find_next_newline(const T& source, size_t start, const char quote = '"') {
   if (start > source.size() - 1) {
     return source.size() - 1;
   }
 
-  auto begin = source.data() + start;
-  auto res =
-      static_cast<const char*>(memchr(begin, '\n', source.size() - start));
-  if (!res) {
-    return source.size() - 1;
+  std::array<char, 3> query = {'\n', quote, '\0'};
+
+  auto buf = source.data();
+  size_t pos = start;
+
+  size_t end = source.size() - 1;
+  bool in_quote = false;
+
+  while (pos < end) {
+    size_t buf_offset = strcspn(buf + pos, query.data());
+    pos = pos + buf_offset;
+    auto c = buf[pos];
+    if (c == '\n') { // no embedded quotes allowed
+      if (in_quote) {
+        ++pos;
+        continue;
+      }
+      return pos;
+    }
+
+    else if (c == quote) {
+      in_quote = !in_quote;
+    }
+    ++pos;
   }
-  return res - source.data();
+
+  return pos;
 }
 
 template <typename T>

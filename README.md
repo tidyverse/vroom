@@ -58,11 +58,11 @@ vroom has nearly all of the parsing features of
   - windows newlines
   - [reading from multiple files or
     connections\*](#reading-multiple-files)
+  - embedded newlines in headers and fields\*\*
 
 \* *these are additional features only in vroom.*
 
-However vroom does not currently support embedded newlines in headers or
-fields.
+\*\* *requires `num_threads = 1`.*
 
 ## Installation
 

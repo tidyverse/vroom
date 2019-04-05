@@ -347,6 +347,27 @@ test_that("vroom makes additional col_names if it is too short", {
   )
 })
 
+test_that("vroom reads newlines in data", {
+  test_vroom('a\n"1\n2"\n',
+  equals = tibble::tibble(a = "1\n2"))
+})
+
+test_that("vroom reads headers with embedded newlines", {
+  test_vroom("\"Header\nLine Two\"\nValue\n", delim = ",",
+    equals = tibble::tibble("Header\nLine Two" = "Value")
+  )
+
+  test_vroom("\"Header\",\"Second header\nLine Two\"\nValue,Value2\n", delim = ",",
+    equals = tibble::tibble("Header" = "Value", "Second header\nLine Two" = "Value2")
+  )
+})
+
+test_that("vroom reads headers with embedded newlines 2", {
+  test_vroom("\"Header\nLine Two\"\n\"Another line\nto\nskip\"\nValue,Value2\n", skip = 2, col_names = FALSE, delim = ",",
+    equals = tibble::tibble("X1" = "Value", "X2" = "Value2")
+  )
+})
+
 # Figure out a better way to test progress bars...
 #test_that("progress bars work", {
   #withr::with_options(c("vroom.show_after" = 0), {
