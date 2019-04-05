@@ -1,3 +1,5 @@
+MAKEFLAGS := -j 1
+
 all:
 	@echo "make: Entering directory '/Users/jhester/p/vroom/src'"
 	@Rscript -e 'pkgload::load_all(quiet = FALSE)'
