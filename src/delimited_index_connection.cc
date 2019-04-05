@@ -50,6 +50,10 @@ delimited_index_connection::delimited_index_connection(
     Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(in, "rb");
   }
 
+  /* raw connections are always created as open, but we should close them */
+  bool should_close =
+      should_open || strcmp("rawConnection", con->class_name) == 0;
+
   std::array<std::vector<char>, 2> buf = {std::vector<char>(chunk_size),
                                           std::vector<char>(chunk_size)};
   // std::vector<char>(chunk_size)};
@@ -77,6 +81,22 @@ delimited_index_connection::delimited_index_connection(
   delim_len_ = delim_.length();
 
   auto first_nl = find_next_newline(buf[i], start);
+
+  if (sz > 1 && buf[i][first_nl] != '\n') {
+    // This first newline must not have fit in the buffer, throw error
+    // suggesting a larger buffer size.
+
+    if (should_close) {
+      Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["close"])(in);
+    }
+    std::stringstream ss;
+
+    ss << "The size of the connection buffer (" << chunk_size
+       << ") was not large enough\nto fit a complete line:\n  * Increase it by "
+          "setting `Sys.setenv(\"VROOM_CONNECTION_SIZE\")`";
+
+    throw Rcpp::exception(ss.str().c_str(), false);
+  }
 
   // Check for windows newlines
   windows_newlines_ = first_nl > 0 && buf[i][first_nl - 1] == '\r';
@@ -172,8 +192,6 @@ delimited_index_connection::delimited_index_connection(
   }
 
   /* raw connections are always created as open, but we should close them */
-  bool should_close =
-      should_open || strcmp("rawConnection", con->class_name) == 0;
   if (should_close) {
     Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["close"])(in);
   }
