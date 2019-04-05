@@ -85,7 +85,7 @@ public:
     if (data2 != R_NilValue) {
       return STRING_ELT(data2, i);
     }
-    SPDLOG_TRACE("{0:x}: vroom_chr string_Elt", (size_t)vec);
+    SPDLOG_TRACE("{0:x}: vroom_chr string_Elt {1}", (size_t)vec, i);
 
     return Val(vec, i);
   }
