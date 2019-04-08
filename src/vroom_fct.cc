@@ -21,22 +21,16 @@ Rcpp::IntegerVector read_fctr_explicit(
     level_map[levels[i]] = i + 1;
   }
 
-  parallel_for(
-      n,
-      [&](size_t start, size_t end, size_t id) {
-        size_t i = start;
-        auto col = info->column->slice(start, end);
-        for (const auto& str : *col) {
-          auto search = level_map.find(
-              info->locale->encoder_.makeSEXP(str.begin(), str.end(), false));
-          if (search != level_map.end()) {
-            out[i++] = search->second;
-          } else {
-            out[i++] = NA_INTEGER;
-          }
-        }
-      },
-      info->num_threads);
+  size_t i = 0;
+  for (const auto& str : *info->column) {
+    auto search = level_map.find(
+        info->locale->encoder_.makeSEXP(str.begin(), str.end(), false));
+    if (search != level_map.end()) {
+      out[i++] = search->second;
+    } else {
+      out[i++] = NA_INTEGER;
+    }
+  }
 
   out.attr("levels") = levels;
   if (ordered) {
