@@ -139,6 +139,7 @@ inline collectors resolve_collectors(
       col_types_standardise(col_types, col_nms, col_keep, col_skip);
 
   auto guess_num = std::min(num_rows, guess_max);
+
   auto guess_step = guess_num > 0 ? num_rows / guess_num : 0;
 
   Rcpp::Function guess_type = vroom["guess_type"];

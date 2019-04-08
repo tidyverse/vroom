@@ -368,6 +368,22 @@ test_that("vroom reads headers with embedded newlines 2", {
   )
 })
 
+test_that("vroom uses the number of rows when guess_max = Inf", {
+  tf <- tempfile()
+  df <- tibble::tibble(x = c(1:1000, "foo"))
+  readr::write_tsv(df, tf)
+
+  # The type should be guessed wrong, because the character comes at the end
+  res <- vroom(tf)
+  expect_is(res[["x"]], "numeric")
+  expect_true(is.na(res[["x"]][[NROW(res)]]))
+
+  # The value should exist with guess_max = Inf
+  res <- vroom(tf, guess_max = Inf)
+  expect_is(res[["x"]], "character")
+  expect_equal(res[["x"]][[NROW(res)]], "foo")
+})
+
 # Figure out a better way to test progress bars...
 #test_that("progress bars work", {
   #withr::with_options(c("vroom.show_after" = 0), {

@@ -62,6 +62,10 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
     n_max <- -1
   }
 
+  if (guess_max < 0 || is.infinite(guess_max)) {
+    guess_max <- -1
+  }
+
   # Workaround weird RStudio / Progress bug: https://github.com/r-lib/progress/issues/56#issuecomment-384232184
   if (
     isTRUE(progress) &&
