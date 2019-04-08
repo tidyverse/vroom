@@ -31,7 +31,13 @@ vroom_fwf <- function(file,
     n_max = n_max, num_threads = num_threads,
     altrep_opts = vroom_altrep_opts(), locale = locale, progress = progress)
 
-  tibble::as_tibble(out, .name_repair = .name_repair)
+  out <- tibble::as_tibble(out, .name_repair = .name_repair)
+
+  if (is.null(col_types)) {
+    show_spec_summary(out, locale = locale)
+  }
+
+  out
 }
 
 #' @importFrom readr fwf_cols

@@ -62,3 +62,7 @@ readr::default_locale
 #' @importFrom readr locale
 #' @export
 readr::locale
+
+#' @importFrom readr spec
+#' @export
+readr::spec

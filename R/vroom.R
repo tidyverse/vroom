@@ -81,7 +81,72 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
     guess_max = guess_max, n_max = n_max, altrep_opts = vroom_altrep_opts(),
     num_threads = num_threads, progress = progress)
 
-  tibble::as_tibble(out, .name_repair = .name_repair)
+  out <- tibble::as_tibble(out, .name_repair = .name_repair)
+
+  if (is.null(col_types)) {
+    show_spec_summary(out, locale = locale)
+  }
+
+  out
+}
+
+#' @importFrom crayon silver
+show_spec_summary <- function(x, width = getOption("width"), locale = default_locale()) {
+  spec <- readr::spec(x)
+  if (length(spec$cols) == 0) {
+    return(invisible(x))
+  }
+
+  type_map <- c("collector_character" = "chr", "collector_double" = "dbl",
+    "collector_integer" = "int", "collector_num" = "num", "collector_logical" = "lgl",
+    "collector_factor" = "fct", "collector_datetime" = "dttm", "collector_date" = "date",
+    "collector_time" = "time")
+
+  col_types <- vapply(spec$cols, function(x) class(x)[[1]], character(1))
+  col_types <- droplevels(factor(type_map[col_types], levels = unname(type_map)))
+  type_counts <- table(col_types)
+
+  n <- length(type_counts)
+
+  types <- format(vapply(names(type_counts), color_type, character(1)))
+  counts <- format(type_counts)
+  col_width <- min(width - crayon::col_nchar(types) + nchar(counts) + 4)
+  columns <- vapply(split(names(spec$cols), col_types), function(x) glue::glue_collapse(x, ", ", width = col_width), character(1))
+
+  fmt_num <- function(x) {
+    prettyNum(x, big.mark = locale$grouping_mark, decimal.mark = locale$decimal_mark)
+  }
+
+  message(
+    glue::glue(
+      .transformer = collapse_transformer(sep = "\n"),
+      entries = glue::glue("{format(types)} [{format(type_counts)}]: {columns}"),
+
+      '
+      {bold("Observations:")} {fmt_num(NROW(x))}
+      {bold("Variables:")} {fmt_num(NCOL(x))}
+      {entries*}
+
+      {silver("Call `spec()` for a copy-pastable column specification.")}
+      '
+    )
+  )
+
+  invisible(x)
+}
+
+color_type <- function(type) {
+  switch(type,
+    chr = ,
+    fct = crayon::red(type),
+    lgl = crayon::yellow(type),
+    dbl = ,
+    int = ,
+    num = crayon::green(type),
+    date = ,
+    dttm = ,
+    time = crayon::blue(type)
+  )
 }
 
 #' Guess the type of a vector
@@ -187,7 +252,7 @@ vroom_progress <- function() {
     interactive() &&
     !isTRUE(getOption("knitr.in.progress")) &&
     !isTRUE(getOption("rstudio.notebook.executing")) &&
-    !isTRUE(as.logical(Sys.getenv("TESTTHAT", "false")))
+    !testthat::is_testing()
 }
 
 #' @importFrom crayon blue cyan green bold reset col_nchar

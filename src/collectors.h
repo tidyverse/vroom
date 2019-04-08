@@ -76,12 +76,14 @@ public:
 };
 
 class collectors {
+  Rcpp::List spec_;
   Rcpp::List collectors_;
   size_t altrep_opts_;
 
 public:
   collectors(Rcpp::List col_types, size_t altrep_opts)
-      : collectors_(Rcpp::as<Rcpp::List>(col_types["cols"])),
+      : spec_(col_types),
+        collectors_(Rcpp::as<Rcpp::List>(col_types["cols"])),
         altrep_opts_(altrep_opts) {}
   collector operator[](int i) {
     return {collectors_[i],
@@ -89,6 +91,7 @@ public:
                 Rcpp::as<Rcpp::CharacterVector>(collectors_.attr("names"))[i]),
             altrep_opts_};
   }
+  Rcpp::List spec() { return spec_; }
 };
 
 inline CharacterVector read_column_names(

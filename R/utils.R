@@ -14,3 +14,15 @@ is_windows <- function() {
 }
 
 `%||%` <- function(x, y) if (is.null(x)) y else x
+
+collapse_transformer <- function(regex = "[*]$", ...) {
+  function(text, envir) {
+    if (grepl(regex, text)) {
+      text <- sub(regex, "", text)
+      res <- eval(parse(text = text, keep.source = FALSE), envir)
+      glue::glue_collapse(res, ...)
+    } else {
+      glue::identity_transformer(text, envir)
+    }
+  }
+}

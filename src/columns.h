@@ -238,8 +238,8 @@ inline List create_columns(
   }
 
   res.attr("names") = res_nms;
-  // res.attr("filename") = idx->filenames();
+  res.attr("spec") = my_collectors.spec();
 
   return res;
-} // namespace vroom
+}
 } // namespace vroom
