@@ -3,6 +3,8 @@
 language: R
 cache: packages
 
+r_github_packages: r-lib/remotes#340
+
 matrix:
   include:
   - r: devel
