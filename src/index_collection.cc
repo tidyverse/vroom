@@ -187,7 +187,7 @@ void check_column_consistency(
     ss << "Files must all have " << first->num_columns()
        << " columns:\n"
           "* File "
-       << i + 1 << " has " << check->num_columns() << " columns.";
+       << i + 1 << " has " << check->num_columns() << " columns";
 
     throw Rcpp::exception(ss.str().c_str(), false);
   }
