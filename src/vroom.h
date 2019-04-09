@@ -30,7 +30,7 @@ enum column_type {
 // needed because of escapes.
 class string {
 public:
-  string(std::string str) : str_(str) {
+  string(std::string&& str) : str_(std::move(str)) {
     begin_ = str_.c_str();
     end_ = begin_ + str_.length();
   }
@@ -54,10 +54,18 @@ public:
            strncmp(begin_, other.data(), length()) == 0;
   }
 
+  std::string str() const {
+    if (size() > 0 && str_.size() == 0) {
+      return std::string(begin_, end_);
+    } else {
+      return str_;
+    }
+  }
+
 private:
   const char* begin_;
   const char* end_;
-  std::string str_;
+  const std::string str_;
 };
 
 } // namespace vroom

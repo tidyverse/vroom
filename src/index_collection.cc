@@ -122,6 +122,102 @@ string index_collection::full_iterator::at(ptrdiff_t n) const {
   return idx_->get(n, column_);
 }
 
+std::shared_ptr<vroom::index> make_delimited_index(
+    RObject in,
+    const char* delim,
+    const char quote,
+    const bool trim_ws,
+    const bool escape_double,
+    const bool escape_backslash,
+    const bool has_header,
+    const size_t skip,
+    const size_t n_max,
+    const char comment,
+    const size_t num_threads,
+    const bool progress) {
+
+  Rcpp::Function standardise_one_path =
+      Rcpp::Environment::namespace_env("vroom")["standardise_one_path"];
+
+  RObject x = standardise_one_path(in);
+
+  bool is_connection = TYPEOF(x) != STRSXP;
+
+  if (is_connection) {
+    return std::make_shared<vroom::delimited_index_connection>(
+        x,
+        delim,
+        quote,
+        trim_ws,
+        escape_double,
+        escape_backslash,
+        has_header,
+        skip,
+        n_max,
+        comment,
+        get_env("VROOM_CONNECTION_SIZE", 1 << 17),
+        progress);
+  }
+
+  auto filename = as<std::string>(x);
+  return std::make_shared<vroom::delimited_index>(
+      filename.c_str(),
+      delim,
+      quote,
+      trim_ws,
+      escape_double,
+      escape_backslash,
+      has_header,
+      skip,
+      n_max,
+      comment,
+      num_threads,
+      progress);
+}
+
+void check_column_consistency(
+    std::shared_ptr<vroom::index> first,
+    std::shared_ptr<vroom::index> check,
+    bool has_header,
+    size_t i) {
+
+  if (check->num_columns() != first->num_columns()) {
+
+    std::stringstream ss;
+    ss << "Files must all have " << first->num_columns()
+       << " columns:\n"
+          "* File "
+       << i + 1 << " has " << check->num_columns() << " columns.";
+
+    throw Rcpp::exception(ss.str().c_str(), false);
+  }
+
+  // If the files have a header ensure they are consistent with each other.
+  if (has_header) {
+    auto first_header = first->get_header()->begin();
+
+    auto check_header = check->get_header();
+    auto col = 0;
+    for (auto header : *check_header) {
+      if (!(header == *first_header)) {
+
+        std::stringstream ss;
+        ss << "Files must have consistent column names:\n"
+              "* File 1 column "
+           << col + 1 << " is: " << (*first_header).str()
+           << "\n"
+              "* File "
+           << i + 1 << " column " << col + 1 << " is: " << header.str();
+
+        throw Rcpp::exception(ss.str().c_str(), false);
+      }
+
+      ++first_header;
+      ++col;
+    }
+  }
+}
+
 // Index_collection
 index_collection::index_collection(
     Rcpp::List in,
@@ -138,57 +234,94 @@ index_collection::index_collection(
     const bool progress)
     : rows_(0), columns_(0) {
 
+  std::shared_ptr<vroom::index> first = make_delimited_index(
+      in[0],
+      delim,
+      quote,
+      trim_ws,
+      escape_double,
+      escape_backslash,
+      has_header,
+      skip,
+      n_max,
+      comment,
+      num_threads,
+      progress);
+
+  indexes_.push_back(first);
+  columns_ = first->num_columns();
+  rows_ = first->num_rows();
+
+  for (int i = 1; i < in.size(); ++i) {
+
+    std::shared_ptr<vroom::index> idx = make_delimited_index(
+        in[i],
+        delim,
+        quote,
+        trim_ws,
+        escape_double,
+        escape_backslash,
+        has_header,
+        skip,
+        n_max,
+        comment,
+        num_threads,
+        progress);
+
+    check_column_consistency(first, idx, has_header, i);
+
+    rows_ += idx->num_rows();
+
+    indexes_.emplace_back(std::move(idx));
+  }
+}
+
+std::shared_ptr<vroom::index> make_fixed_width_index(
+    Rcpp::RObject in,
+    const std::vector<int>& col_starts,
+    const std::vector<int>& col_ends,
+    const bool trim_ws,
+    const size_t skip,
+    const char comment,
+    const size_t n_max,
+    const bool progress) {
+
   Rcpp::Function standardise_one_path =
       Rcpp::Environment::namespace_env("vroom")["standardise_one_path"];
 
-  for (int i = 0; i < in.size(); ++i) {
-    RObject x = standardise_one_path(in[i]);
+  RObject x = standardise_one_path(in);
 
-    bool is_connection = TYPEOF(x) != STRSXP;
+  bool is_connection = TYPEOF(x) != STRSXP;
 
-    std::shared_ptr<vroom::index> p;
-    if (is_connection) {
-      p = std::make_shared<vroom::delimited_index_connection>(
-          x,
-          delim,
-          quote,
-          trim_ws,
-          escape_double,
-          escape_backslash,
-          has_header,
-          skip,
-          n_max,
-          comment,
-          get_env("VROOM_CONNECTION_SIZE", 1 << 17),
-          progress);
-    } else {
-      auto filename = as<std::string>(x);
-      p = std::make_shared<vroom::delimited_index>(
-          filename.c_str(),
-          delim,
-          quote,
-          trim_ws,
-          escape_double,
-          escape_backslash,
-          has_header,
-          skip,
-          n_max,
-          comment,
-          num_threads,
-          progress);
-    }
-    rows_ += p->num_rows();
-    columns_ = p->num_columns();
-    SPDLOG_DEBUG("rows_: {}", rows_);
-
-    indexes_.push_back(std::move(p));
+  if (is_connection) {
+    return std::make_shared<vroom::fixed_width_index_connection>(
+        x,
+        col_starts,
+        col_ends,
+        trim_ws,
+        skip,
+        comment,
+        n_max,
+        progress,
+        get_env("VROOM_CONNECTION_SIZE", 1 << 17));
+  } else {
+    auto filename = as<std::string>(x);
+    return std::make_shared<vroom::fixed_width_index>(
+        filename.c_str(),
+        col_starts,
+        col_ends,
+        trim_ws,
+        skip,
+        comment,
+        n_max,
+        progress);
   }
 }
 
 index_collection::index_collection(
     Rcpp::List in,
-    std::vector<int> col_starts,
-    std::vector<int> col_ends,
+    const std::vector<int>& col_starts,
+    const std::vector<int>& col_ends,
     const bool trim_ws,
     const size_t skip,
     const char comment,
@@ -196,42 +329,23 @@ index_collection::index_collection(
     const bool progress)
     : rows_(0), columns_(0) {
 
-  Rcpp::Function standardise_one_path =
-      Rcpp::Environment::namespace_env("vroom")["standardise_one_path"];
+  auto first = make_fixed_width_index(
+      in[0], col_starts, col_ends, trim_ws, skip, comment, n_max, progress);
 
-  for (int i = 0; i < in.size(); ++i) {
-    RObject x = standardise_one_path(in[i]);
+  columns_ = first->num_columns();
+  rows_ = first->num_rows();
 
-    bool is_connection = TYPEOF(x) != STRSXP;
+  indexes_.push_back(first);
 
-    std::shared_ptr<vroom::index> p;
-    if (is_connection) {
-      p = std::make_shared<vroom::fixed_width_index_connection>(
-          x,
-          col_starts,
-          col_ends,
-          trim_ws,
-          skip,
-          comment,
-          n_max,
-          progress,
-          get_env("VROOM_CONNECTION_SIZE", 1 << 17));
-    } else {
-      auto filename = as<std::string>(x);
-      p = std::make_shared<vroom::fixed_width_index>(
-          filename.c_str(),
-          col_starts,
-          col_ends,
-          trim_ws,
-          skip,
-          comment,
-          n_max,
-          progress);
-    }
-    rows_ += p->num_rows();
-    columns_ = p->num_columns();
+  for (int i = 1; i < in.size(); ++i) {
+    auto idx = make_fixed_width_index(
+        in[i], col_starts, col_ends, trim_ws, skip, comment, n_max, progress);
 
-    indexes_.push_back(std::move(p));
+    check_column_consistency(first, idx, false, i);
+
+    rows_ += idx->num_rows();
+
+    indexes_.emplace_back(std::move(idx));
   }
 }
 

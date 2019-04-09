@@ -92,3 +92,15 @@ test_that("vroom works with many connections", {
   expect_equal(colnames(res), c("x", "y"))
   expect_equal(NROW(res), 2000)
 })
+
+test_that("vroom errors if numbers of columns are inconsistent", {
+
+  files <- test_path("multi-file", c("foo", "baz"))
+  expect_error(vroom::vroom(files), "must all have")
+})
+
+test_that("vroom errors if column names are inconsistent", {
+
+  files <- test_path("multi-file", c("foo", "bar"))
+  expect_error(vroom::vroom(files), "consistent column names")
+})
