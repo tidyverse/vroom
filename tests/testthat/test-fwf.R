@@ -9,6 +9,15 @@ test_that("trailing spaces ommitted", {
   expect_equal(df$X1, df$X2)
 })
 
+test_that("connections and normal files produce identical output", {
+  spec <- fwf_empty(test_path("fwf-trailing.txt"))
+
+  y <- vroom_fwf(test_path("fwf-trailing.txt"), spec)
+  x <- vroom_fwf(file(test_path("fwf-trailing.txt")), spec)
+
+  expect_equal(x, y)
+})
+
 test_that("respects the trim_ws argument", {
   x <- "a11 b22 c33\nd   e   f  "
   out1 <- vroom_fwf(x, fwf_empty(x), trim_ws = FALSE)
