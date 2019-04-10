@@ -9,7 +9,7 @@ bool matches(const string& needle, const std::vector<std::string>& haystack) {
   return false;
 }
 
-Rcpp::IntegerVector read_fctr_explicit(
+Rcpp::IntegerVector read_fct_explicit(
     vroom_vec_info* info, Rcpp::CharacterVector levels, bool ordered) {
   R_xlen_t n = info->column->size();
 
@@ -41,7 +41,7 @@ Rcpp::IntegerVector read_fctr_explicit(
   return out;
 }
 
-Rcpp::IntegerVector read_fctr_implicit(vroom_vec_info* info, bool include_na) {
+Rcpp::IntegerVector read_fct_implicit(vroom_vec_info* info, bool include_na) {
   R_xlen_t n = info->column->size();
 
   Rcpp::IntegerVector out(n);

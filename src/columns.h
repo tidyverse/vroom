@@ -169,7 +169,7 @@ inline List create_columns(
       auto levels = collector["levels"];
       if (Rf_isNull(levels)) {
         res[i] =
-            read_fctr_implicit(info, Rcpp::as<bool>(collector["include_na"]));
+            read_fct_implicit(info, Rcpp::as<bool>(collector["include_na"]));
         delete info;
       } else {
         bool ordered = Rcpp::as<bool>(collector["ordered"]);
@@ -178,7 +178,7 @@ inline List create_columns(
           res[i] = vroom_fct::Make(info, levels, ordered);
 #endif
         } else {
-          res[i] = read_fctr_explicit(info, levels, ordered);
+          res[i] = read_fct_explicit(info, levels, ordered);
           delete info;
         }
       }
