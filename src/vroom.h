@@ -30,6 +30,10 @@ enum column_type {
 // needed because of escapes.
 class string {
 public:
+  string(const std::string& str) : str_(str) {
+    begin_ = str_.c_str();
+    end_ = begin_ + str_.length();
+  }
   string(std::string&& str) : str_(std::move(str)) {
     begin_ = str_.c_str();
     end_ = begin_ + str_.length();
