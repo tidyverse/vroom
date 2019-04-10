@@ -2,6 +2,8 @@
 
 #include "Rcpp.h"
 
+using namespace Rcpp;
+
 class collector {
   const Rcpp::List data_;
   const std::string name_;
