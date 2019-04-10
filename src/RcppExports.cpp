@@ -25,6 +25,17 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// vroom_str_
+std::string vroom_str_(RObject x);
+RcppExport SEXP _vroom_vroom_str_(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< RObject >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(vroom_str_(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // gen_character_
 CharacterVector gen_character_(int n, int min, int max, std::string values);
 RcppExport SEXP _vroom_gen_character_(SEXP nSEXP, SEXP minSEXP, SEXP maxSEXP, SEXP valuesSEXP) {
@@ -101,6 +112,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_vroom_force_materialization", (DL_FUNC) &_vroom_force_materialization, 1},
     {"_vroom_vroom_materialize", (DL_FUNC) &_vroom_vroom_materialize, 1},
+    {"_vroom_vroom_str_", (DL_FUNC) &_vroom_vroom_str_, 1},
     {"_vroom_gen_character_", (DL_FUNC) &_vroom_gen_character_, 4},
     {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 20},
     {"_vroom_vroom_fwf_", (DL_FUNC) &_vroom_vroom_fwf_, 18},

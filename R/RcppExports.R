@@ -9,6 +9,10 @@ vroom_materialize <- function(x) {
     invisible(.Call(`_vroom_vroom_materialize`, x))
 }
 
+vroom_str_ <- function(x) {
+    .Call(`_vroom_vroom_str_`, x)
+}
+
 gen_character_ <- function(n, min, max, values) {
     .Call(`_vroom_gen_character_`, n, min, max, values)
 }

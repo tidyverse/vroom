@@ -3,6 +3,8 @@
 #include "altrep.h"
 #include <thread>
 
+using namespace Rcpp;
+
 // [[Rcpp::export]]
 void force_materialization(SEXP x) {
 #ifdef HAS_ALTREP
@@ -30,4 +32,41 @@ void vroom_materialize(Rcpp::List x) {
   }
   std::for_each(t.begin(), t.end(), std::mem_fn(&std::thread::join));
 #endif
+}
+
+// std::string get_altrep_class(RObject x) {
+// auto csym = ALTREP_SERIALIZED_CLASS_CLSSYM(x) auto c = ALTREP_CLASS(x);
+// auto n = LENGTH(c);
+// std::string out;
+// out.reserve(n);
+// for (int i = 0; i < LENGTH(c); ++i) {
+// out[i] = RAW(c)[i];
+//}
+// return out;
+//}
+
+#define ALTREP_SERIALIZED_CLASS_CLSSYM(x) CAR(x)
+
+// [[Rcpp::export]]
+std::string vroom_str_(RObject x) {
+  std::stringstream ss;
+
+  if (ALTREP(x)) {
+
+    auto csym = CAR(ATTRIB(ALTREP_CLASS(x)));
+    auto psym = CADR(ATTRIB(ALTREP_CLASS(x)));
+    bool is_altrep = ALTREP(x);
+    bool materialzied = R_altrep_data2(x) != R_NilValue;
+
+    ss << std::boolalpha << "altrep:" << is_altrep << '\t'
+       << "type:" << CHAR(PRINTNAME(psym)) << "::" << CHAR(PRINTNAME(csym))
+       << '\t' << "length:" << LENGTH(x) << '\t'
+       << "materialized:" << materialzied << '\n';
+  } else {
+    ss << std::boolalpha << "altrep:" << false << '\t'
+       << "type: " << Rf_type2char(TYPEOF(x)) << '\t' << "length:" << LENGTH(x)
+       << '\n';
+  }
+
+  return ss.str();
 }
