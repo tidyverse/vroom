@@ -127,7 +127,8 @@ show_spec_summary <- function(x, width = getOption("width"), locale = default_lo
       {bold("Variables:")} {fmt_num(NCOL(x))}
       {entries*}
 
-      {silver("Call `spec()` for a copy-pastable column specification.")}
+      {silver("Call `spec()` for a copy-pastable column specification")}
+      {silver("Specify the column types with `col_types` to quiet this message")}
       '
     )
   )
