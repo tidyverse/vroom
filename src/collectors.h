@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Rcpp.h"
+
 class collector {
   const Rcpp::List data_;
   const std::string name_;
