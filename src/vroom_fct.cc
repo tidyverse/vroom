@@ -1,5 +1,4 @@
 #include "vroom_fct.h"
-#include "parallel.h"
 
 bool matches(const string& needle, const std::vector<std::string>& haystack) {
   for (auto& hay : haystack) {
