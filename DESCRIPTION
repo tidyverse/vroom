@@ -24,7 +24,9 @@ Imports:
     withr,
     Rcpp (>= 0.12.18.3),
     glue,
-    crayon
+    crayon,
+    tidyselect,
+    rlang
 URL: https://github.com/jimhester/vroom
 BugReports: https://github.com/jimhester/vroom/issues
 SystemRequirements: C++11

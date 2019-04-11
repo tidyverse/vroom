@@ -42,7 +42,8 @@ non-character columns, to further improve performance.
 ## Features
 
 vroom has nearly all of the parsing features of
-[readr](https://readr.tidyverse.org) for delimited files, including
+[readr](https://readr.tidyverse.org) for delimited and fixed width
+files, including
 
   - delimiter guessing\*
   - custom delimiters (including multi-byte\* and unicode\* delimiters)
@@ -51,6 +52,7 @@ vroom has nearly all of the parsing features of
       - logical types
       - datetime types (datetime, date, time)
       - categorical types (characters, factors)
+  - column selection, like `dplyr::select()`\*
   - skipping headers, comments and blank lines
   - quoted fields
   - double and backslashed escapes
@@ -137,6 +139,12 @@ vroom::vroom(files)
 #> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
 #> #   minute <dbl>, time_hour <dttm>
 ```
+
+## Further reading
+
+See [Getting
+started](https://jimhester.github.io/vroom/articles/vroom.html) to jump
+start your use of vroom\!
 
 ## Benchmarks
 

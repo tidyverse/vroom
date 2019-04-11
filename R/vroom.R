@@ -16,14 +16,9 @@ NULL
 #' @param id Either a string or 'NULL'. If a string, the output will contain a
 #'   variable with that name with the filename(s) as the value. If 'NULL', the
 #'   default, no variable will be created.
-#' @param col_keep Columns to keep in the output, all other columns will be
-#'   skipped. Input can be a character vector of column names, a logical vector
-#'   or a numeric vector of column indexes. Only one of `col_keep` or
-#'   `col_drop` can be used.
-#' @param col_skip Columns to skip in the output, all other columns will be
-#'   kept. Input can be a character vector of column names, a logical vector
-#'   or a numeric vector of column indexes. Only one of `col_keep` or
-#'   `col_drop` can be used.
+#' @param col_select One or more selection expressions, like in
+#'   `dplyr::select()`. Use `c()` or `list()` to use more than one expression.
+#'   See `?dplyr::select` for details on available selection options.
 #' @param .name_repair Handling of column names. By default, vroom ensures
 #'   column names are not empty and unique. See `.name_repair` as documented in
 #'   [tibble::tibble()] for additional options including supplying user defined
@@ -42,15 +37,13 @@ NULL
 #' setwd(.old_wd)
 #' }
 vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
-  col_keep = NULL, col_skip = NULL, id = NULL, skip = 0, n_max = Inf,
+  col_select = NULL,
+  id = NULL, skip = 0, n_max = Inf,
   na = c("", "NA"), quote = '"', comment = "", trim_ws = TRUE,
   escape_double = TRUE, escape_backslash = FALSE, locale = readr::default_locale(),
   guess_max = 100, num_threads = vroom_threads(), progress = vroom_progress(),
   .name_repair = "unique") {
 
-  if (!is.null(col_keep) && !is.null(col_skip)) {
-    stop("Only one of `col_keep` and `col_skip` can be set", call. = FALSE)
-  }
 
   file <- standardise_path(file)
 
@@ -74,14 +67,18 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
     Sys.setenv("RSTUDIO" = "1")
   }
 
+  col_select <- vroom_enquo(rlang::enquo(col_select))
+
   out <- vroom_(file, delim = delim, col_names = col_names, col_types = col_types,
-    col_keep = col_keep, col_skip = col_skip, id = id, skip = skip,
+    id = id, skip = skip, col_select = col_select,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
     escape_backslash = escape_backslash, comment = comment, locale = locale,
     guess_max = guess_max, n_max = n_max, altrep_opts = vroom_altrep_opts(),
     num_threads = num_threads, progress = progress)
 
   out <- tibble::as_tibble(out, .name_repair = .name_repair)
+
+  out <- vroom_select(out, col_select)
 
   if (is.null(col_types)) {
     show_spec_summary(out, locale = locale)
@@ -161,7 +158,30 @@ guess_type <- function(x, na = c("", "NA"), locale = readr::default_locale(), gu
   get(paste0("col_", type), asNamespace("readr"))()
 }
 
-col_types_standardise <- function(col_types, col_names, col_keep = NULL, col_skip = NULL) {
+vroom_enquo <- function(x) {
+  if (rlang::quo_is_call(x, "c") || rlang::quo_is_call(x, "list")) {
+    return(rlang::as_quosures(rlang::get_expr(x)[-1], rlang::get_env(x)))
+  }
+  x
+}
+
+vroom_select <- function(x, col_select) {
+  # reorder and rename columns
+  if (inherits(col_select, "quosures") || !rlang::quo_is_null(col_select)) {
+    if (inherits(col_select, "quosures")) {
+      vars <- tidyselect::vars_select(names(spec(x)$cols), !!!col_select)
+    } else {
+      vars <- tidyselect::vars_select(names(spec(x)$cols), !!col_select)
+    }
+    # This can't be just names(x) as we need to have skipped
+    # names as well to pass to vars_select()
+    x <- x[vars]
+    names(x) <- names(vars)
+  }
+  x
+}
+
+col_types_standardise <- function(col_types, col_names, col_select) {
   spec <- readr::as.col_spec(col_types)
   type_names <- names(spec$cols)
 
@@ -203,23 +223,14 @@ col_types_standardise <- function(col_types, col_names, col_keep = NULL, col_ski
     spec$cols <- spec$cols[col_names]
   }
 
-  if (!is.null(col_keep)) {
-    if (is.character(col_keep)) {
-      col_keep <- names(spec$cols) %in% col_keep
-    } else if (is.numeric(col_keep)) {
-      col_keep <- seq_along(spec$cols) %in% col_keep
-    }
-    col_skip <- !col_keep
-  }
-
-  if (!is.null(col_skip)) {
-    if (is.character(col_skip)) {
-      col_skip <- names(spec$cols) %in% col_skip
-    } else if (is.numeric(col_skip)) {
-      col_skip <- seq_along(spec$cols) %in% col_skip
+  if (inherits(col_select, "quosures") || !rlang::quo_is_null(col_select)) {
+    if (inherits(col_select, "quosures")) {
+      to_keep <- names(spec$cols) %in% tidyselect::vars_select(names(spec$cols), !!!col_select)
+    } else {
+      to_keep <- names(spec$cols) %in% tidyselect::vars_select(names(spec$cols), !!col_select)
     }
 
-    spec$cols[col_skip] <- rep(list(col_skip()), sum(col_skip))
+    spec$cols[!to_keep] <- rep(list(col_skip()), sum(!to_keep))
   }
 
   spec

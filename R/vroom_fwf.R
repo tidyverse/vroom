@@ -6,7 +6,7 @@
 vroom_fwf <- function(file,
                       col_positions = fwf_empty(file[[1]], skip, n = guess_max),
                       col_types = NULL,
-                      col_keep = NULL, col_skip = NULL, id = NULL,
+                      col_select = NULL, id = NULL,
                       locale = default_locale(), na = c("", "NA"),
                       comment = "", trim_ws = TRUE, skip = 0, n_max = Inf,
                       guess_max = 100,
@@ -24,14 +24,18 @@ vroom_fwf <- function(file,
     n_max <- -1
   }
 
+  col_select <- vroom_enquo(rlang::enquo(col_select))
+
   out <- vroom_fwf_(file, col_positions$begin, col_positions$end,
     trim_ws = trim_ws, col_names = col_positions$col_names,
-    col_types = col_types, col_keep = col_keep, col_skip = col_skip,
+    col_types = col_types, col_select = col_select,
     id = id, na = na, guess_max = guess_max, skip = skip, comment = comment,
     n_max = n_max, num_threads = num_threads,
     altrep_opts = vroom_altrep_opts(), locale = locale, progress = progress)
 
   out <- tibble::as_tibble(out, .name_repair = .name_repair)
+
+  out <- vroom_select(out, col_select)
 
   if (is.null(col_types)) {
     show_spec_summary(out, locale = locale)

@@ -115,8 +115,7 @@ inline CharacterVector read_column_names(
 inline collectors resolve_collectors(
     RObject col_names,
     RObject col_types,
-    RObject col_keep,
-    RObject col_skip,
+    RObject col_select,
     std::shared_ptr<index_collection> idx,
     CharacterVector na,
     std::shared_ptr<LocaleInfo> locale_info,
@@ -143,7 +142,7 @@ inline collectors resolve_collectors(
 
   Rcpp::Function col_types_standardise = vroom["col_types_standardise"];
   Rcpp::List col_types_std =
-      col_types_standardise(col_types, col_nms, col_keep, col_skip);
+      col_types_standardise(col_types, col_nms, col_select);
 
   auto guess_num = std::min(num_rows, guess_max);
 
