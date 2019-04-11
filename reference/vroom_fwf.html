@@ -126,11 +126,11 @@
     </div>
 
     <pre class="usage"><span class='fu'>vroom_fwf</span>(<span class='no'>file</span>, <span class='kw'>col_positions</span> <span class='kw'>=</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_fwf.html'>fwf_empty</a></span>(<span class='no'>file</span><span class='kw'>[[</span><span class='fl'>1</span>]], <span class='no'>skip</span>, <span class='kw'>n</span> <span class='kw'>=</span>
-  <span class='no'>guess_max</span>), <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>col_keep</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>col_skip</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>id</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>locale</span> <span class='kw'>=</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/locale.html'>default_locale</a></span>(), <span class='kw'>na</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>""</span>, <span class='st'>"NA"</span>),
-  <span class='kw'>comment</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>trim_ws</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>Inf</span>,
-  <span class='kw'>guess_max</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(),
-  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>(), <span class='kw'>.name_repair</span> <span class='kw'>=</span> <span class='st'>"unique"</span>)</pre>
+  <span class='no'>guess_max</span>), <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>col_select</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>locale</span> <span class='kw'>=</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/locale.html'>default_locale</a></span>(), <span class='kw'>na</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>""</span>, <span class='st'>"NA"</span>), <span class='kw'>comment</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>trim_ws</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>Inf</span>, <span class='kw'>guess_max</span> <span class='kw'>=</span> <span class='fl'>100</span>,
+  <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(), <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>(),
+  <span class='kw'>.name_repair</span> <span class='kw'>=</span> <span class='st'>"unique"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -173,18 +173,10 @@ l = logical, f = factor, D = date, T = date time, t = time, ? = guess, or
 <code>_</code>/<code>-</code> to skip the column.</p></td>
     </tr>
     <tr>
-      <th>col_keep</th>
-      <td><p>Columns to keep in the output, all other columns will be
-skipped. Input can be a character vector of column names, a logical vector
-or a numeric vector of column indexes. Only one of `col_keep` or
-`col_drop` can be used.</p></td>
-    </tr>
-    <tr>
-      <th>col_skip</th>
-      <td><p>Columns to skip in the output, all other columns will be
-kept. Input can be a character vector of column names, a logical vector
-or a numeric vector of column indexes. Only one of `col_keep` or
-`col_drop` can be used.</p></td>
+      <th>col_select</th>
+      <td><p>One or more selection expressions, like in
+`dplyr::select()`. Use `c()` or `list()` to use more than one expression.
+See `?dplyr::select` for details on available selection options.</p></td>
     </tr>
     <tr>
       <th>id</th>

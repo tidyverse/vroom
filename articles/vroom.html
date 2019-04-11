@@ -257,33 +257,35 @@
 <a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co">#&gt; 3 Datsun…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></a>
 <a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
 </div>
-<div id="column-skipping" class="section level2">
+<div id="column-selection" class="section level2">
 <h2 class="hasAnchor">
-<a href="#column-skipping" class="anchor"></a>Column skipping</h2>
-<p>vroom uses the <code>col_keep</code> and <code>col_skip</code> parameters to control which columns to keep or skip in the output. Both parameters can take input in 3 different ways.</p>
+<a href="#column-selection" class="anchor"></a>Column selection</h2>
+<p>vroom provides the same interface for column selection and renaming as [dplyr::select()]. This provides very flexible and readable selections.</p>
 <ul>
 <li>A character vector of column names</li>
 </ul>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_keep =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"model"</span>, <span class="st">"cyl"</span>, <span class="st">"gear"</span>))</a>
-<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="co">#&gt; Observations: 32</span></a>
-<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="co">#&gt; Variables: 3</span></a>
-<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; chr [1]: model</span></a>
-<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#&gt; dbl [2]: cyl, gear</span></a>
-<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; Call `spec()` for a copy-pastable column specification</span></a>
-<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt; Specify the column types with `col_types` to quiet this message</span></a>
-<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; # A tibble: 32 x 3</span></a>
-<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">#&gt;   model           cyl  gear</span></a>
-<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb9-12" data-line-number="12"><span class="co">#&gt; 1 Mazda RX4         6     4</span></a>
-<a class="sourceLine" id="cb9-13" data-line-number="13"><span class="co">#&gt; 2 Mazda RX4 Wag     6     4</span></a>
-<a class="sourceLine" id="cb9-14" data-line-number="14"><span class="co">#&gt; 3 Datsun 710        4     4</span></a>
-<a class="sourceLine" id="cb9-15" data-line-number="15"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">file &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv.gz"</span>)</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_select =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(model, cyl, gear))</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; Observations: 32</span></a>
+<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#&gt; Variables: 3</span></a>
+<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt; chr [1]: model</span></a>
+<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; dbl [2]: cyl, gear</span></a>
+<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; Call `spec()` for a copy-pastable column specification</span></a>
+<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">#&gt; Specify the column types with `col_types` to quiet this message</span></a>
+<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co">#&gt; # A tibble: 32 x 3</span></a>
+<a class="sourceLine" id="cb9-12" data-line-number="12"><span class="co">#&gt;   model           cyl  gear</span></a>
+<a class="sourceLine" id="cb9-13" data-line-number="13"><span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb9-14" data-line-number="14"><span class="co">#&gt; 1 Mazda RX4         6     4</span></a>
+<a class="sourceLine" id="cb9-15" data-line-number="15"><span class="co">#&gt; 2 Mazda RX4 Wag     6     4</span></a>
+<a class="sourceLine" id="cb9-16" data-line-number="16"><span class="co">#&gt; 3 Datsun 710        4     4</span></a>
+<a class="sourceLine" id="cb9-17" data-line-number="17"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
 <ul>
 <li>A numeric vector of column indexes, e.g. <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c(1, 2, 5)</a></code>
 </li>
 </ul>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_keep =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">11</span>))</a>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_select =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">11</span>))</a>
 <a class="sourceLine" id="cb10-2" data-line-number="2"><span class="co">#&gt; Observations: 32</span></a>
 <a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; Variables: 3</span></a>
 <a class="sourceLine" id="cb10-4" data-line-number="4"><span class="co">#&gt; chr [1]: model</span></a>
@@ -299,38 +301,39 @@
 <a class="sourceLine" id="cb10-14" data-line-number="14"><span class="co">#&gt; 3 Datsun 710        4     4</span></a>
 <a class="sourceLine" id="cb10-15" data-line-number="15"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
 <ul>
-<li>A logical vector</li>
+<li>You can also use the selection helpers</li>
 </ul>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_keep =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="ot">TRUE</span>, <span class="ot">FALSE</span>, <span class="ot">TRUE</span>, <span class="ot">FALSE</span>, <span class="ot">FALSE</span>, <span class="ot">FALSE</span>, <span class="ot">FALSE</span>, <span class="ot">FALSE</span>, <span class="ot">FALSE</span>, <span class="ot">FALSE</span>, <span class="ot">TRUE</span>, <span class="ot">FALSE</span>))</a>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_select =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/tidyselect/topics/select_helpers">starts_with</a></span>(<span class="st">"d"</span>))</a>
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="co">#&gt; Observations: 32</span></a>
-<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt; Variables: 3</span></a>
-<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt; chr [1]: model</span></a>
-<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; dbl [2]: cyl, gear</span></a>
-<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt; Call `spec()` for a copy-pastable column specification</span></a>
-<a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt; Specify the column types with `col_types` to quiet this message</span></a>
-<a class="sourceLine" id="cb11-9" data-line-number="9"><span class="co">#&gt; # A tibble: 32 x 3</span></a>
-<a class="sourceLine" id="cb11-10" data-line-number="10"><span class="co">#&gt;   model           cyl  gear</span></a>
-<a class="sourceLine" id="cb11-11" data-line-number="11"><span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb11-12" data-line-number="12"><span class="co">#&gt; 1 Mazda RX4         6     4</span></a>
-<a class="sourceLine" id="cb11-13" data-line-number="13"><span class="co">#&gt; 2 Mazda RX4 Wag     6     4</span></a>
-<a class="sourceLine" id="cb11-14" data-line-number="14"><span class="co">#&gt; 3 Datsun 710        4     4</span></a>
-<a class="sourceLine" id="cb11-15" data-line-number="15"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
-<p><code>col_skip</code> works in the same way, but has the opposite effect.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_skip =</span> <span class="dv">5</span><span class="op">:</span><span class="dv">12</span>)</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt; Variables: 2</span></a>
+<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt; dbl [2]: disp, drat</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; Call `spec()` for a copy-pastable column specification</span></a>
+<a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt; Specify the column types with `col_types` to quiet this message</span></a>
+<a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt; # A tibble: 32 x 2</span></a>
+<a class="sourceLine" id="cb11-9" data-line-number="9"><span class="co">#&gt;    disp  drat</span></a>
+<a class="sourceLine" id="cb11-10" data-line-number="10"><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb11-11" data-line-number="11"><span class="co">#&gt; 1   160  3.9 </span></a>
+<a class="sourceLine" id="cb11-12" data-line-number="12"><span class="co">#&gt; 2   160  3.9 </span></a>
+<a class="sourceLine" id="cb11-13" data-line-number="13"><span class="co">#&gt; 3   108  3.85</span></a>
+<a class="sourceLine" id="cb11-14" data-line-number="14"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
+<ul>
+<li>Or rename columns</li>
+</ul>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_select =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">car =</span> model, <span class="kw"><a href="https://www.rdocumentation.org/packages/tidyselect/topics/select_helpers">everything</a></span>()))</a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="co">#&gt; Observations: 32</span></a>
-<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="co">#&gt; Variables: 4</span></a>
-<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="co">#&gt; chr [1]: model</span></a>
-<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt; dbl [3]: mpg, cyl, disp</span></a>
+<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="co">#&gt; Variables: 12</span></a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="co">#&gt; chr [ 1]: model</span></a>
+<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></a>
 <a class="sourceLine" id="cb12-6" data-line-number="6"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb12-7" data-line-number="7"><span class="co">#&gt; Call `spec()` for a copy-pastable column specification</span></a>
 <a class="sourceLine" id="cb12-8" data-line-number="8"><span class="co">#&gt; Specify the column types with `col_types` to quiet this message</span></a>
-<a class="sourceLine" id="cb12-9" data-line-number="9"><span class="co">#&gt; # A tibble: 32 x 4</span></a>
-<a class="sourceLine" id="cb12-10" data-line-number="10"><span class="co">#&gt;   model           mpg   cyl  disp</span></a>
-<a class="sourceLine" id="cb12-11" data-line-number="11"><span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb12-12" data-line-number="12"><span class="co">#&gt; 1 Mazda RX4      21       6   160</span></a>
-<a class="sourceLine" id="cb12-13" data-line-number="13"><span class="co">#&gt; 2 Mazda RX4 Wag  21       6   160</span></a>
-<a class="sourceLine" id="cb12-14" data-line-number="14"><span class="co">#&gt; 3 Datsun 710     22.8     4   108</span></a>
+<a class="sourceLine" id="cb12-9" data-line-number="9"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
+<a class="sourceLine" id="cb12-10" data-line-number="10"><span class="co">#&gt;   car       mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></a>
+<a class="sourceLine" id="cb12-11" data-line-number="11"><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb12-12" data-line-number="12"><span class="co">#&gt; 1 Mazda …  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></a>
+<a class="sourceLine" id="cb12-13" data-line-number="13"><span class="co">#&gt; 2 Mazda …  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></a>
+<a class="sourceLine" id="cb12-14" data-line-number="14"><span class="co">#&gt; 3 Datsun…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></a>
 <a class="sourceLine" id="cb12-15" data-line-number="15"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
 </div>
 <div id="column-types" class="section level2">
@@ -435,7 +438,7 @@
       <li><a href="#reading-multiple-files">Reading multiple files</a></li>
       <li><a href="#reading-compressed-files">Reading compressed files</a></li>
       <li><a href="#reading-remote-files">Reading remote files</a></li>
-      <li><a href="#column-skipping">Column skipping</a></li>
+      <li><a href="#column-selection">Column selection</a></li>
       <li><a href="#column-types">Column types</a></li>
       <li><a href="#further-reading">Further reading</a></li>
       </ul>
