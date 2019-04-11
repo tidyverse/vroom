@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 options(tibble.print_min = 3)
 ```
 
-# 🏎💨  vroom&nbsp;vroom! <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
+# 🏎💨vroom  <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/package=vroom)
