@@ -45,12 +45,11 @@ void vroom_materialize(Rcpp::List x) {
 // return out;
 //}
 
-#define ALTREP_SERIALIZED_CLASS_CLSSYM(x) CAR(x)
-
 // [[Rcpp::export]]
 std::string vroom_str_(RObject x) {
   std::stringstream ss;
 
+#ifdef HAS_ALTREP
   if (ALTREP(x)) {
 
     auto csym = CAR(ATTRIB(ALTREP_CLASS(x)));
@@ -62,7 +61,12 @@ std::string vroom_str_(RObject x) {
        << "type:" << CHAR(PRINTNAME(psym)) << "::" << CHAR(PRINTNAME(csym))
        << '\t' << "length:" << LENGTH(x) << '\t'
        << "materialized:" << materialzied << '\n';
-  } else {
+  }
+#else
+  if (false) {
+  }
+#endif
+  else {
     ss << std::boolalpha << "altrep:" << false << '\t'
        << "type: " << Rf_type2char(TYPEOF(x)) << '\t' << "length:" << LENGTH(x)
        << '\n';
