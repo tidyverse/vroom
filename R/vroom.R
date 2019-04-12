@@ -157,7 +157,7 @@ guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";", "\n")) 
     my <- which.max(y)
 
     if (x[[mx]] > y[[my]] ||
-      x[[mx]] == y[[my]] && nx > ny) {
+      x[[mx]] == y[[my]] && nx[[mx]] > ny[[my]]) {
       i
     } else {
       j
