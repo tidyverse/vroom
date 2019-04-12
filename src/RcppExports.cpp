@@ -39,6 +39,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// guess_type_
+std::string guess_type_(CharacterVector input, List locale_, bool guess_integer);
+RcppExport SEXP _vroom_guess_type_(SEXP inputSEXP, SEXP locale_SEXP, SEXP guess_integerSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< CharacterVector >::type input(inputSEXP);
+    Rcpp::traits::input_parameter< List >::type locale_(locale_SEXP);
+    Rcpp::traits::input_parameter< bool >::type guess_integer(guess_integerSEXP);
+    rcpp_result_gen = Rcpp::wrap(guess_type_(input, locale_, guess_integer));
+    return rcpp_result_gen;
+END_RCPP
+}
 // vroom_
 SEXP vroom_(List inputs, SEXP delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char comment, size_t skip, size_t n_max, bool progress, RObject col_names, RObject col_types, RObject col_keep, RObject col_skip, SEXP id, CharacterVector na, List locale, size_t guess_max, size_t num_threads, size_t altrep_opts);
 RcppExport SEXP _vroom_vroom_(SEXP inputsSEXP, SEXP delimSEXP, SEXP quoteSEXP, SEXP trim_wsSEXP, SEXP escape_doubleSEXP, SEXP escape_backslashSEXP, SEXP commentSEXP, SEXP skipSEXP, SEXP n_maxSEXP, SEXP progressSEXP, SEXP col_namesSEXP, SEXP col_typesSEXP, SEXP col_keepSEXP, SEXP col_skipSEXP, SEXP idSEXP, SEXP naSEXP, SEXP localeSEXP, SEXP guess_maxSEXP, SEXP num_threadsSEXP, SEXP altrep_optsSEXP) {
@@ -102,6 +115,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_force_materialization", (DL_FUNC) &_vroom_force_materialization, 1},
     {"_vroom_vroom_materialize", (DL_FUNC) &_vroom_vroom_materialize, 1},
     {"_vroom_gen_character_", (DL_FUNC) &_vroom_gen_character_, 4},
+    {"_vroom_guess_type_", (DL_FUNC) &_vroom_guess_type_, 3},
     {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 20},
     {"_vroom_vroom_fwf_", (DL_FUNC) &_vroom_vroom_fwf_, 18},
     {NULL, NULL, 0}

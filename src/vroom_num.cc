@@ -1,4 +1,5 @@
 #include "vroom_num.h"
+#include "Rcpp.h"
 
 enum NumberState { STATE_INIT, STATE_LHS, STATE_RHS, STATE_EXP, STATE_FIN };
 
@@ -114,12 +115,12 @@ end:
   return seenNumber;
 }
 
-double parse_num(const string& str, const LocaleInfo& loc) {
+double parse_num(const string& str, const LocaleInfo& loc, bool strict) {
   double ret;
   auto start = str.begin();
   auto end = str.end();
   bool ok = parseNumber(loc.decimalMark_, loc.groupingMark_, start, end, ret);
-  if (ok) {
+  if (ok && (!strict || (start == str.begin() && end == str.end()))) {
     return ret;
   }
 

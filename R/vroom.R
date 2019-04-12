@@ -157,8 +157,12 @@ guess_type <- function(x, na = c("", "NA"), locale = readr::default_locale(), gu
 
   x[x %in% na] <- NA
 
-  type <- readr::guess_parser(x, locale = locale, guess_integer = guess_integer)
+  type <- guess_type_(x, locale = locale, guess_integer = guess_integer)
   get(paste0("col_", type), asNamespace("readr"))()
+}
+
+guess_parser <- function(x, locale = readr::default_locale(), guess_integer = FALSE) {
+  guess_type_(x, locale = locale, guess_integer = guess_integer)
 }
 
 col_types_standardise <- function(col_types, col_names, col_keep = NULL, col_skip = NULL) {

@@ -1,3 +1,8 @@
+#pragma once
+
+#include "parallel.h"
+#include "vroom_vec.h"
+
 #include <Rcpp.h>
 
 const static char* const true_values[] = {
@@ -28,13 +33,14 @@ inline bool isFalse(const char* start, const char* end) {
   return false;
 }
 
-inline int parse_logical(const char* start, const char* end) {
+inline int
+parse_logical(const char* start, const char* end, bool strict = true) {
   auto len = end - start;
 
-  if (isTrue(start, end) || (len == 1 && *start == '1')) {
+  if (isTrue(start, end) || (!strict && len == 1 && *start == '1')) {
     return true;
   }
-  if (isFalse(start, end) || (len == 1 && *start == '0')) {
+  if (isFalse(start, end) || (!strict && len == 1 && *start == '0')) {
     return false;
   }
   return NA_LOGICAL;
@@ -52,7 +58,7 @@ inline Rcpp::LogicalVector read_lgl(vroom_vec_info* info) {
         auto i = start;
         auto col = info->column->slice(start, end);
         for (const auto& str : *col) {
-          out[i++] = parse_logical(str.begin(), str.end());
+          out[i++] = parse_logical(str.begin(), str.end(), false);
         }
       },
       info->num_threads);

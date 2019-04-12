@@ -13,6 +13,10 @@ gen_character_ <- function(n, min, max, values) {
     .Call(`_vroom_gen_character_`, n, min, max, values)
 }
 
+guess_type_ <- function(input, locale_, guess_integer = FALSE) {
+    .Call(`_vroom_guess_type_`, input, locale_, guess_integer)
+}
+
 vroom_ <- function(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip, n_max, progress, col_names, col_types, col_keep, col_skip, id, na, locale, guess_max, num_threads, altrep_opts) {
     .Call(`_vroom_vroom_`, inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip, n_max, progress, col_names, col_types, col_keep, col_skip, id, na, locale, guess_max, num_threads, altrep_opts)
 }
