@@ -343,28 +343,28 @@
 <p>The available specifications are: (with single letter abbreviations in quotes)</p>
 <ul>
 <li>
-<code>col_logical()</code> ‘l’, containing only <code>T</code>, <code>F</code>, <code>TRUE</code>, <code>FALSE</code>, <code>1</code> or <code>0</code>.</li>
+<code><a href="../reference/cols.html">col_logical()</a></code> ‘l’, containing only <code>T</code>, <code>F</code>, <code>TRUE</code>, <code>FALSE</code>, <code>1</code> or <code>0</code>.</li>
 <li>
-<code><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_integer()</a></code> ‘i’, integer values.</li>
+<code><a href="../reference/cols.html">col_integer()</a></code> ‘i’, integer values.</li>
 <li>
-<code><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_double()</a></code> ‘d’, floating point values.</li>
+<code><a href="../reference/cols.html">col_double()</a></code> ‘d’, floating point values.</li>
 <li>
-<code><a href="https://readr.tidyverse.org/reference/parse_number.html">col_number()</a></code> [n], numbers containing the <code>grouping_mark</code>
+<code><a href="../reference/cols.html">col_number()</a></code> [n], numbers containing the <code>grouping_mark</code>
 </li>
 <li>
-<code><a href="https://readr.tidyverse.org/reference/parse_datetime.html">col_date(format = "")</a></code> [D]: with the locale’s <code>date_format</code>.</li>
+<code><a href="../reference/cols.html">col_date(format = "")</a></code> [D]: with the locale’s <code>date_format</code>.</li>
 <li>
-<code><a href="https://readr.tidyverse.org/reference/parse_datetime.html">col_time(format = "")</a></code> [t]: with the locale’s <code>time_format</code>.</li>
+<code><a href="../reference/cols.html">col_time(format = "")</a></code> [t]: with the locale’s <code>time_format</code>.</li>
 <li>
-<code><a href="https://readr.tidyverse.org/reference/parse_datetime.html">col_datetime(format = "")</a></code> [T]: ISO8601 date times.</li>
+<code><a href="../reference/cols.html">col_datetime(format = "")</a></code> [T]: ISO8601 date times.</li>
 <li>
-<code><a href="https://readr.tidyverse.org/reference/parse_factor.html">col_factor(levels, ordered)</a></code> ‘f’, a fixed set of values.</li>
+<code><a href="../reference/cols.html">col_factor(levels, ordered)</a></code> ‘f’, a fixed set of values.</li>
 <li>
-<code><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character()</a></code> ‘c’, everything else.</li>
+<code><a href="../reference/cols.html">col_character()</a></code> ‘c’, everything else.</li>
 <li>
-<code><a href="https://readr.tidyverse.org/reference/col_skip.html">col_skip()</a></code> ’_, -’, don’t import this column.</li>
+<code><a href="../reference/cols.html">col_skip()</a></code> ’_, -’, don’t import this column.</li>
 <li>
-<code><a href="https://readr.tidyverse.org/reference/parse_guess.html">col_guess()</a></code> ‘?’, parse using the “best” type based on the input.</li>
+<code><a href="../reference/cols.html">col_guess()</a></code> ‘?’, parse using the “best” type based on the input.</li>
 </ul>
 <p>You can tell vroom what columns to use with the <code>col_types()</code> argument in a number of ways.</p>
 <p>If you only need to override a single column the most consise way is to use a named vector.</p>
@@ -400,7 +400,7 @@
 <p>However you can also use the <code>col_*()</code> functions in a list.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(</a>
 <a class="sourceLine" id="cb14-2" data-line-number="2">  <span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>),</a>
-<a class="sourceLine" id="cb14-3" data-line-number="3">  <span class="dt">col_types =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">hp =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_integer</a></span>(), <span class="dt">cyl =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/col_skip.html">col_skip</a></span>(), <span class="dt">gear =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_factor.html">col_factor</a></span>())</a>
+<a class="sourceLine" id="cb14-3" data-line-number="3">  <span class="dt">col_types =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">hp =</span> <span class="kw"><a href="../reference/cols.html">col_integer</a></span>(), <span class="dt">cyl =</span> <span class="kw"><a href="../reference/cols.html">col_skip</a></span>(), <span class="dt">gear =</span> <span class="kw"><a href="../reference/cols.html">col_factor</a></span>())</a>
 <a class="sourceLine" id="cb14-4" data-line-number="4">)</a>
 <a class="sourceLine" id="cb14-5" data-line-number="5"><span class="co">#&gt; # A tibble: 32 x 11</span></a>
 <a class="sourceLine" id="cb14-6" data-line-number="6"><span class="co">#&gt;   model           mpg  disp    hp  drat    wt  qsec    vs    am gear   carb</span></a>
@@ -412,7 +412,7 @@
 <p>This is most useful when a column type needs additional information, such as for categorical data when you know all of the levels of a factor.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(</a>
 <a class="sourceLine" id="cb15-2" data-line-number="2">  <span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>),</a>
-<a class="sourceLine" id="cb15-3" data-line-number="3">  <span class="dt">col_types =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">gear =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_factor.html">col_factor</a></span>(<span class="dt">levels =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dt">gear =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span>))))</a>
+<a class="sourceLine" id="cb15-3" data-line-number="3">  <span class="dt">col_types =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">gear =</span> <span class="kw"><a href="../reference/cols.html">col_factor</a></span>(<span class="dt">levels =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dt">gear =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span>))))</a>
 <a class="sourceLine" id="cb15-4" data-line-number="4">)</a>
 <a class="sourceLine" id="cb15-5" data-line-number="5"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
 <a class="sourceLine" id="cb15-6" data-line-number="6"><span class="co">#&gt;   model     mpg   cyl  disp    hp  drat    wt  qsec    vs    am gear   carb</span></a>
