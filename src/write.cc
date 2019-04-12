@@ -1,5 +1,6 @@
 #include "grisu3.h"
 #include <Rcpp.h>
+#include <future>
 
 size_t get_buffer_size(Rcpp::List input, size_t start, size_t end) {
 
@@ -82,19 +83,31 @@ void write_buf(const std::vector<char>& buf, std::FILE* out) {
 
 // [[Rcpp::export]]
 void vroom_write_(
-    Rcpp::List input, std::string filename, size_t buf_lines = 10) {
+    Rcpp::List input,
+    std::string filename,
+    size_t buf_lines,
+    size_t num_threads) {
 
   size_t begin = 0;
   size_t num_rows = Rf_xlength(input[0]);
   std::FILE* out = std::fopen(filename.c_str(), "wb");
 
-  while (begin < num_rows) {
-    auto num_lines = std::min(begin + buf_lines, num_rows - begin);
-    auto end = begin + num_lines;
+  std::vector<std::future<std::vector<char> > > threads;
+  threads.resize(num_threads);
 
-    auto buf = fill_buf(input, begin, end);
-    write_buf(buf, out);
-    begin += num_lines;
+  while (begin < num_rows) {
+    auto t = 0;
+    while (t < num_threads && begin < num_rows) {
+      auto num_lines = std::min(begin + buf_lines, num_rows - begin);
+      auto end = begin + num_lines;
+      threads[t++] = std::async(fill_buf, input, begin, end);
+      begin += num_lines;
+    }
+
+    for (auto i = 0; i < t; ++i) {
+      auto buf = threads[i].get();
+      write_buf(buf, out);
+    }
   }
 
   std::fclose(out);

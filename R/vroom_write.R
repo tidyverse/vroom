@@ -1,3 +1,3 @@
-vroom_write <- function(df, out, lines = 100) {
-  vroom_write_(df, out, lines)
+vroom_write <- function(df, out, lines = 100, num_threads = vroom_threads()) {
+  vroom_write_(df, out, lines, num_threads)
 }

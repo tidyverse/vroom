@@ -134,14 +134,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // vroom_write_
-void vroom_write_(Rcpp::List input, std::string filename, size_t buf_lines);
-RcppExport SEXP _vroom_vroom_write_(SEXP inputSEXP, SEXP filenameSEXP, SEXP buf_linesSEXP) {
+void vroom_write_(Rcpp::List input, std::string filename, size_t buf_lines, size_t num_threads);
+RcppExport SEXP _vroom_vroom_write_(SEXP inputSEXP, SEXP filenameSEXP, SEXP buf_linesSEXP, SEXP num_threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::List >::type input(inputSEXP);
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< size_t >::type buf_lines(buf_linesSEXP);
-    vroom_write_(input, filename, buf_lines);
+    Rcpp::traits::input_parameter< size_t >::type num_threads(num_threadsSEXP);
+    vroom_write_(input, filename, buf_lines, num_threads);
     return R_NilValue;
 END_RCPP
 }
@@ -155,7 +156,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 19},
     {"_vroom_vroom_fwf_", (DL_FUNC) &_vroom_vroom_fwf_, 17},
     {"_vroom_whitespace_columns_", (DL_FUNC) &_vroom_whitespace_columns_, 4},
-    {"_vroom_vroom_write_", (DL_FUNC) &_vroom_vroom_write_, 3},
+    {"_vroom_vroom_write_", (DL_FUNC) &_vroom_vroom_write_, 4},
     {NULL, NULL, 0}
 };
 
