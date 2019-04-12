@@ -1,5 +1,7 @@
 #pragma once
 
+#include <exception>
+
 // clang-format off
 #ifdef __clang__
 # pragma clang diagnostic push
@@ -195,6 +197,8 @@ public:
       const size_t end,
       const size_t file_offset,
       const size_t n_max,
+      size_t& cols,
+      const size_t num_cols,
       P& pb,
       const size_t update_size = -1) {
 
@@ -217,6 +221,7 @@ public:
 
       if (!in_quote && strncmp(delim, buf + pos, delim_len_) == 0) {
         destination.push_back(pos + file_offset);
+        ++cols;
       }
 
       else if (c == '\n') {
@@ -224,6 +229,22 @@ public:
           ++pos;
           continue;
         }
+
+        // Ensure columns are consistent
+        if (num_cols > 0 && pos > start) {
+          // Remove extra columns if there are too many
+          while (cols >= num_cols) {
+            destination.pop_back();
+            --cols;
+          }
+          // Add additional columns if there are too few
+          while (cols < num_cols - 1) {
+            destination.push_back(pos + file_offset);
+            ++cols;
+          }
+        }
+
+        cols = 0;
         destination.push_back(pos + file_offset);
         if (lines_read >= n_max) {
           if (progress_ && pb) {
@@ -257,6 +278,6 @@ public:
     }
     return lines_read;
   }
-}; // namespace vroom
+};
 
 } // namespace vroom

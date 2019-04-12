@@ -101,6 +101,7 @@ delimited_index::delimited_index(
 
   // Index the first row
   idx_[0].push_back(start - 1);
+  size_t cols = 0;
   size_t lines_read = index_region(
       mmap_,
       idx_[0],
@@ -110,6 +111,8 @@ delimited_index::delimited_index(
       first_nl + 1,
       0,
       n_max,
+      cols,
+      0,
       pb,
       -1);
   columns_ = idx_[0].size() - 1;
@@ -129,6 +132,8 @@ delimited_index::delimited_index(
           file_size,
           0,
           n_max,
+          cols,
+          columns_,
           pb,
           file_size / 100);
     }));
@@ -139,6 +144,7 @@ delimited_index::delimited_index(
           idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
           start = find_next_newline(mmap_, first_nl + start);
           end = find_next_newline(mmap_, first_nl + end);
+          size_t cols = 0;
           index_region(
               mmap_,
               idx_[id + 1],
@@ -148,6 +154,8 @@ delimited_index::delimited_index(
               end,
               0,
               n_max,
+              cols,
+              columns_,
               pb,
               file_size / 100);
         },
@@ -234,11 +242,16 @@ delimited_index::get_cell(size_t i, bool is_first) const {
     auto sz = idx.size();
     if (i + 1 < sz) {
 
+      auto start = idx[i];
+      auto end = idx[i + 1];
+      if (start == end) {
+        return {mmap_.data() + start, mmap_.data() + end};
+      }
       // By relying on 0 and 1 being true and false we can remove a branch
       // here, which improves performance a bit, as this function is called a
       // lot.
-      return {mmap_.data() + (idx[i] + (!is_first * delim_len_) + is_first),
-              mmap_.data() + idx[i + 1]};
+      return {mmap_.data() + (start + (!is_first * delim_len_) + is_first),
+              mmap_.data() + end};
     }
 
     i -= (sz - 1);

@@ -6,8 +6,9 @@ test_that("reading from connection is consistent with reading directly from a fi
   # This needs to be small enough to have a few blocks in the file, but big
   # enough to fit on the first line (until #47 is fixed)
   withr::with_envvar(c("VROOM_CONNECTION_SIZE" = 100), {
-    expect_equal(vroom(file(vroom_example("mtcars.csv"), "")), expected)
+    actual <- vroom(file(vroom_example("mtcars.csv"), ""))
   })
+    expect_equal(actual, expected)
 })
 
 test_that("vroom errors when the connection buffer is too small", {

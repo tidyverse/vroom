@@ -114,6 +114,8 @@ delimited_index_connection::delimited_index_connection(
 
   // Index the first row
   idx_[0].push_back(start - 1);
+
+  size_t cols = 0;
   size_t lines_read = index_region(
       buf[i],
       idx_[0],
@@ -123,6 +125,8 @@ delimited_index_connection::delimited_index_connection(
       first_nl + 1,
       0,
       n_max,
+      cols,
+      0,
       empty_pb);
 
   columns_ = idx_[0].size() - 1;
@@ -154,6 +158,8 @@ delimited_index_connection::delimited_index_connection(
           sz,
           total_read,
           n_max,
+          cols,
+          columns_,
           empty_pb);
     });
 
