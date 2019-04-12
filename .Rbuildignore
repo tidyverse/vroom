@@ -18,3 +18,5 @@
 ^vroom.*\.tgz$
 ^src/spdlog$
 ^Makefile$
+^data-raw$
+^logs$

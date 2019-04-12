@@ -34,3 +34,9 @@ is_named <- function (x) {
   }
   all(nms != "" & !is.na(nms))
 }
+
+deparse2 <- function(expr, ..., sep = "\n") {
+  paste(deparse(expr, ...), collapse = sep)
+}
+
+is_syntactic <- function(x) make.names(x) == x

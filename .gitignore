@@ -6,3 +6,5 @@ docs
 vroom.Rcheck/
 vroom*.tar.gz
 vroom*.tgz
+logs/
+script.R

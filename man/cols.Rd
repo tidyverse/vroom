@@ -3,11 +3,44 @@
 \name{cols}
 \alias{cols}
 \alias{cols_only}
+\alias{col_logical}
+\alias{col_integer}
+\alias{col_double}
+\alias{col_character}
+\alias{col_skip}
+\alias{col_number}
+\alias{col_guess}
+\alias{col_factor}
+\alias{col_datetime}
+\alias{col_date}
+\alias{col_time}
 \title{Create column specification}
 \usage{
 cols(..., .default = col_guess())
 
 cols_only(...)
+
+col_logical()
+
+col_integer()
+
+col_double()
+
+col_character()
+
+col_skip()
+
+col_number()
+
+col_guess()
+
+col_factor(levels = NULL, ordered = FALSE, include_na = FALSE)
+
+col_datetime(format = "")
+
+col_date(format = "")
+
+col_time(format = "")
 }
 \arguments{
 \item{...}{Either column objects created by `col_*()`, or their abbreviated
@@ -18,6 +51,21 @@ the column names exactly.}
 
 \item{.default}{Any named columns not explicitly overridden in `...`
 will be read with this column type.}
+
+\item{levels}{Character vector providing set of allowed levels. if \code{NULL},
+will generate levels based on the unique values of \code{x}, ordered by order
+of appearance in \code{x}.}
+
+\item{ordered}{Is it an ordered factor?}
+
+\item{include_na}{If \code{NA} are present, include as an explicit factor to level?}
+
+\item{format}{A format specification, as described below. If set to "",
+date times are parsed as ISO8601, dates and times used the date and
+time formats specified in the \code{\link[=locale]{locale()}}.
+
+Unlike \code{\link[=strptime]{strptime()}}, the format specification must match
+the complete string.}
 }
 \description{
 `cols()` includes all columns in the input data, guessing the column types
@@ -61,7 +109,3 @@ t3 <- t1
 t3$cols <- c(t1$cols, t2$cols)
 t3
 }
-\seealso{
-Other parsers: \code{\link{cols_condense}}
-}
-\concept{parsers}

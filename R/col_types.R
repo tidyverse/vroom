@@ -18,7 +18,6 @@
 #' * `col_skip()` \[_, -\], don't import this column.
 #' * `col_guess()` \[?\], parse using the "best" type based on the input.
 #'
-#' @family parsers
 #' @param ... Either column objects created by `col_*()`, or their abbreviated
 #'   character names (as described in the `col_types` argument of
 #'   [read_delim()]). If you're only overriding a few columns, it's
@@ -272,7 +271,7 @@ str.col_spec <- function(object, ..., indent.str = "") {
 #' @return A col_spec object.
 #' @export
 #' @examples
-#' df <- read_csv(readr_example("mtcars.csv"))
+#' df <- vroom(vroom_example("mtcars.csv"))
 #' s <- spec(df)
 #' s
 #'
@@ -440,56 +439,69 @@ color_type <- function(type) {
   )
 }
 
+#' @rdname cols
 #' @export
 col_logical <- function() {
   collector("logical")
 }
 
+#' @rdname cols
 #' @export
 col_integer <- function() {
   collector("integer")
 }
 
+#' @rdname cols
 #' @export
 col_double <- function() {
   collector("double")
 }
 
+#' @rdname cols
 #' @export
 col_character <- function() {
   collector("character")
 }
 
+#' @rdname cols
 #' @export
 col_skip <- function() {
   collector("skip")
 }
 
+#' @rdname cols
 #' @export
 col_number <- function() {
   collector("number")
 }
 
+#' @rdname cols
 #' @export
 col_guess <- function() {
   collector("guess")
 }
 
+#' @inheritParams readr::col_factor
+#' @rdname cols
 #' @export
 col_factor <- function(levels = NULL, ordered = FALSE, include_na = FALSE) {
   collector("factor", levels = levels, ordered = ordered, include_na = include_na)
 }
 
+#' @inheritParams readr::col_datetime
+#' @rdname cols
 #' @export
 col_datetime <- function(format = "") {
   collector("datetime", format = format)
 }
 
+#' @rdname cols
 #' @export
 col_date <- function(format = "") {
   collector("date", format = format)
 }
 
+#' @rdname cols
 #' @export
 col_time <- function(format = "") {
   collector("time", format = format)

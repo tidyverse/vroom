@@ -32,9 +32,9 @@ NULL
 #' @examples
 #' \dontshow{
 #' .old_wd <- setwd(tempdir())
+#' write.table(mtcars, sep = "\t", row.names = FALSE, quote = FALSE, "mtcars.tsv")
 #' }
 #'
-#' readr::write_tsv(mtcars, "mtcars.tsv")
 #' vroom("mtcars.tsv")
 #'
 #' \dontshow{

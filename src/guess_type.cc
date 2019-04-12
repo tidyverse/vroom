@@ -105,8 +105,8 @@ static bool isDateTime(const std::string& x, LocaleInfo* pLocale) {
 
 // [[Rcpp::export]]
 std::string
-guess_type_(CharacterVector input, List locale_, bool guess_integer = false) {
-  LocaleInfo locale(locale_);
+guess_type_(CharacterVector input, List locale, bool guess_integer = false) {
+  LocaleInfo locale_(locale);
 
   if (input.size() == 0) {
     return "character";
@@ -117,19 +117,19 @@ guess_type_(CharacterVector input, List locale_, bool guess_integer = false) {
   }
 
   // Work from strictest to most flexible
-  if (canParse(input, isLogical, &locale))
+  if (canParse(input, isLogical, &locale_))
     return "logical";
-  if (guess_integer && canParse(input, isInteger, &locale))
+  if (guess_integer && canParse(input, isInteger, &locale_))
     return "integer";
-  if (canParse(input, isDouble, &locale))
+  if (canParse(input, isDouble, &locale_))
     return "double";
-  if (canParse(input, isNumber, &locale))
+  if (canParse(input, isNumber, &locale_))
     return "number";
-  if (canParse(input, isTime, &locale))
+  if (canParse(input, isTime, &locale_))
     return "time";
-  if (canParse(input, isDate, &locale))
+  if (canParse(input, isDate, &locale_))
     return "date";
-  if (canParse(input, isDateTime, &locale))
+  if (canParse(input, isDateTime, &locale_))
     return "datetime";
 
   // Otherwise can always parse as a character

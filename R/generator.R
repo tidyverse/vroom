@@ -109,6 +109,10 @@ gen_write <- function(x, path, delim, na = "NA", append = FALSE, col_names =
     }
     x[[i]] <- do.call(as.character, c(list(x[[i]]), specs$cols[[i]]))
   }
-  loadNamespace("readr")
-  write_delim(x, path, delim, na = na, append = append, col_names = col_names)
+
+  if (!requireNamespace("readr")) {
+    stop("readr must be installed to use `gen_write()`", call. = FALSE)
+  }
+
+  readr::write_delim(x, path, delim, na = na, append = append, col_names = col_names)
 }

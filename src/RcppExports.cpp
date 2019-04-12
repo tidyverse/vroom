@@ -40,15 +40,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // guess_type_
-std::string guess_type_(CharacterVector input, List locale_, bool guess_integer);
-RcppExport SEXP _vroom_guess_type_(SEXP inputSEXP, SEXP locale_SEXP, SEXP guess_integerSEXP) {
+std::string guess_type_(CharacterVector input, List locale, bool guess_integer);
+RcppExport SEXP _vroom_guess_type_(SEXP inputSEXP, SEXP localeSEXP, SEXP guess_integerSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< CharacterVector >::type input(inputSEXP);
-    Rcpp::traits::input_parameter< List >::type locale_(locale_SEXP);
+    Rcpp::traits::input_parameter< List >::type locale(localeSEXP);
     Rcpp::traits::input_parameter< bool >::type guess_integer(guess_integerSEXP);
-    rcpp_result_gen = Rcpp::wrap(guess_type_(input, locale_, guess_integer));
+    rcpp_result_gen = Rcpp::wrap(guess_type_(input, locale, guess_integer));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -110,6 +110,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// whitespace_columns_
+List whitespace_columns_(std::string filename, size_t skip, int n, std::string comment);
+RcppExport SEXP _vroom_whitespace_columns_(SEXP filenameSEXP, SEXP skipSEXP, SEXP nSEXP, SEXP commentSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< size_t >::type skip(skipSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< std::string >::type comment(commentSEXP);
+    rcpp_result_gen = Rcpp::wrap(whitespace_columns_(filename, skip, n, comment));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_vroom_force_materialization", (DL_FUNC) &_vroom_force_materialization, 1},
@@ -118,6 +132,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_guess_type_", (DL_FUNC) &_vroom_guess_type_, 3},
     {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 20},
     {"_vroom_vroom_fwf_", (DL_FUNC) &_vroom_vroom_fwf_, 18},
+    {"_vroom_whitespace_columns_", (DL_FUNC) &_vroom_whitespace_columns_, 4},
     {NULL, NULL, 0}
 };
 

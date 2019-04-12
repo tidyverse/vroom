@@ -24,13 +24,10 @@ with a different type.
 created by readr.
 }
 \examples{
-df <- read_csv(readr_example("mtcars.csv"))
+df <- vroom(vroom_example("mtcars.csv"))
 s <- spec(df)
 s
 
 cols_condense(s)
-}
-\seealso{
-Other parsers: \code{\link{cols}}
 }
 \concept{parsers}
