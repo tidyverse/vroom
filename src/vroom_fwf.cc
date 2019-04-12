@@ -52,3 +52,71 @@ List vroom_fwf_(
       guess_max,
       num_threads);
 }
+
+template <typename Iterator>
+std::vector<bool> find_empty_cols(Iterator begin, Iterator end, size_t n) {
+
+  std::vector<bool> is_white;
+
+  size_t row = 0, col = 0;
+  for (Iterator cur = begin; cur != end; ++cur) {
+    if (row > n)
+      break;
+
+    switch (*cur) {
+    case '\n':
+      col = 0;
+      row++;
+      break;
+    case '\r':
+    case ' ':
+      col++;
+      break;
+    default:
+      // Make sure there's enough room
+      if (col >= is_white.size())
+        is_white.resize(col + 1, true);
+      is_white[col] = false;
+      col++;
+    }
+  }
+
+  return is_white;
+}
+
+// [[Rcpp::export]]
+List whitespace_columns_(
+    std::string filename, size_t skip, int n = 100, std::string comment = "") {
+
+  std::error_code error;
+  auto mmap = mio::make_mmap_source(filename, error);
+  if (error) {
+    // We cannot actually portably compare error messages due to a bug in
+    // libstdc++ (https://stackoverflow.com/a/54316671/2055486), so just print
+    // the message on stderr return
+    Rcpp::Rcerr << "mapping error: " << error.message();
+    return List();
+  }
+
+  size_t s = find_first_line(mmap, 0, comment[0]);
+
+  std::vector<bool> empty = find_empty_cols(mmap.begin() + s, mmap.end(), n);
+  std::vector<int> begin, end;
+
+  bool in_col = false;
+
+  for (size_t i = 0; i < empty.size(); ++i) {
+    if (in_col && empty[i]) {
+      end.push_back(i);
+      in_col = false;
+    } else if (!in_col && !empty[i]) {
+      begin.push_back(i);
+      in_col = true;
+    }
+  }
+
+  if (in_col)
+    end.push_back(empty.size());
+
+  return List::create(_["begin"] = begin, _["end"] = end);
+}

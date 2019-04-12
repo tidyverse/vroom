@@ -27,9 +27,9 @@ NULL
 #' @examples
 #' \dontshow{
 #' .old_wd <- setwd(tempdir())
+#' write.table(mtcars, sep = "\t", row.names = FALSE, quote = FALSE, "mtcars.tsv")
 #' }
 #'
-#' readr::write_tsv(mtcars, "mtcars.tsv")
 #' vroom("mtcars.tsv")
 #'
 #' \dontshow{
@@ -85,155 +85,6 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
   }
 
   out
-}
-
-#' @importFrom crayon silver
-show_spec_summary <- function(x, width = getOption("width"), locale = default_locale()) {
-  spec <- readr::spec(x)
-  if (length(spec$cols) == 0) {
-    return(invisible(x))
-  }
-
-  type_map <- c("collector_character" = "chr", "collector_double" = "dbl",
-    "collector_integer" = "int", "collector_num" = "num", "collector_logical" = "lgl",
-    "collector_factor" = "fct", "collector_datetime" = "dttm", "collector_date" = "date",
-    "collector_time" = "time")
-
-  col_types <- vapply(spec$cols, function(x) class(x)[[1]], character(1))
-  col_types <- droplevels(factor(type_map[col_types], levels = unname(type_map)))
-  type_counts <- table(col_types)
-
-  n <- length(type_counts)
-
-  types <- format(vapply(names(type_counts), color_type, character(1)))
-  counts <- format(type_counts)
-  col_width <- min(width - crayon::col_nchar(types) + nchar(counts) + 4)
-  columns <- vapply(split(names(spec$cols), col_types), function(x) glue::glue_collapse(x, ", ", width = col_width), character(1))
-
-  fmt_num <- function(x) {
-    prettyNum(x, big.mark = locale$grouping_mark, decimal.mark = locale$decimal_mark)
-  }
-
-  message(
-    glue::glue(
-      .transformer = collapse_transformer(sep = "\n"),
-      entries = glue::glue("{format(types)} [{format(type_counts)}]: {columns}"),
-
-      '
-      {bold("Observations:")} {fmt_num(NROW(x))}
-      {bold("Variables:")} {fmt_num(NCOL(x))}
-      {entries*}
-
-      {silver("Call `spec()` for a copy-pastable column specification")}
-      {silver("Specify the column types with `col_types` to quiet this message")}
-      '
-    )
-  )
-
-  invisible(x)
-}
-
-color_type <- function(type) {
-  switch(type,
-    chr = ,
-    fct = crayon::red(type),
-    lgl = crayon::yellow(type),
-    dbl = ,
-    int = ,
-    num = crayon::green(type),
-    date = ,
-    dttm = ,
-    time = crayon::blue(type)
-  )
-}
-
-#' Guess the type of a vector
-#'
-#' @inheritParams readr::guess_parser
-guess_type <- function(x, na = c("", "NA"), locale = readr::default_locale(), guess_integer = FALSE) {
-
-  x[x %in% na] <- NA
-
-  type <- readr::guess_parser(x, locale = locale, guess_integer = guess_integer)
-  get(paste0("col_", type), asNamespace("readr"))()
-}
-
-vroom_enquo <- function(x) {
-  if (rlang::quo_is_call(x, "c") || rlang::quo_is_call(x, "list")) {
-    return(rlang::as_quosures(rlang::get_expr(x)[-1], rlang::get_env(x)))
-  }
-  x
-}
-
-vroom_select <- function(x, col_select) {
-  # reorder and rename columns
-  if (inherits(col_select, "quosures") || !rlang::quo_is_null(col_select)) {
-    if (inherits(col_select, "quosures")) {
-      vars <- tidyselect::vars_select(names(spec(x)$cols), !!!col_select)
-    } else {
-      vars <- tidyselect::vars_select(names(spec(x)$cols), !!col_select)
-    }
-    # This can't be just names(x) as we need to have skipped
-    # names as well to pass to vars_select()
-    x <- x[vars]
-    names(x) <- names(vars)
-  }
-  x
-}
-
-col_types_standardise <- function(col_types, col_names, col_select) {
-  spec <- readr::as.col_spec(col_types)
-  type_names <- names(spec$cols)
-
-  if (length(spec$cols) == 0) {
-    # no types specified so use defaults
-
-    spec$cols <- rep(list(spec$default), length(col_names))
-    names(spec$cols) <- col_names
-  } else if (is.null(type_names)) {
-    # unnamed types & names guessed from header: match exactly
-
-    if (length(spec$cols) != length(col_names)) {
-      warning("Unnamed `col_types` should have the same length as `col_names`. ",
-        "Using smaller of the two.", call. = FALSE)
-      n <- min(length(col_names), length(spec$cols))
-      spec$cols <- spec$cols[seq_len(n)]
-      col_names <- col_names[seq_len(n)]
-    }
-
-    names(spec$cols) <- col_names
-  } else {
-    # names types
-
-    bad_types <- !(type_names %in% col_names)
-    if (any(bad_types)) {
-      warning("The following named parsers don't match the column names: ",
-        paste0(type_names[bad_types], collapse = ", "), call. = FALSE)
-      spec$cols <- spec$cols[!bad_types]
-      type_names <- type_names[!bad_types]
-    }
-
-    default_types <- !(col_names %in% type_names)
-    if (any(default_types)) {
-      defaults <- rep(list(spec$default), sum(default_types))
-      names(defaults) <- col_names[default_types]
-      spec$cols[names(defaults)] <- defaults
-    }
-
-    spec$cols <- spec$cols[col_names]
-  }
-
-  if (inherits(col_select, "quosures") || !rlang::quo_is_null(col_select)) {
-    if (inherits(col_select, "quosures")) {
-      to_keep <- names(spec$cols) %in% tidyselect::vars_select(names(spec$cols), !!!col_select)
-    } else {
-      to_keep <- names(spec$cols) %in% tidyselect::vars_select(names(spec$cols), !!col_select)
-    }
-
-    spec$cols[!to_keep] <- rep(list(col_skip()), sum(!to_keep))
-  }
-
-  spec
 }
 
 make_names <- function(x, len) {
@@ -306,7 +157,7 @@ guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";", "\n")) 
     my <- which.max(y)
 
     if (x[[mx]] > y[[my]] ||
-      x[[mx]] == y[[my]] && nx > ny) {
+      x[[mx]] == y[[my]] && nx[[mx]] > ny[[my]]) {
       i
     } else {
       j

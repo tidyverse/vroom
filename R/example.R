@@ -1,4 +1,4 @@
-#' Get path to readr example
+#' Get path to vroom examples
 #'
 #' vroom comes bundled with a number of sample files in
 #' its 'inst/extdata' directory. This function make them

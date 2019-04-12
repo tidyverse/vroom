@@ -2,7 +2,7 @@
 % Please edit documentation in R/example.R
 \name{vroom_example}
 \alias{vroom_example}
-\title{Get path to readr example}
+\title{Get path to vroom examples}
 \usage{
 vroom_example(path = NULL)
 }

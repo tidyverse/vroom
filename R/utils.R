@@ -26,3 +26,17 @@ collapse_transformer <- function(regex = "[*]$", ...) {
     }
   }
 }
+
+is_named <- function (x) {
+  nms <- names(x)
+  if (is.null(nms)) {
+    return(FALSE)
+  }
+  all(nms != "" & !is.na(nms))
+}
+
+deparse2 <- function(expr, ..., sep = "\n") {
+  paste(deparse(expr, ...), collapse = sep)
+}
+
+is_syntactic <- function(x) make.names(x) == x

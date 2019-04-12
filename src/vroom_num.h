@@ -9,7 +9,7 @@
 
 using namespace vroom;
 
-double parse_num(const string& str, const LocaleInfo& loc);
+double parse_num(const string& str, const LocaleInfo& loc, bool strict = false);
 
 Rcpp::NumericVector read_num(vroom_vec_info* info);
 

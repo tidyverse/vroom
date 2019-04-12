@@ -2,6 +2,10 @@
 % Please edit documentation in R/vroom_fwf.R
 \name{vroom_fwf}
 \alias{vroom_fwf}
+\alias{fwf_empty}
+\alias{fwf_widths}
+\alias{fwf_positions}
+\alias{fwf_cols}
 \title{Read a fixed width file into a tibble}
 \usage{
 vroom_fwf(file, col_positions = fwf_empty(file[[1]], skip, n =
@@ -10,6 +14,14 @@ vroom_fwf(file, col_positions = fwf_empty(file[[1]], skip, n =
   trim_ws = TRUE, skip = 0, n_max = Inf, guess_max = 100,
   num_threads = vroom_threads(), progress = vroom_progress(),
   .name_repair = "unique")
+
+fwf_empty(file, skip = 0, col_names = NULL, comment = "", n = 100L)
+
+fwf_widths(widths, col_names = NULL)
+
+fwf_positions(start, end = NULL, col_names = NULL)
+
+fwf_cols(...)
 }
 \arguments{
 \item{file}{Either a path to a file, a connection, or literal data
@@ -90,6 +102,24 @@ setting option \code{readr.show_progress} to \code{FALSE}.}
 column names are not empty and unique. See `.name_repair` as documented in
 [tibble::tibble()] for additional options including supplying user defined
 name repair functions.}
+
+\item{col_names}{Either NULL, or a character vector column names.}
+
+\item{n}{Number of lines the tokenizer will read to determine file structure. By default
+it is set to 100.}
+
+\item{widths}{Width of each field. Use NA as width of last field when
+reading a ragged fwf file.}
+
+\item{start, end}{Starting and ending (inclusive) positions of each field.
+Use NA as last end field when reading a ragged fwf file.}
+
+\item{...}{If the first element is a data frame,
+then it must have all numeric columns and either one or two rows.
+The column names are the variable names. The column values are the
+variable widths if a length one vector, and if length two, variable start and end
+positions. The elements of `...` are used to construct a data frame
+with or or two rows as above.}
 }
 \description{
 Read a fixed width file into a tibble

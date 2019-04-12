@@ -44,18 +44,80 @@ vroom_fwf <- function(file,
   out
 }
 
-#' @importFrom readr fwf_cols
-#' @export
 
-readr::fwf_cols
-#' @importFrom readr fwf_empty
+#' @rdname vroom_fwf
+#' @inheritParams readr::read_fwf
 #' @export
-readr::fwf_empty
+#' @param n Number of lines the tokenizer will read to determine file structure. By default
+#'      it is set to 100.
+fwf_empty <- function(file, skip = 0, col_names = NULL, comment = "", n = 100L) {
 
-#' @importFrom readr fwf_positions
-#' @export
-readr::fwf_positions
+  file <- standardise_path(file)[[1]]
 
-#' @importFrom readr fwf_widths
+  if (inherits(file, "connection")) {
+    stop("`file` must be a regular file, not a connection", call. = FALSE)
+  }
+
+  out <- whitespace_columns_(file[[1]], skip, comment = comment, n = n)
+  out$end[length(out$end)] <- NA
+
+  col_names <- fwf_col_names(col_names, length(out$begin))
+  out$col_names <- col_names
+  out
+}
+
+#' @rdname vroom_fwf
 #' @export
-readr::fwf_widths
+#' @param widths Width of each field. Use NA as width of last field when
+#'    reading a ragged fwf file.
+#' @param col_names Either NULL, or a character vector column names.
+fwf_widths <- function(widths, col_names = NULL) {
+  pos <- cumsum(c(1L, abs(widths)))
+  fwf_positions(pos[-length(pos)], pos[-1] - 1L, col_names)
+}
+
+#' @rdname vroom_fwf
+#' @export
+#' @param start,end Starting and ending (inclusive) positions of each field.
+#'    Use NA as last end field when reading a ragged fwf file.
+fwf_positions <- function(start, end = NULL, col_names = NULL) {
+
+  stopifnot(length(start) == length(end))
+  col_names <- fwf_col_names(col_names, length(start))
+
+  tibble::tibble(
+    begin = start - 1L,
+    end = end, # -1 to change to 0 offset, +1 to be exclusive,
+    col_names = as.character(col_names)
+  )
+}
+
+
+#' @rdname vroom_fwf
+#' @export
+#' @param ... If the first element is a data frame,
+#'   then it must have all numeric columns and either one or two rows.
+#'   The column names are the variable names. The column values are the
+#'   variable widths if a length one vector, and if length two, variable start and end
+#'   positions. The elements of `...` are used to construct a data frame
+#'   with or or two rows as above.
+fwf_cols <- function(...) {
+  x <- lapply(list(...), as.integer)
+  names(x) <- fwf_col_names(names(x), length(x))
+  x <- tibble::as_tibble(x)
+  if (nrow(x) == 2) {
+    fwf_positions(as.integer(x[1, ]), as.integer(x[2, ]), names(x))
+  } else if (nrow(x) == 1) {
+    fwf_widths(as.integer(x[1, ]), names(x))
+  } else {
+    stop("All variables must have either one (width) two (start, end) values.",
+         call. = FALSE)
+  }
+}
+
+fwf_col_names <- function(nm, n) {
+  nm <- nm %||% rep("", n)
+  nm_empty <- (nm == "")
+  nm[nm_empty] <- paste0("X", seq_len(n))[nm_empty]
+  nm
+}
