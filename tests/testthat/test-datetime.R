@@ -59,9 +59,8 @@ test_that("%e allows leading space", {
 })
 
 test_that("%OS captures partial seconds", {
-  skip("not yet working")
   test_parse_datetime("2001-01-01 00:00:01.125", "%Y-%m-%d %H:%M:%OS", readr:::utctime(2001, 1, 1, 0, 0, 1, .125))
-  test_parse_datetime("2001-01-01 00:00:01.125", "%Y-%m-%d %H:%M:%OS", readr:::utctime(2001, 1, 1, 0, 0, 1, .133))
+  test_parse_datetime("2001-01-01 00:00:01.133", "%Y-%m-%d %H:%M:%OS", readr:::utctime(2001, 1, 1, 0, 0, 1, .133))
 })
 
 test_that("%Y requires 4 digits", {

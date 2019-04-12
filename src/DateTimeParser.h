@@ -48,7 +48,7 @@ inline bool parseDouble(
   char* endp;
 
   errno = 0;
-  res = strtol(buf, &endp, 10);
+  res = strtod(buf, &endp);
   if (errno > 0)
     res = NA_REAL;
 
