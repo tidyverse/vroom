@@ -34,17 +34,6 @@ void vroom_materialize(Rcpp::List x) {
 #endif
 }
 
-// std::string get_altrep_class(RObject x) {
-// auto csym = ALTREP_SERIALIZED_CLASS_CLSSYM(x) auto c = ALTREP_CLASS(x);
-// auto n = LENGTH(c);
-// std::string out;
-// out.reserve(n);
-// for (int i = 0; i < LENGTH(c); ++i) {
-// out[i] = RAW(c)[i];
-//}
-// return out;
-//}
-
 // [[Rcpp::export]]
 std::string vroom_str_(RObject x) {
   std::stringstream ss;
