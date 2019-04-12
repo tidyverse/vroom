@@ -76,8 +76,8 @@ all_col_types <- tibble::tribble(
 #' @inheritParams vroom
 #' @export
 gen_tbl <- function(rows, cols, col_types = NULL, locale = default_locale()) {
-  nms <- paste0("V", seq_len(cols))
-  specs <- col_types_standardise(col_types, nms)
+  nms <- make_names(NULL, cols)
+  specs <- col_types_standardise(col_types, nms, vroom_enquo(rlang::quo(NULL)))
   res <- vector("list", cols)
   for (i in seq_len(cols)) {
     type <- sub("collector_", "", class(specs$cols[[i]])[[1]])
