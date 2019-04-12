@@ -126,28 +126,28 @@ file <- "https://raw.githubusercontent.com/jimhester/vroom/master/inst/extdata/m
 vroom(file)
 ```
 
-## Column skipping
+## Column selection
 
-vroom uses the `col_keep` and `col_skip` parameters to control which columns to
-keep or skip in the output. Both parameters can take input in 3 different ways.
+vroom provides the same interface for column selection and renaming as
+[dplyr::select()]. This provides very flexible and readable selections.
 
 - A character vector of column names
 ```{r}
-vroom(file, col_keep = c("model", "cyl", "gear"))
+file <- vroom_example("mtcars.csv.gz")
+
+vroom(file, col_select = c(model, cyl, gear))
 ```
 - A numeric vector of column indexes, e.g. `c(1, 2, 5)`
 ```{r}
-vroom(file, col_keep = c(1, 3, 11))
+vroom(file, col_select = c(1, 3, 11))
 ```
-- A logical vector
+- You can also use the selection helpers
 ```{r}
-vroom(file, col_keep = c(TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE))
+vroom(file, col_select = starts_with("d"))
 ```
-
-`col_skip` works in the same way, but has the opposite effect.
-
+- Or rename columns
 ```{r}
-vroom(file, col_skip = 5:12)
+vroom(file, col_select = list(car = model, everything()))
 ```
 
 ## Column types

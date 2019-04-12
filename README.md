@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# 🏎💨 vroom vroom\! <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
+# 🏎💨vroom <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
 
 <!-- badges: start -->
 
@@ -42,7 +42,8 @@ non-character columns, to further improve performance.
 ## Features
 
 vroom has nearly all of the parsing features of
-[readr](https://readr.tidyverse.org) for delimited files, including
+[readr](https://readr.tidyverse.org) for delimited and fixed width
+files, including
 
   - delimiter guessing\*
   - custom delimiters (including multi-byte\* and unicode\* delimiters)
@@ -51,6 +52,7 @@ vroom has nearly all of the parsing features of
       - logical types
       - datetime types (datetime, date, time)
       - categorical types (characters, factors)
+  - column selection, like `dplyr::select()`\*
   - skipping headers, comments and blank lines
   - quoted fields
   - double and backslashed escapes
@@ -118,6 +120,14 @@ files
 #> flights_OO.tsv flights_UA.tsv flights_US.tsv flights_VX.tsv flights_WN.tsv 
 #> flights_YV.tsv
 vroom::vroom(files)
+#> Observations: 336,776
+#> Variables: 19
+#> chr  [ 4]: carrier, tailnum, origin, dest
+#> dbl  [14]: year, month, day, dep_time, sched_dep_time, dep_delay, arr_time, sched_arr...
+#> dttm [ 1]: time_hour
+#> 
+#> Call `spec()` for a copy-pastable column specification
+#> Specify the column types with `col_types` to quiet this message
 #> # A tibble: 336,776 x 19
 #>    year month   day dep_time sched_dep_time dep_delay arr_time
 #>   <dbl> <dbl> <dbl>    <dbl>          <dbl>     <dbl>    <dbl>
@@ -129,6 +139,12 @@ vroom::vroom(files)
 #> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
 #> #   minute <dbl>, time_hour <dttm>
 ```
+
+## Further reading
+
+See [Getting
+started](https://jimhester.github.io/vroom/articles/vroom.html) to jump
+start your use of vroom\!
 
 ## Benchmarks
 

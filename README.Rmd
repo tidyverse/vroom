@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 options(tibble.print_min = 3)
 ```
 
-# 🏎💨  vroom&nbsp;vroom! <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
+# 🏎💨vroom  <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/package=vroom)
@@ -65,7 +65,7 @@ knitr::kable(tbl, digits = 2, align = "lrrrr")
 ## Features
 
 vroom has nearly all of the parsing features of
-[readr](https://readr.tidyverse.org) for delimited files, including
+[readr](https://readr.tidyverse.org) for delimited and fixed width files, including
 
 - delimiter guessing\*
 - custom delimiters (including multi-byte\* and unicode\* delimiters)
@@ -74,6 +74,7 @@ vroom has nearly all of the parsing features of
   - logical types
   - datetime types (datetime, date, time)
   - categorical types (characters, factors)
+- column selection, like `dplyr::select()`\*
 - skipping headers, comments and blank lines
 - quoted fields
 - double and backslashed escapes
@@ -137,6 +138,11 @@ vroom::vroom(files)
 ```{r, include = FALSE}
 fs::file_delete(files)
 ```
+
+## Further reading
+
+See [Getting started](https://jimhester.github.io/vroom/articles/vroom.html)
+to jump start your use of vroom!
 
 ## Benchmarks
 

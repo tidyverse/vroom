@@ -6,10 +6,10 @@
 
 using namespace vroom;
 
-Rcpp::IntegerVector read_fctr_explicit(
+Rcpp::IntegerVector read_fct_explicit(
     vroom_vec_info* info, Rcpp::CharacterVector levels, bool ordered);
 
-Rcpp::IntegerVector read_fctr_implicit(vroom_vec_info* info, bool include_na);
+Rcpp::IntegerVector read_fct_implicit(vroom_vec_info* info, bool include_na);
 
 #ifdef HAS_ALTREP
 
