@@ -26,3 +26,11 @@ collapse_transformer <- function(regex = "[*]$", ...) {
     }
   }
 }
+
+is_named <- function (x) {
+  nms <- names(x)
+  if (is.null(nms)) {
+    return(FALSE)
+  }
+  all(nms != "" & !is.na(nms))
+}

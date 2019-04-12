@@ -3,22 +3,8 @@
 \docType{import}
 \name{reexports}
 \alias{reexports}
-\alias{col_integer}
-\alias{col_factor}
-\alias{col_double}
-\alias{col_character}
-\alias{col_date}
-\alias{col_datetime}
-\alias{col_time}
-\alias{col_number}
-\alias{col_skip}
-\alias{col_guess}
-\alias{cols}
-\alias{cols_only}
-\alias{cols_condense}
 \alias{default_locale}
 \alias{locale}
-\alias{spec}
 \alias{fwf_cols}
 \alias{fwf_empty}
 \alias{fwf_positions}
@@ -30,6 +16,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{readr}{\code{\link[readr]{col_integer}}, \code{\link[readr]{col_factor}}, \code{\link[readr]{col_double}}, \code{\link[readr]{col_character}}, \code{\link[readr]{col_date}}, \code{\link[readr]{col_datetime}}, \code{\link[readr]{col_time}}, \code{\link[readr]{col_number}}, \code{\link[readr]{col_factor}}, \code{\link[readr]{col_skip}}, \code{\link[readr]{col_guess}}, \code{\link[readr]{cols}}, \code{\link[readr]{cols_only}}, \code{\link[readr]{cols_condense}}, \code{\link[readr]{default_locale}}, \code{\link[readr]{locale}}, \code{\link[readr]{spec}}, \code{\link[readr]{fwf_cols}}, \code{\link[readr]{fwf_empty}}, \code{\link[readr]{fwf_positions}}, \code{\link[readr]{fwf_widths}}}
+  \item{readr}{\code{\link[readr]{default_locale}}, \code{\link[readr]{locale}}, \code{\link[readr]{fwf_cols}}, \code{\link[readr]{fwf_empty}}, \code{\link[readr]{fwf_positions}}, \code{\link[readr]{fwf_widths}}}
 }}
 
