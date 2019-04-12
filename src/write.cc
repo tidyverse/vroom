@@ -42,11 +42,14 @@ size_t get_buffer_size(Rcpp::List input, size_t start, size_t end) {
   return buf_size;
 }
 
-size_t
-fill_buf(Rcpp::List input, std::vector<char>& buf, size_t start, size_t end) {
+std::vector<char> fill_buf(Rcpp::List input, size_t begin, size_t end) {
+
+  auto buf_sz = get_buffer_size(input, begin, end);
+  auto buf = std::vector<char>();
+  buf.resize(buf_sz);
 
   size_t pos = 0;
-  for (int row = start; row < end; ++row) {
+  for (int row = begin; row < end; ++row) {
     for (int col = 0; col < input.length(); ++col) {
       switch (TYPEOF(input[col])) {
       case STRSXP: {
@@ -68,11 +71,13 @@ fill_buf(Rcpp::List input, std::vector<char>& buf, size_t start, size_t end) {
     buf[pos - 1] = '\n';
   }
 
-  return pos;
+  buf.resize(pos);
+
+  return buf;
 }
 
-void write_buf(const std::vector<char>& buf, std::FILE* out, size_t sz) {
-  std::fwrite(buf.data(), sizeof buf[0], sz, out);
+void write_buf(const std::vector<char>& buf, std::FILE* out) {
+  std::fwrite(buf.data(), sizeof buf[0], buf.size(), out);
 }
 
 // [[Rcpp::export]]
@@ -86,12 +91,9 @@ void vroom_write_(
   while (begin < num_rows) {
     auto num_lines = std::min(begin + buf_lines, num_rows - begin);
     auto end = begin + num_lines;
-    auto buf_sz = get_buffer_size(input, begin, end);
-    auto buf = std::vector<char>();
-    buf.resize(buf_sz);
 
-    auto sz = fill_buf(input, buf, begin, end);
-    write_buf(buf, out, sz);
+    auto buf = fill_buf(input, begin, end);
+    write_buf(buf, out);
     begin += num_lines;
   }
 
