@@ -126,7 +126,8 @@ as.col_spec.default <- function(x) {
   stop("`col_types` must be NULL, a list or a string", call. = FALSE)
 }
 
-#' @export
+# Conditionally exported in zzz.R
+# @export
 print.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_color(), ...) {
   cat(format.col_spec(x, n = n, condense = condense, colour = colour, ...))
 
@@ -149,7 +150,8 @@ cols_condense <- function(x) {
   x
 }
 
-#' @export
+# Conditionally exported in zzz.R
+# @export
 format.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_color(), ...) {
 
   if (n == 0) {
@@ -246,7 +248,8 @@ colourise_cols <- function(cols, colourise = crayon::has_color()) {
 }
 
 # This allows str() on a tibble object to print a little nicer.
-#' @export
+# Conditionally exported in zzz.R
+# @export
 str.col_spec <- function(object, ..., indent.str = "") {
 
   # Split the formatted column spec into strings

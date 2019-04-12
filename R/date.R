@@ -54,7 +54,8 @@ date_names_langs <- function() {
   names(date_symbols)
 }
 
-#' @export
+# Conditionally exported in zzz.R
+# @export
 print.date_names <- function(x, ...) {
   cat("<date_names>\n")
 

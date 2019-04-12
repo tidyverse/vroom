@@ -4,7 +4,8 @@ collector <- function(type, ...) {
 
 is.collector <- function(x) inherits(x, "collector")
 
-#' @export
+# Conditionally exported in zzz.R
+# @export
 print.collector <- function(x, ...) {
   cat("<", class(x)[1], ">\n", sep = "")
 }

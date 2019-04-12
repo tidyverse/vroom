@@ -75,7 +75,8 @@ locale <- function(date_names = "en",
 
 is.locale <- function(x) inherits(x, "locale")
 
-#' @export
+# Conditionally exported in zzz.R
+# @export
 print.locale <- function(x, ...) {
   cat("<locale>\n")
   cat("Numbers:  ", prettyNum(123456.78, big.mark = x$grouping_mark,
