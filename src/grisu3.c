@@ -396,6 +396,6 @@ int dtoa_grisu3(double v, char *dst)
 	}// Add scientific notation?
 	else if (d_exp < 0 || d_exp > 2) { s2[len++] = 'e'; len += i_to_str(d_exp, s2+len); }
 	// Add zeroes instead of scientific notation?
-	s2[len] = '\0'; // grisu3 doesn't null terminate, so ensure termination.
+	/*s2[len] = '\0'; // grisu3 doesn't null terminate, so ensure termination.*/
 	return (int)(s2+len-dst);
 }
