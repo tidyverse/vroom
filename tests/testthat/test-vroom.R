@@ -313,7 +313,7 @@ test_that("vroom reads headers with embedded newlines 2", {
 test_that("vroom uses the number of rows when guess_max = Inf", {
   tf <- tempfile()
   df <- tibble::tibble(x = c(1:1000, "foo"))
-  readr::write_tsv(df, tf)
+  vroom_write(df, tf, delim = "\t")
 
   # The type should be guessed wrong, because the character comes at the end
   res <- vroom(tf)
@@ -344,3 +344,10 @@ test_that("vroom adds removes columns if a row is too long", {
     #expect_output_file(vroom(vroom_example("mtcars.csv"), progress = TRUE), "mtcars-progress")
   #})
 #})
+
+test_that("guess_type works with long strings (#74)", {
+  expect_is(
+    guess_type("https://www.bing.com/search?q=mr+popper%27s+penguins+worksheets+free&FORM=QSRE1"),
+    "collector_character"
+  )
+})

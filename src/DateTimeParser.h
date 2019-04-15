@@ -40,7 +40,14 @@ template <typename Iterator, typename Attr>
 inline bool parseDouble(
     const char decimalMark, Iterator& first, Iterator& last, Attr& res) {
 
-  char buf[64];
+  char buf[65];
+
+  // It can't be a double if it is over 64 characters long.
+  bool too_long = last - first > 64;
+  if (too_long) {
+    res = NA_REAL;
+    return false;
+  }
 
   std::copy(first, last, buf);
   buf[last - first] = '\0';
@@ -49,11 +56,13 @@ inline bool parseDouble(
 
   errno = 0;
   res = strtod(buf, &endp);
-  if (errno > 0)
+  if (errno > 0) {
     res = NA_REAL;
+  } else {
+    first += endp - buf;
+  }
 
-  first += endp - buf;
-  return res != NA_REAL;
+  return !ISNA(res);
 }
 
 class DateTimeParser {

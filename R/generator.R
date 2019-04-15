@@ -73,11 +73,12 @@ all_col_types <- tibble::tribble(
 #' share the real dataset.
 #' @param rows Number of rows to generate
 #' @param cols Number of columns to generate
+#' @param missing The percentage (from 0 to 1) of missing data to use
 #' @inheritParams vroom
 #' @export
-gen_tbl <- function(rows, cols, col_types = NULL, locale = default_locale()) {
-  nms <- paste0("V", seq_len(cols))
-  specs <- col_types_standardise(col_types, nms)
+gen_tbl <- function(rows, cols, col_types = NULL, locale = default_locale(), missing = 0) {
+  nms <- make_names(NULL, cols)
+  specs <- col_types_standardise(col_types, nms, vroom_enquo(rlang::quo(NULL)))
   res <- vector("list", cols)
   for (i in seq_len(cols)) {
     type <- sub("collector_", "", class(specs$cols[[i]])[[1]])
@@ -88,6 +89,13 @@ gen_tbl <- function(rows, cols, col_types = NULL, locale = default_locale()) {
     fun_nme <- paste0("gen_", type)
     res[[i]] <- do.call(fun_nme, c(rows, specs$cols[[i]], locale))
   }
+
+  if (missing > 0) {
+    res[] <- lapply(res, function(x) {
+      x[sample(c(TRUE, FALSE), size = rows, prob = c(missing, 1 - missing), replace = TRUE)] <- NA
+      x
+    })
+  }
   names(res) <- nms
   attr(res, "spec") <- specs
   tibble::as_tibble(res)
@@ -96,7 +104,7 @@ gen_tbl <- function(rows, cols, col_types = NULL, locale = default_locale()) {
 gen_write <- function(x, path, delim, na = "NA", append = FALSE, col_names =
   !append, col_types = NULL, locale = default_locale(), quote_escape = "double") {
   if (is.null(col_types) && inherits(x, "tbl_df")) {
-    col_types <- readr::spec(x)
+    col_types <- spec(x)
   }
 
   specs <- col_types_standardise(col_types, colnames(x))
@@ -110,11 +118,7 @@ gen_write <- function(x, path, delim, na = "NA", append = FALSE, col_names =
     x[[i]] <- do.call(as.character, c(list(x[[i]]), specs$cols[[i]]))
   }
 
-  if (!requireNamespace("readr")) {
-    stop("readr must be installed to use `gen_write()`", call. = FALSE)
-  }
-
-  readr::write_delim(x, path, delim, na = na, append = append, col_names = col_names)
+  vroom_write(x, path, delim, na = na, append = append, col_names = col_names)
 }
 # Name and adjective list from https://github.com/rstudio/cranwhales/blob/93349fe1bc790f115a3d56660b6b99ffe258d9a2/random-names.R
 random_name <- local({

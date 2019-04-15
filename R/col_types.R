@@ -389,10 +389,10 @@ guess_type <- function(x, na = c("", "NA"), locale = readr::default_locale(), gu
   x[x %in% na] <- NA
 
   type <- guess_type_(x, locale = locale, guess_integer = guess_integer)
-  get(paste0("col_", type), asNamespace("readr"))()
+  get(paste0("col_", type), asNamespace("vroom"))()
 }
 
-guess_parser <- function(x, locale = readr::default_locale(), guess_integer = FALSE) {
+guess_parser <- function(x, locale = default_locale(), guess_integer = FALSE) {
   guess_type_(x, locale = locale, guess_integer = guess_integer)
 }
 

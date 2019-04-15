@@ -18,7 +18,7 @@ test_vroom <- function(content, ..., equals) {
   if (!file.exists(content)) {
     tf <- tempfile()
     on.exit(unlink(tf))
-    readr::write_lines(content, tf, sep = "")
+    writeLines(content, tf, sep = "")
 
     con <- file(tf, "rb")
   } else {
