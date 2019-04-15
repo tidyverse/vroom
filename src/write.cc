@@ -4,6 +4,7 @@
 #include <future>
 
 #include "RProgress.h"
+#include "connection.h"
 #include "utils.h"
 
 size_t get_buffer_size(
@@ -182,6 +183,10 @@ void write_buf(const std::vector<char>& buf, std::FILE* out) {
   std::fwrite(buf.data(), sizeof buf[0], buf.size(), out);
 }
 
+void write_buf_con(const std::vector<char>& buf, Rconnection con) {
+  R_WriteConnection(con, (void*)buf.data(), sizeof buf[0] * buf.size());
+}
+
 std::vector<SEXPTYPE> get_types(const Rcpp::List& input) {
   std::vector<SEXPTYPE> out;
   for (int col = 0; col < input.length(); ++col) {
@@ -312,6 +317,99 @@ void vroom_write_(
 
   // Close the file
   std::fclose(out);
+}
+
+// TODO: Think about refactoring this so it and vroom_write_ can share some
+// code
+// [[Rcpp::export]]
+void vroom_write_connection_(
+    Rcpp::List input,
+    Rcpp::RObject con,
+    const char delim,
+    const char* na_str,
+    bool col_names,
+    bool append,
+    size_t num_threads,
+    bool progress,
+    size_t buf_lines) {
+
+  size_t begin = 0;
+  size_t num_rows = Rf_xlength(input[0]);
+
+  auto con_ = R_GetConnection(con);
+
+  bool should_open = !con_->isopen;
+  if (should_open) {
+    Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(con, "wb");
+  }
+
+  bool should_close = should_open;
+
+  std::array<std::vector<std::future<std::vector<char> > >, 2> futures;
+  futures[0].resize(num_threads);
+  futures[1].resize(num_threads);
+
+  std::future<size_t> write_fut;
+
+  int idx = 0;
+
+  auto types = get_types(input);
+  auto ptrs = get_ptrs(input);
+
+  if (col_names) {
+    auto header = get_header(input, delim);
+    write_buf_con(header, con_);
+  }
+
+  std::unique_ptr<RProgress::RProgress> pb = nullptr;
+  if (progress) {
+    pb = std::unique_ptr<RProgress::RProgress>(
+        new RProgress::RProgress(vroom::get_pb_format("write"), 1e12));
+  }
+
+  while (begin < num_rows) {
+    auto t = 0;
+    while (t < num_threads && begin < num_rows) {
+      auto num_lines = std::min(buf_lines, num_rows - begin);
+      auto end = begin + num_lines;
+      futures[idx][t++] =
+          std::async(fill_buf, input, delim, na_str, types, ptrs, begin, end);
+      begin += num_lines;
+    }
+
+    if (write_fut.valid()) {
+      auto sz = write_fut.get();
+      if (progress) {
+        pb->tick(sz);
+      }
+      Rcpp::checkUserInterrupt();
+    }
+
+    write_fut = std::async([&, idx, t] {
+      size_t sz = 0;
+      for (auto i = 0; i < t; ++i) {
+        auto buf = futures[idx][i].get();
+        write_buf_con(buf, con_);
+        sz += buf.size();
+      }
+      return sz;
+    });
+
+    idx = (idx + 1) % 2;
+  }
+
+  // Wait for the last writing to finish
+  if (write_fut.valid()) {
+    write_fut.get();
+    if (progress) {
+      pb->update(1);
+    }
+  }
+
+  // Close the connection
+  if (should_close) {
+    Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["close"])(con);
+  }
 }
 
 // [[Rcpp::export]]

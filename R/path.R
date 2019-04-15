@@ -15,7 +15,7 @@ standardise_path <- function(path) {
   as.list(path)
 }
 
-standardise_one_path <- function (path) {
+standardise_one_path <- function (path, check = TRUE) {
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))
   }
@@ -46,7 +46,9 @@ standardise_one_path <- function (path) {
     )
   }
 
-  path <- check_path(path)
+  if (check) {
+    path <- check_path(path)
+  }
 
   switch(tolower(tools::file_ext(path)),
     gz = gzfile(path, ""),
