@@ -2,10 +2,10 @@
 #'
 #' @inheritParams readr::write_tsv
 #' @export
-vroom_write <- function(x, out, delim = '\t', na = "NA", col_names = !append, append = FALSE, num_threads = vroom_threads()) {
+vroom_write <- function(x, out, delim = '\t', na = "NA", col_names = !append, append = FALSE, num_threads = vroom_threads(), progress = vroom_progress()) {
   x_in <- x
   x[] <- lapply(x, output_column)
-  vroom_write_(x, out, delim, na_str = na, col_names = col_names, append = append, num_threads = num_threads,
+  vroom_write_(x, out, delim, na_str = na, col_names = col_names, append = append, num_threads = num_threads, progress = progress,
     buf_lines = as.numeric(Sys.getenv("VROOM_WRITE_BUFFER_SIZE", 1000)))
 
   invisible(x_in)

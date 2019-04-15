@@ -3,6 +3,9 @@
 #include <array>
 #include <future>
 
+#include "RProgress.h"
+#include "utils.h"
+
 size_t get_buffer_size(
     const Rcpp::List& input,
     const std::vector<SEXPTYPE>& types,
@@ -229,6 +232,7 @@ void vroom_write_(
     bool col_names,
     bool append,
     size_t num_threads,
+    bool progress,
     size_t buf_lines) {
 
   size_t begin = 0;
@@ -250,7 +254,7 @@ void vroom_write_(
   futures[0].resize(num_threads);
   futures[1].resize(num_threads);
 
-  std::future<void> write_fut;
+  std::future<size_t> write_fut;
 
   int idx = 0;
 
@@ -260,6 +264,12 @@ void vroom_write_(
   if (col_names) {
     auto header = get_header(input, delim);
     write_buf(header, out);
+  }
+
+  std::unique_ptr<RProgress::RProgress> pb = nullptr;
+  if (progress) {
+    pb = std::unique_ptr<RProgress::RProgress>(
+        new RProgress::RProgress(vroom::get_pb_format("write"), 1e12));
   }
 
   while (begin < num_rows) {
@@ -273,14 +283,20 @@ void vroom_write_(
     }
 
     if (write_fut.valid()) {
-      write_fut.wait();
+      auto sz = write_fut.get();
+      if (progress) {
+        pb->tick(sz);
+      }
     }
 
     write_fut = std::async([&, idx, t] {
+      size_t sz = 0;
       for (auto i = 0; i < t; ++i) {
         auto buf = futures[idx][i].get();
         write_buf(buf, out);
+        sz += buf.size();
       }
+      return sz;
     });
 
     idx = (idx + 1) % 2;
@@ -288,7 +304,10 @@ void vroom_write_(
 
   // Wait for the last writing to finish
   if (write_fut.valid()) {
-    write_fut.wait();
+    write_fut.get();
+    if (progress) {
+      pb->update(1);
+    }
   }
 
   // Close the file

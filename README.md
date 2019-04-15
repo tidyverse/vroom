@@ -186,6 +186,8 @@ will not need to be set by most users.
     testthat and when knitting documents.
   - `VROOM_CONNECTION_SIZE` - The size (in bytes) of the connection
     buffer when reading from connections (default is 128 KiB).
+  - `VROOM_WRITE_BUFFER_LINES` - The number of lines to use for each
+    buffer when writing files (default: 1000).
 
 There are also a family of variables to control use of the Altrep
 framework. For versions of R where the Altrep framework is unavailable

@@ -132,6 +132,10 @@ pb_connection_format <- function(unused) {
   glue::glue_col("{bold}indexed{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}")
 }
 
+pb_write_format <- function(unused) {
+  glue::glue_col("{bold}wrote{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}")
+}
+
 # Guess delimiter by splitting every line by each delimiter and choosing the
 # delimiter which splits the lines into the highest number of consistent fields
 guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";", "\n")) {
