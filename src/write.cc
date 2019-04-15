@@ -173,12 +173,19 @@ void vroom_write_(
     std::string filename,
     const char delim,
     bool col_names,
+    bool append,
     size_t buf_lines,
     size_t num_threads) {
 
   size_t begin = 0;
   size_t num_rows = Rf_xlength(input[0]);
-  std::FILE* out = std::fopen(filename.c_str(), "wb");
+
+  char mode[3] = "wb";
+  if (append) {
+    strcpy(mode, "ab");
+  }
+
+  std::FILE* out = std::fopen(filename.c_str(), mode);
 
   std::array<std::vector<std::future<std::vector<char> > >, 2> futures;
   futures[0].resize(num_threads);
