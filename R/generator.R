@@ -73,6 +73,7 @@ all_col_types <- tibble::tribble(
 #' share the real dataset.
 #' @param rows Number of rows to generate
 #' @param cols Number of columns to generate
+#' @param missing The percentage (from 0 to 1) of missing data to use
 #' @inheritParams vroom
 #' @export
 gen_tbl <- function(rows, cols, col_types = NULL, locale = default_locale(), missing = 0) {

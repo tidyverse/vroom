@@ -34,6 +34,8 @@ The default locale is US-centric (like R), but you can use
 \code{\link[=locale]{locale()}} to create your own locale that controls things like
 the default time zone, encoding, decimal mark, big mark, and day/month
 names.}
+
+\item{missing}{The percentage (from 0 to 1) of missing data to use}
 }
 \description{
 This is useful for benchmarking, but also for bug reports when you cannot

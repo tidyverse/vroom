@@ -1,25 +1,33 @@
 #' Write a data frame to a delimited file
 #'
+#' @inheritParams vroom
 #' @inheritParams readr::write_tsv
 #' @export
-vroom_write <- function(x, out, delim = '\t', na = "NA", col_names = !append, append = FALSE, num_threads = vroom_threads(), progress = vroom_progress()) {
+vroom_write <- function(x, path, delim = '\t', na = "NA", col_names = !append, append = FALSE, num_threads = vroom_threads(), progress = vroom_progress()) {
   # Standardise path returns a list, but we will only ever have 1 output file.
-  out <- standardise_one_path(out, check = FALSE)
+  path <- standardise_one_path(path, check = FALSE)
 
   x_in <- x
   x[] <- lapply(x, output_column)
 
-  if (inherits(out, "connection")) {
-    vroom_write_connection_(x, out, delim, na_str = na, col_names = col_names, append = append, num_threads = num_threads, progress = progress,
+  if (inherits(path, "connection")) {
+    vroom_write_connection_(x, path, delim, na_str = na, col_names = col_names, append = append, num_threads = num_threads, progress = progress,
       buf_lines = as.numeric(Sys.getenv("VROOM_WRITE_BUFFER_SIZE", 1000)))
   } else {
-    vroom_write_(x, out, delim, na_str = na, col_names = col_names, append = append, num_threads = num_threads, progress = progress,
+    vroom_write_(x, path, delim, na_str = na, col_names = col_names, append = append, num_threads = num_threads, progress = progress,
       buf_lines = as.numeric(Sys.getenv("VROOM_WRITE_BUFFER_SIZE", 1000)))
   }
 
   invisible(x_in)
 }
 
+#' Convert a data frame to a delimited string
+#'
+#' This is equivalent to [vroom_write()], but instead of writing to
+#' disk, it returns a string. It is primarily useful for examples and for
+#' testing.
+#'
+#' @inheritParams vroom_write
 #' @export
 vroom_format <- function(x, delim = '\t', na = "NA", col_names = TRUE) {
   x[] <- lapply(x, output_column)
@@ -34,11 +42,6 @@ vroom_format <- function(x, delim = '\t', na = "NA", col_names = TRUE) {
 #' @keywords internal
 #' @param x A vector
 #' @export
-#' @examples
-#' # Most columns are left as is, but POSIXct are
-#' # converted to ISO8601.
-#' x <- parse_datetime("2016-01-01")
-#' str(output_column(x))
 output_column <- function(x) {
   UseMethod("output_column")
 }
