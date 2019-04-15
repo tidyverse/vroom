@@ -71,7 +71,7 @@ number of cylinders, (it is OK if you don't currently understand this code).
 mt <- tibble::rownames_to_column(mtcars, "model")
 purrr::iwalk(
   split(mt, mt$cyl),
-  ~ readr::write_csv(.x, glue::glue("mtcars_{.y}.csv"))
+  ~ vroom_write(.x, glue::glue("mtcars_{.y}.csv"), "\t")
 )
 ```
 

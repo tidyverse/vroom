@@ -103,7 +103,7 @@ gen_tbl <- function(rows, cols, col_types = NULL, locale = default_locale(), mis
 gen_write <- function(x, path, delim, na = "NA", append = FALSE, col_names =
   !append, col_types = NULL, locale = default_locale(), quote_escape = "double") {
   if (is.null(col_types) && inherits(x, "tbl_df")) {
-    col_types <- readr::spec(x)
+    col_types <- spec(x)
   }
 
   specs <- col_types_standardise(col_types, colnames(x))
@@ -117,11 +117,7 @@ gen_write <- function(x, path, delim, na = "NA", append = FALSE, col_names =
     x[[i]] <- do.call(as.character, c(list(x[[i]]), specs$cols[[i]]))
   }
 
-  if (!requireNamespace("readr")) {
-    stop("readr must be installed to use `gen_write()`", call. = FALSE)
-  }
-
-  readr::write_delim(x, path, delim, na = na, append = append, col_names = col_names)
+  vroom_write(x, path, delim, na = na, append = append, col_names = col_names)
 }
 # Name and adjective list from https://github.com/rstudio/cranwhales/blob/93349fe1bc790f115a3d56660b6b99ffe258d9a2/random-names.R
 random_name <- local({

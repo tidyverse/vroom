@@ -313,7 +313,7 @@ test_that("vroom reads headers with embedded newlines 2", {
 test_that("vroom uses the number of rows when guess_max = Inf", {
   tf <- tempfile()
   df <- tibble::tibble(x = c(1:1000, "foo"))
-  readr::write_tsv(df, tf)
+  vroom_write(df, tf, delim = "\t")
 
   # The type should be guessed wrong, because the character comes at the end
   res <- vroom(tf)

@@ -12,7 +12,7 @@ test_that("vroom adds the id column from the filename for multiple files", {
 
   splits <- split(mtcars, mtcars$cyl)
   for (i in seq_along(splits)) {
-    readr::write_tsv(splits[[i]], file.path(dir, paste0("mtcars_", names(splits)[[i]], ".tsv")))
+    vroom_write(splits[[i]], file.path(dir, paste0("mtcars_", names(splits)[[i]], ".tsv")), delim = "\t")
   }
 
   files <- list.files(dir, full.names = TRUE)
@@ -32,7 +32,7 @@ test_that("vroom adds the id column from the filename for multiple connections",
   splits <- split(mtcars, mtcars$cyl)
   for (i in seq_along(splits)) {
     # write_tsv will automatically gzip them
-    readr::write_tsv(splits[[i]], file.path(dir, paste0("mtcars_", names(splits)[[i]], ".tsv.gz")))
+    vroom_write(splits[[i]], file.path(dir, paste0("mtcars_", names(splits)[[i]], ".tsv.gz")), delim = "\t")
   }
 
   files <- list.files(dir, full.names = TRUE)
@@ -52,13 +52,13 @@ test_that("vroom works with many files", {
   on.exit(unlink(dir, recursive = TRUE))
 
   for (i in seq_len(200)) {
-    readr::write_csv(
+    vroom_write(
       tibble::tibble(
         x = rnorm(10),
         y = rnorm(10),
       ),
-      file.path(dir, paste0(i, ".csv"))
-    )
+      file.path(dir, paste0(i, ".csv")),
+    delim = ",")
   }
 
   files <- list.files(dir, pattern = ".*[.]csv", full.names = TRUE)
@@ -76,13 +76,13 @@ test_that("vroom works with many connections", {
   on.exit(unlink(dir, recursive = TRUE))
 
   for (i in seq_len(200)) {
-    readr::write_csv(
+    vroom_write(
       tibble::tibble(
         x = rnorm(10),
         y = rnorm(10),
       ),
-      file.path(dir, paste0(i, ".csv.gz"))
-    )
+      file.path(dir, paste0(i, ".csv.gz")),
+    delim = ",")
   }
 
   files <- list.files(dir, pattern = ".*[.]csv[.]gz", full.names = TRUE)
