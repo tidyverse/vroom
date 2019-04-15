@@ -344,3 +344,10 @@ test_that("vroom adds removes columns if a row is too long", {
     #expect_output_file(vroom(vroom_example("mtcars.csv"), progress = TRUE), "mtcars-progress")
   #})
 #})
+
+test_that("guess_type works with long strings (#74)", {
+  expect_is(
+    guess_type("https://www.bing.com/search?q=mr+popper%27s+penguins+worksheets+free&FORM=QSRE1"),
+    "collector_character"
+  )
+})
