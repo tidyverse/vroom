@@ -33,7 +33,7 @@ size_t get_buffer_size(
     switch (types[i]) {
     case STRSXP: {
       for (size_t j = start; j < end; ++j) {
-        auto sz = strlen(CHAR(STRING_ELT(input[i], j)));
+        auto sz = Rf_xlength(STRING_ELT(input[i], j));
         buf_size += sz + 2;
       }
       break;
