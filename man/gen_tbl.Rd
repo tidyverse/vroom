@@ -4,7 +4,8 @@
 \alias{gen_tbl}
 \title{Generate a random tibble}
 \usage{
-gen_tbl(rows, cols, col_types = NULL, locale = default_locale())
+gen_tbl(rows, cols, col_types = NULL, locale = default_locale(),
+  missing = 0)
 }
 \arguments{
 \item{rows}{Number of rows to generate}

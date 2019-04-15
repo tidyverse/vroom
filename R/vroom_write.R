@@ -1,16 +1,53 @@
+#' Write a data frame to a delimited file
+#'
+#' @inheritParams readr::write_tsv
 #' @export
-vroom_write <- function(df, out, delim = '\t', col_names = !append, append = FALSE, lines = 100, num_threads = vroom_threads()) {
-  df_in <- df
-  df[] <- lapply(df, readr::output_column)
-  vroom_write_(df, out, delim, col_names, append, lines, num_threads)
+vroom_write <- function(x, out, delim = '\t', na = "NA", col_names = !append, append = FALSE, num_threads = vroom_threads()) {
+  x_in <- x
+  x[] <- lapply(x, output_column)
+  vroom_write_(x, out, delim, na_str = na, col_names = col_names, append = append, num_threads = num_threads,
+    buf_lines = as.numeric(Sys.getenv("VROOM_WRITE_BUFFER_SIZE", 1000)))
 
-  invisible(df_in)
+  invisible(x_in)
 }
 
 #' @export
-vroom_format <- function(df, delim = '\t', col_names = TRUE) {
-  df[] <- lapply(df, readr::output_column)
-  vroom_format_(df, delim = delim, col_names = col_names)
+vroom_format <- function(x, delim = '\t', na = "NA", col_names = TRUE) {
+  x[] <- lapply(x, output_column)
+  vroom_format_(x, delim = delim, na_str = na, col_names = col_names)
+}
+
+#' Preprocess column for output
+#'
+#' This is a generic function that applied to each column before it is saved
+#' to disk. It provides a hook for S3 classes that need special handling.
+#'
+#' @keywords internal
+#' @param x A vector
+#' @export
+#' @examples
+#' # Most columns are left as is, but POSIXct are
+#' # converted to ISO8601.
+#' x <- parse_datetime("2016-01-01")
+#' str(output_column(x))
+output_column <- function(x) {
+  UseMethod("output_column")
+}
+
+#' @export
+output_column.default <- function(x) {
+  if (!is.object(x)) return(x)
+  as.character(x)
+}
+
+#' @export
+output_column.double <- function(x) {
+  x
+}
+
+#' @export
+output_column.POSIXt <- function(x) {
+  format(x, "%Y-%m-%dT%H:%M:%OSZ", tz = "UTC", justify = "none")
 }
 
 #' @export

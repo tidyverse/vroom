@@ -134,31 +134,33 @@ BEGIN_RCPP
 END_RCPP
 }
 // vroom_write_
-void vroom_write_(Rcpp::List input, std::string filename, const char delim, bool col_names, bool append, size_t buf_lines, size_t num_threads);
-RcppExport SEXP _vroom_vroom_write_(SEXP inputSEXP, SEXP filenameSEXP, SEXP delimSEXP, SEXP col_namesSEXP, SEXP appendSEXP, SEXP buf_linesSEXP, SEXP num_threadsSEXP) {
+void vroom_write_(Rcpp::List input, std::string filename, const char delim, const char* na_str, bool col_names, bool append, size_t num_threads, size_t buf_lines);
+RcppExport SEXP _vroom_vroom_write_(SEXP inputSEXP, SEXP filenameSEXP, SEXP delimSEXP, SEXP na_strSEXP, SEXP col_namesSEXP, SEXP appendSEXP, SEXP num_threadsSEXP, SEXP buf_linesSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::List >::type input(inputSEXP);
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< const char >::type delim(delimSEXP);
+    Rcpp::traits::input_parameter< const char* >::type na_str(na_strSEXP);
     Rcpp::traits::input_parameter< bool >::type col_names(col_namesSEXP);
     Rcpp::traits::input_parameter< bool >::type append(appendSEXP);
-    Rcpp::traits::input_parameter< size_t >::type buf_lines(buf_linesSEXP);
     Rcpp::traits::input_parameter< size_t >::type num_threads(num_threadsSEXP);
-    vroom_write_(input, filename, delim, col_names, append, buf_lines, num_threads);
+    Rcpp::traits::input_parameter< size_t >::type buf_lines(buf_linesSEXP);
+    vroom_write_(input, filename, delim, na_str, col_names, append, num_threads, buf_lines);
     return R_NilValue;
 END_RCPP
 }
 // vroom_format_
-Rcpp::CharacterVector vroom_format_(Rcpp::List input, const char delim, bool col_names);
-RcppExport SEXP _vroom_vroom_format_(SEXP inputSEXP, SEXP delimSEXP, SEXP col_namesSEXP) {
+Rcpp::CharacterVector vroom_format_(Rcpp::List input, const char delim, const char* na_str, bool col_names);
+RcppExport SEXP _vroom_vroom_format_(SEXP inputSEXP, SEXP delimSEXP, SEXP na_strSEXP, SEXP col_namesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::List >::type input(inputSEXP);
     Rcpp::traits::input_parameter< const char >::type delim(delimSEXP);
+    Rcpp::traits::input_parameter< const char* >::type na_str(na_strSEXP);
     Rcpp::traits::input_parameter< bool >::type col_names(col_namesSEXP);
-    rcpp_result_gen = Rcpp::wrap(vroom_format_(input, delim, col_names));
+    rcpp_result_gen = Rcpp::wrap(vroom_format_(input, delim, na_str, col_names));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -172,8 +174,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 19},
     {"_vroom_vroom_fwf_", (DL_FUNC) &_vroom_vroom_fwf_, 17},
     {"_vroom_whitespace_columns_", (DL_FUNC) &_vroom_whitespace_columns_, 4},
-    {"_vroom_vroom_write_", (DL_FUNC) &_vroom_vroom_write_, 7},
-    {"_vroom_vroom_format_", (DL_FUNC) &_vroom_vroom_format_, 3},
+    {"_vroom_vroom_write_", (DL_FUNC) &_vroom_vroom_write_, 8},
+    {"_vroom_vroom_format_", (DL_FUNC) &_vroom_vroom_format_, 4},
     {NULL, NULL, 0}
 };
 

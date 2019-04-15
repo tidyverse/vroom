@@ -13,10 +13,10 @@ test_that("a literal NA is quoted", {
   expect_equal(vroom_format(data.frame(x = "NA")), "x\n\"NA\"\n")
 })
 
-#test_that("na argument modifies how missing values are written", {
-  #df <- data.frame(x = c(NA, "x", "."), y = c(1, 2, NA))
-  #expect_equal(format_csv(df, na = "."), "x,y\n.,1\nx,2\n\".\",.\n")
-#})
+test_that("na argument modifies how missing values are written", {
+  df <- data.frame(x = c(NA, "x", "."), y = c(1, 2, NA))
+  expect_equal(vroom_format(df, ",", na = "."), "x,y\n.,1\nx,2\n\".\",.\n")
+})
 
 test_that("read_delim/csv/tsv and write_delim round trip special chars", {
   x <- c("a", '"', ",", "\n","at\t")
@@ -62,9 +62,10 @@ test_that("roundtrip preserves dates and datetimes", {
   expect_equal(output$y, y)
 })
 
-#test_that("fails to create file in non-existent directory", {
-  #expect_warning(expect_error(write_csv(mtcars, file.path(tempdir(), "/x/y")), "cannot open the connection"), "No such file or directory")
-#})
+test_that("fails to create file in non-existent directory", {
+  expect_error(vroom_write(mtcars, file.path(tempdir(), "/x/y"), "\t"),
+    "Cannot open file for writing")
+})
 
 #test_that("write_excel_csv/csv2 includes a byte order mark", {
   #tmp <- tempfile()
@@ -157,4 +158,17 @@ test_that("write_csv writes large integers without scientific notation up to 1E1
 test_that("hms NAs are written without padding (#930)", {
   df <- data.frame(x = hms::as.hms(c(NA, 34.234)))
   expect_equal(vroom_format(df), "x\nNA\n00:00:34.234\n")
+})
+
+test_that("vroom_write equals the same thing as vroom_format", {
+  df <- gen_tbl(100, 8, col_types = c("dilfcDtT"), missing = .1)
+  tf <- tempfile()
+  on.exit(unlink(tf))
+
+  # Temporarily run with 2 lines per buffer, to test the multithreading
+  withr::with_envvar(c("VROOM_WRITE_BUFFER_LINES" = "2"),
+    vroom_write(df, tf, "\t")
+  )
+
+  expect_equal(readChar(tf, file.info(tf)$size), vroom_format(df))
 })

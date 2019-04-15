@@ -56,8 +56,8 @@ size_t get_buffer_size(
   return buf_size;
 }
 
-bool needs_quote(const char* str, const char delim) {
-  if (strncmp(str, "NA", 2) == 0) {
+bool needs_quote(const char* str, const char delim, const char* na_str) {
+  if (strncmp(str, na_str, 2) == 0) {
     return true;
   }
 
@@ -73,6 +73,7 @@ bool needs_quote(const char* str, const char delim) {
 std::vector<char> fill_buf(
     const Rcpp::List& input,
     const char delim,
+    const char* na_str,
     const std::vector<SEXPTYPE>& types,
     const std::vector<void*>& ptrs,
     size_t begin,
@@ -82,6 +83,8 @@ std::vector<char> fill_buf(
   auto buf = std::vector<char>();
   buf.resize(buf_sz);
 
+  auto na_len = strlen(na_str);
+
   size_t pos = 0;
   for (int row = begin; row < end; ++row) {
     for (int col = 0; col < input.length(); ++col) {
@@ -89,11 +92,11 @@ std::vector<char> fill_buf(
       case STRSXP: {
         auto str = STRING_ELT(input[col], row);
         if (str == NA_STRING) {
-          strcpy(buf.data() + pos, "NA");
-          pos += 2;
+          strcpy(buf.data() + pos, na_str);
+          pos += na_len;
         } else {
           auto str_p = CHAR(str);
-          bool should_quote = needs_quote(str_p, delim);
+          bool should_quote = needs_quote(str_p, delim, na_str);
           if (should_quote) {
             buf[pos++] = '"';
           }
@@ -119,8 +122,8 @@ std::vector<char> fill_buf(
           pos += 5;
           break;
         default:
-          strcpy(buf.data() + pos, "NA");
-          pos += 2;
+          strcpy(buf.data() + pos, na_str);
+          pos += na_len;
           break;
         }
         break;
@@ -129,8 +132,8 @@ std::vector<char> fill_buf(
         auto value = static_cast<double*>(ptrs[col])[row];
         if (!R_FINITE(value)) {
           if (ISNA(value)) {
-            strcpy(buf.data() + pos, "NA");
-            pos += 2;
+            strcpy(buf.data() + pos, na_str);
+            pos += na_len;
           } else if (ISNAN(value)) {
             strcpy(buf.data() + pos, "NaN");
             pos += 3;
@@ -151,8 +154,8 @@ std::vector<char> fill_buf(
       case INTSXP: {
         auto value = static_cast<int*>(ptrs[col])[row];
         if (value == NA_INTEGER) {
-          strcpy(buf.data() + pos, "NA");
-          pos += 2;
+          strcpy(buf.data() + pos, na_str);
+          pos += na_len;
         } else {
           // TODO: use something like https://github.com/jeaiii/itoa for
           // faster integer writing
@@ -222,10 +225,11 @@ void vroom_write_(
     Rcpp::List input,
     std::string filename,
     const char delim,
+    const char* na_str,
     bool col_names,
     bool append,
-    size_t buf_lines,
-    size_t num_threads) {
+    size_t num_threads,
+    size_t buf_lines) {
 
   size_t begin = 0;
   size_t num_rows = Rf_xlength(input[0]);
@@ -236,6 +240,11 @@ void vroom_write_(
   }
 
   std::FILE* out = std::fopen(filename.c_str(), mode);
+  if (!out) {
+    std::string msg("Cannot open file for writing:\n* ");
+    msg += '\'' + filename + '\'';
+    throw Rcpp::exception(msg.c_str(), false);
+  }
 
   std::array<std::vector<std::future<std::vector<char> > >, 2> futures;
   futures[0].resize(num_threads);
@@ -259,7 +268,7 @@ void vroom_write_(
       auto num_lines = std::min(buf_lines, num_rows - begin);
       auto end = begin + num_lines;
       futures[idx][t++] =
-          std::async(fill_buf, input, delim, types, ptrs, begin, end);
+          std::async(fill_buf, input, delim, na_str, types, ptrs, begin, end);
       begin += num_lines;
     }
 
@@ -287,8 +296,8 @@ void vroom_write_(
 }
 
 // [[Rcpp::export]]
-Rcpp::CharacterVector
-vroom_format_(Rcpp::List input, const char delim, bool col_names) {
+Rcpp::CharacterVector vroom_format_(
+    Rcpp::List input, const char delim, const char* na_str, bool col_names) {
 
   size_t num_rows = Rf_xlength(input[0]);
   Rcpp::CharacterVector out(1);
@@ -301,7 +310,7 @@ vroom_format_(Rcpp::List input, const char delim, bool col_names) {
     data = get_header(input, delim);
   }
 
-  auto buf = fill_buf(input, delim, types, ptrs, 0, num_rows);
+  auto buf = fill_buf(input, delim, na_str, types, ptrs, 0, num_rows);
   std::copy(buf.begin(), buf.end(), std::back_inserter(data));
 
   out[0] = Rf_mkCharLenCE(data.data(), data.size(), CE_UTF8);

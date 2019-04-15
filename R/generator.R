@@ -75,7 +75,7 @@ all_col_types <- tibble::tribble(
 #' @param cols Number of columns to generate
 #' @inheritParams vroom
 #' @export
-gen_tbl <- function(rows, cols, col_types = NULL, locale = default_locale()) {
+gen_tbl <- function(rows, cols, col_types = NULL, locale = default_locale(), missing = 0) {
   nms <- make_names(NULL, cols)
   specs <- col_types_standardise(col_types, nms, vroom_enquo(rlang::quo(NULL)))
   res <- vector("list", cols)
@@ -87,6 +87,13 @@ gen_tbl <- function(rows, cols, col_types = NULL, locale = default_locale()) {
     }
     fun_nme <- paste0("gen_", type)
     res[[i]] <- do.call(fun_nme, c(rows, specs$cols[[i]], locale))
+  }
+
+  if (missing > 0) {
+    res[] <- lapply(res, function(x) {
+      x[sample(c(TRUE, FALSE), size = rows, prob = c(missing, 1 - missing), replace = TRUE)] <- NA
+      x
+    })
   }
   names(res) <- nms
   attr(res, "spec") <- specs
