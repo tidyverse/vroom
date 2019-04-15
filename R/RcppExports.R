@@ -33,7 +33,11 @@ whitespace_columns_ <- function(filename, skip, n = 100L, comment = "") {
     .Call(`_vroom_whitespace_columns_`, filename, skip, n, comment)
 }
 
-vroom_write_ <- function(input, filename, buf_lines, num_threads) {
-    invisible(.Call(`_vroom_vroom_write_`, input, filename, buf_lines, num_threads))
+vroom_write_ <- function(input, filename, delim, col_names, buf_lines, num_threads) {
+    invisible(.Call(`_vroom_vroom_write_`, input, filename, delim, col_names, buf_lines, num_threads))
+}
+
+vroom_format_ <- function(input, delim, col_names) {
+    .Call(`_vroom_vroom_format_`, input, delim, col_names)
 }
 

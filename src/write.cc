@@ -11,14 +11,19 @@ size_t get_buffer_size(
 
   // First need to determine how big the buffer(s) should be
   // - For characters we need the total nchar() + 2 (for quotes if needed)
-  // - For factors we need max(nchar(levels))
-  // - For decimal numbers we need 24 + 1 for null terminator
+  //   (they are converted to UTF-8 in R)
+  // - For factors we need max(nchar(levels)) (but currently we just convert to
+  //   character in R)
+  // - For decimal numbers we need 24
   //   source: https://stackoverflow.com/a/52045523/2055486
+  // - For 32 bit integers we need 33 (32 for digits plus the sign)
   // - For logical we need 5 (FALSE)
-  // - We always use ISO8601 for dates, times and datetimes
-  // - For dates we need 10 (2019-04-12)
-  // - For times we need 8 (01:00:00)
-  // - For datetimes we need 20 (2019-04-12T20:46:31Z)
+  //
+  // - Currently we convert dates, times and datetimes to character before
+  //   output. If we wanted to do it in C it would be
+  //   - For dates we need 10 (2019-04-12)
+  //   - For times we need 8 (01:00:00)
+  //   - For datetimes we need 20 (2019-04-12T20:46:31Z)
 
   size_t buf_size = 0;
 
@@ -28,7 +33,7 @@ size_t get_buffer_size(
     switch (types[i]) {
     case STRSXP: {
       for (size_t j = start; j < end; ++j) {
-        auto sz = R_nchar(STRING_ELT(input[i], j), Bytes, TRUE, FALSE, "error");
+        auto sz = strlen(CHAR(STRING_ELT(input[i], j)));
         buf_size += sz;
       }
       break;
@@ -37,7 +42,10 @@ size_t get_buffer_size(
       buf_size += 5 * num_rows;
       break;
     case REALSXP:
-      buf_size += 25 * num_rows;
+      buf_size += 24 * num_rows;
+      break;
+    case INTSXP:
+      buf_size += 33 * num_rows;
       break;
     }
   }
@@ -50,13 +58,13 @@ size_t get_buffer_size(
 
 std::vector<char> fill_buf(
     const Rcpp::List& input,
+    const char delim,
     const std::vector<SEXPTYPE>& types,
-    const std::vector<double*>& real_p,
+    const std::vector<void*>& ptrs,
     size_t begin,
     size_t end) {
 
   auto buf_sz = get_buffer_size(input, types, begin, end);
-  // std::cerr << buf_sz << '\n';
   auto buf = std::vector<char>();
   buf.resize(buf_sz);
 
@@ -71,14 +79,40 @@ std::vector<char> fill_buf(
         }
         break;
       }
-      case LGLSXP:
+      case LGLSXP: {
+        int value = static_cast<int*>(ptrs[col])[row];
+        switch (value) {
+        case TRUE:
+          strcpy(buf.data() + pos, "TRUE");
+          pos += 4;
+          break;
+        case FALSE:
+          strcpy(buf.data() + pos, "FALSE");
+          pos += 5;
+          break;
+        default:
+          strcpy(buf.data() + pos, "NA");
+          pos += 2;
+          break;
+        }
         break;
-      case REALSXP:
-        int len = dtoa_grisu3(real_p[col][row], buf.data() + pos);
+      }
+      case REALSXP: {
+        int len =
+            dtoa_grisu3(static_cast<double*>(ptrs[col])[row], buf.data() + pos);
         pos += len;
         break;
       }
-      buf[pos++] = '\t';
+      case INTSXP: {
+        // TODO: use something like https://github.com/jeaiii/itoa for
+        // faster integer writing
+        auto len =
+            sprintf(buf.data() + pos, "%i", static_cast<int*>(ptrs[col])[row]);
+        pos += len;
+        break;
+      }
+      }
+      buf[pos++] = delim;
     }
     buf[pos - 1] = '\n';
   }
@@ -100,15 +134,36 @@ std::vector<SEXPTYPE> get_types(const Rcpp::List& input) {
   return out;
 }
 
-std::vector<double*> get_real_p(const Rcpp::List& input) {
-  std::vector<double*> out;
+std::vector<void*> get_ptrs(const Rcpp::List& input) {
+  std::vector<void*> out;
   for (int col = 0; col < input.length(); ++col) {
-    if (TYPEOF(input[col]) == REALSXP) {
+    switch (TYPEOF(input[col])) {
+    case REALSXP:
       out.push_back(REAL(input[col]));
-    } else {
+      break;
+    case INTSXP:
+      out.push_back(INTEGER(input[col]));
+      break;
+    case LGLSXP:
+      out.push_back(LOGICAL(input[col]));
+      break;
+    default:
       out.push_back(nullptr);
     }
   }
+  return out;
+}
+
+std::vector<char> get_header(const Rcpp::List& input, const char delim) {
+  Rcpp::CharacterVector names =
+      Rcpp::as<Rcpp::CharacterVector>(input.attr("names"));
+  std::vector<char> out;
+  for (size_t i = 0; i < names.size(); ++i) {
+    auto str = Rf_translateCharUTF8(STRING_ELT(names, i));
+    std::copy(str, str + strlen(str), std::back_inserter(out));
+    out.push_back(delim);
+  }
+  out[out.size() - 1] = '\n';
   return out;
 }
 
@@ -116,6 +171,8 @@ std::vector<double*> get_real_p(const Rcpp::List& input) {
 void vroom_write_(
     Rcpp::List input,
     std::string filename,
+    const char delim,
+    bool col_names,
     size_t buf_lines,
     size_t num_threads) {
 
@@ -132,7 +189,12 @@ void vroom_write_(
   int idx = 0;
 
   auto types = get_types(input);
-  auto real_p = get_real_p(input);
+  auto ptrs = get_ptrs(input);
+
+  if (col_names) {
+    auto header = get_header(input, delim);
+    write_buf(header, out);
+  }
 
   while (begin < num_rows) {
     auto t = 0;
@@ -140,7 +202,7 @@ void vroom_write_(
       auto num_lines = std::min(buf_lines, num_rows - begin);
       auto end = begin + num_lines;
       futures[idx][t++] =
-          std::async(fill_buf, input, types, real_p, begin, end);
+          std::async(fill_buf, input, delim, types, ptrs, begin, end);
       begin += num_lines;
     }
 
@@ -165,4 +227,27 @@ void vroom_write_(
 
   // Close the file
   std::fclose(out);
+}
+
+// [[Rcpp::export]]
+Rcpp::CharacterVector
+vroom_format_(Rcpp::List input, const char delim, bool col_names) {
+
+  size_t num_rows = Rf_xlength(input[0]);
+  Rcpp::CharacterVector out(1);
+
+  auto types = get_types(input);
+  auto ptrs = get_ptrs(input);
+
+  std::vector<char> data;
+  if (col_names) {
+    data = get_header(input, delim);
+  }
+
+  auto buf = fill_buf(input, delim, types, ptrs, 0, num_rows);
+  std::copy(buf.begin(), buf.end(), std::back_inserter(data));
+
+  out[0] = Rf_mkCharLenCE(data.data(), data.size(), CE_UTF8);
+
+  return out;
 }
