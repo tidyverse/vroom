@@ -8,8 +8,9 @@ vroom_write <- function(df, out, delim = '\t', col_names = !append, append = FAL
 }
 
 #' @export
-vroom_format <- function(df, col_names = TRUE) {
-  vroom_format_(df, col_names = col_names)
+vroom_format <- function(df, delim = '\t', col_names = TRUE) {
+  df[] <- lapply(df, readr::output_column)
+  vroom_format_(df, delim = delim, col_names = col_names)
 }
 
 #' @export

@@ -16,7 +16,7 @@ size_t get_buffer_size(
   //   character in R)
   // - For decimal numbers we need 24
   //   source: https://stackoverflow.com/a/52045523/2055486
-  // - For 32 bit integers we need 33 (32 for digits plus the sign)
+  // - For 32 bit integers we need 11 (10 for digits plus the sign)
   // - For logical we need 5 (FALSE)
   //
   // - Currently we convert dates, times and datetimes to character before
@@ -34,7 +34,7 @@ size_t get_buffer_size(
     case STRSXP: {
       for (size_t j = start; j < end; ++j) {
         auto sz = strlen(CHAR(STRING_ELT(input[i], j)));
-        buf_size += sz;
+        buf_size += sz + 2;
       }
       break;
     }
@@ -45,7 +45,7 @@ size_t get_buffer_size(
       buf_size += 24 * num_rows;
       break;
     case INTSXP:
-      buf_size += 33 * num_rows;
+      buf_size += 11 * num_rows;
       break;
     }
   }
@@ -54,6 +54,20 @@ size_t get_buffer_size(
   buf_size += input.length() * num_rows;
 
   return buf_size;
+}
+
+bool needs_quote(const char* str, const char delim) {
+  if (strncmp(str, "NA", 2) == 0) {
+    return true;
+  }
+
+  for (const char* cur = str; *cur != '\0'; ++cur) {
+    if (*cur == '\n' || *cur == '\r' || *cur == '"' || *cur == delim) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 std::vector<char> fill_buf(
@@ -73,10 +87,24 @@ std::vector<char> fill_buf(
     for (int col = 0; col < input.length(); ++col) {
       switch (types[col]) {
       case STRSXP: {
-        auto str = CHAR(STRING_ELT(input[col], row));
-        while (*str != '\0') {
-          buf[pos++] = *str++;
+        auto str = STRING_ELT(input[col], row);
+        if (str == NA_STRING) {
+          strcpy(buf.data() + pos, "NA");
+          pos += 2;
+        } else {
+          auto str_p = CHAR(str);
+          bool should_quote = needs_quote(str_p, delim);
+          if (should_quote) {
+            buf[pos++] = '"';
+          }
+          while (*str_p != '\0') {
+            buf[pos++] = *str_p++;
+          }
+          if (should_quote) {
+            buf[pos++] = '"';
+          }
         }
+
         break;
       }
       case LGLSXP: {
@@ -98,17 +126,39 @@ std::vector<char> fill_buf(
         break;
       }
       case REALSXP: {
-        int len =
-            dtoa_grisu3(static_cast<double*>(ptrs[col])[row], buf.data() + pos);
-        pos += len;
+        auto value = static_cast<double*>(ptrs[col])[row];
+        if (!R_FINITE(value)) {
+          if (ISNA(value)) {
+            strcpy(buf.data() + pos, "NA");
+            pos += 2;
+          } else if (ISNAN(value)) {
+            strcpy(buf.data() + pos, "NaN");
+            pos += 3;
+          } else if (value > 0) {
+            strcpy(buf.data() + pos, "Inf");
+            pos += 3;
+          } else {
+            strcpy(buf.data() + pos, "-Inf");
+            pos += 4;
+          }
+        } else {
+          int len = dtoa_grisu3(
+              static_cast<double*>(ptrs[col])[row], buf.data() + pos);
+          pos += len;
+        }
         break;
       }
       case INTSXP: {
-        // TODO: use something like https://github.com/jeaiii/itoa for
-        // faster integer writing
-        auto len =
-            sprintf(buf.data() + pos, "%i", static_cast<int*>(ptrs[col])[row]);
-        pos += len;
+        auto value = static_cast<int*>(ptrs[col])[row];
+        if (value == NA_INTEGER) {
+          strcpy(buf.data() + pos, "NA");
+          pos += 2;
+        } else {
+          // TODO: use something like https://github.com/jeaiii/itoa for
+          // faster integer writing
+          auto len = sprintf(buf.data() + pos, "%i", value);
+          pos += len;
+        }
         break;
       }
       }
