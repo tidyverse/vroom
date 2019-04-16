@@ -105,7 +105,7 @@ by airline.
 library(nycflights13)
 purrr::iwalk(
   split(flights, flights$carrier),
-  ~ vroom_write(.x, glue::glue("flights_{.y}.tsv"), delim = "\t")
+  ~ vroom::vroom_write(.x, glue::glue("flights_{.y}.tsv"), delim = "\t")
 )
 ```
 
