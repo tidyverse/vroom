@@ -2,6 +2,7 @@
 #include <Rcpp.h>
 #include <array>
 #include <future>
+#include <iterator>
 
 #include "RProgress.h"
 #include "connection.h"
@@ -74,6 +75,12 @@ bool needs_quote(const char* str, const char delim, const char* na_str) {
   return false;
 }
 
+// adapted from https://stackoverflow.com/a/28110728/2055486
+template <size_t N>
+void append_literal(std::vector<char>& buf, const char (&str)[N]) {
+  std::copy(std::begin(str), std::end(str) - 1, std::back_inserter(buf));
+}
+
 std::vector<char> fill_buf(
     const Rcpp::List& input,
     const char delim,
@@ -83,32 +90,27 @@ std::vector<char> fill_buf(
     size_t begin,
     size_t end) {
 
-  auto buf_sz = get_buffer_size(input, types, begin, end);
   auto buf = std::vector<char>();
-  buf.resize(buf_sz);
 
   auto na_len = strlen(na_str);
 
-  size_t pos = 0;
   for (int row = begin; row < end; ++row) {
     for (int col = 0; col < input.length(); ++col) {
       switch (types[col]) {
       case STRSXP: {
         auto str = STRING_ELT(input[col], row);
         if (str == NA_STRING) {
-          strcpy(buf.data() + pos, na_str);
-          pos += na_len;
+          std::copy(na_str, na_str + na_len, std::back_inserter(buf));
         } else {
           auto str_p = CHAR(str);
+          auto len = Rf_xlength(str);
           bool should_quote = needs_quote(str_p, delim, na_str);
           if (should_quote) {
-            buf[pos++] = '"';
+            buf.push_back('"');
           }
-          while (*str_p != '\0') {
-            buf[pos++] = *str_p++;
-          }
+          std::copy(str_p, str_p + len, std::back_inserter(buf));
           if (should_quote) {
-            buf[pos++] = '"';
+            buf.push_back('"');
           }
         }
 
@@ -118,16 +120,13 @@ std::vector<char> fill_buf(
         int value = static_cast<int*>(ptrs[col])[row];
         switch (value) {
         case TRUE:
-          strcpy(buf.data() + pos, "TRUE");
-          pos += 4;
+          append_literal(buf, "TRUE");
           break;
         case FALSE:
-          strcpy(buf.data() + pos, "FALSE");
-          pos += 5;
+          append_literal(buf, "FALSE");
           break;
         default:
-          strcpy(buf.data() + pos, na_str);
-          pos += na_len;
+          std::copy(na_str, na_str + na_len, std::back_inserter(buf));
           break;
         }
         break;
@@ -136,45 +135,39 @@ std::vector<char> fill_buf(
         auto value = static_cast<double*>(ptrs[col])[row];
         if (!R_FINITE(value)) {
           if (ISNA(value)) {
-            strcpy(buf.data() + pos, na_str);
-            pos += na_len;
+            std::copy(na_str, na_str + na_len, std::back_inserter(buf));
           } else if (ISNAN(value)) {
-            strcpy(buf.data() + pos, "NaN");
-            pos += 3;
+            append_literal(buf, "NaN");
           } else if (value > 0) {
-            strcpy(buf.data() + pos, "Inf");
-            pos += 3;
+            append_literal(buf, "Inf");
           } else {
-            strcpy(buf.data() + pos, "-Inf");
-            pos += 4;
+            append_literal(buf, "-Inf");
           }
         } else {
-          int len = dtoa_grisu3(
-              static_cast<double*>(ptrs[col])[row], buf.data() + pos);
-          pos += len;
+          char temp_buf[33];
+          int len = dtoa_grisu3(static_cast<double*>(ptrs[col])[row], temp_buf);
+          std::copy(temp_buf, temp_buf + len, std::back_inserter(buf));
         }
         break;
       }
       case INTSXP: {
         auto value = static_cast<int*>(ptrs[col])[row];
         if (value == NA_INTEGER) {
-          strcpy(buf.data() + pos, na_str);
-          pos += na_len;
+          std::copy(na_str, na_str + na_len, std::back_inserter(buf));
         } else {
           // TODO: use something like https://github.com/jeaiii/itoa for
           // faster integer writing
-          auto len = sprintf(buf.data() + pos, "%i", value);
-          pos += len;
+          char temp_buf[12];
+          auto len = sprintf(temp_buf, "%i", value);
+          std::copy(temp_buf, temp_buf + len, std::back_inserter(buf));
         }
         break;
       }
       }
-      buf[pos++] = delim;
+      buf.push_back(delim);
     }
-    buf[pos - 1] = '\n';
+    buf[buf.size() - 1] = '\n';
   }
-
-  buf.resize(pos);
 
   return buf;
 }
