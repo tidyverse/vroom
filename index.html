@@ -192,7 +192,7 @@
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(nycflights13)</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/imap.html">iwalk</a></span>(</a>
 <a class="sourceLine" id="cb3-3" data-line-number="3">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/split">split</a></span>(flights, flights<span class="op">$</span>carrier),</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">  <span class="op">~</span><span class="st"> </span>readr<span class="op">::</span><span class="kw"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_tsv</a></span>(.x, glue<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/glue/topics/glue">glue</a></span>(<span class="st">"flights_{.y}.tsv"</span>))</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">  <span class="op">~</span><span class="st"> </span>vroom<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/vroom/topics/vroom_write">vroom_write</a></span>(.x, glue<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/glue/topics/glue">glue</a></span>(<span class="st">"flights_{.y}.tsv"</span>), <span class="dt">delim =</span> <span class="st">"</span><span class="ch">\t</span><span class="st">"</span>)</a>
 <a class="sourceLine" id="cb3-5" data-line-number="5">)</a></code></pre></div>
 <p>Then we can efficiently read them into one tibble by passing the filenames directly to vroom.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">files &lt;-<span class="st"> </span>fs<span class="op">::</span><span class="kw"><a href="http://fs.r-lib.org/reference/dir_ls.html">dir_ls</a></span>(<span class="dt">glob =</span> <span class="st">"flights*tsv"</span>)</a>
@@ -251,6 +251,8 @@
 <code>VROOM_SHOW_PROGRESS</code> - Whether to show the progress bar when indexing. Regardless of this setting the progress bar is disabled in non-interactive settings, R notebooks, when running tests with testthat and when knitting documents.</li>
 <li>
 <code>VROOM_CONNECTION_SIZE</code> - The size (in bytes) of the connection buffer when reading from connections (default is 128 KiB).</li>
+<li>
+<code>VROOM_WRITE_BUFFER_LINES</code> - The number of lines to use for each buffer when writing files (default: 1000).</li>
 </ul>
 <p>There are also a family of variables to control use of the Altrep framework. For versions of R where the Altrep framework is unavailable (R &lt; 3.5.0) they are automatically turned off and the variables have no effect. The variables can take one of <code>true</code>, <code>false</code>, <code>TRUE</code>, <code>FALSE</code>, <code>1</code>, or <code>0</code>.</p>
 <ul>

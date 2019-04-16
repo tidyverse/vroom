@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • vroom</title>
+<title>Write a data frame to a delimited file — vroom_write • vroom</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,7 +30,10 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Write a data frame to a delimited file — vroom_write" />
+
+<meta property="og:description" content="Write a data frame to a delimited file" />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -47,7 +50,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -109,120 +112,87 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Write a data frame to a delimited file</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jimhester/vroom/blob/master/R/vroom_write.R'><code>R/vroom_write.R</code></a></small>
+    <div class="hidden name"><code>vroom_write.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    
+    <p>Write a data frame to a delimited file</p>
+    
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
-
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="cols.html">cols()</a></code> <code><a href="cols.html">cols_only()</a></code> <code><a href="cols.html">col_logical()</a></code> <code><a href="cols.html">col_integer()</a></code> <code><a href="cols.html">col_double()</a></code> <code><a href="cols.html">col_character()</a></code> <code><a href="cols.html">col_skip()</a></code> <code><a href="cols.html">col_number()</a></code> <code><a href="cols.html">col_guess()</a></code> <code><a href="cols.html">col_factor()</a></code> <code><a href="cols.html">col_datetime()</a></code> <code><a href="cols.html">col_date()</a></code> <code><a href="cols.html">col_time()</a></code> </p>
-        </td>
-        <td><p>Create column specification</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="date_names.html">date_names()</a></code> <code><a href="date_names.html">date_names_lang()</a></code> <code><a href="date_names.html">date_names_langs()</a></code> </p>
-        </td>
-        <td><p>Create or retrieve date names</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="gen_tbl.html">gen_tbl()</a></code> </p>
-        </td>
-        <td><p>Generate a random tibble</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="guess_type.html">guess_type()</a></code> </p>
-        </td>
-        <td><p>Guess the type of a vector</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="locale.html">locale()</a></code> <code><a href="locale.html">default_locale()</a></code> </p>
-        </td>
-        <td><p>Create locales</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="spec.html">cols_condense()</a></code> <code><a href="spec.html">spec()</a></code> </p>
-        </td>
-        <td><p>Examine the column specifications for a data frame</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="vroom.html">vroom()</a></code> </p>
-        </td>
-        <td><p>Read a delimited file into a tibble</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="vroom_altrep_opts.html">vroom_altrep_opts()</a></code> </p>
-        </td>
-        <td><p>Show which column types are using Altrep</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="vroom_example.html">vroom_example()</a></code> </p>
-        </td>
-        <td><p>Get path to vroom examples</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="vroom_format.html">vroom_format()</a></code> </p>
-        </td>
-        <td><p>Convert a data frame to a delimited string</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="vroom_fwf.html">vroom_fwf()</a></code> <code><a href="vroom_fwf.html">fwf_empty()</a></code> <code><a href="vroom_fwf.html">fwf_widths()</a></code> <code><a href="vroom_fwf.html">fwf_positions()</a></code> <code><a href="vroom_fwf.html">fwf_cols()</a></code> </p>
-        </td>
-        <td><p>Read a fixed width file into a tibble</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="vroom_progress.html">vroom_progress()</a></code> </p>
-        </td>
-        <td><p>Determine progress bars should be shown</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="vroom_str.html">vroom_str()</a></code> </p>
-        </td>
-        <td><p>Structure of objects</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="vroom_write.html">vroom_write()</a></code> </p>
-        </td>
-        <td><p>Write a data frame to a delimited file</p></td>
-      </tr>
-    </tbody>
+    <pre class="usage"><span class='fu'>vroom_write</span>(<span class='no'>x</span>, <span class='no'>path</span>, <span class='kw'>delim</span> <span class='kw'>=</span> <span class='st'>"\t"</span>, <span class='kw'>na</span> <span class='kw'>=</span> <span class='st'>"NA"</span>, <span class='kw'>col_names</span> <span class='kw'>=</span> !<span class='no'>append</span>,
+  <span class='kw'>append</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(),
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>())</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>A data frame to write to disk</p></td>
+    </tr>
+    <tr>
+      <th>path</th>
+      <td><p>Path or connection to write to.</p></td>
+    </tr>
+    <tr>
+      <th>delim</th>
+      <td><p>One of more characters used to delimiter fields within a
+record. If `NULL` the delimiter is guessed from the set of (",", "\t", " ",
+"|", ":", ";", "\n").</p></td>
+    </tr>
+    <tr>
+      <th>na</th>
+      <td><p>Character vector of strings to interpret as missing values. Set this
+option to <code><a href='https://www.rdocumentation.org/packages/base/topics/character'>character()</a></code> to indicate no missing values.</p></td>
+    </tr>
+    <tr>
+      <th>col_names</th>
+      <td><p>Either <code>TRUE</code>, <code>FALSE</code> or a character vector
+of column names.</p>
+<p>If <code>TRUE</code>, the first row of the input will be used as the column
+names, and will not be included in the data frame. If <code>FALSE</code>, column
+names will be generated automatically: X1, X2, X3 etc.</p>
+<p>If <code>col_names</code> is a character vector, the values will be used as the
+names of the columns, and the first row of the input will be read into
+the first row of the output data frame.</p>
+<p>Missing (<code>NA</code>) column names will generate a warning, and be filled
+in with dummy names <code>X1</code>, <code>X2</code> etc. Duplicate column names
+will generate a warning and be made unique with a numeric prefix.</p></td>
+    </tr>
+    <tr>
+      <th>append</th>
+      <td><p>If <code>FALSE</code>, will overwrite existing file. If <code>TRUE</code>,
+will append to existing file. In both cases, if file does not exist a new
+file is created.</p></td>
+    </tr>
+    <tr>
+      <th>num_threads</th>
+      <td><p>Number of threads to use when reading and materializing vectors.</p></td>
+    </tr>
+    <tr>
+      <th>progress</th>
+      <td><p>Display a progress bar? By default it will only display
+in an interactive session and not while knitting a document. The display
+is updated every 50,000 values and will only display if estimated reading
+time is 5 seconds or more. The automatic progress bar can be disabled by
+setting option <code>readr.show_progress</code> to <code>FALSE</code>.</p></td>
+    </tr>
     </table>
-  </div>
+    
 
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
-    </ul>
+      <li><a href="#arguments">Arguments</a></li>
+                </ul>
+
   </div>
 </div>
 
