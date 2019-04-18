@@ -72,13 +72,25 @@ all_col_types <- tibble::tribble(
 #' This is useful for benchmarking, but also for bug reports when you cannot
 #' share the real dataset.
 #' @param rows Number of rows to generate
-#' @param cols Number of columns to generate
+#' @param cols Number of columns to generate, if `NULL` this is derived from `col_types`.
 #' @param missing The percentage (from 0 to 1) of missing data to use
 #' @inheritParams vroom
 #' @export
-gen_tbl <- function(rows, cols, col_types = NULL, locale = default_locale(), missing = 0) {
-  nms <- make_names(NULL, cols)
-  specs <- col_types_standardise(col_types, nms, vroom_enquo(rlang::quo(NULL)))
+gen_tbl <- function(rows, cols = NULL, col_types = NULL, locale = default_locale(), missing = 0) {
+
+  if (is.null(cols) && is.null(col_types)) {
+    stop("One of `cols` or `col_types` must be set", call. = FALSE)
+  }
+
+  spec <- as.col_spec(col_types)
+
+  if (is.null(cols)) {
+    cols <- length(spec$cols)
+  }
+
+  nms <- make_names(names(spec$cols), cols)
+
+  specs <- col_types_standardise(spec, nms, vroom_enquo(rlang::quo(NULL)))
   res <- vector("list", cols)
   for (i in seq_len(cols)) {
     type <- sub("collector_", "", class(specs$cols[[i]])[[1]])

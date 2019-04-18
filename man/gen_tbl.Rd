@@ -4,13 +4,13 @@
 \alias{gen_tbl}
 \title{Generate a random tibble}
 \usage{
-gen_tbl(rows, cols, col_types = NULL, locale = default_locale(),
-  missing = 0)
+gen_tbl(rows, cols = NULL, col_types = NULL,
+  locale = default_locale(), missing = 0)
 }
 \arguments{
 \item{rows}{Number of rows to generate}
 
-\item{cols}{Number of columns to generate}
+\item{cols}{Number of columns to generate, if `NULL` this is derived from `col_types`.}
 
 \item{col_types}{One of \code{NULL}, a \code{\link[=cols]{cols()}} specification, or
 a string. See \code{vignette("readr")} for more details.
