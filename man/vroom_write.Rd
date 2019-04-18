@@ -42,6 +42,10 @@ file is created.}
 
 \item{quote}{Single character used to quote strings.}
 
+\item{escape}{The type of escape to use when quotes are in the data.}
+
+\item{bom}{If `TRUE` add a UTF-8 BOM at the beginning of the file.}
+
 \item{num_threads}{Number of threads to use when reading and materializing vectors.}
 
 \item{progress}{Display a progress bar? By default it will only display

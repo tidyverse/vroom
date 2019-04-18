@@ -33,7 +33,11 @@ Missing (\code{NA}) column names will generate a warning, and be filled
 in with dummy names \code{X1}, \code{X2} etc. Duplicate column names
 will generate a warning and be made unique with a numeric prefix.}
 
+\item{escape}{The type of escape to use when quotes are in the data.}
+
 \item{quote}{Single character used to quote strings.}
+
+\item{bom}{If `TRUE` add a UTF-8 BOM at the beginning of the file.}
 }
 \description{
 This is equivalent to [vroom_write()], but instead of writing to
