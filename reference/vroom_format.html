@@ -129,7 +129,9 @@ testing.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>vroom_format</span>(<span class='no'>x</span>, <span class='kw'>delim</span> <span class='kw'>=</span> <span class='st'>"\t"</span>, <span class='kw'>na</span> <span class='kw'>=</span> <span class='st'>"NA"</span>, <span class='kw'>col_names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>vroom_format</span>(<span class='no'>x</span>, <span class='kw'>delim</span> <span class='kw'>=</span> <span class='st'>"\t"</span>, <span class='kw'>na</span> <span class='kw'>=</span> <span class='st'>"NA"</span>, <span class='kw'>col_names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>escape</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"double"</span>, <span class='st'>"backslash"</span>, <span class='st'>"none"</span>), <span class='kw'>quote</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"needed"</span>, <span class='st'>"all"</span>,
+  <span class='st'>"none"</span>), <span class='kw'>bom</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -162,6 +164,18 @@ the first row of the output data frame.</p>
 <p>Missing (<code>NA</code>) column names will generate a warning, and be filled
 in with dummy names <code>X1</code>, <code>X2</code> etc. Duplicate column names
 will generate a warning and be made unique with a numeric prefix.</p></td>
+    </tr>
+    <tr>
+      <th>escape</th>
+      <td><p>The type of escape to use when quotes are in the data.</p></td>
+    </tr>
+    <tr>
+      <th>quote</th>
+      <td><p>Single character used to quote strings.</p></td>
+    </tr>
+    <tr>
+      <th>bom</th>
+      <td><p>If `TRUE` add a UTF-8 BOM at the beginning of the file.</p></td>
     </tr>
     </table>
     

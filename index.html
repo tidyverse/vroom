@@ -94,7 +94,7 @@
 <p>The fastest delimited reader for R, <strong>1.04 GB/sec</strong>.</p>
 <p>But that’s impossible! How can it be <a href="https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html">so fast</a>?</p>
 <p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use.</p>
-<p>vroom also uses multiple threads for indexing and materializing non-character columns, to further improve performance.</p>
+<p>vroom also uses multiple threads for indexing, materializing non-character columns, and when writing to further improve performance.</p>
 <table class="table table">
 <thead><tr class="header">
 <th align="left">package</th>
@@ -157,6 +157,7 @@
 <li>windows newlines</li>
 <li><a href="#reading-multiple-files">reading from multiple files or connections*</a></li>
 <li>embedded newlines in headers and fields**</li>
+<li>writing delimited files with as-needed quoting.</li>
 </ul>
 <p>* <em>these are additional features only in vroom.</em></p>
 <p>** <em>requires <code>num_threads = 1</code>.</em></p>
@@ -231,12 +232,6 @@
 <a href="#benchmarks" class="anchor"></a>Benchmarks</h2>
 <p>The speed quoted above is from a dataset with 14,776,615 rows and 11 columns, see the <a href="https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html">benchmark article</a> for full details of the dataset and <a href="https://github.com/jimhester/vroom/blob/master/inst/bench">bench/</a> for the code used to retrieve the data and perform the benchmarks.</p>
 </div>
-<div id="rstudio-caveats" class="section level2">
-<h2 class="hasAnchor">
-<a href="#rstudio-caveats" class="anchor"></a>RStudio caveats</h2>
-<p>RStudio’s environment pane auto-refresh behavior calls <code><a href="https://www.rdocumentation.org/packages/utils/topics/object.size">object.size()</a></code> which for Altrep objects can be extremely slow. This was fixed in <a href="https://github.com/rstudio/rstudio/pull/4210">rstudio#4210</a> and <a href="https://github.com/rstudio/rstudio/pull/4292">rstudio#4292</a>, so it is recommended you use a <a href="https://dailies.rstudio.com/">daily version</a> if you are trying to use vroom inside RStudio. For older versions a workaround is to use the ‘Manual Refresh Only’ option in the environment pane.</p>
-<p><img src="https://user-images.githubusercontent.com/470418/51357022-95a1f280-1a82-11e9-8035-3687c8fd5dd8.png"></p>
-</div>
 </div>
 <div id="environment-variables" class="section level1">
 <h1 class="hasAnchor">
@@ -271,6 +266,12 @@
 <li><code>VROOM_USE_ALTREP_DATE</code></li>
 <li><code>VROOM_USE_ALTREP_TIME</code></li>
 </ul>
+<div id="rstudio-caveats" class="section level2">
+<h2 class="hasAnchor">
+<a href="#rstudio-caveats" class="anchor"></a>RStudio caveats</h2>
+<p>RStudio’s environment pane auto-refresh behavior calls <code><a href="https://www.rdocumentation.org/packages/utils/topics/object.size">object.size()</a></code> which for Altrep objects can be extremely slow. This was fixed in <a href="https://github.com/rstudio/rstudio/pull/4210">rstudio#4210</a> and <a href="https://github.com/rstudio/rstudio/pull/4292">rstudio#4292</a>, so it is recommended you use a <a href="https://dailies.rstudio.com/">daily version</a> if you are trying to use vroom inside RStudio. For older versions a workaround is to use the ‘Manual Refresh Only’ option in the environment pane.</p>
+<p><img src="https://user-images.githubusercontent.com/470418/51357022-95a1f280-1a82-11e9-8035-3687c8fd5dd8.png"></p>
+</div>
 <div id="thanks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#thanks" class="anchor"></a>Thanks</h2>

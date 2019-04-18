@@ -126,8 +126,9 @@
     </div>
 
     <pre class="usage"><span class='fu'>vroom_write</span>(<span class='no'>x</span>, <span class='no'>path</span>, <span class='kw'>delim</span> <span class='kw'>=</span> <span class='st'>"\t"</span>, <span class='kw'>na</span> <span class='kw'>=</span> <span class='st'>"NA"</span>, <span class='kw'>col_names</span> <span class='kw'>=</span> !<span class='no'>append</span>,
-  <span class='kw'>append</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(),
-  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>())</pre>
+  <span class='kw'>append</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>quote</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"needed"</span>, <span class='st'>"all"</span>, <span class='st'>"none"</span>),
+  <span class='kw'>escape</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"double"</span>, <span class='st'>"backslash"</span>, <span class='st'>"none"</span>), <span class='kw'>bom</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(), <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>())</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -170,6 +171,18 @@ will generate a warning and be made unique with a numeric prefix.</p></td>
       <td><p>If <code>FALSE</code>, will overwrite existing file. If <code>TRUE</code>,
 will append to existing file. In both cases, if file does not exist a new
 file is created.</p></td>
+    </tr>
+    <tr>
+      <th>quote</th>
+      <td><p>Single character used to quote strings.</p></td>
+    </tr>
+    <tr>
+      <th>escape</th>
+      <td><p>The type of escape to use when quotes are in the data.</p></td>
+    </tr>
+    <tr>
+      <th>bom</th>
+      <td><p>If `TRUE` add a UTF-8 BOM at the beginning of the file.</p></td>
     </tr>
     <tr>
       <th>num_threads</th>
