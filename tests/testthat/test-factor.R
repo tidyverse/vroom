@@ -74,7 +74,7 @@ test_that("NAs included in levels if desired", {
 })
 
 #test_that("Factors handle encodings properly (#615)", {
-  #x <- read_csv(encoded("test\nA\n\xC4\n", "latin1"),
+  #x <- test_vroom(encoded("test\nA\n\xC4\n", "latin1"),
     #col_types = cols(col_factor(c("A", "\uC4"))),
     #locale = locale(encoding = "latin1"), progress = FALSE)
 

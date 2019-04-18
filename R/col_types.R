@@ -338,11 +338,7 @@ col_types_standardise <- function(col_types, col_names, col_select) {
     # unnamed types & names guessed from header: match exactly
 
     if (length(spec$cols) != length(col_names)) {
-      warning("Unnamed `col_types` should have the same length as `col_names`. ",
-        "Using smaller of the two.", call. = FALSE)
-      n <- min(length(col_names), length(spec$cols))
-      spec$cols <- spec$cols[seq_len(n)]
-      col_names <- col_names[seq_len(n)]
+      stop("Unnamed `col_types` must have the same length as `col_names`.", call. = FALSE)
     }
 
     names(spec$cols) <- col_names

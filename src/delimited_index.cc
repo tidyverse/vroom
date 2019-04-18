@@ -143,7 +143,7 @@ delimited_index::delimited_index(
         [&](size_t start, size_t end, size_t id) {
           idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
           start = find_next_newline(mmap_, first_nl + start);
-          end = find_next_newline(mmap_, first_nl + end);
+          end = find_next_newline(mmap_, first_nl + end) + 1;
           size_t cols = 0;
           index_region(
               mmap_,

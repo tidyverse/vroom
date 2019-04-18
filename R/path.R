@@ -95,7 +95,7 @@ utils::globalVariables("con")
 chr_to_file <- function(x, envir = parent.frame()) {
   out <- tempfile()
   con <- file(out, "wb")
-  writeLines(x, con, useBytes = TRUE)
+  writeLines(sub("\n$", "", x), con, useBytes = TRUE)
   close(con)
 
   withr::defer(unlink(out), envir = envir)
