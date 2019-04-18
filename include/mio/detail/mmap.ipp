@@ -124,7 +124,7 @@ file_handle_type open_file(const String& path, const access_mode mode,
     return handle;
 }
 
-inline int64_t query_file_size(file_handle_type handle, std::error_code& error)
+inline size_t query_file_size(file_handle_type handle, std::error_code& error)
 {
     error.clear();
 #ifdef _WIN32
@@ -201,7 +201,7 @@ inline mmap_context memory_map(const file_handle_type file_handle, const int64_t
     }
 #endif
     mmap_context ctx;
-    ctx.data = mapping_start + offset - aligned_offset;
+    ctx.data = mapping_start + offset;
     ctx.length = length;
     ctx.mapped_length = length_to_map;
 #ifdef _WIN32
@@ -400,9 +400,10 @@ void basic_mmap<AccessMode, ByteT>::unmap()
     if(data_) { ::munmap(const_cast<pointer>(get_mapping_start()), mapped_length_); }
 #endif
 
-    // If file_handle_ was obtained by our opening it (when map is called with a path,
-    // rather than an existing file handle), we need to close it, otherwise it must not
-    // be closed as it may still be used outside this instance.
+    // If `file_handle_` was obtained by our opening it (when map is called with
+    // a path, rather than an existing file handle), we need to close it,
+    // otherwise it must not be closed as it may still be used outside this
+    // instance.
     if(is_handle_internal_)
     {
 #ifdef _WIN32
