@@ -296,7 +296,7 @@ void vroom_write_(
   auto types = get_types(input);
   auto ptrs = get_ptrs(input);
 
-  if (options & bom) {
+  if (!append && options & bom) {
     std::vector<char> bom{'\xEF', '\xBB', '\xBF'};
     write_buf(bom, out);
   }
