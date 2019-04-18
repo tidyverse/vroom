@@ -8,6 +8,14 @@
 #include "connection.h"
 #include "utils.h"
 
+typedef enum {
+  quote_needed = 1,
+  quote_all = 2,
+  escape_double = 4,
+  escape_backslash = 8,
+  bom = 16
+} vroom_write_opt_t;
+
 size_t get_buffer_size(
     const Rcpp::List& input,
     const std::vector<SEXPTYPE>& types,
@@ -81,10 +89,52 @@ void append_literal(std::vector<char>& buf, const char (&str)[N]) {
   std::copy(std::begin(str), std::end(str) - 1, std::back_inserter(buf));
 }
 
+void str_to_buf(
+    SEXP str,
+    std::vector<char>& buf,
+    const char delim,
+    const char* na_str,
+    size_t na_len,
+    size_t options) {
+
+  if (str == NA_STRING) {
+    std::copy(na_str, na_str + na_len, std::back_inserter(buf));
+    return;
+  }
+
+  auto str_p = CHAR(str);
+  auto len = Rf_xlength(str);
+  bool should_quote =
+      options & quote_all ||
+      (options & quote_needed && needs_quote(str_p, delim, na_str));
+  if (should_quote) {
+    buf.push_back('"');
+  }
+
+  auto end = str_p + len;
+  bool should_escape = options & (escape_double | escape_backslash);
+  auto escape =
+      options & escape_double ? '"' : options & escape_backslash ? '\\' : '\0';
+
+  buf.reserve(buf.size() + len);
+  while (str_p < end) {
+    if (should_escape && *str_p == '"') {
+      buf.push_back(escape);
+    }
+    buf.push_back(*str_p++);
+  }
+
+  if (should_quote) {
+    buf.push_back('"');
+  }
+  return;
+}
+
 std::vector<char> fill_buf(
     const Rcpp::List& input,
     const char delim,
     const char* na_str,
+    size_t options,
     const std::vector<SEXPTYPE>& types,
     const std::vector<void*>& ptrs,
     size_t begin,
@@ -99,21 +149,7 @@ std::vector<char> fill_buf(
       switch (types[col]) {
       case STRSXP: {
         auto str = STRING_ELT(input[col], row);
-        if (str == NA_STRING) {
-          std::copy(na_str, na_str + na_len, std::back_inserter(buf));
-        } else {
-          auto str_p = CHAR(str);
-          auto len = Rf_xlength(str);
-          bool should_quote = needs_quote(str_p, delim, na_str);
-          if (should_quote) {
-            buf.push_back('"');
-          }
-          std::copy(str_p, str_p + len, std::back_inserter(buf));
-          if (should_quote) {
-            buf.push_back('"');
-          }
-        }
-
+        str_to_buf(str, buf, delim, na_str, na_len, options);
         break;
       }
       case LGLSXP: {
@@ -229,6 +265,7 @@ void vroom_write_(
     const char* na_str,
     bool col_names,
     bool append,
+    size_t options,
     size_t num_threads,
     bool progress,
     size_t buf_lines) {
@@ -259,6 +296,11 @@ void vroom_write_(
   auto types = get_types(input);
   auto ptrs = get_ptrs(input);
 
+  if (options & bom) {
+    std::vector<char> bom{'\xEF', '\xBB', '\xBF'};
+    write_buf(bom, out);
+  }
+
   if (col_names) {
     auto header = get_header(input, delim);
     write_buf(header, out);
@@ -275,8 +317,8 @@ void vroom_write_(
     while (t < num_threads && begin < num_rows) {
       auto num_lines = std::min(buf_lines, num_rows - begin);
       auto end = begin + num_lines;
-      futures[idx][t++] =
-          std::async(fill_buf, input, delim, na_str, types, ptrs, begin, end);
+      futures[idx][t++] = std::async(
+          fill_buf, input, delim, na_str, options, types, ptrs, begin, end);
       begin += num_lines;
     }
 
@@ -322,6 +364,7 @@ void vroom_write_connection_(
     const char* na_str,
     bool col_names,
     bool append,
+    size_t options,
     size_t num_threads,
     bool progress,
     size_t buf_lines) {
@@ -365,8 +408,8 @@ void vroom_write_connection_(
     while (t < num_threads && begin < num_rows) {
       auto num_lines = std::min(buf_lines, num_rows - begin);
       auto end = begin + num_lines;
-      futures[idx][t++] =
-          std::async(fill_buf, input, delim, na_str, types, ptrs, begin, end);
+      futures[idx][t++] = std::async(
+          fill_buf, input, delim, na_str, options, types, ptrs, begin, end);
       begin += num_lines;
     }
 
@@ -407,7 +450,11 @@ void vroom_write_connection_(
 
 // [[Rcpp::export]]
 Rcpp::CharacterVector vroom_format_(
-    Rcpp::List input, const char delim, const char* na_str, bool col_names) {
+    Rcpp::List input,
+    const char delim,
+    const char* na_str,
+    bool col_names,
+    size_t options) {
 
   size_t num_rows = Rf_xlength(input[0]);
   Rcpp::CharacterVector out(1);
@@ -416,11 +463,17 @@ Rcpp::CharacterVector vroom_format_(
   auto ptrs = get_ptrs(input);
 
   std::vector<char> data;
+
+  if (options & bom) {
+    std::vector<char> bom{'\xEF', '\xBB', '\xBF'};
+    std::copy(bom.begin(), bom.end(), std::back_inserter(data));
+  }
+
   if (col_names) {
     data = get_header(input, delim);
   }
 
-  auto buf = fill_buf(input, delim, na_str, types, ptrs, 0, num_rows);
+  auto buf = fill_buf(input, delim, na_str, options, types, ptrs, 0, num_rows);
   std::copy(buf.begin(), buf.end(), std::back_inserter(data));
 
   out[0] = Rf_mkCharLenCE(data.data(), data.size(), CE_UTF8);

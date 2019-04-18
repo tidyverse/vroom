@@ -67,27 +67,20 @@ test_that("fails to create file in non-existent directory", {
     "Cannot open file for writing")
 })
 
-#test_that("write_excel_csv/csv2 includes a byte order mark", {
-  #tmp <- tempfile()
-  #on.exit(unlink(tmp))
+test_that("includes a byte order mark if desired", {
+  tmp <- tempfile()
+  on.exit(unlink(tmp))
 
-  #tmp2 <- tempfile()
-  #on.exit(unlink(tmp2))
+  vroom_write(mtcars, tmp, bom = TRUE)
 
-  #write_excel_csv(mtcars, tmp)
-  #write_excel_csv2(mtcars, tmp2)
+  output <- readBin(tmp, "raw", file.info(tmp)$size)
 
-  #output <- readBin(tmp, "raw", file.info(tmp)$size)
-  #output2 <- readBin(tmp2, "raw", file.info(tmp2)$size)
+  # BOM is there
+  expect_equal(output[1:3], charToRaw("\xEF\xBB\xBF"))
 
-  ## BOM is there
-  #expect_equal(output[1:3], charToRaw("\xEF\xBB\xBF"))
-  #expect_equal(output2[1:3], charToRaw("\xEF\xBB\xBF"))
-
-  ## Rest of file also there
-  #expect_equal(output[4:6], charToRaw("mpg"))
-  #expect_equal(output2[4:6], charToRaw("mpg"))
-#})
+  # Rest of file also there
+  expect_equal(output[4:6], charToRaw("mpg"))
+})
 
 
 test_that("does not writes a trailing .0 for whole number doubles", {
@@ -106,16 +99,24 @@ test_that("does not writes a trailing .0 for whole number doubles", {
   expect_equal(vroom_format(tibble::tibble(x = -123456789)), "x\n-123456789\n")
 })
 
-#test_that("write_csv can write to compressed files", {
-  #mt <- read_csv(readr_example("mtcars.csv.bz2"))
+test_that("write_csv can write to compressed files", {
+  mt <- vroom(vroom_example("mtcars.csv"))
 
-  #filename <- file.path(tempdir(), "mtcars.csv.bz2")
-  #on.exit(unlink(filename))
-  #write_csv(mt, filename)
+  filename <- file.path(tempdir(), "mtcars.csv.bz2")
+  on.exit(unlink(filename))
+  vroom_write(mt, filename)
 
-  #expect_true(is_bz2_file(filename))
-  #expect_equal(mt, read_csv(filename))
-#})
+  is_bz2_file <- function(x) {
+
+    # Magic number for bz2 is "BZh" in ASCII
+    # https://en.wikipedia.org/wiki/Bzip2#File_format
+    identical(charToRaw("BZh"), readBin(x, n = 3, what = "raw"))
+  }
+
+  expect_true(is_bz2_file(filename))
+
+  expect_equal(vroom(filename), mt)
+})
 
 test_that("write_csv writes large integers without scientific notation #671", {
   x <- data.frame(a = c(60150001022000, 60150001022001))
@@ -143,17 +144,16 @@ test_that("write_csv writes large integers without scientific notation up to 1E1
   #expect_equal(format_csv2(df), "x;y\n0,5;a\nNA;b\n1,2;NA\n")
 #})
 
-#test_that("Can change the escape behavior for quotes", {
-  #df <- data.frame(x = c("a", '"', ",", "\n"))
+test_that("Can change the escape behavior for quotes", {
+  df <- data.frame(x = c("a", '"', ",", "\n"))
 
-  #expect_error(format_delim(df, "\t", quote_escape = "invalid"), "should be one of")
+  expect_error(vroom_format(df, "\t", escape = "invalid"), "should be one of")
 
-  #expect_equal(format_delim(df, "\t"), "x\na\n\"\"\"\"\n,\n\"\n\"\n")
-  #expect_equal(format_delim(df, "\t", quote_escape = "double"), "x\na\n\"\"\"\"\n,\n\"\n\"\n")
-  #expect_equal(format_delim(df, "\t", quote_escape = "backslash"), "x\na\n\"\\\"\"\n,\n\"\n\"\n")
-  #expect_equal(format_delim(df, "\t", quote_escape = "none"), "x\na\n\"\"\"\n,\n\"\n\"\n")
-  #expect_equal(format_delim(df, "\t", quote_escape = FALSE), "x\na\n\"\"\"\n,\n\"\n\"\n")
-#})
+  expect_equal(vroom_format(df, "\t"), 'x\na\n""""\n,\n"\n"\n')
+  expect_equal(vroom_format(df, "\t", escape = "double"), "x\na\n\"\"\"\"\n,\n\"\n\"\n")
+  expect_equal(vroom_format(df, "\t", escape = "backslash"), "x\na\n\"\\\"\"\n,\n\"\n\"\n")
+  expect_equal(vroom_format(df, "\t", escape = "none"), "x\na\n\"\"\"\n,\n\"\n\"\n")
+})
 
 test_that("hms NAs are written without padding (#930)", {
   df <- data.frame(x = hms::as.hms(c(NA, 34.234)))

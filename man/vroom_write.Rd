@@ -5,8 +5,9 @@
 \title{Write a data frame to a delimited file}
 \usage{
 vroom_write(x, path, delim = "\\t", na = "NA", col_names = !append,
-  append = FALSE, num_threads = vroom_threads(),
-  progress = vroom_progress())
+  append = FALSE, quote = c("needed", "all", "none"),
+  escape = c("double", "backslash", "none"), bom = FALSE,
+  num_threads = vroom_threads(), progress = vroom_progress())
 }
 \arguments{
 \item{x}{A data frame to write to disk}
@@ -38,6 +39,8 @@ will generate a warning and be made unique with a numeric prefix.}
 \item{append}{If \code{FALSE}, will overwrite existing file. If \code{TRUE},
 will append to existing file. In both cases, if file does not exist a new
 file is created.}
+
+\item{quote}{Single character used to quote strings.}
 
 \item{num_threads}{Number of threads to use when reading and materializing vectors.}
 

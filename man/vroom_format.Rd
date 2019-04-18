@@ -4,7 +4,9 @@
 \alias{vroom_format}
 \title{Convert a data frame to a delimited string}
 \usage{
-vroom_format(x, delim = "\\t", na = "NA", col_names = TRUE)
+vroom_format(x, delim = "\\t", na = "NA", col_names = TRUE,
+  escape = c("double", "backslash", "none"), quote = c("needed", "all",
+  "none"), bom = FALSE)
 }
 \arguments{
 \item{x}{A data frame to write to disk}
@@ -30,6 +32,8 @@ the first row of the output data frame.
 Missing (\code{NA}) column names will generate a warning, and be filled
 in with dummy names \code{X1}, \code{X2} etc. Duplicate column names
 will generate a warning and be made unique with a numeric prefix.}
+
+\item{quote}{Single character used to quote strings.}
 }
 \description{
 This is equivalent to [vroom_write()], but instead of writing to

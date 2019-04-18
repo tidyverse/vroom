@@ -3,7 +3,16 @@
 #' @inheritParams vroom
 #' @inheritParams readr::write_tsv
 #' @export
-vroom_write <- function(x, path, delim = '\t', na = "NA", col_names = !append, append = FALSE, num_threads = vroom_threads(), progress = vroom_progress()) {
+vroom_write <- function(x, path, delim = '\t', na = "NA", col_names = !append,
+  append = FALSE, quote = c("needed", "all", "none"), escape =
+    c("double", "backslash", "none"), bom = FALSE, num_threads =
+    vroom_threads(), progress = vroom_progress()) {
+
+  quote <- match.arg(quote)
+  escape <- match.arg(escape)
+
+  opts <- get_vroom_write_opts(quote, escape, bom)
+
   # Standardise path returns a list, but we will only ever have 1 output file.
   path <- standardise_one_path(path, check = FALSE)
 
@@ -14,15 +23,37 @@ vroom_write <- function(x, path, delim = '\t', na = "NA", col_names = !append, a
   buf_lines <- max(as.integer(Sys.getenv("VROOM_WRITE_BUFFER_SIZE", nrow(x) / 100 / num_threads)), 1)
 
   if (inherits(path, "connection")) {
-    vroom_write_connection_(x, path, delim, na_str = na, col_names = col_names, append = append, num_threads = num_threads, progress = progress,
-      buf_lines = buf_lines)
+    vroom_write_connection_(x, path, delim, na_str = na, col_names = col_names,
+      append = append, options = opts, num_threads = num_threads, progress = progress, buf_lines = buf_lines)
   } else {
-    vroom_write_(x, path, delim, na_str = na, col_names = col_names, append = append, num_threads = num_threads, progress = progress,
-      buf_lines = buf_lines)
+    vroom_write_(x, path, delim, na_str = na, col_names = col_names,
+      append = append, options = opts,
+      num_threads = num_threads, progress = progress, buf_lines = buf_lines)
   }
 
   invisible(x_in)
 }
+
+
+get_vroom_write_opts <- function(quote, escape, bom) {
+  v_opts <- vroom_write_opts()
+  bitwOr(
+    v_opts[paste0("quote_", quote)],
+    bitwOr(
+      v_opts[paste0("escape_", escape)],
+      if (bom) v_opts["bom"] else 0)
+  )
+}
+
+vroom_write_opts <- function() c(
+  "quote_none" = 0L,
+  "escape_none" = 0L,
+  "quote_needed" = 1L,
+  "quote_all" = 2L,
+  "escape_double" = 4L,
+  "escape_backslash" = 8L,
+  "bom" = 16L
+)
 
 #' Convert a data frame to a delimited string
 #'
@@ -32,9 +63,19 @@ vroom_write <- function(x, path, delim = '\t', na = "NA", col_names = !append, a
 #'
 #' @inheritParams vroom_write
 #' @export
-vroom_format <- function(x, delim = '\t', na = "NA", col_names = TRUE) {
+vroom_format <- function(x, delim = '\t', na = "NA", col_names = TRUE,
+                         escape = c("double", "backslash", "none"),
+                         quote = c("needed", "all", "none"),
+                         bom = FALSE) {
+
+  quote <- match.arg(quote)
+  escape <- match.arg(escape)
+
+  opts <- get_vroom_write_opts(quote, escape, bom)
+
   x[] <- lapply(x, output_column)
-  vroom_format_(x, delim = delim, na_str = na, col_names = col_names)
+  vroom_format_(x, delim = delim, na_str = na, col_names = col_names,
+                options = opts)
 }
 
 #' Preprocess column for output
