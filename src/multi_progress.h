@@ -3,16 +3,43 @@
 #include <condition_variable>
 #include <mutex>
 
-#include <Rcpp.h>
+#ifdef VROOM_STANDALONE
+
+// A stub class that doesn't do anything
+
+namespace RProgress {
+
+class RProgress {
+public:
+  RProgress(
+      std::string format = "[:bar] :percent",
+      double total = 100,
+      int width = 80 - 2,
+      char complete_char = '=',
+      char incomplete_char = '-',
+      bool clear = true,
+      double show_after = 0.2) {}
+
+  void update(double) {}
+  void tick(double) {}
+};
+
+} // namespace RProgress
+
+#else
+
+#include "Rcpp.h"
 
 #include "RProgress.h"
+
+#endif
 
 class multi_progress {
 public:
   multi_progress(
       std::string format = "[:bar] :percent",
       size_t total = 100,
-      int width = Rf_GetOptionWidth() - 2,
+      int width = 78,
       const char complete_char = '=',
       const char incomplete_char = '-',
       bool clear = true,

@@ -2,11 +2,19 @@
 
 #include "parallel.h"
 
+#include "multi_progress.h"
+#include <exception>
 #include <fstream>
+#include <iostream>
+#include <numeric>
 
 #ifdef VROOM_LOG
 #include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
 #include "spdlog/spdlog.h"
+#endif
+
+#ifndef VROOM_STANDALONE
+#include "r_utils.h"
 #endif
 
 using namespace vroom;
@@ -44,7 +52,12 @@ delimited_index::delimited_index(
     // We cannot actually portably compare error messages due to a bug in
     // libstdc++ (https://stackoverflow.com/a/54316671/2055486), so just print
     // the message on stderr return
-    Rcpp::Rcerr << "mapping error: " << error.message();
+#ifndef VROOM_STANDALONE
+    Rcpp::Rcerr << "mapping error: " << error.message() << '\n';
+#else
+    std::cerr << "mapping error: " << error.message() << '\n';
+#endif
+
     return;
   }
 
@@ -55,7 +68,11 @@ delimited_index::delimited_index(
   std::string delim_;
 
   if (delim == nullptr) {
+#ifndef VROOM_STANDALONE
     delim_ = std::string(1, guess_delim(mmap_, start));
+#else
+    throw std::runtime_error("Must specify a delimiter");
+#endif
   } else {
     delim_ = delim;
   }
@@ -74,11 +91,13 @@ delimited_index::delimited_index(
   std::unique_ptr<multi_progress> pb = nullptr;
 
   if (progress_) {
+#ifndef VROOM_STANDALONE
     auto format = get_pb_format("file", filename);
     auto width = get_pb_width(format);
     pb = std::unique_ptr<multi_progress>(
         new multi_progress(format, file_size, width));
     pb->tick(start);
+#endif
   }
 
   bool nmax_set = n_max != static_cast<size_t>(-1);
@@ -165,7 +184,9 @@ delimited_index::delimited_index(
   }
 
   if (progress_) {
+#ifndef VROOM_STANDALONE
     pb->display_progress();
+#endif
   }
 
   for (auto& t : threads) {

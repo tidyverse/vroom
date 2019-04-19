@@ -15,7 +15,7 @@
 #endif
 // clang-format on
 
-#include "utils.h"
+#include "r_utils.h"
 #include "RProgress.h"
 
 #ifdef VROOM_LOG

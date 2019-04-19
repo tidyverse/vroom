@@ -5,7 +5,7 @@
 #include <fstream>
 #include <future> // std::async, std::future
 
-#include "utils.h"
+#include "r_utils.h"
 #include <Rcpp.h>
 
 #ifdef VROOM_LOG

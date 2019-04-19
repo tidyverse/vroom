@@ -5,7 +5,7 @@
 #include "index.h"
 #include <memory>
 
-#include "utils.h"
+#include "r_utils.h"
 
 using namespace vroom;
 using namespace Rcpp;

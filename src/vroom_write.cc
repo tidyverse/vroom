@@ -6,7 +6,7 @@
 
 #include "RProgress.h"
 #include "connection.h"
-#include "utils.h"
+#include "r_utils.h"
 
 typedef enum {
   quote_needed = 1,

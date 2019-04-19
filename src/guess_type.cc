@@ -4,7 +4,7 @@ using namespace Rcpp;
 #include "DateTime.h"
 #include "DateTimeParser.h"
 #include "LocaleInfo.h"
-#include "utils.h"
+#include "r_utils.h"
 
 #include "vroom_lgl.h"
 #include "vroom_num.h"
