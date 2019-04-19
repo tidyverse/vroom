@@ -16,7 +16,6 @@
 #include "index.h"
 
 #include "utils.h"
-#include <Rcpp.h>
 #include <array>
 
 #include "multi_progress.h"
