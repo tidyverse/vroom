@@ -88,6 +88,10 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
 }
 
 make_names <- function(x, len) {
+  if (len == 0) {
+    return(character())
+  }
+
   if (length(x) == len) {
     return(x)
   }
