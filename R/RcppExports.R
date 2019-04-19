@@ -13,8 +13,8 @@ vroom_str_ <- function(x) {
     .Call(`_vroom_vroom_str_`, x)
 }
 
-gen_character_ <- function(n, min, max, values) {
-    .Call(`_vroom_gen_character_`, n, min, max, values)
+gen_character_ <- function(n, min, max, values, seed, seed2) {
+    .Call(`_vroom_gen_character_`, n, min, max, values, seed, seed2)
 }
 
 guess_type_ <- function(input, locale, guess_integer = FALSE) {

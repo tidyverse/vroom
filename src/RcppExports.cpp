@@ -37,8 +37,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // gen_character_
-CharacterVector gen_character_(int n, int min, int max, std::string values);
-RcppExport SEXP _vroom_gen_character_(SEXP nSEXP, SEXP minSEXP, SEXP maxSEXP, SEXP valuesSEXP) {
+CharacterVector gen_character_(int n, int min, int max, std::string values, uint32_t seed, uint32_t seed2);
+RcppExport SEXP _vroom_gen_character_(SEXP nSEXP, SEXP minSEXP, SEXP maxSEXP, SEXP valuesSEXP, SEXP seedSEXP, SEXP seed2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -46,7 +46,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type min(minSEXP);
     Rcpp::traits::input_parameter< int >::type max(maxSEXP);
     Rcpp::traits::input_parameter< std::string >::type values(valuesSEXP);
-    rcpp_result_gen = Rcpp::wrap(gen_character_(n, min, max, values));
+    Rcpp::traits::input_parameter< uint32_t >::type seed(seedSEXP);
+    Rcpp::traits::input_parameter< uint32_t >::type seed2(seed2SEXP);
+    rcpp_result_gen = Rcpp::wrap(gen_character_(n, min, max, values, seed, seed2));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -191,7 +193,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_force_materialization", (DL_FUNC) &_vroom_force_materialization, 1},
     {"_vroom_vroom_materialize", (DL_FUNC) &_vroom_vroom_materialize, 1},
     {"_vroom_vroom_str_", (DL_FUNC) &_vroom_vroom_str_, 1},
-    {"_vroom_gen_character_", (DL_FUNC) &_vroom_gen_character_, 4},
+    {"_vroom_gen_character_", (DL_FUNC) &_vroom_gen_character_, 6},
     {"_vroom_guess_type_", (DL_FUNC) &_vroom_guess_type_, 3},
     {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 19},
     {"_vroom_vroom_fwf_", (DL_FUNC) &_vroom_vroom_fwf_, 17},

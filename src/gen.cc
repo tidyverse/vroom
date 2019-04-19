@@ -4,11 +4,15 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-CharacterVector gen_character_(int n, int min, int max, std::string values) {
-  std::random_device
-      rd; // Will be used to obtain a seed for the random number engine
-  std::mt19937 gen1(rd());
-  std::mt19937 gen2(rd());
+CharacterVector gen_character_(
+    int n,
+    int min,
+    int max,
+    std::string values,
+    uint32_t seed,
+    uint32_t seed2) {
+  std::mt19937 gen1(seed);
+  std::mt19937 gen2(seed2);
 
   CharacterVector out(n);
 

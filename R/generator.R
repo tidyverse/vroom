@@ -1,11 +1,14 @@
 gen_character <- function(n, min = 5, max = 25, values = c(letters, LETTERS, 0:9), ...) {
-  #replicate(n, paste(sample(values, sample.int(max - min) + min, replace = TRUE), collapse = ""), simplify = "vector")
 
   if (min > max) {
     max <- min
   }
 
-  gen_character_(n, min, max, paste(values, collapse = ""))
+  # The seed for the C++ RNG used is an unsigned 32 bit integer, which is why I
+  # multiply int max by 2. Possibly an off by one error here though...
+  seeds <- sample.int(2 * .Machine$integer.max, 2)
+
+  gen_character_(n, min, max, paste(values, collapse = ""), seeds[[1]], seeds[[2]])
 }
 
 gen_double <- function(n, f = stats::rnorm, ...) {
