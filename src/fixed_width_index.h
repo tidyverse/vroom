@@ -161,7 +161,7 @@ public:
       std::unique_ptr<RProgress::RProgress>& pb,
       size_t update_size = -1) {
 
-    size_t pos = find_next_newline(source, start);
+    size_t pos = find_next_newline(source, start, false);
     size_t lines_read = 0;
     auto last_tick = start;
 
@@ -181,7 +181,7 @@ public:
         }
       }
 
-      pos = find_next_newline(source, pos + 1);
+      pos = find_next_newline(source, pos + 1, false);
     }
 
     if (pb) {

@@ -62,8 +62,8 @@ delimited_index::delimited_index(
 
   delim_len_ = delim_.length();
 
-  size_t first_nl = find_next_newline(mmap_, start);
-  size_t second_nl = find_next_newline(mmap_, first_nl + 1);
+  size_t first_nl = find_next_newline(mmap_, start, true);
+  size_t second_nl = find_next_newline(mmap_, first_nl + 1, true);
   size_t one_row_size = second_nl - first_nl;
   size_t guessed_rows =
       one_row_size > 0 ? (file_size - first_nl) / one_row_size * 1.1 : 0;
@@ -142,8 +142,8 @@ delimited_index::delimited_index(
         file_size - first_nl,
         [&](size_t start, size_t end, size_t id) {
           idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
-          start = find_next_newline(mmap_, first_nl + start);
-          end = find_next_newline(mmap_, first_nl + end) + 1;
+          start = find_next_newline(mmap_, first_nl + start, false);
+          end = find_next_newline(mmap_, first_nl + end, false) + 1;
           size_t cols = 0;
           index_region(
               mmap_,

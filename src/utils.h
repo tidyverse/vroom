@@ -19,8 +19,8 @@ inline int get_pb_width(const std::string& format) {
 }
 
 template <typename T>
-static size_t
-find_next_newline(const T& source, size_t start, const char quote = '"') {
+static size_t find_next_non_quoted_newline(
+    const T& source, size_t start, const char quote = '"') {
   if (start > source.size() - 1) {
     return source.size() - 1;
   }
@@ -37,7 +37,7 @@ find_next_newline(const T& source, size_t start, const char quote = '"') {
     size_t buf_offset = strcspn(buf + pos, query.data());
     pos = pos + buf_offset;
     auto c = buf[pos];
-    if (c == '\n') { // no embedded quotes allowed
+    if (c == '\n') {
       if (in_quote) {
         ++pos;
         continue;
@@ -52,6 +52,22 @@ find_next_newline(const T& source, size_t start, const char quote = '"') {
   }
 
   return pos;
+}
+
+template <typename T>
+static size_t
+find_next_newline(const T& source, size_t start, bool embedded_nl = true) {
+  if (embedded_nl) {
+    return find_next_non_quoted_newline(source, start);
+  }
+
+  auto begin = source.data() + start;
+  auto res =
+      static_cast<const char*>(memchr(begin, '\n', source.size() - start));
+  if (!res) {
+    return source.size() - 1;
+  }
+  return res - source.data();
 }
 
 template <typename T>
