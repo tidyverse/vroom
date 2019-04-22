@@ -20,3 +20,4 @@
 ^Makefile$
 ^data-raw$
 ^logs$
+^standalone$
