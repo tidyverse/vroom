@@ -63,6 +63,15 @@ delimited_index::delimited_index(
 
   size_t file_size = mmap_.cend() - mmap_.cbegin();
 
+  if (mmap_[file_size - 1] != '\n') {
+#ifndef VROOM_STANDALONE
+    Rcpp::Rcerr << "Files must end with a newline\n";
+#else
+    std::cerr << "Files must end with a newline\n";
+#endif
+    return;
+  }
+
   size_t start = find_first_line(mmap_, skip_, comment_);
 
   std::string delim_;
@@ -139,7 +148,6 @@ delimited_index::delimited_index(
   std::vector<std::future<void> > threads;
 
   if (nmax_set) {
-
     threads.emplace_back(std::async([&] {
       n_max -= lines_read;
       index_region(

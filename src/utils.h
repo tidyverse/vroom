@@ -49,6 +49,11 @@ find_next_newline(const T& source, size_t start, bool embedded_nl = true) {
   }
 
   auto begin = source.data() + start;
+
+  if (start >= source.size()) {
+    return source.size() - 1;
+  }
+
   auto res =
       static_cast<const char*>(memchr(begin, '\n', source.size() - start));
   if (!res) {
