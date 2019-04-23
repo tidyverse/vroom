@@ -38,6 +38,10 @@ static size_t find_next_non_quoted_newline(
     ++pos;
   }
 
+  if (pos > end) {
+    return end;
+  }
+
   return pos;
 }
 
@@ -166,7 +170,7 @@ size_t find_first_line(const T& source, size_t skip, const char comment) {
   /* Skip skip parameters, comments and blank lines */
 
   while (bool should_skip =
-             (begin < source.size() &&
+             (begin < source.size() - 1 &&
               is_blank_or_comment_line(source.data() + begin, comment)) ||
              skip > 0) {
     begin = find_next_newline(source, begin) + 1;

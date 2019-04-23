@@ -74,6 +74,11 @@ delimited_index::delimited_index(
 
   size_t start = find_first_line(mmap_, skip_, comment_);
 
+  // If an empty file, or a file with only a newline.
+  if (start >= file_size - 1) {
+    return;
+  }
+
   std::string delim_;
 
   if (delim == nullptr) {
