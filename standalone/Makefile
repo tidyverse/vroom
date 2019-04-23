@@ -29,20 +29,20 @@ FUZZ_DIR=/Volumes/ram_disk
 
 fuzz: CXX = afl-clang++
 fuzz: CXXFLAGS += -g
-fuzz: release test-cases
+fuzz: release $(FUZZ_DIR)/fuzz-testing/tests
+fuzz: VROOM_ARGS=--comment '\#' --escape_double --escape_backslash
 fuzz:
 	mkdir -p "$(FUZZ_DIR)/fuzz-testing"
 	cp vroom "$(FUZZ_DIR)/fuzz-testing/vroom"
-	afl-fuzz -S fuzzer1 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom @@ > /dev/null &
-	afl-fuzz -S fuzzer2 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom @@ > /dev/null &
-	afl-fuzz -S fuzzer3 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom @@ > /dev/null &
-	afl-fuzz -S fuzzer4 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom @@ > /dev/null &
-	afl-fuzz -S fuzzer5 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom @@ > /dev/null &
-	afl-fuzz -S fuzzer6 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom @@ > /dev/null &
-	afl-fuzz -M fuzzer0 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom @@
+	afl-fuzz -S fuzzer1 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom $(VROOM_ARGS) @@ > /dev/null &
+	afl-fuzz -S fuzzer2 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom $(VROOM_ARGS) @@ > /dev/null &
+	afl-fuzz -S fuzzer3 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom $(VROOM_ARGS) @@ > /dev/null &
+	afl-fuzz -S fuzzer4 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom $(VROOM_ARGS) @@ > /dev/null &
+	afl-fuzz -S fuzzer5 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom $(VROOM_ARGS) @@ > /dev/null &
+	afl-fuzz -S fuzzer6 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom $(VROOM_ARGS) @@ > /dev/null &
+	afl-fuzz -M fuzzer0 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom $(VROOM_ARGS) @@
 
 # Generate test cases for the fuzzer
-test-cases:
-	mkdir -p "$(FUZZ_DIR)/fuzz-testing/tests"
-	R -q -e 'library(vroom);vroom_write(gen_tbl(5, col_types = "difcDtT"), "$(FUZZ_DIR)/fuzz-testing/tests/00")'
-	R -q -e 'library(vroom);vroom_write(gen_tbl(5, col_types = "difcDtT"), "$(FUZZ_DIR)/fuzz-testing/tests/01", bom = TRUE, quote = "all")'
+$(FUZZ_DIR)/fuzz-testing/tests:
+	mkdir -p "$@"
+	./create_tests.R $@
