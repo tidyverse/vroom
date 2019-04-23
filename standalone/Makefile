@@ -28,6 +28,7 @@ FUZZ_DIR=/Volumes/ram_disk
 .PHONY: test-cases
 
 fuzz: CXX = afl-clang++
+fuzz: CXXFLAGS += -g
 fuzz: release test-cases
 fuzz:
 	mkdir -p "$(FUZZ_DIR)/fuzz-testing"
@@ -38,13 +39,10 @@ fuzz:
 	afl-fuzz -S fuzzer4 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom @@ > /dev/null &
 	afl-fuzz -S fuzzer5 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom @@ > /dev/null &
 	afl-fuzz -S fuzzer6 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom @@ > /dev/null &
-	afl-fuzz -S fuzzer7 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom @@ > /dev/null &
 	afl-fuzz -M fuzzer0 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom @@
-
-fuzz-stop:
-	-killall afl-fuzz
 
 # Generate test cases for the fuzzer
 test-cases:
 	mkdir -p "$(FUZZ_DIR)/fuzz-testing/tests"
 	R -q -e 'library(vroom);vroom_write(gen_tbl(5, col_types = "difcDtT"), "$(FUZZ_DIR)/fuzz-testing/tests/00")'
+	R -q -e 'library(vroom);vroom_write(gen_tbl(5, col_types = "difcDtT"), "$(FUZZ_DIR)/fuzz-testing/tests/01", bom = TRUE, quote = "all")'
