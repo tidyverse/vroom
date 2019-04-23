@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
   app.add_option("-t,--num_threads", num_threads, "The number of parallel threads to use");
   CLI11_PARSE(app, argc, argv);
 
-  auto idx = vroom::delimited_index(filename.c_str(), delim.c_str(), '"', false, false, false, false, 0, -1, '\0', num_threads, false);
+  auto idx = vroom::delimited_index(filename.c_str(), delim.c_str(), '"', false, false, false, false, 0, -1, '\0', num_threads, false, false);
 
   std::cout << idx.num_rows() * idx.num_columns() << '\n';
 

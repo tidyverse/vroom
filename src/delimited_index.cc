@@ -31,7 +31,8 @@ delimited_index::delimited_index(
     size_t n_max,
     const char comment,
     size_t num_threads,
-    bool progress)
+    bool progress,
+    const bool use_threads)
     : filename_(filename),
       has_header_(has_header),
       quote_(quote),
@@ -192,7 +193,7 @@ delimited_index::delimited_index(
               file_size / 100);
         },
         num_threads,
-        true,
+        use_threads,
         false);
   }
 

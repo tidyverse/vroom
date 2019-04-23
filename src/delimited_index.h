@@ -43,7 +43,8 @@ public:
       size_t n_max,
       const char comment,
       const size_t num_threads,
-      const bool progress);
+      const bool progress,
+      const bool use_threads = true);
 
   class column_iterator : public base_iterator {
     std::shared_ptr<const delimited_index> idx_;
