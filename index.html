@@ -64,7 +64,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/jimhester/vroom">
+  <a href="https://github.com/r-lib/vroom">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -87,12 +87,12 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <div id="vroom" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#vroom" class="anchor"></a>🏎💨vroom <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right"></a>
+<a href="#vroom" class="anchor"></a>🏎💨vroom <a href="http://r-lib.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right"></a>
 </h1></div>
 <!-- badges: start -->
 
 <p>The fastest delimited reader for R, <strong>1.04 GB/sec</strong>.</p>
-<p>But that’s impossible! How can it be <a href="https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html">so fast</a>?</p>
+<p>But that’s impossible! How can it be <a href="https://r-lib.github.io/vroom/articles/benchmarks/benchmarks.html">so fast</a>?</p>
 <p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use.</p>
 <p>vroom also uses multiple threads for indexing, materializing non-character columns, and when writing to further improve performance.</p>
 <table class="table table">
@@ -167,7 +167,7 @@
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>Install the development version from <a href="https://github.com/">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">"jimhester/vroom"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">"r-lib/vroom"</span>)</a></code></pre></div>
 </div>
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
@@ -225,12 +225,12 @@
 <div id="further-reading" class="section level2">
 <h2 class="hasAnchor">
 <a href="#further-reading" class="anchor"></a>Further reading</h2>
-<p>See <a href="https://jimhester.github.io/vroom/articles/vroom.html">Getting started</a> to jump start your use of vroom!</p>
+<p>See <a href="https://r-lib.github.io/vroom/articles/vroom.html">Getting started</a> to jump start your use of vroom!</p>
 </div>
 <div id="benchmarks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#benchmarks" class="anchor"></a>Benchmarks</h2>
-<p>The speed quoted above is from a dataset with 14,776,615 rows and 11 columns, see the <a href="https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html">benchmark article</a> for full details of the dataset and <a href="https://github.com/jimhester/vroom/blob/master/inst/bench">bench/</a> for the code used to retrieve the data and perform the benchmarks.</p>
+<p>The speed quoted above is from a dataset with 14,776,615 rows and 11 columns, see the <a href="https://r-lib.github.io/vroom/articles/benchmarks/benchmarks.html">benchmark article</a> for full details of the dataset and <a href="https://github.com/r-lib/vroom/blob/master/inst/bench">bench/</a> for the code used to retrieve the data and perform the benchmarks.</p>
 </div>
 </div>
 <div id="environment-variables" class="section level1">
@@ -292,9 +292,9 @@
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/jimhester/vroom">https://​github.com/​jimhester/​vroom</a>
+<li>Browse source code at <br><a href="https://github.com/r-lib/vroom">https://​github.com/​r-lib/​vroom</a>
 </li>
-<li>Report a bug at <br><a href="https://github.com/jimhester/vroom/issues">https://​github.com/​jimhester/​vroom/​issues</a>
+<li>Report a bug at <br><a href="https://github.com/r-lib/vroom/issues">https://​github.com/​r-lib/​vroom/​issues</a>
 </li>
 </ul>
 </div>
@@ -308,7 +308,8 @@
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Jim Hester <br><small class="roles"> Author, maintainer </small>  </li>
+<li>Jim Hester <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-2739-7082" target="orcid.widget"><img src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg" class="orcid" alt="ORCID" height="16"></a> </li>
+<li><a href="authors.html">All authors...</a></li>
 </ul>
 </div>
 
@@ -317,9 +318,9 @@
 <ul class="list-unstyled">
 <li><a href="https://cran.r-project.org/package=vroom"><img src="https://www.r-pkg.org/badges/version/vroom" alt="CRAN status"></a></li>
 <li><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
-<li><a href="https://travis-ci.org/jimhester/vroom"><img src="https://travis-ci.org/jimhester/vroom.svg?branch=master" alt="Travis build status"></a></li>
-<li><a href="https://ci.appveyor.com/project/jimhester/vroom"><img src="https://ci.appveyor.com/api/projects/status/github/jimhester/vroom?branch=master&amp;svg=true" alt="AppVeyor build status"></a></li>
-<li><a href="https://codecov.io/gh/jimhester/vroom?branch=master"><img src="https://codecov.io/gh/jimhester/vroom/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://travis-ci.org/r-lib/vroom"><img src="https://travis-ci.org/r-lib/vroom.svg?branch=master" alt="Travis build status"></a></li>
+<li><a href="https://ci.appveyor.com/project/r-lib/vroom"><img src="https://ci.appveyor.com/api/projects/status/github/r-lib/vroom?branch=master&amp;svg=true" alt="AppVeyor build status"></a></li>
+<li><a href="https://codecov.io/gh/r-lib/vroom?branch=master"><img src="https://codecov.io/gh/r-lib/vroom/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>
 </div>
 </div>

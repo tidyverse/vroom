@@ -97,7 +97,7 @@
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/jimhester/vroom">
+  <a href="https://github.com/r-lib/vroom">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -115,7 +115,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Write a data frame to a delimited file</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jimhester/vroom/blob/master/R/vroom_write.R'><code>R/vroom_write.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vroom/blob/master/R/vroom_write.R'><code>R/vroom_write.R</code></a></small>
     <div class="hidden name"><code>vroom_write.Rd</code></div>
     </div>
 
@@ -182,7 +182,9 @@ file is created.</p></td>
     </tr>
     <tr>
       <th>bom</th>
-      <td><p>If `TRUE` add a UTF-8 BOM at the beginning of the file.</p></td>
+      <td><p>If `TRUE` add a UTF-8 BOM at the beginning of the file. This is
+recommended when saving data for consumption by excel, as it will force
+excel to read the data with the correct encoding (UTF-8)</p></td>
     </tr>
     <tr>
       <th>num_threads</th>
