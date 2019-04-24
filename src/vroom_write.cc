@@ -244,13 +244,15 @@ std::vector<void*> get_ptrs(const Rcpp::List& input) {
   return out;
 }
 
-std::vector<char> get_header(const Rcpp::List& input, const char delim) {
+std::vector<char>
+get_header(const Rcpp::List& input, const char delim, size_t options) {
   Rcpp::CharacterVector names =
       Rcpp::as<Rcpp::CharacterVector>(input.attr("names"));
   std::vector<char> out;
   for (size_t i = 0; i < names.size(); ++i) {
-    auto str = Rf_translateCharUTF8(STRING_ELT(names, i));
-    std::copy(str, str + strlen(str), std::back_inserter(out));
+    auto str = STRING_ELT(names, i);
+
+    str_to_buf(str, out, delim, "", 0, options);
     out.push_back(delim);
   }
   out[out.size() - 1] = '\n';
@@ -302,7 +304,7 @@ void vroom_write_(
   }
 
   if (col_names) {
-    auto header = get_header(input, delim);
+    auto header = get_header(input, delim, options);
     write_buf(header, out);
   }
 
@@ -393,7 +395,7 @@ void vroom_write_connection_(
   auto ptrs = get_ptrs(input);
 
   if (col_names) {
-    auto header = get_header(input, delim);
+    auto header = get_header(input, delim, options);
     write_buf_con(header, con_);
   }
 
@@ -470,7 +472,7 @@ Rcpp::CharacterVector vroom_format_(
   }
 
   if (col_names) {
-    data = get_header(input, delim);
+    data = get_header(input, delim, options);
   }
 
   auto buf = fill_buf(input, delim, na_str, options, types, ptrs, 0, num_rows);
