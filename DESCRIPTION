@@ -2,10 +2,13 @@ Package: vroom
 Title: Read Delimited Files Fast, Really Fast
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "Jim",
-           family = "Hester",
-           role = c("aut", "cre"),
-           email = "james.f.hester@gmail.com")
+    c(person(given = "Jim",
+             family = "Hester",
+             role = c("aut", "cre"),
+             email = "james.f.hester@gmail.com",
+             comment = c(ORCID = "0000-0002-2739-7082")),
+      person(given = "RStudio",
+             role = "cph"))
 Description: An experiment using lazy parsing to read delimited files quickly into R,
   delaying parsing until the specific values are used.
 License: MIT + file LICENSE
