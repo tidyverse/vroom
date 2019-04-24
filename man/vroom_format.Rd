@@ -37,7 +37,9 @@ will generate a warning and be made unique with a numeric prefix.}
 
 \item{quote}{Single character used to quote strings.}
 
-\item{bom}{If `TRUE` add a UTF-8 BOM at the beginning of the file.}
+\item{bom}{If `TRUE` add a UTF-8 BOM at the beginning of the file. This is
+recommended when saving data for consumption by excel, as it will force
+excel to read the data with the correct encoding (UTF-8)}
 }
 \description{
 This is equivalent to [vroom_write()], but instead of writing to

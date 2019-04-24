@@ -44,7 +44,9 @@ file is created.}
 
 \item{escape}{The type of escape to use when quotes are in the data.}
 
-\item{bom}{If `TRUE` add a UTF-8 BOM at the beginning of the file.}
+\item{bom}{If `TRUE` add a UTF-8 BOM at the beginning of the file. This is
+recommended when saving data for consumption by excel, as it will force
+excel to read the data with the correct encoding (UTF-8)}
 
 \item{num_threads}{Number of threads to use when reading and materializing vectors.}
 
