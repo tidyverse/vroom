@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# 🏎💨vroom <a href="http://jimhester.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
+# 🏎💨vroom <a href="http://r-lib.github.io/vroom"><img src="https://i.gifer.com/2TjY.gif" align="right" /></a>
 
 <!-- badges: start -->
 
@@ -10,17 +10,17 @@ status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Travis build
-status](https://travis-ci.org/jimhester/vroom.svg?branch=master)](https://travis-ci.org/jimhester/vroom)
+status](https://travis-ci.org/r-lib/vroom.svg?branch=master)](https://travis-ci.org/r-lib/vroom)
 [![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/jimhester/vroom?branch=master&svg=true)](https://ci.appveyor.com/project/jimhester/vroom)
+status](https://ci.appveyor.com/api/projects/status/github/r-lib/vroom?branch=master&svg=true)](https://ci.appveyor.com/project/r-lib/vroom)
 [![Codecov test
-coverage](https://codecov.io/gh/jimhester/vroom/branch/master/graph/badge.svg)](https://codecov.io/gh/jimhester/vroom?branch=master)
+coverage](https://codecov.io/gh/r-lib/vroom/branch/master/graph/badge.svg)](https://codecov.io/gh/r-lib/vroom?branch=master)
 <!-- badges: end -->
 
 The fastest delimited reader for R, **1.04 GB/sec**.
 
 But that’s impossible\! How can it be [so
-fast](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)?
+fast](https://r-lib.github.io/vroom/articles/benchmarks/benchmarks.html)?
 
 vroom doesn’t stop to actually *read* all of your data, it simply
 indexes where each record is located so it can be read later. The
@@ -73,7 +73,7 @@ Install the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("jimhester/vroom")
+devtools::install_github("r-lib/vroom")
 ```
 
 ## Usage
@@ -143,18 +143,17 @@ vroom::vroom(files)
 
 ## Further reading
 
-See [Getting
-started](https://jimhester.github.io/vroom/articles/vroom.html) to jump
-start your use of vroom\!
+See [Getting started](https://r-lib.github.io/vroom/articles/vroom.html)
+to jump start your use of vroom\!
 
 ## Benchmarks
 
 The speed quoted above is from a dataset with 14,776,615 rows and 11
 columns, see the [benchmark
-article](https://jimhester.github.io/vroom/articles/benchmarks/benchmarks.html)
+article](https://r-lib.github.io/vroom/articles/benchmarks/benchmarks.html)
 for full details of the dataset and
-[bench/](https://github.com/jimhester/vroom/blob/master/inst/bench) for
-the code used to retrieve the data and perform the benchmarks.
+[bench/](https://github.com/r-lib/vroom/blob/master/inst/bench) for the
+code used to retrieve the data and perform the benchmarks.
 
 # Environment variables
 

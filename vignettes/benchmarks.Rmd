@@ -86,7 +86,7 @@ trip_fare_1.tsv, It is 1.55G in size.
 ## Benchmarks
 
 The code used to run the benchmarks is in
-[bench/benchmark.R](https://github.com/jimhester/vroom/blob/master/inst/bench/benchmark.R).
+[bench/benchmark.R](https://github.com/r-lib/vroom/blob/master/inst/bench/benchmark.R).
 
 The benchmark `base` uses `vroom` with base functions for subsetting.
 `dplyr` uses `vroom` to read the file and dplyr functions to subset.

@@ -19,20 +19,20 @@ test_that("vroom works with compressed files", {
 test_that("read_file works via https", {
   skip_on_cran()
 
-  url <- "https://raw.githubusercontent.com/jimhester/vroom/master/inst/extdata/mtcars.csv"
+  url <- "https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv"
   expect_equal(vroom(url), mt)
 })
 
 test_that("vroom works via https on gz file", {
   skip_on_cran()
 
-  url <- "https://raw.githubusercontent.com/jimhester/vroom/master/inst/extdata/mtcars.csv.gz"
+  url <- "https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv.gz"
   expect_equal(vroom(url), mt)
 })
 
 test_that("vroom errors via https on non-gz file", {
   skip_on_cran()
 
-  url <- "https://raw.githubusercontent.com/jimhester/vroom/master/inst/extdata/mtcars.csv.bz2"
+  url <- "https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv.bz2"
   expect_error(vroom(url), "Reading from remote `bz2` compressed files is not supported")
 })

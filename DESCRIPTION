@@ -29,8 +29,8 @@ Imports:
     crayon,
     tidyselect,
     rlang
-URL: https://github.com/jimhester/vroom
-BugReports: https://github.com/jimhester/vroom/issues
+URL: https://github.com/r-lib/vroom
+BugReports: https://github.com/r-lib/vroom/issues
 SystemRequirements: C++11
 Suggests: 
     bench,
