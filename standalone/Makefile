@@ -21,28 +21,26 @@ clean:
 
 
 # Create a 1Gb ram disk, so AFL writing millions of files doesn't destroy your SSD
-# http://www.cipherdyne.org/blog/2014/12/ram-disks-and-saving-your-ssd-from-afl-fuzzing.html
-# diskutil erasevolume HFS+ 'ram_disk' `hdiutil attach -nomount ram://2097152`
-FUZZ_DIR=/Volumes/ram_disk
+# http:/www.cipherdyne.org/blog/2014/12/ram-disks-and-saving-your-ssd-from-afl-fuzzing.html
+# diskutil erasevolume HFS+ 'ram_disk' `hdiutil attach -nomount ram:/2097152`
+FUZZ_DIR=/Volumes/ram_disk/fuzz-testing
 
-.PHONY: test-cases
+# Generate test cases for the fuzzer
+$(FUZZ_DIR)/tests:
+	mkdir -p "$@"
+	./generate_tests.R $@
+
+VROOM_ARGS=--comment '\#' --escape_double --escape_backslash $(VROOM_FWF_ARGS)
 
 fuzz: CXX = afl-clang++
 fuzz: CXXFLAGS += -g
-fuzz: release $(FUZZ_DIR)/fuzz-testing/tests
-fuzz: VROOM_ARGS=--comment '\#' --escape_double --escape_backslash
+fuzz: release $(FUZZ_DIR)/tests
 fuzz:
-	mkdir -p "$(FUZZ_DIR)/fuzz-testing"
-	cp vroom "$(FUZZ_DIR)/fuzz-testing/vroom"
-	afl-fuzz -S fuzzer1 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom $(VROOM_ARGS) @@ > /dev/null &
-	afl-fuzz -S fuzzer2 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom $(VROOM_ARGS) @@ > /dev/null &
-	afl-fuzz -S fuzzer3 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom $(VROOM_ARGS) @@ > /dev/null &
-	afl-fuzz -S fuzzer4 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom $(VROOM_ARGS) @@ > /dev/null &
-	afl-fuzz -S fuzzer5 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom $(VROOM_ARGS) @@ > /dev/null &
-	afl-fuzz -S fuzzer6 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom $(VROOM_ARGS) @@ > /dev/null &
-	afl-fuzz -M fuzzer0 -i $(FUZZ_DIR)/fuzz-testing/tests -o $(FUZZ_DIR)/fuzz-testing/out $(FUZZ_DIR)/fuzz-testing/vroom $(VROOM_ARGS) @@
-
-# Generate test cases for the fuzzer
-$(FUZZ_DIR)/fuzz-testing/tests:
-	mkdir -p "$@"
-	./create_tests.R $@
+	mkdir -p "$(FUZZ_DIR)/"
+	cp vroom "$(FUZZ_DIR)/vroom"
+	afl-fuzz -S fuzzer1 -i $(FUZZ_DIR)/tests -o $(FUZZ_DIR)/out -- $(FUZZ_DIR)/vroom $(VROOM_ARGS) @@ > /dev/null &
+	afl-fuzz -S fuzzer2 -i $(FUZZ_DIR)/tests -o $(FUZZ_DIR)/out -- $(FUZZ_DIR)/vroom $(VROOM_ARGS) @@ > /dev/null &
+	afl-fuzz -S fuzzer3 -i $(FUZZ_DIR)/tests -o $(FUZZ_DIR)/out -- $(FUZZ_DIR)/vroom $(VROOM_ARGS) @@ > /dev/null &
+	afl-fuzz -S fuzzer4 -i $(FUZZ_DIR)/tests -o $(FUZZ_DIR)/out -- $(FUZZ_DIR)/vroom $(VROOM_ARGS) @@ > /dev/null &
+	afl-fuzz -S fuzzer5 -i $(FUZZ_DIR)/tests -o $(FUZZ_DIR)/out -- $(FUZZ_DIR)/vroom $(VROOM_ARGS) @@ > /dev/null &
+	afl-fuzz -M fuzzer0 -i $(FUZZ_DIR)/tests -o $(FUZZ_DIR)/out -- $(FUZZ_DIR)/vroom $(VROOM_ARGS) @@

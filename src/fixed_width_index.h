@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Rcpp.h"
-
 #include "index.h"
 
 // clang-format off
@@ -15,8 +13,13 @@
 #endif
 // clang-format on
 
+#ifndef VROOM_STANDALONE
 #include "r_utils.h"
 #include "RProgress.h"
+#else
+#include "utils.h"
+#define NA_INTEGER INT_MIN
+#endif
 
 #ifdef VROOM_LOG
 #include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
@@ -56,7 +59,12 @@ public:
       // We cannot actually portably compare error messages due to a bug in
       // libstdc++ (https://stackoverflow.com/a/54316671/2055486), so just print
       // the message on stderr return
-      Rcpp::Rcerr << "mapping error: " << error.message();
+#ifndef VROOM_STANDALONE
+      Rcpp::Rcerr << "mapping error: " << error.message() << '\n';
+#else
+      std::cerr << "mapping error: " << error.message() << '\n';
+#endif
+
       return;
     }
 
@@ -66,11 +74,13 @@ public:
 
     std::unique_ptr<RProgress::RProgress> pb = nullptr;
     if (progress) {
+#ifndef VROOM_STANDALONE
       auto format = get_pb_format("file", filename);
       auto width = get_pb_width(format);
       pb = std::unique_ptr<RProgress::RProgress>(
           new RProgress::RProgress(format, file_size, width));
       pb->tick(start);
+#endif
     }
 
     if (n_max > 0) {
@@ -83,7 +93,9 @@ public:
     newlines_.push_back(file_size - 1);
 
     if (progress) {
+#ifndef VROOM_STANDALONE
       pb->update(1);
+#endif
     }
 
 #ifdef VROOM_LOG
