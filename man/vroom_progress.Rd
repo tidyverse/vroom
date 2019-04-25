@@ -7,10 +7,12 @@
 vroom_progress()
 }
 \description{
-Progress bars are shown _unless_ one of the following is `TRUE`
-- The bar is explicitly disabled by setting `Sys.getenv("VROOM_SHOW_PROGRESS"="false")`
-- The code is run in a non-interactive session (`interactive()` is `FALSE`).
-- The code is run in an RStudio notebook chunk.
-- The code is run by knitr / rmarkdown.
-- The code is run by testthat (the `TESTTHAT` envvar is `true`).
+Progress bars are shown \emph{unless} one of the following is \code{TRUE}
+\itemize{
+\item The bar is explicitly disabled by setting \code{Sys.getenv("VROOM_SHOW_PROGRESS"="false")}
+\item The code is run in a non-interactive session (\code{interactive()} is \code{FALSE}).
+\item The code is run in an RStudio notebook chunk.
+\item The code is run by knitr / rmarkdown.
+\item The code is run by testthat (the \code{TESTTHAT} envvar is \code{true}).
+}
 }

@@ -12,8 +12,7 @@ vroom_format(x, delim = "\\t", na = "NA", col_names = TRUE,
 \item{x}{A data frame to write to disk}
 
 \item{delim}{One of more characters used to delimiter fields within a
-record. If `NULL` the delimiter is guessed from the set of (",", "\\t", " ",
-"|", ":", ";", "\\n").}
+record. If \code{NULL} the delimiter is guessed from the set of \code{c(",", "\\t", " ", "|", ":", ";", "\\n")}.}
 
 \item{na}{Character vector of strings to interpret as missing values. Set this
 option to \code{character()} to indicate no missing values.}
@@ -37,12 +36,12 @@ will generate a warning and be made unique with a numeric prefix.}
 
 \item{quote}{Single character used to quote strings.}
 
-\item{bom}{If `TRUE` add a UTF-8 BOM at the beginning of the file. This is
+\item{bom}{If \code{TRUE} add a UTF-8 BOM at the beginning of the file. This is
 recommended when saving data for consumption by excel, as it will force
 excel to read the data with the correct encoding (UTF-8)}
 }
 \description{
-This is equivalent to [vroom_write()], but instead of writing to
+This is equivalent to \code{\link[=vroom_write]{vroom_write()}}, but instead of writing to
 disk, it returns a string. It is primarily useful for examples and for
 testing.
 }

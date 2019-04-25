@@ -46,7 +46,7 @@ vroom has nearly all of the parsing features of
 files, including
 
   - delimiter guessing\*
-  - custom delimiters (including multi-byte\* and unicode\* delimiters)
+  - custom delimiters (including multi-byte\* and Unicode\* delimiters)
   - specification of column types (including type guessing)
       - numeric types (double, integer, number)
       - logical types
@@ -79,6 +79,9 @@ devtools::install_github("r-lib/vroom")
 ```
 
 ## Usage
+
+See [getting started](https://r-lib.github.io/vroom/articles/vroom.html)
+to jump start your use of vroom\!
 
 vroom uses the same interface as readr to specify column types.
 
@@ -143,15 +146,10 @@ vroom::vroom(files)
 #> #   minute <dbl>, time_hour <dttm>
 ```
 
-## Further reading
-
-See [Getting started](https://r-lib.github.io/vroom/articles/vroom.html)
-to jump start your use of vroom\!
-
 ## Benchmarks
 
-The speed quoted above is from a dataset with 14,776,615 rows and 11
-columns, see the [benchmark
+The speed quoted above is from a real dataset with 14,776,615 rows and
+11 columns, see the [benchmark
 article](https://r-lib.github.io/vroom/articles/benchmarks/benchmarks.html)
 for full details of the dataset and
 [bench/](https://github.com/r-lib/vroom/blob/master/inst/bench) for the
@@ -184,7 +182,7 @@ framework. For versions of R where the Altrep framework is unavailable
 effect. The variables can take one of `true`, `false`, `TRUE`, `FALSE`,
 `1`, or `0`.
 
-  - `VROOM_USE_ALTREP_NUMERICS` - If set use altrep for *all* numeric
+  - `VROOM_USE_ALTREP_NUMERICS` - If set use Altrep for *all* numeric
     types (default `false`).
 
 There are also individual variables for each type. Currently only
@@ -204,8 +202,8 @@ There are also individual variables for each type. Currently only
 
 RStudio’s environment pane auto-refresh behavior calls `object.size()`
 which for Altrep objects can be extremely slow. This was fixed in
-[rstudio\#4210](https://github.com/rstudio/rstudio/pull/4210) and
-[rstudio\#4292](https://github.com/rstudio/rstudio/pull/4292), so it is
+[RStudio\#4210](https://github.com/rstudio/rstudio/pull/4210) and
+[RStudio\#4292](https://github.com/rstudio/rstudio/pull/4292), so it is
 recommended you use a [daily version](https://dailies.rstudio.com/) if
 you are trying to use vroom inside RStudio. For older versions a
 workaround is to use the ‘Manual Refresh Only’ option in the environment

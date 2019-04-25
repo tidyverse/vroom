@@ -43,13 +43,13 @@ col_date(format = "")
 col_time(format = "")
 }
 \arguments{
-\item{...}{Either column objects created by `col_*()`, or their abbreviated
-character names (as described in the `col_types` argument of
-[read_delim()]). If you're only overriding a few columns, it's
+\item{...}{Either column objects created by \code{col_*()}, or their abbreviated
+character names (as described in the \code{col_types} argument of
+\code{\link[=read_delim]{read_delim()}}). If you're only overriding a few columns, it's
 best to refer to columns by name. If not named, the column types must match
 the column names exactly.}
 
-\item{.default}{Any named columns not explicitly overridden in `...`
+\item{.default}{Any named columns not explicitly overridden in \code{...}
 will be read with this column type.}
 
 \item{levels}{Character vector providing set of allowed levels. if \code{NULL},
@@ -68,24 +68,25 @@ Unlike \code{\link[=strptime]{strptime()}}, the format specification must match
 the complete string.}
 }
 \description{
-`cols()` includes all columns in the input data, guessing the column types
-as the default. `cols_only()` includes only the columns you explicitly
+\code{cols()} includes all columns in the input data, guessing the column types
+as the default. \code{cols_only()} includes only the columns you explicitly
 specify, skipping the rest.
 }
 \details{
 The available specifications are: (with string abbreviations in brackets)
-
-* `col_logical()` \[l\], containing only `T`, `F`, `TRUE` or `FALSE`.
-* `col_integer()` \[i\], integers.
-* `col_double()` \[d\], doubles.
-* `col_character()` \[c\], everything else.
-* `col_factor(levels, ordered)` \[f\], a fixed set of values.
-* `col_date(format = "")` \[D\]: with the locale's `date_format`.
-* `col_time(format = "")` \[t\]: with the locale's `time_format`.
-* `col_datetime(format = "")` \[T\]: ISO8601 date times
-* `col_number()` \[n\], numbers containing the `grouping_mark`
-* `col_skip()` \[_, -\], don't import this column.
-* `col_guess()` \[?\], parse using the "best" type based on the input.
+\itemize{
+\item \code{col_logical()} [l], containing only \code{T}, \code{F}, \code{TRUE} or \code{FALSE}.
+\item \code{col_integer()} [i], integers.
+\item \code{col_double()} [d], doubles.
+\item \code{col_character()} [c], everything else.
+\item \code{col_factor(levels, ordered)} [f], a fixed set of values.
+\item \code{col_date(format = "")} [D]: with the locale's \code{date_format}.
+\item \code{col_time(format = "")} [t]: with the locale's \code{time_format}.
+\item \code{col_datetime(format = "")} [T]: ISO8601 date times
+\item \code{col_number()} [n], numbers containing the \code{grouping_mark}
+\item \code{col_skip()} [_, -], don't import this column.
+\item \code{col_guess()} [?], parse using the "best" type based on the input.
+}
 }
 \examples{
 cols(a = col_integer())

@@ -16,8 +16,7 @@ vroom(file, delim = NULL, col_names = TRUE, col_types = NULL,
 \item{file}{path to a local file.}
 
 \item{delim}{One of more characters used to delimiter fields within a
-record. If `NULL` the delimiter is guessed from the set of (",", "\\t", " ",
-"|", ":", ";", "\\n").}
+record. If \code{NULL} the delimiter is guessed from the set of \code{c(",", "\\t", " ", "|", ":", ";", "\\n")}.}
 
 \item{col_names}{Either \code{TRUE}, \code{FALSE} or a character vector
 of column names.
@@ -52,8 +51,8 @@ l = logical, f = factor, D = date, T = date time, t = time, ? = guess, or
 \code{_}/\code{-} to skip the column.}
 
 \item{col_select}{One or more selection expressions, like in
-`dplyr::select()`. Use `c()` or `list()` to use more than one expression.
-See `?dplyr::select` for details on available selection options.}
+\code{dplyr::select()}. Use \code{c()} or \code{list()} to use more than one expression.
+See \code{?dplyr::select} for details on available selection options.}
 
 \item{id}{Either a string or 'NULL'. If a string, the output will contain a
 variable with that name with the filename(s) as the value. If 'NULL', the
@@ -75,8 +74,8 @@ comment characters will be silently ignored.}
 each field before parsing it?}
 
 \item{escape_double}{Does the file escape quotes by doubling them?
-i.e. If this option is `TRUE`, the value `""` represents
-a single quote, `"`.}
+i.e. If this option is \code{TRUE}, the value '""' represents
+a single quote, '"'.}
 
 \item{escape_backslash}{Does the file use backslashes to escape special
 characters? This is more general than \code{escape_double} as backslashes
@@ -100,8 +99,8 @@ time is 5 seconds or more. The automatic progress bar can be disabled by
 setting option \code{readr.show_progress} to \code{FALSE}.}
 
 \item{.name_repair}{Handling of column names. By default, vroom ensures
-column names are not empty and unique. See `.name_repair` as documented in
-[tibble::tibble()] for additional options including supplying user defined
+column names are not empty and unique. See \code{.name_repair} as documented in
+\code{\link[tibble:tibble]{tibble::tibble()}} for additional options including supplying user defined
 name repair functions.}
 }
 \description{

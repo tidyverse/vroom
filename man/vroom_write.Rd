@@ -15,8 +15,7 @@ vroom_write(x, path, delim = "\\t", na = "NA", col_names = !append,
 \item{path}{Path or connection to write to.}
 
 \item{delim}{One of more characters used to delimiter fields within a
-record. If `NULL` the delimiter is guessed from the set of (",", "\\t", " ",
-"|", ":", ";", "\\n").}
+record. If \code{NULL} the delimiter is guessed from the set of \code{c(",", "\\t", " ", "|", ":", ";", "\\n")}.}
 
 \item{na}{Character vector of strings to interpret as missing values. Set this
 option to \code{character()} to indicate no missing values.}
@@ -44,7 +43,7 @@ file is created.}
 
 \item{escape}{The type of escape to use when quotes are in the data.}
 
-\item{bom}{If `TRUE` add a UTF-8 BOM at the beginning of the file. This is
+\item{bom}{If \code{TRUE} add a UTF-8 BOM at the beginning of the file. This is
 recommended when saving data for consumption by excel, as it will force
 excel to read the data with the correct encoding (UTF-8)}
 

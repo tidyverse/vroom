@@ -61,10 +61,10 @@ parallelized.
 
 ## Dataset
 
-The dataset used in these benchmarks is from FOIA/FOILed Taxi Trip Data from
-the NYC Taxi and Limousine Commission 2013, originally posted at
-<http://chriswhong.com/open-data/foil_nyc_taxi/>. It is also hosted on
-[archive.org](https://archive.org/details/nycTaxiTripData2013).
+The dataset used in these benchmarks is from Freedom of Information Law (FOIL)
+Taxi Trip Data from the NYC Taxi and Limousine Commission 2013, originally
+posted at <http://chriswhong.com/open-data/foil_nyc_taxi/>. It is also hosted
+on [archive.org](https://archive.org/details/nycTaxiTripData2013).
 
 The first table trip_fare_1.csv was converted to tsv and saved as
 trip_fare_1.tsv, It is 1.55G in size.

@@ -139,8 +139,8 @@ gen_write <- function(x, path, delim, na = "NA", append = FALSE, col_names =
 random_name <- local({
 
   # This will run during build / installation, but that is OK
-  adjectives <- readLines(system.file("wordlist", "adjectives.txt", package = "vroom"))
-  animals <- readLines(system.file("wordlist", "animals.txt", package = "vroom"))
+  adjectives <- readLines(system.file("words", "adjectives.txt", package = "vroom"))
+  animals <- readLines(system.file("words", "animals.txt", package = "vroom"))
 
   function(n = 1) {
     paste0(sample(adjectives, n, replace = TRUE), "_", sample(animals, n, replace = TRUE))

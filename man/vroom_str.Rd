@@ -10,5 +10,5 @@ vroom_str(x)
 \item{x}{a vector}
 }
 \description{
-Similar to `str()` but geared towards altrep objects.
+Similar to \code{str()} but with more information for Altrep objects.
 }

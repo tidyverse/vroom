@@ -16,11 +16,11 @@ spec(x)
 A col_spec object.
 }
 \description{
-`cols_condense()` takes a spec object and condenses its definition by setting
+\code{cols_condense()} takes a spec object and condenses its definition by setting
 the default column type to the most frequent type and only listing columns
 with a different type.
 
-`spec()` extracts the full column specification from a tibble
+\code{spec()} extracts the full column specification from a tibble
 created by readr.
 }
 \examples{

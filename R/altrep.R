@@ -1,6 +1,6 @@
 #' Structure of objects
 #'
-#' Similar to `str()` but geared towards altrep objects.
+#' Similar to `str()` but with more information for Altrep objects.
 #'
 #' @param x a vector
 #' @export

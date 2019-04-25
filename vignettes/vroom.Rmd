@@ -171,7 +171,7 @@ The available specifications are: (with single letter abbreviations in quotes)
 
 You can tell vroom what columns to use with the `col_types()` argument in a number of ways.
 
-If you only need to override a single column the most consise way is to use a named vector.
+If you only need to override a single column the most concise way is to use a named vector.
 
 ```{r}
 # read the 'hp' columns as an integer

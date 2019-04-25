@@ -7,12 +7,12 @@ NULL
 #' @inheritParams readr::read_delim
 #' @param file path to a local file.
 #' @param delim One of more characters used to delimiter fields within a
-#'   record. If `NULL` the delimiter is guessed from the set of (",", "\\t", " ",
-#'   "|", ":", ";", "\\n").
+#'   record. If `NULL` the delimiter is guessed from the set of `c(",", "\\t", " ",
+#'   "|", ":", ";", "\\n")`.
 #' @param num_threads Number of threads to use when reading and materializing vectors.
 #' @param escape_double Does the file escape quotes by doubling them?
-#'   i.e. If this option is `TRUE`, the value `""` represents
-#'   a single quote, `"`.
+#'   i.e. If this option is `TRUE`, the value '""' represents
+#'   a single quote, '"'.
 #' @param id Either a string or 'NULL'. If a string, the output will contain a
 #'   variable with that name with the filename(s) as the value. If 'NULL', the
 #'   default, no variable will be created.

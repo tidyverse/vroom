@@ -62,8 +62,8 @@ l = logical, f = factor, D = date, T = date time, t = time, ? = guess, or
 \code{_}/\code{-} to skip the column.}
 
 \item{col_select}{One or more selection expressions, like in
-`dplyr::select()`. Use `c()` or `list()` to use more than one expression.
-See `?dplyr::select` for details on available selection options.}
+\code{dplyr::select()}. Use \code{c()} or \code{list()} to use more than one expression.
+See \code{?dplyr::select} for details on available selection options.}
 
 \item{id}{Either a string or 'NULL'. If a string, the output will contain a
 variable with that name with the filename(s) as the value. If 'NULL', the
@@ -99,8 +99,8 @@ time is 5 seconds or more. The automatic progress bar can be disabled by
 setting option \code{readr.show_progress} to \code{FALSE}.}
 
 \item{.name_repair}{Handling of column names. By default, vroom ensures
-column names are not empty and unique. See `.name_repair` as documented in
-[tibble::tibble()] for additional options including supplying user defined
+column names are not empty and unique. See \code{.name_repair} as documented in
+\code{\link[tibble:tibble]{tibble::tibble()}} for additional options including supplying user defined
 name repair functions.}
 
 \item{col_names}{Either NULL, or a character vector column names.}
@@ -118,7 +118,7 @@ Use NA as last end field when reading a ragged fwf file.}
 then it must have all numeric columns and either one or two rows.
 The column names are the variable names. The column values are the
 variable widths if a length one vector, and if length two, variable start and end
-positions. The elements of `...` are used to construct a data frame
+positions. The elements of \code{...} are used to construct a data frame
 with or or two rows as above.}
 }
 \description{
