@@ -7,6 +7,9 @@ Authors@R:
              role = c("aut", "cre"),
              email = "james.f.hester@gmail.com",
              comment = c(ORCID = "0000-0002-2739-7082")),
+      person(given = "https://github.com/mandreyel/",
+             role = "cph",
+             comment = "mio library"),
       person(given = "RStudio",
              role = c("cph", "fnd")))
 Description: The goal of 'vroom' is to read and write data (like
