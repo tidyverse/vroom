@@ -10,6 +10,14 @@ Authors@R:
       person(given = "https://github.com/mandreyel/",
              role = "cph",
              comment = "mio library"),
+      person(given = "Jukka",
+             family = "Jylänki",
+             role = "cph",
+             comment = "grisu3 implementation"),
+      person(given = "Mikkel",
+             family = "Jørgensen",
+             role = "cph",
+             comment = "grisu3 implementation"),
       person(given = "RStudio",
              role = c("cph", "fnd")))
 Description: The goal of 'vroom' is to read and write data (like
