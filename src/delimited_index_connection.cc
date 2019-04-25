@@ -45,14 +45,13 @@ delimited_index_connection::delimited_index_connection(
 
   auto con = R_GetConnection(in);
 
-  bool should_open = !con->isopen;
+  bool should_open = !is_open(con);
   if (should_open) {
     Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(in, "rb");
   }
 
   /* raw connections are always created as open, but we should close them */
-  bool should_close =
-      should_open || strcmp("rawConnection", con->class_name) == 0;
+  bool should_close = should_open || Rf_inherits(in, "rawConnection");
 
   std::array<std::vector<char>, 2> buf = {std::vector<char>(chunk_size),
                                           std::vector<char>(chunk_size)};

@@ -32,8 +32,7 @@ inline std::vector<std::string> get_filenames(SEXP in) {
     if (TYPEOF(x) == STRSXP) {
       out.emplace_back(Rcpp::as<std::string>(x));
     } else {
-      auto con = R_GetConnection(x);
-      out.emplace_back(con->description);
+      out.emplace_back(con_description(x));
     }
   }
 

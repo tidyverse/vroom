@@ -212,7 +212,7 @@ void write_buf(const std::vector<char>& buf, std::FILE* out) {
   std::fwrite(buf.data(), sizeof buf[0], buf.size(), out);
 }
 
-void write_buf_con(const std::vector<char>& buf, Rconnection con) {
+void write_buf_con(const std::vector<char>& buf, SEXP con) {
   R_WriteConnection(con, (void*)buf.data(), sizeof buf[0] * buf.size());
 }
 
@@ -376,7 +376,7 @@ void vroom_write_connection_(
 
   auto con_ = R_GetConnection(con);
 
-  bool should_open = !con_->isopen;
+  bool should_open = !is_open(con_);
   if (should_open) {
     Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(con, "wb");
   }
@@ -415,34 +415,35 @@ void vroom_write_connection_(
       begin += num_lines;
     }
 
-    if (write_fut.valid()) {
-      auto sz = write_fut.get();
+    // if (write_fut.valid()) {
+    // auto sz = write_fut.get();
+    // Rcpp::checkUserInterrupt();
+    //}
+
+    // write_fut = std::async([&, idx, t] {
+    // size_t sz = 0;
+    for (auto i = 0; i < t; ++i) {
+      auto buf = futures[idx][i].get();
+      write_buf_con(buf, con_);
+      auto sz = buf.size();
       if (progress) {
         pb->tick(sz);
       }
-      Rcpp::checkUserInterrupt();
+      // sz += buf.size();
     }
-
-    write_fut = std::async([&, idx, t] {
-      size_t sz = 0;
-      for (auto i = 0; i < t; ++i) {
-        auto buf = futures[idx][i].get();
-        write_buf_con(buf, con_);
-        sz += buf.size();
-      }
-      return sz;
-    });
+    // return sz;
+    //});
 
     idx = (idx + 1) % 2;
   }
 
   // Wait for the last writing to finish
-  if (write_fut.valid()) {
-    write_fut.get();
-    if (progress) {
-      pb->update(1);
-    }
+  // if (write_fut.valid()) {
+  // write_fut.get();
+  if (progress) {
+    pb->update(1);
   }
+  //}
 
   // Close the connection
   if (should_close) {
