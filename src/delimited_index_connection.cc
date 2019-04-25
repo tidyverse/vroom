@@ -45,7 +45,7 @@ delimited_index_connection::delimited_index_connection(
 
   auto con = R_GetConnection(in);
 
-  bool should_open = !is_open(con);
+  bool should_open = !is_open(in);
   if (should_open) {
     Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(in, "rb");
   }

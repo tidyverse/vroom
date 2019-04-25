@@ -212,9 +212,15 @@ void write_buf(const std::vector<char>& buf, std::FILE* out) {
   std::fwrite(buf.data(), sizeof buf[0], buf.size(), out);
 }
 
+#ifdef VROOM_USE_CONNECTIONS_API
+void write_buf_con(const std::vector<char>& buf, Rconnection con) {
+  R_WriteConnection(con, (void*)buf.data(), sizeof buf[0] * buf.size());
+}
+#else
 void write_buf_con(const std::vector<char>& buf, SEXP con) {
   R_WriteConnection(con, (void*)buf.data(), sizeof buf[0] * buf.size());
 }
+#endif
 
 std::vector<SEXPTYPE> get_types(const Rcpp::List& input) {
   std::vector<SEXPTYPE> out;
@@ -376,7 +382,7 @@ void vroom_write_connection_(
 
   auto con_ = R_GetConnection(con);
 
-  bool should_open = !is_open(con_);
+  bool should_open = !is_open(con);
   if (should_open) {
     Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(con, "wb");
   }
