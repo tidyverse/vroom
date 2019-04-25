@@ -10,6 +10,9 @@ Authors@R:
       person(given = "https://github.com/mandreyel/",
              role = "cph",
              comment = "mio library"),
+      person(given = "R Core Team",
+             role = "ctb",
+             comment = "localtime.c code adapted from R"),
       person(given = "Jukka",
              family = "Jylänki",
              role = "cph",
@@ -25,7 +28,7 @@ Description: The goal of 'vroom' is to read and write data (like
     indexing step, then reads the values lazily , so only the data you
     actually use needs to be read.  The writer formats the data in
     parallel and writes to disk asynchronously from formatting.
-License: MIT + file LICENSE
+License: GPL-3
 URL: https://github.com/r-lib/vroom
 BugReports: https://github.com/r-lib/vroom/issues
 Depends: 
