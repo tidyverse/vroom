@@ -62,6 +62,8 @@ files, including
     connections\*](#reading-multiple-files)
   - embedded newlines in headers and fields\*\*
   - writing delimited files with as-needed quoting.
+  - robust to invalid inputs (vroom has been extensively tested with the
+    [afl](http://lcamtuf.coredump.cx/afl/) fuzz tester)\*.
 
 \* *these are additional features only in vroom.*
 
