@@ -39,7 +39,7 @@ fixed_width_index_connection::fixed_width_index_connection(
 
   auto con = R_GetConnection(in);
 
-  bool should_open = !con->isopen;
+  bool should_open = !is_open(in);
   if (should_open) {
     Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(in, "rb");
   }
@@ -51,6 +51,9 @@ fixed_width_index_connection::fixed_width_index_connection(
   auto i = 0;
 
   newlines_.reserve(128);
+
+  auto readBin =
+      Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["readBin"]);
 
   auto sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
   buf[i][sz] = '\0';
@@ -117,8 +120,7 @@ fixed_width_index_connection::fixed_width_index_connection(
   }
 
   /* raw connections are always created as open, but we should close them */
-  bool should_close =
-      should_open || strcmp("rawConnection", con->class_name) == 0;
+  bool should_close = should_open || Rf_inherits(in, "rawConnection");
   if (should_close) {
     Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["close"])(in);
   }

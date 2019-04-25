@@ -19,3 +19,8 @@ matrix:
   - r: oldrel
   - r: 3.3
   - r: 3.2
+  - name: "Using C level Connections API"
+    r: release
+    before_script:
+      - mkdir ~/.R
+      - echo "CXX11FLAGS+=-DVROOM_USE_CONNECTIONS_API" > ~/.R/Makevars
