@@ -45,7 +45,7 @@ col_time(format = "")
 \arguments{
 \item{...}{Either column objects created by \code{col_*()}, or their abbreviated
 character names (as described in the \code{col_types} argument of
-\code{\link[=read_delim]{read_delim()}}). If you're only overriding a few columns, it's
+\code{\link[=vroom]{vroom()}}). If you're only overriding a few columns, it's
 best to refer to columns by name. If not named, the column types must match
 the column names exactly.}
 
