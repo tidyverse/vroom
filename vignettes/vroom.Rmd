@@ -241,7 +241,46 @@ vroom(
 )
 ```
 
-## Writing files
+## Writing delimited files
+
+Use `vroom_write()` to write delimited files, the default delimiter is tab.
+
+```{r}
+vroom_write(mtcars, "mtcars.tsv")
+```
+
+### Writing CSV delimited files
+
+Use the `delim = ','` to write CSV files
+
+```{r}
+vroom_write(mtcars, "mtcars.csv", delim = ",")
+```
+
+### Writing compressed files
+
+For gzip, bzip2 and xz compression they will be automatically compressed if the
+filename ends in `gz`, `bz2` or `xz`.
+
+```{r}
+vroom_write(mtcars, "mtcars.tsv.gz")
+
+vroom_write(mtcars, "mtcars.tsv.bz2")
+
+vroom_write(mtcars, "mtcars.tsv.xz")
+```
+
+It is also possible to use other compressors, such as
+[pigz](https://zlib.net/pigz/) a parallel gzip implementation,
+[lbzip2](http://lbzip2.org/) a parallel bzip2 implementation or
+[pixz](https://github.com/vasi/pixz) a parallel xz implementation by using
+`pipe()` to create a pipe connection. The parallel versions can be considerably
+faster for large output files.
+
+```{r, eval = nzchar(Sys.which("pigz"))}
+vroom_write(mtcars, pipe("pigz > mtcars.tsv.gz"))
+vroom_write(mtcars, pipe("7zpigz > mtcars.tsv.gz"))
+```
 
 ## Further reading
 

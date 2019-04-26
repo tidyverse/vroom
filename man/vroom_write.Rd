@@ -39,9 +39,19 @@ will generate a warning and be made unique with a numeric prefix.}
 will append to existing file. In both cases, if file does not exist a new
 file is created.}
 
-\item{quote}{Single character used to quote strings.}
+\item{quote}{How to handle fields which contain characters that need to be quoted.
+\itemize{
+\item \code{needed} - Only quote fields which need them.
+\item \code{all} - Quote all fields.
+\item \code{none} - Never quote fields.
+}}
 
-\item{escape}{The type of escape to use when quotes are in the data.}
+\item{escape}{The type of escape to use when quotes are in the data.
+\itemize{
+\item \code{double} - quotes are escaped by doubling them.
+\item \code{backslash} - quotes are escaped by a preceding backslash.
+\item \code{none} - quotes are not escaped.
+}}
 
 \item{bom}{If \code{TRUE} add a UTF-8 BOM at the beginning of the file. This is
 recommended when saving data for consumption by excel, as it will force

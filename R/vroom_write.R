@@ -3,6 +3,13 @@
 #' @inheritParams vroom
 #' @inheritParams readr::write_tsv
 #' @param escape The type of escape to use when quotes are in the data.
+#'   - `double` - quotes are escaped by doubling them.
+#'   - `backslash` - quotes are escaped by a preceding backslash.
+#'   - `none` - quotes are not escaped.
+#' @param quote How to handle fields which contain characters that need to be quoted.
+#'   - `needed` - Only quote fields which need them.
+#'   - `all` - Quote all fields.
+#'   - `none` - Never quote fields.
 #' @param bom If `TRUE` add a UTF-8 BOM at the beginning of the file. This is
 #'   recommended when saving data for consumption by excel, as it will force
 #'   excel to read the data with the correct encoding (UTF-8)
