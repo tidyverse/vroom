@@ -119,13 +119,18 @@ processor time is often much higher than the real time.
 library(ggplot2)
 library(forcats)
 tm_df %>%
-  mutate(package = fct_inorder(sub("_", "\n", package))) %>%
+  mutate(
+    package = fct_inorder(sub("_", "\n", package)),
+    op = factor(op, c("read", "print", "head", "tail", "sample", "filter"))
+  ) %>%
   ggplot() +
   geom_segment(y = 0, aes(x = package, xend = package, yend = time, alpha = type), color = "grey50") +
     geom_point(aes(x = package, y = time, color = type)) +
+    scale_alpha_manual(values = c("real" = 1, "process" = 0)) +
     facet_wrap(vars(op), scales = "free") +
-    bench::scale_y_bench_time(base = NULL) +
-    theme(legend.position = "bottom")
+    scale_y_continuous(labels = function(x) format(bench::as_bench_time(x))) +
+    theme(legend.position = "bottom") + 
+    coord_flip()
 ```
 
 ```{r, echo = FALSE, warning = FALSE}

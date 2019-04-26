@@ -62,8 +62,6 @@ LinkingTo:
     Rcpp
 VignetteBuilder: 
     knitr
-Remotes:
-    r-lib/bench
 Copyright: file COPYRIGHTS
 Encoding: UTF-8
 LazyData: true
