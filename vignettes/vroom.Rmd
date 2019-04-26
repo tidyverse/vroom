@@ -150,6 +150,44 @@ vroom(file, col_select = starts_with("d"))
 vroom(file, col_select = list(car = model, everything()))
 ```
 
+## Reading fixed width files
+
+ A fixed width file can be a very compact representation of numeric
+ data. Unfortunately, it's also painful because you need to describe the length
+ of every field. vroom aims to make it as easy as possible by providing a
+ number of different ways to describe the field structure. Use `vroom_fwf()` in
+ conjunction with one of the following helper functions to read the file.
+
+```{r}
+fwf_sample <- vroom_example("fwf-sample.txt")
+cat(readLines(fwf_sample))
+```
+
+- `fwf_empty()` - Guess based on the position of empty columns.
+```{r}
+read_fwf(fwf_sample, fwf_empty(fwf_sample, col_names = c("first", "last", "state", "ssn")))
+```
+
+- `fwf_widths()` - Use user provided set of field widths.
+```{r}
+read_fwf(fwf_sample, fwf_widths(c(20, 10, 12), c("name", "state", "ssn")))
+```
+
+- `fwf_positions()` - Use user provided sets of start and end positions.
+```{r}
+read_fwf(fwf_sample, fwf_positions(c(1, 30), c(20, 42), c("name", "ssn")))
+```
+
+- `fwf_cols()` - Use user provided named widths.
+```{r}
+read_fwf(fwf_sample, fwf_cols(name = 20, state = 10, ssn = 12))
+```
+
+- `fwf_cols()` - Use user provided named pairs of positions.
+```{r}
+read_fwf(fwf_sample, fwf_cols(name = c(1, 20), ssn = c(30, 42)))
+```
+
 ## Column types
 
 vroom guesses the data types of columns as they are read, however sometimes it
@@ -202,6 +240,8 @@ vroom(
   col_types = list(gear = col_factor(levels = c(gear = c("3", "4", "5"))))
 )
 ```
+
+## Writing files
 
 ## Further reading
 
