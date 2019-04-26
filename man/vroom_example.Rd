@@ -2,20 +2,30 @@
 % Please edit documentation in R/example.R
 \name{vroom_example}
 \alias{vroom_example}
+\alias{vroom_examples}
 \title{Get path to vroom examples}
 \usage{
-vroom_example(path = NULL)
+vroom_example(path)
+
+vroom_examples(pattern = NULL)
 }
 \arguments{
-\item{path}{Name of file. If 'NULL', all available example files will be
+\item{path}{Name of file.}
+
+\item{pattern}{A regular expression of filenames to match. If \code{NULL} all
+available files are returned.
 listed.}
 }
 \description{
 vroom comes bundled with a number of sample files in
-its 'inst/extdata' directory. This function make them
-easy to access
+its 'inst/extdata' directory. Use \code{vroom_examples()} to list all the
+available examples and \code{vroom_example()} to retrieve the path to one
+example.
 }
 \examples{
-vroom_example()
+# List all available examples
+vroom_examples()
+
+# Get path to one example
 vroom_example("mtcars.csv")
 }
