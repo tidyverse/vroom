@@ -218,9 +218,12 @@ test_that("vroom can read an empty file", {
   expect_equal(vroom(character()), tibble::tibble())
 })
 
-test_that("vroom_example() returns the example files", {
+test_that("vroom_examples() returns the example files", {
+  expect_equal(vroom_examples(), list.files(system.file("extdata", package = "vroom")))
+})
 
-  expect_equal(vroom_example(), list.files(system.file("extdata", package = "vroom")))
+test_that("vroom_example() returns a single example files", {
+  expect_equal(vroom_example("mtcars.csv"), system.file("extdata", "mtcars.csv", package = "vroom"))
 })
 
 test_that("subsets work", {
@@ -357,5 +360,5 @@ test_that("guess_type works with long strings (#74)", {
 })
 
 test_that("vroom errors if unnamed column types do not match the number of columns", {
-  expect_error(vroom("a,b\n1,2\n", col_types = "i"), "must have the same length")
+  expect_error(vroom("a,b\n1,2\n", col_types = "i"), "must have the same length", class = "Rcpp::eval_error")
 })
