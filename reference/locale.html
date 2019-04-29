@@ -36,7 +36,7 @@
 countries. You set the locale in once, and the details are automatically
 passed on down to the columns parsers. The defaults have been chosen to
 match R (i.e. US English) as closely as possible. See
-`vignette(&quot;locales&quot;)` for more details." />
+vignette(&quot;locales&quot;) for more details." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -67,7 +67,7 @@ match R (i.e. US English) as closely as possible. See
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
       </span>
     </div>
 
@@ -129,7 +129,7 @@ match R (i.e. US English) as closely as possible. See
 countries. You set the locale in once, and the details are automatically
 passed on down to the columns parsers. The defaults have been chosen to
 match R (i.e. US English) as closely as possible. See
-`vignette("locales")` for more details.</p>
+<code>vignette("locales")</code> for more details.</p>
     
     </div>
 
@@ -145,8 +145,8 @@ match R (i.e. US English) as closely as possible. See
     <tr>
       <th>date_names</th>
       <td><p>Character representations of day and month names. Either
-the language code as string (passed on to [date_names_lang()])
-or an object created by [date_names()].</p></td>
+the language code as string (passed on to <code><a href='date_names.html'>date_names_lang()</a></code>)
+or an object created by <code><a href='date_names.html'>date_names()</a></code>.</p></td>
     </tr>
     <tr>
       <th>date_format, time_format</th>
@@ -155,23 +155,23 @@ or an object created by [date_names()].</p></td>
     <tr>
       <th>decimal_mark, grouping_mark</th>
       <td><p>Symbols used to indicate the decimal
-place, and to chunk larger numbers. Decimal mark can only be `,` or
-`.`.</p></td>
+place, and to chunk larger numbers. Decimal mark can only be <code>,</code> or
+<code>.</code>.</p></td>
     </tr>
     <tr>
       <th>tz</th>
       <td><p>Default tz. This is used both for input (if the time zone isn't
-  present in individual strings), and for output (to control the default
-  display). The default is to use "UTC", a time zone that does not use
-  daylight savings time (DST) and hence is typically most useful for data.
-  The absence of time zones makes it approximately 50x faster to generate
-  UTC times than any other time zone.</p>
-<p>Use `""` to use the system default time zone, but beware that this
-  will not be reproducible across systems.</p>
-<p>For a complete list of possible time zones, see [OlsonNames()].
-  Americans, note that "EST" is a Canadian time zone that does not have
-  DST. It is *not* Eastern Standard Time. It's better to use
-  "US/Eastern", "US/Central" etc.</p></td>
+present in individual strings), and for output (to control the default
+display). The default is to use "UTC", a time zone that does not use
+daylight savings time (DST) and hence is typically most useful for data.
+The absence of time zones makes it approximately 50x faster to generate
+UTC times than any other time zone.</p>
+<p>Use <code>""</code> to use the system default time zone, but beware that this
+will not be reproducible across systems.</p>
+<p>For a complete list of possible time zones, see <code><a href='https://www.rdocumentation.org/packages/base/topics/timezones'>OlsonNames()</a></code>.
+Americans, note that "EST" is a Canadian time zone that does not have
+DST. It is <em>not</em> Eastern Standard Time. It's better to use
+"US/Eastern", "US/Central" etc.</p></td>
     </tr>
     <tr>
       <th>encoding</th>
@@ -231,7 +231,7 @@ place, and to chunk larger numbers. Decimal mark can only be `,` or
 
       <footer>
       <div class="copyright">
-  <p>Developed by Jim Hester, <a href='https://www.rstudio.com'><img src='https://www.tidyverse.org/rstudio-logo.svg' alt='RStudio' height='24' /></a>.</p>
+  <p>Developed by <a href='http://jimhester.com'>Jim Hester</a>, <a href='https://www.rstudio.com'><img src='https://www.tidyverse.org/rstudio-logo.svg' alt='RStudio' height='24' /></a>.</p>
 </div>
 
 <div class="pkgdown">

@@ -32,12 +32,13 @@
 
 <meta property="og:title" content="Determine progress bars should be shown — vroom_progress" />
 
-<meta property="og:description" content="Progress bars are shown _unless_ one of the following is `TRUE`
-- The bar is explicitly disabled by setting `Sys.getenv(&quot;VROOM_SHOW_PROGRESS&quot;=&quot;false&quot;)`
-- The code is run in a non-interactive session (`interactive()` is `FALSE`).
-- The code is run in an RStudio notebook chunk.
-- The code is run by knitr / rmarkdown.
-- The code is run by testthat (the `TESTTHAT` envvar is `true`)." />
+<meta property="og:description" content="Progress bars are shown unless one of the following is TRUE
+The bar is explicitly disabled by setting Sys.getenv(&quot;VROOM_SHOW_PROGRESS&quot;=&quot;false&quot;)
+The code is run in a non-interactive session (interactive() is FALSE).
+The code is run in an RStudio notebook chunk.
+The code is run by knitr / rmarkdown.
+The code is run by testthat (the TESTTHAT envvar is true).
+" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -68,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
       </span>
     </div>
 
@@ -126,12 +127,13 @@
 
     <div class="ref-description">
     
-    <p>Progress bars are shown _unless_ one of the following is `TRUE`
-- The bar is explicitly disabled by setting `Sys.getenv("VROOM_SHOW_PROGRESS"="false")`
-- The code is run in a non-interactive session (`interactive()` is `FALSE`).
-- The code is run in an RStudio notebook chunk.
-- The code is run by knitr / rmarkdown.
-- The code is run by testthat (the `TESTTHAT` envvar is `true`).</p>
+    <p>Progress bars are shown <em>unless</em> one of the following is <code>TRUE</code></p><ul>
+<li><p>The bar is explicitly disabled by setting <code><a href='https://www.rdocumentation.org/packages/base/topics/Sys.getenv'>Sys.getenv("VROOM_SHOW_PROGRESS"="false")</a></code></p></li>
+<li><p>The code is run in a non-interactive session (<code><a href='https://www.rdocumentation.org/packages/base/topics/interactive'>interactive()</a></code> is <code>FALSE</code>).</p></li>
+<li><p>The code is run in an RStudio notebook chunk.</p></li>
+<li><p>The code is run by knitr / rmarkdown.</p></li>
+<li><p>The code is run by testthat (the <code>TESTTHAT</code> envvar is <code>true</code>).</p></li>
+</ul>
     
     </div>
 
@@ -149,7 +151,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Jim Hester, <a href='https://www.rstudio.com'><img src='https://www.tidyverse.org/rstudio-logo.svg' alt='RStudio' height='24' /></a>.</p>
+  <p>Developed by <a href='http://jimhester.com'>Jim Hester</a>, <a href='https://www.rstudio.com'><img src='https://www.tidyverse.org/rstudio-logo.svg' alt='RStudio' height='24' /></a>.</p>
 </div>
 
 <div class="pkgdown">

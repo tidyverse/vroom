@@ -32,8 +32,8 @@
 
 <meta property="og:title" content="Create column specification — cols" />
 
-<meta property="og:description" content="`cols()` includes all columns in the input data, guessing the column types
-as the default. `cols_only()` includes only the columns you explicitly
+<meta property="og:description" content="cols() includes all columns in the input data, guessing the column types
+as the default. cols_only() includes only the columns you explicitly
 specify, skipping the rest." />
 <meta name="twitter:card" content="summary" />
 
@@ -65,7 +65,7 @@ specify, skipping the rest." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
       </span>
     </div>
 
@@ -123,8 +123,8 @@ specify, skipping the rest." />
 
     <div class="ref-description">
     
-    <p>`cols()` includes all columns in the input data, guessing the column types
-as the default. `cols_only()` includes only the columns you explicitly
+    <p><code>cols()</code> includes all columns in the input data, guessing the column types
+as the default. <code>cols_only()</code> includes only the columns you explicitly
 specify, skipping the rest.</p>
     
     </div>
@@ -160,15 +160,15 @@ specify, skipping the rest.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>...</th>
-      <td><p>Either column objects created by `col_*()`, or their abbreviated
-character names (as described in the `col_types` argument of
-[read_delim()]). If you're only overriding a few columns, it's
+      <td><p>Either column objects created by <code>col_*()</code>, or their abbreviated
+character names (as described in the <code>col_types</code> argument of
+<code><a href='vroom.html'>vroom()</a></code>). If you're only overriding a few columns, it's
 best to refer to columns by name. If not named, the column types must match
 the column names exactly.</p></td>
     </tr>
     <tr>
       <th>.default</th>
-      <td><p>Any named columns not explicitly overridden in `...`
+      <td><p>Any named columns not explicitly overridden in <code>...</code>
 will be read with this column type.</p></td>
     </tr>
     <tr>
@@ -197,18 +197,19 @@ the complete string.</p></td>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The available specifications are: (with string abbreviations in brackets)</p>
-<p>* `col_logical()` \[l\], containing only `T`, `F`, `TRUE` or `FALSE`.
-* `col_integer()` \[i\], integers.
-* `col_double()` \[d\], doubles.
-* `col_character()` \[c\], everything else.
-* `col_factor(levels, ordered)` \[f\], a fixed set of values.
-* `col_date(format = "")` \[D\]: with the locale's `date_format`.
-* `col_time(format = "")` \[t\]: with the locale's `time_format`.
-* `col_datetime(format = "")` \[T\]: ISO8601 date times
-* `col_number()` \[n\], numbers containing the `grouping_mark`
-* `col_skip()` \[_, -\], don't import this column.
-* `col_guess()` \[?\], parse using the "best" type based on the input.</p>
+    <p>The available specifications are: (with string abbreviations in brackets)</p><ul>
+<li><p><code>col_logical()</code> [l], containing only <code>T</code>, <code>F</code>, <code>TRUE</code> or <code>FALSE</code>.</p></li>
+<li><p><code>col_integer()</code> [i], integers.</p></li>
+<li><p><code>col_double()</code> [d], doubles.</p></li>
+<li><p><code>col_character()</code> [c], everything else.</p></li>
+<li><p><code>col_factor(levels, ordered)</code> [f], a fixed set of values.</p></li>
+<li><p><code>col_date(format = "")</code> [D]: with the locale's <code>date_format</code>.</p></li>
+<li><p><code>col_time(format = "")</code> [t]: with the locale's <code>time_format</code>.</p></li>
+<li><p><code>col_datetime(format = "")</code> [T]: ISO8601 date times</p></li>
+<li><p><code>col_number()</code> [n], numbers containing the <code>grouping_mark</code></p></li>
+<li><p><code>col_skip()</code> [_, -], don't import this column.</p></li>
+<li><p><code>col_guess()</code> [?], parse using the "best" type based on the input.</p></li>
+</ul>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -258,7 +259,7 @@ the complete string.</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Jim Hester, <a href='https://www.rstudio.com'><img src='https://www.tidyverse.org/rstudio-logo.svg' alt='RStudio' height='24' /></a>.</p>
+  <p>Developed by <a href='http://jimhester.com'>Jim Hester</a>, <a href='https://www.rstudio.com'><img src='https://www.tidyverse.org/rstudio-logo.svg' alt='RStudio' height='24' /></a>.</p>
 </div>
 
 <div class="pkgdown">

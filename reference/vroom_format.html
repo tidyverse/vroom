@@ -32,7 +32,7 @@
 
 <meta property="og:title" content="Convert a data frame to a delimited string — vroom_format" />
 
-<meta property="og:description" content="This is equivalent to [vroom_write()], but instead of writing to
+<meta property="og:description" content="This is equivalent to vroom_write(), but instead of writing to
 disk, it returns a string. It is primarily useful for examples and for
 testing." />
 <meta name="twitter:card" content="summary" />
@@ -65,7 +65,7 @@ testing." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
       </span>
     </div>
 
@@ -123,7 +123,7 @@ testing." />
 
     <div class="ref-description">
     
-    <p>This is equivalent to [vroom_write()], but instead of writing to
+    <p>This is equivalent to <code><a href='vroom_write.html'>vroom_write()</a></code>, but instead of writing to
 disk, it returns a string. It is primarily useful for examples and for
 testing.</p>
     
@@ -143,8 +143,7 @@ testing.</p>
     <tr>
       <th>delim</th>
       <td><p>One of more characters used to delimiter fields within a
-record. If `NULL` the delimiter is guessed from the set of (",", "\t", " ",
-"|", ":", ";", "\n").</p></td>
+record. If <code>NULL</code> the delimiter is guessed from the set of <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c(",", "\t", " ", "|", ":", ";", "\n")</a></code>.</p></td>
     </tr>
     <tr>
       <th>na</th>
@@ -167,15 +166,23 @@ will generate a warning and be made unique with a numeric prefix.</p></td>
     </tr>
     <tr>
       <th>escape</th>
-      <td><p>The type of escape to use when quotes are in the data.</p></td>
+      <td><p>The type of escape to use when quotes are in the data.</p><ul>
+<li><p><code>double</code> - quotes are escaped by doubling them.</p></li>
+<li><p><code>backslash</code> - quotes are escaped by a preceding backslash.</p></li>
+<li><p><code>none</code> - quotes are not escaped.</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>quote</th>
-      <td><p>Single character used to quote strings.</p></td>
+      <td><p>How to handle fields which contain characters that need to be quoted.</p><ul>
+<li><p><code>needed</code> - Only quote fields which need them.</p></li>
+<li><p><code>all</code> - Quote all fields.</p></li>
+<li><p><code>none</code> - Never quote fields.</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>bom</th>
-      <td><p>If `TRUE` add a UTF-8 BOM at the beginning of the file. This is
+      <td><p>If <code>TRUE</code> add a UTF-8 BOM at the beginning of the file. This is
 recommended when saving data for consumption by excel, as it will force
 excel to read the data with the correct encoding (UTF-8)</p></td>
     </tr>
@@ -194,7 +201,7 @@ excel to read the data with the correct encoding (UTF-8)</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Jim Hester, <a href='https://www.rstudio.com'><img src='https://www.tidyverse.org/rstudio-logo.svg' alt='RStudio' height='24' /></a>.</p>
+  <p>Developed by <a href='http://jimhester.com'>Jim Hester</a>, <a href='https://www.rstudio.com'><img src='https://www.tidyverse.org/rstudio-logo.svg' alt='RStudio' height='24' /></a>.</p>
 </div>
 
 <div class="pkgdown">

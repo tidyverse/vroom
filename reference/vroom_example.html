@@ -33,8 +33,9 @@
 <meta property="og:title" content="Get path to vroom examples — vroom_example" />
 
 <meta property="og:description" content="vroom comes bundled with a number of sample files in
-its 'inst/extdata' directory. This function make them
-easy to access" />
+its 'inst/extdata' directory. Use vroom_examples() to list all the
+available examples and vroom_example() to retrieve the path to one
+example." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -65,7 +66,7 @@ easy to access" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
       </span>
     </div>
 
@@ -124,27 +125,38 @@ easy to access" />
     <div class="ref-description">
     
     <p>vroom comes bundled with a number of sample files in
-its 'inst/extdata' directory. This function make them
-easy to access</p>
+its 'inst/extdata' directory. Use <code>vroom_examples()</code> to list all the
+available examples and <code>vroom_example()</code> to retrieve the path to one
+example.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>vroom_example</span>(<span class='kw'>path</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>vroom_example</span>(<span class='no'>path</span>)
+
+<span class='fu'>vroom_examples</span>(<span class='kw'>pattern</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>path</th>
-      <td><p>Name of file. If 'NULL', all available example files will be
+      <td><p>Name of file.</p></td>
+    </tr>
+    <tr>
+      <th>pattern</th>
+      <td><p>A regular expression of filenames to match. If <code>NULL</code> all
+available files are returned.
 listed.</p></td>
     </tr>
     </table>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>vroom_example</span>()</div><div class='output co'>#&gt; [1] "mtcars.csv"     "mtcars.csv.bz2" "mtcars.csv.gz"  "mtcars.csv.xz" 
-#&gt; [5] "mtcars.csv.zip"</div><div class='input'><span class='fu'>vroom_example</span>(<span class='st'>"mtcars.csv"</span>)</div><div class='output co'>#&gt; [1] "/home/travis/build/r-lib/vroom/inst/extdata/mtcars.csv"</div></pre>
+    <pre class="examples"><div class='input'><span class='co'># List all available examples</span>
+<span class='fu'>vroom_examples</span>()</div><div class='output co'>#&gt; [1] "fwf-sample.txt" "mtcars.csv"     "mtcars.csv.bz2" "mtcars.csv.gz" 
+#&gt; [5] "mtcars.csv.xz"  "mtcars.csv.zip"</div><div class='input'>
+<span class='co'># Get path to one example</span>
+<span class='fu'>vroom_example</span>(<span class='st'>"mtcars.csv"</span>)</div><div class='output co'>#&gt; [1] "/home/travis/build/r-lib/vroom/inst/extdata/mtcars.csv"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -159,7 +171,7 @@ listed.</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Jim Hester, <a href='https://www.rstudio.com'><img src='https://www.tidyverse.org/rstudio-logo.svg' alt='RStudio' height='24' /></a>.</p>
+  <p>Developed by <a href='http://jimhester.com'>Jim Hester</a>, <a href='https://www.rstudio.com'><img src='https://www.tidyverse.org/rstudio-logo.svg' alt='RStudio' height='24' /></a>.</p>
 </div>
 
 <div class="pkgdown">

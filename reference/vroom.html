@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
       </span>
     </div>
 
@@ -143,8 +143,7 @@
     <tr>
       <th>delim</th>
       <td><p>One of more characters used to delimiter fields within a
-record. If `NULL` the delimiter is guessed from the set of (",", "\t", " ",
-"|", ":", ";", "\n").</p></td>
+record. If <code>NULL</code> the delimiter is guessed from the set of <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c(",", "\t", " ", "|", ":", ";", "\n")</a></code>.</p></td>
     </tr>
     <tr>
       <th>col_names</th>
@@ -179,8 +178,8 @@ l = logical, f = factor, D = date, T = date time, t = time, ? = guess, or
     <tr>
       <th>col_select</th>
       <td><p>One or more selection expressions, like in
-`dplyr::select()`. Use `c()` or `list()` to use more than one expression.
-See `?dplyr::select` for details on available selection options.</p></td>
+<code><a href='https://dplyr.tidyverse.org/reference/select.html'>dplyr::select()</a></code>. Use <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c()</a></code> or <code><a href='https://www.rdocumentation.org/packages/base/topics/list'>list()</a></code> to use more than one expression.
+See <code><a href='https://dplyr.tidyverse.org/reference/select.html'>?dplyr::select</a></code> for details on available selection options.</p></td>
     </tr>
     <tr>
       <th>id</th>
@@ -218,8 +217,8 @@ each field before parsing it?</p></td>
     <tr>
       <th>escape_double</th>
       <td><p>Does the file escape quotes by doubling them?
-i.e. If this option is `TRUE`, the value `""` represents
-a single quote, `"`.</p></td>
+i.e. If this option is <code>TRUE</code>, the value '""' represents
+a single quote, '"'.</p></td>
     </tr>
     <tr>
       <th>escape_backslash</th>
@@ -255,8 +254,8 @@ setting option <code>readr.show_progress</code> to <code>FALSE</code>.</p></td>
     <tr>
       <th>.name_repair</th>
       <td><p>Handling of column names. By default, vroom ensures
-column names are not empty and unique. See `.name_repair` as documented in
-[tibble::tibble()] for additional options including supplying user defined
+column names are not empty and unique. See <code>.name_repair</code> as documented in
+<code><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble::tibble()</a></code> for additional options including supplying user defined
 name repair functions.</p></td>
     </tr>
     </table>
@@ -298,7 +297,7 @@ name repair functions.</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Jim Hester, <a href='https://www.rstudio.com'><img src='https://www.tidyverse.org/rstudio-logo.svg' alt='RStudio' height='24' /></a>.</p>
+  <p>Developed by <a href='http://jimhester.com'>Jim Hester</a>, <a href='https://www.rstudio.com'><img src='https://www.tidyverse.org/rstudio-logo.svg' alt='RStudio' height='24' /></a>.</p>
 </div>
 
 <div class="pkgdown">

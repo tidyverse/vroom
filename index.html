@@ -34,7 +34,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
       </span>
     </div>
 
@@ -143,7 +143,7 @@
 <p>vroom has nearly all of the parsing features of <a href="https://readr.tidyverse.org">readr</a> for delimited and fixed width files, including</p>
 <ul>
 <li>delimiter guessing*</li>
-<li>custom delimiters (including multi-byte* and unicode* delimiters)</li>
+<li>custom delimiters (including multi-byte* and Unicode* delimiters)</li>
 <li>specification of column types (including type guessing)
 <ul>
 <li>numeric types (double, integer, number)</li>
@@ -176,6 +176,7 @@
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
+<p>See <a href="https://r-lib.github.io/vroom/articles/vroom.html">getting started</a> to jump start your use of vroom!</p>
 <p>vroom uses the same interface as readr to specify column types.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">vroom<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/vroom/topics/vroom">vroom</a></span>(<span class="st">"mtcars.tsv"</span>,</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2">  <span class="dt">col_types =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">cyl =</span> <span class="st">"i"</span>, <span class="dt">gear =</span> <span class="st">"f"</span>,<span class="dt">hp =</span> <span class="st">"i"</span>, <span class="dt">disp =</span> <span class="st">"_"</span>,</a>
@@ -226,15 +227,10 @@
 <a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co">#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,</span></a>
 <a class="sourceLine" id="cb4-25" data-line-number="25"><span class="co">#&gt; #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></a></code></pre></div>
 </div>
-<div id="further-reading" class="section level2">
-<h2 class="hasAnchor">
-<a href="#further-reading" class="anchor"></a>Further reading</h2>
-<p>See <a href="https://r-lib.github.io/vroom/articles/vroom.html">Getting started</a> to jump start your use of vroom!</p>
-</div>
 <div id="benchmarks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#benchmarks" class="anchor"></a>Benchmarks</h2>
-<p>The speed quoted above is from a dataset with 14,776,615 rows and 11 columns, see the <a href="https://r-lib.github.io/vroom/articles/benchmarks/benchmarks.html">benchmark article</a> for full details of the dataset and <a href="https://github.com/r-lib/vroom/blob/master/inst/bench">bench/</a> for the code used to retrieve the data and perform the benchmarks.</p>
+<p>The speed quoted above is from a real dataset with 14,776,615 rows and 11 columns, see the <a href="https://r-lib.github.io/vroom/articles/benchmarks/benchmarks.html">benchmark article</a> for full details of the dataset and <a href="https://github.com/r-lib/vroom/blob/master/inst/bench">bench/</a> for the code used to retrieve the data and perform the benchmarks.</p>
 </div>
 </div>
 <div id="environment-variables" class="section level1">
@@ -256,7 +252,7 @@
 <p>There are also a family of variables to control use of the Altrep framework. For versions of R where the Altrep framework is unavailable (R &lt; 3.5.0) they are automatically turned off and the variables have no effect. The variables can take one of <code>true</code>, <code>false</code>, <code>TRUE</code>, <code>FALSE</code>, <code>1</code>, or <code>0</code>.</p>
 <ul>
 <li>
-<code>VROOM_USE_ALTREP_NUMERICS</code> - If set use altrep for <em>all</em> numeric types (default <code>false</code>).</li>
+<code>VROOM_USE_ALTREP_NUMERICS</code> - If set use Altrep for <em>all</em> numeric types (default <code>false</code>).</li>
 </ul>
 <p>There are also individual variables for each type. Currently only <code>VROOM_USE_ALTREP_CHR</code> defaults to <code>true</code>.</p>
 <ul>
@@ -273,7 +269,7 @@
 <div id="rstudio-caveats" class="section level2">
 <h2 class="hasAnchor">
 <a href="#rstudio-caveats" class="anchor"></a>RStudio caveats</h2>
-<p>RStudio’s environment pane auto-refresh behavior calls <code><a href="https://www.rdocumentation.org/packages/utils/topics/object.size">object.size()</a></code> which for Altrep objects can be extremely slow. This was fixed in <a href="https://github.com/rstudio/rstudio/pull/4210">rstudio#4210</a> and <a href="https://github.com/rstudio/rstudio/pull/4292">rstudio#4292</a>, so it is recommended you use a <a href="https://dailies.rstudio.com/">daily version</a> if you are trying to use vroom inside RStudio. For older versions a workaround is to use the ‘Manual Refresh Only’ option in the environment pane.</p>
+<p>RStudio’s environment pane auto-refresh behavior calls <code><a href="https://www.rdocumentation.org/packages/utils/topics/object.size">object.size()</a></code> which for Altrep objects can be extremely slow. This was fixed in <a href="https://github.com/rstudio/rstudio/pull/4210">RStudio#4210</a> and <a href="https://github.com/rstudio/rstudio/pull/4292">RStudio#4292</a>, so it is recommended you use a <a href="https://dailies.rstudio.com/">daily version</a> if you are trying to use vroom inside RStudio. For older versions a workaround is to use the ‘Manual Refresh Only’ option in the environment pane.</p>
 <p><img src="https://user-images.githubusercontent.com/470418/51357022-95a1f280-1a82-11e9-8035-3687c8fd5dd8.png"></p>
 </div>
 <div id="thanks" class="section level2">
@@ -312,7 +308,8 @@
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Jim Hester <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-2739-7082" target="orcid.widget"><img src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg" class="orcid" alt="ORCID" height="16"></a> </li>
+<li>
+<a href="http://jimhester.com">Jim Hester</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-2739-7082" target="orcid.widget"><img src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg" class="orcid" alt="ORCID" height="16"></a> </li>
 <li>
 <a href="https://www.rstudio.com"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" height="24"></a> <br><small class="roles"> Copyright holder, funder </small>  </li>
 <li><a href="authors.html">All authors...</a></li>
@@ -335,7 +332,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Jim Hester, <a href="https://www.rstudio.com"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" height="24"></a>.</p>
+  <p>Developed by <a href="http://jimhester.com">Jim Hester</a>, <a href="https://www.rstudio.com"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" height="24"></a>.</p>
 </div>
 
 <div class="pkgdown">
