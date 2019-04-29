@@ -16,6 +16,9 @@ matrix:
       provider: script
       script: Rscript -e 'pkgdown::deploy_site_github(verbose = TRUE)'
       skip_cleanup: true
+      on:
+        repo: r-lib/vroom
+        condition: $TRAVIS_BRANCH = master || -n $TRAVIS_TAG
   - r: oldrel
   - r: 3.3
   - r: 3.2
