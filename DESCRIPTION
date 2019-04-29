@@ -43,7 +43,7 @@ Imports:
     tidyselect,
     withr
 Suggests: 
-    bench,
+    bench (>= 1.0.2),
     covr,
     curl,
     dplyr,
