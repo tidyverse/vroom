@@ -1,8 +1,35 @@
 path <- "~/data/trip_fare_1.tsv"
 desc <- c("library", "read", "print", "head", "tail", "sample", "filter")
 
+watch <- function(expr, description = NULL) {
+  expr <- rlang::enquo(expr)
+  env <- rlang::quo_get_env(expr)
+  exprs <- as.list(rlang::quo_get_expr(expr)[-1])
+
+  if (is.null(description)) {
+    description <- names(exprs)
+  }
+
+  out <- list(
+    exprs = new_bench_expr(exprs, description),
+    process = numeric(length(exprs)),
+    real = numeric(length(exprs))
+  )
+
+  for (i in seq_along(exprs)) {
+    res <- rlang::eval_bare(bench::system_time(!!exprs[[i]]), env)
+    out[[2]][[i]] <- res[[1]]
+    out[[3]][[i]] <- res[[2]]
+  }
+
+  out[[2]] <- bench::as_bench_time(out[[2]])
+  out[[3]] <- bench::as_bench_time(out[[3]])
+
+  tibble::as_tibble(out)
+}
+
 vroom_base <- function(file, desc) {
-  bench::watch(description = desc,
+  watch(description = desc,
     {
       library(vroom)
       x <- vroom(file, col_types = c(pickup_datetime = "c"), quote = "", escape_double = FALSE, na = character())
@@ -16,7 +43,7 @@ vroom_base <- function(file, desc) {
 }
 
 vroom_dplyr <- function(file, desc) {
-  bench::watch(description = desc,
+  watch(description = desc,
     {
       { library(vroom); library(dplyr) }
       x <- vroom(file, col_types = c(pickup_datetime = "c"), quote = "", escape_double = FALSE, na = character())
@@ -30,7 +57,7 @@ vroom_dplyr <- function(file, desc) {
 }
 
 data.table <- function(file, desc) {
-  bench::watch(description = desc,
+  watch(description = desc,
     {
       library(data.table)
       x <- fread(file, sep = "\t", quote = "", strip.white = FALSE, na.strings = NULL)
@@ -44,7 +71,7 @@ data.table <- function(file, desc) {
 }
 
 readr <- function(file, desc) {
-  bench::watch(description = desc,
+  watch(description = desc,
     {
     { library(readr); library(dplyr) }
       x <- read_tsv(file, col_types = c(pickup_datetime = "c"), quote = "", trim_ws = FALSE, na = character())
@@ -58,7 +85,7 @@ readr <- function(file, desc) {
 }
 
 read.delim <- function(file, desc) {
-  bench::watch(description = desc,
+  watch(description = desc,
     {
       x <- read.delim(file, quote = "", na.strings = NULL)
       print(x)
