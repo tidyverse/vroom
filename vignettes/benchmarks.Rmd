@@ -1,5 +1,5 @@
 ---
-title: "Benchmarks"
+title: "Vroom Benchmarks"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{benchmarks}
@@ -13,16 +13,16 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
-vroom is an experiment for a future version of readr (2.0), or a possible
-extension package.
+vroom is a new approach to reading delimited and fixed width data into R.
 
-It stems from the observation that
-IO is not the bottle neck in parsing delimited datasets, rather (re)-allocating
-memory and parsing the values into R data types (particularly for characters)
-takes the bulk of the time.
+It stems from the observation that when parsing files reading data from disk
+and finding the delimiters is generally not the main bottle neck. Instead
+(re)-allocating memory and parsing the values into R data types (particularly
+for characters) takes the bulk of the time.
 
-It relies on the Altrep framework available in R 3.5 to provide lazy / delayed
-parsing of values in delimited files.
+Therefore you can obtain very rapid input by first performing a fast indexing
+step and then using the Altrep framework available in R versions 3.5+ to
+access the values in a lazy / delayed fashion.
 
 ## How it works
 
@@ -32,36 +32,26 @@ created for each column in the data which hold a pointer to the index and the
 memory mapped file. When these vectors are indexed the value is read from the
 memory mapping.
 
-This means initial reading is extremely fast, in the example below it is ~ 1/4
-the time of the multi-threaded `data.table::fread()`. Sampling operations
-are likewise extremely fast, as only the data actually included in the sample
-is read. This means things like the tibble print method, calling `head()`,
-`tail()` `x[sample(), ]` etc. have very low overhead.
-
-Filtering also can be fast, only the columns included in the filter itself have
-to be fully read across the entire dataset, only the filtered rows need to be
-read from the remaining columns.
-
-(*N.B. currently the dplyr implementation
-materializes the all numeric vectors when using `filter()` or `sample_n()`, so these cases are not as
-fast as they could otherwise be*).
-
-This approach also allows you to work with data that is larger than memory. As
-long as you are careful to avoid materializing the entire dataset at once it
-can be efficiently queried and subset.
+This means initial reading is extremely fast, in the real world dataset below
+it is ~ 1/4 the time of the multi-threaded `data.table::fread()`. Sampling
+operations are likewise extremely fast, as only the data actually included in
+the sample is read. This means things like the tibble print method, calling
+`head()`, `tail()` `x[sample(), ]` etc. have very low overhead. Filtering also
+can be fast, only the columns included in the filter selection have to be fully
+read and only the data in the filtered rows needs to be read from the remaining
+columns. Grouped aggregations likewise only need to read the grouping
+variables and the variables aggregated.
 
 Once a particular vector is fully materialized the speed for all subsequent
 operations should be identical to a normal R vector.
 
-There is also lots of possible speed improvements available. The indexer could be highly
-parallelized, as it does not rely on R data structures at all. The index could
-also be stored on disk, which would make re-reading the file at a later time
-basically instantaneous. Materializing non-character vectors could also be
-parallelized.
+This approach potentially also allows you to work with data that is larger than
+memory. As long as you are careful to avoid materializing the entire dataset at
+once it can be efficiently queried and subset.
 
-## Dataset
+## Taxi Trip Dataset
 
-The dataset used in these benchmarks is from Freedom of Information Law (FOIL)
+The dataset used in the following benchmark is from Freedom of Information Law (FOIL)
 Taxi Trip Data from the NYC Taxi and Limousine Commission 2013, originally
 posted at <http://chriswhong.com/open-data/foil_nyc_taxi/>. It is also hosted
 on [archive.org](https://archive.org/details/nycTaxiTripData2013).
@@ -83,58 +73,81 @@ trip_fare_1.tsv, It is 1.55G in size.
     #> $ tolls_amount    <dbl> 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.8, 0.0, 0...
     #> $ total_amount    <dbl> 7.0, 7.0, 7.0, 6.0, 10.5, 10.0, 6.5, 39.3, 7.0...
 
-## Benchmarks
+### Taxi Benchmarks
 
-The code used to run the benchmarks is in
-[bench/benchmark.R](https://github.com/r-lib/vroom/blob/master/inst/bench/benchmark.R).
+The code used to run the taxi benchmarks is in
+[bench/taxi_benchmark.R](https://github.com/r-lib/vroom/blob/master/inst/bench/taxi_benchmark.R).
 
-The benchmark `base` uses `vroom` with base functions for subsetting.
-`dplyr` uses `vroom` to read the file and dplyr functions to subset.
-`data.table` uses `fread()` to read the file and `data.table` functions to
-subset and `readr` uses `readr` to read the file and `dplyr` to subset.
+The benchmarks labeled `vroom_base` uses `vroom` with base functions for
+manipulation. `vroom_dplyr` uses `vroom` to read the file and dplyr functions to
+manipulate. `data.table` uses `fread()` to read the file and `data.table` functions
+to manipulate and `readr` uses `readr` to read the file and `dplyr` to manipulate. By
+default vroom only uses Altrep for character vectors, the benchmarks labeled
+`vroom (full altrep)` instead use Altrep vectors for all supported types.
 
 The following operations are performed.
 
   - The data is read
-  - `print()` - _N.B. read.delim uses `print(head(x, 25))` because printing the whole dataset takes > 10 minutes_
+  - `print()` - _N.B. read.delim uses `print(head(x, 10))` because printing the whole dataset takes > 10 minutes_
   - `head()`
   - `tail()`
   - Sampling 100 random rows
   - Filtering for "UNK" payment, this is 6434 rows (0.0435% of total).
+  - Aggregation of mean fare amount per payment type.
+
+```{r, fig.height = 8, fig.width=10, warning = FALSE, echo = FALSE}
+library(ggplot2)
+library(forcats)
+
+tm_df %>%
+  filter(type == "real") %>%
+  mutate(
+    package = fct_reorder(sub("_", "\n", package), time, sum),
+    op = factor(op, desc),
+  ) %>%
+  ggplot() +
+  geom_bar(aes(x = package, y = time, fill = op, group = package), stat = "identity") +
+    scale_fill_brewer(type = "qual", palette = "Set2") +
+    scale_y_continuous(labels = function(x) format(bench::as_bench_time(x))) +
+    theme(legend.position = "bottom") + 
+    coord_flip() +
+    labs(title = "Real time to analyze trip fare data", x = NULL, y = NULL, fill = NULL)
+```
 
 ```{r, echo = FALSE, message = FALSE}
 library(dplyr)
-tm_df <- vroom::vroom(system.file("bench", "timings.tsv", package = "vroom"))
-read_times <- tm_df %>% dplyr::filter(op == "read", type == "real") %>% select(package, `Time to read file` = time)
 
-total_times <- tm_df %>% group_by(package) %>% dplyr::filter(type == "real") %>% tally(wt = time) %>% rename("Total time for all operations (sec)" = "n")
+desc <- c("setup", "read", "print", "head", "tail", "sample", "filter", "aggregate")
 
-left_join(read_times, total_times) %>% mutate_if(is.numeric, prettyunits::pretty_sec) %>% knitr::kable(digits = 2, align = "r", format = "html")
-```
-
-Graph of timings, note because `vroom` and `data.table` operations use multiple cores the
-processor time is often much higher than the real time.
-
-```{r, fig.height = 8, fig.width=10, warning = FALSE}
-library(ggplot2)
-library(forcats)
-tm_df %>%
+tm_df <- vroom::vroom(system.file("bench", "taxi-times.tsv", package = "vroom")) %>%
+  filter(type == "real") %>%
   mutate(
-    package = fct_inorder(sub("_", "\n", package)),
-    op = factor(op, c("read", "print", "head", "tail", "sample", "filter"))
-  ) %>%
-  ggplot() +
-  geom_segment(y = 0, aes(x = package, xend = package, yend = time, alpha = type), color = "grey50") +
-    geom_point(aes(x = package, y = time, color = type)) +
-    scale_alpha_manual(values = c("real" = 1, "process" = 0)) +
-    facet_wrap(vars(op), scales = "free") +
-    scale_y_continuous(labels = function(x) format(bench::as_bench_time(x))) +
-    theme(legend.position = "bottom") + 
-    coord_flip()
+    package = fct_reorder(sub("_", "\n", package), time, sum),
+    op = factor(op, desc)
+  )
+
+times <- tm_df %>%
+  group_by(package, op) %>%
+  filter(type == "real") %>%
+  tally(wt = time) %>%
+  spread(op, n) %>%
+  mutate(total = sum(setup, read, print, head, tail, sample, filter, aggregate))
+
+times %>%
+  arrange(desc(total)) %>%
+  mutate_if(is.numeric, prettyunits::pretty_sec) %>%
+  knitr::kable(digits = 2, align = "r", format = "html")
 ```
+
+(*N.B. Rcpp used in the dplyr implementation
+fully materializes all the Altrep numeric vectors when using `filter()` or `sample_n()`,
+which is why the first of these cases have additional overhead when using full Altrep.*).
+
+## Session and package information
 
 ```{r, echo = FALSE, warning = FALSE}
-si <- vroom::vroom(system.file("bench", "sessioninfo.tsv", package = "vroom"))
+si <- vroom::vroom(system.file("bench", "sessioninfo.tsv", package = "vroom"), col_types = cols())
 class(si) <- c("packages_info", "data.frame")
-si
+select(as.data.frame(si), package, version = ondiskversion, date, source) %>%
+  knitr::kable()
 ```

@@ -27,15 +27,15 @@ options(tibble.print_min = 3)
 <!-- badges: end -->
 
 ```{r echo = FALSE, message = FALSE}
-tm <- vroom::vroom(system.file("bench", "timings.tsv", package = "vroom"))
+tm <- vroom::vroom(system.file("bench", "taxi-times.tsv", package = "vroom"))
 versions <- vroom::vroom(system.file("bench", "sessioninfo.tsv", package = "vroom"))
 
 # Use the base version number for read.delim
 versions$package[versions$package == "base"] <- "read.delim"
 
 library(dplyr)
-tbl <- tm %>% dplyr::filter(type == "real", op == "read", package != "vroom_dplyr") %>%
-  mutate(package = sub("_base", "", package)) %>%
+tbl <- tm %>% dplyr::filter(type == "real", op == "read", package %in% c("vroom (full altrep)_base", "data.table", "readr", "read.delim")) %>%
+  mutate(package = sub("-.*", "", package)) %>%
   left_join(versions) %>%
   transmute(
     package = package,
