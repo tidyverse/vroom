@@ -91,7 +91,7 @@ specify, skipping the rest." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/benchmarks.html">Benchmarks</a>
+      <a href="../articles/benchmarks.html">Vroom Benchmarks</a>
     </li>
   </ul>
 </li>
@@ -133,27 +133,27 @@ specify, skipping the rest.</p>
 
 <span class='fu'>cols_only</span>(<span class='no'>...</span>)
 
-<span class='fu'>col_logical</span>()
+<span class='fu'>col_logical</span>(<span class='no'>...</span>)
 
-<span class='fu'>col_integer</span>()
+<span class='fu'>col_integer</span>(<span class='no'>...</span>)
 
-<span class='fu'>col_double</span>()
+<span class='fu'>col_double</span>(<span class='no'>...</span>)
 
-<span class='fu'>col_character</span>()
+<span class='fu'>col_character</span>(<span class='no'>...</span>)
 
-<span class='fu'>col_skip</span>()
+<span class='fu'>col_skip</span>(<span class='no'>...</span>)
 
-<span class='fu'>col_number</span>()
+<span class='fu'>col_number</span>(<span class='no'>...</span>)
 
-<span class='fu'>col_guess</span>()
+<span class='fu'>col_guess</span>(<span class='no'>...</span>)
 
-<span class='fu'>col_factor</span>(<span class='kw'>levels</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ordered</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>include_na</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'>col_factor</span>(<span class='kw'>levels</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ordered</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>include_na</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
-<span class='fu'>col_datetime</span>(<span class='kw'>format</span> <span class='kw'>=</span> <span class='st'>""</span>)
+<span class='fu'>col_datetime</span>(<span class='kw'>format</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>...</span>)
 
-<span class='fu'>col_date</span>(<span class='kw'>format</span> <span class='kw'>=</span> <span class='st'>""</span>)
+<span class='fu'>col_date</span>(<span class='kw'>format</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>...</span>)
 
-<span class='fu'>col_time</span>(<span class='kw'>format</span> <span class='kw'>=</span> <span class='st'>""</span>)</pre>
+<span class='fu'>col_time</span>(<span class='kw'>format</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -164,7 +164,8 @@ specify, skipping the rest.</p>
 character names (as described in the <code>col_types</code> argument of
 <code><a href='vroom.html'>vroom()</a></code>). If you're only overriding a few columns, it's
 best to refer to columns by name. If not named, the column types must match
-the column names exactly.</p></td>
+the column names exactly. In <code>col_*()</code> functions these are stored in the
+object.</p></td>
     </tr>
     <tr>
       <th>.default</th>
