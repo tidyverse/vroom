@@ -89,6 +89,17 @@ void append_literal(std::vector<char>& buf, const char (&str)[N]) {
   std::copy(std::begin(str), std::end(str) - 1, std::back_inserter(buf));
 }
 
+inline bool is_utf8(cetype_t ce) {
+  switch (ce) {
+  case CE_ANY:
+  case CE_BYTES:
+  case CE_UTF8:
+    return true;
+  default:
+    return false;
+  }
+}
+
 void str_to_buf(
     SEXP str,
     std::vector<char>& buf,
@@ -102,7 +113,13 @@ void str_to_buf(
     return;
   }
 
-  auto str_p = CHAR(str);
+  const char* str_p;
+  if (is_utf8(Rf_getCharCE(str))) {
+    str_p = CHAR(str);
+  } else {
+    str_p = Rf_translateCharUTF8(str);
+  }
+
   auto len = Rf_xlength(str);
   bool should_quote =
       options & quote_all ||

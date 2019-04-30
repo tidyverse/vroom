@@ -119,7 +119,7 @@ output_column.POSIXt <- function(x) {
 
 #' @export
 output_column.character <- function(x) {
-  enc2utf8(x)
+  x
 }
 
 #' @export
