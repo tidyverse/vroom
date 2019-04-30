@@ -131,9 +131,6 @@ tm_df <- map_dfr(times, function(x) {
     real = as.numeric(x$real),
   )
   }, .id = "package") %>%
-  mutate(
-    package = fct_inorder(package),
-  ) %>%
   gather(type, time, -package, -op) %>%
   mutate(size = file.size(file),
     rows = nrow(data),

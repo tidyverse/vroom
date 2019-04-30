@@ -18,6 +18,11 @@ library(forcats)
 library(dplyr)
 library(tidyr)
 
+pretty_sec <- function(x) {
+  x[!is.na(x)] <- prettyunits::pretty_sec(x[!is.na(x)])
+  x
+}
+
 read_benchmark <- function(file, desc) {
   vroom::vroom(file, col_types = c("cccdddd")) %>%
     filter(type == "real", op != "setup") %>%
@@ -27,12 +32,16 @@ read_benchmark <- function(file, desc) {
     )
 }
 
-plot_benchmark <- function(data, title) {
-
+generate_subtitle <- function(data) {
   rows <- scales::comma(data$rows[[1]])
   cols <- scales::comma(data$cols[[1]])
   size <- fs::fs_bytes(data$size[[1]])
-  subtitle <- glue::glue("{rows} x {cols} - {size}B")
+  glue::glue("{rows} x {cols} - {size}B")
+}
+
+plot_benchmark <- function(data, title) {
+
+  subtitle <- generate_subtitle(data)
 
   data %>%
     filter(package != "read.delim") %>%
@@ -55,7 +64,7 @@ make_table <- function(data) {
 
   times %>%
     arrange(desc(total)) %>%
-    mutate_if(is.numeric, prettyunits::pretty_sec) %>%
+    mutate_if(is.numeric, pretty_sec) %>%
     knitr::kable(digits = 2, align = "r", format = "html")
 }
 
@@ -156,7 +165,7 @@ The following operations are performed.
 ```{r, fig.height = 8, fig.width=10, warning = FALSE, echo = FALSE, message = FALSE}
 taxi <- read_benchmark(system.file("bench", "taxi-times.tsv", package = "vroom"), desc)
 
-plot_benchmark(taxi, "Time to analyze trip fare data")
+plot_benchmark(taxi, "Time to analyze taxi trip data")
 
 make_table(taxi)
 ```
@@ -203,6 +212,46 @@ all_chr <- read_benchmark(system.file("bench", "all_character-times.tsv", packag
 plot_benchmark(all_chr, "Time to analyze all character data")
 
 make_table(all_chr)
+```
+
+# Writing delimited files
+
+The code used to run the taxi writing benchmarks is at
+[bench/taxi_writing-benchmark.R](https://github.com/r-lib/vroom/blob/master/inst/bench/taxi_writing-benchmark.R).
+
+The benchmarks write out the taxi trip dataset in three different ways.
+
+- An uncompressed file
+- A gzip compressed file using `gzfile()` _(readr and vroom do this automatically for files ending in `.gz`)_
+- A multithreaded gzip compressed file using a `pipe()` connection to [pigz](https://zlib.net/pigz/)
+
+*Note the current CRAN version of data.table (1.12.2) does not support writing to compressed files*
+
+```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
+desc_w <- c("uncompressed", "gzip", "multithreaded gzip")
+taxi_writing <- read_benchmark(system.file("bench", "taxi_writing-times.tsv", package = "vroom"), desc_w) %>%
+  spread(op, time) %>%
+  arrange(!is.na(`multithreaded gzip`), desc(`multithreaded gzip`)) %>%
+  mutate(package = fct_rev(fct_inorder(package)))
+
+subtitle <- generate_subtitle(taxi_writing)
+
+taxi_writing %>%
+  select(-size, -rows, -cols, -type) %>%
+  gather(op, time, -package) %>%
+  mutate(op = factor(op, desc_w)) %>%
+  ggplot() +
+  geom_bar(aes(x = package, y = time, fill = op), stat = "identity", position = position_dodge2(preserve = "single", reverse = TRUE)) +
+  scale_fill_brewer(type = "qual", palette = "Set2") +
+  scale_y_continuous(labels = function(x) format(bench::as_bench_time(x))) +
+  theme(legend.position = "bottom") +
+  coord_flip() +
+  labs(title = "Writing taxi trip data", subtitle = subtitle, x = NULL, y = NULL, fill = NULL)
+
+taxi_writing %>%
+  select(-size, -rows, -cols, -type) %>%
+  mutate_if(is.numeric, pretty_sec) %>%
+  knitr::kable(digits = 2, align = "r", format = "html")
 ```
 
 ## Session and package information

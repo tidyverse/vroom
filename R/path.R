@@ -48,6 +48,8 @@ standardise_one_path <- function (path, check = TRUE) {
 
   if (check) {
     path <- check_path(path)
+  } else {
+    path <- normalizePath(path, mustWork = FALSE)
   }
 
   switch(tolower(tools::file_ext(path)),
