@@ -22,10 +22,10 @@
 #'   character names (as described in the `col_types` argument of
 #'   [vroom()]). If you're only overriding a few columns, it's
 #'   best to refer to columns by name. If not named, the column types must match
-#'   the column names exactly.
+#'   the column names exactly. In `col_*()` functions these are stored in the
+#'   object.
 #' @param .default Any named columns not explicitly overridden in `...`
 #'   will be read with this column type.
-#' @param ... Additional arguments ignored.
 #' @export
 #' @examples
 #' cols(a = col_integer())

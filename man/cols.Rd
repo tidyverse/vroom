@@ -20,34 +20,35 @@ cols(..., .default = col_guess())
 
 cols_only(...)
 
-col_logical()
+col_logical(...)
 
-col_integer()
+col_integer(...)
 
-col_double()
+col_double(...)
 
-col_character()
+col_character(...)
 
-col_skip()
+col_skip(...)
 
-col_number()
+col_number(...)
 
-col_guess()
+col_guess(...)
 
-col_factor(levels = NULL, ordered = FALSE, include_na = FALSE)
+col_factor(levels = NULL, ordered = FALSE, include_na = FALSE, ...)
 
-col_datetime(format = "")
+col_datetime(format = "", ...)
 
-col_date(format = "")
+col_date(format = "", ...)
 
-col_time(format = "")
+col_time(format = "", ...)
 }
 \arguments{
 \item{...}{Either column objects created by \code{col_*()}, or their abbreviated
 character names (as described in the \code{col_types} argument of
 \code{\link[=vroom]{vroom()}}). If you're only overriding a few columns, it's
 best to refer to columns by name. If not named, the column types must match
-the column names exactly.}
+the column names exactly. In \code{col_*()} functions these are stored in the
+object.}
 
 \item{.default}{Any named columns not explicitly overridden in \code{...}
 will be read with this column type.}

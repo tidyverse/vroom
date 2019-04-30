@@ -57,6 +57,7 @@ Suggests:
     rmarkdown,
     testthat,
     tidyr,
+    scales,
     spelling
 LinkingTo: 
     progress,
