@@ -17,7 +17,7 @@ status](https://ci.appveyor.com/api/projects/status/github/r-lib/vroom?branch=ma
 coverage](https://codecov.io/gh/r-lib/vroom/branch/master/graph/badge.svg)](https://codecov.io/gh/r-lib/vroom?branch=master)
 <!-- badges: end -->
 
-The fastest delimited reader for R, **/sec**.
+The fastest delimited reader for R, **905.64 MB/sec/sec**.
 
 But that’s impossible\! How can it be [so
 fast](https://r-lib.github.io/vroom/articles/benchmarks/benchmarks.html)?
@@ -32,9 +32,12 @@ what you use.
 vroom also uses multiple threads for indexing, materializing
 non-character columns, and when writing to further improve performance.
 
-| package    | version | time (sec) | speedup | throughput |
-| :--------- | ------: | ---------: | ------: | ---------: |
-| data.table |  1.12.0 |      14.64 |       1 |  113.83 MB |
+| package    |    version | time (sec) | speedup |    throughput |
+| :--------- | ---------: | ---------: | ------: | ------------: |
+| vroom      | 0.0.0.9000 |       1.84 |   44.28 | 905.64 MB/sec |
+| data.table |     1.12.2 |      15.72 |    5.18 | 106.04 MB/sec |
+| readr      |      1.3.1 |      33.09 |    2.46 |  50.37 MB/sec |
+| read.delim |      3.5.3 |      81.49 |    1.00 |  20.45 MB/sec |
 
 ## Features
 

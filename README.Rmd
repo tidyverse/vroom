@@ -35,14 +35,15 @@ versions$package[versions$package == "base"] <- "read.delim"
 
 library(dplyr)
 tbl <- tm %>% dplyr::filter(type == "real", op == "read", package %in% c("vroom (full altrep)_base", "data.table", "readr", "read.delim")) %>%
-  mutate(package = sub("-.*", "", package)) %>%
+  mutate(package = sub(" .*", "", package)) %>%
   left_join(versions) %>%
   transmute(
     package = package,
     version = ondiskversion,
     "time (sec)" = time,
     speedup = max(time) / time,
-    "throughput" = prettyunits::pretty_bytes(size / time))
+    "throughput" = paste0(prettyunits::pretty_bytes(size / time), "/sec")
+  )
 ```
 
 The fastest delimited reader for R, **`r dplyr::filter(tbl, package == "vroom") %>% pull("throughput") %>% paste0("/sec") %>% trimws()`**.

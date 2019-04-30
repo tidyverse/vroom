@@ -10,3 +10,16 @@ test:
 
 clean:
 	@Rscript -e 'devtools::clean_dll()'
+
+BENCH_SRC := $(wildcard inst/bench/*-benchmark.R)
+BENCH_OUT := $(BENCH_SRC:-benchmark.R=-times.tsv)
+
+.NOTPARALLEL: bench
+
+bench: $(BENCH_OUT)
+
+%-times.tsv : %-benchmark.R
+	R -q --vanilla -f $<
+
+bench-clean:
+	rm -f $(BENCH_OUT)

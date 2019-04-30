@@ -25,6 +25,7 @@
 #'   the column names exactly.
 #' @param .default Any named columns not explicitly overridden in `...`
 #'   will be read with this column type.
+#' @param ... Additional arguments ignored.
 #' @export
 #' @examples
 #' cols(a = col_integer())
@@ -454,68 +455,68 @@ color_type <- function(type) {
 
 #' @rdname cols
 #' @export
-col_logical <- function() {
-  collector("logical")
+col_logical <- function(...) {
+  collector("logical", ...)
 }
 
 #' @rdname cols
 #' @export
-col_integer <- function() {
-  collector("integer")
+col_integer <- function(...) {
+  collector("integer", ...)
 }
 
 #' @rdname cols
 #' @export
-col_double <- function() {
-  collector("double")
+col_double <- function(...) {
+  collector("double", ...)
 }
 
 #' @rdname cols
 #' @export
-col_character <- function() {
-  collector("character")
+col_character <- function(...) {
+  collector("character", ...)
 }
 
 #' @rdname cols
 #' @export
-col_skip <- function() {
-  collector("skip")
+col_skip <- function(...) {
+  collector("skip", ...)
 }
 
 #' @rdname cols
 #' @export
-col_number <- function() {
-  collector("number")
+col_number <- function(...) {
+  collector("number", ...)
 }
 
 #' @rdname cols
 #' @export
-col_guess <- function() {
-  collector("guess")
+col_guess <- function(...) {
+  collector("guess", ...)
 }
 
 #' @inheritParams readr::col_factor
 #' @rdname cols
 #' @export
-col_factor <- function(levels = NULL, ordered = FALSE, include_na = FALSE) {
-  collector("factor", levels = levels, ordered = ordered, include_na = include_na)
+col_factor <- function(levels = NULL, ordered = FALSE, include_na = FALSE, ...) {
+  collector("factor", levels = levels, ordered = ordered, include_na = include_na, ...)
 }
 
 #' @inheritParams readr::col_datetime
 #' @rdname cols
 #' @export
-col_datetime <- function(format = "") {
-  collector("datetime", format = format)
+col_datetime <- function(format = "", ...) {
+  collector("datetime", format = format, ...)
 }
 
 #' @rdname cols
 #' @export
-col_date <- function(format = "") {
-  collector("date", format = format)
+col_date <- function(format = "", ...) {
+  collector("date", format = format, ...)
 }
 
 #' @rdname cols
 #' @export
-col_time <- function(format = "") {
-  collector("time", format = format)
+col_time <- function(format = "", ...) {
+  collector("time", format = format, ...)
 }

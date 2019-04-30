@@ -1,17 +1,49 @@
-file <- "~/data/trip_fare_1.tsv"
+rows <- 1e6
+cols <- 25
+
+set.seed(42)
+RNGversion("3.5.3")
+
+library(fs)
+
+file <- path(tempdir(), "all-character.tsv")
+
+# Generate one factor column that can be used for filtering and the rest random
+# length characters
+library(vroom)
+
+# We want ~ 1000 rows to filter
+num_levels <- 5
+levels <- c("helpless_sheep", vroom:::random_name(num_levels - 1))
+
+filt_p <- 1000 / rows
+
+# The prob for the rest should just be evenly spaced
+rest_p <- rep((1 - filt_p) / (num_levels - 1), num_levels - 1)
+
+col_types <-  stats::setNames(
+  c(list(
+      col_factor(levels = levels, prob = c(filt_p, rest_p))),
+    rep(list(col_character()), cols - 1)
+  ), make.names(seq_len(cols)))
+
+data <- gen_tbl(rows, cols, col_types = col_types)
+
+vroom_write(data, file, "\t")
+
 desc <- c("setup", "read", "print", "head", "tail", "sample", "filter", "aggregate")
 
 `vroom (full altrep)_base` <- function(file, desc) {
   bench::workout(description = desc,
     {
     {library(vroom); Sys.setenv("VROOM_USE_ALTREP_NUMERICS" = "true") }
-      x <- vroom(file, col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character())
+      x <- vroom(file, trim_ws = FALSE, quote = "", escape_double = FALSE, na = character())
       print(x)
       a <- head(x)
       b <- tail(x)
       c <- x[sample(NROW(x), 100), ]
-      d <- x[x$payment_type == "UNK", ]
-      e <- tapply(x$tip_amount, x$payment_type, mean)
+      d <- x[x$X1 == "helpless_sheep", ]
+      e <- tapply(x$X2, x$X1, function(x) mean(nchar(x)))
     }
   )
 }
@@ -20,13 +52,13 @@ desc <- c("setup", "read", "print", "head", "tail", "sample", "filter", "aggrega
   bench::workout(description = desc,
     {
       {library(vroom); library(dplyr); Sys.setenv("VROOM_USE_ALTREP_NUMERICS" = "true") }
-      x <- vroom(file, col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character())
+      x <- vroom(file, trim_ws = FALSE, quote = "", escape_double = FALSE, na = character())
       print(x)
       a <- head(x)
       b <- tail(x)
       c <- sample_n(x, 100)
-      d <- filter(x, payment_type == "UNK")
-      e <- group_by(x, payment_type) %>% summarise(avg_tip = mean(tip_amount))
+      d <- filter(x, X1 == "helpless_sheep")
+      e <- group_by(x, X1) %>% summarise(avg_nchar = mean(nchar(X2)))
     }
   )
 }
@@ -35,13 +67,13 @@ vroom_base <- function(file, desc) {
   bench::workout(description = desc,
     {
       library(vroom)
-      x <- vroom(file, col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character())
+      x <- vroom(file, trim_ws = FALSE, quote = "", escape_double = FALSE, na = character())
       print(x)
       a <- head(x)
       b <- tail(x)
       c <- x[sample(NROW(x), 100), ]
-      d <- x[x$payment_type == "UNK", ]
-      e <- tapply(x$tip_amount, x$payment_type, mean)
+      d <- x[x$X1 == "helpless_sheep", ]
+      e <- tapply(x$X2, x$X1, function(x) mean(nchar(x)))
     }
   )
 }
@@ -50,13 +82,13 @@ vroom_dplyr <- function(file, desc) {
   bench::workout(description = desc,
     {
       { library(vroom); library(dplyr) }
-      x <- vroom(file, col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character())
+      x <- vroom(file, trim_ws = FALSE, quote = "", escape_double = FALSE, na = character())
       print(x)
       a <- head(x)
       b <- tail(x)
       c <- sample_n(x, 100)
-      d <- filter(x, payment_type == "UNK")
-      e <- group_by(x, payment_type) %>% summarise(avg_tip = mean(tip_amount))
+      d <- filter(x, X1 == "helpless_sheep")
+      e <- group_by(x, X1) %>% summarise(avg_nchar = mean(nchar(X2)))
     }
   )
 }
@@ -70,8 +102,8 @@ data.table <- function(file, desc) {
       a <- head(x)
       b <- tail(x)
       c <- x[sample(NROW(x), 100), ]
-      d <- x[payment_type == "UNK", ]
-      e <- x[ , .(mean(tip_amount)), by = payment_type]
+      d <- x[X1 == "helpless_sheep", ]
+      e <- x[ , .(mean(nchar(X2))), by = X1]
     }
   )
 }
@@ -80,13 +112,13 @@ readr <- function(file, desc) {
   bench::workout(description = desc,
     {
     { library(readr); library(dplyr) }
-      x <- read_tsv(file, col_types = c(pickup_datetime = "c"), quote = "", trim_ws = FALSE, na = character())
+      x <- read_tsv(file, trim_ws = FALSE, quote = "", na = character())
       print(x)
       a <- head(x)
       b <- tail(x)
       c <- sample_n(x, 100)
-      d <- filter(x, payment_type == "UNK")
-      e <- group_by(x, payment_type) %>% summarise(avg_tip = mean(tip_amount))
+      d <- filter(x, X1 == "helpless_sheep")
+      e <- group_by(x, X1) %>% summarise(avg_nchar = mean(nchar(X2)))
     }
   )
 }
@@ -100,8 +132,8 @@ read.delim <- function(file, desc) {
       a <- head(x)
       b <- tail(x)
       c <- x[sample(NROW(x), 100), ]
-      d <- x[x$payment_type == "UNK", ]
-      e <- tapply(x$tip_amount, x$payment_type, mean)
+      d <- x[x$X1 == "helpless_sheep", ]
+      e <- tapply(x$X2, x$X1, function(x) mean(nchar(x)))
     }
   )
 }
@@ -122,8 +154,6 @@ library(dplyr)
 library(forcats)
 library(bench)
 
-data <- vroom::vroom(file)
-
 tm_df <- map_dfr(times, function(x) {
   tibble::tibble(
     op = factor(x$exprs, levels = desc, ordered = TRUE),
@@ -135,14 +165,15 @@ tm_df <- map_dfr(times, function(x) {
     package = fct_inorder(package),
   ) %>%
   gather(type, time, -package, -op) %>%
-  mutate(size = file.size(file),
+  mutate(
+    size = file.size(file),
     rows = nrow(data),
     cols = ncol(data)
   )
 
 vroom::vroom_write(
   tm_df,
-  here::here("inst", "bench", "taxi-times.tsv"),
+  here::here("inst", "bench", "all_character-times.tsv"),
   delim = "\t")
 
 vroom::vroom_write(
@@ -150,3 +181,5 @@ vroom::vroom_write(
   here::here("inst", "bench", "sessioninfo.tsv"),
   delim = "\t"
 )
+
+file_delete(file)

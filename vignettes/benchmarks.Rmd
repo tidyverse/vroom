@@ -12,6 +12,54 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+library(ggplot2)
+library(forcats)
+library(dplyr)
+library(tidyr)
+
+read_benchmark <- function(file, desc) {
+  vroom::vroom(file, col_types = c("cccdddd")) %>%
+    filter(type == "real", op != "setup") %>%
+    mutate(
+      package = fct_reorder(sub("_", "\n", package), time, sum),
+      op = factor(op, desc)
+    )
+}
+
+plot_benchmark <- function(data, title) {
+
+  rows <- scales::comma(data$rows[[1]])
+  cols <- scales::comma(data$cols[[1]])
+  size <- fs::fs_bytes(data$size[[1]])
+  subtitle <- glue::glue("{rows} x {cols} - {size}B")
+
+  data %>%
+    filter(package != "read.delim") %>%
+    ggplot() +
+    geom_bar(aes(x = package, y = time, fill = op, group = package), stat = "identity") +
+    scale_fill_brewer(type = "qual", palette = "Set2") +
+    scale_y_continuous(labels = function(x) format(bench::as_bench_time(x))) +
+    theme(legend.position = "bottom") +
+    coord_flip() +
+    labs(title = title, subtitle = subtitle, x = NULL, y = NULL, fill = NULL)
+}
+
+make_table <- function(data) {
+  times <- data %>%
+    group_by(package, op) %>%
+    filter(type == "real") %>%
+    tally(wt = time) %>%
+    spread(op, n) %>%
+    mutate(total = sum(read, print, head, tail, sample, filter, aggregate))
+
+  times %>%
+    arrange(desc(total)) %>%
+    mutate_if(is.numeric, prettyunits::pretty_sec) %>%
+    knitr::kable(digits = 2, align = "r", format = "html")
+}
+
+desc <- c("setup", "read", "print", "head", "tail", "sample", "filter", "aggregate")
 ```
 vroom is a new approach to reading delimited and fixed width data into R.
 
@@ -49,9 +97,19 @@ This approach potentially also allows you to work with data that is larger than
 memory. As long as you are careful to avoid materializing the entire dataset at
 once it can be efficiently queried and subset.
 
+# Reading delimited files
+
+The following benchmarks all measure reading delimited files of various sizes
+and data types. Because vroom delays reading the benchmarks also do some
+manipulation of the data afterwards to try and provide a more realistic
+performance comparison.
+
+Because the `read.delim` results are so much slower than the others they are
+excluded from the plots, but are retained in the tables.
+
 ## Taxi Trip Dataset
 
-The dataset used in the following benchmark is from Freedom of Information Law (FOIL)
+This real world dataset is from Freedom of Information Law (FOIL)
 Taxi Trip Data from the NYC Taxi and Limousine Commission 2013, originally
 posted at <http://chriswhong.com/open-data/foil_nyc_taxi/>. It is also hosted
 on [archive.org](https://archive.org/details/nycTaxiTripData2013).
@@ -76,7 +134,7 @@ trip_fare_1.tsv, It is 1.55G in size.
 ### Taxi Benchmarks
 
 The code used to run the taxi benchmarks is in
-[bench/taxi_benchmark.R](https://github.com/r-lib/vroom/blob/master/inst/bench/taxi_benchmark.R).
+[bench/taxi-benchmark.R](https://github.com/r-lib/vroom/blob/master/inst/bench/taxi-benchmark.R).
 
 The benchmarks labeled `vroom_base` uses `vroom` with base functions for
 manipulation. `vroom_dplyr` uses `vroom` to read the file and dplyr functions to
@@ -95,58 +153,66 @@ The following operations are performed.
   - Filtering for "UNK" payment, this is 6434 rows (0.0435% of total).
   - Aggregation of mean fare amount per payment type.
 
-```{r, fig.height = 8, fig.width=10, warning = FALSE, echo = FALSE}
-library(ggplot2)
-library(forcats)
+```{r, fig.height = 8, fig.width=10, warning = FALSE, echo = FALSE, message = FALSE}
+taxi <- read_benchmark(system.file("bench", "taxi-times.tsv", package = "vroom"), desc)
 
-tm_df %>%
-  filter(type == "real") %>%
-  mutate(
-    package = fct_reorder(sub("_", "\n", package), time, sum),
-    op = factor(op, desc),
-  ) %>%
-  ggplot() +
-  geom_bar(aes(x = package, y = time, fill = op, group = package), stat = "identity") +
-    scale_fill_brewer(type = "qual", palette = "Set2") +
-    scale_y_continuous(labels = function(x) format(bench::as_bench_time(x))) +
-    theme(legend.position = "bottom") + 
-    coord_flip() +
-    labs(title = "Real time to analyze trip fare data", x = NULL, y = NULL, fill = NULL)
-```
+plot_benchmark(taxi, "Time to analyze trip fare data")
 
-```{r, echo = FALSE, message = FALSE}
-library(dplyr)
-
-desc <- c("setup", "read", "print", "head", "tail", "sample", "filter", "aggregate")
-
-tm_df <- vroom::vroom(system.file("bench", "taxi-times.tsv", package = "vroom")) %>%
-  filter(type == "real") %>%
-  mutate(
-    package = fct_reorder(sub("_", "\n", package), time, sum),
-    op = factor(op, desc)
-  )
-
-times <- tm_df %>%
-  group_by(package, op) %>%
-  filter(type == "real") %>%
-  tally(wt = time) %>%
-  spread(op, n) %>%
-  mutate(total = sum(setup, read, print, head, tail, sample, filter, aggregate))
-
-times %>%
-  arrange(desc(total)) %>%
-  mutate_if(is.numeric, prettyunits::pretty_sec) %>%
-  knitr::kable(digits = 2, align = "r", format = "html")
+make_table(taxi)
 ```
 
 (*N.B. Rcpp used in the dplyr implementation
 fully materializes all the Altrep numeric vectors when using `filter()` or `sample_n()`,
 which is why the first of these cases have additional overhead when using full Altrep.*).
 
+## All numeric data
+
+The code used to run the all numeric benchmarks is in
+[bench/all_numeric-benchmark.R](https://github.com/r-lib/vroom/blob/master/inst/bench/all_numeric-benchmark.R).
+
+All numeric data is really a worst case scenario for vroom. The index takes
+about as much memory as the parsed data. Also because parsing doubles can be
+done quickly in parallel and text representations of doubles are only ~25
+characters at most there isn't a great deal of savings for delayed parsing.
+
+For these reasons (and becuase the data.table implementation is very fast)
+vroom is a bit slower than fread for pure numeric data.
+
+However the vroom is multi-threaded and therefore is quicker than readr and
+read.delim.
+
+```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
+all_num <- read_benchmark(system.file("bench", "all_numeric-times.tsv", package = "vroom"), desc)
+
+plot_benchmark(all_num, "Time to analyze all numeric data")
+
+make_table(all_num)
+```
+
+## All character data
+
+The code used to run the all character benchmarks is in
+[bench/all_character-benchmark.R](https://github.com/r-lib/vroom/blob/master/inst/bench/all_character-benchmark.R).
+
+All character data is a best case scenario for vroom, as none of the data needs
+to be read initially.
+
+```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
+all_chr <- read_benchmark(system.file("bench", "all_character-times.tsv", package = "vroom"), desc)
+
+plot_benchmark(all_chr, "Time to analyze all character data")
+
+make_table(all_chr)
+```
+
 ## Session and package information
 
-```{r, echo = FALSE, warning = FALSE}
-si <- vroom::vroom(system.file("bench", "sessioninfo.tsv", package = "vroom"), col_types = cols())
+The development version of dplyr was used in the benchmarks, as contains a
+[fix](https://github.com/tidyverse/dplyr/pull/4314) for a performance issue
+with Altrep objects.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+si <- vroom::vroom(system.file("bench", "sessioninfo.tsv", package = "vroom"))
 class(si) <- c("packages_info", "data.frame")
 select(as.data.frame(si), package, version = ondiskversion, date, source) %>%
   knitr::kable()

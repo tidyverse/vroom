@@ -17,9 +17,9 @@ gen_double <- function(n, f = stats::rnorm, ...) {
 
 gen_number <- gen_double
 
-gen_integer <- function(n, min = 1L, max = .Machine$integer.max, ...) {
+gen_integer <- function(n, min = 1L, max = .Machine$integer.max, prob = NULL, ...) {
   max <- max - min + 1L
-  sample.int(max, size = n, replace = TRUE) + min - 1L
+  sample.int(max, size = n, replace = TRUE, prob = prob) + min - 1L
 }
 
 gen_factor <- function(n, levels = NULL, ordered = FALSE, include_na = FALSE, num_levels = gen_integer(1L, 1L, 25L), ...) {
@@ -27,7 +27,7 @@ gen_factor <- function(n, levels = NULL, ordered = FALSE, include_na = FALSE, nu
     levels <- random_name(num_levels)
   }
 
-  res <- gen_integer(n, max = length(levels))
+  res <- gen_integer(n, max = length(levels), ...)
 
   attr(res, "levels") <- levels
   if (ordered) {
