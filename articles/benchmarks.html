@@ -387,7 +387,7 @@ vroom (full altrep) dplyr
 <a href="#all-numeric-data" class="anchor"></a>All numeric data</h2>
 <p>The code used to run the all numeric benchmarks is in <a href="https://github.com/r-lib/vroom/blob/master/inst/bench/all_numeric-benchmark.R">bench/all_numeric-benchmark.R</a>.</p>
 <p>All numeric data is really a worst case scenario for vroom. The index takes about as much memory as the parsed data. Also because parsing doubles can be done quickly in parallel and text representations of doubles are only ~25 characters at most there isn’t a great deal of savings for delayed parsing.</p>
-<p>For these reasons (and becuase the data.table implementation is very fast) vroom is a bit slower than fread for pure numeric data.</p>
+<p>For these reasons (and because the data.table implementation is very fast) vroom is a bit slower than fread for pure numeric data.</p>
 <p>However the vroom is multi-threaded and therefore is quicker than readr and read.delim.</p>
 <img src="benchmarks_files/figure-html/unnamed-chunk-3-1.png" width="960"><table class="table">
 <thead><tr>
