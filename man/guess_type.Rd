@@ -4,7 +4,7 @@
 \alias{guess_type}
 \title{Guess the type of a vector}
 \usage{
-guess_type(x, na = c("", "NA"), locale = readr::default_locale(),
+guess_type(x, na = c("", "NA"), locale = default_locale(),
   guess_integer = FALSE)
 }
 \arguments{

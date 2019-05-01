@@ -381,7 +381,7 @@ col_types_standardise <- function(col_types, col_names, col_select) {
 #' Guess the type of a vector
 #'
 #' @inheritParams readr::guess_parser
-guess_type <- function(x, na = c("", "NA"), locale = readr::default_locale(), guess_integer = FALSE) {
+guess_type <- function(x, na = c("", "NA"), locale = default_locale(), guess_integer = FALSE) {
 
   x[x %in% na] <- NA
 

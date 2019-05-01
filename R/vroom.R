@@ -40,7 +40,7 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
   col_select = NULL,
   id = NULL, skip = 0, n_max = Inf,
   na = c("", "NA"), quote = '"', comment = "", trim_ws = TRUE,
-  escape_double = TRUE, escape_backslash = FALSE, locale = readr::default_locale(),
+  escape_double = TRUE, escape_backslash = FALSE, locale = default_locale(),
   guess_max = 100, num_threads = vroom_threads(), progress = vroom_progress(),
   .name_repair = "unique") {
 
