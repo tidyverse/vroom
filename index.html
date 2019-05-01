@@ -41,26 +41,29 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="index.html">
-    <span class="fa fa-home fa-lg"></span>
-     
-  </a>
+  <a href="index.html">Home</a>
 </li>
 <li>
   <a href="articles/vroom.html">Get started</a>
+</li>
+<li>
+  <a href="articles/benchmarks.html">Benchmarks</a>
 </li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
+    News
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">Release notes</li>
+    <li class="divider">
+    </li>
 <li>
-      <a href="articles/benchmarks.html">Vroom Benchmarks</a>
+      <a href="news/index.html">Change log</a>
     </li>
   </ul>
 </li>
@@ -95,7 +98,7 @@
 <!-- badges: start -->
 
 <p>The fastest delimited reader for R, <strong>905.64 MB/sec/sec</strong>.</p>
-<p>But that’s impossible! How can it be <a href="https://r-lib.github.io/vroom/articles/benchmarks/benchmarks.html">so fast</a>?</p>
+<p>But that’s impossible! How can it be <a href="http://vroom.r-lib.org/articles/benchmarks.html">so fast</a>?</p>
 <p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use.</p>
 <p>vroom also uses multiple threads for indexing, materializing non-character columns, and when writing to further improve performance.</p>
 <table class="table table">
@@ -230,7 +233,7 @@
 <div id="benchmarks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#benchmarks" class="anchor"></a>Benchmarks</h2>
-<p>The speed quoted above is from a real dataset with 14,776,615 rows and 11 columns, see the <a href="https://r-lib.github.io/vroom/articles/benchmarks/benchmarks.html">benchmark article</a> for full details of the dataset and <a href="https://github.com/r-lib/vroom/blob/master/inst/bench">bench/</a> for the code used to retrieve the data and perform the benchmarks.</p>
+<p>The speed quoted above is from a real dataset with 14,776,615 rows and 11 columns, see the <a href="http://vroom.r-lib.org/articles/benchmarks.html">benchmark article</a> for full details of the dataset and <a href="https://github.com/r-lib/vroom/blob/master/inst/bench">bench/</a> for the code used to retrieve the data and perform the benchmarks.</p>
 </div>
 </div>
 <div id="environment-variables" class="section level1">
@@ -311,6 +314,8 @@
 <li>
 <a href="http://jimhester.com">Jim Hester</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-2739-7082" target="orcid.widget"><img src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg" class="orcid" alt="ORCID" height="16"></a> </li>
 <li>
+<a href="http://hadley.nz">Hadley Wickham</a> <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-4757-117X" target="orcid.widget"><img src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg" class="orcid" alt="ORCID" height="16"></a> </li>
+<li>
 <a href="https://www.rstudio.com"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" height="24"></a> <br><small class="roles"> Copyright holder, funder </small>  </li>
 <li><a href="authors.html">All authors...</a></li>
 </ul>
@@ -319,11 +324,11 @@
       <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://cran.r-project.org/package=vroom"><img src="https://www.r-pkg.org/badges/version/vroom" alt="CRAN status"></a></li>
-<li><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 <li><a href="https://travis-ci.org/r-lib/vroom"><img src="https://travis-ci.org/r-lib/vroom.svg?branch=master" alt="Travis build status"></a></li>
 <li><a href="https://ci.appveyor.com/project/r-lib/vroom"><img src="https://ci.appveyor.com/api/projects/status/github/r-lib/vroom?branch=master&amp;svg=true" alt="AppVeyor build status"></a></li>
 <li><a href="https://codecov.io/gh/r-lib/vroom?branch=master"><img src="https://codecov.io/gh/r-lib/vroom/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://cran.r-project.org/package=vroom"><img src="https://www.r-pkg.org/badges/version/vroom" alt="CRAN status"></a></li>
+<li><a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle: maturing"></a></li>
 </ul>
 </div>
 </div>
@@ -332,7 +337,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="http://jimhester.com">Jim Hester</a>, <a href="https://www.rstudio.com"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" height="24"></a>.</p>
+  <p>Developed by <a href="http://jimhester.com">Jim Hester</a>, <a href="http://hadley.nz">Hadley Wickham</a>, <a href="https://www.rstudio.com"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" height="24"></a>.</p>
 </div>
 
 <div class="pkgdown">

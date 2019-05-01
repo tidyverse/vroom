@@ -16,6 +16,9 @@
     <loc>http://vroom.r-lib.org/reference/gen_tbl.html</loc>
   </url>
   <url>
+    <loc>http://vroom.r-lib.org/reference/generators.html</loc>
+  </url>
+  <url>
     <loc>http://vroom.r-lib.org/reference/guess_type.html</loc>
   </url>
   <url>
@@ -29,6 +32,9 @@
   </url>
   <url>
     <loc>http://vroom.r-lib.org/reference/spec.html</loc>
+  </url>
+  <url>
+    <loc>http://vroom.r-lib.org/reference/vroom-package.html</loc>
   </url>
   <url>
     <loc>http://vroom.r-lib.org/reference/vroom.html</loc>

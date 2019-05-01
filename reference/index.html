@@ -67,26 +67,28 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
-     
-  </a>
+  <a href="../index.html">Home</a>
 </li>
 <li>
   <a href="../articles/vroom.html">Get started</a>
+</li>
+<li>
+  <a href="../articles/benchmarks.html">Benchmarks</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
+    News
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Release notes</li>
+    <li class="divider"></li>
     <li>
-      <a href="../articles/benchmarks.html">Vroom Benchmarks</a>
+      <a href="../news/index.html">Change log</a>
     </li>
   </ul>
 </li>
@@ -125,40 +127,68 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
+          <h2 id="section-read-rectangular-files" class="hasAnchor"><a href="#section-read-rectangular-files" class="anchor"></a>Read rectangular files</h2>
+          <p class="section-desc"><p>These functions parse rectangular files (like csv or fixed-width format) into tibbles. They specify the overall structure of the file, and how each line is divided up into fields.</p></p>
         </th>
       </tr>
       <tr>
         
         <td>
+          <p><code><a href="vroom.html">vroom()</a></code> </p>
+        </td>
+        <td><p>Read a delimited file into a tibble</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="vroom_fwf.html">vroom_fwf()</a></code> <code><a href="vroom_fwf.html">fwf_empty()</a></code> <code><a href="vroom_fwf.html">fwf_widths()</a></code> <code><a href="vroom_fwf.html">fwf_positions()</a></code> <code><a href="vroom_fwf.html">fwf_cols()</a></code> </p>
+        </td>
+        <td><p>Read a fixed width file into a tibble</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-write-rectangular-files" class="hasAnchor"><a href="#section-write-rectangular-files" class="anchor"></a>Write rectangular files</h2>
+          <p class="section-desc"><p>These functions write data frames to disk, or to convert them to in-memory strings.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="vroom_write.html">vroom_write()</a></code> </p>
+        </td>
+        <td><p>Write a data frame to a delimited file</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="vroom_format.html">vroom_format()</a></code> </p>
+        </td>
+        <td><p>Convert a data frame to a delimited string</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="output_column.html">output_column()</a></code> </p>
+        </td>
+        <td><p>Preprocess column for output</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-column-specification" class="hasAnchor"><a href="#section-column-specification" class="anchor"></a>Column specification</h2>
+          <p class="section-desc"><p>The column specification describes how each column is parsed from a character vector in to a more specific data type. vroom does make an educated guess about the type of each column, but you’ll need override those guesses when it gets them wrong.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="as.col_spec.html">as.col_spec()</a></code> </p>
+        </td>
+        <td><p>Coerce to a column specification</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="cols.html">cols()</a></code> <code><a href="cols.html">cols_only()</a></code> <code><a href="cols.html">col_logical()</a></code> <code><a href="cols.html">col_integer()</a></code> <code><a href="cols.html">col_double()</a></code> <code><a href="cols.html">col_character()</a></code> <code><a href="cols.html">col_skip()</a></code> <code><a href="cols.html">col_number()</a></code> <code><a href="cols.html">col_guess()</a></code> <code><a href="cols.html">col_factor()</a></code> <code><a href="cols.html">col_datetime()</a></code> <code><a href="cols.html">col_date()</a></code> <code><a href="cols.html">col_time()</a></code> </p>
         </td>
         <td><p>Create column specification</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="date_names.html">date_names()</a></code> <code><a href="date_names.html">date_names_lang()</a></code> <code><a href="date_names.html">date_names_langs()</a></code> </p>
-        </td>
-        <td><p>Create or retrieve date names</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="gen_tbl.html">gen_tbl()</a></code> </p>
-        </td>
-        <td><p>Generate a random tibble</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="guess_type.html">guess_type()</a></code> </p>
-        </td>
-        <td><p>Guess the type of a vector</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="locale.html">locale()</a></code> <code><a href="locale.html">default_locale()</a></code> </p>
-        </td>
-        <td><p>Create locales</p></td>
       </tr><tr>
         
         <td>
@@ -168,10 +198,58 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="vroom.html">vroom()</a></code> </p>
+          <p><code><a href="guess_type.html">guess_type()</a></code> </p>
         </td>
-        <td><p>Read a delimited file into a tibble</p></td>
+        <td><p>Guess the type of a vector</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-locale-controls" class="hasAnchor"><a href="#section-locale-controls" class="anchor"></a>Locale controls</h2>
+          <p class="section-desc"><p>The “locale” controls all options that vary from country-to-country or language-to-language. This includes things like the character used as the decimal mark, the names of days of the week, and the encoding. See <code>vignette("locales")</code> for more details.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="locale.html">locale()</a></code> <code><a href="locale.html">default_locale()</a></code> </p>
+        </td>
+        <td><p>Create locales</p></td>
       </tr><tr>
+        
+        <td>
+          <p><code><a href="date_names.html">date_names()</a></code> <code><a href="date_names.html">date_names_lang()</a></code> <code><a href="date_names.html">date_names_langs()</a></code> </p>
+        </td>
+        <td><p>Create or retrieve date names</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-data-generation" class="hasAnchor"><a href="#section-data-generation" class="anchor"></a>Data generation</h2>
+          <p class="section-desc"><p>vroom provides a number of functions to generate datasets based on a column specification. These are mainly used for development and benchmarking, but can also be useful for reproducing bugs without requiring the original dataset.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="gen_tbl.html">gen_tbl()</a></code> </p>
+        </td>
+        <td><p>Generate a random tibble</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="generators.html">gen_character()</a></code> <code><a href="generators.html">gen_double()</a></code> <code><a href="generators.html">gen_number()</a></code> <code><a href="generators.html">gen_integer()</a></code> <code><a href="generators.html">gen_factor()</a></code> <code><a href="generators.html">gen_time()</a></code> <code><a href="generators.html">gen_date()</a></code> <code><a href="generators.html">gen_datetime()</a></code> <code><a href="generators.html">gen_logical()</a></code> <code><a href="generators.html">gen_name()</a></code> </p>
+        </td>
+        <td><p>Generate individual vectors of the types supported by vroom</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-misc-tools" class="hasAnchor"><a href="#section-misc-tools" class="anchor"></a>Misc tools</h2>
+          <p class="section-desc"><p>These functions are used as helpers for other functions, or to inspect objects.</p></p>
+        </th>
+      </tr>
+      <tr>
         
         <td>
           <p><code><a href="vroom_altrep_opts.html">vroom_altrep_opts()</a></code> </p>
@@ -186,33 +264,15 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="vroom_format.html">vroom_format()</a></code> </p>
-        </td>
-        <td><p>Convert a data frame to a delimited string</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="vroom_fwf.html">vroom_fwf()</a></code> <code><a href="vroom_fwf.html">fwf_empty()</a></code> <code><a href="vroom_fwf.html">fwf_widths()</a></code> <code><a href="vroom_fwf.html">fwf_positions()</a></code> <code><a href="vroom_fwf.html">fwf_cols()</a></code> </p>
-        </td>
-        <td><p>Read a fixed width file into a tibble</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="vroom_progress.html">vroom_progress()</a></code> </p>
         </td>
-        <td><p>Determine progress bars should be shown</p></td>
+        <td><p>Determine if progress bars should be shown</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="vroom_str.html">vroom_str()</a></code> </p>
         </td>
         <td><p>Structure of objects</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="vroom_write.html">vroom_write()</a></code> </p>
-        </td>
-        <td><p>Write a data frame to a delimited file</p></td>
       </tr>
     </tbody>
     </table>
@@ -221,14 +281,19 @@
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#section-read-rectangular-files">Read rectangular files</a></li>
+      <li><a href="#section-write-rectangular-files">Write rectangular files</a></li>
+      <li><a href="#section-column-specification">Column specification</a></li>
+      <li><a href="#section-locale-controls">Locale controls</a></li>
+      <li><a href="#section-data-generation">Data generation</a></li>
+      <li><a href="#section-misc-tools">Misc tools</a></li>
     </ul>
   </div>
 </div>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='http://jimhester.com'>Jim Hester</a>, <a href='https://www.rstudio.com'><img src='https://www.tidyverse.org/rstudio-logo.svg' alt='RStudio' height='24' /></a>.</p>
+  <p>Developed by <a href='http://jimhester.com'>Jim Hester</a>, <a href='http://hadley.nz'>Hadley Wickham</a>, <a href='https://www.rstudio.com'><img src='https://www.tidyverse.org/rstudio-logo.svg' alt='RStudio' height='24' /></a>.</p>
 </div>
 
 <div class="pkgdown">
