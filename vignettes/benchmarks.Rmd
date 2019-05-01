@@ -184,7 +184,7 @@ about as much memory as the parsed data. Also because parsing doubles can be
 done quickly in parallel and text representations of doubles are only ~25
 characters at most there isn't a great deal of savings for delayed parsing.
 
-For these reasons (and becuase the data.table implementation is very fast)
+For these reasons (and because the data.table implementation is very fast)
 vroom is a bit slower than fread for pure numeric data.
 
 However the vroom is multi-threaded and therefore is quicker than readr and

@@ -45,7 +45,7 @@ gen_name(n)
 
 \item{min}{The minimum range for the vector}
 
-\item{max}{The maxiumum range for the vector}
+\item{max}{The maximum range for the vector}
 
 \item{values}{The explicit values to use.}
 

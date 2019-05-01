@@ -2,7 +2,7 @@
 #'
 #' @param n The size of the vector to generate
 #' @param min The minimum range for the vector
-#' @param max The maxiumum range for the vector
+#' @param max The maximum range for the vector
 #' @param values The explicit values to use.
 #' @param f The random function to use.
 #' @inheritParams base::sample.int
