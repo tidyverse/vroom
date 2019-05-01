@@ -18,6 +18,8 @@ navbar:
     href: articles/vroom.html
   - text: Benchmarks
     href: articles/benchmarks.html
+  - text: Reference
+    href: reference/index.html
   - text: News
     menu:
     - text: "Release notes"
