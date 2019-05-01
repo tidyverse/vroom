@@ -8,3 +8,59 @@ destination: docs
 
 development:
   mode: auto
+
+reference:
+- title: Read rectangular files
+  desc: >
+    These functions parse rectangular files (like csv or fixed-width format)
+    into tibbles. They specify the overall structure of the file, and how each
+    line is divided up into fields.
+  contents:
+  - vroom
+  - vroom_fwf
+
+- title: Write rectangular files
+  desc: >
+    These functions write data frames to disk, or to convert them to in-memory strings.
+  contents:
+  - vroom_write
+  - vroom_format
+  - output_column
+
+- title: Column specification
+  desc: >
+    The column specification describes how each column is parsed from a
+    character vector in to a more specific data type. vroom does make
+    an educated guess about the type of each column, but you'll need override
+    those guesses when it gets them wrong.
+  contents:
+  - as.col_spec
+  - cols
+  - guess_type
+
+- title: Locale controls
+  desc: >
+    The "locale" controls all options that vary from country-to-country or
+    language-to-language. This includes things like the character used as
+    the decimal mark, the names of days of the week, and the encoding. See
+    `vignette("locales")` for more details.
+  contents:
+  - locale
+  - date_names
+
+- title: Data generation
+  desc: >
+    vroom provides a number of functions to generate datasets based on a column
+    specification. These are mainly used for development and benchmarking, but
+    can also be useful for reproducing bugs without requiring the original
+    dataset.
+  contents:
+    - gen_tbl
+
+- title: Misc tools
+  desc: >
+    These functions are used as helpers for other functions, or to inspect objects.
+  contents:
+    - vroom_example
+    - vroom_progress
+    - vroom_str
