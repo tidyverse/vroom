@@ -4,9 +4,8 @@
 #define HAS_ALTREP
 #endif
 
-#ifndef HAS_ALTREP
-/* no support for altrep before 3.5 */
-#elif R_VERSION < R_Version(3, 6, 0)
+#ifdef HAS_ALTREP
+#if R_VERSION < R_Version(3, 6, 0)
 
 // workaround because R's <R_ext/Altrep.h> not so conveniently uses `class`
 // as a variable name, and C++ is not happy about that
@@ -34,5 +33,8 @@ extern "C" {
 #undef class
 
 #else
+extern "C" {
 #include <R_ext/Altrep.h>
+}
+#endif
 #endif
