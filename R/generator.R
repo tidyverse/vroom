@@ -40,10 +40,13 @@ gen_integer <- function(n, min = 1L, max = .Machine$integer.max, prob = NULL, ..
 }
 
 #' @rdname generators
+#' @param num_levels The number of factor levels to generate
+#' @param ordered Should the factors be ordered factors?
+#' @param levels The explicit levels to use, if `NULL` random levels are generated using [gen_name()].
 #' @export
 gen_factor <- function(n, levels = NULL, ordered = FALSE, num_levels = gen_integer(1L, 1L, 25L), ...) {
   if (is.null(levels)) {
-    levels <- random_name(num_levels)
+    levels <- gen_name(num_levels)
   }
 
   res <- gen_integer(n, max = length(levels), ...)
@@ -170,13 +173,15 @@ gen_write <- function(x, path, delim, na = "NA", append = FALSE, col_names =
   vroom_write(x, path, delim, na = na, append = append, col_names = col_names)
 }
 # Name and adjective list from https://github.com/rstudio/cranwhales/blob/93349fe1bc790f115a3d56660b6b99ffe258d9a2/random-names.R
-random_name <- local({
+#' @rdname generators
+#' @export
+gen_name <- local({
 
   # This will run during build / installation, but that is OK
   adjectives <- readLines(system.file("words", "adjectives.txt", package = "vroom"))
   animals <- readLines(system.file("words", "animals.txt", package = "vroom"))
 
-  function(n = 1) {
+  function(n) {
     paste0(sample(adjectives, n, replace = TRUE), "_", sample(animals, n, replace = TRUE))
   }
 })

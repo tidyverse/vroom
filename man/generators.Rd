@@ -11,6 +11,7 @@
 \alias{gen_date}
 \alias{gen_datetime}
 \alias{gen_logical}
+\alias{gen_name}
 \title{Generate individual vectors of the types supported by vroom}
 \usage{
 gen_character(n, min = 5, max = 25, values = c(letters, LETTERS,
@@ -36,6 +37,8 @@ gen_datetime(n, min = as.POSIXct("2001-01-01"),
   max = as.POSIXct("2021-01-01"), tz = "UTC", ...)
 
 gen_logical(n, ...)
+
+gen_name(n)
 }
 \arguments{
 \item{n}{The size of the vector to generate}
@@ -52,6 +55,12 @@ gen_logical(n, ...)
 
 \item{prob}{a vector of probability weights for obtaining the elements
     of the vector being sampled.}
+
+\item{levels}{The explicit levels to use, if \code{NULL} random levels are generated using \code{\link[=gen_name]{gen_name()}}.}
+
+\item{ordered}{Should the factors be ordered factors?}
+
+\item{num_levels}{The number of factor levels to generate}
 
 \item{fractional}{Whether to generate times with fractional seconds}
 
