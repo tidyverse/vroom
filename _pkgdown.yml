@@ -9,6 +9,22 @@ destination: docs
 development:
   mode: auto
 
+navbar:
+  type: default
+  left:
+  - text: Home
+    href: index.html
+  - text: Get started
+    href: articles/vroom.html
+  - text: Benchmarks
+    href: articles/benchmarks.html
+  - text: News
+    menu:
+    - text: "Release notes"
+    - text: "------------------"
+    - text: "Change log"
+      href: news/index.html
+
 reference:
 - title: Read rectangular files
   desc: >
@@ -36,6 +52,7 @@ reference:
   contents:
   - as.col_spec
   - cols
+  - cols_condense
   - guess_type
 
 - title: Locale controls
@@ -56,11 +73,13 @@ reference:
     dataset.
   contents:
     - gen_tbl
+    - generators
 
 - title: Misc tools
   desc: >
     These functions are used as helpers for other functions, or to inspect objects.
   contents:
+    - vroom_altrep_opts
     - vroom_example
     - vroom_progress
     - vroom_str
