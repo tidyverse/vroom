@@ -118,6 +118,10 @@ vroom::vroom("mtcars.tsv",
 )
 ```
 
+```{r, include = FALSE}
+unlink("mtcars.tsv")
+```
+
 ## Reading multiple files
 
 vroom natively supports reading from multiple files (or even multiple
