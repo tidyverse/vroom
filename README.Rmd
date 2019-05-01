@@ -48,7 +48,7 @@ tbl <- tm %>% dplyr::filter(type == "real", op == "read", package %in% c("vroom 
 
 The fastest delimited reader for R, **`r dplyr::filter(tbl, package == "vroom") %>% pull("throughput") %>% paste0("/sec") %>% trimws()`**.
 
-But that's impossible! How can it be [so fast](https://r-lib.github.io/vroom/articles/benchmarks/benchmarks.html)?
+But that's impossible! How can it be [so fast](http://vroom.r-lib.org/articles/benchmarks.html)?
 
 vroom doesn't stop to actually _read_ all of your data, it simply indexes where
 each record is located so it can be read later. The vectors returned use the
@@ -153,8 +153,7 @@ fs::file_delete(files)
 ## Benchmarks
 
 The speed quoted above is from a real dataset with 14,776,615 rows and 11 columns,
-see the [benchmark
-article](https://r-lib.github.io/vroom/articles/benchmarks/benchmarks.html)
+see the [benchmark article](http://vroom.r-lib.org/articles/benchmarks.html)
 for full details of the dataset and
 [bench/](https://github.com/r-lib/vroom/blob/master/inst/bench) for the code
 used to retrieve the data and perform the benchmarks.

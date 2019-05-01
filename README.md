@@ -20,7 +20,7 @@ maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www
 The fastest delimited reader for R, **905.64 MB/sec/sec**.
 
 But that’s impossible\! How can it be [so
-fast](https://r-lib.github.io/vroom/articles/benchmarks/benchmarks.html)?
+fast](http://vroom.r-lib.org/articles/benchmarks.html)?
 
 vroom doesn’t stop to actually *read* all of your data, it simply
 indexes where each record is located so it can be read later. The
@@ -150,8 +150,8 @@ vroom::vroom(files)
 
 The speed quoted above is from a real dataset with 14,776,615 rows and
 11 columns, see the [benchmark
-article](https://r-lib.github.io/vroom/articles/benchmarks/benchmarks.html)
-for full details of the dataset and
+article](http://vroom.r-lib.org/articles/benchmarks.html) for full
+details of the dataset and
 [bench/](https://github.com/r-lib/vroom/blob/master/inst/bench) for the
 code used to retrieve the data and perform the benchmarks.
 
