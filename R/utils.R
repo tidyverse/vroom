@@ -40,3 +40,11 @@ deparse2 <- function(expr, ..., sep = "\n") {
 }
 
 is_syntactic <- function(x) make.names(x) == x
+
+# Conditionally exported in zzz.R
+# @export
+compare.tbl_df <- function (x, y, ...) {
+  attr(x, "spec") <- NULL
+  attr(y, "spec") <- NULL
+  NextMethod("compare")
+}

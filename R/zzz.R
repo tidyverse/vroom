@@ -11,6 +11,7 @@
     s3_register("base::print", "date_names")
     s3_register("base::print", "locale")
     s3_register("utils::str", "col_spec")
+    s3_register("testthat::compare", "tbl_df")
   }
 }
 
