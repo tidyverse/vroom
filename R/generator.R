@@ -1,3 +1,14 @@
+#' Generate individual vectors of the types supported by vroom
+#'
+#' @param n The size of the vector to generate
+#' @param min The minimum range for the vector
+#' @param max The maxiumum range for the vector
+#' @param values The explicit values to use.
+#' @param f The random function to use.
+#' @inheritParams base::sample.int
+#' @param ... Additional arguments passed to internal generation functions
+#' @name generators
+#' @export
 gen_character <- function(n, min = 5, max = 25, values = c(letters, LETTERS, 0:9), ...) {
 
   if (min > max) {
@@ -11,18 +22,26 @@ gen_character <- function(n, min = 5, max = 25, values = c(letters, LETTERS, 0:9
   gen_character_(n, min, max, paste(values, collapse = ""), seeds[[1]], seeds[[2]])
 }
 
+#' @rdname generators
+#' @export
 gen_double <- function(n, f = stats::rnorm, ...) {
   f(n)
 }
 
+#' @rdname generators
+#' @export
 gen_number <- gen_double
 
+#' @rdname generators
+#' @export
 gen_integer <- function(n, min = 1L, max = .Machine$integer.max, prob = NULL, ...) {
   max <- max - min + 1L
   sample.int(max, size = n, replace = TRUE, prob = prob) + min - 1L
 }
 
-gen_factor <- function(n, levels = NULL, ordered = FALSE, include_na = FALSE, num_levels = gen_integer(1L, 1L, 25L), ...) {
+#' @rdname generators
+#' @export
+gen_factor <- function(n, levels = NULL, ordered = FALSE, num_levels = gen_integer(1L, 1L, 25L), ...) {
   if (is.null(levels)) {
     levels <- random_name(num_levels)
   }
@@ -38,6 +57,9 @@ gen_factor <- function(n, levels = NULL, ordered = FALSE, include_na = FALSE, nu
   res
 }
 
+#' @rdname generators
+#' @param fractional Whether to generate times with fractional seconds
+#' @export
 gen_time <- function(n, min = 0, max = hms::hms(days = 1), fractional = FALSE, ...) {
   res <- hms::hms(seconds = stats::runif(n, min = min, max = max))
   if (!fractional) {
@@ -46,14 +68,21 @@ gen_time <- function(n, min = 0, max = hms::hms(days = 1), fractional = FALSE, .
   res
 }
 
+#' @rdname generators
+#' @export
 gen_date <- function(n, min = as.Date("2001-01-01"), max = as.Date("2021-01-01"), ...) {
   structure(as.numeric(gen_integer(n, min = min, max = max)), class = "Date")
 }
 
+#' @rdname generators
+#' @param tz The timezone to use for dates
+#' @export
 gen_datetime <- function(n, min = as.POSIXct("2001-01-01"), max = as.POSIXct("2021-01-01"), tz = "UTC", ...) {
   structure(stats::runif(n, min = min, max = max), class = c("POSIXct", "POSIXt"), tzone = tz)
 }
 
+#' @rdname generators
+#' @export
 gen_logical <- function(n, ...) {
   c(TRUE, FALSE)[sample.int(n = 2, n, replace = TRUE)]
 }
@@ -74,9 +103,14 @@ all_col_types <- tibble::tribble(
 #'
 #' This is useful for benchmarking, but also for bug reports when you cannot
 #' share the real dataset.
+#'
+#' There is also a family of functions to generate individual vectors of each
+#' type.
+#'
 #' @param rows Number of rows to generate
 #' @param cols Number of columns to generate, if `NULL` this is derived from `col_types`.
 #' @param missing The percentage (from 0 to 1) of missing data to use
+#' @seealso [generators] to generate individual vectors.
 #' @inheritParams vroom
 #' @export
 gen_tbl <- function(rows, cols = NULL, col_types = NULL, locale = default_locale(), missing = 0) {

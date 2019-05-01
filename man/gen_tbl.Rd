@@ -41,3 +41,10 @@ names.}
 This is useful for benchmarking, but also for bug reports when you cannot
 share the real dataset.
 }
+\details{
+There is also a family of functions to generate individual vectors of each
+type.
+}
+\seealso{
+\link{generators} to generate individual vectors.
+}
