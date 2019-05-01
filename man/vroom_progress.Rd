@@ -2,7 +2,7 @@
 % Please edit documentation in R/vroom.R
 \name{vroom_progress}
 \alias{vroom_progress}
-\title{Determine progress bars should be shown}
+\title{Determine if progress bars should be shown}
 \usage{
 vroom_progress()
 }

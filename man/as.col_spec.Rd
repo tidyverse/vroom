@@ -2,7 +2,7 @@
 % Please edit documentation in R/col_types.R
 \name{as.col_spec}
 \alias{as.col_spec}
-\title{Generate a column specification}
+\title{Coerce to a column specification}
 \usage{
 as.col_spec(x)
 }
@@ -10,7 +10,7 @@ as.col_spec(x)
 \item{x}{Input object}
 }
 \description{
-This is most useful for generating a specification using the short form
+This is most useful for generating a specification using the short form or coercing from a list.
 }
 \examples{
 as.col_spec("cccnnn")

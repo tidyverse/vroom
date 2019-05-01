@@ -105,7 +105,7 @@ make_names <- function(x, len) {
   nms
 }
 
-#' Determine progress bars should be shown
+#' Determine if progress bars should be shown
 #'
 #' Progress bars are shown _unless_ one of the following is `TRUE`
 #' - The bar is explicitly disabled by setting `Sys.getenv("VROOM_SHOW_PROGRESS"="false")`

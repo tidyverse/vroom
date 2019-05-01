@@ -91,9 +91,10 @@ col_spec <- function(col_types, default = col_guess()) {
 is.col_spec <- function(x) inherits(x, "col_spec")
 
 
-#' Generate a column specification
+#' Coerce to a column specification
 #'
-#' This is most useful for generating a specification using the short form
+#' This is most useful for generating a specification using the short form or coercing from a list.
+#'
 #' @param x Input object
 #' @keywords internal
 #' @examples
