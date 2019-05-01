@@ -161,7 +161,7 @@ std::vector<char> fill_buf(
 
   auto na_len = strlen(na_str);
 
-  for (int row = begin; row < end; ++row) {
+  for (size_t row = begin; row < end; ++row) {
     for (int col = 0; col < input.length(); ++col) {
       switch (types[col]) {
       case STRSXP: {
@@ -272,7 +272,7 @@ get_header(const Rcpp::List& input, const char delim, size_t options) {
   Rcpp::CharacterVector names =
       Rcpp::as<Rcpp::CharacterVector>(input.attr("names"));
   std::vector<char> out;
-  for (size_t i = 0; i < names.size(); ++i) {
+  for (R_xlen_t i = 0; i < names.size(); ++i) {
     auto str = STRING_ELT(names, i);
 
     str_to_buf(str, out, delim, "", 0, options);
@@ -338,7 +338,7 @@ void vroom_write_(
   }
 
   while (begin < num_rows) {
-    auto t = 0;
+    size_t t = 0;
     while (t < num_threads && begin < num_rows) {
       auto num_lines = std::min(buf_lines, num_rows - begin);
       auto end = begin + num_lines;
@@ -356,7 +356,7 @@ void vroom_write_(
 
     write_fut = std::async([&, idx, t] {
       size_t sz = 0;
-      for (auto i = 0; i < t; ++i) {
+      for (size_t i = 0; i < t; ++i) {
         auto buf = futures[idx][i].get();
         write_buf(buf, out);
         sz += buf.size();
@@ -388,7 +388,6 @@ void vroom_write_connection_(
     const char delim,
     const char* na_str,
     bool col_names,
-    bool append,
     size_t options,
     size_t num_threads,
     bool progress,
@@ -429,7 +428,7 @@ void vroom_write_connection_(
   }
 
   while (begin < num_rows) {
-    auto t = 0;
+    size_t t = 0;
     while (t < num_threads && begin < num_rows) {
       auto num_lines = std::min(buf_lines, num_rows - begin);
       auto end = begin + num_lines;
@@ -445,7 +444,7 @@ void vroom_write_connection_(
 
     // write_fut = std::async([&, idx, t] {
     // size_t sz = 0;
-    for (auto i = 0; i < t; ++i) {
+    for (size_t i = 0; i < t; ++i) {
       auto buf = futures[idx][i].get();
       write_buf_con(buf, con_);
       auto sz = buf.size();

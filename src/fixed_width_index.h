@@ -150,7 +150,7 @@ public:
     }
     string value() const { return idx_->get(i_, column_); }
     column_iterator* clone() const { return new column_iterator(*this); }
-    string at(ptrdiff_t n) const { return idx_->get(i_, column_); }
+    string at(ptrdiff_t n) const { return idx_->get(n, column_); }
     virtual ~column_iterator() = default;
   };
 
