@@ -1,3 +1,5 @@
+# vroom 1.0.0
+
 # vroom (development version)
 
 * Initial release
