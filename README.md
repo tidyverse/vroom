@@ -5,16 +5,16 @@
 
 <!-- badges: start -->
 
-[![CRAN
-status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/package=vroom)
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Travis build
 status](https://travis-ci.org/r-lib/vroom.svg?branch=master)](https://travis-ci.org/r-lib/vroom)
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/r-lib/vroom?branch=master&svg=true)](https://ci.appveyor.com/project/r-lib/vroom)
 [![Codecov test
 coverage](https://codecov.io/gh/r-lib/vroom/branch/master/graph/badge.svg)](https://codecov.io/gh/r-lib/vroom?branch=master)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/package=vroom)
+[![Lifecycle:
+maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
 The fastest delimited reader for R, **905.64 MB/sec/sec**.
