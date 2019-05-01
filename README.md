@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# 🏎💨vroom <a href="http://r-lib.github.io/vroom"><img src="https://media.giphy.com/media/J13s43PrY0NDdmEbor/giphy.gif" align="right" width = "30%"/></a>
+# 🏎💨vroom <a href="http://r-lib.github.io/vroom"><img src="https://github.com/r-lib/vroom/raw/gh-pages/taylor.gif" align="right" width = "30%"/></a>
 
 <!-- badges: start -->
 
