@@ -8,7 +8,7 @@ vroom(file, delim = NULL, col_names = TRUE, col_types = NULL,
   col_select = NULL, id = NULL, skip = 0, n_max = Inf, na = c("",
   "NA"), quote = "\\"", comment = "", trim_ws = TRUE,
   escape_double = TRUE, escape_backslash = FALSE,
-  locale = default_locale(), guess_max = 100,
+  locale = default_locale(), guess_max = 100, altrep_opts = "chr",
   num_threads = vroom_threads(), progress = vroom_progress(),
   .name_repair = "unique")
 }
@@ -90,6 +90,10 @@ names.}
 
 \item{guess_max}{Maximum number of records to use for guessing column types.}
 
+\item{altrep_opts}{Control which column types use Altrep representations,
+either a character vector of types, \code{TRUE} or \code{FALSE}. See
+\code{\link[=vroom_altrep_opts]{vroom_altrep_opts()}} for for full details.}
+
 \item{num_threads}{Number of threads to use when reading and materializing vectors.}
 
 \item{progress}{Display a progress bar? By default it will only display
@@ -109,13 +113,55 @@ Read a delimited file into a tibble
 \examples{
 \dontshow{
 .old_wd <- setwd(tempdir())
-write.table(mtcars, sep = "\\t", row.names = FALSE, quote = FALSE, "mtcars.tsv")
+mt <- vroom(vroom_example("mtcars.csv"))
+vroom_write(mt, "mtcars.tsv")
+vroom_write(mt, "mtcars.tsv.gz")
+vroom_write(mt, "mtcars.tsv.bz2")
 }
 
+# Input sources -------------------------------------------------------------
+# Read from a path
 vroom("mtcars.tsv")
+vroom("mtcars.tsv.gz")
+vroom("mtcars.tsv.bz2")
 
+\dontrun{
+# Including remote paths
+vroom("https://github.com/r-lib/vroom/raw/master/inst/extdata/mtcars.csv")
+}
+
+# Or directly from a string (must contain a trailing newline)
+vroom("x,y\\n1,2\\n3,4\\n")
+
+# Column selection ----------------------------------------------------------
+# Pass column names or indexes directly to select them
+vroom("mtcars.tsv", col_select = c(model, cyl, gear))
+vroom("mtcars.tsv", col_select = c(1, 3, 11))
+
+# Or use the selection helpers
+vroom("mtcars.tsv", col_select = starts_with("d"))
+
+# You can also rename specific columns
+vroom("mtcars.tsv", col_select = list(car = model, everything()))
+
+# Column types --------------------------------------------------------------
+# By default, vroom guesses the columns types, looking at 1000 rows
+# throughout the dataset.
+# You can specify them explcitly with a compact specification:
+vroom("x,y\\n1,2\\n3,4\\n", col_types = "dc")
+
+# Or with a list of column types:
+vroom("x,y\\n1,2\\n3,4\\n", col_types = list(col_double(), col_character()))
+
+# File types ----------------------------------------------------------------
+# csv
+vroom("a,b\\n1.0,2.0\\n", delim = ",")
+# tsv
+vroom("a\\tb\\n1.0\\t2.0\\n")
+# Other delimiters
+vroom("a|b\\n1.0|2.0\\n", delim = "|")
 \dontshow{
-unlink("mtcars.tsv")
+unlink(c("mtcars.tsv", "mtcars.tsv.gz", "mtcars.bz2"))
 setwd(.old_wd)
 }
 }

@@ -3,6 +3,21 @@
 #' @inheritParams readr::read_fwf
 #' @inheritParams vroom
 #' @export
+#' @examples
+#' fwf_sample <- vroom_example("fwf-sample.txt")
+#' cat(readLines(fwf_sample))
+#'
+#' # You can specify column positions in several ways:
+#' # 1. Guess based on position of empty columns
+#' vroom_fwf(fwf_sample, fwf_empty(fwf_sample, col_names = c("first", "last", "state", "ssn")))
+#' # 2. A vector of field widths
+#' vroom_fwf(fwf_sample, fwf_widths(c(20, 10, 12), c("name", "state", "ssn")))
+#' # 3. Paired vectors of start and end positions
+#' vroom_fwf(fwf_sample, fwf_positions(c(1, 30), c(20, 42), c("name", "ssn")))
+#' # 4. Named arguments with start and end positions
+#' vroom_fwf(fwf_sample, fwf_cols(name = c(1, 20), ssn = c(30, 42)))
+#' # 5. Named arguments with column widths
+#' vroom_fwf(fwf_sample, fwf_cols(name = 20, state = 10, ssn = 12))
 vroom_fwf <- function(file,
                       col_positions = fwf_empty(file[[1]], skip, n = guess_max),
                       col_types = NULL,

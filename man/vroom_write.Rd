@@ -68,3 +68,17 @@ setting option \code{readr.show_progress} to \code{FALSE}.}
 \description{
 Write a data frame to a delimited file
 }
+\examples{
+\dontshow{.old_wd <- setwd(tempdir())}
+# If you only specify a file name, vroom_write() will write
+# the file to your current working directory.
+vroom_write(mtcars, "mtcars.tsv")
+vroom_write(mtcars, "mtcars.csv", ",")
+
+# If you add an extension to the file name, write_()* will
+# automatically compress the output.
+vroom_write(mtcars, "mtcars.tsv.gz")
+vroom_write(mtcars, "mtcars.tsv.bz2")
+vroom_write(mtcars, "mtcars.tsv.xz")
+\dontshow{setwd(.old_wd)}
+}

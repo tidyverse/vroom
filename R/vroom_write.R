@@ -14,6 +14,19 @@
 #'   recommended when saving data for consumption by excel, as it will force
 #'   excel to read the data with the correct encoding (UTF-8)
 #' @export
+#' @examples
+#' \dontshow{.old_wd <- setwd(tempdir())}
+#' # If you only specify a file name, vroom_write() will write
+#' # the file to your current working directory.
+#' vroom_write(mtcars, "mtcars.tsv")
+#' vroom_write(mtcars, "mtcars.csv", ",")
+#'
+#' # If you add an extension to the file name, write_()* will
+#' # automatically compress the output.
+#' vroom_write(mtcars, "mtcars.tsv.gz")
+#' vroom_write(mtcars, "mtcars.tsv.bz2")
+#' vroom_write(mtcars, "mtcars.tsv.xz")
+#' \dontshow{setwd(.old_wd)}
 vroom_write <- function(x, path, delim = '\t', na = "NA", col_names = !append,
   append = FALSE, quote = c("needed", "all", "none"), escape =
     c("double", "backslash", "none"), bom = FALSE, num_threads =
@@ -96,6 +109,14 @@ vroom_format <- function(x, delim = '\t', na = "NA", col_names = TRUE,
 #'
 #' @keywords internal
 #' @param x A vector
+#' @examples
+#' # Most types are returned unchanged
+#' output_column(1)
+#' output_column("x")
+#'
+#' # datetimes are formatted in ISO 8601
+#' output_column(Sys.Date())
+#' output_column(Sys.time())
 #' @export
 output_column <- function(x) {
   UseMethod("output_column")

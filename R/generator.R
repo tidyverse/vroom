@@ -8,6 +8,24 @@
 #' @inheritParams base::sample.int
 #' @param ... Additional arguments passed to internal generation functions
 #' @name generators
+#' @examples
+#' # characters
+#' gen_character(4)
+#'
+#' # factors
+#' gen_factor(4)
+#'
+#' # logical
+#' gen_logical(4)
+#'
+#' # numbers
+#' gen_double(4)
+#' gen_integer(4)
+#'
+#' # temporal data
+#' gen_time(4)
+#' gen_date(4)
+#' gen_datetime(4)
 #' @export
 gen_character <- function(n, min = 5, max = 25, values = c(letters, LETTERS, 0:9), ...) {
 
@@ -24,8 +42,8 @@ gen_character <- function(n, min = 5, max = 25, values = c(letters, LETTERS, 0:9
 
 #' @rdname generators
 #' @export
-gen_double <- function(n, f = stats::rnorm, ...) {
-  f(n)
+gen_double <- function(n, f = stats::rnorm, ..., locale) {
+  f(n, ...)
 }
 
 #' @rdname generators
@@ -115,6 +133,20 @@ all_col_types <- tibble::tribble(
 #' @param missing The percentage (from 0 to 1) of missing data to use
 #' @seealso [generators] to generate individual vectors.
 #' @inheritParams vroom
+#' @examples
+#' # random 10 x 5 table with random column types
+#' rand_tbl <- gen_tbl(10, 5)
+#' rand_tbl
+#'
+#' # all double 25 x 4 table
+#' dbl_tbl <- gen_tbl(25, 4, col_types = strrep("d", 4))
+#' dbl_tbl
+#'
+#' # Use the dots in long form column types to change the random function and options
+#' types <- rep(times = 4, list(col_double(f = stats::runif, min = -10, max = 25)))
+#' types
+#' dbl_tbl2 <- gen_tbl(25, 4, col_types = types)
+#' dbl_tbl2
 #' @export
 gen_tbl <- function(rows, cols = NULL, col_types = NULL, locale = default_locale(), missing = 0) {
 
@@ -139,7 +171,7 @@ gen_tbl <- function(rows, cols = NULL, col_types = NULL, locale = default_locale
       specs$cols[[i]] <- do.call(paste0("col_", type), list())
     }
     fun_nme <- paste0("gen_", type)
-    res[[i]] <- do.call(fun_nme, c(rows, specs$cols[[i]], locale))
+    res[[i]] <- do.call(fun_nme, c(rows, specs$cols[[i]]))
   }
 
   if (missing > 0) {
@@ -153,25 +185,6 @@ gen_tbl <- function(rows, cols = NULL, col_types = NULL, locale = default_locale
   tibble::as_tibble(res)
 }
 
-gen_write <- function(x, path, delim, na = "NA", append = FALSE, col_names =
-  !append, col_types = NULL, locale = default_locale(), quote_escape = "double") {
-  if (is.null(col_types) && inherits(x, "tbl_df")) {
-    col_types <- spec(x)
-  }
-
-  specs <- col_types_standardise(col_types, colnames(x))
-
-  for (i in seq_along(x)) {
-    if (inherits(x[[i]], "hms")) {
-      if (nzchar(specs$cols[[i]]$format)) {
-        x[[i]] <- do.call(as.character, c(list(as.POSIXlt(x[[i]])), specs$cols[[i]]))
-      }
-    }
-    x[[i]] <- do.call(as.character, c(list(x[[i]]), specs$cols[[i]]))
-  }
-
-  vroom_write(x, path, delim, na = na, append = append, col_names = col_names)
-}
 # Name and adjective list from https://github.com/rstudio/cranwhales/blob/93349fe1bc790f115a3d56660b6b99ffe258d9a2/random-names.R
 #' @rdname generators
 #' @export

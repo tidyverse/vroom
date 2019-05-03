@@ -12,3 +12,10 @@ vroom_str(x)
 \description{
 Similar to \code{str()} but with more information for Altrep objects.
 }
+\examples{
+# when used on non-altrep objects altrep will always be false
+vroom_str(mtcars)
+
+mt <- vroom(vroom_example("mtcars.csv"), ",", altrep_opts = c("chr", "dbl"))
+vroom_str(mt)
+}

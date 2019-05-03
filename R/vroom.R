@@ -23,17 +23,62 @@ NULL
 #'   column names are not empty and unique. See `.name_repair` as documented in
 #'   [tibble::tibble()] for additional options including supplying user defined
 #'   name repair functions.
+#' @param altrep_opts Control which column types use Altrep representations,
+#'   either a character vector of types, `TRUE` or `FALSE`. See
+#'   [vroom_altrep_opts()] for for full details.
 #' @export
 #' @examples
 #' \dontshow{
 #' .old_wd <- setwd(tempdir())
-#' write.table(mtcars, sep = "\t", row.names = FALSE, quote = FALSE, "mtcars.tsv")
+#' mt <- vroom(vroom_example("mtcars.csv"))
+#' vroom_write(mt, "mtcars.tsv")
+#' vroom_write(mt, "mtcars.tsv.gz")
+#' vroom_write(mt, "mtcars.tsv.bz2")
 #' }
 #'
+#' # Input sources -------------------------------------------------------------
+#' # Read from a path
 #' vroom("mtcars.tsv")
+#' vroom("mtcars.tsv.gz")
+#' vroom("mtcars.tsv.bz2")
 #'
+#' \dontrun{
+#' # Including remote paths
+#' vroom("https://github.com/r-lib/vroom/raw/master/inst/extdata/mtcars.csv")
+#' }
+#'
+#' # Or directly from a string (must contain a trailing newline)
+#' vroom("x,y\n1,2\n3,4\n")
+#'
+#' # Column selection ----------------------------------------------------------
+#' # Pass column names or indexes directly to select them
+#' vroom("mtcars.tsv", col_select = c(model, cyl, gear))
+#' vroom("mtcars.tsv", col_select = c(1, 3, 11))
+#'
+#' # Or use the selection helpers
+#' vroom("mtcars.tsv", col_select = starts_with("d"))
+#'
+#' # You can also rename specific columns
+#' vroom("mtcars.tsv", col_select = list(car = model, everything()))
+#'
+#' # Column types --------------------------------------------------------------
+#' # By default, vroom guesses the columns types, looking at 1000 rows
+#' # throughout the dataset.
+#' # You can specify them explcitly with a compact specification:
+#' vroom("x,y\n1,2\n3,4\n", col_types = "dc")
+#'
+#' # Or with a list of column types:
+#' vroom("x,y\n1,2\n3,4\n", col_types = list(col_double(), col_character()))
+#'
+#' # File types ----------------------------------------------------------------
+#' # csv
+#' vroom("a,b\n1.0,2.0\n", delim = ",")
+#' # tsv
+#' vroom("a\tb\n1.0\t2.0\n")
+#' # Other delimiters
+#' vroom("a|b\n1.0|2.0\n", delim = "|")
 #' \dontshow{
-#' unlink("mtcars.tsv")
+#' unlink(c("mtcars.tsv", "mtcars.tsv.gz", "mtcars.bz2"))
 #' setwd(.old_wd)
 #' }
 vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
@@ -41,7 +86,7 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
   id = NULL, skip = 0, n_max = Inf,
   na = c("", "NA"), quote = '"', comment = "", trim_ws = TRUE,
   escape_double = TRUE, escape_backslash = FALSE, locale = default_locale(),
-  guess_max = 100, num_threads = vroom_threads(), progress = vroom_progress(),
+  guess_max = 100, altrep_opts = "chr", num_threads = vroom_threads(), progress = vroom_progress(),
   .name_repair = "unique") {
 
 
@@ -73,7 +118,7 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
     id = id, skip = skip, col_select = col_select,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
     escape_backslash = escape_backslash, comment = comment, locale = locale,
-    guess_max = guess_max, n_max = n_max, altrep_opts = vroom_altrep_opts(),
+    guess_max = guess_max, n_max = n_max, altrep_opts = vroom_altrep_opts(altrep_opts),
     num_threads = num_threads, progress = progress)
 
   out <- tibble::as_tibble(out, .name_repair = .name_repair)
@@ -114,6 +159,8 @@ make_names <- function(x, len) {
 #' - The code is run by knitr / rmarkdown.
 #' - The code is run by testthat (the `TESTTHAT` envvar is `true`).
 #' @export
+#' @examples
+#' vroom_progress()
 vroom_progress <- function() {
   env_to_logical("VROOM_SHOW_PROGRESS", TRUE) &&
     interactive() &&
@@ -190,11 +237,56 @@ vroom_tempfile <- function() {
 
 #' Show which column types are using Altrep
 #'
-#' @param which A character vector of column types to use Altrep for.
+#' `vroom_altrep_opts()` can be used directly as input to the `altrep_opts`
+#' argument of [vroom()].
+#'
+#' Altrenatively there is also a family of environment variables to control use of
+#' the Altrep framework. These can then be set in your `.Renviron` file, e.g.
+#' with [usethis::edit_r_environ()]. For versions of R where the Altrep
+#' framework is unavailable (R < 3.5.0) they are automatically turned off and
+#' the variables have no effect. The variables can take one of `true`, `false`,
+#' `TRUE`, `FALSE`, `1`, or `0`.
+#'
+#' - `VROOM_USE_ALTREP_NUMERICS` - If set use Altrep for _all_ numeric types
+#'   (default `false`).
+#'
+#' There are also individual variables for each type. Currently only
+#' `VROOM_USE_ALTREP_CHR` defaults to `true`.
+#'
+#' - `VROOM_USE_ALTREP_CHR`
+#' - `VROOM_USE_ALTREP_FCT`
+#' - `VROOM_USE_ALTREP_INT`
+#' - `VROOM_USE_ALTREP_DBL`
+#' - `VROOM_USE_ALTREP_NUM`
+#' - `VROOM_USE_ALTREP_LGL`
+#' - `VROOM_USE_ALTREP_DTTM`
+#' - `VROOM_USE_ALTREP_DATE`
+#' - `VROOM_USE_ALTREP_TIME`
+#'
+#' @param which A character vector of column types to use Altrep for. Can also
+#'   take `TRUE` or `FALSE` to use Altrep for all possible or none of the
+#'   types
+#' @examples
+#' vroom_altrep_opts()
+#' vroom_altrep_opts(c("chr", "fct", "int"))
+#' vroom_altrep_opts(TRUE)
+#' vroom_altrep_opts(FALSE)
 #' @export
 vroom_altrep_opts <- function(which = NULL) {
-  which <- match.arg(which, names(altrep_opt_vals()), several.ok = TRUE)
-  which <- as.list(stats::setNames(rep(TRUE, length(which)), which))
+  if (!is.null(which)) {
+    if (is.logical(which)) {
+      types <- names(altrep_opts_vals())
+      if (isTRUE(which)) {
+        which <- as.list(stats::setNames(rep(TRUE, length(types)), types))
+      } else {
+        which <- as.list(stats::setNames(rep(FALSE, length(types)), types))
+      }
+    } else {
+      which <- match.arg(which, names(altrep_opts_vals()), several.ok = TRUE)
+      which <- as.list(stats::setNames(rep(TRUE, length(which)), which))
+    }
+  }
+
 
   args <- list(
     which$chr %||% vroom_use_altrep_chr(),
@@ -215,7 +307,7 @@ vroom_altrep_opts <- function(which = NULL) {
   structure(out, class = "vroom_altrep_opts")
 }
 
-altrep_opt_vals <- function() c(
+altrep_opts_vals <- function() c(
   "none" = 0L,
   "chr" = 1L,
   "fct" = 2L,
@@ -230,13 +322,13 @@ altrep_opt_vals <- function() c(
 
 #' @export
 print.vroom_altrep_opts <- function(x, ...) {
-  vals <- altrep_opt_vals()
+  vals <- altrep_opts_vals()
   reps <- names(vals)[bitwAnd(vals, x) > 0]
 
-  cat(glue::glue(
-      "Using Altrep representations for:
+  cat("Using Altrep representations for:\n",
+    glue::glue("
         * {reps}
-       ", reps = glue::glue_collapse(reps, "\n * ")), sep = "")
+       ", reps = glue::glue_collapse(reps, "\n * ")), "\n", sep = "")
 }
 
 vroom_use_altrep_chr <- function() {

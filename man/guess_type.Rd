@@ -25,3 +25,16 @@ names.}
 \description{
 Guess the type of a vector
 }
+\examples{
+ # Logical vectors
+ guess_type(c("FALSE", "TRUE", "F", "T"))
+ # Integers and doubles
+ guess_type(c("1","2","3"))
+ guess_type(c("1.6","2.6","3.4"))
+ # Numbers containing grouping mark
+ guess_type("1,234,566")
+ # ISO 8601 date times
+ guess_type(c("2010-10-10"))
+ guess_type(c("2010-10-10 01:02:03"))
+ guess_type(c("01:02:03 AM"))
+}

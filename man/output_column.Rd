@@ -13,4 +13,13 @@ output_column(x)
 This is a generic function that applied to each column before it is saved
 to disk. It provides a hook for S3 classes that need special handling.
 }
+\examples{
+# Most types are returned unchanged
+output_column(1)
+output_column("x")
+
+# datetimes are formatted in ISO 8601
+output_column(Sys.Date())
+output_column(Sys.time())
+}
 \keyword{internal}

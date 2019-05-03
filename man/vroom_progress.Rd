@@ -16,3 +16,6 @@ Progress bars are shown \emph{unless} one of the following is \code{TRUE}
 \item The code is run by testthat (the \code{TESTTHAT} envvar is \code{true}).
 }
 }
+\examples{
+vroom_progress()
+}

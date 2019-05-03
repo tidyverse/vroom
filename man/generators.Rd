@@ -17,9 +17,9 @@
 gen_character(n, min = 5, max = 25, values = c(letters, LETTERS,
   0:9), ...)
 
-gen_double(n, f = stats::rnorm, ...)
+gen_double(n, f = stats::rnorm, ..., locale)
 
-gen_number(n, f = stats::rnorm, ...)
+gen_number(n, f = stats::rnorm, ..., locale)
 
 gen_integer(n, min = 1L, max = .Machine$integer.max, prob = NULL,
   ...)
@@ -68,4 +68,23 @@ gen_name(n)
 }
 \description{
 Generate individual vectors of the types supported by vroom
+}
+\examples{
+# characters
+gen_character(4)
+
+# factors
+gen_factor(4)
+
+# logical
+gen_logical(4)
+
+# numbers
+gen_double(4)
+gen_integer(4)
+
+# temporal data
+gen_time(4)
+gen_date(4)
+gen_datetime(4)
 }
