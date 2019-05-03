@@ -78,7 +78,7 @@ NULL
 #' # Other delimiters
 #' vroom("a|b\n1.0|2.0\n", delim = "|")
 #' \dontshow{
-#' unlink(c("mtcars.tsv", "mtcars.tsv.gz", "mtcars.bz2"))
+#' unlink(c("mtcars.tsv", "mtcars.tsv.gz", "mtcars.tsv.bz2"))
 #' setwd(.old_wd)
 #' }
 vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
