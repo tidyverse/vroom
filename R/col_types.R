@@ -49,7 +49,7 @@
 #' t3$cols <- c(t1$cols, t2$cols)
 #' t3
 cols <- function(..., .default = col_guess()) {
-  col_types <- list(...)
+  col_types <- rlang::list2(...)
   is_character <- vapply(col_types, is.character, logical(1))
   col_types[is_character] <- lapply(col_types[is_character], col_concise)
 
