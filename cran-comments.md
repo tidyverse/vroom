@@ -1,5 +1,5 @@
 This is a resubmission. I have added examples for all exported functions and
-believe the examples and vignettes should no longer write outside the R
+believe the tests, examples and vignettes should no longer write outside the R
 temporary directory.
 
 ## Test environments
