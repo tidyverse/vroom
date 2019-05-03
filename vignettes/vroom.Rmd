@@ -8,6 +8,7 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
+knitr::opts_knit$set(root.dir = tempdir())
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
