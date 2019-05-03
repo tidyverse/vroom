@@ -204,15 +204,16 @@ test_that("vroom can read an empty file", {
     equals = tibble::tibble()
   )
 
-  file.create("foo")
-  on.exit(unlink("foo"))
+  f <- tempfile()
+  file.create(f)
+  on.exit(unlink(f))
 
   capture.output(type = "message",
-    expect_equal(vroom("foo"), tibble::tibble())
+    expect_equal(vroom(f), tibble::tibble())
   )
 
   capture.output(type = "message",
-    expect_equal(vroom("foo", col_names = FALSE), tibble::tibble())
+    expect_equal(vroom(f, col_names = FALSE), tibble::tibble())
   )
 
   expect_equal(vroom(character()), tibble::tibble())
