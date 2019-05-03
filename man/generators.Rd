@@ -17,9 +17,9 @@
 gen_character(n, min = 5, max = 25, values = c(letters, LETTERS,
   0:9), ...)
 
-gen_double(n, f = stats::rnorm, ..., locale)
+gen_double(n, f = stats::rnorm, ...)
 
-gen_number(n, f = stats::rnorm, ..., locale)
+gen_number(n, f = stats::rnorm, ...)
 
 gen_integer(n, min = 1L, max = .Machine$integer.max, prob = NULL,
   ...)

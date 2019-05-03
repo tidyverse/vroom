@@ -42,7 +42,7 @@ gen_character <- function(n, min = 5, max = 25, values = c(letters, LETTERS, 0:9
 
 #' @rdname generators
 #' @export
-gen_double <- function(n, f = stats::rnorm, ..., locale) {
+gen_double <- function(n, f = stats::rnorm, ...) {
   f(n, ...)
 }
 
