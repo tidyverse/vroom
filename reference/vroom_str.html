@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -139,12 +139,47 @@
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># when used on non-altrep objects altrep will always be false</span>
+<span class='fu'>vroom_str</span>(<span class='no'>mtcars</span>)</div><div class='output co'>#&gt; 'data.frame': 32 obs., 11 vars.:
+#&gt; $mpg:	altrep:false	type: double	length:32
+#&gt; $cyl:	altrep:false	type: double	length:32
+#&gt; $disp:	altrep:false	type: double	length:32
+#&gt; $hp:	altrep:false	type: double	length:32
+#&gt; $drat:	altrep:false	type: double	length:32
+#&gt; $wt:	altrep:false	type: double	length:32
+#&gt; $qsec:	altrep:false	type: double	length:32
+#&gt; $vs:	altrep:false	type: double	length:32
+#&gt; $am:	altrep:false	type: double	length:32
+#&gt; $gear:	altrep:false	type: double	length:32
+#&gt; $carb:	altrep:false	type: double	length:32</div><div class='input'>
+<span class='no'>mt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='vroom.html'>vroom</a></span>(<span class='fu'><a href='vroom_example.html'>vroom_example</a></span>(<span class='st'>"mtcars.csv"</span>), <span class='st'>","</span>, <span class='kw'>altrep_opts</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"chr"</span>, <span class='st'>"dbl"</span>))</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Observations:</span><span> 32</span>
+#&gt; <span class='message'></span><span style='font-weight: bold;'>Variables:</span><span> 12</span>
+#&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [ 1]: model</span>
+#&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'></span><span style='color: #555555;'>Call `spec()` for a copy-pastable column specification</span><span></span>
+#&gt; <span class='message'></span><span style='color: #555555;'>Specify the column types with `col_types` to quiet this message</span><span></span></div><div class='input'><span class='fu'>vroom_str</span>(<span class='no'>mt</span>)</div><div class='output co'>#&gt; 'tbl_df', 'tbl', and 'data.frame': 32 obs., 12 vars.:
+#&gt; $model:	altrep:true	type:vroom::vroom_chr	length:32	materialized:false
+#&gt; $mpg:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
+#&gt; $cyl:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
+#&gt; $disp:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
+#&gt; $hp:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
+#&gt; $drat:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
+#&gt; $wt:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
+#&gt; $qsec:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
+#&gt; $vs:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
+#&gt; $am:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
+#&gt; $gear:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
+#&gt; $carb:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

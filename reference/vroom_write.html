@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -210,12 +210,25 @@ setting option <code>readr.show_progress</code> to <code>FALSE</code>.</p></td>
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># If you only specify a file name, vroom_write() will write</span>
+<span class='co'># the file to your current working directory.</span>
+<span class='fu'>vroom_write</span>(<span class='no'>mtcars</span>, <span class='st'>"mtcars.tsv"</span>)
+<span class='fu'>vroom_write</span>(<span class='no'>mtcars</span>, <span class='st'>"mtcars.csv"</span>, <span class='st'>","</span>)
+
+<span class='co'># If you add an extension to the file name, write_()* will</span>
+<span class='co'># automatically compress the output.</span>
+<span class='fu'>vroom_write</span>(<span class='no'>mtcars</span>, <span class='st'>"mtcars.tsv.gz"</span>)
+<span class='fu'>vroom_write</span>(<span class='no'>mtcars</span>, <span class='st'>"mtcars.tsv.bz2"</span>)
+<span class='fu'>vroom_write</span>(<span class='no'>mtcars</span>, <span class='st'>"mtcars.tsv.xz"</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>
