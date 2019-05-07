@@ -14,6 +14,8 @@
 * Fix for UBSAN issues reported by CRAN (#97)
 
 * Fix for rchk issues reported by CRAN (#94)
+* `vroom_lines()` function added, to (lazily) read lines from a file into a
+  character vector (#90).
 
 # vroom 1.0.0
 
