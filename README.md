@@ -71,7 +71,14 @@ files, including
 
 ## Installation
 
-Install the development version from [GitHub](https://github.com/) with:
+Install vroom from CRAN with:
+
+``` r
+install.packages("vctrs")
+```
+
+Alternatively, if you need the development version from
+[GitHub](https://github.com/) install it with:
 
 ``` r
 # install.packages("devtools")
