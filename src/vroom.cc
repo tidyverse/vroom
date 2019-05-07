@@ -20,7 +20,7 @@ SEXP vroom_(
     bool escape_backslash,
     const char comment,
     size_t skip,
-    size_t n_max,
+    ptrdiff_t n_max,
     bool progress,
     RObject col_names,
     RObject col_types,
@@ -28,7 +28,7 @@ SEXP vroom_(
     SEXP id,
     CharacterVector na,
     List locale,
-    size_t guess_max,
+    ptrdiff_t guess_max,
     size_t num_threads,
     size_t altrep_opts) {
 

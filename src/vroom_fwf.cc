@@ -17,11 +17,11 @@ List vroom_fwf_(
     RObject col_select,
     size_t skip,
     const char comment,
-    size_t n_max,
+    ptrdiff_t n_max,
     SEXP id,
     CharacterVector na,
     List locale,
-    size_t guess_max,
+    ptrdiff_t guess_max,
     size_t num_threads,
     size_t altrep_opts,
     bool progress) {

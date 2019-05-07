@@ -39,6 +39,10 @@ vroom_fwf <- function(file,
     n_max <- -1
   }
 
+  if (guess_max < 0 || is.infinite(guess_max)) {
+    guess_max <- -1
+  }
+
   col_select <- vroom_enquo(rlang::enquo(col_select))
 
   out <- vroom_fwf_(file, col_positions$begin, col_positions$end,

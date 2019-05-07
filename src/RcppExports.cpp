@@ -66,7 +66,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // vroom_
-SEXP vroom_(List inputs, SEXP delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char comment, size_t skip, size_t n_max, bool progress, RObject col_names, RObject col_types, RObject col_select, SEXP id, CharacterVector na, List locale, size_t guess_max, size_t num_threads, size_t altrep_opts);
+SEXP vroom_(List inputs, SEXP delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char comment, size_t skip, ptrdiff_t n_max, bool progress, RObject col_names, RObject col_types, RObject col_select, SEXP id, CharacterVector na, List locale, ptrdiff_t guess_max, size_t num_threads, size_t altrep_opts);
 RcppExport SEXP _vroom_vroom_(SEXP inputsSEXP, SEXP delimSEXP, SEXP quoteSEXP, SEXP trim_wsSEXP, SEXP escape_doubleSEXP, SEXP escape_backslashSEXP, SEXP commentSEXP, SEXP skipSEXP, SEXP n_maxSEXP, SEXP progressSEXP, SEXP col_namesSEXP, SEXP col_typesSEXP, SEXP col_selectSEXP, SEXP idSEXP, SEXP naSEXP, SEXP localeSEXP, SEXP guess_maxSEXP, SEXP num_threadsSEXP, SEXP altrep_optsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -79,7 +79,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type escape_backslash(escape_backslashSEXP);
     Rcpp::traits::input_parameter< const char >::type comment(commentSEXP);
     Rcpp::traits::input_parameter< size_t >::type skip(skipSEXP);
-    Rcpp::traits::input_parameter< size_t >::type n_max(n_maxSEXP);
+    Rcpp::traits::input_parameter< ptrdiff_t >::type n_max(n_maxSEXP);
     Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
     Rcpp::traits::input_parameter< RObject >::type col_names(col_namesSEXP);
     Rcpp::traits::input_parameter< RObject >::type col_types(col_typesSEXP);
@@ -87,7 +87,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type id(idSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type na(naSEXP);
     Rcpp::traits::input_parameter< List >::type locale(localeSEXP);
-    Rcpp::traits::input_parameter< size_t >::type guess_max(guess_maxSEXP);
+    Rcpp::traits::input_parameter< ptrdiff_t >::type guess_max(guess_maxSEXP);
     Rcpp::traits::input_parameter< size_t >::type num_threads(num_threadsSEXP);
     Rcpp::traits::input_parameter< size_t >::type altrep_opts(altrep_optsSEXP);
     rcpp_result_gen = Rcpp::wrap(vroom_(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip, n_max, progress, col_names, col_types, col_select, id, na, locale, guess_max, num_threads, altrep_opts));
@@ -95,7 +95,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // vroom_fwf_
-List vroom_fwf_(List inputs, std::vector<int> col_starts, std::vector<int> col_ends, bool trim_ws, RObject col_names, RObject col_types, RObject col_select, size_t skip, const char comment, size_t n_max, SEXP id, CharacterVector na, List locale, size_t guess_max, size_t num_threads, size_t altrep_opts, bool progress);
+List vroom_fwf_(List inputs, std::vector<int> col_starts, std::vector<int> col_ends, bool trim_ws, RObject col_names, RObject col_types, RObject col_select, size_t skip, const char comment, ptrdiff_t n_max, SEXP id, CharacterVector na, List locale, ptrdiff_t guess_max, size_t num_threads, size_t altrep_opts, bool progress);
 RcppExport SEXP _vroom_vroom_fwf_(SEXP inputsSEXP, SEXP col_startsSEXP, SEXP col_endsSEXP, SEXP trim_wsSEXP, SEXP col_namesSEXP, SEXP col_typesSEXP, SEXP col_selectSEXP, SEXP skipSEXP, SEXP commentSEXP, SEXP n_maxSEXP, SEXP idSEXP, SEXP naSEXP, SEXP localeSEXP, SEXP guess_maxSEXP, SEXP num_threadsSEXP, SEXP altrep_optsSEXP, SEXP progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -109,11 +109,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< RObject >::type col_select(col_selectSEXP);
     Rcpp::traits::input_parameter< size_t >::type skip(skipSEXP);
     Rcpp::traits::input_parameter< const char >::type comment(commentSEXP);
-    Rcpp::traits::input_parameter< size_t >::type n_max(n_maxSEXP);
+    Rcpp::traits::input_parameter< ptrdiff_t >::type n_max(n_maxSEXP);
     Rcpp::traits::input_parameter< SEXP >::type id(idSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type na(naSEXP);
     Rcpp::traits::input_parameter< List >::type locale(localeSEXP);
-    Rcpp::traits::input_parameter< size_t >::type guess_max(guess_maxSEXP);
+    Rcpp::traits::input_parameter< ptrdiff_t >::type guess_max(guess_maxSEXP);
     Rcpp::traits::input_parameter< size_t >::type num_threads(num_threadsSEXP);
     Rcpp::traits::input_parameter< size_t >::type altrep_opts(altrep_optsSEXP);
     Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
