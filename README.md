@@ -74,7 +74,7 @@ files, including
 Install vroom from CRAN with:
 
 ``` r
-install.packages("vctrs")
+install.packages("vroom")
 ```
 
 Alternatively, if you need the development version from
