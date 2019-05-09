@@ -54,7 +54,9 @@ public:
             show_after)),
         progress_(0),
         total_(total),
-        last_progress_(0) {}
+        last_progress_(0),
+        last_time_(std::chrono::system_clock::now()),
+        update_interval_(10) {}
 
   void tick(size_t progress) {
     std::lock_guard<std::mutex> guard(mutex_);
@@ -75,8 +77,13 @@ public:
       std::unique_lock<std::mutex> lk(mutex_);
       if (progress_ < total_) {
         cv_.wait(lk);
-        pb_->tick(progress_ - last_progress_);
-        last_progress_ = progress_;
+        auto now = std::chrono::system_clock::now();
+        std::chrono::duration<float, std::milli> diff = now - last_time_;
+        if (diff > update_interval_) {
+          pb_->tick(progress_ - last_progress_);
+          last_progress_ = progress_;
+          last_time_ = std::chrono::system_clock::now();
+        }
       } else {
         break;
       }
@@ -89,6 +96,8 @@ private:
   size_t progress_;
   size_t total_;
   size_t last_progress_;
+  std::chrono::time_point<std::chrono::system_clock> last_time_;
+  std::chrono::milliseconds update_interval_;
   std::mutex mutex_;
   std::condition_variable cv_;
 };
