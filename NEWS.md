@@ -9,6 +9,8 @@
 
 * Fix for UBSAN issues reported by CRAN (#97)
 
+* Fix for rchk issues reported by CRAN (#94)
+
 # vroom 1.0.0
 
 * Initial release

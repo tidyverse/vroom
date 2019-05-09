@@ -75,21 +75,26 @@ public:
       return nullptr;
     }
 
-    Rcpp::IntegerVector in(indx);
+    vroom_vec_info* info;
 
-    auto idx = std::make_shared<std::vector<size_t> >();
+    // This block is here to avoid a false positive from rchck
+    {
+      auto& inf = Info(x);
 
-    std::transform(in.begin(), in.end(), std::back_inserter(*idx), [](int i) {
-      return i - 1;
-    });
+      Rcpp::IntegerVector in(indx);
 
-    auto& inf = Info(x);
+      auto idx = std::make_shared<std::vector<size_t> >();
 
-    auto info = new vroom_vec_info{inf.column->subset(idx),
-                                   inf.num_threads,
-                                   inf.na,
-                                   inf.locale,
-                                   inf.format};
+      std::transform(in.begin(), in.end(), std::back_inserter(*idx), [](int i) {
+        return i - 1;
+      });
+
+      info = new vroom_vec_info{inf.column->subset(idx),
+                                inf.num_threads,
+                                inf.na,
+                                inf.locale,
+                                inf.format};
+    }
 
     return T::Make(info);
   }
