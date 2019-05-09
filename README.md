@@ -27,7 +27,8 @@ indexes where each record is located so it can be read later. The
 vectors returned use the [Altrep
 framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html) to
 lazily load the data on-demand when it is accessed, so you only pay for
-what you use.
+what you use. This lazy access is done automatically, so no changes to
+your R data-manipulation code are needed.
 
 vroom also uses multiple threads for indexing, materializing
 non-character columns, and when writing to further improve performance.
