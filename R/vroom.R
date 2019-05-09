@@ -297,15 +297,15 @@ vroom_altrep_opts <- function(which = NULL) {
 
 
   args <- list(
-    which$chr %||% vroom_use_altrep_chr(),
-    which$fct %||% vroom_use_altrep_fct(),
-    which$int %||% vroom_use_altrep_int(),
-    which$dbl %||% vroom_use_altrep_dbl(),
-    which$num %||% vroom_use_altrep_num(),
-    which$lgl %||% vroom_use_altrep_lgl(),
-    which$dttm %||% vroom_use_altrep_dttm(),
-    which$date %||% vroom_use_altrep_date(),
-    which$time %||% vroom_use_altrep_time()
+    getRversion() >= "3.5.0" && which$chr %||% vroom_use_altrep_chr(),
+    getRversion() >= "3.5.0" && which$fct %||% vroom_use_altrep_fct(),
+    getRversion() >= "3.5.0" && which$int %||% vroom_use_altrep_int(),
+    getRversion() >= "3.5.0" && which$dbl %||% vroom_use_altrep_dbl(),
+    getRversion() >= "3.5.0" && which$num %||% vroom_use_altrep_num(),
+    getRversion() >= "3.6.0" && which$lgl %||% vroom_use_altrep_lgl(), # logicals only supported in R 3.6.0+
+    getRversion() >= "3.5.0" && which$dttm %||% vroom_use_altrep_dttm(),
+    getRversion() >= "3.5.0" && which$date %||% vroom_use_altrep_date(),
+    getRversion() >= "3.5.0" && which$time %||% vroom_use_altrep_time()
   )
 
   out <-  0L
@@ -340,38 +340,38 @@ print.vroom_altrep_opts <- function(x, ...) {
 }
 
 vroom_use_altrep_chr <- function() {
-  getRversion() > "3.5.0" && env_to_logical("VROOM_USE_ALTREP_CHR", TRUE)
+  env_to_logical("VROOM_USE_ALTREP_CHR", TRUE)
 }
 
 vroom_use_altrep_fct <- function() {
   # fct is a numeric internally
-  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_FCT", FALSE))
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_FCT", FALSE)
 }
 
 vroom_use_altrep_int <- function() {
-  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_INT", FALSE))
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_INT", FALSE)
 }
 
 vroom_use_altrep_dbl <- function() {
-  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_DBL", FALSE))
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_DBL", FALSE)
 }
 
 vroom_use_altrep_num <- function() {
-  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_NUM", FALSE))
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_NUM", FALSE)
 }
 
 vroom_use_altrep_lgl <- function() {
-  getRversion() > "3.6.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_LGL", FALSE))
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_LGL", FALSE)
 }
 
 vroom_use_altrep_dttm <- function() {
-  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_DTTM", FALSE))
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_DTTM", FALSE)
 }
 
 vroom_use_altrep_date <- function() {
-  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_DATE", FALSE))
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_DATE", FALSE)
 }
 
 vroom_use_altrep_time <- function() {
-  getRversion() > "3.5.0" && (env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_TIME", FALSE))
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_TIME", FALSE)
 }

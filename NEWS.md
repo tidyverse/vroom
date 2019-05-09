@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Fix to actually return non-altrep character columns on R 3.2, 3.3 and 3.4.
+
 * The progress bar now only updates every 10 milliseconds
 
 * Disable colors in the progress bar when running in RStudio, so work around
