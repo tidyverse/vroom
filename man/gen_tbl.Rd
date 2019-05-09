@@ -51,7 +51,7 @@ rand_tbl <- gen_tbl(10, 5)
 rand_tbl
 
 # all double 25 x 4 table
-dbl_tbl <- gen_tbl(25, 4, col_types = strrep("d", 4))
+dbl_tbl <- gen_tbl(25, 4, col_types = "dddd")
 dbl_tbl
 
 # Use the dots in long form column types to change the random function and options
