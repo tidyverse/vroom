@@ -52,3 +52,22 @@ compare.tbl_df <- function (x, y, ...) {
 is_rstudio_console <- function() {
   !(Sys.getenv("RSTUDIO", "") == "" || Sys.getenv("RSTUDIO_TERM", "") != "")
 }
+
+strrep <- function(x, times) {
+  # This is from backports
+  # https://github.com/r-lib/backports/blob/4373f8dabacd7ba288d7c559cb78146165cfdb5c/R/strrep.R#L15
+  if (getRversion() < "3.3.0") {
+    x = as.character(x)
+    if (length(x) == 0L)
+      return(x)
+    unlist(.mapply(function(x, times) {
+        if (is.na(x) || is.na(times))
+          return(NA_character_)
+        if (times <= 0L)
+          return("")
+        paste0(replicate(times, x), collapse = "")
+}, list(x = x, times = times), MoreArgs = list()), use.names = FALSE)
+  } else {
+    base::strrep(x, times)
+  }
+}
