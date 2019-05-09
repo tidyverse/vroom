@@ -208,14 +208,11 @@ There are also individual variables for each type. Currently only
 
 ## RStudio caveats
 
-RStudio's environment pane auto-refresh behavior calls `object.size()` which for Altrep
-objects can be extremely slow. This was fixed in
-[RStudio#4210](https://github.com/rstudio/rstudio/pull/4210) and [RStudio#4292](https://github.com/rstudio/rstudio/pull/4292), so it is
-recommended you use a [daily version](https://dailies.rstudio.com/) if you are
-trying to use vroom inside RStudio. For older versions a workaround is to
-use the 'Manual Refresh Only' option in the environment pane.
-
-![](https://user-images.githubusercontent.com/470418/51357022-95a1f280-1a82-11e9-8035-3687c8fd5dd8.png)
+RStudio's environment pane calls `object.size()` when it refreshes the pane, which
+for Altrep objects can be extremely slow. RStudio 1.2.1335+ includes the fixes
+([RStudio#4210](https://github.com/rstudio/rstudio/pull/4210),
+[RStudio#4292](https://github.com/rstudio/rstudio/pull/4292)) for this issue,
+so so it is recommended you use at least that version.
 
 ## Thanks
 
