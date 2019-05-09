@@ -48,3 +48,7 @@ compare.tbl_df <- function (x, y, ...) {
   attr(y, "spec") <- NULL
   NextMethod("compare")
 }
+
+is_rstudio_console <- function() {
+  !(Sys.getenv("RSTUDIO", "") == "" || Sys.getenv("RSTUDIO_TERM", "") != "")
+}

@@ -171,7 +171,11 @@ vroom_progress <- function() {
 
 #' @importFrom crayon blue cyan green bold reset col_nchar
 pb_file_format <- function(filename) {
-  glue::glue_col("{bold}indexing{reset} {blue}{basename(filename)}{reset} [:bar] {green}:rate{reset}, eta: {cyan}:eta{reset}")
+
+  # Workaround RStudio bug https://github.com/rstudio/rstudio/issues/4777
+  withr::with_options(list(crayon.enabled = !is_rstudio_console() && getOption("crayon.enabled", TRUE)),
+    glue::glue_col("{bold}indexing{reset} {blue}{basename(filename)}{reset} [:bar] {green}:rate{reset}, eta: {cyan}:eta{reset}")
+  )
 }
 
 pb_width <- function(format) {
@@ -180,11 +184,15 @@ pb_width <- function(format) {
 }
 
 pb_connection_format <- function(unused) {
-  glue::glue_col("{bold}indexed{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}")
+  withr::with_options(list(crayon.enabled = !is_rstudio_console() && getOption("crayon.enabled", TRUE)),
+    glue::glue_col("{bold}indexed{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}")
+  )
 }
 
 pb_write_format <- function(unused) {
-  glue::glue_col("{bold}wrote{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}")
+  withr::with_options(list(crayon.enabled = !is_rstudio_console() && getOption("crayon.enabled", TRUE)),
+    glue::glue_col("{bold}wrote{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}")
+  )
 }
 
 # Guess delimiter by splitting every line by each delimiter and choosing the
