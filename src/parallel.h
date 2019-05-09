@@ -20,7 +20,7 @@
 /// @param use_threads : enable / disable threads.
 ///
 ///
-static std::vector<std::future<void> > parallel_for(
+static std::vector<std::thread> parallel_for(
     size_t nb_elements,
     std::function<void(size_t start, size_t end, size_t thread_id)> functor,
     unsigned nb_threads,
@@ -32,18 +32,18 @@ static std::vector<std::future<void> > parallel_for(
 
   unsigned batch_remainder = nb_elements % nb_threads;
 
-  auto my_threads = std::vector<std::future<void> >(nb_threads);
+  auto my_threads = std::vector<std::thread>(nb_threads);
 
   if (use_threads) {
     // Multithread execution
     for (unsigned i = 0; i < (nb_threads - 1); ++i) {
       size_t start = i * batch_size;
-      my_threads[i] = std::async(functor, start, start + batch_size, i);
+      my_threads[i] = std::thread(functor, start, start + batch_size, i);
     }
 
     // Last batch includes the remainder
     size_t start = (nb_threads - 1) * batch_size;
-    my_threads[nb_threads - 1] = std::async(
+    my_threads[nb_threads - 1] = std::thread(
         functor, start, start + batch_size + batch_remainder, nb_threads - 1);
   } else {
     // Single thread execution (for easy debugging)
@@ -55,13 +55,13 @@ static std::vector<std::future<void> > parallel_for(
     size_t start = (nb_threads - 1) * batch_size;
     functor(start, start + batch_size + batch_remainder, nb_threads - 1);
 
-    return std::vector<std::future<void> >();
+    return std::vector<std::thread>();
   }
 
   // Wait for the other thread to finish their task
   if (use_threads && cleanup) {
     for (auto& t : my_threads) {
-      t.get();
+      t.join();
     }
   }
   return my_threads;
