@@ -103,7 +103,7 @@
 
 <p>The fastest delimited reader for R, <strong>905.64 MB/sec/sec</strong>.</p>
 <p>But that’s impossible! How can it be <a href="http://vroom.r-lib.org/articles/benchmarks.html">so fast</a>?</p>
-<p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use.</p>
+<p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use. This lazy access is done automatically, so no changes to your R data-manipulation code are needed.</p>
 <p>vroom also uses multiple threads for indexing, materializing non-character columns, and when writing to further improve performance.</p>
 <table class="table table">
 <thead><tr class="header">
@@ -278,8 +278,7 @@
 <div id="rstudio-caveats" class="section level2">
 <h2 class="hasAnchor">
 <a href="#rstudio-caveats" class="anchor"></a>RStudio caveats</h2>
-<p>RStudio’s environment pane auto-refresh behavior calls <code><a href="https://www.rdocumentation.org/packages/utils/topics/object.size">object.size()</a></code> which for Altrep objects can be extremely slow. This was fixed in <a href="https://github.com/rstudio/rstudio/pull/4210">RStudio#4210</a> and <a href="https://github.com/rstudio/rstudio/pull/4292">RStudio#4292</a>, so it is recommended you use a <a href="https://dailies.rstudio.com/">daily version</a> if you are trying to use vroom inside RStudio. For older versions a workaround is to use the ‘Manual Refresh Only’ option in the environment pane.</p>
-<p><img src="https://user-images.githubusercontent.com/470418/51357022-95a1f280-1a82-11e9-8035-3687c8fd5dd8.png"></p>
+<p>RStudio’s environment pane calls <code><a href="https://www.rdocumentation.org/packages/utils/topics/object.size">object.size()</a></code> when it refreshes the pane, which for Altrep objects can be extremely slow. RStudio 1.2.1335+ includes the fixes (<a href="https://github.com/rstudio/rstudio/pull/4210">RStudio#4210</a>, <a href="https://github.com/rstudio/rstudio/pull/4292">RStudio#4292</a>) for this issue, so so it is recommended you use at least that version.</p>
 </div>
 <div id="thanks" class="section level2">
 <h2 class="hasAnchor">
