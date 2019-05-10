@@ -105,10 +105,6 @@ delimited_index::delimited_index(
 
   std::unique_ptr<multi_progress> pb = nullptr;
 
-  // Used to delay the start of the threads, so we can test the progress bar.
-  std::chrono::duration<double> sleep_time(
-      get_env("VROOM_PROGRESS_THREAD_SLEEP", .0));
-
   if (progress_) {
 #ifndef VROOM_STANDALONE
     auto format = get_pb_format("file", filename);
@@ -178,9 +174,6 @@ delimited_index::delimited_index(
     threads = parallel_for(
         file_size - first_nl,
         [&](size_t start, size_t end, size_t id) {
-          if (sleep_time > std::chrono::duration<double>(.0)) {
-            std::this_thread::sleep_for(sleep_time);
-          }
           idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
           start = find_next_newline(mmap_, first_nl + start, false);
           end = find_next_newline(mmap_, first_nl + end, false) + 1;
