@@ -166,7 +166,7 @@ vroom_progress <- function() {
     interactive() &&
     !isTRUE(getOption("knitr.in.progress")) &&
     !isTRUE(getOption("rstudio.notebook.executing")) &&
-    !testthat::is_testing()
+    !(is_loaded("testthat") && testthat::is_testing())
 }
 
 #' @importFrom crayon blue cyan green bold reset col_nchar

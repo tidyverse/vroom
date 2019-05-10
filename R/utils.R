@@ -13,6 +13,10 @@ is_windows <- function() {
   identical(tolower(Sys.info()[["sysname"]]), "windows")
 }
 
+is_loaded <- function(pkg) {
+  isTRUE(pkg[[1]] %in% loadedNamespaces())
+}
+
 `%||%` <- function(x, y) if (is.null(x)) y else x
 
 collapse_transformer <- function(regex = "[*]$", ...) {
