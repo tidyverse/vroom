@@ -43,9 +43,7 @@ public:
       const char complete_char = '=',
       const char incomplete_char = '-',
       bool clear = true,
-      double show_after = vroom::get_env("VROOM_PROGRESS_SHOW_AFTER", .2),
-      double update_interval =
-          vroom::get_env("VROOM_PROGRESS_UPDATE_INTERVAL", 0.01))
+      double show_after = 0.2)
       : pb_(new RProgress::RProgress(
             format,
             total,
@@ -58,7 +56,7 @@ public:
         total_(total),
         last_progress_(0),
         last_time_(std::chrono::system_clock::now()),
-        update_interval_(update_interval) {}
+        update_interval_(10) {}
 
   void tick(size_t progress) {
     std::lock_guard<std::mutex> guard(mutex_);
@@ -80,7 +78,7 @@ public:
       if (progress_ < total_) {
         cv_.wait(lk);
         auto now = std::chrono::system_clock::now();
-        std::chrono::duration<double> diff = now - last_time_;
+        std::chrono::duration<float, std::milli> diff = now - last_time_;
         if (diff > update_interval_) {
           pb_->tick(progress_ - last_progress_);
           last_progress_ = progress_;
@@ -99,7 +97,7 @@ private:
   size_t total_;
   size_t last_progress_;
   std::chrono::time_point<std::chrono::system_clock> last_time_;
-  std::chrono::duration<double> update_interval_;
+  std::chrono::milliseconds update_interval_;
   std::mutex mutex_;
   std::condition_variable cv_;
 };
