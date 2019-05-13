@@ -2,7 +2,7 @@
 title: "Vroom Benchmarks"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{benchmarks}
+  %\VignetteIndexEntry{Vroom Benchmarks}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
