@@ -37,6 +37,7 @@ This vignette covers the following topics:
 - Skipping particular columns.
 - Specifying column types, for additional safety and when the automatic guessing
   fails.
+- Writing regular and compressed files
 
 ## Reading files
 To read a CSV, or other type of delimited file with vroom pass the file to
