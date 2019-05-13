@@ -65,7 +65,7 @@ Suggests:
     testthat,
     tidyr
 LinkingTo: 
-    progress,
+    progress (>= 1.2.1),
     Rcpp
 VignetteBuilder: 
     knitr
