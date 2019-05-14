@@ -40,14 +40,15 @@ public:
       std::string format = "[:bar] :percent",
       size_t total = 100,
       int width = 78,
-      const char complete_char = '=',
-      const char incomplete_char = '-',
+      const char* complete_char = "=",
+      const char* incomplete_char = "-",
       bool clear = true,
       double show_after = 0.2)
       : pb_(new RProgress::RProgress(
             format,
             total,
             width,
+            complete_char,
             complete_char,
             incomplete_char,
             clear,
@@ -56,7 +57,9 @@ public:
         total_(total),
         last_progress_(0),
         last_time_(std::chrono::system_clock::now()),
-        update_interval_(10) {}
+        update_interval_(10) {
+    pb_->set_reverse(false);
+  }
 
   void tick(size_t progress) {
     std::lock_guard<std::mutex> guard(mutex_);
