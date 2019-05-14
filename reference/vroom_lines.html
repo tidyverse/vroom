@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create locales — locale • vroom</title>
+<title>Read lines from a file — vroom_lines • vroom</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,13 +30,11 @@
 
 
 
-<meta property="og:title" content="Create locales — locale" />
+<meta property="og:title" content="Read lines from a file — vroom_lines" />
 
-<meta property="og:description" content="A locale object tries to capture all the defaults that can vary between
-countries. You set the locale in once, and the details are automatically
-passed on down to the columns parsers. The defaults have been chosen to
-match R (i.e. US English) as closely as possible. See
-vignette(&quot;locales&quot;) for more details." />
+<meta property="og:description" content="vroom_lines() is similar to readLines(), however it reads the lines
+lazily like vroom(), so operations like length(), head(), tail() and sample()
+can be done much more efficiently without reading all the data into R." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -123,105 +121,65 @@ vignette(&quot;locales&quot;) for more details." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create locales</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vroom/blob/master/R/locale.R'><code>R/locale.R</code></a></small>
-    <div class="hidden name"><code>locale.Rd</code></div>
+    <h1>Read lines from a file</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vroom/blob/master/R/vroom_lines.R'><code>R/vroom_lines.R</code></a></small>
+    <div class="hidden name"><code>vroom_lines.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>A locale object tries to capture all the defaults that can vary between
-countries. You set the locale in once, and the details are automatically
-passed on down to the columns parsers. The defaults have been chosen to
-match R (i.e. US English) as closely as possible. See
-<code>vignette("locales")</code> for more details.</p>
+    <p><code>vroom_lines()</code> is similar to <code><a href='https://www.rdocumentation.org/packages/base/topics/readLines'>readLines()</a></code>, however it reads the lines
+lazily like <code><a href='vroom.html'>vroom()</a></code>, so operations like <code><a href='https://www.rdocumentation.org/packages/base/topics/length'>length()</a></code>, <code><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head()</a></code>, <code><a href='https://www.rdocumentation.org/packages/utils/topics/head'>tail()</a></code> and <code><a href='https://www.rdocumentation.org/packages/base/topics/sample'>sample()</a></code>
+can be done much more efficiently without reading all the data into R.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>locale</span>(<span class='kw'>date_names</span> <span class='kw'>=</span> <span class='st'>"en"</span>, <span class='kw'>date_format</span> <span class='kw'>=</span> <span class='st'>"%AD"</span>, <span class='kw'>time_format</span> <span class='kw'>=</span> <span class='st'>"%AT"</span>,
-  <span class='kw'>decimal_mark</span> <span class='kw'>=</span> <span class='st'>"."</span>, <span class='kw'>grouping_mark</span> <span class='kw'>=</span> <span class='st'>","</span>, <span class='kw'>tz</span> <span class='kw'>=</span> <span class='st'>"UTC"</span>,
-  <span class='kw'>encoding</span> <span class='kw'>=</span> <span class='st'>"UTF-8"</span>)
-
-<span class='fu'>default_locale</span>()</pre>
+    <pre class="usage"><span class='fu'>vroom_lines</span>(<span class='no'>file</span>, <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>Inf</span>, <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>altrep_opts</span> <span class='kw'>=</span> <span class='st'>"chr"</span>,
+  <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(), <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>())</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>date_names</th>
-      <td><p>Character representations of day and month names. Either
-the language code as string (passed on to <code><a href='date_names.html'>date_names_lang()</a></code>)
-or an object created by <code><a href='date_names.html'>date_names()</a></code>.</p></td>
+      <th>file</th>
+      <td><p>path to a local file.</p></td>
     </tr>
     <tr>
-      <th>date_format, time_format</th>
-      <td><p>Default date and time formats.</p></td>
+      <th>n_max</th>
+      <td><p>Maximum number of records to read.</p></td>
     </tr>
     <tr>
-      <th>decimal_mark, grouping_mark</th>
-      <td><p>Symbols used to indicate the decimal
-place, and to chunk larger numbers. Decimal mark can only be <code>,</code> or
-<code>.</code>.</p></td>
+      <th>skip</th>
+      <td><p>Number of lines to skip before reading data.</p></td>
     </tr>
     <tr>
-      <th>tz</th>
-      <td><p>Default tz. This is used both for input (if the time zone isn't
-present in individual strings), and for output (to control the default
-display). The default is to use "UTC", a time zone that does not use
-daylight savings time (DST) and hence is typically most useful for data.
-The absence of time zones makes it approximately 50x faster to generate
-UTC times than any other time zone.</p>
-<p>Use <code>""</code> to use the system default time zone, but beware that this
-will not be reproducible across systems.</p>
-<p>For a complete list of possible time zones, see <code><a href='https://www.rdocumentation.org/packages/base/topics/timezones'>OlsonNames()</a></code>.
-Americans, note that "EST" is a Canadian time zone that does not have
-DST. It is <em>not</em> Eastern Standard Time. It's better to use
-"US/Eastern", "US/Central" etc.</p></td>
+      <th>altrep_opts</th>
+      <td><p>Control which column types use Altrep representations,
+either a character vector of types, <code>TRUE</code> or <code>FALSE</code>. See
+<code><a href='vroom_altrep_opts.html'>vroom_altrep_opts()</a></code> for for full details.</p></td>
     </tr>
     <tr>
-      <th>encoding</th>
-      <td><p>Default encoding.</p></td>
+      <th>num_threads</th>
+      <td><p>Number of threads to use when reading and materializing vectors.</p></td>
+    </tr>
+    <tr>
+      <th>progress</th>
+      <td><p>Display a progress bar? By default it will only display
+in an interactive session and not while knitting a document. The display
+is updated every 50,000 values and will only display if estimated reading
+time is 5 seconds or more. The automatic progress bar can be disabled by
+setting option <code>readr.show_progress</code> to <code>FALSE</code>.</p></td>
     </tr>
     </table>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>locale</span>()</div><div class='output co'>#&gt; &lt;locale&gt;
-#&gt; Numbers:  123,456.78
-#&gt; Formats:  %AD / %AT
-#&gt; Timezone: UTC
-#&gt; Encoding: UTF-8
-#&gt; &lt;date_names&gt;
-#&gt; Days:   Sunday (Sun), Monday (Mon), Tuesday (Tue), Wednesday (Wed), Thursday
-#&gt;         (Thu), Friday (Fri), Saturday (Sat)
-#&gt; Months: January (Jan), February (Feb), March (Mar), April (Apr), May (May),
-#&gt;         June (Jun), July (Jul), August (Aug), September (Sep), October
-#&gt;         (Oct), November (Nov), December (Dec)
-#&gt; AM/PM:  AM/PM</div><div class='input'><span class='fu'>locale</span>(<span class='st'>"fr"</span>)</div><div class='output co'>#&gt; &lt;locale&gt;
-#&gt; Numbers:  123,456.78
-#&gt; Formats:  %AD / %AT
-#&gt; Timezone: UTC
-#&gt; Encoding: UTF-8
-#&gt; &lt;date_names&gt;
-#&gt; Days:   dimanche (dim.), lundi (lun.), mardi (mar.), mercredi (mer.), jeudi
-#&gt;         (jeu.), vendredi (ven.), samedi (sam.)
-#&gt; Months: janvier (janv.), février (févr.), mars (mars), avril (avr.), mai (mai),
-#&gt;         juin (juin), juillet (juil.), août (août), septembre (sept.),
-#&gt;         octobre (oct.), novembre (nov.), décembre (déc.)
-#&gt; AM/PM:  AM/PM</div><div class='input'>
-<span class='co'># South American locale</span>
-<span class='fu'>locale</span>(<span class='st'>"es"</span>, <span class='kw'>decimal_mark</span> <span class='kw'>=</span> <span class='st'>","</span>)</div><div class='output co'>#&gt; &lt;locale&gt;
-#&gt; Numbers:  123.456,78
-#&gt; Formats:  %AD / %AT
-#&gt; Timezone: UTC
-#&gt; Encoding: UTF-8
-#&gt; &lt;date_names&gt;
-#&gt; Days:   domingo (dom.), lunes (lun.), martes (mar.), miércoles (mié.), jueves
-#&gt;         (jue.), viernes (vie.), sábado (sáb.)
-#&gt; Months: enero (ene.), febrero (feb.), marzo (mar.), abril (abr.), mayo (may.),
-#&gt;         junio (jun.), julio (jul.), agosto (ago.), septiembre (sept.),
-#&gt;         octubre (oct.), noviembre (nov.), diciembre (dic.)
-#&gt; AM/PM:  a. m./p. m.</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>lines</span> <span class='kw'>&lt;-</span> <span class='fu'>vroom_lines</span>(<span class='fu'><a href='vroom_example.html'>vroom_example</a></span>(<span class='st'>"mtcars.csv"</span>))
+
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/length'>length</a></span>(<span class='no'>lines</span>)</div><div class='output co'>#&gt; [1] 33</div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='no'>lines</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; [1] "model,mpg,cyl,disp,hp,drat,wt,qsec,vs,am,gear,carb"
+#&gt; [2] "Mazda RX4,21,6,160,110,3.9,2.62,16.46,0,1,4,4"     </div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>tail</a></span>(<span class='no'>lines</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; [1] "Maserati Bora,15,8,301,335,3.54,3.57,14.6,0,1,5,8"
+#&gt; [2] "Volvo 142E,21.4,4,121,109,4.11,2.78,18.6,1,1,4,2" </div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sample'>sample</a></span>(<span class='no'>lines</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; [1] "Merc 230,22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2"  
+#&gt; [2] "Maserati Bora,15,8,301,335,3.54,3.57,14.6,0,1,5,8"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

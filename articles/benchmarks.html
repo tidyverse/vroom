@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.1</span>
       </span>
     </div>
 
@@ -56,6 +56,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li class="dropdown-header">Release notes</li>
+    <li>
+      <a href="https://www.tidyverse.org/articles/2019/05/vroom-1-0-0/">Version 1.0.0</a>
+    </li>
     <li class="divider">
     <li>
       <a href="../news/index.html">Change log</a>
@@ -179,7 +182,7 @@ total
 read.delim
 </td>
 <td style="text-align:right;">
-1m 21.5s
+1m 23.6s
 </td>
 <td style="text-align:right;">
 6ms
@@ -194,13 +197,13 @@ read.delim
 1ms
 </td>
 <td style="text-align:right;">
-315ms
+336ms
 </td>
 <td style="text-align:right;">
-764ms
+745ms
 </td>
 <td style="text-align:right;">
-1m 22.6s
+1m 24.7s
 </td>
 </tr>
 <tr>
@@ -208,10 +211,10 @@ read.delim
 readr
 </td>
 <td style="text-align:right;">
-33.1s
+33.9s
 </td>
 <td style="text-align:right;">
-90ms
+115ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -223,13 +226,13 @@ readr
 2ms
 </td>
 <td style="text-align:right;">
-202ms
+214ms
 </td>
 <td style="text-align:right;">
-825ms
+899ms
 </td>
 <td style="text-align:right;">
-34.2s
+35.1s
 </td>
 </tr>
 <tr>
@@ -237,13 +240,10 @@ readr
 data.table
 </td>
 <td style="text-align:right;">
-15.7s
+15.8s
 </td>
 <td style="text-align:right;">
-13ms
-</td>
-<td style="text-align:right;">
-1ms
+16ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -252,13 +252,16 @@ data.table
 1ms
 </td>
 <td style="text-align:right;">
-129ms
+1ms
 </td>
 <td style="text-align:right;">
-394ms
+133ms
 </td>
 <td style="text-align:right;">
-16.3s
+397ms
+</td>
+<td style="text-align:right;">
+16.4s
 </td>
 </tr>
 <tr>
@@ -266,10 +269,10 @@ data.table
 vroom base
 </td>
 <td style="text-align:right;">
-3.6s
+3.8s
 </td>
 <td style="text-align:right;">
-93ms
+94ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -284,10 +287,10 @@ vroom base
 1.4s
 </td>
 <td style="text-align:right;">
-7.3s
+7.2s
 </td>
 <td style="text-align:right;">
-12.4s
+12.5s
 </td>
 </tr>
 <tr>
@@ -298,7 +301,7 @@ vroom (full altrep) base
 1.8s
 </td>
 <td style="text-align:right;">
-133ms
+130ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -313,39 +316,10 @@ vroom (full altrep) base
 1.4s
 </td>
 <td style="text-align:right;">
-7.5s
+7.4s
 </td>
 <td style="text-align:right;">
-10.9s
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom dplyr
-</td>
-<td style="text-align:right;">
-3.6s
-</td>
-<td style="text-align:right;">
-86ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-1.4s
-</td>
-<td style="text-align:right;">
-1.9s
-</td>
-<td style="text-align:right;">
-7s
+10.7s
 </td>
 </tr>
 <tr>
@@ -353,28 +327,57 @@ vroom dplyr
 vroom (full altrep) dplyr
 </td>
 <td style="text-align:right;">
-1.7s
+2.1s
 </td>
 <td style="text-align:right;">
-89ms
-</td>
-<td style="text-align:right;">
-1ms
+156ms
 </td>
 <td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-1.7s
+1ms
+</td>
+<td style="text-align:right;">
+3.2s
 </td>
 <td style="text-align:right;">
 1.3s
 </td>
 <td style="text-align:right;">
-1.9s
+2s
 </td>
 <td style="text-align:right;">
-6.7s
+8.7s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom dplyr
+</td>
+<td style="text-align:right;">
+3.8s
+</td>
+<td style="text-align:right;">
+97ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+3ms
+</td>
+<td style="text-align:right;">
+1.4s
+</td>
+<td style="text-align:right;">
+2s
+</td>
+<td style="text-align:right;">
+7.2s
 </td>
 </tr>
 </tbody>
@@ -425,10 +428,10 @@ total
 read.delim
 </td>
 <td style="text-align:right;">
-1m 57.6s
+2m 0.5s
 </td>
 <td style="text-align:right;">
-8ms
+9ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -440,13 +443,13 @@ read.delim
 2ms
 </td>
 <td style="text-align:right;">
-7s
+7.6s
 </td>
 <td style="text-align:right;">
 54ms
 </td>
 <td style="text-align:right;">
-2m 4.7s
+2m 8.2s
 </td>
 </tr>
 <tr>
@@ -454,10 +457,10 @@ read.delim
 readr
 </td>
 <td style="text-align:right;">
-5.2s
+5.5s
 </td>
 <td style="text-align:right;">
-103ms
+102ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -469,13 +472,13 @@ readr
 3ms
 </td>
 <td style="text-align:right;">
-12ms
+11ms
 </td>
 <td style="text-align:right;">
-43ms
+44ms
 </td>
 <td style="text-align:right;">
-5.4s
+5.7s
 </td>
 </tr>
 <tr>
@@ -486,7 +489,7 @@ vroom base
 1.6s
 </td>
 <td style="text-align:right;">
-109ms
+119ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -498,10 +501,10 @@ vroom base
 3ms
 </td>
 <td style="text-align:right;">
-73ms
+82ms
 </td>
 <td style="text-align:right;">
-67ms
+58ms
 </td>
 <td style="text-align:right;">
 1.9s
@@ -509,13 +512,42 @@ vroom base
 </tr>
 <tr>
 <td style="text-align:right;">
+vroom dplyr
+</td>
+<td style="text-align:right;">
+1.5s
+</td>
+<td style="text-align:right;">
+119ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+3ms
+</td>
+<td style="text-align:right;">
+13ms
+</td>
+<td style="text-align:right;">
+41ms
+</td>
+<td style="text-align:right;">
+1.7s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
 vroom (full altrep) dplyr
 </td>
 <td style="text-align:right;">
-391ms
+354ms
 </td>
 <td style="text-align:right;">
-105ms
+112ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -527,39 +559,10 @@ vroom (full altrep) dplyr
 1.1s
 </td>
 <td style="text-align:right;">
-64ms
+63ms
 </td>
 <td style="text-align:right;">
-41ms
-</td>
-<td style="text-align:right;">
-1.7s
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom dplyr
-</td>
-<td style="text-align:right;">
-1.5s
-</td>
-<td style="text-align:right;">
-108ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-4ms
-</td>
-<td style="text-align:right;">
-12ms
-</td>
-<td style="text-align:right;">
-37ms
+47ms
 </td>
 <td style="text-align:right;">
 1.7s
@@ -570,39 +573,10 @@ vroom dplyr
 vroom (full altrep) base
 </td>
 <td style="text-align:right;">
-504ms
+488ms
 </td>
 <td style="text-align:right;">
-152ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-60ms
-</td>
-<td style="text-align:right;">
-220ms
-</td>
-<td style="text-align:right;">
-937ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-data.table
-</td>
-<td style="text-align:right;">
-467ms
-</td>
-<td style="text-align:right;">
-14ms
+157ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -614,13 +588,42 @@ data.table
 3ms
 </td>
 <td style="text-align:right;">
-5ms
+64ms
 </td>
 <td style="text-align:right;">
-54ms
+253ms
 </td>
 <td style="text-align:right;">
-541ms
+963ms
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+data.table
+</td>
+<td style="text-align:right;">
+513ms
+</td>
+<td style="text-align:right;">
+18ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+4ms
+</td>
+<td style="text-align:right;">
+6ms
+</td>
+<td style="text-align:right;">
+59ms
+</td>
+<td style="text-align:right;">
+598ms
 </td>
 </tr>
 </tbody>
@@ -667,7 +670,7 @@ total
 read.delim
 </td>
 <td style="text-align:right;">
-1m 38.6s
+1m 41.9s
 </td>
 <td style="text-align:right;">
 9ms
@@ -682,13 +685,13 @@ read.delim
 3ms
 </td>
 <td style="text-align:right;">
-21ms
+23ms
 </td>
 <td style="text-align:right;">
-330ms
+338ms
 </td>
 <td style="text-align:right;">
-1m 39s
+1m 42.3s
 </td>
 </tr>
 <tr>
@@ -696,28 +699,28 @@ read.delim
 readr
 </td>
 <td style="text-align:right;">
-58.6s
+1m 1.2s
 </td>
 <td style="text-align:right;">
-111ms
-</td>
-<td style="text-align:right;">
-1ms
+112ms
 </td>
 <td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-4ms
+1ms
 </td>
 <td style="text-align:right;">
-14ms
+5ms
 </td>
 <td style="text-align:right;">
-359ms
+17ms
 </td>
 <td style="text-align:right;">
-59.1s
+369ms
+</td>
+<td style="text-align:right;">
+1m 1.7s
 </td>
 </tr>
 <tr>
@@ -725,28 +728,28 @@ readr
 data.table
 </td>
 <td style="text-align:right;">
-38.5s
+44.3s
 </td>
 <td style="text-align:right;">
-17ms
-</td>
-<td style="text-align:right;">
-1ms
+23ms
 </td>
 <td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-2ms
+1ms
 </td>
 <td style="text-align:right;">
-16ms
+10ms
 </td>
 <td style="text-align:right;">
-226ms
+27ms
 </td>
 <td style="text-align:right;">
-38.8s
+268ms
+</td>
+<td style="text-align:right;">
+44.6s
 </td>
 </tr>
 <tr>
@@ -754,10 +757,10 @@ data.table
 vroom (full altrep) base
 </td>
 <td style="text-align:right;">
-516ms
+521ms
 </td>
 <td style="text-align:right;">
-148ms
+146ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -769,13 +772,13 @@ vroom (full altrep) base
 3ms
 </td>
 <td style="text-align:right;">
-159ms
+190ms
 </td>
 <td style="text-align:right;">
-1.9s
+2s
 </td>
 <td style="text-align:right;">
-2.7s
+2.9s
 </td>
 </tr>
 <tr>
@@ -783,10 +786,10 @@ vroom (full altrep) base
 vroom base
 </td>
 <td style="text-align:right;">
-493ms
+506ms
 </td>
 <td style="text-align:right;">
-137ms
+131ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -798,13 +801,13 @@ vroom base
 3ms
 </td>
 <td style="text-align:right;">
-168ms
+142ms
 </td>
 <td style="text-align:right;">
-1.9s
+2s
 </td>
 <td style="text-align:right;">
-2.7s
+2.8s
 </td>
 </tr>
 <tr>
@@ -812,28 +815,28 @@ vroom base
 vroom dplyr
 </td>
 <td style="text-align:right;">
-391ms
+387ms
 </td>
 <td style="text-align:right;">
-166ms
-</td>
-<td style="text-align:right;">
-1ms
+162ms
 </td>
 <td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-4ms
+1ms
 </td>
 <td style="text-align:right;">
-180ms
+5ms
 </td>
 <td style="text-align:right;">
-1.2s
+173ms
 </td>
 <td style="text-align:right;">
-1.9s
+1.3s
+</td>
+<td style="text-align:right;">
+2s
 </td>
 </tr>
 <tr>
@@ -841,10 +844,10 @@ vroom dplyr
 vroom (full altrep) dplyr
 </td>
 <td style="text-align:right;">
-381ms
+429ms
 </td>
 <td style="text-align:right;">
-89ms
+105ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -856,13 +859,13 @@ vroom (full altrep) dplyr
 4ms
 </td>
 <td style="text-align:right;">
-137ms
+179ms
 </td>
 <td style="text-align:right;">
-1s
+1.3s
 </td>
 <td style="text-align:right;">
-1.6s
+2s
 </td>
 </tr>
 </tbody>
@@ -903,7 +906,7 @@ multithreaded gzip
 data.table
 </td>
 <td style="text-align:right;">
-4.3s
+5.6s
 </td>
 <td style="text-align:right;">
 NA
@@ -917,13 +920,13 @@ NA
 write.delim
 </td>
 <td style="text-align:right;">
-1m 31.6s
+1m 36.4s
 </td>
 <td style="text-align:right;">
-3m 20.5s
+3m 19.6s
 </td>
 <td style="text-align:right;">
-1m 29.1s
+1m 29.3s
 </td>
 </tr>
 <tr>
@@ -931,13 +934,13 @@ write.delim
 readr
 </td>
 <td style="text-align:right;">
-1m 6.8s
+1m 10s
 </td>
 <td style="text-align:right;">
-2m 16.6s
+2m 18.8s
 </td>
 <td style="text-align:right;">
-1m 4.7s
+1m 4.5s
 </td>
 </tr>
 <tr>
@@ -945,13 +948,13 @@ readr
 vroom
 </td>
 <td style="text-align:right;">
-7.4s
+6.5s
 </td>
 <td style="text-align:right;">
-1m 18.3s
+1m 19.5s
 </td>
 <td style="text-align:right;">
-17.5s
+19s
 </td>
 </tr>
 </tbody>
@@ -994,8 +997,8 @@ vroom
 </tr>
 <tr class="odd">
 <td align="left">vroom</td>
-<td align="left">0.0.0.9000</td>
-<td align="left">2019-04-30</td>
+<td align="left">1.0.1</td>
+<td align="left">2019-05-14</td>
 <td align="left">local</td>
 </tr>
 </tbody>

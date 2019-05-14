@@ -60,7 +60,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.1</span>
       </span>
     </div>
 
@@ -86,6 +86,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
+    <li>
+      <a href="https://www.tidyverse.org/articles/2019/05/vroom-1-0-0/">Version 1.0.0</a>
+    </li>
     <li class="divider"></li>
     <li>
       <a href="../news/index.html">Change log</a>
@@ -117,10 +120,41 @@
       <small>Source: <a href='https://github.com/r-lib/vroom/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="vroom-1-0-1" class="section level1">
+<h1 class="page-header">
+<a href="#vroom-1-0-1" class="anchor"></a>vroom 1.0.1<small> Unreleased </small>
+</h1>
+<div id="new-features" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features" class="anchor"></a>New Features</h2>
+<ul>
+<li>
+<code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> function added, to (lazily) read lines from a file into a character vector (<a href='https://github.com/r-lib/vroom/issues/90'>#90</a>).</li>
+</ul>
+</div>
+<div id="minor-improvements-and-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-improvements-and-fixes" class="anchor"></a>Minor improvements and fixes</h2>
+<ul>
+<li><p>Fix for a hang on Windows caused by a race condition in the progress bar (<a href='https://github.com/r-lib/vroom/issues/98'>#98</a>)</p></li>
+<li><p>Remove accidental runtime dependency on testthat (<a href='https://github.com/r-lib/vroom/issues/104'>#104</a>)</p></li>
+<li><p>Fix to actually return non-Altrep character columns on R 3.2, 3.3 and 3.4.</p></li>
+<li><p>Disable colors in the progress bar when running in RStudio, to work around an issue where the progress bar would be garbled (<a href="https://github.com/rstudio/rstudio/issues/4777" class="uri">https://github.com/rstudio/rstudio/issues/4777</a>)</p></li>
+<li><p>Fix for UBSAN issues reported by CRAN (<a href='https://github.com/r-lib/vroom/issues/97'>#97</a>)</p></li>
+<li><p>Fix for rchk issues reported by CRAN (<a href='https://github.com/r-lib/vroom/issues/94'>#94</a>)</p></li>
+<li><p>The progress bar now only updates every 10 milliseconds.</p></li>
+<li><p>Getting started vignette index entry now more informative (<a href='https://github.com/r-lib/vroom/issues/92'>#92</a>)</p></li>
+</ul>
+</div>
+</div>
     <div id="vroom-1-0-0" class="section level1">
 <h1 class="page-header">
 <a href="#vroom-1-0-0" class="anchor"></a>vroom 1.0.0<small> 2019-05-04 </small>
 </h1>
+<ul>
+<li><p>Initial release</p></li>
+<li><p>Added a <code>NEWS.md</code> file to track changes to the package.</p></li>
+</ul>
 </div>
   </div>
 
@@ -128,6 +162,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#vroom-1-0-1">1.0.1</a></li>
         <li><a href="#vroom-1-0-0">1.0.0</a></li>
       </ul>
     </div>
