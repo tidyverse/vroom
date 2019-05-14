@@ -17,7 +17,7 @@ status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
-The fastest delimited reader for R, **905.64 MB/sec/sec**.
+The fastest delimited reader for R, **936.19 MB/sec/sec**.
 
 But that’s impossible\! How can it be [so
 fast](http://vroom.r-lib.org/articles/benchmarks.html)?
@@ -33,12 +33,12 @@ your R data-manipulation code are needed.
 vroom also uses multiple threads for indexing, materializing
 non-character columns, and when writing to further improve performance.
 
-| package    |    version | time (sec) | speedup |    throughput |
-| :--------- | ---------: | ---------: | ------: | ------------: |
-| vroom      | 0.0.0.9000 |       1.84 |   44.28 | 905.64 MB/sec |
-| data.table |     1.12.2 |      15.72 |    5.18 | 106.04 MB/sec |
-| readr      |      1.3.1 |      33.09 |    2.46 |  50.37 MB/sec |
-| read.delim |      3.5.3 |      81.49 |    1.00 |  20.45 MB/sec |
+| package    | version | time (sec) | speedup |    throughput |
+| :--------- | ------: | ---------: | ------: | ------------: |
+| vroom      |   1.0.1 |       1.78 |   46.98 | 936.19 MB/sec |
+| data.table |  1.12.2 |      15.81 |    5.29 | 105.40 MB/sec |
+| readr      |   1.3.1 |      33.86 |    2.47 |  49.23 MB/sec |
+| read.delim |   3.5.3 |      83.64 |    1.00 |  19.93 MB/sec |
 
 ## Features
 

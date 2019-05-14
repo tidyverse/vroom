@@ -107,8 +107,8 @@ read.delim <- function(file, desc) {
 }
 
 times <- list(
-  `vroom (full altrep)_base` = callr::r(`vroom (full altrep)_base`, list(file, desc)),
   `vroom (full altrep)_dplyr` = callr::r(`vroom (full altrep)_dplyr`, list(file, desc)),
+  `vroom (full altrep)_base` = callr::r(`vroom (full altrep)_base`, list(file, desc)),
   vroom_base = callr::r(vroom_base, list(file, desc)),
   vroom_dplyr = callr::r(vroom_dplyr, list(file, desc)),
   data.table = callr::r(data.table, list(file, desc)),

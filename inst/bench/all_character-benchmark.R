@@ -14,7 +14,7 @@ library(vroom)
 
 # We want ~ 1000 rows to filter
 num_levels <- 5
-levels <- c("helpless_sheep", vroom:::random_name(num_levels - 1))
+levels <- c("helpless_sheep", gen_name(num_levels - 1))
 
 filt_p <- 1000 / rows
 
