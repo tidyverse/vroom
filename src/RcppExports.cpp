@@ -16,12 +16,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // vroom_materialize
-void vroom_materialize(Rcpp::List x);
-RcppExport SEXP _vroom_vroom_materialize(SEXP xSEXP) {
+void vroom_materialize(SEXP x, bool replace);
+RcppExport SEXP _vroom_vroom_materialize(SEXP xSEXP, SEXP replaceSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::List >::type x(xSEXP);
-    vroom_materialize(x);
+    Rcpp::traits::input_parameter< SEXP >::type x(xSEXP);
+    Rcpp::traits::input_parameter< bool >::type replace(replaceSEXP);
+    vroom_materialize(x, replace);
     return R_NilValue;
 END_RCPP
 }
@@ -190,7 +191,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_vroom_force_materialization", (DL_FUNC) &_vroom_force_materialization, 1},
-    {"_vroom_vroom_materialize", (DL_FUNC) &_vroom_vroom_materialize, 1},
+    {"_vroom_vroom_materialize", (DL_FUNC) &_vroom_vroom_materialize, 2},
     {"_vroom_vroom_str_", (DL_FUNC) &_vroom_vroom_str_, 1},
     {"_vroom_gen_character_", (DL_FUNC) &_vroom_gen_character_, 6},
     {"_vroom_guess_type_", (DL_FUNC) &_vroom_guess_type_, 3},

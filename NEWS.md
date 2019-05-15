@@ -1,5 +1,7 @@
 # vroom (development)
 
+* Fix non-deterministic crash when `vroom_write()` was used on Altrep vectors.
+
 # vroom 1.0.1
 
 ## New Features

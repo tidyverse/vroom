@@ -13,24 +13,41 @@ void force_materialization(SEXP x) {
 }
 
 // [[Rcpp::export]]
-void vroom_materialize(Rcpp::List x) {
+void vroom_materialize(SEXP x, bool replace = false) {
 #ifdef HAS_ALTREP
   std::vector<std::thread> t;
-  for (int i = 0; i < x.length(); ++i) {
+  for (R_xlen_t i = 0; i < Rf_xlength(x); ++i) {
 
+    SEXP elt = VECTOR_ELT(x, i);
     // First materialize all of the non-character vectors
-    if (TYPEOF(x[i]) == REALSXP || TYPEOF(x[i]) == INTSXP) {
-      t.emplace_back(std::thread([&, i]() { DATAPTR(x[i]); }));
+    if (TYPEOF(elt) == REALSXP || TYPEOF(elt) == INTSXP) {
+      // t.emplace_back(std::thread([elt, i]() { DATAPTR(elt); }));
+      DATAPTR(elt);
     }
   }
 
   // Then materialize the rest
-  for (int i = 0; i < x.length(); ++i) {
-    if (!(TYPEOF(x[i]) == REALSXP || TYPEOF(x[i]) == INTSXP)) {
-      DATAPTR(x[i]);
+  for (R_xlen_t i = 0; i < Rf_xlength(x); ++i) {
+    SEXP elt = VECTOR_ELT(x, i);
+    if (!(TYPEOF(elt) == REALSXP || TYPEOF(elt) == INTSXP)) {
+      DATAPTR(VECTOR_ELT(x, i));
     }
   }
   std::for_each(t.begin(), t.end(), std::mem_fn(&std::thread::join));
+
+  // If replace replace the altrep vectors with their materialized
+  // vectors
+  if (replace) {
+    for (R_xlen_t i = 0; i < Rf_xlength(x); ++i) {
+      SEXP elt = PROTECT(VECTOR_ELT(x, i));
+      if (ALTREP(elt)) {
+        SET_VECTOR_ELT(x, i, R_altrep_data2(elt));
+        R_set_altrep_data2(elt, R_NilValue);
+      }
+      UNPROTECT(1);
+    }
+  }
+
 #endif
 }
 
