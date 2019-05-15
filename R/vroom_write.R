@@ -43,7 +43,6 @@ vroom_write <- function(x, path, delim = '\t', na = "NA", col_names = !append,
   # We need to materialize any altrep vector as otherwise we can't fill the
   # write buffers from other threads.
   vroom_materialize(x, replace = TRUE)
-  vroom_str(x)
 
   x_in <- x
   x[] <- lapply(x, output_column)
