@@ -88,3 +88,7 @@ reference:
     - vroom_example
     - vroom_progress
     - vroom_str
+
+template:
+  params:
+    ganalytics: UA-115082821-1
