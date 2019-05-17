@@ -19,7 +19,7 @@
 #' # 5. Named arguments with column widths
 #' vroom_fwf(fwf_sample, fwf_cols(name = 20, state = 10, ssn = 12))
 vroom_fwf <- function(file,
-                      col_positions = fwf_empty(file[[1]], skip, n = guess_max),
+                      col_positions = fwf_empty(file, skip, n = guess_max),
                       col_types = NULL,
                       col_select = NULL, id = NULL,
                       locale = default_locale(), na = c("", "NA"),
@@ -71,7 +71,7 @@ vroom_fwf <- function(file,
 #'      it is set to 100.
 fwf_empty <- function(file, skip = 0, col_names = NULL, comment = "", n = 100L) {
 
-  file <- standardise_path(file)[[1]]
+  file <- standardise_one_path(standardise_path(file)[[1]])
 
   if (inherits(file, "connection")) {
     stop("`file` must be a regular file, not a connection", call. = FALSE)
