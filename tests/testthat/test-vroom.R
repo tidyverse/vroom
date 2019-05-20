@@ -368,3 +368,9 @@ test_that("column names are properly encoded", {
   nms <- vroom::vroom("f\U00F6\U00F6\nbar\n")
   expect_equal(Encoding(colnames(nms)), "UTF-8")
 })
+
+test_that("Files with windows newlines and missing fields work", {
+  test_vroom("a,b,c,d\r\nm,\r\n\r\n", delim = ",",
+    equals = tibble::tibble(a = c("m", NA), b = c(NA, NA), c = c(NA, NA), d = c(NA, NA))
+  )
+})

@@ -248,6 +248,11 @@ void delimited_index::trim_quotes(const char*& begin, const char*& end) const {
 
 const string delimited_index::get_escaped_string(
     const char* begin, const char* end, bool has_quote) const {
+
+  if (end <= begin) {
+    return {begin, begin};
+  }
+
   // If not escaping just return without a copy
   if (!((escape_double_ && has_quote) || escape_backslash_)) {
     return {begin, end};

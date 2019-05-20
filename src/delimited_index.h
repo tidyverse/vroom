@@ -239,7 +239,7 @@ public:
           }
           // Add additional columns if there are too few
           while (cols < num_cols - 1) {
-            destination.push_back(pos + file_offset);
+            destination.push_back(pos + file_offset - windows_newlines_);
             ++cols;
           }
         }
