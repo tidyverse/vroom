@@ -363,3 +363,8 @@ test_that("guess_type works with long strings (#74)", {
 test_that("vroom errors if unnamed column types do not match the number of columns", {
   expect_error(vroom("a,b\n1,2\n", col_types = "i"), "must have the same length", class = "Rcpp::eval_error")
 })
+
+test_that("column names are properly encoded", {
+  nms <- vroom::vroom("f\U00F6\U00F6\nbar\n")
+  expect_equal(Encoding(colnames(nms)), "UTF-8")
+})

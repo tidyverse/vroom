@@ -1,5 +1,7 @@
 # vroom (development)
 
+* Fix encoding of column names (#113, #115)
+
 * Fix non-deterministic crash when `vroom_write()` was used on Altrep vectors.
 
 # vroom 1.0.1

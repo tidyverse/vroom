@@ -6,7 +6,7 @@ using namespace Rcpp;
 
 class collector {
   const Rcpp::List data_;
-  const std::string name_;
+  const SEXP name_;
   const column_type type_;
   const size_t altrep_opts_;
 
@@ -44,14 +44,14 @@ private:
   }
 
 public:
-  collector(Rcpp::List data, std::string name, size_t altrep_opts)
+  collector(Rcpp::List data, SEXP name, size_t altrep_opts)
       : data_(data),
         name_(name),
         type_(derive_type(Rcpp::as<std::string>(
             Rcpp::as<Rcpp::CharacterVector>(data_.attr("class"))[0]))),
         altrep_opts_(altrep_opts) {}
   column_type type() const { return type_; }
-  std::string name() const { return name_; }
+  SEXP name() const { return name_; }
   SEXP operator[](const char* nme) { return data_[nme]; }
   bool use_altrep() {
     switch (type()) {
@@ -91,8 +91,7 @@ public:
         altrep_opts_(altrep_opts) {}
   collector operator[](int i) {
     return {collectors_[i],
-            Rcpp::as<std::string>(
-                Rcpp::as<Rcpp::CharacterVector>(collectors_.attr("names"))[i]),
+            Rcpp::as<Rcpp::CharacterVector>(collectors_.attr("names"))[i],
             altrep_opts_};
   }
   Rcpp::List spec() { return spec_; }
