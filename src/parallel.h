@@ -23,20 +23,20 @@
 static std::vector<std::thread> parallel_for(
     size_t nb_elements,
     std::function<void(size_t start, size_t end, size_t thread_id)> functor,
-    unsigned nb_threads,
+    size_t nb_threads,
     bool use_threads = true,
     bool cleanup = true) {
   // -------
 
-  unsigned batch_size = nb_elements / nb_threads;
+  size_t batch_size = nb_elements / nb_threads;
 
-  unsigned batch_remainder = nb_elements % nb_threads;
+  size_t batch_remainder = nb_elements % nb_threads;
 
   auto my_threads = std::vector<std::thread>(nb_threads);
 
   if (use_threads) {
     // Multithread execution
-    for (unsigned i = 0; i < (nb_threads - 1); ++i) {
+    for (size_t i = 0; i < (nb_threads - 1); ++i) {
       size_t start = i * batch_size;
       my_threads[i] = std::thread(functor, start, start + batch_size, i);
     }
@@ -47,7 +47,7 @@ static std::vector<std::thread> parallel_for(
         functor, start, start + batch_size + batch_remainder, nb_threads - 1);
   } else {
     // Single thread execution (for easy debugging)
-    for (unsigned i = 0; i < (nb_threads - 1); ++i) {
+    for (size_t i = 0; i < (nb_threads - 1); ++i) {
       size_t start = i * batch_size;
       functor(start, start + batch_size, i);
     }

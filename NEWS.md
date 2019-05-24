@@ -1,5 +1,7 @@
 # vroom (development)
 
+* Fix integer overflow with very large files (#116)
+
 * Fix missing columns and windows newlines (#114)
 
 * Fix encoding of column names (#113, #115)
