@@ -1,5 +1,7 @@
 # vroom (development)
 
+`vroom_write()` now works with the standard output connection `stdout()` (#106).
+
 * Move example files for `vroom()` out of `\dontshow{}`.
 
 * Fix integer overflow with very large files (#116)

@@ -230,12 +230,25 @@ void write_buf(const std::vector<char>& buf, std::FILE* out) {
 }
 
 #ifdef VROOM_USE_CONNECTIONS_API
-void write_buf_con(const std::vector<char>& buf, Rconnection con) {
-  R_WriteConnection(con, (void*)buf.data(), sizeof buf[0] * buf.size());
+void write_buf_con(
+    const std::vector<char>& buf, Rconnection con, bool is_stdout) {
+  if (is_stdout) {
+    std::string out;
+    std::copy(buf.begin(), buf.end(), std::back_inserter(out));
+    Rcpp::Rcout << out;
+  } else {
+    R_WriteConnection(con, (void*)buf.data(), sizeof buf[0] * buf.size());
+  }
 }
 #else
-void write_buf_con(const std::vector<char>& buf, SEXP con) {
-  R_WriteConnection(con, (void*)buf.data(), sizeof buf[0] * buf.size());
+void write_buf_con(const std::vector<char>& buf, SEXP con, bool is_stdout) {
+  if (is_stdout) {
+    std::string out;
+    std::copy(buf.begin(), buf.end(), std::back_inserter(out));
+    Rcpp::Rcout << out;
+  } else {
+    R_WriteConnection(con, (void*)buf.data(), sizeof buf[0] * buf.size());
+  }
 }
 #endif
 
@@ -391,7 +404,8 @@ void vroom_write_connection_(
     size_t options,
     size_t num_threads,
     bool progress,
-    size_t buf_lines) {
+    size_t buf_lines,
+    bool is_stdout) {
 
   size_t begin = 0;
   size_t num_rows = Rf_xlength(input[0]);
@@ -418,7 +432,7 @@ void vroom_write_connection_(
 
   if (col_names) {
     auto header = get_header(input, delim, options);
-    write_buf_con(header, con_);
+    write_buf_con(header, con_, is_stdout);
   }
 
   std::unique_ptr<RProgress::RProgress> pb = nullptr;
@@ -446,7 +460,7 @@ void vroom_write_connection_(
     // size_t sz = 0;
     for (size_t i = 0; i < t; ++i) {
       auto buf = futures[idx][i].get();
-      write_buf_con(buf, con_);
+      write_buf_con(buf, con_, is_stdout);
       auto sz = buf.size();
       if (progress) {
         pb->tick(sz);
