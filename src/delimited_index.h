@@ -254,7 +254,7 @@ public:
         }
         ++lines_read;
         if (progress_ && pb) {
-          auto tick_size = pos - last_tick;
+          size_t tick_size = pos - last_tick;
           if (tick_size > update_size) {
             pb->tick(pos - last_tick);
             last_tick = pos;
