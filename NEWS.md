@@ -1,5 +1,7 @@
 # vroom (development)
 
+* Move example files for `vroom()` out of `\dontshow{}`.
+
 * Fix integer overflow with very large files (#116)
 
 * Fix missing columns and windows newlines (#114)

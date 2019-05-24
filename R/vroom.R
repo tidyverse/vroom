@@ -30,11 +30,13 @@ NULL
 #' @examples
 #' \dontshow{
 #' .old_wd <- setwd(tempdir())
+#' }
+#'
+#' # Write files for use in examples
 #' mt <- vroom(vroom_example("mtcars.csv"))
 #' vroom_write(mt, "mtcars.tsv")
 #' vroom_write(mt, "mtcars.tsv.gz")
 #' vroom_write(mt, "mtcars.tsv.bz2")
-#' }
 #'
 #' # Input sources -------------------------------------------------------------
 #' # Read from a path
