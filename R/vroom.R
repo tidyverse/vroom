@@ -232,9 +232,18 @@ guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";", "\n")) 
   delims[[res]]
 }
 
+cached <- new.env(emptyenv())
 
 vroom_threads <- function() {
-  as.integer(Sys.getenv("VROOM_THREADS", parallel::detectCores()))
+  res <- as.integer(
+    Sys.getenv("VROOM_THREADS",
+      cached$num_threads <- cached$num_threads %||% parallel::detectCores()
+    )
+  )
+  if (is.na(res) || res <= 0) {
+    res <- 1
+  }
+  res
 }
 
 vroom_tempfile <- function() {
