@@ -1,6 +1,8 @@
 # vroom (development)
 
-`vroom_write()` now works with the standard output connection `stdout()` (#106).
+* Fix indexing into connections with quoted fields (#119)
+
+* `vroom_write()` now works with the standard output connection `stdout()` (#106).
 
 * Move example files for `vroom()` out of `\dontshow{}`.
 

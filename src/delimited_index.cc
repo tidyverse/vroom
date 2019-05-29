@@ -136,11 +136,13 @@ delimited_index::delimited_index(
   // Index the first row
   idx_[0].push_back(start - 1);
   size_t cols = 0;
+  bool in_quote = false;
   size_t lines_read = index_region(
       mmap_,
       idx_[0],
       delim_.c_str(),
       quote,
+      in_quote,
       start,
       first_nl + 1,
       0,
@@ -161,6 +163,7 @@ delimited_index::delimited_index(
           idx_[1],
           delim_.c_str(),
           quote,
+          in_quote,
           first_nl,
           file_size,
           0,
@@ -178,11 +181,13 @@ delimited_index::delimited_index(
           start = find_next_newline(mmap_, first_nl + start, false);
           end = find_next_newline(mmap_, first_nl + end, false) + 1;
           size_t cols = 0;
+          bool in_quote = false;
           index_region(
               mmap_,
               idx_[id + 1],
               delim_.c_str(),
               quote,
+              in_quote,
               start,
               end,
               0,

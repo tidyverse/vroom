@@ -115,11 +115,13 @@ delimited_index_connection::delimited_index_connection(
   idx_[0].push_back(start - 1);
 
   size_t cols = 0;
+  bool in_quote = false;
   size_t lines_read = index_region(
       buf[i],
       idx_[0],
       delim_.c_str(),
       quote,
+      in_quote,
       start,
       first_nl + 1,
       0,
@@ -153,6 +155,7 @@ delimited_index_connection::delimited_index_connection(
           idx_[1],
           delim_.c_str(),
           quote,
+          in_quote,
           first_nl,
           sz,
           total_read,

@@ -193,6 +193,7 @@ public:
       idx_t& destination,
       const char* delim,
       const char quote,
+      bool& in_quote,
       const size_t start,
       const size_t end,
       const size_t file_offset,
@@ -206,8 +207,6 @@ public:
     std::array<char, 5> query = {delim[0], '\n', '\\', quote, '\0'};
 
     auto last_tick = start;
-
-    bool in_quote = false;
 
     auto buf = source.data();
 
