@@ -64,14 +64,12 @@ public:
   void tick(size_t progress) {
     std::lock_guard<std::mutex> guard(mutex_);
     progress_ += progress;
-    mutex_.unlock();
     cv_.notify_one();
   }
 
   void finish() {
     std::lock_guard<std::mutex> guard(mutex_);
     progress_ = total_;
-    mutex_.unlock();
     cv_.notify_one();
   }
 
