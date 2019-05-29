@@ -111,21 +111,16 @@ name repair functions.}
 Read a delimited file into a tibble
 }
 \examples{
-\dontshow{
-.old_wd <- setwd(tempdir())
-}
+# Show path to example file
+input_file <- vroom_example("mtcars.csv")
 
-# Write files for use in examples
-mt <- vroom(vroom_example("mtcars.csv"))
-vroom_write(mt, "mtcars.tsv")
-vroom_write(mt, "mtcars.tsv.gz")
-vroom_write(mt, "mtcars.tsv.bz2")
+# Read from a path
 
 # Input sources -------------------------------------------------------------
 # Read from a path
-vroom("mtcars.tsv")
-vroom("mtcars.tsv.gz")
-vroom("mtcars.tsv.bz2")
+vroom(input_file)
+# You can also use literal paths directly
+# vroom("mtcars.csv")
 
 \dontrun{
 # Including remote paths
@@ -137,14 +132,14 @@ vroom("x,y\\n1,2\\n3,4\\n")
 
 # Column selection ----------------------------------------------------------
 # Pass column names or indexes directly to select them
-vroom("mtcars.tsv", col_select = c(model, cyl, gear))
-vroom("mtcars.tsv", col_select = c(1, 3, 11))
+vroom(input_file, col_select = c(model, cyl, gear))
+vroom(input_file, col_select = c(1, 3, 11))
 
 # Or use the selection helpers
-vroom("mtcars.tsv", col_select = starts_with("d"))
+vroom(input_file, col_select = starts_with("d"))
 
 # You can also rename specific columns
-vroom("mtcars.tsv", col_select = list(car = model, everything()))
+vroom(input_file, col_select = list(car = model, everything()))
 
 # Column types --------------------------------------------------------------
 # By default, vroom guesses the columns types, looking at 1000 rows
@@ -162,8 +157,4 @@ vroom("a,b\\n1.0,2.0\\n", delim = ",")
 vroom("a\\tb\\n1.0\\t2.0\\n")
 # Other delimiters
 vroom("a|b\\n1.0|2.0\\n", delim = "|")
-\dontshow{
-unlink(c("mtcars.tsv", "mtcars.tsv.gz", "mtcars.tsv.bz2"))
-setwd(.old_wd)
-}
 }
