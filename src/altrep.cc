@@ -19,7 +19,9 @@ void vroom_materialize(SEXP x, bool replace = false) {
 
     SEXP elt = VECTOR_ELT(x, i);
     // First materialize all of the non-character vectors
-    DATAPTR(elt);
+    if (ALTREP(elt)) {
+      DATAPTR(elt);
+    }
   }
 
   // If replace replace the altrep vectors with their materialized
