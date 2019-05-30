@@ -255,7 +255,7 @@ basic_mmap<AccessMode, ByteT>::operator=(basic_mmap&& other)
 #ifdef _WIN32
         file_mapping_handle_ = std::move(other.file_mapping_handle_);
 #endif
-        is_handle_internal_ = other.is_handle_internal_;
+        is_handle_internal_ = std::move(other.is_handle_internal_);
 
         // The moved from basic_mmap's fields need to be reset, because
         // otherwise other's destructor will unmap the same mapping that was

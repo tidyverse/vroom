@@ -1,5 +1,7 @@
 # vroom (development)
 
+* Fix additional UBSAN issue in the mio project reported by CRAN (#97)
+
 * Fix indexing into connections with quoted fields (#119)
 
 * `vroom_write()` now works with the standard output connection `stdout()` (#106).
