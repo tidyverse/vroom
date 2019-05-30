@@ -1,36 +1,6 @@
 file <- "~/data/trip_fare_1.tsv"
 desc <- c("setup", "read", "print", "head", "tail", "sample", "filter", "aggregate")
 
-`vroom (full altrep)_base` <- function(file, desc) {
-  bench::workout(description = desc,
-    {
-    {library(vroom); Sys.setenv("VROOM_USE_ALTREP_NUMERICS" = "true") }
-      x <- vroom(file, col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character())
-      print(x)
-      a <- head(x)
-      b <- tail(x)
-      c <- x[sample(NROW(x), 100), ]
-      d <- x[x$payment_type == "UNK", ]
-      e <- tapply(x$tip_amount, x$payment_type, mean)
-    }
-  )
-}
-
-`vroom (full altrep)_dplyr` <- function(file, desc) {
-  bench::workout(description = desc,
-    {
-      {library(vroom); library(dplyr); Sys.setenv("VROOM_USE_ALTREP_NUMERICS" = "true") }
-      x <- vroom(file, col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character())
-      print(x)
-      a <- head(x)
-      b <- tail(x)
-      c <- sample_n(x, 100)
-      d <- filter(x, payment_type == "UNK")
-      e <- group_by(x, payment_type) %>% summarise(avg_tip = mean(tip_amount))
-    }
-  )
-}
-
 vroom_base <- function(file, desc) {
   bench::workout(description = desc,
     {
@@ -46,11 +16,71 @@ vroom_base <- function(file, desc) {
   )
 }
 
+`vroom (full altrep)_base` <- function(file, desc) {
+  bench::workout(description = desc,
+    {
+    {library(vroom)}
+      x <- vroom(file, col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character(), altrep_opts = TRUE)
+      print(x)
+      a <- head(x)
+      b <- tail(x)
+      c <- x[sample(NROW(x), 100), ]
+      d <- x[x$payment_type == "UNK", ]
+      e <- tapply(x$tip_amount, x$payment_type, mean)
+    }
+  )
+}
+
+`vroom (no altrep)_base` <- function(file, desc) {
+  bench::workout(description = desc,
+    {
+    {library(vroom)}
+      x <- vroom(file, col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character(), altrep_opts = FALSE)
+      print(x)
+      a <- head(x)
+      b <- tail(x)
+      c <- x[sample(NROW(x), 100), ]
+      d <- x[x$payment_type == "UNK", ]
+      e <- tapply(x$tip_amount, x$payment_type, mean)
+    }
+  )
+}
+
 vroom_dplyr <- function(file, desc) {
   bench::workout(description = desc,
     {
       { library(vroom); library(dplyr) }
       x <- vroom(file, col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character())
+      print(x)
+      a <- head(x)
+      b <- tail(x)
+      c <- sample_n(x, 100)
+      d <- filter(x, payment_type == "UNK")
+      e <- group_by(x, payment_type) %>% summarise(avg_tip = mean(tip_amount))
+    }
+  )
+}
+
+`vroom (full altrep)_dplyr` <- function(file, desc) {
+  bench::workout(description = desc,
+    {
+      {library(vroom); library(dplyr)}
+      x <- vroom(file, col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character(), altrep_opts = TRUE)
+      print(x)
+      a <- head(x)
+      b <- tail(x)
+      c <- sample_n(x, 100)
+      d <- filter(x, payment_type == "UNK")
+      e <- group_by(x, payment_type) %>% summarise(avg_tip = mean(tip_amount))
+    }
+  )
+}
+
+`vroom (no altrep)_dplyr` <- function(file, desc) {
+  bench::workout(description = desc,
+    {
+      {library(vroom); library(dplyr)}
+      x <- vroom(file, col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character(), altrep_opts = FALSE)
       print(x)
       a <- head(x)
       b <- tail(x)
@@ -79,7 +109,7 @@ data.table <- function(file, desc) {
 readr <- function(file, desc) {
   bench::workout(description = desc,
     {
-    { library(readr); library(dplyr) }
+      { library(readr); library(dplyr) }
       x <- read_tsv(file, col_types = c(pickup_datetime = "c"), quote = "", trim_ws = FALSE, na = character())
       print(x)
       a <- head(x)
@@ -107,10 +137,12 @@ read.delim <- function(file, desc) {
 }
 
 times <- list(
-  `vroom (full altrep)_dplyr` = callr::r(`vroom (full altrep)_dplyr`, list(file, desc)),
-  `vroom (full altrep)_base` = callr::r(`vroom (full altrep)_base`, list(file, desc)),
   vroom_base = callr::r(vroom_base, list(file, desc)),
+  `vroom (full altrep)_base` = callr::r(`vroom (full altrep)_base`, list(file, desc)),
+  `vroom (no altrep)_base` = callr::r(`vroom (no altrep)_base`, list(file, desc)),
   vroom_dplyr = callr::r(vroom_dplyr, list(file, desc)),
+  `vroom (full altrep)_dplyr` = callr::r(`vroom (full altrep)_dplyr`, list(file, desc)),
+  `vroom (no altrep)_dplyr` = callr::r(`vroom (no altrep)_dplyr`, list(file, desc)),
   data.table = callr::r(data.table, list(file, desc)),
   readr = callr::r(readr, list(file, desc)),
   read.delim = callr::r(read.delim, list(file, desc))

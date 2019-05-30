@@ -27,9 +27,31 @@ read_benchmark <- function(file, desc) {
   vroom::vroom(file, col_types = c("cccdddd")) %>%
     filter(type == "real", op != "setup") %>%
     mutate(
-      package = fct_reorder(sub("_", "\n", package), time, sum),
-      op = factor(op, desc)
-    )
+      method = case_when(
+        package == "data.table" ~ "data.table",
+        package == "readr" ~ "dplyr",
+        package == "read.delim" ~ "base",
+        package == "write.delim" ~ "base",
+        grepl("^vroom", package) ~ sub(".*_", "", package)
+        ),
+      altrep = case_when(
+        grepl("^vroom [(]full altrep[)]", package) ~ "full",
+        grepl("^vroom [(]no altrep[)]", package) ~ "none",
+        grepl("^vroom_", package) ~ "normal",
+        TRUE ~ NA_character_
+        ),
+      package = case_when(
+        grepl("^vroom", package) ~ "vroom",
+        TRUE ~ package
+      ),
+    label = fct_reorder(
+      glue::glue("{package}{altrep}\n{method}",
+        altrep = ifelse(is.na(altrep), "", glue::glue("(altrep: {altrep})"))
+      ),
+      time,
+      sum),
+    op = factor(op, desc)
+  )
 }
 
 generate_subtitle <- function(data) {
@@ -46,7 +68,7 @@ plot_benchmark <- function(data, title) {
   data %>%
     filter(package != "read.delim") %>%
     ggplot() +
-    geom_bar(aes(x = package, y = time, fill = op, group = package), stat = "identity") +
+    geom_bar(aes(x = label, y = time, fill = op, group = label), stat = "identity") +
     scale_fill_brewer(type = "qual", palette = "Set2") +
     scale_y_continuous(labels = function(x) format(bench::as_bench_time(x))) +
     theme(legend.position = "bottom") +
@@ -55,14 +77,13 @@ plot_benchmark <- function(data, title) {
 }
 
 make_table <- function(data) {
-  times <- data %>%
-    group_by(package, op) %>%
-    filter(type == "real") %>%
-    tally(wt = time) %>%
-    spread(op, n) %>%
-    mutate(total = sum(read, print, head, tail, sample, filter, aggregate))
-
-  times %>%
+  data %>%
+    select(-label, -type, -size, -rows, -cols) %>%
+    spread(op, time) %>%
+    mutate(
+      total = read + print + head + tail + sample + filter + aggregate,
+    ) %>%
+    rename(manip = method) %>%
     arrange(desc(total)) %>%
     mutate_if(is.numeric, pretty_sec) %>%
     knitr::kable(digits = 2, align = "r", format = "html")
@@ -237,7 +258,7 @@ taxi_writing <- read_benchmark(system.file("bench", "taxi_writing-times.tsv", pa
 subtitle <- generate_subtitle(taxi_writing)
 
 taxi_writing %>%
-  select(-size, -rows, -cols, -type) %>%
+  select(-size, -rows, -cols, -type, -altrep, -label, -method) %>%
   gather(op, time, -package) %>%
   mutate(op = factor(op, desc_w)) %>%
   ggplot() +
