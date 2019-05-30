@@ -15,25 +15,12 @@ void force_materialization(SEXP x) {
 // [[Rcpp::export]]
 void vroom_materialize(SEXP x, bool replace = false) {
 #ifdef HAS_ALTREP
-  std::vector<std::thread> t;
   for (R_xlen_t i = 0; i < Rf_xlength(x); ++i) {
 
     SEXP elt = VECTOR_ELT(x, i);
     // First materialize all of the non-character vectors
-    if (TYPEOF(elt) == REALSXP || TYPEOF(elt) == INTSXP) {
-      // t.emplace_back(std::thread([elt, i]() { DATAPTR(elt); }));
-      DATAPTR(elt);
-    }
+    DATAPTR(elt);
   }
-
-  // Then materialize the rest
-  for (R_xlen_t i = 0; i < Rf_xlength(x); ++i) {
-    SEXP elt = VECTOR_ELT(x, i);
-    if (!(TYPEOF(elt) == REALSXP || TYPEOF(elt) == INTSXP)) {
-      DATAPTR(VECTOR_ELT(x, i));
-    }
-  }
-  std::for_each(t.begin(), t.end(), std::mem_fn(&std::thread::join));
 
   // If replace replace the altrep vectors with their materialized
   // vectors
