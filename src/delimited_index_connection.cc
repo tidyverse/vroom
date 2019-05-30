@@ -64,11 +64,11 @@ delimited_index_connection::delimited_index_connection(
 
   idx_[0].reserve(128);
 
-  auto sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
+  size_t sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
   buf[i][sz] = '\0';
 
   // Parse header
-  auto start = find_first_line(buf[i], skip_, comment_);
+  size_t start = find_first_line(buf[i], skip_, comment_);
 
   std::string delim_;
   if (delim == nullptr) {
@@ -79,7 +79,7 @@ delimited_index_connection::delimited_index_connection(
 
   delim_len_ = delim_.length();
 
-  auto first_nl = find_next_newline(buf[i], start);
+  size_t first_nl = find_next_newline(buf[i], start);
 
   if (sz > 1 && buf[i][first_nl] != '\n') {
     // This first newline must not have fit in the buffer, throw error
@@ -138,7 +138,7 @@ delimited_index_connection::delimited_index_connection(
       first_nl,
       sz);
 
-  auto total_read = 0;
+  size_t total_read = 0;
   std::future<void> parse_fut;
   std::future<void> write_fut;
   // We don't actually want any progress bar, so just pass a dummy one.
@@ -185,7 +185,7 @@ delimited_index_connection::delimited_index_connection(
 
     first_nl = 0;
 
-    SPDLOG_DEBUG("first_nl_loc: {0} size: {1}", first_nl, sz);
+    // SPDLOG_DEBUG("first_nl_loc: {0} size: {1}", first_nl, sz);
   }
   if (parse_fut.valid()) {
     parse_fut.wait();
@@ -210,7 +210,7 @@ delimited_index_connection::delimited_index_connection(
     throw Rcpp::exception(error.message().c_str(), false);
   }
 
-  auto total_size = std::accumulate(
+  size_t total_size = std::accumulate(
       idx_.begin(), idx_.end(), 0, [](size_t sum, const idx_t& v) {
         sum += v.size() > 0 ? v.size() - 1 : 0;
         return sum;

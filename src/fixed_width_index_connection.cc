@@ -55,11 +55,11 @@ fixed_width_index_connection::fixed_width_index_connection(
   auto readBin =
       Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["readBin"]);
 
-  auto sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
+  size_t sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
   buf[i][sz] = '\0';
 
   // Parse header
-  auto start = find_first_line(buf[i], skip, comment);
+  size_t start = find_first_line(buf[i], skip, comment);
 
   std::unique_ptr<RProgress::RProgress> pb = nullptr;
   if (progress) {
@@ -68,7 +68,7 @@ fixed_width_index_connection::fixed_width_index_connection(
     pb->tick(start);
   }
 
-  auto total_read = 0;
+  size_t total_read = 0;
   std::future<void> parse_fut;
   std::future<void> write_fut;
   size_t lines_read = 0;
