@@ -17,7 +17,7 @@ status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
-The fastest delimited reader for R, **952.97 MB/sec/sec**.
+The fastest delimited reader for R, **952.97 MB/sec**.
 
 But that’s impossible\! How can it be [so
 fast](http://vroom.r-lib.org/articles/benchmarks.html)?
@@ -33,12 +33,12 @@ your R data-manipulation code are needed.
 vroom also uses multiple threads for indexing, materializing
 non-character columns, and when writing to further improve performance.
 
-| package    | version | time (sec) | speedup |    throughput |
-| :--------- | ------: | ---------: | ------: | ------------: |
-| vroom      |   1.0.1 |       1.75 |   44.38 | 952.97 MB/sec |
-| data.table |  1.12.2 |      14.79 |    5.25 | 112.68 MB/sec |
-| readr      |   1.3.1 |      31.49 |    2.46 |  52.93 MB/sec |
-| read.delim |   3.5.3 |      77.62 |    1.00 |  21.47 MB/sec |
+| package    | version | time (sec) | speedup | throughput |
+| :--------- | ------: | ---------: | ------: | ---------: |
+| vroom      |   1.0.1 |       1.75 |   44.38 |  952.97 MB |
+| data.table |  1.12.2 |      14.79 |    5.25 |  112.68 MB |
+| readr      |   1.3.1 |      31.49 |    2.46 |   52.93 MB |
+| read.delim |   3.5.3 |      77.62 |    1.00 |   21.47 MB |
 
 ## Features
 
@@ -117,10 +117,27 @@ by airline.
 
 ``` r
 library(nycflights13)
+foo <- split(flights, flights$carrier)
 purrr::iwalk(
   split(flights, flights$carrier),
-  ~ vroom::vroom_write(.x, glue::glue("flights_{.y}.tsv"), delim = "\t")
+  ~ { str(.x$carrier[[1]]); vroom::vroom_write(.x, glue::glue("flights_{.y}.tsv"), delim = "\t") }
 )
+#>  chr "9E"
+#>  chr "AA"
+#>  chr "AS"
+#>  chr "B6"
+#>  chr "DL"
+#>  chr "EV"
+#>  chr "F9"
+#>  chr "FL"
+#>  chr "HA"
+#>  chr "MQ"
+#>  chr "OO"
+#>  chr "UA"
+#>  chr "US"
+#>  chr "VX"
+#>  chr "WN"
+#>  chr "YV"
 ```
 
 Then we can efficiently read them into one tibble by passing the
@@ -129,12 +146,12 @@ filenames directly to vroom.
 ``` r
 files <- fs::dir_ls(glob = "flights*tsv")
 files
-#> flights_9E.tsv flights_AA.tsv flights_AS.tsv flights_B6.tsv flights_DL.tsv 
-#> flights_EV.tsv flights_F9.tsv flights_FL.tsv flights_HA.tsv flights_MQ.tsv 
-#> flights_OO.tsv flights_UA.tsv flights_US.tsv flights_VX.tsv flights_WN.tsv 
-#> flights_YV.tsv
+#> flights.tsv    flights_9E.tsv flights_AA.tsv flights_AS.tsv flights_B6.tsv 
+#> flights_DL.tsv flights_EV.tsv flights_F9.tsv flights_FL.tsv flights_HA.tsv 
+#> flights_MQ.tsv flights_OO.tsv flights_UA.tsv flights_US.tsv flights_VX.tsv 
+#> flights_WN.tsv flights_YV.tsv
 vroom::vroom(files)
-#> Observations: 336,776
+#> Observations: 673,552
 #> Variables: 19
 #> chr  [ 4]: carrier, tailnum, origin, dest
 #> dbl  [14]: year, month, day, dep_time, sched_dep_time, dep_delay, arr_time, sched_arr...
@@ -142,13 +159,13 @@ vroom::vroom(files)
 #> 
 #> Call `spec()` for a copy-pastable column specification
 #> Specify the column types with `col_types` to quiet this message
-#> # A tibble: 336,776 x 19
+#> # A tibble: 673,552 x 19
 #>    year month   day dep_time sched_dep_time dep_delay arr_time
 #>   <dbl> <dbl> <dbl>    <dbl>          <dbl>     <dbl>    <dbl>
-#> 1  2013     1     1      810            810         0     1048
-#> 2  2013     1     1     1451           1500        -9     1634
-#> 3  2013     1     1     1452           1455        -3     1637
-#> # … with 3.368e+05 more rows, and 12 more variables: sched_arr_time <dbl>,
+#> 1  2013     1     1      517            515         2      830
+#> 2  2013     1     1      533            529         4      850
+#> 3  2013     1     1      542            540         2      923
+#> # … with 6.735e+05 more rows, and 12 more variables: sched_arr_time <dbl>,
 #> #   arr_delay <dbl>, carrier <chr>, flight <dbl>, tailnum <chr>,
 #> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
 #> #   minute <dbl>, time_hour <dttm>
