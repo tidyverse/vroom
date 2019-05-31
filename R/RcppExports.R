@@ -6,7 +6,7 @@ force_materialization <- function(x) {
 }
 
 vroom_materialize <- function(x, replace = FALSE) {
-    invisible(.Call(`_vroom_vroom_materialize`, x, replace))
+    .Call(`_vroom_vroom_materialize`, x, replace)
 }
 
 vroom_str_ <- function(x) {

@@ -16,14 +16,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // vroom_materialize
-void vroom_materialize(SEXP x, bool replace);
+SEXP vroom_materialize(SEXP x, bool replace);
 RcppExport SEXP _vroom_vroom_materialize(SEXP xSEXP, SEXP replaceSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type x(xSEXP);
     Rcpp::traits::input_parameter< bool >::type replace(replaceSEXP);
-    vroom_materialize(x, replace);
-    return R_NilValue;
+    rcpp_result_gen = Rcpp::wrap(vroom_materialize(x, replace));
+    return rcpp_result_gen;
 END_RCPP
 }
 // vroom_str_

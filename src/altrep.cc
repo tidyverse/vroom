@@ -1,6 +1,15 @@
 #include <Rcpp.h>
 
 #include "altrep.h"
+#include "vroom_chr.h"
+#include "vroom_date.h"
+#include "vroom_dbl.h"
+#include "vroom_dttm.h"
+#include "vroom_fct.h"
+#include "vroom_int.h"
+#include "vroom_lgl.h"
+#include "vroom_num.h"
+#include "vroom_time.h"
 #include <thread>
 
 using namespace Rcpp;
@@ -12,14 +21,26 @@ void force_materialization(SEXP x) {
 #endif
 }
 
+bool vroom_altrep(SEXP x) {
+  return R_altrep_inherits(x, vroom_chr::class_t) ||
+         R_altrep_inherits(x, vroom_date::class_t) ||
+         R_altrep_inherits(x, vroom_dbl::class_t) ||
+         R_altrep_inherits(x, vroom_dttm::class_t) ||
+         R_altrep_inherits(x, vroom_fct::class_t) ||
+         R_altrep_inherits(x, vroom_int::class_t) ||
+         // R_altrep_inherits(x, vroom_lgl::class_t) ||
+         R_altrep_inherits(x, vroom_num::class_t) ||
+         R_altrep_inherits(x, vroom_time::class_t);
+}
+
 // [[Rcpp::export]]
-void vroom_materialize(SEXP x, bool replace = false) {
+SEXP vroom_materialize(SEXP x, bool replace = false) {
 #ifdef HAS_ALTREP
   for (R_xlen_t i = 0; i < Rf_xlength(x); ++i) {
 
     SEXP elt = VECTOR_ELT(x, i);
     // First materialize all of the non-character vectors
-    if (ALTREP(elt)) {
+    if (vroom_altrep(elt)) {
       DATAPTR(elt);
     }
   }
@@ -29,7 +50,7 @@ void vroom_materialize(SEXP x, bool replace = false) {
   if (replace) {
     for (R_xlen_t i = 0; i < Rf_xlength(x); ++i) {
       SEXP elt = PROTECT(VECTOR_ELT(x, i));
-      if (ALTREP(elt)) {
+      if (vroom_altrep(elt)) {
         SET_VECTOR_ELT(x, i, R_altrep_data2(elt));
         R_set_altrep_data2(elt, R_NilValue);
       }
@@ -38,6 +59,8 @@ void vroom_materialize(SEXP x, bool replace = false) {
   }
 
 #endif
+
+  return x;
 }
 
 // [[Rcpp::export]]
