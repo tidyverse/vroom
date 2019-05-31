@@ -47,6 +47,16 @@
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115082821-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-115082821-1');
+</script>
+
   </head>
 
   <body>
@@ -63,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.0.1.9000</span>
       </span>
     </div>
 
@@ -130,8 +140,8 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>vroom_fwf</span>(<span class='no'>file</span>, <span class='kw'>col_positions</span> <span class='kw'>=</span> <span class='fu'>fwf_empty</span>(<span class='no'>file</span><span class='kw'>[[</span><span class='fl'>1</span>]], <span class='no'>skip</span>, <span class='kw'>n</span> <span class='kw'>=</span>
-  <span class='no'>guess_max</span>), <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>col_select</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+    <pre class="usage"><span class='fu'>vroom_fwf</span>(<span class='no'>file</span>, <span class='kw'>col_positions</span> <span class='kw'>=</span> <span class='fu'>fwf_empty</span>(<span class='no'>file</span>, <span class='no'>skip</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='no'>guess_max</span>),
+  <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>col_select</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>locale</span> <span class='kw'>=</span> <span class='fu'><a href='locale.html'>default_locale</a></span>(), <span class='kw'>na</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>""</span>, <span class='st'>"NA"</span>), <span class='kw'>comment</span> <span class='kw'>=</span> <span class='st'>""</span>,
   <span class='kw'>trim_ws</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>Inf</span>, <span class='kw'>guess_max</span> <span class='kw'>=</span> <span class='fl'>100</span>,
   <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(), <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>(),

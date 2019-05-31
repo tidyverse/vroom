@@ -48,6 +48,16 @@ to disk. It provides a hook for S3 classes that need special handling." />
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115082821-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-115082821-1');
+</script>
+
   </head>
 
   <body>
@@ -64,7 +74,7 @@ to disk. It provides a hook for S3 classes that need special handling." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.0.1.9000</span>
       </span>
     </div>
 
@@ -148,7 +158,7 @@ to disk. It provides a hook for S3 classes that need special handling.</p>
     <pre class="examples"><div class='input'><span class='co'># Most types are returned unchanged</span>
 <span class='fu'>output_column</span>(<span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'>output_column</span>(<span class='st'>"x"</span>)</div><div class='output co'>#&gt; [1] "x"</div><div class='input'>
 <span class='co'># datetimes are formatted in ISO 8601</span>
-<span class='fu'>output_column</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.Date</a></span>())</div><div class='output co'>#&gt; [1] "2019-05-13"</div><div class='input'><span class='fu'>output_column</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.time</a></span>())</div><div class='output co'>#&gt; [1] "2019-05-13T15:20:48Z"</div></pre>
+<span class='fu'>output_column</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.Date</a></span>())</div><div class='output co'>#&gt; [1] "2019-05-31"</div><div class='input'><span class='fu'>output_column</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.time</a></span>())</div><div class='output co'>#&gt; [1] "2019-05-31T13:11:25Z"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
