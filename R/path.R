@@ -58,7 +58,11 @@ standardise_one_path <- function (path, check = TRUE) {
     bz2 = bzfile(path, ""),
     xz = xzfile(path, ""),
     zip = zipfile(path, ""),
-    path
+    if (!has_trailing_newline(path)) {
+      file(path)
+    } else {
+      path
+    }
   )
 }
 

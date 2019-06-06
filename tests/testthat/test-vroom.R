@@ -374,3 +374,17 @@ test_that("Files with windows newlines and missing fields work", {
     equals = tibble::tibble(a = c("m", NA), b = c(NA, NA), c = c(NA, NA), d = c(NA, NA))
   )
 })
+
+test_that("vroom can read files with no trailing newline", {
+  f <- tempfile()
+  on.exit(unlink(f))
+
+  writeBin(charToRaw("foo\nbar"), f)
+  expect_equal(vroom(f, col_names = FALSE)[[1]], c("foo", "bar"))
+
+  f2 <- tempfile()
+  on.exit(unlink(f2), add = TRUE)
+
+  writeBin(charToRaw("foo,bar\n1,2"), f2)
+  expect_equal(vroom(f2), tibble::tibble(foo = 1, bar = 2))
+})

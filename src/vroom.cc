@@ -74,3 +74,16 @@ SEXP vroom_(
       guess_max,
       num_threads);
 }
+
+// [[Rcpp::export]]
+bool has_trailing_newline(std::string filename) {
+  std::FILE* f = std::fopen(filename.c_str(), "rb");
+
+  if (!f) {
+    return true;
+  }
+
+  fseek(f, -1, SEEK_END);
+  char c = fgetc(f);
+  return c == '\n';
+}

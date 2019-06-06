@@ -261,12 +261,16 @@ public:
         }
       }
 
-      else if (c == quote) {
-        in_quote = !in_quote;
-      }
-
       else if (escape_backslash_ && c == '\\') {
         ++pos;
+      }
+
+      else if (c == '\0') {
+        break;
+      }
+
+      else if (c == quote) {
+        in_quote = !in_quote;
       }
 
       ++pos;

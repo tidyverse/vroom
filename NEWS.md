@@ -1,5 +1,8 @@
 # vroom (development)
 
+* `vroom()` and `vroom_lines()` now support reading files which do not end in
+  newlines by using a file connection (#40).
+
 * Fix additional UBSAN issue in the mio project reported by CRAN (#97)
 
 * Fix indexing into connections with quoted fields (#119)

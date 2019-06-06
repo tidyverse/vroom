@@ -96,6 +96,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// has_trailing_newline
+bool has_trailing_newline(std::string filename);
+RcppExport SEXP _vroom_has_trailing_newline(SEXP filenameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    rcpp_result_gen = Rcpp::wrap(has_trailing_newline(filename));
+    return rcpp_result_gen;
+END_RCPP
+}
 // vroom_fwf_
 List vroom_fwf_(List inputs, std::vector<int> col_starts, std::vector<int> col_ends, bool trim_ws, RObject col_names, RObject col_types, RObject col_select, size_t skip, const char comment, ptrdiff_t n_max, SEXP id, CharacterVector na, List locale, ptrdiff_t guess_max, size_t num_threads, size_t altrep_opts, bool progress);
 RcppExport SEXP _vroom_vroom_fwf_(SEXP inputsSEXP, SEXP col_startsSEXP, SEXP col_endsSEXP, SEXP trim_wsSEXP, SEXP col_namesSEXP, SEXP col_typesSEXP, SEXP col_selectSEXP, SEXP skipSEXP, SEXP commentSEXP, SEXP n_maxSEXP, SEXP idSEXP, SEXP naSEXP, SEXP localeSEXP, SEXP guess_maxSEXP, SEXP num_threadsSEXP, SEXP altrep_optsSEXP, SEXP progressSEXP) {
@@ -198,6 +209,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_gen_character_", (DL_FUNC) &_vroom_gen_character_, 6},
     {"_vroom_guess_type_", (DL_FUNC) &_vroom_guess_type_, 3},
     {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 19},
+    {"_vroom_has_trailing_newline", (DL_FUNC) &_vroom_has_trailing_newline, 1},
     {"_vroom_vroom_fwf_", (DL_FUNC) &_vroom_vroom_fwf_, 17},
     {"_vroom_whitespace_columns_", (DL_FUNC) &_vroom_whitespace_columns_, 4},
     {"_vroom_vroom_write_", (DL_FUNC) &_vroom_vroom_write_, 10},

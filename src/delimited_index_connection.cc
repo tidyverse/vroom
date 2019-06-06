@@ -67,6 +67,13 @@ delimited_index_connection::delimited_index_connection(
   size_t sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
   buf[i][sz] = '\0';
 
+  if (sz == 0) {
+    if (should_close) {
+      Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["close"])(in);
+    }
+    return;
+  }
+
   // Parse header
   size_t start = find_first_line(buf[i], skip_, comment_);
 
@@ -85,16 +92,22 @@ delimited_index_connection::delimited_index_connection(
     // This first newline must not have fit in the buffer, throw error
     // suggesting a larger buffer size.
 
-    if (should_close) {
-      Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["close"])(in);
+    // Try reading again, if size is 0 we are at the end of the file, so should
+    // just go on.
+    size_t next_sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
+    if (!(next_sz == 0)) {
+      if (should_close) {
+        Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["close"])(in);
+      }
+      std::stringstream ss;
+
+      ss << "The size of the connection buffer (" << chunk_size
+         << ") was not large enough\nto fit a complete line:\n  * Increase it "
+            "by "
+            "setting `Sys.setenv(\"VROOM_CONNECTION_SIZE\")`";
+
+      throw Rcpp::exception(ss.str().c_str(), false);
     }
-    std::stringstream ss;
-
-    ss << "The size of the connection buffer (" << chunk_size
-       << ") was not large enough\nto fit a complete line:\n  * Increase it by "
-          "setting `Sys.setenv(\"VROOM_CONNECTION_SIZE\")`";
-
-    throw Rcpp::exception(ss.str().c_str(), false);
   }
 
   // Check for windows newlines
@@ -208,6 +221,17 @@ delimited_index_connection::delimited_index_connection(
   mmap_ = mio::make_mmap_source(filename_, error);
   if (error) {
     throw Rcpp::exception(error.message().c_str(), false);
+  }
+
+  size_t file_size = mmap_.size();
+
+  if (mmap_[file_size - 1] != '\n') {
+    if (columns_ == 0) {
+      ++columns_;
+      idx_[0].push_back(file_size);
+    } else {
+      idx_[1].push_back(file_size);
+    }
   }
 
   size_t total_size = std::accumulate(
