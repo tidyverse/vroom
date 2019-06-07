@@ -10,6 +10,7 @@
 #include "vroom_int.h"
 #include "vroom_lgl.h"
 #include "vroom_num.h"
+#include "vroom_rle.h"
 #include "vroom_time.h"
 #include "vroom_vec.h"
 
@@ -39,10 +40,19 @@ inline std::vector<std::string> get_filenames(SEXP in) {
   return out;
 }
 
-inline CharacterVector generate_filename_column(
+inline SEXP generate_filename_column(
     const std::vector<std::string>& filenames,
     const std::vector<size_t>& lengths,
     size_t rows) {
+#ifdef HAS_ALTREP
+  IntegerVector rle(filenames.size());
+  for (size_t i = 0; i < lengths.size(); ++i) {
+    rle[i] = lengths[i];
+  }
+  rle.names() = filenames;
+
+  return vroom_rle::Make(rle);
+#else
   std::vector<std::string> out;
   out.reserve(rows);
 
@@ -56,6 +66,7 @@ inline CharacterVector generate_filename_column(
     }
   }
   return wrap(out);
+#endif
 }
 
 inline List create_columns(

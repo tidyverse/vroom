@@ -5,6 +5,7 @@
 #include "connection.h"
 #include "index.h"
 #include "index_collection.h"
+#include "vroom_rle.h"
 #include <Rcpp.h>
 #include <algorithm>
 
@@ -87,3 +88,6 @@ bool has_trailing_newline(std::string filename) {
   char c = fgetc(f);
   return c == '\n';
 }
+
+// [[Rcpp::export]]
+SEXP vroom_rle(Rcpp::IntegerVector input) { return vroom_rle::Make(input); }

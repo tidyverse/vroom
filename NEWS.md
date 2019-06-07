@@ -1,5 +1,8 @@
 # vroom (development)
 
+* The column created by `id` is now stored as an run length encoded Altrep
+  vector, which uses less memory and is much faster for large inputs. (#111)
+
 * `vroom()` and `vroom_lines()` now support reading files which do not end in
   newlines by using a file connection (#40).
 
