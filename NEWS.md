@@ -1,5 +1,7 @@
 # vroom (development)
 
+* The integer parser now returns NA values for invalid inputs (#135)
+
 * The column created by `id` is now stored as an run length encoded Altrep
   vector, which uses less memory and is much faster for large inputs. (#111)
 

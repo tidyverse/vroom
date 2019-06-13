@@ -4,8 +4,12 @@
 // A version of strtoi that doesn't need null terminated strings, to avoid
 // needing to copy the data
 int strtoi(const char* begin, const char* end) {
-  int val = 0;
+  double val = 0;
   bool is_neg = false;
+
+  if (begin == end) {
+    return NA_INTEGER;
+  }
 
   if (begin != end && *begin == '-') {
     is_neg = true;
@@ -14,6 +18,15 @@ int strtoi(const char* begin, const char* end) {
 
   while (begin != end && isdigit(*begin)) {
     val = val * 10 + ((*begin++) - '0');
+  }
+
+  // If there is more than digits, return NA
+  if (begin != end) {
+    return NA_INTEGER;
+  }
+
+  if (val > INT_MAX) {
+    return NA_INTEGER;
   }
 
   return is_neg ? -val : val;
