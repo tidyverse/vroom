@@ -48,6 +48,16 @@ argument of vroom()." />
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115082821-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-115082821-1');
+</script>
+
   </head>
 
   <body>
@@ -149,7 +159,7 @@ types</p></td>
 
     <p>Altrenatively there is also a family of environment variables to control use of
 the Altrep framework. These can then be set in your <code>.Renviron</code> file, e.g.
-with <code>usethis::edit_r_environ()</code>. For versions of R where the Altrep
+with <code><a href='https://usethis.r-lib.org/reference/edit.html'>usethis::edit_r_environ()</a></code>. For versions of R where the Altrep
 framework is unavailable (R &lt; 3.5.0) they are automatically turned off and
 the variables have no effect. The variables can take one of <code>true</code>, <code>false</code>,
 <code>TRUE</code>, <code>FALSE</code>, <code>1</code>, or <code>0</code>.</p><ul>

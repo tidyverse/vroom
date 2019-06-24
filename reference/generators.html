@@ -47,6 +47,16 @@
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115082821-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-115082821-1');
+</script>
+
   </head>
 
   <body>
@@ -213,8 +223,8 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># characters</span>
-<span class='fu'>gen_character</span>(<span class='fl'>4</span>)</div><div class='output co'>#&gt; [1] "tt0s7u2hWXhBiIaSQ63" "acdmR"               "ctNbCy3JiOr6mzgGva" 
-#&gt; [4] "26cCjLIAiev3"       </div><div class='input'>
+<span class='fu'>gen_character</span>(<span class='fl'>4</span>)</div><div class='output co'>#&gt; [1] "rDDQHwIV"                 "S2FSr1WfjnMnHl90FJwWH6IN"
+#&gt; [3] "852jvQzU4p9K7c746VQEA"    "eME2Ecpgix"              </div><div class='input'>
 <span class='co'># factors</span>
 <span class='fu'>gen_factor</span>(<span class='fl'>4</span>)</div><div class='output co'>#&gt; [1] bad_ape      big_puma     big_puma     panicky_newt
 #&gt; 7 Levels: old_ram ancient_gorilla obnoxious_lizard big_puma ... cooing_hartebeest</div><div class='input'>
@@ -226,8 +236,8 @@
 <span class='fu'>gen_time</span>(<span class='fl'>4</span>)</div><div class='output co'>#&gt; 16:56:50
 #&gt; 12:03:15
 #&gt; 12:43:06
-#&gt; 06:12:08</div><div class='input'><span class='fu'>gen_date</span>(<span class='fl'>4</span>)</div><div class='output co'>#&gt; [1] "2016-07-26" "2017-10-09" "2007-06-23" "2009-04-20"</div><div class='input'><span class='fu'>gen_datetime</span>(<span class='fl'>4</span>)</div><div class='output co'>#&gt; [1] "2002-06-19 19:01:30 UTC" "2018-09-12 01:07:20 UTC"
-#&gt; [3] "2017-07-15 01:06:36 UTC" "2015-07-08 16:56:14 UTC"</div></pre>
+#&gt; 06:12:08</div><div class='input'><span class='fu'>gen_date</span>(<span class='fl'>4</span>)</div><div class='output co'>#&gt; [1] "2016-07-26" "2017-10-09" "2007-06-23" "2009-04-20"</div><div class='input'><span class='fu'>gen_datetime</span>(<span class='fl'>4</span>)</div><div class='output co'>#&gt; [1] "2002-06-20 00:01:30 UTC" "2018-09-12 06:07:20 UTC"
+#&gt; [3] "2017-07-15 06:06:36 UTC" "2015-07-08 21:56:14 UTC"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

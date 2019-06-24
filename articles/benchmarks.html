@@ -15,7 +15,13 @@
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<![endif]--><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-115082821-1"></script><script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-115082821-1');
+</script>
 </head>
 <body>
     <div class="container template-article">
@@ -102,7 +108,7 @@
 <h2 class="hasAnchor">
 <a href="#how-it-works" class="anchor"></a>How it works</h2>
 <p>The initial reading of the file simply records the locations of each individual record, the actual values are not read into R. Altrep vectors are created for each column in the data which hold a pointer to the index and the memory mapped file. When these vectors are indexed the value is read from the memory mapping.</p>
-<p>This means initial reading is extremely fast, in the real world dataset below it is ~ 1/4 the time of the multi-threaded <code>data.table::fread()</code>. Sampling operations are likewise extremely fast, as only the data actually included in the sample is read. This means things like the tibble print method, calling <code><a href="https://www.rdocumentation.org/packages/utils/topics/head">head()</a></code>, <code><a href="https://www.rdocumentation.org/packages/utils/topics/head">tail()</a></code> <code>x[sample(), ]</code> etc. have very low overhead. Filtering also can be fast, only the columns included in the filter selection have to be fully read and only the data in the filtered rows needs to be read from the remaining columns. Grouped aggregations likewise only need to read the grouping variables and the variables aggregated.</p>
+<p>This means initial reading is extremely fast, in the real world dataset below it is ~ 1/4 the time of the multi-threaded <code><a href="https://www.rdocumentation.org/packages/data.table/topics/fread">data.table::fread()</a></code>. Sampling operations are likewise extremely fast, as only the data actually included in the sample is read. This means things like the tibble print method, calling <code><a href="https://www.rdocumentation.org/packages/utils/topics/head">head()</a></code>, <code><a href="https://www.rdocumentation.org/packages/utils/topics/head">tail()</a></code> <code>x[sample(), ]</code> etc. have very low overhead. Filtering also can be fast, only the columns included in the filter selection have to be fully read and only the data in the filtered rows needs to be read from the remaining columns. Grouped aggregations likewise only need to read the grouping variables and the variables aggregated.</p>
 <p>Once a particular vector is fully materialized the speed for all subsequent operations should be identical to a normal R vector.</p>
 <p>This approach potentially also allows you to work with data that is larger than memory. As long as you are careful to avoid materializing the entire dataset at once it can be efficiently queried and subset.</p>
 </div>
