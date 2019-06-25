@@ -12,8 +12,8 @@ vroom_fwf(file, col_positions = fwf_empty(file, skip, n = guess_max),
   col_types = NULL, col_select = NULL, id = NULL,
   locale = default_locale(), na = c("", "NA"), comment = "",
   trim_ws = TRUE, skip = 0, n_max = Inf, guess_max = 100,
-  num_threads = vroom_threads(), progress = vroom_progress(),
-  .name_repair = "unique")
+  altrep_opts = "chr", num_threads = vroom_threads(),
+  progress = vroom_progress(), .name_repair = "unique")
 
 fwf_empty(file, skip = 0, col_names = NULL, comment = "", n = 100L)
 
@@ -89,6 +89,10 @@ each field before parsing it?}
 \item{n_max}{Maximum number of records to read.}
 
 \item{guess_max}{Maximum number of records to use for guessing column types.}
+
+\item{altrep_opts}{Control which column types use Altrep representations,
+either a character vector of types, \code{TRUE} or \code{FALSE}. See
+\code{\link[=vroom_altrep_opts]{vroom_altrep_opts()}} for for full details.}
 
 \item{num_threads}{Number of threads to use when reading and materializing vectors.}
 
