@@ -251,7 +251,7 @@ vroom_tempfile <- function() {
 #' `vroom_altrep_opts()` can be used directly as input to the `altrep_opts`
 #' argument of [vroom()].
 #'
-#' Altrenatively there is also a family of environment variables to control use of
+#' Alternatively there is also a family of environment variables to control use of
 #' the Altrep framework. These can then be set in your `.Renviron` file, e.g.
 #' with [usethis::edit_r_environ()]. For versions of R where the Altrep
 #' framework is unavailable (R < 3.5.0) they are automatically turned off and
