@@ -27,7 +27,11 @@ vroom_lines <- function(file, n_max = Inf, skip = 0, altrep_opts = "chr",
 
   col_select <- rlang::quo(NULL)
 
-  out <- vroom_(file, delim = "\n", col_names = "V1", col_types = "c",
+  # delim = "\1" sets the delimiter to be start of header, which should never
+  # appear in modern text. This essentially means the only record breaks will
+  # be newlines. Ideally this would be "\0", but R doesn't let you have nulls
+  # in character vectors.
+  out <- vroom_(file, delim = "\1", col_names = "V1", col_types = "c",
     id = NULL, skip = skip, col_select = col_select, na = character(), quote = "",
     trim_ws = FALSE, escape_double = FALSE, escape_backslash = FALSE, comment = "",
     locale = default_locale(),

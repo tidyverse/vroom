@@ -46,3 +46,8 @@ test_that("vroom_lines works with files with no trailing newline", {
   writeBin(charToRaw("foo\nbar"), f2)
   expect_equal(vroom_lines(f2), c("foo", "bar"))
 })
+
+test_that("vroom_lines respects n_max", {
+  infile <- vroom_example("mtcars.csv")
+  expect_equal(vroom_lines(infile, n_max = 2), readLines(infile, n = 2))
+})

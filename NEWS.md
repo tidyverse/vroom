@@ -1,5 +1,7 @@
 # vroom (development)
 
+* `vroom_lines()` now properly respects the `n_max` parameter (#142)
+
 * The integer parser now returns NA values for invalid inputs (#135)
 
 * The column created by `id` is now stored as an run length encoded Altrep
