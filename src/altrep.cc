@@ -22,6 +22,7 @@ void force_materialization(SEXP x) {
 }
 
 bool vroom_altrep(SEXP x) {
+#ifdef HAS_ALTREP
   return R_altrep_inherits(x, vroom_chr::class_t) ||
          R_altrep_inherits(x, vroom_date::class_t) ||
          R_altrep_inherits(x, vroom_dbl::class_t) ||
@@ -31,6 +32,9 @@ bool vroom_altrep(SEXP x) {
          // R_altrep_inherits(x, vroom_lgl::class_t) ||
          R_altrep_inherits(x, vroom_num::class_t) ||
          R_altrep_inherits(x, vroom_time::class_t);
+#else
+  return false;
+#endif
 }
 
 // [[Rcpp::export]]
