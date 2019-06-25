@@ -90,4 +90,19 @@ bool has_trailing_newline(std::string filename) {
 }
 
 // [[Rcpp::export]]
-SEXP vroom_rle(Rcpp::IntegerVector input) { return vroom_rle::Make(input); }
+SEXP vroom_rle(Rcpp::IntegerVector input) {
+#ifdef HAS_ALTREP
+  return vroom_rle::Make(input);
+#else
+  R_xlen_t total_size = std::accumulate(input.begin(), input.end(), 0);
+  CharacterVector out(total_size);
+  CharacterVector nms = input.names();
+  R_xlen_t idx = 0;
+  for (R_xlen_t i = 0; i < Rf_xlength(input); ++i) {
+    for (R_xlen_t j = 0; j < input[i]; ++j) {
+      SET_STRING_ELT(out, idx++, nms[i]);
+    }
+  }
+  return out;
+#endif
+}
