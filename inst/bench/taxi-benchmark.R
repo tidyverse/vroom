@@ -1,4 +1,4 @@
-file <- "~/data/trip_fare_1.tsv"
+file <- commandArgs(trailingOnly = TRUE)[[1]]
 desc <- c("setup", "read", "print", "head", "tail", "sample", "filter", "aggregate")
 
 vroom_base <- function(file, desc) {
@@ -19,7 +19,7 @@ vroom_base <- function(file, desc) {
 `vroom (full altrep)_base` <- function(file, desc) {
   bench::workout(description = desc,
     {
-    {library(vroom)}
+    ({library(vroom)})
       x <- vroom(file, col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character(), altrep_opts = TRUE)
       print(x)
       a <- head(x)
@@ -34,7 +34,7 @@ vroom_base <- function(file, desc) {
 `vroom (no altrep)_base` <- function(file, desc) {
   bench::workout(description = desc,
     {
-    {library(vroom)}
+    ({library(vroom)})
       x <- vroom(file, col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character(), altrep_opts = FALSE)
       print(x)
       a <- head(x)
@@ -49,7 +49,7 @@ vroom_base <- function(file, desc) {
 vroom_dplyr <- function(file, desc) {
   bench::workout(description = desc,
     {
-      { library(vroom); library(dplyr) }
+      ({ library(vroom); library(dplyr) })
       x <- vroom(file, col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character())
       print(x)
       a <- head(x)
@@ -64,7 +64,7 @@ vroom_dplyr <- function(file, desc) {
 `vroom (full altrep)_dplyr` <- function(file, desc) {
   bench::workout(description = desc,
     {
-      {library(vroom); library(dplyr)}
+      ({library(vroom); library(dplyr)})
       x <- vroom(file, col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character(), altrep_opts = TRUE)
       print(x)
       a <- head(x)
@@ -79,7 +79,7 @@ vroom_dplyr <- function(file, desc) {
 `vroom (no altrep)_dplyr` <- function(file, desc) {
   bench::workout(description = desc,
     {
-      {library(vroom); library(dplyr)}
+      ({library(vroom); library(dplyr)})
       x <- vroom(file, col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character(), altrep_opts = FALSE)
       print(x)
       a <- head(x)
@@ -95,7 +95,7 @@ data.table <- function(file, desc) {
   bench::workout(description = desc,
     {
       library(data.table)
-      x <- fread(file, sep = "\t", quote = "", strip.white = FALSE, na.strings = NULL)
+      x <- fread(file, sep = ",", quote = "", strip.white = FALSE, na.strings = NULL)
       print(x)
       a <- head(x)
       b <- tail(x)
@@ -109,8 +109,8 @@ data.table <- function(file, desc) {
 readr <- function(file, desc) {
   bench::workout(description = desc,
     {
-      { library(readr); library(dplyr) }
-      x <- read_tsv(file, col_types = c(pickup_datetime = "c"), quote = "", trim_ws = FALSE, na = character())
+      ({ library(readr); library(dplyr) })
+      x <- read_csv(file, col_types = c(pickup_datetime = "c"), quote = "", trim_ws = FALSE, na = character())
       print(x)
       a <- head(x)
       b <- tail(x)
@@ -124,8 +124,8 @@ readr <- function(file, desc) {
 read.delim <- function(file, desc) {
   bench::workout(description = desc,
     {
-      {}
-      x <- read.delim(file, quote = "", na.strings = NULL, stringsAsFactors = FALSE)
+      ({})
+      x <- read.delim(file, sep = ",", quote = "", na.strings = NULL, stringsAsFactors = FALSE)
       print(head(x, 10))
       a <- head(x)
       b <- tail(x)

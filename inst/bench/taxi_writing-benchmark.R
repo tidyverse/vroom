@@ -1,5 +1,5 @@
 # Write the taxi data
-file <- "~/data/small_trip_fare_1.tsv"
+file <- commandArgs(trailingOnly = TRUE)[[1]]
 
 library(vroom)
 

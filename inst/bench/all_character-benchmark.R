@@ -1,5 +1,7 @@
-rows <- 1e6
-cols <- 25
+args <- commandArgs(trailingOnly = TRUE)
+str(args)
+rows <- as.integer(args[[1]])
+cols <- as.integer(args[[2]])
 
 set.seed(42)
 RNGversion("3.5.3")
@@ -51,7 +53,7 @@ vroom_base <- function(file, desc) {
 `vroom (full altrep)_base` <- function(file, desc) {
   bench::workout(description = desc,
     {
-    {library(vroom)}
+    ({library(vroom)})
       x <- vroom(file, trim_ws = FALSE, quote = "", escape_double = FALSE, na = character(), altrep_opts = TRUE)
       print(x)
       a <- head(x)
@@ -66,7 +68,7 @@ vroom_base <- function(file, desc) {
 `vroom (no altrep)_base` <- function(file, desc) {
   bench::workout(description = desc,
     {
-    {library(vroom)}
+    ({library(vroom)})
       x <- vroom(file, trim_ws = FALSE, quote = "", escape_double = FALSE, na = character(), altrep_opts = FALSE)
       print(x)
       a <- head(x)
@@ -81,7 +83,7 @@ vroom_base <- function(file, desc) {
 vroom_dplyr <- function(file, desc) {
   bench::workout(description = desc,
     {
-      { library(vroom); library(dplyr) }
+      ({ library(vroom); library(dplyr) })
       x <- vroom(file, trim_ws = FALSE, quote = "", escape_double = FALSE, na = character())
       print(x)
       a <- head(x)
@@ -96,7 +98,7 @@ vroom_dplyr <- function(file, desc) {
 `vroom (full altrep)_dplyr` <- function(file, desc) {
   bench::workout(description = desc,
     {
-      {library(vroom); library(dplyr)}
+      ({library(vroom); library(dplyr)})
       x <- vroom(file, trim_ws = FALSE, quote = "", escape_double = FALSE, na = character(), altrep_opts = TRUE)
       print(x)
       a <- head(x)
@@ -111,7 +113,7 @@ vroom_dplyr <- function(file, desc) {
 `vroom (no altrep)_dplyr` <- function(file, desc) {
   bench::workout(description = desc,
     {
-      {library(vroom); library(dplyr)}
+      ({library(vroom); library(dplyr)})
       x <- vroom(file, trim_ws = FALSE, quote = "", escape_double = FALSE, na = character(), altrep_opts = FALSE)
       print(x)
       a <- head(x)
@@ -141,7 +143,7 @@ data.table <- function(file, desc) {
 readr <- function(file, desc) {
   bench::workout(description = desc,
     {
-    { library(readr); library(dplyr) }
+    ({ library(readr); library(dplyr) })
       x <- read_tsv(file, trim_ws = FALSE, quote = "", na = character())
       print(x)
       a <- head(x)
@@ -156,7 +158,7 @@ readr <- function(file, desc) {
 read.delim <- function(file, desc) {
   bench::workout(description = desc,
     {
-      {}
+      ({})
       x <- read.delim(file, quote = "", na.strings = NULL, stringsAsFactors = FALSE)
       print(head(x, 10))
       a <- head(x)
