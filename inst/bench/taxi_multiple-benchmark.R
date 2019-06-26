@@ -1,13 +1,5 @@
 library(vroom)
-purrr::walk(fs::dir_ls("~/data", glob = "*/trip_fare*csv"),
-  ~ vroom_write(vroom(.x, n_max = 2500000),
-    fs::path(
-      fs::path_dir(.x),
-      fs::path_ext_set(glue::glue("small_{fs::path_file(.x)}"), "tsv")
-    ),
-  "\t")
-)
-files <- c("~/data/small_trip_fare_1.tsv", "~/data/small_trip_fare_2.tsv", "~/data/small_trip_fare_3.tsv", "~/data/small_trip_fare_4.tsv")
+files <- fs::dir_ls("~/data", glob = "*/trip_fare*csv")
 desc <- c("setup", "read", "print", "head", "tail", "sample", "filter", "aggregate")
 
 `vroom (full altrep)_dplyr` <- function(files, desc) {
