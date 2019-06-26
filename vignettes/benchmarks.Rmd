@@ -70,7 +70,7 @@ plot_benchmark <- function(data, title) {
     ggplot() +
     geom_bar(aes(x = label, y = time, fill = op, group = label), stat = "identity") +
     scale_fill_brewer(type = "qual", palette = "Set2") +
-    scale_y_continuous(labels = function(x) format(bench::as_bench_time(x))) +
+    scale_y_continuous(labels = scales::number_format(suffix = "s")) +
     theme(legend.position = "bottom") +
     coord_flip() +
     labs(title = title, subtitle = subtitle, x = NULL, y = NULL, fill = NULL)
@@ -168,10 +168,12 @@ The code used to run the taxi benchmarks is in
 
 The benchmarks labeled `vroom_base` uses `vroom` with base functions for
 manipulation. `vroom_dplyr` uses `vroom` to read the file and dplyr functions to
-manipulate. `data.table` uses `fread()` to read the file and `data.table` functions
-to manipulate and `readr` uses `readr` to read the file and `dplyr` to manipulate. By
-default vroom only uses Altrep for character vectors, the benchmarks labeled
-`vroom (full altrep)` instead use Altrep vectors for all supported types.
+manipulate. `data.table` uses `fread()` to read the file and `data.table`
+functions to manipulate and `readr` uses `readr` to read the file and `dplyr` to
+manipulate. By default vroom only uses Altrep for character vectors, these are
+labeled `vroom(altrep: normal)`. The benchmarks labeled `vroom(altrep: full)`
+instead use Altrep vectors for all supported types and `vroom(altrep: none)`
+disable Altrep entirely.
 
 The following operations are performed.
 
@@ -224,8 +226,7 @@ make_table(all_num)
 The code used to run the all character benchmarks is in
 [bench/all_character-benchmark.R](https://github.com/r-lib/vroom/blob/master/inst/bench/all_character-benchmark.R).
 
-All character data is a best case scenario for vroom, as none of the data needs
-to be read initially.
+All character data is a best case scenario for vroom when using Altrep, as it takes full advantage of the lazy reading.
 
 ```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
 all_chr <- read_benchmark(system.file("bench", "all_character-times.tsv", package = "vroom"), desc)
@@ -262,40 +263,34 @@ The benchmarks write out the taxi trip dataset in three different ways.
 - A gzip compressed file using `gzfile()` _(readr and vroom do this automatically for files ending in `.gz`)_
 - A multithreaded gzip compressed file using a `pipe()` connection to [pigz](https://zlib.net/pigz/)
 
-*Note the current CRAN version of data.table (1.12.2) does not support writing to compressed files*
+*Note the current CRAN version of data.table (1.12.2) does not support writing directly to gzip compressed files, though the developement version (1.12.3) does *
 
 ```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
-desc_w <- c("uncompressed", "gzip", "multithreaded gzip")
+desc_w <- rev(c("xz", "gzip", "multithreaded gzip", "zstandard", "uncompressed"))
 taxi_writing <- read_benchmark(system.file("bench", "taxi_writing-times.tsv", package = "vroom"), desc_w) %>%
-  spread(op, time) %>%
-  arrange(!is.na(`multithreaded gzip`), desc(`multithreaded gzip`)) %>%
-  mutate(package = fct_rev(fct_inorder(package)))
+  mutate(package = factor(package, c("write.delim", "readr", "data.table", "vroom")))
 
 subtitle <- generate_subtitle(taxi_writing)
 
 taxi_writing %>%
-  select(-size, -rows, -cols, -type, -altrep, -label, -method) %>%
-  gather(op, time, -package) %>%
-  mutate(op = factor(op, desc_w)) %>%
-  ggplot() +
-  geom_bar(aes(x = package, y = time, fill = op), stat = "identity", position = position_dodge2(preserve = "single", reverse = TRUE)) +
+  ggplot(aes(x = op, y = time, fill = package)) +
+  geom_bar(stat = "identity", position = position_dodge2(reverse = TRUE, padding = .05)) +
   scale_fill_brewer(type = "qual", palette = "Set2") +
-  scale_y_continuous(labels = function(x) format(bench::as_bench_time(x))) +
+  scale_y_continuous(labels = scales::number_format(suffix = "s")) +
   theme(legend.position = "bottom") +
   coord_flip() +
   labs(title = "Writing taxi trip data", subtitle = subtitle, x = NULL, y = NULL, fill = NULL)
 
 taxi_writing %>%
-  select(-size, -rows, -cols, -type) %>%
+  select(-size, -rows, -cols, -type, -method, -altrep, -label) %>%
   mutate_if(is.numeric, pretty_sec) %>%
+  spread(package, time) %>%
+  arrange(desc(op)) %>%
+  rename(method = op) %>%
   knitr::kable(digits = 2, align = "r", format = "html")
 ```
 
 ## Session and package information
-
-The development version of dplyr was used in the benchmarks, as contains a
-[fix](https://github.com/tidyverse/dplyr/pull/4314) for a performance issue
-with Altrep objects.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 si <- vroom::vroom(system.file("bench", "sessioninfo.tsv", package = "vroom"))

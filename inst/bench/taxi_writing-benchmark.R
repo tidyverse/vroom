@@ -1,5 +1,5 @@
 # Write the taxi data
-file <- "~/data/trip_fare_1.tsv"
+file <- "~/data/small_trip_fare_1.tsv"
 
 library(vroom)
 
@@ -19,24 +19,41 @@ uncompressed <- bench::workout(description = desc, {
 
 uncompressed$op = "uncompressed"
 
-f <- tempfile(fileext = ".gz")
+xz <- bench::workout(description = desc, {
+  ({ con <- xzfile(tempfile(), "wb");  write.table(data, con, sep = "\t", quote = FALSE, row.names = FALSE); close(con) })
+  readr::write_tsv(data, tempfile(fileext = ".xz"))
+  vroom_write(data, tempfile(fileext = ".xz"), delim = "\t")
+  NULL # unsupported
+})
 
-compressed <- bench::workout(description = c("write.delim", "readr", "vroom"), {
-  { con <- gzfile(tempfile(), "wb");  write.table(data, con, sep = "\t", quote = FALSE, row.names = FALSE); close(con) }
+xz$op <- "xz"
+
+gzip <- bench::workout(description = desc, {
+  ({ con <- gzfile(tempfile(), "wb");  write.table(data, con, sep = "\t", quote = FALSE, row.names = FALSE); close(con) })
   readr::write_tsv(data, tempfile(fileext = ".gz"))
   vroom_write(data, tempfile(fileext = ".gz"), delim = "\t")
+  NULL # data.table::fwrite(data, tempfile(fileext = ".gz"), sep = "\t", nThread = 1)
 })
 
-compressed$op = "gzip"
+gzip$op = "gzip"
 
-multithreaded <- bench::workout(description = c("write.delim", "readr", "vroom"), {
-  { con <- pipe(glue::glue('pigz > {tempfile(fileext = ".gz")}'), "wb");  write.table(data, con, sep = "\t", quote = FALSE, row.names = FALSE); close(con) }
+multithreaded_gzip <- bench::workout(description = desc, {
+  ({ con <- pipe(glue::glue('pigz > {tempfile(fileext = ".gz")}'), "wb");  write.table(data, con, sep = "\t", quote = FALSE, row.names = FALSE); close(con) })
   readr::write_tsv(data, pipe(glue::glue('pigz > {tempfile(fileext = ".gz")}')))
   vroom_write(data, pipe(glue::glue('pigz > {tempfile(fileext = ".gz")}')), delim = "\t")
+  NULL # data.table::fwrite(data, tempfile(fileext = ".gz"), sep = "\t")
 })
 
-multithreaded$op = "multithreaded gzip"
+multithreaded_gzip$op = "multithreaded gzip"
 
+zstandard <- bench::workout(description = desc, {
+  ({ con <- pipe(glue::glue('zstd > {tempfile(fileext = ".zst")}'), "wb");  write.table(data, con, sep = "\t", quote = FALSE, row.names = FALSE); close(con) })
+  readr::write_tsv(data, pipe(glue::glue('zstd > {tempfile(fileext = ".zst")}')))
+  vroom_write(data, pipe(glue::glue('zstd > {tempfile(fileext = ".zst")}')), delim = "\t")
+  NULL # unsupported
+})
+
+zstandard$op = "zstandard"
 
 library(purrr)
 library(tidyr)
@@ -44,9 +61,10 @@ library(dplyr)
 library(forcats)
 library(bench)
 
-tm_df <- do.call(rbind, list(uncompressed, compressed, multithreaded)) %>%
+tm_df <- do.call(rbind, list(uncompressed, xz, gzip, multithreaded_gzip, zstandard)) %>%
   mutate(exprs = as.character(exprs)) %>%
   rename(package = exprs) %>%
+  filter(package != "data.table" | op == "uncompressed") %>%
   gather(type, time, -package, -op) %>%
   mutate(
     time = as.numeric(time),
