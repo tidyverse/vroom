@@ -235,6 +235,22 @@ plot_benchmark(all_chr, "Time to analyze all character data")
 make_table(all_chr)
 ```
 
+# Reading multiple delimited files
+
+The code used to run the taxi multiple file benchmarks is at
+[bench/taxi_multiple-benchmark.R](https://github.com/r-lib/vroom/blob/master/inst/bench/taxi_multiple-benchmark.R).
+
+For the benchmark the first 2,500,000 lines of the first four taxi trip fare
+files were used, for a total of 10,000,000 lines.
+
+```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
+mult <- read_benchmark(system.file("bench", "taxi_multiple-times.tsv", package = "vroom"), desc)
+
+plot_benchmark(mult, "Time to analyze multiple file data")
+
+make_table(mult)
+```
+
 # Writing delimited files
 
 The code used to run the taxi writing benchmarks is at
