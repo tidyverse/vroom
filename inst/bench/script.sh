@@ -1,7 +1,11 @@
 #!/bin/bash
 
 # don't forget to set your GITHUB_PAT before running this script
-[ -n "$GITHUB_PAT" ] || echo >&2 "Set GITHUB_PAT first!" && exit 2
+if [ -n "$GITHUB_PAT" ];
+then
+  echo >&2 "Set GITHUB_PAT first!"
+  exit 2
+fi
 
 sudo apt-get update -qq && \
     DEBIAN_FRONTEND=noninteractive sudo apt-get install -y \
@@ -44,13 +48,7 @@ rm R-${R_VERSION}.tar.gz
 export PATH=/opt/R/${R_VERSION}/bin:$PATH
 
 # download and extract data
-mkdir ~/data/
-wget -O ~/data/trip_fare.7z https://archive.org/download/nycTaxiTripData2013/trip_fare.7z && \
-  sudo apt install p7zip-full && \
-  cd ~/data && \
-  7z x trip_fare.7z &> data.out &
-# fix trailing space in header for every file
-ls *trip_fare*.csv | xargs -P 16 sed -i '1 s/, /,/g'
+download-data.sh&
 
 # clone vroom
 git clone https://jimhester:${GITHUB_PAT}/github.com/r-lib/vroom.git
@@ -65,6 +63,9 @@ Rscript -e 'install.packages("remotes")' \
 
 # install additional packages for benchmarking
 Rscript -e 'remotes::install_cran(c("data.table", "callr", "here", "sessioninfo"))'
+
+# wait for download job to finish
+wait
 
 make bench
 

@@ -1,6 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
-#curl -L https://archive.org/download/nycTaxiTripData2013/faredata2013.zip/trip_fare_1.csv.zip -o ~/data/trip_fare_1.csv.zip
-#unzip ~/data/trip_data_1.csv.zip
-
-R -e 'x <- data.table::fread("~/data/trip_fare_1.csv")' -e 'data.table::fwrite(x, "~/data/trip_fare_1.tsv", sep = "\\t")'
+mkdir ~/data/
+wget -O ~/data/trip_fare.7z https://archive.org/download/nycTaxiTripData2013/trip_fare.7z && \
+  sudo apt install p7zip-full && \
+  cd ~/data && \
+  7z x trip_fare.7z &> data.out && \
+  # fix trailing space in header for every file
+  ls *trip_fare*.csv | xargs -P 16 sed -i '1 s/, /,/g'
