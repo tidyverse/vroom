@@ -20,7 +20,7 @@ uncompressed <- bench::workout(description = desc, {
 uncompressed$op = "uncompressed"
 
 xz <- bench::workout(description = desc, {
-  ({ con <- xzfile(tempfile(), "wb");  write.table(data, con, sep = "\t", quote = FALSE, row.names = FALSE); close(con) })
+  ({ con <- xzfile(tempfile(fileext = ".xz"), "wb");  write.table(data, con, sep = "\t", quote = FALSE, row.names = FALSE); close(con) })
   readr::write_tsv(data, tempfile(fileext = ".xz"))
   vroom_write(data, tempfile(fileext = ".xz"), delim = "\t")
   NULL # unsupported
