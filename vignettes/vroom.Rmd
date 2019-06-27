@@ -286,9 +286,9 @@ unlink(c("mtcars.tsv.gz", "mtcars.tsv.bz2", "mtcars.tsv.xz"))
 ```
 
 It is also possible to use other compressors, such as
-[pigz](https://zlib.net/pigz/) a parallel gzip implementation,
-[lbzip2](http://lbzip2.org/) a parallel bzip2 implementation or
-[pixz](https://github.com/vasi/pixz) a parallel xz implementation by using
+[pigz](https://zlib.net/pigz/), a parallel gzip implementation,
+lbzip2, a parallel bzip2 implementation or
+[pixz](https://github.com/vasi/pixz), a parallel xz implementation by using
 `pipe()` to create a pipe connection. The parallel versions can be considerably
 faster for large output files.
 
