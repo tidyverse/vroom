@@ -1,4 +1,4 @@
-file <- "~/data/small_PUMS5_06.TXT"
+file <- commandArgs(trailingOnly = TRUE)[[1]]
 desc <- c("setup", "read", "print", "head", "tail", "sample", "filter", "aggregate")
 
 library(vroom)
