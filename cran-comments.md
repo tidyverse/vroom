@@ -1,4 +1,4 @@
-This release fixes the existing rchk and UBSAN issues.
+This release fixes the outstanding UBSAN issues and R CMD check issues.
 
 ## Test environments
 * local OS X install, R 3.5.3
