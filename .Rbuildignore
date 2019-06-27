@@ -24,3 +24,4 @@
 ^src/mio/third_party$
 ^cran-comments\.md$
 ^CRAN-RELEASE$
+^presentation$
