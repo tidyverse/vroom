@@ -1,12 +1,11 @@
 #!/bin/bash
 
-# don't forget to set your GITHUB_PAT before running this script
-if [ -n "$GITHUB_PAT" ];
-then
-  echo >&2 "Set GITHUB_PAT first!"
-  exit 2
-fi
+# need to run download-data.sh before this script
 
+# don't forget to set your GITHUB_PAT before running this script
+[ -n "${GITHUB_PAT}" ] || { echo >&2 "Set GITHUB_PAT first!"; exit 1; }
+
+# Install R runtime prereqs
 sudo apt-get update -qq && \
     DEBIAN_FRONTEND=noninteractive sudo apt-get install -y \
     apt-transport-https \
@@ -40,6 +39,7 @@ sudo apt-get update -qq && \
 OS_IDENTIFIER=ubuntu-1804
 R_VERSION=3.6.0
 
+# download precompiled R binary and install
 wget -O R-${R_VERSION}.tar.gz https://cdn.rstudio.com/r/${OS_IDENTIFIER}/R-${R_VERSION}-${OS_IDENTIFIER}.tar.gz 
 sudo mkdir -p /opt/R 
 sudo chown ubuntu /opt/R
@@ -47,11 +47,12 @@ tar zx -C /opt/R -f ./R-${R_VERSION}.tar.gz
 rm R-${R_VERSION}.tar.gz
 export PATH=/opt/R/${R_VERSION}/bin:$PATH
 
-# download and extract data
-download-data.sh&
-
 # clone vroom
 git clone https://jimhester:${GITHUB_PAT}/github.com/r-lib/vroom.git
+
+# download and extract data
+vroom/inst/bench/download-data.sh &
+
 cd vroom
 
 # set common Rprofile options
@@ -63,6 +64,7 @@ Rscript -e 'install.packages("remotes")' \
 
 # install additional packages for benchmarking
 Rscript -e 'remotes::install_cran(c("data.table", "callr", "here", "sessioninfo"))'
+sudo apt-get install -y pigz zstd
 
 # wait for download job to finish
 wait

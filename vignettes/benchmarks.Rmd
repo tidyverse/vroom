@@ -144,8 +144,7 @@ Taxi Trip Data from the NYC Taxi and Limousine Commission 2013, originally
 posted at <http://chriswhong.com/open-data/foil_nyc_taxi/>. It is also hosted
 on [archive.org](https://archive.org/details/nycTaxiTripData2013).
 
-The first table trip_fare_1.csv was converted to tsv and saved as
-trip_fare_1.tsv, It is 1.55G in size.
+The first table trip_fare_1.csv is 1.55G in size.
 
     #> Observations: 14,776,615
     #> Variables: 11
@@ -241,15 +240,41 @@ make_table(all_chr)
 The code used to run the taxi multiple file benchmarks is at
 [bench/taxi_multiple-benchmark.R](https://github.com/r-lib/vroom/blob/master/inst/bench/taxi_multiple-benchmark.R).
 
-For the benchmark the first 2,500,000 lines of the first four taxi trip fare
-files were used, for a total of 10,000,000 lines.
+```{r, echo = FALSE, message = FALSE}
+mult <- read_benchmark(system.file("bench", "taxi_multiple-times.tsv", package = "vroom"), desc)
+```
+
+The benchmark reads all 12 files in the taxi trip fare data, totaling `r scales::comma(mult$rows[[1]])` rows 
+and `r mult$cols[[1]]` columns for a total file size of `r format(fs::fs_bytes(mult$size[[1]]))`.
 
 ```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
-mult <- read_benchmark(system.file("bench", "taxi_multiple-times.tsv", package = "vroom"), desc)
-
 plot_benchmark(mult, "Time to analyze multiple file data")
 
 make_table(mult)
+```
+
+# Reading fixed width files
+
+## United States Census 5-Percent Public Use Microdata Sample files
+
+```{r, echo = FALSE, message = FALSE}
+fwf <- read_benchmark(system.file("bench", "fwf-times.tsv", package = "vroom"), desc)
+```
+
+This fixed width dataset contains individual records of the characteristics of a 5 percent sample of people and housing units from the year 2000 and is freely available at <https://www2.census.gov/census_2000/datasets/PUMS/FivePercent/California/all_California.zip>. The data is split into files by state, and the state of California was used in this benchmark.
+
+The data totals `r scales::comma(fwf$rows[[1]])` rows 
+and `r fwf$cols[[1]]` columns with a total file size of `r format(fs::fs_bytes(fwf$size[[1]]))`.
+
+## Census data benchmarks
+
+The code used to run the census data benchmarks is at
+[bench/fwf-benchmark.R](https://github.com/r-lib/vroom/blob/master/inst/bench/fwf-benchmark.R).
+
+```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
+plot_benchmark(fwf, "Time to analyze fixed width data")
+
+make_table(fwf)
 ```
 
 # Writing delimited files
