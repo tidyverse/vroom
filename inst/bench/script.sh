@@ -1,11 +1,7 @@
 #!/bin/bash
 
 # don't forget to set your GITHUB_PAT before running this script
-<<<<<<< HEAD
 [ -n "${GITHUB_PAT}" ] || { echo >&2 "Set GITHUB_PAT first!"; exit 1; }
-=======
-[ -n "$GITHUB_PAT" ] || echo >&2 "Set GITHUB_PAT first!" && exit 2
->>>>>>> fwf-bench
 
 sudo apt-get update -qq && \
     DEBIAN_FRONTEND=noninteractive sudo apt-get install -y \
