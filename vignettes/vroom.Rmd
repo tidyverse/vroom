@@ -95,8 +95,10 @@ vroom(files, id = "path")
 ```
 
 ```{r, include = FALSE}
+# just to clear .Last.value
+1 + 1
 gc()
-fs::file_delete(files)
+unlink(files)
 ```
 
 ## Reading compressed files
