@@ -11,6 +11,9 @@ test:
 clean:
 	@Rscript -e 'devtools::clean_dll()'
 
+BENCH_TAXI := $(wildcard ~/data/taxi_trip_fare*csv)
+BENCH_ROWS := 1000000
+BENCH_COLS := 25
 BENCH_SRC := $(wildcard inst/bench/*-benchmark.R)
 BENCH_OUT := $(BENCH_SRC:-benchmark.R=-times.tsv)
 
@@ -19,7 +22,10 @@ BENCH_OUT := $(BENCH_SRC:-benchmark.R=-times.tsv)
 bench: $(BENCH_OUT)
 
 %-times.tsv : %-benchmark.R
-	R -q --vanilla -f $<
+	R -q --vanilla -f $< --args $(BENCH_INPUTS)
+
+inst/bench/all_%-times.tsv: inst/bench/all_%-benchmark.R
+	R -q --vanilla -f $< --args $(BENCH_ROWS) $(BENCH_COLS)
 
 bench-clean:
 	rm -f $(BENCH_OUT)

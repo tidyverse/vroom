@@ -1,5 +1,5 @@
 library(vroom)
-files <- fs::dir_ls("~/data", glob = "*/trip_fare*csv")
+files <- commandArgs(trailingOnly = TRUE)
 desc <- c("setup", "read", "print", "head", "tail", "sample", "filter", "aggregate")
 
 `vroom (full altrep)_dplyr` <- function(files, desc) {
@@ -37,7 +37,7 @@ data.table <- function(files, desc) {
     {
       library(data.table)
       x <- rbindlist(idcol = "path",
-        lapply(stats::setNames(files, files), fread, sep = "\t", quote = "", strip.white = FALSE, na.strings = NULL)
+        lapply(stats::setNames(files, files), fread, sep = ",", quote = "", strip.white = FALSE, na.strings = NULL)
       )
       print(x)
       a <- head(x)
@@ -54,7 +54,7 @@ readr <- function(files, desc) {
     {
       ({ library(readr); library(dplyr); library(purrr) })
       x <- map_dfr(set_names(files), .id = "path",
-        ~ read_tsv(.x, col_types = c(pickup_datetime = "c"), quote = "", trim_ws = FALSE, na = character())
+        ~ read_csv(.x, col_types = c(pickup_datetime = "c"), quote = "", trim_ws = FALSE, na = character())
       )
       print(x)
       a <- head(x)
@@ -69,10 +69,9 @@ readr <- function(files, desc) {
 read.delim <- function(files, desc) {
   bench::workout(description = desc,
     {
-      NULL
-      {}
+      ({})
       {x <- do.call(rbind.data.frame,
-        c(lapply(stats::setNames(files, files), read.delim, quote = "", na.strings = NULL, stringsAsFactors = FALSE), stringsAsFactors = FALSE, make.row.names = TRUE)
+        c(lapply(stats::setNames(files, files), read.delim, sep = ",", quote = "", na.strings = NULL, stringsAsFactors = FALSE), stringsAsFactors = FALSE, make.row.names = TRUE)
       )
       # need to make the new column out of the munged row names
       x$path <- sub("[.]\\d+$", "", rownames(x))

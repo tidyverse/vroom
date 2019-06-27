@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # don't forget to set your GITHUB_PAT before running this script
-[ -n "$GITHUB_PAT" ] || echo >&2 "Set GITHUB_PAT first!" && exit 2
+[ -n "${GITHUB_PAT}" ] || { echo >&2 "Set GITHUB_PAT first!"; exit 1; }
 
 sudo apt-get update -qq && \
     DEBIAN_FRONTEND=noninteractive sudo apt-get install -y \
@@ -65,6 +65,7 @@ Rscript -e 'install.packages("remotes")' \
 
 # install additional packages for benchmarking
 Rscript -e 'remotes::install_cran(c("data.table", "callr", "here", "sessioninfo"))'
+sudo apt-get install -y pigz zstd
 
 make bench
 
