@@ -70,7 +70,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.0.1.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.0.2.9000</span>
       </span>
     </div>
 
@@ -130,21 +130,50 @@
       <small>Source: <a href='https://github.com/r-lib/vroom/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="vroom-1-0-1" class="section level1">
+    <div id="vroom-1-0-2" class="section level1">
 <h1 class="page-header">
-<a href="#vroom-1-0-1" class="anchor"></a>vroom 1.0.1<small> 2019-05-14 </small>
+<a href="#vroom-1-0-2" class="anchor"></a>vroom 1.0.2<small> Unreleased </small>
 </h1>
 <div id="new-features" class="section level2">
 <h2 class="hasAnchor">
 <a href="#new-features" class="anchor"></a>New Features</h2>
 <ul>
-<li>
-<code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> function added, to (lazily) read lines from a file into a character vector (<a href='https://github.com/r-lib/vroom/issues/90'>#90</a>).</li>
+<li>The column created by <code>id</code> is now stored as an run length encoded Altrep vector, which uses less memory and is much faster for large inputs. (<a href='https://github.com/r-lib/vroom/issues/111'>#111</a>)</li>
 </ul>
 </div>
 <div id="minor-improvements-and-fixes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#minor-improvements-and-fixes" class="anchor"></a>Minor improvements and fixes</h2>
+<ul>
+<li><p><code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> now properly respects the <code>n_max</code> parameter (<a href='https://github.com/r-lib/vroom/issues/142'>#142</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> and <code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> now support reading files which do not end in newlines by using a file connection (<a href='https://github.com/r-lib/vroom/issues/40'>#40</a>).</p></li>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now works with the standard output connection <code><a href="https://www.rdocumentation.org/packages/base/topics/showConnections">stdout()</a></code> (<a href='https://github.com/r-lib/vroom/issues/106'>#106</a>).</p></li>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> no longer crashes non-deterministically when used on Altrep vectors.</p></li>
+<li><p>The integer parser now returns NA values for invalid inputs (<a href='https://github.com/r-lib/vroom/issues/135'>#135</a>)</p></li>
+<li><p>Fix additional UBSAN issue in the mio project reported by CRAN (<a href='https://github.com/r-lib/vroom/issues/97'>#97</a>)</p></li>
+<li><p>Fix indexing into connections with quoted fields (<a href='https://github.com/r-lib/vroom/issues/119'>#119</a>)</p></li>
+<li><p>Move example files for <code><a href="../reference/vroom.html">vroom()</a></code> out of <code>\dontshow{}</code>.</p></li>
+<li><p>Fix integer overflow with very large files (<a href='https://github.com/r-lib/vroom/issues/116'>#116</a>, <a href='https://github.com/r-lib/vroom/issues/119'>#119</a>)</p></li>
+<li><p>Fix missing columns and windows newlines (<a href='https://github.com/r-lib/vroom/issues/114'>#114</a>)</p></li>
+<li><p>Fix encoding of column names (<a href='https://github.com/r-lib/vroom/issues/113'>#113</a>, <a href='https://github.com/r-lib/vroom/issues/115'>#115</a>)</p></li>
+</ul>
+</div>
+</div>
+    <div id="vroom-1-0-1" class="section level1">
+<h1 class="page-header">
+<a href="#vroom-1-0-1" class="anchor"></a>vroom 1.0.1<small> 2019-05-14 </small>
+</h1>
+<div id="new-features-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features-1" class="anchor"></a>New Features</h2>
+<ul>
+<li>
+<code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> function added, to (lazily) read lines from a file into a character vector (<a href='https://github.com/r-lib/vroom/issues/90'>#90</a>).</li>
+</ul>
+</div>
+<div id="minor-improvements-and-fixes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-improvements-and-fixes-1" class="anchor"></a>Minor improvements and fixes</h2>
 <ul>
 <li><p>Fix for a hang on Windows caused by a race condition in the progress bar (<a href='https://github.com/r-lib/vroom/issues/98'>#98</a>)</p></li>
 <li><p>Remove accidental runtime dependency on testthat (<a href='https://github.com/r-lib/vroom/issues/104'>#104</a>)</p></li>
@@ -172,6 +201,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#vroom-1-0-2">1.0.2</a></li>
         <li><a href="#vroom-1-0-1">1.0.1</a></li>
         <li><a href="#vroom-1-0-0">1.0.0</a></li>
       </ul>

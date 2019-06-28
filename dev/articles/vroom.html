@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.0.1.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.0.2.9000</span>
       </span>
     </div>
 
@@ -548,7 +548,7 @@
 <a class="sourceLine" id="cb24-3" data-line-number="3"><span class="kw"><a href="../reference/vroom_write.html">vroom_write</a></span>(mtcars, <span class="st">"mtcars.tsv.bz2"</span>)</a>
 <a class="sourceLine" id="cb24-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb24-5" data-line-number="5"><span class="kw"><a href="../reference/vroom_write.html">vroom_write</a></span>(mtcars, <span class="st">"mtcars.tsv.xz"</span>)</a></code></pre></div>
-<p>It is also possible to use other compressors, such as <a href="https://zlib.net/pigz/">pigz</a> a parallel gzip implementation, <a href="http://lbzip2.org/">lbzip2</a> a parallel bzip2 implementation or <a href="https://github.com/vasi/pixz">pixz</a> a parallel xz implementation by using <code><a href="https://www.rdocumentation.org/packages/base/topics/connections">pipe()</a></code> to create a pipe connection. The parallel versions can be considerably faster for large output files.</p>
+<p>It is also possible to use other compressors, such as <a href="https://zlib.net/pigz/">pigz</a>, a parallel gzip implementation, lbzip2, a parallel bzip2 implementation or <a href="https://github.com/vasi/pixz">pixz</a>, a parallel xz implementation by using <code><a href="https://www.rdocumentation.org/packages/base/topics/connections">pipe()</a></code> to create a pipe connection. The parallel versions can be considerably faster for large output files.</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw"><a href="../reference/vroom_write.html">vroom_write</a></span>(mtcars, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/connections">pipe</a></span>(<span class="st">"pigz &gt; mtcars.tsv.gz"</span>))</a></code></pre></div>
 </div>
 </div>
