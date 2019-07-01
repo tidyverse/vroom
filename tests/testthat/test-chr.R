@@ -3,7 +3,7 @@ context("test-chr.R")
 # Encoding ----------------------------------------------------------------
 
 test_that("locale encoding affects parsing", {
-  x <- c("ao\U00FBt", "\U00E9l\U00E8ve", "\U00E7a va")
+  x <- c("ao\u00FBt", "\u00E9l\u00E8ve", "\u00E7a va")
   #expect_equal(Encoding(x), rep("UTF-8", 3))
 
   y <- iconv(paste0(x, collapse = "\n"), "UTF-8", "latin1")
