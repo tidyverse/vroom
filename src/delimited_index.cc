@@ -80,8 +80,6 @@ delimited_index::delimited_index(
     return;
   }
 
-  std::string delim_;
-
   if (delim == nullptr) {
 #ifndef VROOM_STANDALONE
     delim_ = std::string(1, guess_delim(mmap_, start));

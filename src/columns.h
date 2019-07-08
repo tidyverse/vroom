@@ -250,7 +250,9 @@ inline List create_columns(
   }
 
   res.attr("names") = res_nms;
-  res.attr("spec") = my_collectors.spec();
+  Rcpp::List spec = my_collectors.spec();
+  spec["delim"] = idx->get_delim();
+  res.attr("spec") = spec;
 
   return res;
 }

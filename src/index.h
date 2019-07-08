@@ -80,6 +80,7 @@ public:
   virtual size_t num_rows() const = 0;
 
   virtual string get(size_t row, size_t col) const = 0;
+  virtual std::string get_delim() const = 0;
   virtual ~index() {}
 };
 

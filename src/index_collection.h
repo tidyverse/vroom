@@ -57,6 +57,8 @@ public:
     return out;
   }
 
+  std::string get_delim() const { return indexes_[0]->get_delim(); }
+
 public:
   class full_iterator : public base_iterator {
     size_t i_;

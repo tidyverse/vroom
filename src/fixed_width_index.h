@@ -114,6 +114,11 @@ public:
   size_t num_rows() const { return newlines_.size() - 1; }
   size_t num_columns() const { return col_starts_.size(); }
 
+  std::string get_delim() const {
+    /* TODO: FIXME */
+    return "";
+  }
+
   string get(size_t row, size_t col) const {
     size_t nl_size = 1;
     auto begin = mmap_.data() + (newlines_[row] + nl_size + col_starts_[col]);
