@@ -227,6 +227,12 @@ vroom(vroom_example("mtcars.csv"), col_types = c(hp = "i", cyl = "_"))
 vroom(vroom_example("mtcars.csv"), col_types = c(hp = "i", cyl = "_", gear = "f"))
 ```
 
+You can read all the column with the same type, for example as a character. 
+
+```{r}
+vroom(vroom_example("mtcars.csv"), col_types = list(.default = "c"))
+```
+
 However you can also use the `col_*()` functions in a list.
 
 ```{r}
