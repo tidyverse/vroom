@@ -112,6 +112,15 @@ file <- vroom_example("mtcars.csv.gz")
 vroom(file)
 ```
 
+If you are reading a zip file that contains multiple files, just write a wrapper function as follows: 
+
+```{r}
+read_all_zip <- function(file, ...) {
+  filenames <- unzip(file, list = TRUE)$Name
+  vroom(purrr::map(filenames, ~ unz(file, .x)), ...)
+}
+```
+
 ## Reading remote files
 
 vroom can read files from the internet as well by passing the URL of the file
