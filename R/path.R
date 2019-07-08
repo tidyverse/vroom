@@ -15,7 +15,7 @@ standardise_path <- function(path) {
   as.list(path)
 }
 
-standardise_one_path <- function (path, read = TRUE) {
+standardise_one_path <- function (path, write = TRUE) {
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))
   }
@@ -57,7 +57,7 @@ standardise_one_path <- function (path, read = TRUE) {
     gz = gzfile(path, ""),
     bz2 = bzfile(path, ""),
     xz = xzfile(path, ""),
-    zip = if (read) {
+    zip = if (!write) {
             zipfile(path, "")
           } else {
             stop("Writing zip files is not supported")
