@@ -47,21 +47,22 @@ standardise_one_path <- function (path, write = FALSE) {
     )
   }
 
+  ext <- tolower(tools::file_ext(path))
+
   if (!write) {
     path <- check_path(path)
   } else {
     path <- normalizePath(path, mustWork = FALSE)
+    if (ext == "zip") {
+      stop("Can only read from, not write to, .zip", call. = FALSE)
+    }
   }
 
-  switch(tolower(tools::file_ext(path)),
+  switch(ext,
     gz = gzfile(path, ""),
     bz2 = bzfile(path, ""),
     xz = xzfile(path, ""),
-    zip = if (!write) {
-            zipfile(path, "")
-          } else {
-            stop("Writing zip files is not supported")
-          },
+    zip = zipfile(path, ""),
     if (!has_trailing_newline(path)) {
       file(path)
     } else {
