@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Added benchmarks with _wide_ data for both numeric and character data (#87)
+
 # vroom 1.0.2
 
 ## New Features
