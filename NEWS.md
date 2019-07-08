@@ -1,5 +1,8 @@
 # vroom (development version)
 
+
+* The delimiter used for parsing is now shown in the message output (#95 @R3myG)
+
 # vroom 1.0.2
 
 ## New Features
