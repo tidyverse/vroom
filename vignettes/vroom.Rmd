@@ -114,7 +114,7 @@ vroom(file)
 
 After the `vroom()` function indexes and writes the initial file, the already uncompressed file is going to compressed again but into a temporary file (in a `tempdir()`).
 
-The temporal file created remains until it is no longer needed, e.g. when the dataset is removed and all of the data has been materialiwed or the R session ends. After this the temporal file is automatically cleaned up. 
+The temporary file created remains until it is no longer needed, e.g. when the dataset is removed and all of the data has been materialised, or when the R session ends. After this, the temporary file is automatically cleaned up. 
 
 The temporal file is not going to be saved by default. In case you would like save this temporal file for future uses, see `vroom_write`.
 
