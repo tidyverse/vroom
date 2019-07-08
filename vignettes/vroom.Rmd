@@ -112,6 +112,12 @@ file <- vroom_example("mtcars.csv.gz")
 vroom(file)
 ```
 
+About how it work `vroom()`. After the works of this function (indexing and writes) the already uncompressed file is going to compressed again but into a temporal file (in a `tempdir()`).
+
+The temporal file created remains until it is no longer needed, e.g. when the dataset is removed and all of the data has been materialiwed or the R session ends. After this the temporal file is automatically cleaned up. 
+
+The temporal file is not going to be saved by default. In case you would like save this temporal file for future uses, see `vroom_write`.
+
 ## Reading remote files
 
 vroom can read files from the internet as well by passing the URL of the file
