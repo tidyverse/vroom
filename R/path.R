@@ -57,10 +57,11 @@ standardise_one_path <- function (path, check = TRUE) {
     gz = gzfile(path, ""),
     bz2 = bzfile(path, ""),
     xz = xzfile(path, ""),
-
-    zip = ifelse(check,
-                 zipfile(path, ""),
-                 stop("Writing zip files is not supported")),
+    zip = if(check){
+            zipfile(path, "")
+          } else {
+            stop("Writing zip files is not supported")
+          },
     if (!has_trailing_newline(path)) {
       file(path)
     } else {
