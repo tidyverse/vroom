@@ -32,6 +32,8 @@
 
 * Fix encoding of column names (#113, #115)
 
+* Throw an error message when writing a zip file, which is not supported
+
 # vroom 1.0.1
 
 ## New Features
