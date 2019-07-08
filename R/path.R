@@ -47,7 +47,7 @@ standardise_one_path <- function (path, write = TRUE) {
     )
   }
 
-  if (check) {
+  if (write) {
     path <- check_path(path)
   } else {
     path <- normalizePath(path, mustWork = FALSE)
