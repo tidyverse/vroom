@@ -250,9 +250,11 @@ vroom(
 
 Often the names of columns in the original dataset are not ideal to work with. `vroom()` uses the same .name_repair argument as tibble, so you can use one of the default name repair strategies or provide a custom function A great approach is to use the [`janitor::make_clean_names()`](http://sfirke.github.io/janitor/reference/make_clean_names.html) function as the input.
 
-```{r}
-vroom(vroom_example("mtcars.csv"),
-      .name_repair = ~ janitor::make_clean_names(., case = "all_caps"))
+```{r, eval = FALSE}
+vroom(
+  vroom_example("mtcars.csv"),
+  .name_repair = ~ janitor::make_clean_names(., case = "all_caps")
+)
 ```
 
 
