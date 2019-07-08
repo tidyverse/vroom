@@ -15,7 +15,7 @@ standardise_path <- function(path) {
   as.list(path)
 }
 
-standardise_one_path <- function (path, write = TRUE) {
+standardise_one_path <- function (path, write = FALSE) {
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))
   }
@@ -47,7 +47,7 @@ standardise_one_path <- function (path, write = TRUE) {
     )
   }
 
-  if (write) {
+  if (!write) {
     path <- check_path(path)
   } else {
     path <- normalizePath(path, mustWork = FALSE)
