@@ -49,13 +49,13 @@ standardise_one_path <- function (path, write = FALSE) {
 
   ext <- tolower(tools::file_ext(path))
 
-  if (!write) {
-    path <- check_path(path)
-  } else {
+  if (write) {
     path <- normalizePath(path, mustWork = FALSE)
     if (ext == "zip") {
       stop("Can only read from, not write to, .zip", call. = FALSE)
     }
+  } else {
+    path <- check_path(path)
   }
 
   switch(ext,
