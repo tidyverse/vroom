@@ -1,7 +1,5 @@
 # vroom (development version)
 
-* Add a section to getting started vignette to show to how handle multiple files in a zip (@meta00, #125) 
-
 # vroom 1.0.2
 
 ## New Features
