@@ -32,7 +32,10 @@
 
 * Fix encoding of column names (#113, #115)
 
+* Throw an error message when writing a zip file, which is not supported (@metaOO, #145)
+
 * Default message output from `vroom()` now uses `Rows` and `Cols` (@meta00, #140)
+
 
 # vroom 1.0.1
 

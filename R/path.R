@@ -15,7 +15,7 @@ standardise_path <- function(path) {
   as.list(path)
 }
 
-standardise_one_path <- function (path, check = TRUE) {
+standardise_one_path <- function (path, write = FALSE) {
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))
   }
@@ -47,13 +47,18 @@ standardise_one_path <- function (path, check = TRUE) {
     )
   }
 
-  if (check) {
-    path <- check_path(path)
-  } else {
+  ext <- tolower(tools::file_ext(path))
+
+  if (write) {
     path <- normalizePath(path, mustWork = FALSE)
+    if (ext == "zip") {
+      stop("Can only read from, not write to, .zip", call. = FALSE)
+    }
+  } else {
+    path <- check_path(path)
   }
 
-  switch(tolower(tools::file_ext(path)),
+  switch(ext,
     gz = gzfile(path, ""),
     bz2 = bzfile(path, ""),
     xz = xzfile(path, ""),
