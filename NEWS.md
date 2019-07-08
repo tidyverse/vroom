@@ -34,6 +34,8 @@
 
 * Fix encoding of column names (#113, #115)
 
+* Default message output from `vroom()` now uses `Rows` and `Cols` (@meta00, #140)
+
 # vroom 1.0.1
 
 ## New Features
