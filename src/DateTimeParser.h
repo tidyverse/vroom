@@ -444,7 +444,7 @@ private:
         *pOut = 10 * out1 + out2;
       else {
         *pOut = out1;
-		dateItr_--; // unconsume the last read non-integer char
+        dateItr_--; // unconsume the last read non-integer char
       }
     }
 
