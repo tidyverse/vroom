@@ -131,8 +131,8 @@
 <a class="sourceLine" id="cb2-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co"># Read the file, by default vroom will guess the delimiter automatically.</span></a>
 <a class="sourceLine" id="cb2-7" data-line-number="7"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file)</a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; Observations: 32</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; Variables: 12</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; Rows: 32</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; Cols: 12</span></a>
 <a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; chr [ 1]: model</span></a>
 <a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></a>
 <a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt; </span></a>
@@ -149,8 +149,8 @@
 <a class="sourceLine" id="cb2-23" data-line-number="23"><span class="co"># You can also specify it explicitly, which is (slightly) faster, and safer if</span></a>
 <a class="sourceLine" id="cb2-24" data-line-number="24"><span class="co"># you know how the file is delimited.</span></a>
 <a class="sourceLine" id="cb2-25" data-line-number="25"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">delim =</span> <span class="st">","</span>)</a>
-<a class="sourceLine" id="cb2-26" data-line-number="26"><span class="co">#&gt; Observations: 32</span></a>
-<a class="sourceLine" id="cb2-27" data-line-number="27"><span class="co">#&gt; Variables: 12</span></a>
+<a class="sourceLine" id="cb2-26" data-line-number="26"><span class="co">#&gt; Rows: 32</span></a>
+<a class="sourceLine" id="cb2-27" data-line-number="27"><span class="co">#&gt; Cols: 12</span></a>
 <a class="sourceLine" id="cb2-28" data-line-number="28"><span class="co">#&gt; chr [ 1]: model</span></a>
 <a class="sourceLine" id="cb2-29" data-line-number="29"><span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></a>
 <a class="sourceLine" id="cb2-30" data-line-number="30"><span class="co">#&gt; </span></a>
@@ -179,8 +179,8 @@
 <a class="sourceLine" id="cb4-2" data-line-number="2">files</a>
 <a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt; mtcars_4.csv mtcars_6.csv mtcars_8.csv</span></a>
 <a class="sourceLine" id="cb4-4" data-line-number="4"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(files)</a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; Observations: 32</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; Variables: 12</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; Rows: 32</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; Cols: 12</span></a>
 <a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt; chr [ 1]: model</span></a>
 <a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></a>
 <a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt; </span></a>
@@ -195,8 +195,8 @@
 <a class="sourceLine" id="cb4-18" data-line-number="18"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
 <p>Often the filename or directory where the files are stored contains information, in this case the <code>id</code> parameter can be used to add an extra column to the result with the full path to each file. (in this case named <code>path</code>).</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(files, <span class="dt">id =</span> <span class="st">"path"</span>)</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co">#&gt; Observations: 32</span></a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#&gt; Variables: 13</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co">#&gt; Rows: 32</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#&gt; Cols: 13</span></a>
 <a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#&gt; chr [ 1]: model</span></a>
 <a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></a>
 <a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt; </span></a>
@@ -217,8 +217,8 @@
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">file &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv.gz"</span>)</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file)</a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co">#&gt; Observations: 32</span></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#&gt; Variables: 12</span></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co">#&gt; Rows: 32</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#&gt; Cols: 12</span></a>
 <a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; chr [ 1]: model</span></a>
 <a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></a>
 <a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; </span></a>
@@ -238,8 +238,8 @@
 <p>vroom can read files from the internet as well by passing the URL of the file to vroom.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">file &lt;-<span class="st"> "https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv"</span></a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file)</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; Observations: 32</span></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt; Variables: 12</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; Rows: 32</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt; Cols: 12</span></a>
 <a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt; chr [ 1]: model</span></a>
 <a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></a>
 <a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; </span></a>
@@ -255,8 +255,8 @@
 <p>It can even read gzipped files from the internet (although currently not the other compressed formats).</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">file &lt;-<span class="st"> "https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv.gz"</span></a>
 <a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file)</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt; Observations: 32</span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#&gt; Variables: 12</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt; Rows: 32</span></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#&gt; Cols: 12</span></a>
 <a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt; chr [ 1]: model</span></a>
 <a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></a>
 <a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">#&gt; </span></a>
@@ -280,8 +280,8 @@
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">file &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv.gz"</span>)</a>
 <a class="sourceLine" id="cb9-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb9-3" data-line-number="3"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_select =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(model, cyl, gear))</a>
-<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; Observations: 32</span></a>
-<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#&gt; Variables: 3</span></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; Rows: 32</span></a>
+<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#&gt; Cols: 3</span></a>
 <a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt; chr [1]: model</span></a>
 <a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; dbl [2]: cyl, gear</span></a>
 <a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt; </span></a>
@@ -299,8 +299,8 @@
 </li>
 </ul>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_select =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">11</span>))</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="co">#&gt; Observations: 32</span></a>
-<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; Variables: 3</span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="co">#&gt; Rows: 32</span></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; Cols: 3</span></a>
 <a class="sourceLine" id="cb10-4" data-line-number="4"><span class="co">#&gt; chr [1]: model</span></a>
 <a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt; dbl [2]: cyl, gear</span></a>
 <a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt; </span></a>
@@ -317,8 +317,8 @@
 <li>You can also use the selection helpers</li>
 </ul>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_select =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/tidyselect/topics/select_helpers">starts_with</a></span>(<span class="st">"d"</span>))</a>
-<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="co">#&gt; Observations: 32</span></a>
-<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt; Variables: 2</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="co">#&gt; Rows: 32</span></a>
+<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt; Cols: 2</span></a>
 <a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt; dbl [2]: disp, drat</span></a>
 <a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; Call `spec()` for a copy-pastable column specification</span></a>
@@ -334,8 +334,8 @@
 <li>Or rename columns</li>
 </ul>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_select =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">car =</span> model, <span class="kw"><a href="https://www.rdocumentation.org/packages/tidyselect/topics/select_helpers">everything</a></span>()))</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="co">#&gt; Observations: 32</span></a>
-<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="co">#&gt; Variables: 12</span></a>
+<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="co">#&gt; Rows: 32</span></a>
+<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="co">#&gt; Cols: 12</span></a>
 <a class="sourceLine" id="cb12-4" data-line-number="4"><span class="co">#&gt; chr [ 1]: model</span></a>
 <a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></a>
 <a class="sourceLine" id="cb12-6" data-line-number="6"><span class="co">#&gt; </span></a>
@@ -361,8 +361,8 @@
 <code><a href="../reference/vroom_fwf.html">fwf_empty()</a></code> - Guess based on the position of empty columns.</li>
 </ul>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span>(fwf_sample, <span class="kw"><a href="../reference/vroom_fwf.html">fwf_empty</a></span>(fwf_sample, <span class="dt">col_names =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"first"</span>, <span class="st">"last"</span>, <span class="st">"state"</span>, <span class="st">"ssn"</span>)))</a>
-<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="co">#&gt; Observations: 3</span></a>
-<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="co">#&gt; Variables: 4</span></a>
+<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="co">#&gt; Rows: 3</span></a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="co">#&gt; Cols: 4</span></a>
 <a class="sourceLine" id="cb14-4" data-line-number="4"><span class="co">#&gt; chr [4]: first, last, state, ssn</span></a>
 <a class="sourceLine" id="cb14-5" data-line-number="5"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb14-6" data-line-number="6"><span class="co">#&gt; Call `spec()` for a copy-pastable column specification</span></a>
@@ -378,8 +378,8 @@
 <code><a href="../reference/vroom_fwf.html">fwf_widths()</a></code> - Use user provided set of field widths.</li>
 </ul>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span>(fwf_sample, <span class="kw"><a href="../reference/vroom_fwf.html">fwf_widths</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">20</span>, <span class="dv">10</span>, <span class="dv">12</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"name"</span>, <span class="st">"state"</span>, <span class="st">"ssn"</span>)))</a>
-<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="co">#&gt; Observations: 3</span></a>
-<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="co">#&gt; Variables: 3</span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="co">#&gt; Rows: 3</span></a>
+<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="co">#&gt; Cols: 3</span></a>
 <a class="sourceLine" id="cb15-4" data-line-number="4"><span class="co">#&gt; chr [3]: name, state, ssn</span></a>
 <a class="sourceLine" id="cb15-5" data-line-number="5"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb15-6" data-line-number="6"><span class="co">#&gt; Call `spec()` for a copy-pastable column specification</span></a>
@@ -395,8 +395,8 @@
 <code><a href="../reference/vroom_fwf.html">fwf_positions()</a></code> - Use user provided sets of start and end positions.</li>
 </ul>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span>(fwf_sample, <span class="kw"><a href="../reference/vroom_fwf.html">fwf_positions</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="dv">30</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">20</span>, <span class="dv">42</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"name"</span>, <span class="st">"ssn"</span>)))</a>
-<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="co">#&gt; Observations: 3</span></a>
-<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="co">#&gt; Variables: 2</span></a>
+<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="co">#&gt; Rows: 3</span></a>
+<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="co">#&gt; Cols: 2</span></a>
 <a class="sourceLine" id="cb16-4" data-line-number="4"><span class="co">#&gt; chr [2]: name, ssn</span></a>
 <a class="sourceLine" id="cb16-5" data-line-number="5"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb16-6" data-line-number="6"><span class="co">#&gt; Call `spec()` for a copy-pastable column specification</span></a>
@@ -412,8 +412,8 @@
 <code><a href="../reference/vroom_fwf.html">fwf_cols()</a></code> - Use user provided named widths.</li>
 </ul>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span>(fwf_sample, <span class="kw"><a href="../reference/vroom_fwf.html">fwf_cols</a></span>(<span class="dt">name =</span> <span class="dv">20</span>, <span class="dt">state =</span> <span class="dv">10</span>, <span class="dt">ssn =</span> <span class="dv">12</span>))</a>
-<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="co">#&gt; Observations: 3</span></a>
-<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="co">#&gt; Variables: 3</span></a>
+<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="co">#&gt; Rows: 3</span></a>
+<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="co">#&gt; Cols: 3</span></a>
 <a class="sourceLine" id="cb17-4" data-line-number="4"><span class="co">#&gt; chr [3]: name, state, ssn</span></a>
 <a class="sourceLine" id="cb17-5" data-line-number="5"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb17-6" data-line-number="6"><span class="co">#&gt; Call `spec()` for a copy-pastable column specification</span></a>
@@ -429,8 +429,8 @@
 <code><a href="../reference/vroom_fwf.html">fwf_cols()</a></code> - Use user provided named pairs of positions.</li>
 </ul>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span>(fwf_sample, <span class="kw"><a href="../reference/vroom_fwf.html">fwf_cols</a></span>(<span class="dt">name =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="dv">20</span>), <span class="dt">ssn =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">30</span>, <span class="dv">42</span>)))</a>
-<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="co">#&gt; Observations: 3</span></a>
-<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="co">#&gt; Variables: 2</span></a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="co">#&gt; Rows: 3</span></a>
+<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="co">#&gt; Cols: 2</span></a>
 <a class="sourceLine" id="cb18-4" data-line-number="4"><span class="co">#&gt; chr [2]: name, ssn</span></a>
 <a class="sourceLine" id="cb18-5" data-line-number="5"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb18-6" data-line-number="6"><span class="co">#&gt; Call `spec()` for a copy-pastable column specification</span></a>
