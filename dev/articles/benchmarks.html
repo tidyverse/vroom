@@ -871,13 +871,372 @@ NA
 </tr>
 </tbody>
 </table>
+<div id="wide-all-numeric-data" class="section level3">
+<h3 class="hasAnchor">
+<a href="#wide-all-numeric-data" class="anchor"></a>Wide all numeric data</h3>
+<p>The code used to run the wide all numeric benchmarks is in <a href="https://github.com/r-lib/vroom/blob/master/inst/bench/all_numeric_wide-benchmark.R">bench/all_numeric-benchmark.R</a>.</p>
+<img src="benchmarks_files/figure-html/unnamed-chunk-4-1.png" width="960"><table class="table">
+<thead><tr>
+<th style="text-align:right;">
+package
+</th>
+<th style="text-align:right;">
+manip
+</th>
+<th style="text-align:right;">
+altrep
+</th>
+<th style="text-align:right;">
+read
+</th>
+<th style="text-align:right;">
+print
+</th>
+<th style="text-align:right;">
+head
+</th>
+<th style="text-align:right;">
+tail
+</th>
+<th style="text-align:right;">
+sample
+</th>
+<th style="text-align:right;">
+filter
+</th>
+<th style="text-align:right;">
+aggregate
+</th>
+<th style="text-align:right;">
+total
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+data.table
+</td>
+<td style="text-align:right;">
+data.table
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+31ms
+</td>
+<td style="text-align:right;">
+4.3s
+</td>
+<td style="text-align:right;">
+10ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+3ms
+</td>
+<td style="text-align:right;">
+4.3s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+base
+</td>
+<td style="text-align:right;">
+normal
+</td>
+<td style="text-align:right;">
+1.1s
+</td>
+<td style="text-align:right;">
+256ms
+</td>
+<td style="text-align:right;">
+4ms
+</td>
+<td style="text-align:right;">
+6ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1.3s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+normal
+</td>
+<td style="text-align:right;">
+460ms
+</td>
+<td style="text-align:right;">
+265ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+3ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+21ms
+</td>
+<td style="text-align:right;">
+752ms
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+base
+</td>
+<td style="text-align:right;">
+full
+</td>
+<td style="text-align:right;">
+439ms
+</td>
+<td style="text-align:right;">
+267ms
+</td>
+<td style="text-align:right;">
+6ms
+</td>
+<td style="text-align:right;">
+11ms
+</td>
+<td style="text-align:right;">
+7ms
+</td>
+<td style="text-align:right;">
+6ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+734ms
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+base
+</td>
+<td style="text-align:right;">
+none
+</td>
+<td style="text-align:right;">
+457ms
+</td>
+<td style="text-align:right;">
+206ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+6ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+675ms
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+full
+</td>
+<td style="text-align:right;">
+316ms
+</td>
+<td style="text-align:right;">
+205ms
+</td>
+<td style="text-align:right;">
+5ms
+</td>
+<td style="text-align:right;">
+5ms
+</td>
+<td style="text-align:right;">
+94ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+23ms
+</td>
+<td style="text-align:right;">
+647ms
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+none
+</td>
+<td style="text-align:right;">
+368ms
+</td>
+<td style="text-align:right;">
+190ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+20ms
+</td>
+<td style="text-align:right;">
+584ms
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+read.delim
+</td>
+<td style="text-align:right;">
+base
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+212ms
+</td>
+<td style="text-align:right;">
+229ms
+</td>
+<td style="text-align:right;">
+6ms
+</td>
+<td style="text-align:right;">
+18ms
+</td>
+<td style="text-align:right;">
+18ms
+</td>
+<td style="text-align:right;">
+7ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+488ms
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+readr
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+218ms
+</td>
+<td style="text-align:right;">
+243ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+3ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+15ms
+</td>
+<td style="text-align:right;">
+482ms
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div id="all-character-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#all-character-data" class="anchor"></a>All character data</h2>
 <p>The code used to run the all character benchmarks is in <a href="https://github.com/r-lib/vroom/blob/master/inst/bench/all_character-benchmark.R">bench/all_character-benchmark.R</a>.</p>
 <p>All character data is a best case scenario for vroom when using Altrep, as it takes full advantage of the lazy reading.</p>
-<img src="benchmarks_files/figure-html/unnamed-chunk-4-1.png" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-5-1.png" width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 package
@@ -1231,6 +1590,365 @@ full
 </tr>
 </tbody>
 </table>
+<div id="wide-all-character-data" class="section level3">
+<h3 class="hasAnchor">
+<a href="#wide-all-character-data" class="anchor"></a>Wide all character data</h3>
+<p>The code used to run the wide all character benchmarks is in <a href="https://github.com/r-lib/vroom/blob/master/inst/bench/all_character_wide-benchmark.R">bench/all_character-benchmark.R</a>.</p>
+<img src="benchmarks_files/figure-html/unnamed-chunk-6-1.png" width="960"><table class="table">
+<thead><tr>
+<th style="text-align:right;">
+package
+</th>
+<th style="text-align:right;">
+manip
+</th>
+<th style="text-align:right;">
+altrep
+</th>
+<th style="text-align:right;">
+read
+</th>
+<th style="text-align:right;">
+print
+</th>
+<th style="text-align:right;">
+head
+</th>
+<th style="text-align:right;">
+tail
+</th>
+<th style="text-align:right;">
+sample
+</th>
+<th style="text-align:right;">
+filter
+</th>
+<th style="text-align:right;">
+aggregate
+</th>
+<th style="text-align:right;">
+total
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+data.table
+</td>
+<td style="text-align:right;">
+data.table
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+44ms
+</td>
+<td style="text-align:right;">
+18.8s
+</td>
+<td style="text-align:right;">
+16ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+4ms
+</td>
+<td style="text-align:right;">
+10ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+18.9s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+base
+</td>
+<td style="text-align:right;">
+normal
+</td>
+<td style="text-align:right;">
+310ms
+</td>
+<td style="text-align:right;">
+422ms
+</td>
+<td style="text-align:right;">
+15ms
+</td>
+<td style="text-align:right;">
+11ms
+</td>
+<td style="text-align:right;">
+11ms
+</td>
+<td style="text-align:right;">
+33ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+800ms
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+read.delim
+</td>
+<td style="text-align:right;">
+base
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+151ms
+</td>
+<td style="text-align:right;">
+416ms
+</td>
+<td style="text-align:right;">
+25ms
+</td>
+<td style="text-align:right;">
+10ms
+</td>
+<td style="text-align:right;">
+54ms
+</td>
+<td style="text-align:right;">
+90ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+746ms
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+normal
+</td>
+<td style="text-align:right;">
+233ms
+</td>
+<td style="text-align:right;">
+249ms
+</td>
+<td style="text-align:right;">
+6ms
+</td>
+<td style="text-align:right;">
+5ms
+</td>
+<td style="text-align:right;">
+21ms
+</td>
+<td style="text-align:right;">
+37ms
+</td>
+<td style="text-align:right;">
+10ms
+</td>
+<td style="text-align:right;">
+558ms
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+base
+</td>
+<td style="text-align:right;">
+none
+</td>
+<td style="text-align:right;">
+341ms
+</td>
+<td style="text-align:right;">
+201ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+4ms
+</td>
+<td style="text-align:right;">
+4ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+554ms
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+readr
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+220ms
+</td>
+<td style="text-align:right;">
+288ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+5ms
+</td>
+<td style="text-align:right;">
+4ms
+</td>
+<td style="text-align:right;">
+7ms
+</td>
+<td style="text-align:right;">
+525ms
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+base
+</td>
+<td style="text-align:right;">
+full
+</td>
+<td style="text-align:right;">
+296ms
+</td>
+<td style="text-align:right;">
+197ms
+</td>
+<td style="text-align:right;">
+5ms
+</td>
+<td style="text-align:right;">
+4ms
+</td>
+<td style="text-align:right;">
+5ms
+</td>
+<td style="text-align:right;">
+11ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+515ms
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+full
+</td>
+<td style="text-align:right;">
+266ms
+</td>
+<td style="text-align:right;">
+184ms
+</td>
+<td style="text-align:right;">
+5ms
+</td>
+<td style="text-align:right;">
+4ms
+</td>
+<td style="text-align:right;">
+16ms
+</td>
+<td style="text-align:right;">
+25ms
+</td>
+<td style="text-align:right;">
+6ms
+</td>
+<td style="text-align:right;">
+503ms
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+none
+</td>
+<td style="text-align:right;">
+276ms
+</td>
+<td style="text-align:right;">
+201ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+4ms
+</td>
+<td style="text-align:right;">
+3ms
+</td>
+<td style="text-align:right;">
+6ms
+</td>
+<td style="text-align:right;">
+492ms
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 <div id="reading-multiple-delimited-files" class="section level1">
@@ -1238,7 +1956,7 @@ full
 <a href="#reading-multiple-delimited-files" class="anchor"></a>Reading multiple delimited files</h1>
 <p>The code used to run the taxi multiple file benchmarks is at <a href="https://github.com/r-lib/vroom/blob/master/inst/bench/taxi_multiple-benchmark.R">bench/taxi_multiple-benchmark.R</a>.</p>
 <p>The benchmark reads all 12 files in the taxi trip fare data, totaling 173,179,759 rows and 12 columns for a total file size of 18.4G.</p>
-<img src="benchmarks_files/figure-html/unnamed-chunk-6-1.png" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-8-1.png" width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 package
@@ -1466,7 +2184,7 @@ full
 <h2 class="hasAnchor">
 <a href="#census-data-benchmarks" class="anchor"></a>Census data benchmarks</h2>
 <p>The code used to run the census data benchmarks is at <a href="https://github.com/r-lib/vroom/blob/master/inst/bench/fwf-benchmark.R">bench/fwf-benchmark.R</a>.</p>
-<img src="benchmarks_files/figure-html/unnamed-chunk-8-1.png" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-10-1.png" width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 package
@@ -1695,7 +2413,7 @@ full
 </li>
 </ul>
 <p><em>Note the current CRAN version of data.table (1.12.2) does not support writing directly to gzip compressed files, though the developement version (1.12.3) does </em></p>
-<img src="benchmarks_files/figure-html/unnamed-chunk-9-1.png" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-11-1.png" width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 method
