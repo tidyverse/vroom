@@ -443,8 +443,8 @@ show_spec_summary <- function(x, width = getOption("width"), locale = default_lo
       entries = glue::glue("{format(types)} [{format(type_counts)}]: {columns}"),
 
       '
-      {bold("Observations:")} {fmt_num(NROW(x))}
-      {bold("Variables:")} {fmt_num(NCOL(x))}
+      {bold("Rows:")} {fmt_num(NROW(x))}
+      {bold("Cols:")} {fmt_num(NCOL(x))}
       {entries*}
 
       {silver("Call `spec()` for a copy-pastable column specification")}
