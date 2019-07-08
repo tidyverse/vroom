@@ -437,6 +437,8 @@ show_spec_summary <- function(x, width = getOption("width"), locale = default_lo
     prettyNum(x, big.mark = locale$grouping_mark, decimal.mark = locale$decimal_mark)
   }
 
+  delim <- spec$delim
+
   message(
     glue::glue(
       .transformer = collapse_transformer(sep = "\n"),
@@ -445,6 +447,7 @@ show_spec_summary <- function(x, width = getOption("width"), locale = default_lo
       '
       {bold("Observations:")} {fmt_num(NROW(x))}
       {bold("Variables:")} {fmt_num(NCOL(x))}
+      {bold("Delimiter:")} "{delim}"
       {entries*}
 
       {silver("Call `spec()` for a copy-pastable column specification")}
