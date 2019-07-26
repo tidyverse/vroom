@@ -67,6 +67,7 @@ jobs:
           testResultsFormat: 'JUnit'
           testResultsFiles: 'check/*.Rcheck/tests/test-*.xml'
       - script: Rscript -e 'cov <- covr::package_coverage()' -e 'covr::to_cobertura(cov, "coverage.xml")'
+        displayName: 'Run code coverage'
       - task: PublishCodeCoverageResults@1
         inputs:
           codeCoverageTool: 'Cobertura'
