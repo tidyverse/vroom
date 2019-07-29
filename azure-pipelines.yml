@@ -93,6 +93,7 @@ jobs:
            mkdir $(R_LIBS_USER)
            R -e "install.packages(c('remotes', 'rcmdcheck'))"
            Rscript -e "remotes::install_deps(dependencies = TRUE)"
+           Rscript -e "remotes::install_github('r-lib/pkgbuild')"
         displayName: 'Install package dependencies'
       - script: |
            set PATH=%PATH%;C:\Progra~1\R\R-3.6.1\bin
