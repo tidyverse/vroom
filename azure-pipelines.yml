@@ -83,12 +83,12 @@ jobs:
     steps:
       - script: |
       - pwsh: |
-           choco install r --no-progress
+           choco install r.project -y --no-progress
            Invoke-WebRequest "https://github.com/hannesmuehleisen/choco-rtools/raw/master/rtools.3.5.0.nupkg" -OutFile "rtools.3.5.0.nupkg"
-           choco install rtools -s rtools.3.5.0.nupkg -f -y
+           choco install rtools -s rtools.3.5.0.nupkg -f -y --no-progress
         displayName: 'Installing R'
       - script: |
-           set PATH=%PATH%;C:\Progra~1\R\R-3.6.1\bin
+        set PATH=C:\Progra~1\R\R-3.6.1\bin;C:\Rtools\bin;%PATH%
            echo options(repos = "$(CRAN)") > %HOMEDRIVE%%HOMEPATH%/Documents/.Rprofile
            mkdir $(R_LIBS_USER)
            R -e "install.packages(c('remotes', 'rcmdcheck'))"
