@@ -88,7 +88,7 @@ jobs:
            choco install rtools -s rtools.3.5.0.nupkg -f -y --no-progress
         displayName: 'Installing R'
       - script: |
-           set PATH=C:\Progra~1\R\R-3.6.1\bin;C:\Rtools\bin;%PATH%
+           set PATH=C:\Rtools\bin;%PATH%;C:\Progra~1\R\R-3.6.1\bin
            echo options(repos = "$(CRAN)") > %HOMEDRIVE%%HOMEPATH%/Documents/.Rprofile
            mkdir $(R_LIBS_USER)
            R -e "install.packages(c('remotes', 'rcmdcheck'))"
