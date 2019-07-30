@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom_fwf()` now handles files with dos newlines properly.
+
 * Added benchmarks with _wide_ data for both numeric and character data (#87, @R3myG)
 
 # vroom 1.0.2

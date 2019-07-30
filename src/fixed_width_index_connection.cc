@@ -61,6 +61,10 @@ fixed_width_index_connection::fixed_width_index_connection(
   // Parse header
   size_t start = find_first_line(buf[i], skip, comment);
 
+  // Check for windows newlines
+  size_t first_nl = find_next_newline(buf[i], start, false);
+  windows_newlines_ = first_nl > 0 && buf[i][first_nl - 1] == '\r';
+
   std::unique_ptr<RProgress::RProgress> pb = nullptr;
   if (progress) {
     pb = std::unique_ptr<RProgress::RProgress>(

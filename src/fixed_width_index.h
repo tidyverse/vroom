@@ -39,6 +39,7 @@ protected:
   std::vector<int> col_ends_;
   mio::mmap_source mmap_;
   bool trim_ws_;
+  bool windows_newlines_;
 
 public:
   fixed_width_index(
@@ -71,6 +72,10 @@ public:
     size_t file_size = mmap_.size();
 
     size_t start = find_first_line(mmap_, skip, comment);
+
+    // Check for windows newlines
+    size_t first_nl = find_next_newline(mmap_, start, false);
+    windows_newlines_ = first_nl > 0 && mmap_[first_nl - 1] == '\r';
 
     std::unique_ptr<RProgress::RProgress> pb = nullptr;
     if (progress) {
@@ -115,13 +120,12 @@ public:
   size_t num_columns() const { return col_starts_.size(); }
 
   string get(size_t row, size_t col) const {
-    size_t nl_size = 1;
-    auto begin = mmap_.data() + (newlines_[row] + nl_size + col_starts_[col]);
+    auto begin = mmap_.data() + (newlines_[row] + 1 + col_starts_[col]);
     const char* end;
     if (col_ends_[col] == NA_INTEGER) {
-      end = mmap_.data() + newlines_[row + 1];
+      end = mmap_.data() + newlines_[row + 1] - windows_newlines_;
     } else {
-      end = mmap_.data() + (newlines_[row] + nl_size + col_ends_[col]);
+      end = mmap_.data() + (newlines_[row] + 1 + col_ends_[col]);
     }
     if (trim_ws_) {
       trim_whitespace(begin, end);
@@ -174,6 +178,7 @@ public:
       size_t update_size = -1) {
 
     size_t pos = find_next_newline(source, start, false);
+
     size_t lines_read = 0;
     auto last_tick = start;
 
