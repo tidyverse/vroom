@@ -1,101 +1,12 @@
 # R package
 # Test an R package
 
-variables:
-  CI: true
+resources:
+  repositories:
+    - repository: azuretest
+      type: github
+      name: jimhester/azuretest
+      endpoint: jimhester/azuretest
 
 jobs:
-  - job: 'Linux'
-    pool:
-      vmImage: 'Ubuntu-16.04'
-    strategy:
-      matrix:
-        R-3.2:
-          containerImage: rstudio/r-base:3.2-xenial
-        R-3.3:
-          containerImage: rstudio/r-base:3.3-xenial
-        R-3.4:
-          containerImage: rstudio/r-base:3.4-xenial
-        R-3.5:
-          containerImage: rstudio/r-base:3.5-xenial
-        R-3.6:
-          containerImage: rstudio/r-base:3.6-xenial
-    variables:
-      R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
-    container: $[ variables['containerImage'] ]
-    steps:
-      - script: |
-           echo 'options(repos = "https://cloud.r-project.org")' > ~/.Rprofile
-           mkdir -p ${R_LIBS_USER}
-           sudo apt-get update && sudo apt-get install -y libxml2-dev libssl-dev
-        displayName: 'Installing R'
-      - task: CacheBeta@0
-        inputs:
-          key: |
-            DESCRIPTION
-            $(containerImage)
-          path: $(R_LIBS_USER)
-        displayName: 'Caching Packages'
-      - script: |
-           R -e "install.packages(c('remotes', 'rcmdcheck'))"
-           Rscript -e "remotes::install_deps(dependencies = TRUE)"
-        displayName: 'Install package dependencies'
-      - script: Rscript -e 'rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")'
-        displayName: 'Check package'
-  - job: 'macOS'
-    pool:
-      vmImage: 'macOS-10.13'
-    variables:
-      R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
-      CRAN: 'https://cloud.r-project.org'
-    steps:
-      - script: |
-           curl -fLo /tmp/R.pkg "$(CRAN)/bin/macosx/R-latest.pkg"
-           sudo installer -pkg "/tmp/R.pkg" -target /
-           rm /tmp/R.pkg
-        displayName: 'Installing R'
-      - script: |
-           echo 'options(repos = "$(CRAN)")' > ~/.Rprofile
-           mkdir -p ${R_LIBS_USER}
-           R -e "install.packages(c('remotes', 'rcmdcheck'))"
-           Rscript -e "remotes::install_deps(dependencies = TRUE)" -e "remotes::install_github('r-lib/covr@azure-cobertura')"
-        displayName: 'Install package dependencies'
-      - script: Rscript -e 'rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "warning", check_dir = "check")'
-        displayName: 'Check package'
-      - task: PublishTestResults@1
-        inputs:
-          testResultsFormat: 'JUnit'
-          testResultsFiles: 'check/*.Rcheck/tests/test-*.xml'
-      - script: Rscript -e 'cov <- covr::package_coverage()' -e 'covr::to_cobertura(cov, "coverage.xml")'
-        displayName: 'Run code coverage'
-      - task: PublishCodeCoverageResults@1
-        inputs:
-          codeCoverageTool: 'Cobertura'
-          summaryFileLocation: 'coverage.xml'
-
-  - job: 'Windows'
-    pool:
-      vmImage: 'vs2017-win2016'
-    variables:
-      R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
-      CRAN: 'https://cloud.r-project.org'
-      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-    steps:
-      - script: |
-      - pwsh: |
-           choco install r.project -y --no-progress
-           Invoke-WebRequest "https://github.com/hannesmuehleisen/choco-rtools/raw/master/rtools.3.5.0.nupkg" -OutFile "rtools.3.5.0.nupkg"
-           choco install rtools -s rtools.3.5.0.nupkg -f -y --no-progress
-        displayName: 'Installing R'
-      - script: |
-           set PATH=C:\Rtools\bin;%PATH%;C:\Progra~1\R\R-3.6.1\bin
-           echo options(repos = "$(CRAN)") > %HOMEDRIVE%%HOMEPATH%/Documents/.Rprofile
-           mkdir $(R_LIBS_USER)
-           R -e "install.packages(c('remotes', 'rcmdcheck'))"
-           Rscript -e "remotes::install_deps(dependencies = TRUE)"
-           Rscript -e "remotes::install_github('r-lib/pkgbuild')"
-        displayName: 'Install package dependencies'
-      - script: |
-           set PATH=%PATH%;C:\Progra~1\R\R-3.6.1\bin
-           Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning')"
-        displayName: 'Check package'
+  - template: azure-tidyverse.yml@azuretest
