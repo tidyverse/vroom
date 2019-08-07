@@ -3,10 +3,10 @@
 
 resources:
   repositories:
-    - repository: azuretest
+    - repository: r-azure-pipelines
       type: github
-      name: jimhester/azuretest
+      name: r-lib/r-azure-pipelines
       endpoint: r-lib
 
 jobs:
-  - template: azure-tidyverse.yml@azuretest
+  - template: azure-tidyverse.yml@r-azure-pipelines
