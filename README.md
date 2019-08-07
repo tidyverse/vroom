@@ -5,6 +5,10 @@
 
 <!-- badges: start -->
 
+[![Azure build
+status](https://dev.azure.com/r-lib/vroom/_apis/build/status/r-lib.vroom?branchName=master)](https://dev.azure.com/r-lib/vroom/_build/latest?definitionId=2&branchName=master)
+[![Azure test
+coverage](https://img.shields.io/azure-devops/coverage/r-lib/vroom/2)](https://dev.azure.com/r-lib/vroom/_build/latest?definitionId=2&branchName=master)
 [![Travis build
 status](https://travis-ci.org/r-lib/vroom.svg?branch=master)](https://travis-ci.org/r-lib/vroom)
 [![AppVeyor build
