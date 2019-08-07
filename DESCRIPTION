@@ -64,7 +64,8 @@ Suggests:
     scales,
     spelling,
     testthat,
-    tidyr
+    tidyr,
+    xml2
 LinkingTo: 
     progress (>= 1.2.1),
     Rcpp
@@ -77,5 +78,3 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 SystemRequirements: C++11
-Remotes:
-    r-lib/covr
