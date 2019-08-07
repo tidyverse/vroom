@@ -6,7 +6,7 @@ resources:
     - repository: azuretest
       type: github
       name: jimhester/azuretest
-      endpoint: jimhester/azuretest
+      endpoint: r-lib
 
 jobs:
   - template: azure-tidyverse.yml@azuretest
