@@ -1,5 +1,9 @@
 # vroom (development version)
 
+## Minor improvements and fixes
+
+* `col_date` now parses single digit month and day (@edzer, #123)
+
 # vroom 1.0.2
 
 ## New Features
