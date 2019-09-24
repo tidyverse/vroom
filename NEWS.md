@@ -1,8 +1,10 @@
 # vroom (development version)
 
-## Minor improvements and fixes
+* `col_date` now parses single digit month and day (@edzer, #123, #170)
 
-* `col_date` now parses single digit month and day (@edzer, #123)
+* `vroom_fwf()` now handles files with dos newlines properly.
+
+* Added benchmarks with _wide_ data for both numeric and character data (#87, @R3myG)
 
 # vroom 1.0.2
 
@@ -35,6 +37,11 @@
 * Fix missing columns and windows newlines (#114)
 
 * Fix encoding of column names (#113, #115)
+
+* Throw an error message when writing a zip file, which is not supported (@metaOO, #145)
+
+* Default message output from `vroom()` now uses `Rows` and `Cols` (@meta00, #140)
+
 
 # vroom 1.0.1
 

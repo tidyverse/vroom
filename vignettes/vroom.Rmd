@@ -112,6 +112,15 @@ file <- vroom_example("mtcars.csv.gz")
 vroom(file)
 ```
 
+If you are reading a zip file that contains multiple files, just write a wrapper function as follows: 
+
+```{r}
+read_all_zip <- function(file, ...) {
+  filenames <- unzip(file, list = TRUE)$Name
+  vroom(purrr::map(filenames, ~ unz(file, .x)), ...)
+}
+```
+
 ## Reading remote files
 
 vroom can read files from the internet as well by passing the URL of the file
@@ -245,6 +254,18 @@ vroom(
   col_types = list(gear = col_factor(levels = c(gear = c("3", "4", "5"))))
 )
 ```
+
+## Name repair
+
+Often the names of columns in the original dataset are not ideal to work with. `vroom()` uses the same .name_repair argument as tibble, so you can use one of the default name repair strategies or provide a custom function A great approach is to use the [`janitor::make_clean_names()`](http://sfirke.github.io/janitor/reference/make_clean_names.html) function as the input.
+
+```{r, eval = FALSE}
+vroom(
+  vroom_example("mtcars.csv"),
+  .name_repair = ~ janitor::make_clean_names(., case = "all_caps")
+)
+```
+
 
 ## Writing delimited files
 

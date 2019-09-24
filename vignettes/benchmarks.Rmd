@@ -220,6 +220,19 @@ plot_benchmark(all_num, "Time to analyze all numeric data")
 make_table(all_num)
 ```
 
+### Wide all numeric data
+
+The code used to run the wide all numeric benchmarks is in
+[bench/all_numeric-benchmark.R](https://github.com/r-lib/vroom/blob/master/inst/bench/all_numeric_wide-benchmark.R).
+
+```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
+all_num_wide <- read_benchmark(system.file("bench", "all_numeric_wide-times.tsv", package = "vroom"), desc)
+
+plot_benchmark(all_num_wide, "Time to analyze wide all numeric data")
+
+make_table(all_num_wide)
+```
+
 ## All character data
 
 The code used to run the all character benchmarks is in
@@ -233,6 +246,19 @@ all_chr <- read_benchmark(system.file("bench", "all_character-times.tsv", packag
 plot_benchmark(all_chr, "Time to analyze all character data")
 
 make_table(all_chr)
+```
+
+### Wide all character data 
+
+The code used to run the wide all character benchmarks is in
+[bench/all_character-benchmark.R](https://github.com/r-lib/vroom/blob/master/inst/bench/all_character_wide-benchmark.R).
+
+```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
+all_chr_wide <- read_benchmark(system.file("bench", "all_character_wide-times.tsv", package = "vroom"), desc)
+
+plot_benchmark(all_chr_wide, "Time to analyze wide all character data")
+
+make_table(all_chr_wide)
 ```
 
 # Reading multiple delimited files
