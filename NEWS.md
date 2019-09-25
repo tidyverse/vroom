@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `col_date` now parses single digit month and day (@edzer, #123, #170)
+
 * `vroom_fwf()` now handles files with dos newlines properly.
 
 * Added benchmarks with _wide_ data for both numeric and character data (#87, @R3myG)
