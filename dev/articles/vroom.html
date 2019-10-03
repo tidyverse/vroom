@@ -510,62 +510,71 @@
 <a class="sourceLine" id="cb20-27" data-line-number="27"><span class="co">#&gt; 2 Mazda RX4 Wag  21     160   110  3.9   2.88  17.0     0     1 4         4</span></a>
 <a class="sourceLine" id="cb20-28" data-line-number="28"><span class="co">#&gt; 3 Datsun 710     22.8   108    93  3.85  2.32  18.6     1     1 4         1</span></a>
 <a class="sourceLine" id="cb20-29" data-line-number="29"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
+<p>You can read all the column with the same type, for example as a character.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>), <span class="dt">col_types =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">.default =</span> <span class="st">"c"</span>))</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="co">#&gt;   model   mpg   cyl   disp  hp    drat  wt    qsec  vs    am    gear  carb </span></a>
+<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;</span></a>
+<a class="sourceLine" id="cb21-5" data-line-number="5"><span class="co">#&gt; 1 Mazda … 21    6     160   110   3.9   2.62  16.46 0     1     4     4    </span></a>
+<a class="sourceLine" id="cb21-6" data-line-number="6"><span class="co">#&gt; 2 Mazda … 21    6     160   110   3.9   2.875 17.02 0     1     4     4    </span></a>
+<a class="sourceLine" id="cb21-7" data-line-number="7"><span class="co">#&gt; 3 Datsun… 22.8  4     108   93    3.85  2.32  18.61 1     1     4     1    </span></a>
+<a class="sourceLine" id="cb21-8" data-line-number="8"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
 <p>However you can also use the <code>col_*()</code> functions in a list.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(</a>
-<a class="sourceLine" id="cb21-2" data-line-number="2">  <span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>),</a>
-<a class="sourceLine" id="cb21-3" data-line-number="3">  <span class="dt">col_types =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">hp =</span> <span class="kw"><a href="../reference/cols.html">col_integer</a></span>(), <span class="dt">cyl =</span> <span class="kw"><a href="../reference/cols.html">col_skip</a></span>(), <span class="dt">gear =</span> <span class="kw"><a href="../reference/cols.html">col_factor</a></span>())</a>
-<a class="sourceLine" id="cb21-4" data-line-number="4">)</a>
-<a class="sourceLine" id="cb21-5" data-line-number="5"><span class="co">#&gt; # A tibble: 32 x 11</span></a>
-<a class="sourceLine" id="cb21-6" data-line-number="6"><span class="co">#&gt;   model           mpg  disp    hp  drat    wt  qsec    vs    am gear   carb</span></a>
-<a class="sourceLine" id="cb21-7" data-line-number="7"><span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb21-8" data-line-number="8"><span class="co">#&gt; 1 Mazda RX4      21     160   110  3.9   2.62  16.5     0     1 4         4</span></a>
-<a class="sourceLine" id="cb21-9" data-line-number="9"><span class="co">#&gt; 2 Mazda RX4 Wag  21     160   110  3.9   2.88  17.0     0     1 4         4</span></a>
-<a class="sourceLine" id="cb21-10" data-line-number="10"><span class="co">#&gt; 3 Datsun 710     22.8   108    93  3.85  2.32  18.6     1     1 4         1</span></a>
-<a class="sourceLine" id="cb21-11" data-line-number="11"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
-<p>This is most useful when a column type needs additional information, such as for categorical data when you know all of the levels of a factor.</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(</a>
 <a class="sourceLine" id="cb22-2" data-line-number="2">  <span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>),</a>
-<a class="sourceLine" id="cb22-3" data-line-number="3">  <span class="dt">col_types =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">gear =</span> <span class="kw"><a href="../reference/cols.html">col_factor</a></span>(<span class="dt">levels =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dt">gear =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span>))))</a>
+<a class="sourceLine" id="cb22-3" data-line-number="3">  <span class="dt">col_types =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">hp =</span> <span class="kw"><a href="../reference/cols.html">col_integer</a></span>(), <span class="dt">cyl =</span> <span class="kw"><a href="../reference/cols.html">col_skip</a></span>(), <span class="dt">gear =</span> <span class="kw"><a href="../reference/cols.html">col_factor</a></span>())</a>
 <a class="sourceLine" id="cb22-4" data-line-number="4">)</a>
-<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
-<a class="sourceLine" id="cb22-6" data-line-number="6"><span class="co">#&gt;   model     mpg   cyl  disp    hp  drat    wt  qsec    vs    am gear   carb</span></a>
-<a class="sourceLine" id="cb22-7" data-line-number="7"><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb22-8" data-line-number="8"><span class="co">#&gt; 1 Mazda …  21       6   160   110  3.9   2.62  16.5     0     1 4         4</span></a>
-<a class="sourceLine" id="cb22-9" data-line-number="9"><span class="co">#&gt; 2 Mazda …  21       6   160   110  3.9   2.88  17.0     0     1 4         4</span></a>
-<a class="sourceLine" id="cb22-10" data-line-number="10"><span class="co">#&gt; 3 Datsun…  22.8     4   108    93  3.85  2.32  18.6     1     1 4         1</span></a>
+<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="co">#&gt; # A tibble: 32 x 11</span></a>
+<a class="sourceLine" id="cb22-6" data-line-number="6"><span class="co">#&gt;   model           mpg  disp    hp  drat    wt  qsec    vs    am gear   carb</span></a>
+<a class="sourceLine" id="cb22-7" data-line-number="7"><span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb22-8" data-line-number="8"><span class="co">#&gt; 1 Mazda RX4      21     160   110  3.9   2.62  16.5     0     1 4         4</span></a>
+<a class="sourceLine" id="cb22-9" data-line-number="9"><span class="co">#&gt; 2 Mazda RX4 Wag  21     160   110  3.9   2.88  17.0     0     1 4         4</span></a>
+<a class="sourceLine" id="cb22-10" data-line-number="10"><span class="co">#&gt; 3 Datsun 710     22.8   108    93  3.85  2.32  18.6     1     1 4         1</span></a>
 <a class="sourceLine" id="cb22-11" data-line-number="11"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
+<p>This is most useful when a column type needs additional information, such as for categorical data when you know all of the levels of a factor.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(</a>
+<a class="sourceLine" id="cb23-2" data-line-number="2">  <span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>),</a>
+<a class="sourceLine" id="cb23-3" data-line-number="3">  <span class="dt">col_types =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">gear =</span> <span class="kw"><a href="../reference/cols.html">col_factor</a></span>(<span class="dt">levels =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dt">gear =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span>))))</a>
+<a class="sourceLine" id="cb23-4" data-line-number="4">)</a>
+<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
+<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="co">#&gt;   model     mpg   cyl  disp    hp  drat    wt  qsec    vs    am gear   carb</span></a>
+<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; 1 Mazda …  21       6   160   110  3.9   2.62  16.5     0     1 4         4</span></a>
+<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; 2 Mazda …  21       6   160   110  3.9   2.88  17.0     0     1 4         4</span></a>
+<a class="sourceLine" id="cb23-10" data-line-number="10"><span class="co">#&gt; 3 Datsun…  22.8     4   108    93  3.85  2.32  18.6     1     1 4         1</span></a>
+<a class="sourceLine" id="cb23-11" data-line-number="11"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
 </div>
 <div id="name-repair" class="section level2">
 <h2 class="hasAnchor">
 <a href="#name-repair" class="anchor"></a>Name repair</h2>
 <p>Often the names of columns in the original dataset are not ideal to work with. <code><a href="../reference/vroom.html">vroom()</a></code> uses the same .name_repair argument as tibble, so you can use one of the default name repair strategies or provide a custom function A great approach is to use the <a href="http://sfirke.github.io/janitor/reference/make_clean_names.html"><code>janitor::make_clean_names()</code></a> function as the input.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(</a>
-<a class="sourceLine" id="cb23-2" data-line-number="2">  <span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>),</a>
-<a class="sourceLine" id="cb23-3" data-line-number="3">  <span class="dt">.name_repair =</span> <span class="op">~</span><span class="st"> </span>janitor<span class="op">::</span><span class="kw">make_clean_names</span>(., <span class="dt">case =</span> <span class="st">"all_caps"</span>)</a>
-<a class="sourceLine" id="cb23-4" data-line-number="4">)</a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(</a>
+<a class="sourceLine" id="cb24-2" data-line-number="2">  <span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>),</a>
+<a class="sourceLine" id="cb24-3" data-line-number="3">  <span class="dt">.name_repair =</span> <span class="op">~</span><span class="st"> </span>janitor<span class="op">::</span><span class="kw">make_clean_names</span>(., <span class="dt">case =</span> <span class="st">"all_caps"</span>)</a>
+<a class="sourceLine" id="cb24-4" data-line-number="4">)</a></code></pre></div>
 </div>
 <div id="writing-delimited-files" class="section level2">
 <h2 class="hasAnchor">
 <a href="#writing-delimited-files" class="anchor"></a>Writing delimited files</h2>
 <p>Use <code><a href="../reference/vroom_write.html">vroom_write()</a></code> to write delimited files, the default delimiter is tab.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw"><a href="../reference/vroom_write.html">vroom_write</a></span>(mtcars, <span class="st">"mtcars.tsv"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw"><a href="../reference/vroom_write.html">vroom_write</a></span>(mtcars, <span class="st">"mtcars.tsv"</span>)</a></code></pre></div>
 <div id="writing-csv-delimited-files" class="section level3">
 <h3 class="hasAnchor">
 <a href="#writing-csv-delimited-files" class="anchor"></a>Writing CSV delimited files</h3>
 <p>Use the <code>delim = ','</code> to write CSV files</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw"><a href="../reference/vroom_write.html">vroom_write</a></span>(mtcars, <span class="st">"mtcars.csv"</span>, <span class="dt">delim =</span> <span class="st">","</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw"><a href="../reference/vroom_write.html">vroom_write</a></span>(mtcars, <span class="st">"mtcars.csv"</span>, <span class="dt">delim =</span> <span class="st">","</span>)</a></code></pre></div>
 </div>
 <div id="writing-compressed-files" class="section level3">
 <h3 class="hasAnchor">
 <a href="#writing-compressed-files" class="anchor"></a>Writing compressed files</h3>
 <p>For gzip, bzip2 and xz compression they will be automatically compressed if the filename ends in <code>gz</code>, <code>bz2</code> or <code>xz</code>.</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw"><a href="../reference/vroom_write.html">vroom_write</a></span>(mtcars, <span class="st">"mtcars.tsv.gz"</span>)</a>
-<a class="sourceLine" id="cb26-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb26-3" data-line-number="3"><span class="kw"><a href="../reference/vroom_write.html">vroom_write</a></span>(mtcars, <span class="st">"mtcars.tsv.bz2"</span>)</a>
-<a class="sourceLine" id="cb26-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb26-5" data-line-number="5"><span class="kw"><a href="../reference/vroom_write.html">vroom_write</a></span>(mtcars, <span class="st">"mtcars.tsv.xz"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw"><a href="../reference/vroom_write.html">vroom_write</a></span>(mtcars, <span class="st">"mtcars.tsv.gz"</span>)</a>
+<a class="sourceLine" id="cb27-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb27-3" data-line-number="3"><span class="kw"><a href="../reference/vroom_write.html">vroom_write</a></span>(mtcars, <span class="st">"mtcars.tsv.bz2"</span>)</a>
+<a class="sourceLine" id="cb27-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb27-5" data-line-number="5"><span class="kw"><a href="../reference/vroom_write.html">vroom_write</a></span>(mtcars, <span class="st">"mtcars.tsv.xz"</span>)</a></code></pre></div>
 <p>It is also possible to use other compressors, such as <a href="https://zlib.net/pigz/">pigz</a>, a parallel gzip implementation, lbzip2, a parallel bzip2 implementation or <a href="https://github.com/vasi/pixz">pixz</a>, a parallel xz implementation by using <code><a href="https://rdrr.io/r/base/connections.html">pipe()</a></code> to create a pipe connection. The parallel versions can be considerably faster for large output files.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw"><a href="../reference/vroom_write.html">vroom_write</a></span>(mtcars, <span class="kw"><a href="https://rdrr.io/r/base/connections.html">pipe</a></span>(<span class="st">"pigz &gt; mtcars.tsv.gz"</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw"><a href="../reference/vroom_write.html">vroom_write</a></span>(mtcars, <span class="kw"><a href="https://rdrr.io/r/base/connections.html">pipe</a></span>(<span class="st">"pigz &gt; mtcars.tsv.gz"</span>))</a></code></pre></div>
 </div>
 </div>
 <div id="further-reading" class="section level2">
