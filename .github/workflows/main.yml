@@ -24,7 +24,7 @@ jobs:
       - name: Check package
         run: |
           Rscript -e "install.packages('rcmdcheck')"
-          Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual')"
+          Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning')"
   test-linux:
     env:
       CRAN: 'https://demo.rstudiopm.com/all/__linux__/xenial/latest'
@@ -45,7 +45,7 @@ jobs:
       - name: Check package
         run: |
           Rscript -e "install.packages('rcmdcheck')"
-          Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual')"
+          Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning')"
   test-windows:
     runs-on: windows-latest
     steps:
@@ -61,4 +61,4 @@ jobs:
       - name: Check package
         run: |
           Rscript -e "install.packages('rcmdcheck')"
-          Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual')"
+          Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning')"
