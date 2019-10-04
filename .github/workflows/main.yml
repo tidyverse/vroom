@@ -56,9 +56,9 @@ jobs:
           r-version: 3.6.1
       - name: Install dependencies
         run: |
-          Rscript -e 'install.packages("remotes")'
-          Rscript -e 'remotes::install_deps(dependencies = TRUE)'
+          Rscript -e "install.packages('remotes')"
+          Rscript -e "remotes::install_deps(dependencies = TRUE)"
       - name: Check package
         run: |
-          Rscript -e 'install.packages("rcmdcheck")'
-          Rscript -e 'rcmdcheck::rcmdcheck()'
+          Rscript -e "install.packages('rcmdcheck')"
+          Rscript -e "rcmdcheck::rcmdcheck()"
