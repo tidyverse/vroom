@@ -12,6 +12,7 @@ jobs:
       matrix:
         r: ['3.5.3', '3.6.1']
     steps:
+      - uses: actions/checkout@v1
       - name: Setup R
         uses: jimhester/setup-r@master
         with:
@@ -32,6 +33,7 @@ jobs:
       matrix:
         r: ['3.6.1']
     steps:
+      - uses: actions/checkout@v1
       - name: Setup R
         uses: jimhester/setup-r@master
         with:
@@ -47,6 +49,7 @@ jobs:
   test-windows:
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v1
       - name: Setup R
         uses: jimhester/setup-r@master
         with:
