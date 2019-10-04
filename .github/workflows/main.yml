@@ -10,7 +10,7 @@ jobs:
     runs-on: macOS-latest
     strategy:
       matrix:
-        r: ['3.5.3', '3.6.1']
+        r: ['3.2', '3.3', '3.4', '3.5', '3.6']
     steps:
       - uses: actions/checkout@v1
       - name: Setup R
@@ -29,15 +29,12 @@ jobs:
     env:
       CRAN: 'https://demo.rstudiopm.com/all/__linux__/xenial/latest'
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        r: ['3.6.1']
     steps:
       - uses: actions/checkout@v1
       - name: Setup R
         uses: jimhester/setup-r@master
         with:
-          r-version: ${{ matrix.r }}
+          r-version: 3.6
       - name: Install dependencies
         run: |
           Rscript -e "install.packages('remotes')"
@@ -53,7 +50,7 @@ jobs:
       - name: Setup R
         uses: jimhester/setup-r@master
         with:
-          r-version: 3.6.1
+          r-version: 3.6
       - name: Install dependencies
         run: |
           Rscript -e "install.packages('remotes')"
