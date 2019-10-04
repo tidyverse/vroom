@@ -10,7 +10,7 @@ jobs:
     runs-on: macOS-latest
     strategy:
       matrix:
-        r: ['3.2', '3.3', '3.4', '3.5', '3.6']
+        r: ['3.2', '3.6']
     steps:
       - uses: actions/checkout@v1
       - name: Setup R
