@@ -19,12 +19,12 @@ jobs:
           r-version: ${{ matrix.r }}
       - name: Install dependencies
         run: |
-          Rscript -e 'install.packages("remotes")'
-          Rscript -e 'remotes::install_deps(dependencies = TRUE)'
+          Rscript -e "install.packages('remotes')"
+          Rscript -e "remotes::install_deps(dependencies = TRUE)"
       - name: Check package
         run: |
-          Rscript -e 'install.packages("rcmdcheck")'
-          Rscript -e 'rcmdcheck::rcmdcheck()'
+          Rscript -e "install.packages('rcmdcheck')"
+          Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual')"
   test-linux:
     env:
       CRAN: 'https://demo.rstudiopm.com/all/__linux__/xenial/latest'
@@ -40,12 +40,12 @@ jobs:
           r-version: ${{ matrix.r }}
       - name: Install dependencies
         run: |
-          Rscript -e 'install.packages("remotes")'
-          Rscript -e 'remotes::install_deps(dependencies = TRUE)'
+          Rscript -e "install.packages('remotes')"
+          Rscript -e "remotes::install_deps(dependencies = TRUE)"
       - name: Check package
         run: |
-          Rscript -e 'install.packages("rcmdcheck")'
-          Rscript -e 'rcmdcheck::rcmdcheck()'
+          Rscript -e "install.packages('rcmdcheck')"
+          Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual')"
   test-windows:
     runs-on: windows-latest
     steps:
@@ -61,4 +61,4 @@ jobs:
       - name: Check package
         run: |
           Rscript -e "install.packages('rcmdcheck')"
-          Rscript -e "rcmdcheck::rcmdcheck()"
+          Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual')"
