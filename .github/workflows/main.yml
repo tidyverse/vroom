@@ -17,11 +17,11 @@ jobs:
         with:
           r-version: ${{ matrix.r }}
       - name: Install dependencies
-      - run: |
+        run: |
           Rscript -e 'install.packages("remotes")'
           Rscript -e 'remotes::install_deps(dependencies = TRUE)'
       - name: Check package
-      - run: |
+        run: |
           Rscript -e 'install.packages("rcmdcheck")'
           Rscript -e 'rcmdcheck::rcmdcheck()'
   test-linux:
@@ -37,11 +37,11 @@ jobs:
         with:
           r-version: ${{ matrix.r }}
       - name: Install dependencies
-      - run: |
+        run: |
           Rscript -e 'install.packages("remotes")'
           Rscript -e 'remotes::install_deps(dependencies = TRUE)'
       - name: Check package
-      - run: |
+        run: |
           Rscript -e 'install.packages("rcmdcheck")'
           Rscript -e 'rcmdcheck::rcmdcheck()'
   test-windows:
@@ -52,10 +52,10 @@ jobs:
         with:
           r-version: 3.6.1
       - name: Install dependencies
-      - run: |
+        run: |
           Rscript -e 'install.packages("remotes")'
           Rscript -e 'remotes::install_deps(dependencies = TRUE)'
       - name: Check package
-      - run: |
+        run: |
           Rscript -e 'install.packages("rcmdcheck")'
           Rscript -e 'rcmdcheck::rcmdcheck()'
