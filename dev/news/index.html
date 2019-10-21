@@ -142,6 +142,7 @@
 <a href="#vroom-development-version" class="anchor"></a>vroom (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now outputs its messages on <code><a href="https://rdrr.io/r/base/showConnections.html">stdout()</a></code> rather than <code><a href="https://rdrr.io/r/base/showConnections.html">stderr()</a></code>, which avoids the text being red in RStudio and in the Windows GUI.</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer overflows when reading files with more than 2B entries (<a href='https://github.com/wlattner'>@wlattner</a>, <a href='https://github.com/r-lib/vroom/issues/183'>#183</a>).</p></li>
 <li><p><code>col_date</code> now parses single digit month and day (<a href='https://github.com/edzer'>@edzer</a>, <a href='https://github.com/r-lib/vroom/issues/123'>#123</a>, <a href='https://github.com/r-lib/vroom/issues/170'>#170</a>)</p></li>
 <li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> now handles files with dos newlines properly.</p></li>
