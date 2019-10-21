@@ -1,5 +1,8 @@
 # vroom (development version)
 
+* `vroom()` now outputs its messages on `stdout()` rather than `stderr()`,
+  which avoids the text being red in RStudio and in the Windows GUI.
+
 * `vroom()` no longer overflows when reading files with more than 2B entries (@wlattner, #183).
 
 * `col_date` now parses single digit month and day (@edzer, #123, #170)

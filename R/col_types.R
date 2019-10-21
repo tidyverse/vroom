@@ -437,7 +437,8 @@ show_spec_summary <- function(x, width = getOption("width"), locale = default_lo
     prettyNum(x, big.mark = locale$grouping_mark, decimal.mark = locale$decimal_mark)
   }
 
-  message(
+  # The red text worries people, so we write this message to stdout instead
+  inform_on_stdout(
     glue::glue(
       .transformer = collapse_transformer(sep = "\n"),
       entries = glue::glue("{format(types)} [{format(type_counts)}]: {columns}"),
@@ -454,6 +455,19 @@ show_spec_summary <- function(x, width = getOption("width"), locale = default_lo
   )
 
   invisible(x)
+}
+
+inform_on_stdout <- function(message, ..., .file = stdout(), .subclass = NULL) {
+  message <- paste0(message, collapse = "\n")
+  message <- paste0(message, "\n")
+  cnd <- rlang::message_cnd(.subclass, ..., message = message)
+  withRestarts(
+    expr = {
+      signalCondition(cnd)
+      cat(conditionMessage(cnd), file = .file, sep = "")
+    },
+    muffleMessage = function() { NULL }
+  )
 }
 
 color_type <- function(type) {
