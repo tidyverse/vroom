@@ -233,11 +233,17 @@
 <a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; 2 Mazda …  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></a>
 <a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; 3 Datsun…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></a>
 <a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt; # … with 29 more rows</span></a></code></pre></div>
-<p>If you are reading a zip file that contains multiple files, just write a wrapper function as follows:</p>
+<p><code><a href="../reference/vroom.html">vroom()</a></code> decompresses, indexes and writes the decompressed file to the temp directory in a single stream.</p>
+<p>The temporary file is used to lazily look up the values and will be automatically cleaned up when all values in the object have been fully read, the object is removed, or the R session ends.</p>
+<div id="reading-single-files-from-multiple-multi-file-zip-archives" class="section level3">
+<h3 class="hasAnchor">
+<a href="#reading-single-files-from-multiple-multi-file-zip-archives" class="anchor"></a>Reading single files from multiple multi-file zip archives</h3>
+<p>If you are reading a zip file that contains multiple files, you can use a wrapper function as follows:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">read_all_zip &lt;-<span class="st"> </span><span class="cf">function</span>(file, ...) {</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2">  filenames &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/unzip.html">unzip</a></span>(file, <span class="dt">list =</span> <span class="ot">TRUE</span>)<span class="op">$</span>Name</a>
 <a class="sourceLine" id="cb7-3" data-line-number="3">  <span class="kw"><a href="../reference/vroom.html">vroom</a></span>(purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(filenames, <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/connections.html">unz</a></span>(file, .x)), ...)</a>
 <a class="sourceLine" id="cb7-4" data-line-number="4">}</a></code></pre></div>
+</div>
 </div>
 <div id="reading-remote-files" class="section level2">
 <h2 class="hasAnchor">
