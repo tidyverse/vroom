@@ -214,7 +214,7 @@ public:
         year_ += (year_ < 69) ? 2000 : 1900;
         break;
       case 'm': // month
-        if (!consumeInteger1(2, &mon_, false))
+        if (!consumeInteger1length1_or_2(2, &mon_, false))
           return false;
         break;
       case 'b': // abbreviated month name
@@ -226,7 +226,7 @@ public:
           return false;
         break;
       case 'd': // day
-        if (!consumeInteger1(2, &day_, false))
+        if (!consumeInteger1length1_or_2(2, &day_, false))
           return false;
         break;
       case 'a': // abbreviated day of week
@@ -429,6 +429,24 @@ private:
   inline bool consumeInteger1(int n, int* pOut, bool exact = true) {
     if (!consumeInteger(n, pOut, exact))
       return false;
+
+    (*pOut)--;
+    return true;
+  }
+
+  // Integer indexed from 1 (i.e. month and date) which can take 1 or 2 positions
+  inline bool consumeInteger1length1_or_2(int n, int* pOut, bool exact = true) {
+    int out1, out2;
+    if (!consumeInteger(1, &out1, true))
+      return false;
+    else {
+      if (consumeInteger(1, &out2, true))
+        *pOut = 10 * out1 + out2;
+      else {
+        *pOut = out1;
+        dateItr_--; // unconsume the last read non-integer char
+      }
+    }
 
     (*pOut)--;
     return true;

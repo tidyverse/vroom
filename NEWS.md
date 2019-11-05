@@ -1,5 +1,16 @@
 # vroom (development version)
 
+* `vroom()` now outputs its messages on `stdout()` rather than `stderr()`,
+  which avoids the text being red in RStudio and in the Windows GUI.
+
+* `vroom()` no longer overflows when reading files with more than 2B entries (@wlattner, #183).
+
+* `col_date` now parses single digit month and day (@edzer, #123, #170)
+
+* `vroom_fwf()` now handles files with dos newlines properly.
+
+* Added benchmarks with _wide_ data for both numeric and character data (#87, @R3myG)
+
 # vroom 1.0.2
 
 ## New Features
@@ -31,6 +42,11 @@
 * Fix missing columns and windows newlines (#114)
 
 * Fix encoding of column names (#113, #115)
+
+* Throw an error message when writing a zip file, which is not supported (@metaOO, #145)
+
+* Default message output from `vroom()` now uses `Rows` and `Cols` (@meta00, #140)
+
 
 # vroom 1.0.1
 

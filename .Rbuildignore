@@ -25,3 +25,5 @@
 ^cran-comments\.md$
 ^CRAN-RELEASE$
 ^presentation$
+^tools$
+^.github$

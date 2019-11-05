@@ -64,7 +64,8 @@ Suggests:
     scales,
     spelling,
     testthat,
-    tidyr
+    tidyr,
+    xml2
 LinkingTo: 
     progress (>= 1.2.1),
     Rcpp

@@ -1,6 +1,6 @@
 context("vroom_fwf")
 
-test_that("trailing spaces ommitted", {
+test_that("trailing spaces omitted", {
   spec <- fwf_empty(test_path("fwf-trailing.txt"))
   expect_equal(spec$begin, c(0, 4))
   expect_equal(spec$end, c(3, NA))
@@ -9,11 +9,21 @@ test_that("trailing spaces ommitted", {
   expect_equal(df$X1, df$X2)
 })
 
+test_that("dos newlines handles", {
+  spec <- fwf_empty(test_path("fwf-trailing.txt"))
+  x <- vroom_fwf(test_path("fwf-trailing.txt"), spec)
+  y <- vroom_fwf(test_path("fwf-trailing-crlf.txt"), spec)
+  expect_equal(x, y)
+
+  z <- vroom_fwf(file(test_path("fwf-trailing-crlf.txt")), spec)
+  expect_equal(x, z)
+})
+
 test_that("connections and normal files produce identical output", {
   spec <- fwf_empty(test_path("fwf-trailing.txt"))
 
-  y <- vroom_fwf(test_path("fwf-trailing.txt"), spec)
-  x <- vroom_fwf(file(test_path("fwf-trailing.txt")), spec)
+  y <- vroom_fwf(test_path("fwf-trailing-crlf.txt"), spec)
+  x <- vroom_fwf(file(test_path("fwf-trailing-crlf.txt")), spec)
 
   expect_equal(x, y)
 })

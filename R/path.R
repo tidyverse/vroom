@@ -15,7 +15,7 @@ standardise_path <- function(path) {
   as.list(path)
 }
 
-standardise_one_path <- function (path, check = TRUE) {
+standardise_one_path <- function (path, write = FALSE) {
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))
   }
@@ -28,7 +28,7 @@ standardise_one_path <- function (path, check = TRUE) {
     if (requireNamespace("curl", quietly = TRUE)) {
       con <- curl::curl(path)
     } else {
-      message("`curl` package not installed, falling back to using `url()`")
+      inform_on_stdout("`curl` package not installed, falling back to using `url()`")
       con <- url(path)
     }
     ext <- tolower(tools::file_ext(path))
@@ -47,13 +47,18 @@ standardise_one_path <- function (path, check = TRUE) {
     )
   }
 
-  if (check) {
-    path <- check_path(path)
-  } else {
+  ext <- tolower(tools::file_ext(path))
+
+  if (write) {
     path <- normalizePath(path, mustWork = FALSE)
+    if (ext == "zip") {
+      stop("Can only read from, not write to, .zip", call. = FALSE)
+    }
+  } else {
+    path <- check_path(path)
   }
 
-  switch(tolower(tools::file_ext(path)),
+  switch(ext,
     gz = gzfile(path, ""),
     bz2 = bzfile(path, ""),
     xz = xzfile(path, ""),
@@ -91,7 +96,7 @@ zipfile <- function(path, open = "r") {
   file <- files$Name[[1]]
 
   if (nrow(files) > 1) {
-    message("Multiple files in zip: reading '", file, "'")
+    inform_on_stdout("Multiple files in zip: reading '", file, "'")
   }
 
   unz(path, file, open = open)
