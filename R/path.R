@@ -16,6 +16,7 @@ standardise_path <- function(path) {
 }
 
 standardise_one_path <- function (path, write = FALSE) {
+
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))
   }

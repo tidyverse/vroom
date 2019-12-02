@@ -31,13 +31,12 @@ int main(int argc, char** argv) {
   CLI11_PARSE(app, argc, argv);
 
   if (!fixed_width_file) {
-    auto idx = vroom::delimited_index(filename.c_str(), delim.c_str(), '"', false, escape_double, escape_backslash, false, skip, -1, comment.c_str()[0], num_threads, false, false);
-    std::cout << idx.num_rows() * idx.num_columns() << '\n';
+    auto idx = std::make_shared<vroom::delimited_index>(filename.c_str(), delim.c_str(), '"', false, escape_double, escape_backslash, false, skip, -1, comment.c_str()[0], num_threads, false, false);
+    std::cout << idx->num_rows() * idx->num_columns() << '\n';
   } else {
-    auto idx = vroom::fixed_width_index(filename.c_str(), fixed_width_starts, fixed_width_ends, false, 0, comment.c_str()[0], -1, false);
-    std::cout << idx.num_rows() * idx.num_columns() << '\n';
+    auto idx = std::make_shared<vroom::fixed_width_index>(filename.c_str(), fixed_width_starts, fixed_width_ends, false, 0, comment.c_str()[0], -1, false);
+    std::cout << idx->num_rows() * idx->num_columns() << '\n';
   }
-
 
   return 0;
 }

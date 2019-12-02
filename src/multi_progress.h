@@ -15,13 +15,15 @@ public:
       std::string format = "[:bar] :percent",
       double total = 100,
       int width = 80 - 2,
-      char complete_char = '=',
-      char incomplete_char = '-',
+      const char* complete_char = "=",
+      const char* middle_char = "=",
+      const char* incomplete_char = "-",
       bool clear = true,
       double show_after = 0.2) {}
 
   void update(double) {}
   void tick(double) {}
+  void set_reverse(bool) {}
 };
 
 } // namespace RProgress
