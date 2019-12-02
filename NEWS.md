@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` no longer leaks file handles (#177, #180)
+
 * `vroom()` now outputs its messages on `stdout()` rather than `stderr()`,
   which avoids the text being red in RStudio and in the Windows GUI.
 

@@ -86,6 +86,9 @@ bool has_trailing_newline(std::string filename) {
 
   fseek(f, -1, SEEK_END);
   char c = fgetc(f);
+
+  fclose(f);
+
   return c == '\n';
 }
 
