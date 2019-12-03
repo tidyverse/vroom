@@ -104,7 +104,7 @@ test_that("%p detects AM/PM", {
       "%m/%d/%Y %I:%M %p", expected = rep(NA, 2))
 })
 
-test_that("%b and %B are case insensitve", {
+test_that("%b and %B are case insensitive", {
   skip("not working")
   ref <- as.Date("2001-01-01")
 
