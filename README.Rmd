@@ -157,6 +157,11 @@ vroom::vroom(files)
 fs::file_delete(files)
 ```
 
+## Learning more
+
+- [vroom: Because Life is too short to read slow](https://www.youtube.com/watch?v=RA9AjqZXxMU&t=10s) - Presentation at UseR!2019 ([slides](https://speakerdeck.com/jimhester/vroom))
+- [vroom: Read and write rectangular data quickly](https://www.youtube.com/watch?v=ZP_y5eaAc60) - a video tour of the vroom features.
+
 ## Benchmarks
 
 The speed quoted above is from a real dataset with 14,776,615 rows and 11 columns,
