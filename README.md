@@ -5,14 +5,8 @@
 
 <!-- badges: start -->
 
-[![Azure build
-status](https://dev.azure.com/r-lib/vroom/_apis/build/status/r-lib.vroom?branchName=master)](https://dev.azure.com/r-lib/vroom/_build/latest?definitionId=2&branchName=master)
-[![Azure test
-coverage](https://img.shields.io/azure-devops/coverage/r-lib/vroom/2)](https://dev.azure.com/r-lib/vroom/_build/latest?definitionId=2&branchName=master)
-[![Travis build
-status](https://travis-ci.org/r-lib/vroom.svg?branch=master)](https://travis-ci.org/r-lib/vroom)
-[![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/r-lib/vroom?branch=master&svg=true)](https://ci.appveyor.com/project/r-lib/vroom)
+[![R build
+status](https://github.com/r-lib/vroom/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/vroom)
 [![Codecov test
 coverage](https://codecov.io/gh/r-lib/vroom/branch/master/graph/badge.svg)](https://codecov.io/gh/r-lib/vroom?branch=master)
 [![CRAN
@@ -154,10 +148,10 @@ files
 #> flights_OO.tsv flights_UA.tsv flights_US.tsv flights_VX.tsv flights_WN.tsv 
 #> flights_YV.tsv
 vroom::vroom(files)
-#> Observations: 336,776
-#> Variables: 19
+#> Rows: 336,776
+#> Cols: 19
 #> chr  [ 4]: carrier, tailnum, origin, dest
-#> dbl  [14]: year, month, day, dep_time, sched_dep_time, dep_delay, arr_time, sched_arr...
+#> dbl  [14]: year, month, day, dep_time, sched_dep_time, dep_delay, arr_time, sched_arr_...
 #> dttm [ 1]: time_hour
 #> 
 #> Call `spec()` for a copy-pastable column specification
