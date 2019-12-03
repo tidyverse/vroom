@@ -164,6 +164,9 @@ The first table trip_fare_1.csv is 1.55G in size.
 
 The code used to run the taxi benchmarks is in
 [bench/taxi-benchmark.R](https://github.com/r-lib/vroom/blob/master/inst/bench/taxi-benchmark.R).
+The benchmarks were run on a Amazon EC2
+[m5.4xlarge](https://aws.amazon.com/ec2/instance-types/m5/) instance with 16
+vCPUs and an [EBS](https://aws.amazon.com/ebs/) volume type.
 
 The benchmarks labeled `vroom_base` uses `vroom` with base functions for
 manipulation. `vroom_dplyr` uses `vroom` to read the file and dplyr functions to
