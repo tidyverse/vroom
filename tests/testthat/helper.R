@@ -46,14 +46,14 @@ test_parse_number <- function(x, expected, ...) {
   )
 }
 
-test_parse_datetime <- function(x, format, expected, ...) {
+test_parse_datetime <- function(x, expected, format = "", ...) {
   test_vroom(paste0(paste0(x, collapse = "\n"), "\n"), delim = "\n",
     col_names = FALSE, col_types = cols(X1 = col_datetime(format = format)), ...,
     equals = tibble::tibble(X1 = expected)
   )
 }
 
-test_parse_date <- function(x, format, expected, ...) {
+test_parse_date <- function(x, expected, format = "", ...) {
   test_vroom(paste0(paste0(x, collapse = "\n"), "\n"), delim = "\n",
     col_names = FALSE, col_types = cols(X1 = col_date(format = format)), ...,
     equals = tibble::tibble(X1 = expected)
