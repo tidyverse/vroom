@@ -23,7 +23,7 @@ vroom_write(
 
 \item{path}{Path or connection to write to.}
 
-\item{delim}{Delimiter used to separate values. Defaults to '\t' to write
+\item{delim}{Delimiter used to separate values. Defaults to \verb{\\t} to write
 tab separated value (TSV) files.}
 
 \item{na}{String used for missing values. Defaults to 'NA'.}

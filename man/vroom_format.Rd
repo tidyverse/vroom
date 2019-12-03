@@ -17,7 +17,7 @@ vroom_format(
 \arguments{
 \item{x}{A data frame to write to disk}
 
-\item{delim}{Delimiter used to separate values. Defaults to '\t' to write
+\item{delim}{Delimiter used to separate values. Defaults to \verb{\\t} to write
 tab separated value (TSV) files.}
 
 \item{na}{String used for missing values. Defaults to 'NA'.}

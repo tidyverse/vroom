@@ -13,7 +13,7 @@
 #' @param bom If `TRUE` add a UTF-8 BOM at the beginning of the file. This is
 #'   recommended when saving data for consumption by excel, as it will force
 #'   excel to read the data with the correct encoding (UTF-8)
-#' @param delim Delimiter used to separate values. Defaults to '\t' to write
+#' @param delim Delimiter used to separate values. Defaults to `\t` to write
 #'   tab separated value (TSV) files.
 #' @param na String used for missing values. Defaults to 'NA'.
 #' @export
