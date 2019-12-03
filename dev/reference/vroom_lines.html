@@ -148,8 +148,14 @@ lazily like <code><a href='vroom.html'>vroom()</a></code>, so operations like <c
 can be done much more efficiently without reading all the data into R.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vroom_lines</span>(<span class='no'>file</span>, <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>Inf</span>, <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>altrep_opts</span> <span class='kw'>=</span> <span class='st'>"chr"</span>,
-  <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(), <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>())</pre>
+    <pre class="usage"><span class='fu'>vroom_lines</span>(
+  <span class='no'>file</span>,
+  <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>Inf</span>,
+  <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>altrep_opts</span> <span class='kw'>=</span> <span class='st'>"chr"</span>,
+  <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(),
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>()
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -174,7 +180,9 @@ either a character vector of types, <code>TRUE</code> or <code>FALSE</code>. See
     </tr>
     <tr>
       <th>num_threads</th>
-      <td><p>Number of threads to use when reading and materializing vectors.</p></td>
+      <td><p>Number of threads to use when reading and materializing
+vectors. If your data contains embedded newlines (newlines within fields)
+you <em>must</em> use <code>num_threads = 1</code> to read the data properly.</p></td>
     </tr>
     <tr>
       <th>progress</th>

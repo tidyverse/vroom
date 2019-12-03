@@ -144,10 +144,19 @@
     <p>Write a data frame to a delimited file</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vroom_write</span>(<span class='no'>x</span>, <span class='no'>path</span>, <span class='kw'>delim</span> <span class='kw'>=</span> <span class='st'>"\t"</span>, <span class='kw'>na</span> <span class='kw'>=</span> <span class='st'>"NA"</span>, <span class='kw'>col_names</span> <span class='kw'>=</span> !<span class='no'>append</span>,
-  <span class='kw'>append</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>quote</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"needed"</span>, <span class='st'>"all"</span>, <span class='st'>"none"</span>),
-  <span class='kw'>escape</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"double"</span>, <span class='st'>"backslash"</span>, <span class='st'>"none"</span>), <span class='kw'>bom</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(), <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>())</pre>
+    <pre class="usage"><span class='fu'>vroom_write</span>(
+  <span class='no'>x</span>,
+  <span class='no'>path</span>,
+  <span class='kw'>delim</span> <span class='kw'>=</span> <span class='st'>"\t"</span>,
+  <span class='kw'>na</span> <span class='kw'>=</span> <span class='st'>"NA"</span>,
+  <span class='kw'>col_names</span> <span class='kw'>=</span> !<span class='no'>append</span>,
+  <span class='kw'>append</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>quote</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"needed"</span>, <span class='st'>"all"</span>, <span class='st'>"none"</span>),
+  <span class='kw'>escape</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"double"</span>, <span class='st'>"backslash"</span>, <span class='st'>"none"</span>),
+  <span class='kw'>bom</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(),
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>()
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -214,7 +223,9 @@ excel to read the data with the correct encoding (UTF-8)</p></td>
     </tr>
     <tr>
       <th>num_threads</th>
-      <td><p>Number of threads to use when reading and materializing vectors.</p></td>
+      <td><p>Number of threads to use when reading and materializing
+vectors. If your data contains embedded newlines (newlines within fields)
+you <em>must</em> use <code>num_threads = 1</code> to read the data properly.</p></td>
     </tr>
     <tr>
       <th>progress</th>
