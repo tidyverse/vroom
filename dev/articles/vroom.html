@@ -582,6 +582,15 @@
 <p>It is also possible to use other compressors, such as <a href="https://zlib.net/pigz/">pigz</a>, a parallel gzip implementation, lbzip2, a parallel bzip2 implementation or <a href="https://github.com/vasi/pixz">pixz</a>, a parallel xz implementation by using <code><a href="https://rdrr.io/r/base/connections.html">pipe()</a></code> to create a pipe connection. The parallel versions can be considerably faster for large output files.</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw"><a href="../reference/vroom_write.html">vroom_write</a></span>(mtcars, <span class="kw"><a href="https://rdrr.io/r/base/connections.html">pipe</a></span>(<span class="st">"pigz &gt; mtcars.tsv.gz"</span>))</a></code></pre></div>
 </div>
+<div id="reading-and-writing-from-standard-input-and-output" class="section level3">
+<h3 class="hasAnchor">
+<a href="#reading-and-writing-from-standard-input-and-output" class="anchor"></a>Reading and writing from standard input and output</h3>
+<p>vroom supports reading and writing to the C-level <code>stdin</code> and <code>stdout</code> of the R process by using <code><a href="https://rdrr.io/r/base/showConnections.html">stdin()</a></code> and <code><a href="https://rdrr.io/r/base/showConnections.html">stdout()</a></code>. E.g. from a shell prompt you can pipe to and from vroom directly.</p>
+<pre class="shell"><code>cat inst/extdata/mtcars.csv | Rscript -e 'vroom::vroom(stdin())'
+
+Rscript -e 'vroom::vroom_write(iris, stdout())' | head</code></pre>
+<p>Note this interpretation of <code><a href="https://rdrr.io/r/base/showConnections.html">stdin()</a></code> and <code><a href="https://rdrr.io/r/base/showConnections.html">stdout()</a></code> differs from that used by other R functions, however we believe it better matches most user’s expectations.</p>
+</div>
 </div>
 <div id="further-reading" class="section level2">
 <h2 class="hasAnchor">

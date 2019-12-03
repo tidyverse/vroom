@@ -142,6 +142,7 @@
 <a href="#vroom-development-version" class="anchor"></a>vroom (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports reading from <code><a href="https://rdrr.io/r/base/showConnections.html">stdin()</a></code> directly, interpreted as the C-level standard input (<a href='https://github.com/r-lib/vroom/issues/106'>#106</a>).</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer leaks file handles (<a href='https://github.com/r-lib/vroom/issues/177'>#177</a>, <a href='https://github.com/r-lib/vroom/issues/180'>#180</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now outputs its messages on <code><a href="https://rdrr.io/r/base/showConnections.html">stdout()</a></code> rather than <code><a href="https://rdrr.io/r/base/showConnections.html">stderr()</a></code>, which avoids the text being red in RStudio and in the Windows GUI.</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer overflows when reading files with more than 2B entries (<a href='https://github.com/wlattner'>@wlattner</a>, <a href='https://github.com/r-lib/vroom/issues/183'>#183</a>).</p></li>
