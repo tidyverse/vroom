@@ -1,5 +1,8 @@
 # vroom (development version)
 
+* `vroom()` now supports reading from `stdin()` directly, interpreted as the
+  C-level standard input (#106).
+
 * `vroom()` no longer leaks file handles (#177, #180)
 
 * `vroom()` now outputs its messages on `stdout()` rather than `stderr()`,

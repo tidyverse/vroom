@@ -335,6 +335,21 @@ vroom_write(mtcars, pipe("pigz > mtcars.tsv.gz"))
 unlink("mtcars.tsv.gz")
 ```
 
+### Reading and writing from standard input and output
+
+vroom supports reading and writing to the C-level `stdin` and `stdout` of the R
+process by using `stdin()` and `stdout()`. E.g. from a shell prompt you can
+pipe to and from vroom directly.
+
+```shell
+cat inst/extdata/mtcars.csv | Rscript -e 'vroom::vroom(stdin())'
+
+Rscript -e 'vroom::vroom_write(iris, stdout())' | head
+```
+
+Note this interpretation of `stdin()` and `stdout()` differs from that used by
+other R functions, however we believe it better matches most user's expectations.
+
 ## Further reading
 
 `vignette("benchmarks")` discusses the performance of vroom, how it compares to

@@ -5,6 +5,13 @@ standardise_path <- function(path) {
   }
 
   if (inherits(path, "connection")) {
+    # If the connection is `stdin()`, change it to `file("stdin")`, as we don't
+    # support text mode connections.
+
+    if (path == stdin()) {
+      return(list(file("stdin")))
+    }
+
     return(list(path))
   }
 
