@@ -96,9 +96,8 @@ test_that("%p detects AM/PM", {
   test_parse_datetime("12/31/1991 12:01 PM", "%m/%d/%Y %I:%M %p",
     expected = .POSIXct(694180860, "UTC"))
 
-  #TODO: why is this returning NA?
-  #test_parse_datetime("12/31/1991 1:01 AM", "%m/%d/%Y %I:%M %p",
-    #.POSIXct(694141260, "UTC"))
+  test_parse_datetime("12/31/1991 01:01 AM", "%m/%d/%Y %I:%M %p",
+    expected = .POSIXct(694141260, "UTC"))
 
   test_parse_datetime(c("12/31/1991 00:01 PM", "12/31/1991 13:01 PM"),
       "%m/%d/%Y %I:%M %p", expected = rep(NA, 2))
