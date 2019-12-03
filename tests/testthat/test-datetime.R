@@ -134,11 +134,15 @@ test_that("parse_date returns a double like as.Date()", {
 })
 
 test_that("parses NA/empty correctly", {
-  #test_parse_datetime("", "", .POSIXct(NA_real_))
-  #test_parse_date("", "", as.Date(NA))
+  expect_equal(
+    vroom("x\n\n", delim = ",", col_types = list(x = "T")),
+    tibble::tibble(x = .POSIXct(NA_real_))
+  )
 
-  test_parse_datetime("NA", "", expected = .POSIXct(NA_real_))
-  test_parse_date("NA", "", expected = as.Date(NA))
+  expect_equal(
+    vroom("x\n\n", delim = ",", col_types = list(x = "D")),
+    tibble::tibble(x = as.Date(NA))
+  )
 
   test_parse_datetime("TeSt", "", na = "TeSt", expected = .POSIXct(NA_real_))
   test_parse_date("TeSt", "", na = "TeSt", expected = as.Date(NA))
