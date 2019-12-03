@@ -150,51 +150,33 @@ test_that("parses NA/empty correctly", {
 
 ## Locales -----------------------------------------------------------------
 
-#test_that("locale affects months", {
-  #jan1 <- as.Date("2010-01-01")
+test_that("locale affects months", {
+  jan1 <- as.Date("2010-01-01")
 
-  #fr <- locale("fr")
-  #expect_equal(parse_date("1 janv. 2010", "%d %b %Y", locale = fr), jan1)
-  #expect_equal(parse_date("1 janvier 2010", "%d %B %Y", locale = fr), jan1)
-#})
+  fr <- locale("fr")
+  test_parse_date("1 janv. 2010", "%d %b %Y", locale = fr, expected = jan1)
+  test_parse_date("1 janvier 2010", "%d %B %Y", locale = fr, expected = jan1)
+})
 
-#test_that("locale affects day of week", {
-  #a <- parse_datetime("2010-01-01")
-  #b <- parse_date("2010-01-01")
-  #fr <- locale("fr")
-  #expect_equal(parse_datetime("Ven. 1 janv. 2010", "%a %d %b %Y", locale=fr), a)
-  #expect_equal(parse_date("Ven. 1 janv. 2010", "%a %d %b %Y", locale=fr), b)
-  #expect_warning(parse_datetime("Fri 1 janv. 1020", "%a %d %b %Y", locale=fr))
-  #expect_warning(parse_date("Fri 1 janv. 2010", "%a %d %b %Y", locale=fr))
-#})
+test_that("locale affects day of week", {
+  a <- as.POSIXct("2010-01-01", tz = "UTC")
+  b <- as.Date("2010-01-01")
+  fr <- locale("fr")
 
-#test_that("locale affects am/pm", {
-  #a <- parse_time("1:30 PM", "%H:%M %p")
-  #b <- parse_time("오후 1시 30분", "%p %H시 %M분", locale = locale("ko"))
-  #expect_equal(a, b)
-#})
+  test_parse_datetime("Ven. 1 janv. 2010", "%a %d %b %Y", locale=fr, expected = a)
+  test_parse_datetime("Ven. 1 janv. 2010", "%a %d %b %Y", locale=fr, expected = b)
+})
+
+test_that("locale affects am/pm", {
+  expected <- hms::hms(hours = 13, minutes = 30)
+  test_parse_time("01:30 PM", "%H:%M %p", expected = expected)
+  test_parse_time("오후 01시 30분", "%p %H시 %M분", expected = expected, locale = locale("ko"))
+})
 
 #test_that("locale affects both guessing and parsing", {
-  #out <- parse_guess("01/02/2013", locale = locale(date_format = "%m/%d/%Y"))
+  ##TODO: not working
+  #out <- vroom("01/02/2013\n", col_names = FALSE, locale = locale(date_format = "%m/%d/%Y"))
   #expect_equal(out, as.Date("2013-01-02"))
-#})
-
-#test_that("text re-encoded before strings are parsed", {
-  #skip_on_cran() # need to figure out why this fails
-
-  #x <- "1 f\u00e9vrier 2010"
-  #y <- iconv(x, to = "ISO-8859-1")
-  #feb01 <- as.Date(ISOdate(2010, 02, 01))
-
-  #expect_equal(
-    #parse_date(x, "%d %B %Y", locale = locale("fr")),
-    #feb01
-  #)
-
-  #expect_equal(
-    #parse_date(y, "%d %B %Y", locale = locale("fr", encoding = "ISO-8859-1")),
-    #feb01
-  #)
 #})
 
 ## Time zones ------------------------------------------------------------------

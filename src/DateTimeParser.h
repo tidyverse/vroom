@@ -404,7 +404,7 @@ private:
     for (size_t i = 0; i < haystack.size(); ++i) {
       std::string hay = haystack[i];
       std::transform(hay.begin(), hay.end(), hay.begin(), ::tolower);
-      if (hay.find(needleUTF8) != std::string::npos) {
+      if (needleUTF8.find(hay) != std::string::npos) {
         *pOut = i;
         dateItr_ += hay.size();
         return true;
@@ -434,7 +434,8 @@ private:
     return true;
   }
 
-  // Integer indexed from 1 (i.e. month and date) which can take 1 or 2 positions
+  // Integer indexed from 1 (i.e. month and date) which can take 1 or 2
+  // positions
   inline bool consumeInteger1length1_or_2(int n, int* pOut, bool exact = true) {
     int out1, out2;
     if (!consumeInteger(1, &out1, true))

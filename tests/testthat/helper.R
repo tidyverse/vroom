@@ -59,3 +59,10 @@ test_parse_date <- function(x, expected, format = "", ...) {
     equals = tibble::tibble(X1 = expected)
   )
 }
+
+test_parse_time <- function(x, expected, format = "", ...) {
+  test_vroom(paste0(paste0(x, collapse = "\n"), "\n"), delim = "\n",
+    col_names = FALSE, col_types = cols(X1 = col_time(format = format)), ...,
+    equals = tibble::tibble(X1 = expected)
+  )
+}
