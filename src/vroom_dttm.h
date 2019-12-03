@@ -35,7 +35,7 @@ public:
     vroom_dttm_info* dttm_info = new vroom_dttm_info;
     dttm_info->info = info;
     dttm_info->parser =
-        std::unique_ptr<DateTimeParser>(new DateTimeParser(&*info->locale));
+        std::unique_ptr<DateTimeParser>(new DateTimeParser(info->locale.get()));
 
     SEXP out = PROTECT(R_MakeExternalPtr(dttm_info, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(out, vroom_dttm::Finalize, FALSE);

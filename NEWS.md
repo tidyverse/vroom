@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Dates, times, and datetimes now properly consider the locale when parsing.
+
 * `vroom()` now supports reading from `stdin()` directly, interpreted as the
   C-level standard input (#106).
 
