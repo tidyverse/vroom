@@ -226,18 +226,18 @@ test_that("unambiguous times with and without daylight savings", {
 
 ## Guessing ---------------------------------------------------------------------
 
-#test_that("DDDD-DD not parsed as date (i.e. doesn't trigger partial date match)", {
-  #expect_equal(guess_parser(c("1989-90", "1990-91")), "character")
-#})
+test_that("DDDD-DD not parsed as date (i.e. doesn't trigger partial date match)", {
+  expect_is(vroom("1989-90\n1990-91\n")[[1]], "character")
+})
 
-#test_that("leading zeros don't get parsed as date without explicit separator", {
-  #expect_equal(guess_parser("00010203"), "character")
-  #expect_equal(guess_parser("0001-02-03"), "date")
-#})
+test_that("leading zeros don't get parsed as date without explicit separator", {
+  expect_is(vroom("00010203\n", col_names = FALSE)[[1]], "character")
+  expect_is(vroom("0001-02-03\n", col_names = FALSE)[[1]], "Date")
+})
 
-#test_that("must have either two - or none", {
-  #expect_equal(guess_parser("2000-10-10"), "date")
-  #expect_equal(guess_parser("2000-1010"), "character")
-  #expect_equal(guess_parser("200010-10"), "character")
-  #expect_equal(guess_parser("20001010"), "double")
-#})
+test_that("must have either two - or none", {
+  expect_is(vroom("2000-10-10\n", col_names = FALSE)[[1]], "Date")
+  expect_is(vroom("2000-1010\n", col_names = FALSE)[[1]], "character")
+  expect_is(vroom("200010-10\n", col_names = FALSE)[[1]], "character")
+  expect_is(vroom("20001010\n", col_names = FALSE)[[1]], "numeric")
+})
