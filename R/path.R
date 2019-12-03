@@ -29,7 +29,7 @@ standardise_one_path <- function (path, write = FALSE) {
     if (requireNamespace("curl", quietly = TRUE)) {
       con <- curl::curl(path)
     } else {
-      inform_on_stdout("`curl` package not installed, falling back to using `url()`")
+      rlang::inform("`curl` package not installed, falling back to using `url()`")
       con <- url(path)
     }
     ext <- tolower(tools::file_ext(path))
@@ -97,7 +97,7 @@ zipfile <- function(path, open = "r") {
   file <- files$Name[[1]]
 
   if (nrow(files) > 1) {
-    inform_on_stdout("Multiple files in zip: reading '", file, "'")
+    rlang::inform(paste0("Multiple files in zip: reading '", file, "'"))
   }
 
   unz(path, file, open = open)

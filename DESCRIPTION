@@ -43,7 +43,7 @@ Imports:
     glue,
     hms,
     Rcpp (>= 0.12.18.3),
-    rlang,
+    rlang (>= 0.4.2),
     tibble (>= 2.0.0),
     tidyselect,
     withr
