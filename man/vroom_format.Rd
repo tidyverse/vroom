@@ -17,8 +17,8 @@ vroom_format(
 \arguments{
 \item{x}{A data frame to write to disk}
 
-\item{delim}{One of more characters used to delimiter fields within a
-record. If \code{NULL} the delimiter is guessed from the set of \code{c(",", "\\t", " ", "|", ":", ";", "\\n")}.}
+\item{delim}{Delimiter used to separate values. Defaults to '\t' to write
+tab separated value (TSV) files.}
 
 \item{na}{Character vector of strings to interpret as missing values. Set this
 option to \code{character()} to indicate no missing values.}

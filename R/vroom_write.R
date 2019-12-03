@@ -13,6 +13,8 @@
 #' @param bom If `TRUE` add a UTF-8 BOM at the beginning of the file. This is
 #'   recommended when saving data for consumption by excel, as it will force
 #'   excel to read the data with the correct encoding (UTF-8)
+#' @param delim Delimiter used to separate values. Defaults to '\t' to write
+#'   tab separated value (TSV) files.
 #' @export
 #' @examples
 #' # If you only specify a file name, vroom_write() will write

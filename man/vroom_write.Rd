@@ -23,8 +23,8 @@ vroom_write(
 
 \item{path}{Path or connection to write to.}
 
-\item{delim}{One of more characters used to delimiter fields within a
-record. If \code{NULL} the delimiter is guessed from the set of \code{c(",", "\\t", " ", "|", ":", ";", "\\n")}.}
+\item{delim}{Delimiter used to separate values. Defaults to '\t' to write
+tab separated value (TSV) files.}
 
 \item{na}{Character vector of strings to interpret as missing values. Set this
 option to \code{character()} to indicate no missing values.}

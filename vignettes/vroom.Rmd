@@ -281,7 +281,11 @@ vroom(
 
 ## Writing delimited files
 
-Use `vroom_write()` to write delimited files, the default delimiter is tab.
+Use `vroom_write()` to write delimited files, the default delimiter is tab, to write TSV files. Writing to TSV by default has the following benefits:
+  - Avoids the issue of whether to use `;` (common in Europe) or `,` (common in the US)
+  - Unlikely to require quoting in fields, as very few fields contain tabs
+  - More easily and efficiently ingested by Unix command line tools such as
+    `cut`, `perl` and `awk`.
 
 ```{r}
 vroom_write(mtcars, "mtcars.tsv")
@@ -293,7 +297,8 @@ unlink("mtcars.tsv")
 
 ### Writing CSV delimited files
 
-Use the `delim = ','` to write CSV files
+However you can easily set `delim` to `delim = ','` to write CSV files, which
+are common as inputs to GUI spreadsheet tools like Excel or Google Sheets.
 
 ```{r}
 vroom_write(mtcars, "mtcars.csv", delim = ",")
