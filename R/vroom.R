@@ -7,9 +7,11 @@ NULL
 #' @inheritParams readr::read_delim
 #' @param file path to a local file.
 #' @param delim One of more characters used to delimiter fields within a
-#'   record. If `NULL` the delimiter is guessed from the set of `c(",", "\\t", " ",
-#'   "|", ":", ";", "\\n")`.
-#' @param num_threads Number of threads to use when reading and materializing vectors.
+#'   record. If `NULL` the delimiter is guessed from the set of `c(",", "\t", " ",
+#'   "|", ":", ";", "\n")`.
+#' @param num_threads Number of threads to use when reading and materializing
+#'   vectors. If your data contains embedded newlines (newlines within fields)
+#'   you _must_ use `num_threads = 1` to read the data properly.
 #' @param escape_double Does the file escape quotes by doubling them?
 #'   i.e. If this option is `TRUE`, the value '""' represents
 #'   a single quote, '"'.
