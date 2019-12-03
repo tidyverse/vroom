@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom_write()` now does not try to write anything when given empty inputs (#172).
+
 * Dates, times, and datetimes now properly consider the locale when parsing.
 
 * `vroom()` now supports reading from `stdin()` directly, interpreted as the

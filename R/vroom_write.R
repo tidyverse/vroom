@@ -36,6 +36,11 @@ vroom_write <- function(x, path, delim = '\t', na = "NA", col_names = !append,
     c("double", "backslash", "none"), bom = FALSE, num_threads =
     vroom_threads(), progress = vroom_progress()) {
 
+  # If there are no rows or columns in the data frame, just return
+  if (NROW(x) == 0 || NCOL(x) == 0) {
+    return(invisible(x))
+  }
+
   quote <- match.arg(quote)
   escape <- match.arg(escape)
 
