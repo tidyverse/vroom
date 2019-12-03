@@ -226,3 +226,9 @@ test_that("must have either two - or none", {
   expect_is(vroom("200010-10\n", col_names = FALSE)[[1]], "character")
   expect_is(vroom("20001010\n", col_names = FALSE)[[1]], "numeric")
 })
+
+test_that("times are guessed even without AM / PM", {
+  expect_is(guess_type("01:02:03"), "collector_time")
+  expect_is(guess_type("01:02:03 AM"), "collector_time")
+  expect_is(guess_type("01:02:03 PM"), "collector_time")
+})
