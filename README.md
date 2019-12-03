@@ -64,7 +64,7 @@ files, including
   - robust to invalid inputs (vroom has been extensively tested with the
     [afl](http://lcamtuf.coredump.cx/afl/) fuzz tester)\*.
 
-\* *these are additional features only in vroom.*
+\* *these are additional features not in readr.*
 
 \*\* *requires `num_threads = 1`.*
 
@@ -151,21 +151,20 @@ vroom::vroom(files)
 #> Rows: 336,776
 #> Cols: 19
 #> chr  [ 4]: carrier, tailnum, origin, dest
-#> dbl  [14]: year, month, day, dep_time, sched_dep_time, dep_delay, arr_time, sched_arr_...
+#> dbl  [14]: year, month, day, dep_time, sched_dep_time, dep_delay, arr_time, sched_arr_time...
 #> dttm [ 1]: time_hour
 #> 
 #> Call `spec()` for a copy-pastable column specification
 #> Specify the column types with `col_types` to quiet this message
 #> # A tibble: 336,776 x 19
-#>    year month   day dep_time sched_dep_time dep_delay arr_time
-#>   <dbl> <dbl> <dbl>    <dbl>          <dbl>     <dbl>    <dbl>
-#> 1  2013     1     1      810            810         0     1048
-#> 2  2013     1     1     1451           1500        -9     1634
-#> 3  2013     1     1     1452           1455        -3     1637
-#> # … with 3.368e+05 more rows, and 12 more variables: sched_arr_time <dbl>,
-#> #   arr_delay <dbl>, carrier <chr>, flight <dbl>, tailnum <chr>,
-#> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
-#> #   minute <dbl>, time_hour <dttm>
+#>    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+#>   <dbl> <dbl> <dbl>    <dbl>          <dbl>     <dbl>    <dbl>          <dbl>
+#> 1  2013     1     1      810            810         0     1048           1037
+#> 2  2013     1     1     1451           1500        -9     1634           1636
+#> 3  2013     1     1     1452           1455        -3     1637           1639
+#> # … with 3.368e+05 more rows, and 11 more variables: arr_delay <dbl>,
+#> #   carrier <chr>, flight <dbl>, tailnum <chr>, origin <chr>, dest <chr>,
+#> #   air_time <dbl>, distance <dbl>, hour <dbl>, minute <dbl>, time_hour <dttm>
 ```
 
 ## Benchmarks

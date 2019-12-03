@@ -87,7 +87,7 @@ vroom has nearly all of the parsing features of
 - robust to invalid inputs (vroom has been extensively tested with the
   [afl](http://lcamtuf.coredump.cx/afl/) fuzz tester)\*.
 
-\* *these are additional features only in vroom.*
+\* *these are additional features not in readr.*
 
 \*\* *requires `num_threads = 1`.*
 
