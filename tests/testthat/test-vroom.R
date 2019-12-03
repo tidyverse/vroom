@@ -388,3 +388,9 @@ test_that("vroom can read files with no trailing newline", {
   writeBin(charToRaw("foo,bar\n1,2"), f2)
   expect_equal(vroom(f2), tibble::tibble(foo = 1, bar = 2))
 })
+
+test_that("Missing files error with a nice error message", {
+  f <- tempfile()
+  expect_error(vroom(f), sprintf("'%s' does not exist", f))
+  expect_error(vroom("foo"), sprintf("'%s' does not exist in current working directory", "foo"))
+})

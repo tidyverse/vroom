@@ -88,8 +88,9 @@ check_path <- function(path) {
     return(normalizePath(path, "/", mustWork = FALSE))
 
   stop("'", path, "' does not exist",
-    if (!is_absolute_path(path))
-      paste0(" in current working directory ('", getwd(), "')"),
+    if (!is_absolute_path(path)) {
+      paste0(" in current working directory ('", getwd(), "')")
+    },
     ".",
     call. = FALSE
   )

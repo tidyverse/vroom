@@ -139,7 +139,12 @@ std::shared_ptr<vroom::index> make_delimited_index(
   Rcpp::Function standardise_one_path =
       Rcpp::Environment::namespace_env("vroom")["standardise_one_path"];
 
-  RObject x = standardise_one_path(in);
+  RObject x;
+  try {
+    x = standardise_one_path(in);
+  } catch (const Rcpp::eval_error& e) {
+    rethrow_rcpp_eval_error(e);
+  }
 
   bool is_connection = TYPEOF(x) != STRSXP;
 
@@ -289,7 +294,12 @@ std::shared_ptr<vroom::index> make_fixed_width_index(
   Rcpp::Function standardise_one_path =
       Rcpp::Environment::namespace_env("vroom")["standardise_one_path"];
 
-  RObject x = standardise_one_path(in);
+  RObject x;
+  try {
+    x = standardise_one_path(in);
+  } catch (const Rcpp::eval_error& e) {
+    rethrow_rcpp_eval_error(e);
+  }
 
   bool is_connection = TYPEOF(x) != STRSXP;
 

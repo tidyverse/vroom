@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` now has an improved error message when a file does not exist (#169).
+
 * `vroom_write()` now does not try to write anything when given empty inputs (#172).
 
 * Dates, times, and datetimes now properly consider the locale when parsing.

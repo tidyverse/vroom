@@ -40,4 +40,14 @@ static char guess_delim(
   return Rcpp::as<char>(fun(lines));
 }
 
+inline void rethrow_rcpp_eval_error(const Rcpp::eval_error& e) {
+  std::string msg = e.what();
+  // Remove "Evaluation error: "
+  msg.erase(0, 18);
+  // Remove trailing period
+  msg.erase(msg.length() - 1);
+
+  throw Rcpp::exception(msg.c_str(), false);
+}
+
 } // namespace vroom
