@@ -14,27 +14,33 @@
 \alias{gen_name}
 \title{Generate individual vectors of the types supported by vroom}
 \usage{
-gen_character(n, min = 5, max = 25, values = c(letters, LETTERS,
-  0:9), ...)
+gen_character(n, min = 5, max = 25, values = c(letters, LETTERS, 0:9), ...)
 
 gen_double(n, f = stats::rnorm, ...)
 
 gen_number(n, f = stats::rnorm, ...)
 
-gen_integer(n, min = 1L, max = .Machine$integer.max, prob = NULL,
-  ...)
+gen_integer(n, min = 1L, max = .Machine$integer.max, prob = NULL, ...)
 
-gen_factor(n, levels = NULL, ordered = FALSE,
-  num_levels = gen_integer(1L, 1L, 25L), ...)
+gen_factor(
+  n,
+  levels = NULL,
+  ordered = FALSE,
+  num_levels = gen_integer(1L, 1L, 25L),
+  ...
+)
 
-gen_time(n, min = 0, max = hms::hms(days = 1), fractional = FALSE,
-  ...)
+gen_time(n, min = 0, max = hms::hms(days = 1), fractional = FALSE, ...)
 
-gen_date(n, min = as.Date("2001-01-01"), max = as.Date("2021-01-01"),
-  ...)
+gen_date(n, min = as.Date("2001-01-01"), max = as.Date("2021-01-01"), ...)
 
-gen_datetime(n, min = as.POSIXct("2001-01-01"),
-  max = as.POSIXct("2021-01-01"), tz = "UTC", ...)
+gen_datetime(
+  n,
+  min = as.POSIXct("2001-01-01"),
+  max = as.POSIXct("2021-01-01"),
+  tz = "UTC",
+  ...
+)
 
 gen_logical(n, ...)
 

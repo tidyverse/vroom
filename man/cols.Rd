@@ -43,11 +43,11 @@ col_date(format = "", ...)
 col_time(format = "", ...)
 }
 \arguments{
-\item{...}{Either column objects created by \code{col_*()}, or their abbreviated
+\item{...}{Either column objects created by \verb{col_*()}, or their abbreviated
 character names (as described in the \code{col_types} argument of
 \code{\link[=vroom]{vroom()}}). If you're only overriding a few columns, it's
 best to refer to columns by name. If not named, the column types must match
-the column names exactly. In \code{col_*()} functions these are stored in the
+the column names exactly. In \verb{col_*()} functions these are stored in the
 object.}
 
 \item{.default}{Any named columns not explicitly overridden in \code{...}
@@ -63,7 +63,7 @@ of appearance in \code{x}.}
 
 \item{format}{A format specification, as described below. If set to "",
 date times are parsed as ISO8601, dates and times used the date and
-time formats specified in the \code{\link[=locale]{locale()}}.
+time formats specified in the \code{\link[readr:locale]{locale()}}.
 
 Unlike \code{\link[=strptime]{strptime()}}, the format specification must match
 the complete string.}

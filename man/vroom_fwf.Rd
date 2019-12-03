@@ -8,12 +8,24 @@
 \alias{fwf_cols}
 \title{Read a fixed width file into a tibble}
 \usage{
-vroom_fwf(file, col_positions = fwf_empty(file, skip, n = guess_max),
-  col_types = NULL, col_select = NULL, id = NULL,
-  locale = default_locale(), na = c("", "NA"), comment = "",
-  trim_ws = TRUE, skip = 0, n_max = Inf, guess_max = 100,
-  altrep_opts = "chr", num_threads = vroom_threads(),
-  progress = vroom_progress(), .name_repair = "unique")
+vroom_fwf(
+  file,
+  col_positions = fwf_empty(file, skip, n = guess_max),
+  col_types = NULL,
+  col_select = NULL,
+  id = NULL,
+  locale = default_locale(),
+  na = c("", "NA"),
+  comment = "",
+  trim_ws = TRUE,
+  skip = 0,
+  n_max = Inf,
+  guess_max = 100,
+  altrep_opts = "chr",
+  num_threads = vroom_threads(),
+  progress = vroom_progress(),
+  .name_repair = "unique"
+)
 
 fwf_empty(file, skip = 0, col_names = NULL, comment = "", n = 100L)
 
@@ -37,23 +49,23 @@ Literal data is most useful for examples and tests. It must contain at
 least one new line to be recognised as data (instead of a path) or be a
 vector of greater than length 1.
 
-Using a value of \code{\link[=clipboard]{clipboard()}} will read from the system clipboard.}
+Using a value of \code{\link[readr:clipboard]{clipboard()}} will read from the system clipboard.}
 
-\item{col_positions}{Column positions, as created by \code{\link[=fwf_empty]{fwf_empty()}},
-\code{\link[=fwf_widths]{fwf_widths()}} or \code{\link[=fwf_positions]{fwf_positions()}}. To read in only selected fields,
-use \code{\link[=fwf_positions]{fwf_positions()}}. If the width of the last column is variable (a
+\item{col_positions}{Column positions, as created by \code{\link[readr:fwf_empty]{fwf_empty()}},
+\code{\link[readr:fwf_widths]{fwf_widths()}} or \code{\link[readr:fwf_positions]{fwf_positions()}}. To read in only selected fields,
+use \code{\link[readr:fwf_positions]{fwf_positions()}}. If the width of the last column is variable (a
 ragged fwf file), supply the last end position as NA.}
 
-\item{col_types}{One of \code{NULL}, a \code{\link[=cols]{cols()}} specification, or
+\item{col_types}{One of \code{NULL}, a \code{\link[readr:cols]{cols()}} specification, or
 a string. See \code{vignette("readr")} for more details.
 
 If \code{NULL}, all column types will be imputed from the first 1000 rows
 on the input. This is convenient (and fast), but not robust. If the
 imputation fails, you'll need to supply the correct types yourself.
 
-If a column specification created by \code{\link[=cols]{cols()}}, it must contain
+If a column specification created by \code{\link[readr:cols]{cols()}}, it must contain
 one column specification for each column. If you only want to read a
-subset of the columns, use \code{\link[=cols_only]{cols_only()}}.
+subset of the columns, use \code{\link[readr:cols_only]{cols_only()}}.
 
 Alternatively, you can use a compact string representation where each
 character represents one column:
@@ -71,7 +83,7 @@ default, no variable will be created.}
 
 \item{locale}{The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
-\code{\link[=locale]{locale()}} to create your own locale that controls things like
+\code{\link[readr:locale]{locale()}} to create your own locale that controls things like
 the default time zone, encoding, decimal mark, big mark, and day/month
 names.}
 
@@ -94,7 +106,9 @@ each field before parsing it?}
 either a character vector of types, \code{TRUE} or \code{FALSE}. See
 \code{\link[=vroom_altrep_opts]{vroom_altrep_opts()}} for for full details.}
 
-\item{num_threads}{Number of threads to use when reading and materializing vectors.}
+\item{num_threads}{Number of threads to use when reading and materializing
+vectors. If your data contains embedded newlines (newlines within fields)
+you \emph{must} use \code{num_threads = 1} to read the data properly.}
 
 \item{progress}{Display a progress bar? By default it will only display
 in an interactive session and not while knitting a document. The display

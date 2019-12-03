@@ -21,11 +21,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Jim Hester \email{james.f.hester@gmail.com} (0000-0002-2739-7082)
+\strong{Maintainer}: Jim Hester \email{james.f.hester@gmail.com} (\href{https://orcid.org/0000-0002-2739-7082}{ORCID})
 
 Authors:
 \itemize{
-  \item Hadley Wickham \email{hadley@rstudio.com} (0000-0003-4757-117X)
+  \item Hadley Wickham \email{hadley@rstudio.com} (\href{https://orcid.org/0000-0003-4757-117X}{ORCID})
 }
 
 Other contributors:

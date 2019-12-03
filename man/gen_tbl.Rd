@@ -4,24 +4,29 @@
 \alias{gen_tbl}
 \title{Generate a random tibble}
 \usage{
-gen_tbl(rows, cols = NULL, col_types = NULL,
-  locale = default_locale(), missing = 0)
+gen_tbl(
+  rows,
+  cols = NULL,
+  col_types = NULL,
+  locale = default_locale(),
+  missing = 0
+)
 }
 \arguments{
 \item{rows}{Number of rows to generate}
 
 \item{cols}{Number of columns to generate, if \code{NULL} this is derived from \code{col_types}.}
 
-\item{col_types}{One of \code{NULL}, a \code{\link[=cols]{cols()}} specification, or
+\item{col_types}{One of \code{NULL}, a \code{\link[readr:cols]{cols()}} specification, or
 a string. See \code{vignette("readr")} for more details.
 
 If \code{NULL}, all column types will be imputed from the first 1000 rows
 on the input. This is convenient (and fast), but not robust. If the
 imputation fails, you'll need to supply the correct types yourself.
 
-If a column specification created by \code{\link[=cols]{cols()}}, it must contain
+If a column specification created by \code{\link[readr:cols]{cols()}}, it must contain
 one column specification for each column. If you only want to read a
-subset of the columns, use \code{\link[=cols_only]{cols_only()}}.
+subset of the columns, use \code{\link[readr:cols_only]{cols_only()}}.
 
 Alternatively, you can use a compact string representation where each
 character represents one column:
@@ -31,7 +36,7 @@ l = logical, f = factor, D = date, T = date time, t = time, ? = guess, or
 
 \item{locale}{The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
-\code{\link[=locale]{locale()}} to create your own locale that controls things like
+\code{\link[readr:locale]{locale()}} to create your own locale that controls things like
 the default time zone, encoding, decimal mark, big mark, and day/month
 names.}
 

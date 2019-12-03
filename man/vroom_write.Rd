@@ -4,10 +4,19 @@
 \alias{vroom_write}
 \title{Write a data frame to a delimited file}
 \usage{
-vroom_write(x, path, delim = "\\t", na = "NA", col_names = !append,
-  append = FALSE, quote = c("needed", "all", "none"),
-  escape = c("double", "backslash", "none"), bom = FALSE,
-  num_threads = vroom_threads(), progress = vroom_progress())
+vroom_write(
+  x,
+  path,
+  delim = "\\t",
+  na = "NA",
+  col_names = !append,
+  append = FALSE,
+  quote = c("needed", "all", "none"),
+  escape = c("double", "backslash", "none"),
+  bom = FALSE,
+  num_threads = vroom_threads(),
+  progress = vroom_progress()
+)
 }
 \arguments{
 \item{x}{A data frame to write to disk}
@@ -57,7 +66,9 @@ file is created.}
 recommended when saving data for consumption by excel, as it will force
 excel to read the data with the correct encoding (UTF-8)}
 
-\item{num_threads}{Number of threads to use when reading and materializing vectors.}
+\item{num_threads}{Number of threads to use when reading and materializing
+vectors. If your data contains embedded newlines (newlines within fields)
+you \emph{must} use \code{num_threads = 1} to read the data properly.}
 
 \item{progress}{Display a progress bar? By default it will only display
 in an interactive session and not while knitting a document. The display

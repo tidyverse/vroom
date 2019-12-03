@@ -4,13 +4,28 @@
 \alias{vroom}
 \title{Read a delimited file into a tibble}
 \usage{
-vroom(file, delim = NULL, col_names = TRUE, col_types = NULL,
-  col_select = NULL, id = NULL, skip = 0, n_max = Inf, na = c("",
-  "NA"), quote = "\\"", comment = "", trim_ws = TRUE,
-  escape_double = TRUE, escape_backslash = FALSE,
-  locale = default_locale(), guess_max = 100, altrep_opts = "chr",
-  num_threads = vroom_threads(), progress = vroom_progress(),
-  .name_repair = "unique")
+vroom(
+  file,
+  delim = NULL,
+  col_names = TRUE,
+  col_types = NULL,
+  col_select = NULL,
+  id = NULL,
+  skip = 0,
+  n_max = Inf,
+  na = c("", "NA"),
+  quote = "\\"",
+  comment = "",
+  trim_ws = TRUE,
+  escape_double = TRUE,
+  escape_backslash = FALSE,
+  locale = default_locale(),
+  guess_max = 100,
+  altrep_opts = "chr",
+  num_threads = vroom_threads(),
+  progress = vroom_progress(),
+  .name_repair = "unique"
+)
 }
 \arguments{
 \item{file}{path to a local file.}
@@ -33,16 +48,16 @@ Missing (\code{NA}) column names will generate a warning, and be filled
 in with dummy names \code{X1}, \code{X2} etc. Duplicate column names
 will generate a warning and be made unique with a numeric prefix.}
 
-\item{col_types}{One of \code{NULL}, a \code{\link[=cols]{cols()}} specification, or
+\item{col_types}{One of \code{NULL}, a \code{\link[readr:cols]{cols()}} specification, or
 a string. See \code{vignette("readr")} for more details.
 
 If \code{NULL}, all column types will be imputed from the first 1000 rows
 on the input. This is convenient (and fast), but not robust. If the
 imputation fails, you'll need to supply the correct types yourself.
 
-If a column specification created by \code{\link[=cols]{cols()}}, it must contain
+If a column specification created by \code{\link[readr:cols]{cols()}}, it must contain
 one column specification for each column. If you only want to read a
-subset of the columns, use \code{\link[=cols_only]{cols_only()}}.
+subset of the columns, use \code{\link[readr:cols_only]{cols_only()}}.
 
 Alternatively, you can use a compact string representation where each
 character represents one column:
@@ -84,7 +99,7 @@ to add special characters like \code{\\n}.}
 
 \item{locale}{The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
-\code{\link[=locale]{locale()}} to create your own locale that controls things like
+\code{\link[readr:locale]{locale()}} to create your own locale that controls things like
 the default time zone, encoding, decimal mark, big mark, and day/month
 names.}
 
@@ -94,7 +109,9 @@ names.}
 either a character vector of types, \code{TRUE} or \code{FALSE}. See
 \code{\link[=vroom_altrep_opts]{vroom_altrep_opts()}} for for full details.}
 
-\item{num_threads}{Number of threads to use when reading and materializing vectors.}
+\item{num_threads}{Number of threads to use when reading and materializing
+vectors. If your data contains embedded newlines (newlines within fields)
+you \emph{must} use \code{num_threads = 1} to read the data properly.}
 
 \item{progress}{Display a progress bar? By default it will only display
 in an interactive session and not while knitting a document. The display
@@ -128,7 +145,7 @@ vroom("https://github.com/r-lib/vroom/raw/master/inst/extdata/mtcars.csv")
 }
 
 # Or directly from a string (must contain a trailing newline)
-vroom("x,y\\n1,2\\n3,4\\n")
+vroom("x,y\n1,2\n3,4\n")
 
 # Column selection ----------------------------------------------------------
 # Pass column names or indexes directly to select them
@@ -145,16 +162,16 @@ vroom(input_file, col_select = list(car = model, everything()))
 # By default, vroom guesses the columns types, looking at 1000 rows
 # throughout the dataset.
 # You can specify them explcitly with a compact specification:
-vroom("x,y\\n1,2\\n3,4\\n", col_types = "dc")
+vroom("x,y\n1,2\n3,4\n", col_types = "dc")
 
 # Or with a list of column types:
-vroom("x,y\\n1,2\\n3,4\\n", col_types = list(col_double(), col_character()))
+vroom("x,y\n1,2\n3,4\n", col_types = list(col_double(), col_character()))
 
 # File types ----------------------------------------------------------------
 # csv
-vroom("a,b\\n1.0,2.0\\n", delim = ",")
+vroom("a,b\n1.0,2.0\n", delim = ",")
 # tsv
-vroom("a\\tb\\n1.0\\t2.0\\n")
+vroom("a\tb\n1.0\t2.0\n")
 # Other delimiters
-vroom("a|b\\n1.0|2.0\\n", delim = "|")
+vroom("a|b\n1.0|2.0\n", delim = "|")
 }

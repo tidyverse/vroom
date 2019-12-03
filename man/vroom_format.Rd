@@ -4,9 +4,15 @@
 \alias{vroom_format}
 \title{Convert a data frame to a delimited string}
 \usage{
-vroom_format(x, delim = "\\t", na = "NA", col_names = TRUE,
-  escape = c("double", "backslash", "none"), quote = c("needed", "all",
-  "none"), bom = FALSE)
+vroom_format(
+  x,
+  delim = "\\t",
+  na = "NA",
+  col_names = TRUE,
+  escape = c("double", "backslash", "none"),
+  quote = c("needed", "all", "none"),
+  bom = FALSE
+)
 }
 \arguments{
 \item{x}{A data frame to write to disk}
