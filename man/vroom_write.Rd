@@ -26,8 +26,7 @@ vroom_write(
 \item{delim}{Delimiter used to separate values. Defaults to '\t' to write
 tab separated value (TSV) files.}
 
-\item{na}{Character vector of strings to interpret as missing values. Set this
-option to \code{character()} to indicate no missing values.}
+\item{na}{String used for missing values. Defaults to 'NA'.}
 
 \item{col_names}{Either \code{TRUE}, \code{FALSE} or a character vector
 of column names.

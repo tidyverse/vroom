@@ -15,6 +15,7 @@
 #'   excel to read the data with the correct encoding (UTF-8)
 #' @param delim Delimiter used to separate values. Defaults to '\t' to write
 #'   tab separated value (TSV) files.
+#' @param na String used for missing values. Defaults to 'NA'.
 #' @export
 #' @examples
 #' # If you only specify a file name, vroom_write() will write
