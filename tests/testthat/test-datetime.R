@@ -168,6 +168,8 @@ test_that("locale affects day of week", {
 })
 
 test_that("locale affects am/pm", {
+  skip_on_os("windows")
+
   expected <- hms::hms(hours = 13, minutes = 30)
   test_parse_time("01:30 PM", "%H:%M %p", expected = expected)
   test_parse_time("\UC624\UD6C4 01\UC2DC 30\UBD84", "%p %H\UC2DC %M\UBD84", expected = expected, locale = locale("ko"))
