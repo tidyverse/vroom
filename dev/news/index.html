@@ -142,6 +142,9 @@
 <a href="#vroom-development-version" class="anchor"></a>vroom (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now has an improved error message when a file does not exist (<a href='https://github.com/r-lib/vroom/issues/169'>#169</a>).</p></li>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now does not try to write anything when given empty inputs (<a href='https://github.com/r-lib/vroom/issues/172'>#172</a>).</p></li>
+<li><p>Dates, times, and datetimes now properly consider the locale when parsing.</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports reading from <code><a href="https://rdrr.io/r/base/showConnections.html">stdin()</a></code> directly, interpreted as the C-level standard input (<a href='https://github.com/r-lib/vroom/issues/106'>#106</a>).</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer leaks file handles (<a href='https://github.com/r-lib/vroom/issues/177'>#177</a>, <a href='https://github.com/r-lib/vroom/issues/180'>#180</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now outputs its messages on <code><a href="https://rdrr.io/r/base/showConnections.html">stdout()</a></code> rather than <code><a href="https://rdrr.io/r/base/showConnections.html">stderr()</a></code>, which avoids the text being red in RStudio and in the Windows GUI.</p></li>
@@ -151,9 +154,9 @@
 <li><p>Added benchmarks with <em>wide</em> data for both numeric and character data (<a href='https://github.com/r-lib/vroom/issues/87'>#87</a>, <a href='https://github.com/R3myG'>@R3myG</a>)</p></li>
 </ul>
 </div>
-    <div id="vroom-1-0-2" class="section level1">
+    <div id="vroom-102" class="section level1">
 <h1 class="page-header">
-<a href="#vroom-1-0-2" class="anchor"></a>vroom 1.0.2<small> 2019-06-28 </small>
+<a href="#vroom-102" class="anchor"></a>vroom 1.0.2<small> 2019-06-28 </small>
 </h1>
 <div id="new-features" class="section level2">
 <h2 class="hasAnchor">
@@ -182,9 +185,9 @@
 </ul>
 </div>
 </div>
-    <div id="vroom-1-0-1" class="section level1">
+    <div id="vroom-101" class="section level1">
 <h1 class="page-header">
-<a href="#vroom-1-0-1" class="anchor"></a>vroom 1.0.1<small> 2019-05-14 </small>
+<a href="#vroom-101" class="anchor"></a>vroom 1.0.1<small> 2019-05-14 </small>
 </h1>
 <div id="new-features-1" class="section level2">
 <h2 class="hasAnchor">
@@ -209,9 +212,9 @@
 </ul>
 </div>
 </div>
-    <div id="vroom-1-0-0" class="section level1">
+    <div id="vroom-100" class="section level1">
 <h1 class="page-header">
-<a href="#vroom-1-0-0" class="anchor"></a>vroom 1.0.0<small> 2019-05-04 </small>
+<a href="#vroom-100" class="anchor"></a>vroom 1.0.0<small> 2019-05-04 </small>
 </h1>
 <ul>
 <li><p>Initial release</p></li>
@@ -225,9 +228,9 @@
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
         <li><a href="#vroom-development-version">development version</a></li>
-        <li><a href="#vroom-1-0-2">1.0.2</a></li>
-        <li><a href="#vroom-1-0-1">1.0.1</a></li>
-        <li><a href="#vroom-1-0-0">1.0.0</a></li>
+        <li><a href="#vroom-102">1.0.2</a></li>
+        <li><a href="#vroom-101">1.0.1</a></li>
+        <li><a href="#vroom-100">1.0.0</a></li>
       </ul>
     </div>
   </div>
@@ -241,7 +244,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.9000.</p>
 </div>
 
       </footer>

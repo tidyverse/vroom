@@ -141,7 +141,7 @@
 <div id="taxi-benchmarks" class="section level3">
 <h3 class="hasAnchor">
 <a href="#taxi-benchmarks" class="anchor"></a>Taxi Benchmarks</h3>
-<p>The code used to run the taxi benchmarks is in <a href="https://github.com/r-lib/vroom/blob/master/inst/bench/taxi-benchmark.R">bench/taxi-benchmark.R</a>.</p>
+<p>The code used to run the taxi benchmarks is in <a href="https://github.com/r-lib/vroom/blob/master/inst/bench/taxi-benchmark.R">bench/taxi-benchmark.R</a>. The benchmarks were run on a Amazon EC2 <a href="https://aws.amazon.com/ec2/instance-types/m5/">m5.4xlarge</a> instance with 16 vCPUs and an <a href="https://aws.amazon.com/ebs/">EBS</a> volume type.</p>
 <p>The benchmarks labeled <code>vroom_base</code> uses <code>vroom</code> with base functions for manipulation. <code>vroom_dplyr</code> uses <code>vroom</code> to read the file and dplyr functions to manipulate. <code>data.table</code> uses <code>fread()</code> to read the file and <code>data.table</code> functions to manipulate and <code>readr</code> uses <code>readr</code> to read the file and <code>dplyr</code> to manipulate. By default vroom only uses Altrep for character vectors, these are labeled <code><a href="../reference/vroom.html">vroom(altrep: normal)</a></code>. The benchmarks labeled <code><a href="../reference/vroom.html">vroom(altrep: full)</a></code> instead use Altrep vectors for all supported types and <code><a href="../reference/vroom.html">vroom(altrep: none)</a></code> disable Altrep entirely.</p>
 <p>The following operations are performed.</p>
 <ul>
@@ -2414,7 +2414,7 @@ full
 <li>A multithreaded gzip compressed file using a <code><a href="https://rdrr.io/r/base/connections.html">pipe()</a></code> connection to <a href="https://zlib.net/pigz/">pigz</a>
 </li>
 </ul>
-<p><em>Note the current CRAN version of data.table (1.12.2) does not support writing directly to gzip compressed files, though the developement version (1.12.3) does </em></p>
+<p><em>Note the current CRAN version of data.table (1.12.2) does not support writing directly to gzip compressed files, though the development version (1.12.3) does </em></p>
 <img src="benchmarks_files/figure-html/unnamed-chunk-11-1.png" width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -2607,7 +2607,7 @@ uncompressed
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.9000.</p>
 </div>
 
       </footer>

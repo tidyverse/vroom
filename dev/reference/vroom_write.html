@@ -171,13 +171,12 @@
     </tr>
     <tr>
       <th>delim</th>
-      <td><p>One of more characters used to delimiter fields within a
-record. If <code>NULL</code> the delimiter is guessed from the set of <code><a href='https://rdrr.io/r/base/c.html'>c(",", "\t", " ", "|", ":", ";", "\n")</a></code>.</p></td>
+      <td><p>Delimiter used to separate values. Defaults to <code>\t</code> to write
+tab separated value (TSV) files.</p></td>
     </tr>
     <tr>
       <th>na</th>
-      <td><p>Character vector of strings to interpret as missing values. Set this
-option to <code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> to indicate no missing values.</p></td>
+      <td><p>String used for missing values. Defaults to 'NA'.</p></td>
     </tr>
     <tr>
       <th>col_names</th>
@@ -270,7 +269,7 @@ setting option <code>readr.show_progress</code> to <code>FALSE</code>.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.9000.</p>
 </div>
 
       </footer>
