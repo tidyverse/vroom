@@ -1,0 +1,27 @@
+on:
+  push:
+    branches: master
+
+name: Pkgdown
+
+jobs:
+  pkgdown:
+    env:
+      CI: true
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: r-lib/actions/setup-r@master
+      - uses: r-lib/actions/setup-pandoc@master
+      - name: Install dependencies
+        run: |
+          install.packages("remotes")
+          remotes::install_deps(dependencies = TRUE)
+          remotes::install_github("jimhester/pkgdown@github-actions-deploy")
+        shell: Rscript {0}
+      - name: Install package
+        run: R CMD INSTALL .
+      - name: Deploy package
+        run: |
+          pkgdown:::deploy_local(new_process = FALSE, remote_url = 'https://x-access-token:${{secrets.DEPLOY_PAT}}@github.com/${{github.repository}}.git')
+        shell: Rscript {0}
