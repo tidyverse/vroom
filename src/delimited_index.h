@@ -125,6 +125,8 @@ public:
 
   std::string filename() const { return filename_; }
 
+  std::string get_delim() const { return delim_; }
+
   std::shared_ptr<vroom::index::column> get_column(size_t column) const {
     auto begin = new column_iterator(shared_from_this(), column);
     auto end = new column_iterator(shared_from_this(), column);
@@ -163,6 +165,7 @@ public:
   size_t columns_;
   bool progress_;
   size_t delim_len_;
+  std::string delim_;
   std::locale loc_;
 
   void skip_lines();

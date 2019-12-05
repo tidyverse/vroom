@@ -436,20 +436,25 @@ show_spec_summary <- function(x, width = getOption("width"), locale = default_lo
   fmt_num <- function(x) {
     prettyNum(x, big.mark = locale$grouping_mark, decimal.mark = locale$decimal_mark)
   }
+  delim <- switch(spec$delim,
+    "\t" = "\\t",
+    "\n" = "\\n",
+    spec$delim
+  )
 
-  # The red text worries people, so we write this message to stdout instead
-  rlang::inform(
+  message(
     glue::glue(
       .transformer = collapse_transformer(sep = "\n"),
       entries = glue::glue("{format(types)} [{format(type_counts)}]: {columns}"),
 
       '
       {bold("Rows:")} {fmt_num(NROW(x))}
-      {bold("Cols:")} {fmt_num(NCOL(x))}
+      {bold("Columns:")} {fmt_num(NCOL(x))}
+      {bold("Delimiter:")} "{delim}"
       {entries*}
 
-      {silver("Call `spec()` for a copy-pastable column specification")}
-      {silver("Specify the column types with `col_types` to quiet this message")}
+      {silver("Use `spec()` to retrieve the guessed column specification")}
+      {silver("Pass a specification to the `col_types` argument to quiet this message")}
       '
     )
   )
