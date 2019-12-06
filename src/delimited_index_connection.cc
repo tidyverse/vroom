@@ -77,7 +77,6 @@ delimited_index_connection::delimited_index_connection(
   // Parse header
   size_t start = find_first_line(buf[i], skip_, comment_);
 
-  std::string delim_;
   if (delim == nullptr) {
     delim_ = std::string(1, guess_delim(buf[i], start, 5, sz));
   } else {
