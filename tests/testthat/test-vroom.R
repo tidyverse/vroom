@@ -1,7 +1,7 @@
 context("test-vroom.R")
 
 test_that("vroom can read a tsv", {
-  test_vroom("a\tb\tc\n1\t2\t3\n",
+  test_vroom("a\tb\tc\n1\t2\t3\n", delim = "\t",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
   )
 })
@@ -122,7 +122,7 @@ test_that("vroom handles UTF byte order marks", {
     vroom(as.raw(c(0xef, 0xbb, 0xbf, # BOM
                 0x41, # A
                 0x0A # newline
-             )), col_names = FALSE
+             )), delim = "\n", col_names = FALSE
     )[[1]],
     "A")
 
@@ -131,7 +131,7 @@ test_that("vroom handles UTF byte order marks", {
     vroom(as.raw(c(0xfe, 0xff, # BOM
                 0x41, # A
                 0x0A # newline
-             )), col_names = FALSE
+             )), delim = "\n", col_names = FALSE
     )[[1]],
     "A")
 
@@ -140,7 +140,7 @@ test_that("vroom handles UTF byte order marks", {
     vroom(as.raw(c(0xff, 0xfe, # BOM
                 0x41, # A
                 0x0A # newline
-             )), col_names = FALSE
+             )), delim = "\n", col_names = FALSE
     )[[1]],
     "A")
 
@@ -149,7 +149,7 @@ test_that("vroom handles UTF byte order marks", {
     vroom(as.raw(c(0x00, 0x00, 0xfe, 0xff, # BOM
                 0x41, # A
                 0x0A # newline
-             )), col_names = FALSE
+             )), delim = "\n", col_names = FALSE
     )[[1]],
     "A")
 
@@ -158,7 +158,7 @@ test_that("vroom handles UTF byte order marks", {
     vroom(as.raw(c(0xff, 0xfe, 0x00, 0x00, # BOM
                 0x41, # A
                 0x0A # newline
-             )), col_names = FALSE
+             )), delim = "\n", col_names = FALSE
     )[[1]],
     "A")
 })
@@ -166,17 +166,17 @@ test_that("vroom handles UTF byte order marks", {
 test_that("vroom handles vectors shorter than the UTF byte order marks", {
 
   expect_equal(
-    charToRaw(vroom(as.raw(c(0xef, 0xbb, 0x0A)), col_names = FALSE)[[1]]),
+    charToRaw(vroom(as.raw(c(0xef, 0xbb, 0x0A)), delim = "\n", col_names = FALSE)[[1]]),
     as.raw(c(0xef, 0xbb))
   )
 
   expect_equal(
-    charToRaw(vroom(as.raw(c(0xfe, 0x0A)), col_names = FALSE)[[1]]),
+    charToRaw(vroom(as.raw(c(0xfe, 0x0A)), delim = "\n", col_names = FALSE)[[1]]),
     as.raw(c(0xfe))
   )
 
   expect_equal(
-    charToRaw(vroom(as.raw(c(0xff, 0x0A)), col_names = FALSE)[[1]]),
+    charToRaw(vroom(as.raw(c(0xff, 0x0A)), delim = "\n", col_names = FALSE)[[1]]),
     as.raw(c(0xff))
   )
 })
@@ -194,7 +194,7 @@ test_that("vroom can read a file with only headers", {
     equals = tibble::tibble(a = character())
   )
 
-  test_vroom("a,b,c\n",
+  test_vroom("a,b,c\n", delim = ",",
     equals = tibble::tibble(a = character(), b = character(), c = character())
   )
 })
@@ -228,7 +228,7 @@ test_that("vroom_example() returns a single example files", {
 })
 
 test_that("subsets work", {
-  res <- vroom("1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14", col_names = FALSE)
+  res <- vroom("1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14", delim = "\n", col_names = FALSE)
   expect_equal(head(res[[1]]), c(1:6))
   expect_equal(tail(res[[1]]), c(9:14))
 
@@ -292,7 +292,7 @@ test_that("vroom truncates col_names if it is too long", {
 })
 
 test_that("vroom makes additional col_names if it is too short", {
-  test_vroom("1,2,3\n4,5,6\n", col_names = c("a", "b"),
+  test_vroom("1,2,3\n4,5,6\n", col_names = c("a", "b"), delim = ",",
     equals = tibble::tibble(a = c(1, 4), b = c(2, 5), X3 = c(3, 6))
   )
 })
@@ -324,12 +324,12 @@ test_that("vroom uses the number of rows when guess_max = Inf", {
   vroom_write(df, tf, delim = "\t")
 
   # The type should be guessed wrong, because the character comes at the end
-  res <- vroom(tf)
+  res <- vroom(tf, delim = "\n")
   expect_is(res[["x"]], "numeric")
   expect_true(is.na(res[["x"]][[NROW(res)]]))
 
   # The value should exist with guess_max = Inf
-  res <- vroom(tf, guess_max = Inf)
+  res <- vroom(tf, delim = "\n", guess_max = Inf)
   expect_is(res[["x"]], "character")
   expect_equal(res[["x"]][[NROW(res)]], "foo")
 })
@@ -365,7 +365,7 @@ test_that("vroom errors if unnamed column types do not match the number of colum
 })
 
 test_that("column names are properly encoded", {
-  nms <- vroom::vroom("f\U00F6\U00F6\nbar\n")
+  nms <- vroom("f\U00F6\U00F6\nbar\n", delim = "\n")
   expect_equal(Encoding(colnames(nms)), "UTF-8")
 })
 
@@ -380,13 +380,13 @@ test_that("vroom can read files with no trailing newline", {
   on.exit(unlink(f))
 
   writeBin(charToRaw("foo\nbar"), f)
-  expect_equal(vroom(f, col_names = FALSE)[[1]], c("foo", "bar"))
+  expect_equal(vroom(f, col_names = FALSE, delim = "\n")[[1]], c("foo", "bar"))
 
   f2 <- tempfile()
   on.exit(unlink(f2), add = TRUE)
 
   writeBin(charToRaw("foo,bar\n1,2"), f2)
-  expect_equal(vroom(f2), tibble::tibble(foo = 1, bar = 2))
+  expect_equal(vroom(f2, delim = ","), tibble::tibble(foo = 1, bar = 2))
 })
 
 test_that("Missing files error with a nice error message", {

@@ -193,37 +193,36 @@ pb_write_format <- function(unused) {
 
 # Guess delimiter by splitting every line by each delimiter and choosing the
 # delimiter which splits the lines into the highest number of consistent fields
-guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";", "\n")) {
+guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";")) {
   if (length(lines) == 0) {
     return("")
   }
 
   # blank text within quotes
-  lines <- gsub('"[^"]+"', "", lines)
+  lines <- gsub('"[^"]*"', "", lines)
 
   splits <- lapply(delims, strsplit, x = lines, useBytes = TRUE, fixed = TRUE)
 
   counts <- lapply(splits, function(x) table(lengths(x)))
 
-  choose_best <- function(i, j) {
-    x <- counts[[i]]
-    y <- counts[[j]]
+  num_fields <- vapply(counts, function(x) as.integer(names(x)[[1]]), integer(1))
 
-    nx <- as.integer(names(counts[[i]]))
-    ny <- as.integer(names(counts[[j]]))
+  num_lines <- vapply(counts, function(x) (x)[[1]], integer(1))
 
-    mx <- which.max(x)
-    my <- which.max(y)
-
-    if (x[[mx]] > y[[my]] ||
-      x[[mx]] == y[[my]] && nx[[mx]] > ny[[my]]) {
-      i
-    } else {
-      j
+  top_lines <- 0
+  top_idx <- 0
+  for (i in seq_along(delims)) {
+    if (num_fields[[i]] >= 2 && num_lines[[i]] > top_lines ||
+      (top_lines == num_lines[[i]] && (top_idx <= 0 || num_fields[[top_idx]] < num_fields[[i]]))) {
+      top_lines <- num_lines[[i]]
+      top_idx <- i
     }
   }
-  res <- Reduce(choose_best, seq_along(counts))
-  delims[[res]]
+  if (top_idx == 0) {
+    stop("Could not guess the delimiter", call. = FALSE)
+  }
+
+  delims[[top_idx]]
 }
 
 cached <- new.env(emptyenv())

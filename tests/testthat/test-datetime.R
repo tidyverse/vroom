@@ -6,6 +6,7 @@ test_that("datetime parsing works", {
 2018-01-01,10:01:01 AM,2018-01-01 10:01:01
 2019-01-01,05:04:03 AM,2019-01-01 05:04:03
 ",
+    delim = ",",
     equals = tibble::tibble(
       date = c(as.Date("2018-01-01"), as.Date("2019-01-01")),
       time = c(hms::hms(1, 1, 10), hms::hms(3, 4, 5)),
@@ -215,19 +216,19 @@ test_that("unambiguous times with and without daylight savings", {
 ## Guessing ---------------------------------------------------------------------
 
 test_that("DDDD-DD not parsed as date (i.e. doesn't trigger partial date match)", {
-  expect_is(vroom("1989-90\n1990-91\n")[[1]], "character")
+  expect_is(vroom("1989-90\n1990-91\n", delim = "\n")[[1]], "character")
 })
 
 test_that("leading zeros don't get parsed as date without explicit separator", {
-  expect_is(vroom("00010203\n", col_names = FALSE)[[1]], "character")
-  expect_is(vroom("0001-02-03\n", col_names = FALSE)[[1]], "Date")
+  expect_is(vroom("00010203\n", col_names = FALSE, delim = "\n")[[1]], "character")
+  expect_is(vroom("0001-02-03\n", col_names = FALSE, delim = "\n")[[1]], "Date")
 })
 
 test_that("must have either two - or none", {
-  expect_is(vroom("2000-10-10\n", col_names = FALSE)[[1]], "Date")
-  expect_is(vroom("2000-1010\n", col_names = FALSE)[[1]], "character")
-  expect_is(vroom("200010-10\n", col_names = FALSE)[[1]], "character")
-  expect_is(vroom("20001010\n", col_names = FALSE)[[1]], "numeric")
+  expect_is(vroom("2000-10-10\n", col_names = FALSE, delim = "\n")[[1]], "Date")
+  expect_is(vroom("2000-1010\n", col_names = FALSE, delim = "\n")[[1]], "character")
+  expect_is(vroom("200010-10\n", col_names = FALSE, delim = "\n")[[1]], "character")
+  expect_is(vroom("20001010\n", col_names = FALSE, delim = "\n")[[1]], "numeric")
 })
 
 test_that("times are guessed even without AM / PM", {

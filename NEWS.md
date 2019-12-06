@@ -1,5 +1,8 @@
 # vroom (development version)
 
+* `vroom()` now uses better heuristics to guess the delimiter and now throws an
+  error if a delimiter cannot be guessed (#126, #141, #167).
+
 * `vroom()` now has an improved error message when a file does not exist (#169).
 
 * `vroom_write()` now does not try to write anything when given empty inputs (#172).
