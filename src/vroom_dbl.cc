@@ -51,7 +51,15 @@ double bsd_strtod(const char* begin, const char* end) {
    * Entry is 10^2^i.  Used to convert decimal
    * exponents into floating-point numbers. */
   static double powersOf10[] = {
-      1e1, 1e2, 1e4, 1e8, 1e16, 1e32, // 1e64, 1e128, 1e256,
+      1e1,
+      1e2,
+      1e4,
+      1e8,
+      1e16,
+      1e32,
+      1e64,
+      1e128,
+      1e256,
   };
 #if 0
         static double powersOf2[] = {

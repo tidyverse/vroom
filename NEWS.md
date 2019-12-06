@@ -1,5 +1,8 @@
 # vroom (development version)
 
+* `vroom()` now better handles floating point values with very large exponents
+  (#164).
+
 * `vroom()` now uses better heuristics to guess the delimiter and now throws an
   error if a delimiter cannot be guessed (#126, #141, #167).
 
