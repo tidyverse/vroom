@@ -21,7 +21,7 @@ vroom(
   escape_backslash = FALSE,
   locale = default_locale(),
   guess_max = 100,
-  altrep_opts = "chr",
+  altrep_opts = TRUE,
   num_threads = vroom_threads(),
   progress = vroom_progress(),
   .name_repair = "unique"

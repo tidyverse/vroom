@@ -81,8 +81,8 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
   id = NULL, skip = 0, n_max = Inf,
   na = c("", "NA"), quote = '"', comment = "", trim_ws = TRUE,
   escape_double = TRUE, escape_backslash = FALSE, locale = default_locale(),
-  guess_max = 100, altrep_opts = "chr", num_threads = vroom_threads(), progress = vroom_progress(),
-  .name_repair = "unique") {
+  guess_max = 100, altrep_opts = TRUE, num_threads = vroom_threads(),
+  progress = vroom_progress(), .name_repair = "unique") {
 
 
   file <- standardise_path(file)
