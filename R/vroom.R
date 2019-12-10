@@ -25,9 +25,10 @@ NULL
 #'   column names are not empty and unique. See `.name_repair` as documented in
 #'   [tibble::tibble()] for additional options including supplying user defined
 #'   name repair functions.
-#' @param altrep_opts Control which column types use Altrep representations,
+#' @param altrep Control which column types use Altrep representations,
 #'   either a character vector of types, `TRUE` or `FALSE`. See
-#'   [vroom_altrep_opts()] for for full details.
+#'   [vroom_altrep()] for for full details.
+#' @param altrep_opts \Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}
 #' @export
 #' @examples
 #' # Show path to example file
@@ -76,14 +77,34 @@ NULL
 #' vroom("a\tb\n1.0\t2.0\n")
 #' # Other delimiters
 #' vroom("a|b\n1.0|2.0\n", delim = "|")
-vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
+vroom <- function(
+  file,
+  delim = NULL,
+  col_names = TRUE,
+  col_types = NULL,
   col_select = NULL,
-  id = NULL, skip = 0, n_max = Inf,
-  na = c("", "NA"), quote = '"', comment = "", trim_ws = TRUE,
-  escape_double = TRUE, escape_backslash = FALSE, locale = default_locale(),
-  guess_max = 100, altrep_opts = TRUE, num_threads = vroom_threads(),
-  progress = vroom_progress(), .name_repair = "unique") {
+  id = NULL,
+  skip = 0,
+  n_max = Inf,
+  na = c("", "NA"),
+  quote = '"',
+  comment = "",
+  trim_ws = TRUE,
+  escape_double = TRUE,
+  escape_backslash = FALSE,
+  locale = default_locale(),
+  guess_max = 100,
+  altrep = TRUE,
+  altrep_opts = deprecated(),
+  num_threads = vroom_threads(),
+  progress = vroom_progress(),
+  .name_repair = "unique"
+  ) {
 
+  if (!rlang::is_missing(altrep_opts)) {
+    deprecate_warn("1.1.0", "vroom(altrep_opts = )", "vroom(altrep = )")
+    altrep <- altrep_opts
+  }
 
   file <- standardise_path(file)
 
@@ -113,7 +134,7 @@ vroom <- function(file, delim = NULL, col_names = TRUE, col_types = NULL,
     id = id, skip = skip, col_select = col_select,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
     escape_backslash = escape_backslash, comment = comment, locale = locale,
-    guess_max = guess_max, n_max = n_max, altrep_opts = vroom_altrep_opts(altrep_opts),
+    guess_max = guess_max, n_max = n_max, altrep = vroom_altrep(altrep),
     num_threads = num_threads, progress = progress)
 
   out <- tibble::as_tibble(out, .name_repair = .name_repair)
@@ -249,7 +270,7 @@ vroom_tempfile <- function() {
 
 #' Show which column types are using Altrep
 #'
-#' `vroom_altrep_opts()` can be used directly as input to the `altrep_opts`
+#' `vroom_altrep()` can be used directly as input to the `altrep`
 #' argument of [vroom()].
 #'
 #' Alternatively there is also a family of environment variables to control use of
@@ -279,22 +300,22 @@ vroom_tempfile <- function() {
 #'   take `TRUE` or `FALSE` to use Altrep for all possible or none of the
 #'   types
 #' @examples
-#' vroom_altrep_opts()
-#' vroom_altrep_opts(c("chr", "fct", "int"))
-#' vroom_altrep_opts(TRUE)
-#' vroom_altrep_opts(FALSE)
+#' vroom_altrep()
+#' vroom_altrep(c("chr", "fct", "int"))
+#' vroom_altrep(TRUE)
+#' vroom_altrep(FALSE)
 #' @export
-vroom_altrep_opts <- function(which = NULL) {
+vroom_altrep <- function(which = NULL) {
   if (!is.null(which)) {
     if (is.logical(which)) {
-      types <- names(altrep_opts_vals())
+      types <- names(altrep_vals())
       if (isTRUE(which)) {
         which <- as.list(stats::setNames(rep(TRUE, length(types)), types))
       } else {
         which <- as.list(stats::setNames(rep(FALSE, length(types)), types))
       }
     } else {
-      which <- match.arg(which, names(altrep_opts_vals()), several.ok = TRUE)
+      which <- match.arg(which, names(altrep_vals()), several.ok = TRUE)
       which <- as.list(stats::setNames(rep(TRUE, length(which)), which))
     }
   }
@@ -316,10 +337,23 @@ vroom_altrep_opts <- function(which = NULL) {
   for (i in seq_along(args)) {
     out <- bitwOr(out, bitwShiftL(as.integer(args[[i]]), i - 1L))
   }
-  structure(out, class = "vroom_altrep_opts")
+  structure(out, class = "vroom_altrep")
 }
 
-altrep_opts_vals <- function() c(
+#' Show which column types are using Altrep
+#'
+#' @description
+#' \Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}
+#' This function is deprecated in favor of `vroom_altrep()`.
+#'
+#' @inheritParams vroom_altrep
+#' @export
+vroom_altrep_opts <- function(which = NULL) {
+  deprecate_warn("1.1.0", "vroom_altrep_opts()", "vroom_altrep()")
+  vroom_altrep(which)
+}
+
+altrep_vals <- function() c(
   "none" = 0L,
   "chr" = 1L,
   "fct" = 2L,
@@ -333,8 +367,8 @@ altrep_opts_vals <- function() c(
 )
 
 #' @export
-print.vroom_altrep_opts <- function(x, ...) {
-  vals <- altrep_opts_vals()
+print.vroom_altrep <- function(x, ...) {
+  vals <- altrep_vals()
   reps <- names(vals)[bitwAnd(vals, x) > 0]
 
   cat("Using Altrep representations for:\n",

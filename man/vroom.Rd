@@ -21,7 +21,8 @@ vroom(
   escape_backslash = FALSE,
   locale = default_locale(),
   guess_max = 100,
-  altrep_opts = TRUE,
+  altrep = TRUE,
+  altrep_opts = deprecated(),
   num_threads = vroom_threads(),
   progress = vroom_progress(),
   .name_repair = "unique"
@@ -105,9 +106,11 @@ names.}
 
 \item{guess_max}{Maximum number of records to use for guessing column types.}
 
-\item{altrep_opts}{Control which column types use Altrep representations,
+\item{altrep}{Control which column types use Altrep representations,
 either a character vector of types, \code{TRUE} or \code{FALSE}. See
-\code{\link[=vroom_altrep_opts]{vroom_altrep_opts()}} for for full details.}
+\code{\link[=vroom_altrep]{vroom_altrep()}} for for full details.}
+
+\item{altrep_opts}{\Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}}
 
 \item{num_threads}{Number of threads to use when reading and materializing
 vectors. If your data contains embedded newlines (newlines within fields)

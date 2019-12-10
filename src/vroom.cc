@@ -31,7 +31,7 @@ SEXP vroom_(
     List locale,
     ptrdiff_t guess_max,
     size_t num_threads,
-    size_t altrep_opts) {
+    size_t altrep) {
 
   Rcpp::CharacterVector tempfile;
 
@@ -71,7 +71,7 @@ SEXP vroom_(
       filenames,
       na,
       locale,
-      altrep_opts,
+      altrep,
       guess_max,
       num_threads);
 }

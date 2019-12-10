@@ -16,6 +16,6 @@ Similar to \code{str()} but with more information for Altrep objects.
 # when used on non-altrep objects altrep will always be false
 vroom_str(mtcars)
 
-mt <- vroom(vroom_example("mtcars.csv"), ",", altrep_opts = c("chr", "dbl"))
+mt <- vroom(vroom_example("mtcars.csv"), ",", altrep = c("chr", "dbl"))
 vroom_str(mt)
 }

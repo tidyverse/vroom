@@ -25,10 +25,16 @@ vroom_fwf <- function(file,
                       locale = default_locale(), na = c("", "NA"),
                       comment = "", trim_ws = TRUE, skip = 0, n_max = Inf,
                       guess_max = 100,
-                      altrep_opts = "chr",
+                      altrep = TRUE,
+                      altrep_opts = deprecated(),
                       num_threads = vroom_threads(),
                       progress = vroom_progress(),
                       .name_repair = "unique") {
+
+  if (!rlang::is_missing(altrep_opts)) {
+    lifecycle::deprecate_warn("1.1.0", "vroom_fwf(altrep_opts = )", "vroom_fwf(altrep = )")
+    altrep <- altrep_opts
+  }
 
   file <- standardise_path(file)
 
@@ -51,7 +57,7 @@ vroom_fwf <- function(file,
     col_types = col_types, col_select = col_select,
     id = id, na = na, guess_max = guess_max, skip = skip, comment = comment,
     n_max = n_max, num_threads = num_threads,
-    altrep_opts = vroom_altrep_opts(altrep_opts), locale = locale,
+    altrep = vroom_altrep(altrep), locale = locale,
     progress = progress)
 
   out <- tibble::as_tibble(out, .name_repair = .name_repair)

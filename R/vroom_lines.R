@@ -12,8 +12,14 @@
 #' tail(lines, n = 2)
 #' sample(lines, size = 2)
 #' @export
-vroom_lines <- function(file, n_max = Inf, skip = 0, altrep_opts = "chr",
-  num_threads = vroom_threads(), progress = vroom_progress()) {
+vroom_lines <- function(file, n_max = Inf, skip = 0, altrep = TRUE,
+  altrep_opts = deprecated(), num_threads = vroom_threads(),
+  progress = vroom_progress()) {
+
+  if (!rlang::is_missing(altrep_opts)) {
+    lifecycle::deprecate_warn("1.1.0", "vroom_lines(altrep_opts = )", "vroom_lines(altrep = )")
+    altrep <- altrep_opts
+  }
 
   file <- standardise_path(file)
 
@@ -35,7 +41,7 @@ vroom_lines <- function(file, n_max = Inf, skip = 0, altrep_opts = "chr",
     id = NULL, skip = skip, col_select = col_select, na = character(), quote = "",
     trim_ws = FALSE, escape_double = FALSE, escape_backslash = FALSE, comment = "",
     locale = default_locale(),
-    guess_max = 0, n_max = n_max, altrep_opts = vroom_altrep_opts(altrep_opts),
+    guess_max = 0, n_max = n_max, altrep = vroom_altrep(altrep),
     num_threads = num_threads, progress = progress
   )
 

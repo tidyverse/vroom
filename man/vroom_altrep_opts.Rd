@@ -12,38 +12,6 @@ take \code{TRUE} or \code{FALSE} to use Altrep for all possible or none of the
 types}
 }
 \description{
-\code{vroom_altrep_opts()} can be used directly as input to the \code{altrep_opts}
-argument of \code{\link[=vroom]{vroom()}}.
-}
-\details{
-Alternatively there is also a family of environment variables to control use of
-the Altrep framework. These can then be set in your \code{.Renviron} file, e.g.
-with \code{\link[usethis:edit_r_environ]{usethis::edit_r_environ()}}. For versions of R where the Altrep
-framework is unavailable (R < 3.5.0) they are automatically turned off and
-the variables have no effect. The variables can take one of \code{true}, \code{false},
-\code{TRUE}, \code{FALSE}, \code{1}, or \code{0}.
-\itemize{
-\item \code{VROOM_USE_ALTREP_NUMERICS} - If set use Altrep for \emph{all} numeric types
-(default \code{false}).
-}
-
-There are also individual variables for each type. Currently only
-\code{VROOM_USE_ALTREP_CHR} defaults to \code{true}.
-\itemize{
-\item \code{VROOM_USE_ALTREP_CHR}
-\item \code{VROOM_USE_ALTREP_FCT}
-\item \code{VROOM_USE_ALTREP_INT}
-\item \code{VROOM_USE_ALTREP_DBL}
-\item \code{VROOM_USE_ALTREP_NUM}
-\item \code{VROOM_USE_ALTREP_LGL}
-\item \code{VROOM_USE_ALTREP_DTTM}
-\item \code{VROOM_USE_ALTREP_DATE}
-\item \code{VROOM_USE_ALTREP_TIME}
-}
-}
-\examples{
-vroom_altrep_opts()
-vroom_altrep_opts(c("chr", "fct", "int"))
-vroom_altrep_opts(TRUE)
-vroom_altrep_opts(FALSE)
+\Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}
+This function is deprecated in favor of \code{vroom_altrep()}.
 }

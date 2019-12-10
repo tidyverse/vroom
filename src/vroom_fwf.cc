@@ -23,7 +23,7 @@ List vroom_fwf_(
     List locale,
     ptrdiff_t guess_max,
     size_t num_threads,
-    size_t altrep_opts,
+    size_t altrep,
     bool progress) {
 
   std::vector<std::string> filenames;
@@ -48,7 +48,7 @@ List vroom_fwf_(
       filenames,
       na,
       locale,
-      altrep_opts,
+      altrep,
       guess_max,
       num_threads);
 }

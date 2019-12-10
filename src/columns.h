@@ -78,7 +78,7 @@ inline List create_columns(
     std::vector<std::string>& filenames,
     CharacterVector na,
     List locale,
-    size_t altrep_opts,
+    size_t altrep,
     size_t guess_max,
     size_t num_threads) {
 
@@ -110,7 +110,7 @@ inline List create_columns(
       na,
       locale_info,
       guess_max,
-      altrep_opts);
+      altrep);
 
   size_t to_parse = 0;
   for (size_t col = 0; col < num_cols; ++col) {

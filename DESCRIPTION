@@ -42,6 +42,7 @@ Imports:
     crayon,
     glue,
     hms,
+    lifecycle,
     Rcpp (>= 0.12.18.3),
     rlang (>= 0.4.2),
     tibble (>= 2.0.0),

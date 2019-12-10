@@ -1,5 +1,13 @@
 # vroom (development version)
 
+## Breaking changes
+
+* `vroom_altrep_opts()` and the argument `vroom(altrep_opts =)` have been
+  renamed to `vroom_altrep()` and `altrep` respectively. The prior names have
+  been deprecated.
+
+## Features / Bugfixes
+
 * `vroom()` now better handles floating point values with very large exponents
   (#164).
 
