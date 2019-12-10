@@ -84,7 +84,7 @@ gen_factor <- function(n, levels = NULL, ordered = FALSE, num_levels = gen_integ
 gen_time <- function(n, min = 0, max = hms::hms(days = 1), fractional = FALSE, ...) {
   res <- hms::hms(seconds = stats::runif(n, min = min, max = max))
   if (!fractional) {
-    res <- hms::as.hms(floor(res))
+    res <- hms::as_hms(floor(res))
   }
   res
 }
