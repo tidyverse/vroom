@@ -141,6 +141,17 @@
 <h1 class="page-header">
 <a href="#vroom-development-version" class="anchor"></a>vroom (development version)<small> Unreleased </small>
 </h1>
+<div id="breaking-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#breaking-changes" class="anchor"></a>Breaking changes</h2>
+<ul>
+<li>
+<code><a href="../reference/vroom_altrep_opts.html">vroom_altrep_opts()</a></code> and the argument <code><a href="../reference/vroom.html">vroom(altrep_opts =)</a></code> have been renamed to <code><a href="../reference/vroom_altrep.html">vroom_altrep()</a></code> and <code>altrep</code> respectively. The prior names have been deprecated.</li>
+</ul>
+</div>
+<div id="features--bugfixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#features--bugfixes" class="anchor"></a>Features / Bugfixes</h2>
 <ul>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now better handles floating point values with very large exponents (<a href='https://github.com/r-lib/vroom/issues/164'>#164</a>).</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now uses better heuristics to guess the delimiter and now throws an error if a delimiter cannot be guessed (<a href='https://github.com/r-lib/vroom/issues/126'>#126</a>, <a href='https://github.com/r-lib/vroom/issues/141'>#141</a>, <a href='https://github.com/r-lib/vroom/issues/167'>#167</a>).</p></li>
@@ -156,6 +167,7 @@
 <li><p>Added benchmarks with <em>wide</em> data for both numeric and character data (<a href='https://github.com/r-lib/vroom/issues/87'>#87</a>, <a href='https://github.com/R3myG'>@R3myG</a>)</p></li>
 <li><p>The delimiter used for parsing is now shown in the message output (<a href='https://github.com/r-lib/vroom/issues/95'>#95</a> <a href='https://github.com/R3myG'>@R3myG</a>)</p></li>
 </ul>
+</div>
 </div>
     <div id="vroom-102" class="section level1">
 <h1 class="page-header">

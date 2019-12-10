@@ -157,7 +157,8 @@
   <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>,
   <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>Inf</span>,
   <span class='kw'>guess_max</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>altrep_opts</span> <span class='kw'>=</span> <span class='st'>"chr"</span>,
+  <span class='kw'>altrep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>altrep_opts</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Deprecated.html'>deprecated</a></span>(),
   <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(),
   <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>(),
   <span class='kw'>.name_repair</span> <span class='kw'>=</span> <span class='st'>"unique"</span>
@@ -259,10 +260,14 @@ each field before parsing it?</p></td>
       <td><p>Maximum number of records to use for guessing column types.</p></td>
     </tr>
     <tr>
-      <th>altrep_opts</th>
+      <th>altrep</th>
       <td><p>Control which column types use Altrep representations,
 either a character vector of types, <code>TRUE</code> or <code>FALSE</code>. See
-<code><a href='vroom_altrep_opts.html'>vroom_altrep_opts()</a></code> for for full details.</p></td>
+<code><a href='vroom_altrep.html'>vroom_altrep()</a></code> for for full details.</p></td>
+    </tr>
+    <tr>
+      <th>altrep_opts</th>
+      <td><p><img src='figures/lifecycle-deprecated.svg' alt='Deprecated lifecycle' /></p></td>
     </tr>
     <tr>
       <th>num_threads</th>
