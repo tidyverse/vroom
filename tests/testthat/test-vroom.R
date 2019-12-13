@@ -394,3 +394,12 @@ test_that("Missing files error with a nice error message", {
   expect_error(vroom(f), "does not exist", class = "Rcpp::exception")
   expect_error(vroom("foo"), "does not exist in current working directory", class = "Rcpp::exception")
 })
+
+test_that("Can return the spec object", {
+  x <- vroom("foo,bar\n1,c\n")
+  obj <- spec(x)
+  expect_is(obj, "col_spec")
+  exp <- as.col_spec(list(foo = "d", bar = "c"))
+  exp$delim <- ","
+  expect_equal(obj, exp)
+})

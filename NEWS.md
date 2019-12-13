@@ -8,6 +8,8 @@
 
 ## Features / Bugfixes
 
+* `vroom()` now includes a spec object with the `col_types` class, as intended.
+
 * `vroom()` now better handles floating point values with very large exponents
   (#164).
 
