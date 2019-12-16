@@ -1,6 +1,0 @@
-package	ondiskversion	loadedversion	path	loadedpath	attached	is_base	date	source	md5ok	library
-base	3.6.0	NA	/opt/R/3.6.0/lib/R/library/base	NA	TRUE	TRUE	2019-05-06	local	NA	/opt/R/3.6.0/lib/R/library
-data.table	1.12.2	NA	/opt/R/3.6.0/lib/R/library/data.table	NA	FALSE	FALSE	2019-04-07	CRAN (R 3.6.0)	NA	/opt/R/3.6.0/lib/R/library
-dplyr	0.8.1	0.8.1	/opt/R/3.6.0/lib/R/library/dplyr	/opt/R/3.6.0/lib/R/library/dplyr	TRUE	FALSE	2019-05-14	CRAN (R 3.6.0)	NA	/opt/R/3.6.0/lib/R/library
-readr	1.3.1	NA	/opt/R/3.6.0/lib/R/library/readr	NA	FALSE	FALSE	2018-12-21	CRAN (R 3.6.0)	NA	/opt/R/3.6.0/lib/R/library
-vroom	1.0.2	1.0.2	/opt/R/3.6.0/lib/R/library/vroom	/opt/R/3.6.0/lib/R/library/vroom	TRUE	FALSE	2019-06-27	local	NA	/opt/R/3.6.0/lib/R/library
