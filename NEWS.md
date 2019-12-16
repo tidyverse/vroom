@@ -8,6 +8,9 @@
 
 ## Features / Bugfixes
 
+* `vroom()` no longer crashes when files have trailing fields, windows newlines
+  and the file is not newline or null terminated.
+
 * `vroom()` now includes a spec object with the `col_types` class, as intended.
 
 * `vroom()` now better handles floating point values with very large exponents

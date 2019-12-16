@@ -316,7 +316,7 @@ delimited_index::get_trimmed_val(size_t i, bool is_first, bool is_last) const {
 
   std::tie(begin, end) = get_cell(i, is_first);
 
-  if (is_last && windows_newlines_) {
+  if (is_last && windows_newlines_ && end > begin) {
     end--;
   }
 

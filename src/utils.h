@@ -82,7 +82,7 @@ template <typename T> T get_env(const char* name, T default_value) {
 }
 
 inline bool is_space(const char* c) {
-  return *c == '\0' || *c == ' ' || *c == '\t';
+  return *c == ' ' || *c == '\t' || *c == '\0';
 }
 
 inline void trim_whitespace(const char*& begin, const char*& end) {

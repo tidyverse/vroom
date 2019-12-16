@@ -403,3 +403,15 @@ test_that("Can return the spec object", {
   exp$delim <- ","
   expect_equal(obj, exp)
 })
+
+test_that("vroom handles files with trailing commas, windows newlines, missing a final newline and not null terminated", {
+  f <- tempfile()
+  on.exit(unlink(f))
+
+  writeChar(paste(collapse = "\r\n", c('foo,bar,', '1,2,')), con = f, eos = NULL)
+
+  expect_equal(
+    vroom(f),
+    tibble::tibble(foo = 1, bar = 2, "...3" = NA)
+  )
+})
