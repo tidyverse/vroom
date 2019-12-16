@@ -178,61 +178,24 @@ created by readr.</p>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='input'><span class='no'>s</span> <span class='kw'>&lt;-</span> <span class='fu'>spec</span>(<span class='no'>df</span>)
-<span class='no'>s</span></div><div class='output co'>#&gt; $cols
-#&gt; $cols$model
-#&gt; &lt;collector_character&gt;
-#&gt; 
-#&gt; $cols$mpg
-#&gt; &lt;collector_double&gt;
-#&gt; 
-#&gt; $cols$cyl
-#&gt; &lt;collector_double&gt;
-#&gt; 
-#&gt; $cols$disp
-#&gt; &lt;collector_double&gt;
-#&gt; 
-#&gt; $cols$hp
-#&gt; &lt;collector_double&gt;
-#&gt; 
-#&gt; $cols$drat
-#&gt; &lt;collector_double&gt;
-#&gt; 
-#&gt; $cols$wt
-#&gt; &lt;collector_double&gt;
-#&gt; 
-#&gt; $cols$qsec
-#&gt; &lt;collector_double&gt;
-#&gt; 
-#&gt; $cols$vs
-#&gt; &lt;collector_double&gt;
-#&gt; 
-#&gt; $cols$am
-#&gt; &lt;collector_double&gt;
-#&gt; 
-#&gt; $cols$gear
-#&gt; &lt;collector_double&gt;
-#&gt; 
-#&gt; $cols$carb
-#&gt; &lt;collector_double&gt;
-#&gt; 
-#&gt; 
-#&gt; $default
-#&gt; &lt;collector_guess&gt;
-#&gt; 
-#&gt; $delim
-#&gt; [1] ","
-#&gt; </div><div class='input'>
-<span class='fu'>cols_condense</span>(<span class='no'>s</span>)</div><div class='output co'>#&gt; $cols
-#&gt; $cols$model
-#&gt; &lt;collector_character&gt;
-#&gt; 
-#&gt; 
-#&gt; $default
-#&gt; &lt;collector_double&gt;
-#&gt; 
-#&gt; $delim
-#&gt; [1] ","
-#&gt; </div></span></pre>
+<span class='no'>s</span></div><div class='output co'>#&gt; cols(
+#&gt;   model = </span><span style='color: #BB0000;'>col_character()</span><span>,
+#&gt;   mpg = </span><span style='color: #00BB00;'>col_double()</span><span>,
+#&gt;   cyl = </span><span style='color: #00BB00;'>col_double()</span><span>,
+#&gt;   disp = </span><span style='color: #00BB00;'>col_double()</span><span>,
+#&gt;   hp = </span><span style='color: #00BB00;'>col_double()</span><span>,
+#&gt;   drat = </span><span style='color: #00BB00;'>col_double()</span><span>,
+#&gt;   wt = </span><span style='color: #00BB00;'>col_double()</span><span>,
+#&gt;   qsec = </span><span style='color: #00BB00;'>col_double()</span><span>,
+#&gt;   vs = </span><span style='color: #00BB00;'>col_double()</span><span>,
+#&gt;   am = </span><span style='color: #00BB00;'>col_double()</span><span>,
+#&gt;   gear = </span><span style='color: #00BB00;'>col_double()</span><span>,
+#&gt;   carb = </span><span style='color: #00BB00;'>col_double()</span><span>
+#&gt; )</div><div class='input'>
+<span class='fu'>cols_condense</span>(<span class='no'>s</span>)</div><div class='output co'>#&gt; cols(
+#&gt;   .default = col_double(),
+#&gt;   model = </span><span style='color: #BB0000;'>col_character()</span><span>
+#&gt; )</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

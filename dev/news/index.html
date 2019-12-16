@@ -153,6 +153,8 @@
 <h2 class="hasAnchor">
 <a href="#features--bugfixes" class="anchor"></a>Features / Bugfixes</h2>
 <ul>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer crashes when files have trailing fields, windows newlines and the file is not newline or null terminated.</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now includes a spec object with the <code>col_types</code> class, as intended.</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now better handles floating point values with very large exponents (<a href='https://github.com/r-lib/vroom/issues/164'>#164</a>).</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now uses better heuristics to guess the delimiter and now throws an error if a delimiter cannot be guessed (<a href='https://github.com/r-lib/vroom/issues/126'>#126</a>, <a href='https://github.com/r-lib/vroom/issues/141'>#141</a>, <a href='https://github.com/r-lib/vroom/issues/167'>#167</a>).</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now has an improved error message when a file does not exist (<a href='https://github.com/r-lib/vroom/issues/169'>#169</a>).</p></li>
