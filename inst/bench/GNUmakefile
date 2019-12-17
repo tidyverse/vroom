@@ -15,8 +15,6 @@ all: $(BENCH_OUT) session_info.tsv
 $(BENCH_OUT) : $(BENCH_MARKS)
 	Rscript summarise-benchmarks.R
 
-$(BENCH_MARKS): $(BENCH_INPUTS)
-
 session_info.tsv: session_info.R
 	./$<
 
