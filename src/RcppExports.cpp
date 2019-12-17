@@ -146,14 +146,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // whitespace_columns_
-List whitespace_columns_(std::string filename, size_t skip, int n, std::string comment);
+List whitespace_columns_(std::string filename, size_t skip, ptrdiff_t n, std::string comment);
 RcppExport SEXP _vroom_whitespace_columns_(SEXP filenameSEXP, SEXP skipSEXP, SEXP nSEXP, SEXP commentSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< size_t >::type skip(skipSEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< ptrdiff_t >::type n(nSEXP);
     Rcpp::traits::input_parameter< std::string >::type comment(commentSEXP);
     rcpp_result_gen = Rcpp::wrap(whitespace_columns_(filename, skip, n, comment));
     return rcpp_result_gen;

@@ -37,7 +37,7 @@ vroom_fwf_ <- function(inputs, col_starts, col_ends, trim_ws, col_names, col_typ
     .Call(`_vroom_vroom_fwf_`, inputs, col_starts, col_ends, trim_ws, col_names, col_types, col_select, skip, comment, n_max, id, na, locale, guess_max, num_threads, altrep, progress)
 }
 
-whitespace_columns_ <- function(filename, skip, n = 100L, comment = "") {
+whitespace_columns_ <- function(filename, skip, n, comment) {
     .Call(`_vroom_whitespace_columns_`, filename, skip, n, comment)
 }
 

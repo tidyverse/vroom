@@ -8,6 +8,8 @@
 
 ## Features / Bugfixes
 
+* `vroom_fwf()` and `fwf_empty()` now support passing `Inf` to `guess_max()`
+
 * `vroom()` now correctly copies string data for factor levels (#184)
 
 * `vroom()` no longer crashes when files have trailing fields, windows newlines

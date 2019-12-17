@@ -54,14 +54,15 @@ List vroom_fwf_(
 }
 
 template <typename Iterator>
-std::vector<bool> find_empty_cols(Iterator begin, Iterator end, size_t n) {
+std::vector<bool> find_empty_cols(Iterator begin, Iterator end, ptrdiff_t n) {
 
   std::vector<bool> is_white;
 
   size_t row = 0, col = 0;
   for (Iterator cur = begin; cur != end; ++cur) {
-    if (row > n)
+    if (n > 0 && row > static_cast<size_t>(n)) {
       break;
+    }
 
     switch (*cur) {
     case '\n':
@@ -86,7 +87,7 @@ std::vector<bool> find_empty_cols(Iterator begin, Iterator end, size_t n) {
 
 // [[Rcpp::export]]
 List whitespace_columns_(
-    std::string filename, size_t skip, int n = 100, std::string comment = "") {
+    std::string filename, size_t skip, ptrdiff_t n, std::string comment) {
 
   std::error_code error;
   auto mmap = mio::make_mmap_source(filename, error);

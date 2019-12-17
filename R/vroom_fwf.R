@@ -85,6 +85,10 @@ fwf_empty <- function(file, skip = 0, col_names = NULL, comment = "", n = 100L) 
     stop("`file` must be a regular file, not a connection", call. = FALSE)
   }
 
+  if (n < 0 || is.infinite(n)) {
+    n <- -1
+  }
+
   out <- whitespace_columns_(file[[1]], skip, comment = comment, n = n)
   out$end[length(out$end)] <- NA
 
