@@ -41,7 +41,7 @@ read_benchmark <- function(file, desc) {
       glue::glue("{reading_package}{altrep}\n{manip_package}",
         altrep = ifelse(is.na(altrep), "", glue::glue("(altrep: {altrep})"))
       ),
-      time,
+      case_when(type == "real" ~ time, TRUE ~ 0),
       sum),
     op = factor(op, desc)
   )
@@ -59,7 +59,7 @@ plot_benchmark <- function(data, title) {
   subtitle <- generate_subtitle(data)
 
   data %>%
-    filter(reading_package != "read.delim") %>%
+    filter(reading_package != "read.delim", type == "real") %>%
     ggplot() +
     geom_bar(aes(x = label, y = time, fill = op, group = label), stat = "identity") +
     scale_fill_brewer(type = "qual", palette = "Set2") +
