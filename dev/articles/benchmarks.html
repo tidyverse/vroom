@@ -195,42 +195,7 @@ total
 <tbody>
 <tr>
 <td style="text-align:right;">
-vroom
-</td>
-<td style="text-align:right;">
-dplyr
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-88ms
-</td>
-<td style="text-align:right;">
-429ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-3ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-5ms
-</td>
-<td style="text-align:right;">
-526ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom
+read.delim
 </td>
 <td style="text-align:right;">
 base
@@ -239,16 +204,10 @@ base
 NA
 </td>
 <td style="text-align:right;">
-208ms
+1m 14.4s
 </td>
 <td style="text-align:right;">
-302ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-3ms
+6ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -257,45 +216,16 @@ NA
 1ms
 </td>
 <td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-514ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom
-</td>
-<td style="text-align:right;">
-dplyr
-</td>
-<td style="text-align:right;">
-none
-</td>
-<td style="text-align:right;">
-85ms
-</td>
-<td style="text-align:right;">
-333ms
-</td>
-<td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-1ms
+400ms
 </td>
 <td style="text-align:right;">
-2ms
+1.4s
 </td>
 <td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-5ms
-</td>
-<td style="text-align:right;">
-425ms
+1m 16.3s
 </td>
 </tr>
 <tr>
@@ -309,28 +239,63 @@ dplyr
 NA
 </td>
 <td style="text-align:right;">
-54ms
+34.5s
 </td>
 <td style="text-align:right;">
-274ms
-</td>
-<td style="text-align:right;">
-1ms
+76ms
 </td>
 <td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-12ms
+1ms
 </td>
 <td style="text-align:right;">
 2ms
 </td>
 <td style="text-align:right;">
-4ms
+181ms
 </td>
 <td style="text-align:right;">
-344ms
+749ms
+</td>
+<td style="text-align:right;">
+35.5s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+none
+</td>
+<td style="text-align:right;">
+17s
+</td>
+<td style="text-align:right;">
+104ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+894ms
+</td>
+<td style="text-align:right;">
+763ms
+</td>
+<td style="text-align:right;">
+18.7s
 </td>
 </tr>
 <tr>
@@ -344,33 +309,33 @@ data.table
 NA
 </td>
 <td style="text-align:right;">
-9ms
+14.6s
 </td>
 <td style="text-align:right;">
-30ms
+12ms
 </td>
 <td style="text-align:right;">
-43ms
+1ms
 </td>
 <td style="text-align:right;">
-73ms
+1ms
 </td>
 <td style="text-align:right;">
-10ms
+1ms
 </td>
 <td style="text-align:right;">
-13ms
+129ms
 </td>
 <td style="text-align:right;">
-113ms
+211ms
 </td>
 <td style="text-align:right;">
-288ms
+15s
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-read.delim
+vroom
 </td>
 <td style="text-align:right;">
 base
@@ -379,13 +344,10 @@ base
 NA
 </td>
 <td style="text-align:right;">
-12ms
+1.2s
 </td>
 <td style="text-align:right;">
-12ms
-</td>
-<td style="text-align:right;">
-1ms
+130ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -397,10 +359,48 @@ NA
 1ms
 </td>
 <td style="text-align:right;">
+1.4s
+</td>
+<td style="text-align:right;">
+8.6s
+</td>
+<td style="text-align:right;">
+11.3s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+4.5s
+</td>
+<td style="text-align:right;">
+179ms
+</td>
+<td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-25ms
+1ms
+</td>
+<td style="text-align:right;">
+1.1s
+</td>
+<td style="text-align:right;">
+1.3s
+</td>
+<td style="text-align:right;">
+2.2s
+</td>
+<td style="text-align:right;">
+9.4s
 </td>
 </tr>
 </tbody>
@@ -457,37 +457,37 @@ total
 <tbody>
 <tr>
 <td style="text-align:right;">
-data.table
+read.delim
 </td>
 <td style="text-align:right;">
-data.table
+base
 </td>
 <td style="text-align:right;">
 NA
 </td>
 <td style="text-align:right;">
-54ms
+1m 56.7s
 </td>
 <td style="text-align:right;">
-399ms
+1.5s
 </td>
 <td style="text-align:right;">
-100ms
+1ms
 </td>
 <td style="text-align:right;">
-228ms
+1ms
 </td>
 <td style="text-align:right;">
-126ms
+1ms
 </td>
 <td style="text-align:right;">
-16ms
+4.8s
 </td>
 <td style="text-align:right;">
-4ms
+39ms
 </td>
 <td style="text-align:right;">
-925ms
+2m 3s
 </td>
 </tr>
 <tr>
@@ -501,150 +501,10 @@ dplyr
 NA
 </td>
 <td style="text-align:right;">
-359ms
+13s
 </td>
 <td style="text-align:right;">
-384ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-7ms
-</td>
-<td style="text-align:right;">
-752ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom
-</td>
-<td style="text-align:right;">
-base
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-234ms
-</td>
-<td style="text-align:right;">
-483ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-3ms
-</td>
-<td style="text-align:right;">
-720ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-read.delim
-</td>
-<td style="text-align:right;">
-base
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-563ms
-</td>
-<td style="text-align:right;">
-75ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-3ms
-</td>
-<td style="text-align:right;">
-642ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom
-</td>
-<td style="text-align:right;">
-base
-</td>
-<td style="text-align:right;">
-none
-</td>
-<td style="text-align:right;">
-239ms
-</td>
-<td style="text-align:right;">
-315ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-3ms
-</td>
-<td style="text-align:right;">
-3ms
-</td>
-<td style="text-align:right;">
-561ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom
-</td>
-<td style="text-align:right;">
-dplyr
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-150ms
-</td>
-<td style="text-align:right;">
-359ms
+90ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -656,13 +516,83 @@ NA
 4ms
 </td>
 <td style="text-align:right;">
+12ms
+</td>
+<td style="text-align:right;">
+32ms
+</td>
+<td style="text-align:right;">
+13.1s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+base
+</td>
+<td style="text-align:right;">
+none
+</td>
+<td style="text-align:right;">
+1.2s
+</td>
+<td style="text-align:right;">
+113ms
+</td>
+<td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-9ms
+1ms
 </td>
 <td style="text-align:right;">
-521ms
+3ms
+</td>
+<td style="text-align:right;">
+64ms
+</td>
+<td style="text-align:right;">
+56ms
+</td>
+<td style="text-align:right;">
+1.4s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+270ms
+</td>
+<td style="text-align:right;">
+192ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+809ms
+</td>
+<td style="text-align:right;">
+12ms
+</td>
+<td style="text-align:right;">
+37ms
+</td>
+<td style="text-align:right;">
+1.3s
 </td>
 </tr>
 <tr>
@@ -676,10 +606,45 @@ dplyr
 none
 </td>
 <td style="text-align:right;">
-133ms
+1.1s
 </td>
 <td style="text-align:right;">
-374ms
+112ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+4ms
+</td>
+<td style="text-align:right;">
+12ms
+</td>
+<td style="text-align:right;">
+31ms
+</td>
+<td style="text-align:right;">
+1.2s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+base
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+286ms
+</td>
+<td style="text-align:right;">
+154ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -691,13 +656,48 @@ none
 3ms
 </td>
 <td style="text-align:right;">
-2ms
+56ms
 </td>
 <td style="text-align:right;">
-9ms
+231ms
 </td>
 <td style="text-align:right;">
-519ms
+729ms
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+data.table
+</td>
+<td style="text-align:right;">
+data.table
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+267ms
+</td>
+<td style="text-align:right;">
+13ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+3ms
+</td>
+<td style="text-align:right;">
+6ms
+</td>
+<td style="text-align:right;">
+25ms
+</td>
+<td style="text-align:right;">
+312ms
 </td>
 </tr>
 </tbody>
@@ -746,72 +746,37 @@ total
 <tbody>
 <tr>
 <td style="text-align:right;">
-data.table
-</td>
-<td style="text-align:right;">
-data.table
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-35ms
-</td>
-<td style="text-align:right;">
-1.1s
-</td>
-<td style="text-align:right;">
-137ms
-</td>
-<td style="text-align:right;">
-39ms
-</td>
-<td style="text-align:right;">
-34ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-3ms
-</td>
-<td style="text-align:right;">
-1.3s
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom
+read.delim
 </td>
 <td style="text-align:right;">
 base
 </td>
 <td style="text-align:right;">
-none
+NA
 </td>
 <td style="text-align:right;">
-352ms
+9m 11.5s
 </td>
 <td style="text-align:right;">
-465ms
+122ms
 </td>
 <td style="text-align:right;">
-1ms
+6ms
 </td>
 <td style="text-align:right;">
-1ms
+6ms
 </td>
 <td style="text-align:right;">
-1ms
+9ms
 </td>
 <td style="text-align:right;">
-1ms
+76ms
 </td>
 <td style="text-align:right;">
 5ms
 </td>
 <td style="text-align:right;">
-824ms
+9m 11.8s
 </td>
 </tr>
 <tr>
@@ -825,28 +790,63 @@ dplyr
 NA
 </td>
 <td style="text-align:right;">
-218ms
+54.6s
 </td>
 <td style="text-align:right;">
-548ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-3ms
+151ms
 </td>
 <td style="text-align:right;">
 2ms
 </td>
 <td style="text-align:right;">
+3ms
+</td>
+<td style="text-align:right;">
+5ms
+</td>
+<td style="text-align:right;">
+5ms
+</td>
+<td style="text-align:right;">
+21ms
+</td>
+<td style="text-align:right;">
+54.8s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+base
+</td>
+<td style="text-align:right;">
+none
+</td>
+<td style="text-align:right;">
+5.5s
+</td>
+<td style="text-align:right;">
+197ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+5ms
+</td>
+<td style="text-align:right;">
+78ms
+</td>
+<td style="text-align:right;">
 7ms
 </td>
 <td style="text-align:right;">
-778ms
+5.7s
 </td>
 </tr>
 <tr>
@@ -860,63 +860,28 @@ dplyr
 NA
 </td>
 <td style="text-align:right;">
-172ms
+958ms
 </td>
 <td style="text-align:right;">
-539ms
+217ms
 </td>
 <td style="text-align:right;">
-1ms
+4ms
 </td>
 <td style="text-align:right;">
-1ms
+3ms
 </td>
 <td style="text-align:right;">
-2ms
+4.5s
 </td>
 <td style="text-align:right;">
-1ms
+7ms
 </td>
 <td style="text-align:right;">
-11ms
+19ms
 </td>
 <td style="text-align:right;">
-725ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom
-</td>
-<td style="text-align:right;">
-base
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-273ms
-</td>
-<td style="text-align:right;">
-408ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-5ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-688ms
+5.7s
 </td>
 </tr>
 <tr>
@@ -930,33 +895,68 @@ dplyr
 none
 </td>
 <td style="text-align:right;">
-184ms
+5.4s
 </td>
 <td style="text-align:right;">
-427ms
+167ms
 </td>
 <td style="text-align:right;">
-1ms
+2ms
 </td>
 <td style="text-align:right;">
-1ms
+2ms
+</td>
+<td style="text-align:right;">
+5ms
+</td>
+<td style="text-align:right;">
+50ms
+</td>
+<td style="text-align:right;">
+21ms
+</td>
+<td style="text-align:right;">
+5.7s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+data.table
+</td>
+<td style="text-align:right;">
+data.table
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+1.3s
+</td>
+<td style="text-align:right;">
+104ms
 </td>
 <td style="text-align:right;">
 3ms
 </td>
 <td style="text-align:right;">
-1ms
+3ms
 </td>
 <td style="text-align:right;">
-7ms
+4ms
 </td>
 <td style="text-align:right;">
-621ms
+4ms
+</td>
+<td style="text-align:right;">
+4ms
+</td>
+<td style="text-align:right;">
+1.4s
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-read.delim
+vroom
 </td>
 <td style="text-align:right;">
 base
@@ -965,28 +965,28 @@ base
 NA
 </td>
 <td style="text-align:right;">
-237ms
+1s
 </td>
 <td style="text-align:right;">
-36ms
+220ms
 </td>
 <td style="text-align:right;">
-2ms
+4ms
 </td>
 <td style="text-align:right;">
-2ms
+4ms
 </td>
 <td style="text-align:right;">
-2ms
+5ms
 </td>
 <td style="text-align:right;">
-2ms
+92ms
 </td>
 <td style="text-align:right;">
-16ms
+48ms
 </td>
 <td style="text-align:right;">
-294ms
+1.4s
 </td>
 </tr>
 </tbody>
@@ -1040,37 +1040,37 @@ total
 <tbody>
 <tr>
 <td style="text-align:right;">
-vroom
+read.delim
 </td>
 <td style="text-align:right;">
-dplyr
+base
 </td>
 <td style="text-align:right;">
-none
+NA
 </td>
 <td style="text-align:right;">
-525ms
+1m 42.9s
 </td>
 <td style="text-align:right;">
-342ms
-</td>
-<td style="text-align:right;">
-1ms
+7ms
 </td>
 <td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-3ms
+1ms
 </td>
 <td style="text-align:right;">
-4ms
+2ms
 </td>
 <td style="text-align:right;">
-17ms
+24ms
 </td>
 <td style="text-align:right;">
-890ms
+413ms
+</td>
+<td style="text-align:right;">
+1m 43.4s
 </td>
 </tr>
 <tr>
@@ -1084,10 +1084,80 @@ dplyr
 NA
 </td>
 <td style="text-align:right;">
-575ms
+1m 3.1s
 </td>
 <td style="text-align:right;">
-232ms
+87ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+4ms
+</td>
+<td style="text-align:right;">
+15ms
+</td>
+<td style="text-align:right;">
+427ms
+</td>
+<td style="text-align:right;">
+1m 3.6s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+none
+</td>
+<td style="text-align:right;">
+50.7s
+</td>
+<td style="text-align:right;">
+115ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+4ms
+</td>
+<td style="text-align:right;">
+15ms
+</td>
+<td style="text-align:right;">
+315ms
+</td>
+<td style="text-align:right;">
+51.2s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+data.table
+</td>
+<td style="text-align:right;">
+data.table
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+38.7s
+</td>
+<td style="text-align:right;">
+14ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -1099,13 +1169,13 @@ NA
 3ms
 </td>
 <td style="text-align:right;">
-4ms
+13ms
 </td>
 <td style="text-align:right;">
-17ms
+243ms
 </td>
 <td style="text-align:right;">
-830ms
+38.9s
 </td>
 </tr>
 <tr>
@@ -1119,13 +1189,10 @@ base
 NA
 </td>
 <td style="text-align:right;">
-281ms
+277ms
 </td>
 <td style="text-align:right;">
-320ms
-</td>
-<td style="text-align:right;">
-1ms
+141ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -1134,13 +1201,16 @@ NA
 1ms
 </td>
 <td style="text-align:right;">
-5ms
+3ms
 </td>
 <td style="text-align:right;">
-92ms
+166ms
 </td>
 <td style="text-align:right;">
-698ms
+2s
+</td>
+<td style="text-align:right;">
+2.6s
 </td>
 </tr>
 <tr>
@@ -1154,48 +1224,10 @@ dplyr
 NA
 </td>
 <td style="text-align:right;">
-126ms
+264ms
 </td>
 <td style="text-align:right;">
-453ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-31ms
-</td>
-<td style="text-align:right;">
-25ms
-</td>
-<td style="text-align:right;">
-41ms
-</td>
-<td style="text-align:right;">
-675ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-read.delim
-</td>
-<td style="text-align:right;">
-base
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-305ms
-</td>
-<td style="text-align:right;">
-69ms
-</td>
-<td style="text-align:right;">
-1ms
+181ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -1207,45 +1239,13 @@ NA
 4ms
 </td>
 <td style="text-align:right;">
-87ms
+159ms
 </td>
 <td style="text-align:right;">
-464ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-data.table
+1.1s
 </td>
 <td style="text-align:right;">
-data.table
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-161ms
-</td>
-<td style="text-align:right;">
-56ms
-</td>
-<td style="text-align:right;">
-4ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-43ms
-</td>
-<td style="text-align:right;">
-6ms
-</td>
-<td style="text-align:right;">
-271ms
+1.7s
 </td>
 </tr>
 </tbody>
@@ -1294,72 +1294,37 @@ total
 <tbody>
 <tr>
 <td style="text-align:right;">
-vroom
+read.delim
 </td>
 <td style="text-align:right;">
-dplyr
-</td>
-<td style="text-align:right;">
-none
-</td>
-<td style="text-align:right;">
-191ms
-</td>
-<td style="text-align:right;">
-477ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-3ms
-</td>
-<td style="text-align:right;">
-6ms
-</td>
-<td style="text-align:right;">
-6ms
-</td>
-<td style="text-align:right;">
-684ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom
-</td>
-<td style="text-align:right;">
-dplyr
+base
 </td>
 <td style="text-align:right;">
 NA
 </td>
 <td style="text-align:right;">
-130ms
+8m 55.4s
 </td>
 <td style="text-align:right;">
-450ms
+143ms
 </td>
 <td style="text-align:right;">
-1ms
+6ms
 </td>
 <td style="text-align:right;">
-1ms
+6ms
 </td>
 <td style="text-align:right;">
-7ms
+12ms
 </td>
 <td style="text-align:right;">
-56ms
+132ms
 </td>
 <td style="text-align:right;">
-9ms
+65ms
 </td>
 <td style="text-align:right;">
-651ms
+8m 55.8s
 </td>
 </tr>
 <tr>
@@ -1373,28 +1338,133 @@ dplyr
 NA
 </td>
 <td style="text-align:right;">
-156ms
+5m 59.6s
 </td>
 <td style="text-align:right;">
-464ms
+151ms
+</td>
+<td style="text-align:right;">
+3ms
+</td>
+<td style="text-align:right;">
+3ms
+</td>
+<td style="text-align:right;">
+10ms
+</td>
+<td style="text-align:right;">
+60ms
+</td>
+<td style="text-align:right;">
+54ms
+</td>
+<td style="text-align:right;">
+5m 59.9s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+none
+</td>
+<td style="text-align:right;">
+4m 1.9s
+</td>
+<td style="text-align:right;">
+182ms
+</td>
+<td style="text-align:right;">
+3ms
+</td>
+<td style="text-align:right;">
+3ms
+</td>
+<td style="text-align:right;">
+12ms
+</td>
+<td style="text-align:right;">
+64ms
+</td>
+<td style="text-align:right;">
+36ms
+</td>
+<td style="text-align:right;">
+4m 2.2s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+data.table
+</td>
+<td style="text-align:right;">
+data.table
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+2m 53.3s
+</td>
+<td style="text-align:right;">
+133ms
 </td>
 <td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
 1ms
-</td>
-<td style="text-align:right;">
-4ms
 </td>
 <td style="text-align:right;">
 9ms
 </td>
 <td style="text-align:right;">
-7ms
+56ms
 </td>
 <td style="text-align:right;">
-638ms
+25ms
+</td>
+<td style="text-align:right;">
+2m 53.5s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+865ms
+</td>
+<td style="text-align:right;">
+207ms
+</td>
+<td style="text-align:right;">
+4ms
+</td>
+<td style="text-align:right;">
+3ms
+</td>
+<td style="text-align:right;">
+35ms
+</td>
+<td style="text-align:right;">
+909ms
+</td>
+<td style="text-align:right;">
+142ms
+</td>
+<td style="text-align:right;">
+2.2s
 </td>
 </tr>
 <tr>
@@ -1408,98 +1478,28 @@ base
 NA
 </td>
 <td style="text-align:right;">
-234ms
+979ms
 </td>
 <td style="text-align:right;">
-381ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-2ms
+218ms
 </td>
 <td style="text-align:right;">
 4ms
 </td>
 <td style="text-align:right;">
-9ms
+4ms
 </td>
 <td style="text-align:right;">
-629ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-data.table
+5ms
 </td>
 <td style="text-align:right;">
-data.table
+139ms
 </td>
 <td style="text-align:right;">
-NA
+230ms
 </td>
 <td style="text-align:right;">
-63ms
-</td>
-<td style="text-align:right;">
-75ms
-</td>
-<td style="text-align:right;">
-11ms
-</td>
-<td style="text-align:right;">
-9ms
-</td>
-<td style="text-align:right;">
-3ms
-</td>
-<td style="text-align:right;">
-30ms
-</td>
-<td style="text-align:right;">
-11ms
-</td>
-<td style="text-align:right;">
-198ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-read.delim
-</td>
-<td style="text-align:right;">
-base
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-121ms
-</td>
-<td style="text-align:right;">
-49ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-3ms
-</td>
-<td style="text-align:right;">
-3ms
-</td>
-<td style="text-align:right;">
-14ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-191ms
+1.6s
 </td>
 </tr>
 </tbody>
@@ -1511,7 +1511,7 @@ NA
 <h1 class="hasAnchor">
 <a href="#reading-multiple-delimited-files" class="anchor"></a>Reading multiple delimited files</h1>
 <p>code: <a href="https://github.com/r-lib/vroom/tree/master/inst/bench/taxi_multiple">bench/taxi_multiple</a></p>
-<p>The benchmark reads all 12 files in the taxi trip fare data, totaling 3,996 rows and 11 columns for a total file size of 444K.</p>
+<p>The benchmark reads all 12 files in the taxi trip fare data, totaling 173,179,759 rows and 11 columns for a total file size of 18.4G.</p>
 <img src="benchmarks_files/figure-html/unnamed-chunk-8-1.png" width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -1551,6 +1551,76 @@ total
 <tbody>
 <tr>
 <td style="text-align:right;">
+readr
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+8m 17.5s
+</td>
+<td style="text-align:right;">
+77ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+2.2s
+</td>
+<td style="text-align:right;">
+9.5s
+</td>
+<td style="text-align:right;">
+8m 29.3s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+data.table
+</td>
+<td style="text-align:right;">
+data.table
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+4m 27.7s
+</td>
+<td style="text-align:right;">
+6ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1.5s
+</td>
+<td style="text-align:right;">
+12.3s
+</td>
+<td style="text-align:right;">
+4m 41.5s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
 vroom
 </td>
 <td style="text-align:right;">
@@ -1560,28 +1630,28 @@ dplyr
 none
 </td>
 <td style="text-align:right;">
-121ms
+3m 44.1s
 </td>
 <td style="text-align:right;">
-374ms
-</td>
-<td style="text-align:right;">
-1ms
+104ms
 </td>
 <td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-4ms
-</td>
-<td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-5ms
+2ms
 </td>
 <td style="text-align:right;">
-503ms
+2.2s
+</td>
+<td style="text-align:right;">
+9.7s
+</td>
+<td style="text-align:right;">
+3m 56.1s
 </td>
 </tr>
 <tr>
@@ -1595,13 +1665,10 @@ base
 NA
 </td>
 <td style="text-align:right;">
-204ms
+31.7s
 </td>
 <td style="text-align:right;">
-291ms
-</td>
-<td style="text-align:right;">
-1ms
+206ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -1610,48 +1677,16 @@ NA
 1ms
 </td>
 <td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-7ms
-</td>
-<td style="text-align:right;">
-502ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-readr
-</td>
-<td style="text-align:right;">
-dplyr
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-122ms
-</td>
-<td style="text-align:right;">
-314ms
-</td>
-<td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-1ms
+18.9s
 </td>
 <td style="text-align:right;">
-2ms
+1m 56.7s
 </td>
 <td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-10ms
-</td>
-<td style="text-align:right;">
-448ms
+2m 47.5s
 </td>
 </tr>
 <tr>
@@ -1665,63 +1700,28 @@ dplyr
 NA
 </td>
 <td style="text-align:right;">
-100ms
+53.5s
 </td>
 <td style="text-align:right;">
-329ms
-</td>
-<td style="text-align:right;">
-1ms
+169ms
 </td>
 <td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-5ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-6ms
-</td>
-<td style="text-align:right;">
-440ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-data.table
-</td>
-<td style="text-align:right;">
-data.table
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-38ms
-</td>
-<td style="text-align:right;">
-120ms
-</td>
-<td style="text-align:right;">
-16ms
-</td>
-<td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-2ms
+10.5s
 </td>
 <td style="text-align:right;">
-8ms
+19.9s
 </td>
 <td style="text-align:right;">
-4ms
+26.6s
 </td>
 <td style="text-align:right;">
-186ms
+1m 50.7s
 </td>
 </tr>
 </tbody>
@@ -1734,7 +1734,7 @@ NA
 <h2 class="hasAnchor">
 <a href="#united-states-census-5-percent-public-use-microdata-sample-files" class="anchor"></a>United States Census 5-Percent Public Use Microdata Sample files</h2>
 <p>This fixed width dataset contains individual records of the characteristics of a 5 percent sample of people and housing units from the year 2000 and is freely available at <a href="https://www2.census.gov/census_2000/datasets/PUMS/FivePercent/California/all_California.zip" class="uri">https://www2.census.gov/census_2000/datasets/PUMS/FivePercent/California/all_California.zip</a>. The data is split into files by state, and the state of California was used in this benchmark.</p>
-<p>The data totals 999 rows and 1 columns with a total file size of 294K.</p>
+<p>The data totals 2,342,339 rows and 37 columns with a total file size of 677M.</p>
 </div>
 <div id="census-data-benchmarks" class="section level2">
 <h2 class="hasAnchor">
@@ -1788,54 +1788,13 @@ base
 NA
 </td>
 <td style="text-align:right;">
-1.7s
+16m 1.6s
 </td>
 <td style="text-align:right;">
-37ms
-</td>
-<td style="text-align:right;">
-1ms
+14ms
 </td>
 <td style="text-align:right;">
 1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-3ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1.8s
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom
-</td>
-<td style="text-align:right;">
-dplyr
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-53ms
-</td>
-<td style="text-align:right;">
-464ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-6ms
 </td>
 <td style="text-align:right;">
 2ms
@@ -1844,77 +1803,13 @@ NA
 7ms
 </td>
 <td style="text-align:right;">
-532ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom
+280ms
 </td>
 <td style="text-align:right;">
-dplyr
+111ms
 </td>
 <td style="text-align:right;">
-none
-</td>
-<td style="text-align:right;">
-70ms
-</td>
-<td style="text-align:right;">
-436ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-3ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-7ms
-</td>
-<td style="text-align:right;">
-516ms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom
-</td>
-<td style="text-align:right;">
-base
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-35ms
-</td>
-<td style="text-align:right;">
-359ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-400ms
+16m 2s
 </td>
 </tr>
 <tr>
@@ -1928,10 +1823,45 @@ dplyr
 NA
 </td>
 <td style="text-align:right;">
-35ms
+30.4s
 </td>
 <td style="text-align:right;">
-312ms
+115ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+8ms
+</td>
+<td style="text-align:right;">
+100ms
+</td>
+<td style="text-align:right;">
+130ms
+</td>
+<td style="text-align:right;">
+30.7s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+none
+</td>
+<td style="text-align:right;">
+15.3s
+</td>
+<td style="text-align:right;">
+140ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -1940,16 +1870,86 @@ NA
 1ms
 </td>
 <td style="text-align:right;">
-3ms
+7ms
 </td>
 <td style="text-align:right;">
-2ms
+175ms
+</td>
+<td style="text-align:right;">
+527ms
+</td>
+<td style="text-align:right;">
+16.1s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+6.3s
+</td>
+<td style="text-align:right;">
+212ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+2.8s
+</td>
+<td style="text-align:right;">
+416ms
+</td>
+<td style="text-align:right;">
+495ms
+</td>
+<td style="text-align:right;">
+10.2s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+base
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+147ms
+</td>
+<td style="text-align:right;">
+208ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
 </td>
 <td style="text-align:right;">
 6ms
 </td>
 <td style="text-align:right;">
-357ms
+479ms
+</td>
+<td style="text-align:right;">
+1.6s
+</td>
+<td style="text-align:right;">
+2.4s
 </td>
 </tr>
 </tbody>
@@ -1993,16 +1993,16 @@ vroom
 gzip
 </td>
 <td style="text-align:right;">
-32ms
+3m 34.1s
 </td>
 <td style="text-align:right;">
-177ms
+2m 11.8s
 </td>
 <td style="text-align:right;">
-135ms
+1m 11.9s
 </td>
 <td style="text-align:right;">
-93ms
+1m 22.2s
 </td>
 </tr>
 <tr>
@@ -2010,16 +2010,16 @@ gzip
 multithreaded_gzip
 </td>
 <td style="text-align:right;">
-27ms
+1m 49.6s
 </td>
 <td style="text-align:right;">
-181ms
+55.8s
 </td>
 <td style="text-align:right;">
-140ms
+9.5s
 </td>
 <td style="text-align:right;">
-80ms
+8.8s
 </td>
 </tr>
 <tr>
@@ -2027,16 +2027,16 @@ multithreaded_gzip
 zstandard
 </td>
 <td style="text-align:right;">
-28ms
+1m 46.2s
 </td>
 <td style="text-align:right;">
-159ms
+53.2s
 </td>
 <td style="text-align:right;">
 NA
 </td>
 <td style="text-align:right;">
-57ms
+13.9s
 </td>
 </tr>
 <tr>
@@ -2044,16 +2044,16 @@ NA
 uncompressed
 </td>
 <td style="text-align:right;">
-31ms
+1m 47.1s
 </td>
 <td style="text-align:right;">
-149ms
+53.6s
 </td>
 <td style="text-align:right;">
-141ms
+1.6s
 </td>
 <td style="text-align:right;">
-28ms
+1.7s
 </td>
 </tr>
 </tbody>
@@ -2071,33 +2071,33 @@ uncompressed
 <tbody>
 <tr class="odd">
 <td align="left">base</td>
-<td align="left">3.6.1</td>
-<td align="left">2019-07-06</td>
+<td align="left">3.6.2</td>
+<td align="left">2019-12-12</td>
 <td align="left">local</td>
 </tr>
 <tr class="even">
 <td align="left">data.table</td>
 <td align="left">1.12.8</td>
 <td align="left">2019-12-09</td>
-<td align="left">CRAN (R 3.6.0)</td>
+<td align="left">RSPM (R 3.6.1)</td>
 </tr>
 <tr class="odd">
 <td align="left">dplyr</td>
 <td align="left">0.8.3</td>
 <td align="left">2019-07-04</td>
-<td align="left">CRAN (R 3.6.0)</td>
+<td align="left">RSPM (R 3.6.1)</td>
 </tr>
 <tr class="even">
 <td align="left">readr</td>
 <td align="left">1.3.1</td>
 <td align="left">2018-12-21</td>
-<td align="left">CRAN (R 3.6.0)</td>
+<td align="left">RSPM (R 3.6.1)</td>
 </tr>
 <tr class="odd">
 <td align="left">vroom</td>
-<td align="left">1.0.2</td>
-<td align="left">2019-06-28</td>
-<td align="left">CRAN (R 3.6.0)</td>
+<td align="left">1.0.2.9000</td>
+<td align="left">2019-12-17</td>
+<td align="left">local</td>
 </tr>
 </tbody>
 </table>
