@@ -45,7 +45,7 @@ Rcpp::IntegerVector read_fct_implicit(vroom_vec_info* info, bool include_na) {
   R_xlen_t n = info->column->size();
 
   Rcpp::IntegerVector out(n);
-  std::vector<string> levels;
+  std::vector<std::string> levels;
   std::unordered_map<string, size_t> level_map;
 
   auto nas = Rcpp::as<std::vector<std::string> >(*info->na);
@@ -66,7 +66,7 @@ Rcpp::IntegerVector read_fct_implicit(vroom_vec_info* info, bool include_na) {
       } else {
         out[i++] = max_level;
         level_map[str] = max_level++;
-        levels.emplace_back(str);
+        levels.emplace_back(str.str());
       }
     }
   }
@@ -74,7 +74,7 @@ Rcpp::IntegerVector read_fct_implicit(vroom_vec_info* info, bool include_na) {
   Rcpp::CharacterVector out_lvls(levels.size());
   for (size_t i = 0; i < levels.size(); ++i) {
     out_lvls[i] = info->locale->encoder_.makeSEXP(
-        levels[i].begin(), levels[i].end(), false);
+        levels[i].c_str(), levels[i].c_str() + levels[i].size(), false);
   }
   if (include_na) {
     out_lvls.push_back(NA_STRING);

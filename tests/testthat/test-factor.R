@@ -127,3 +127,12 @@ test_that("encodings are respected", {
 
   expect_equal(y[[1]], factor(expected, levels = expected))
 })
+
+test_that("Results are correct with backslash escapes", {
+  obj <- vroom("A,T\nB,F\n", col_names = FALSE, col_types = list("f", "f"), escape_backslash = TRUE)
+  exp <- tibble::tibble(X1 = factor(c("A", "B")), X2 = factor(c("T", "F"), levels = c("T", "F")))
+  expect_equal(obj, exp)
+
+  obj2 <- vroom("A,T\nB,F\n", col_names = FALSE, col_types = list("f", "f"), escape_backslash = FALSE)
+  expect_equal(obj2, exp)
+})

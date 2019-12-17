@@ -8,6 +8,8 @@
 
 ## Features / Bugfixes
 
+* `vroom()` now correctly copies string data for factor levels (#184)
+
 * `vroom()` no longer crashes when files have trailing fields, windows newlines
   and the file is not newline or null terminated.
 
