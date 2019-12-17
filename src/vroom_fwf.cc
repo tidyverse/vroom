@@ -99,7 +99,7 @@ List whitespace_columns_(
     return List();
   }
 
-  size_t s = find_first_line(mmap, 0, comment[0]);
+  size_t s = find_first_line(mmap, skip, comment[0]);
 
   std::vector<bool> empty = find_empty_cols(mmap.begin() + s, mmap.end(), n);
   std::vector<int> begin, end;

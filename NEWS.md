@@ -8,7 +8,9 @@
 
 ## Features / Bugfixes
 
-* `vroom_fwf()` and `fwf_empty()` now support passing `Inf` to `guess_max()`
+* `vroom_fwf()` and `fwf_empty()` now support passing `Inf` to `guess_max()`.
+
+* `fwf_empty()` now uses the `skip` parameter, as intended.
 
 * `vroom()` now correctly copies string data for factor levels (#184)
 

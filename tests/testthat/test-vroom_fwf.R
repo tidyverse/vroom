@@ -69,6 +69,16 @@ test_that("fwf_empty can skip comments", {
   expect_equal(dim(out1), c(2, 3))
 })
 
+test_that("fwf_empty can skip lines", {
+  x <- "foo\nbar\baz\n1 2 3\n4 5 6\n"
+
+  obj <- fwf_empty(x, skip = 3)
+
+  exp <- list(begin = c(0L, 2L, 4L), end = c(1L, 3L, NA_integer_), col_names = c("X1", "X2", "X3"))
+
+  expect_equal(obj, exp)
+})
+
 test_that("passing \"\" to vroom_fwf's 'na' option", {
   expect_equal(vroom_fwf('foobar\nfoo   ', fwf_widths(c(3, 3)), na = "")[[2]],
                c("bar", NA))
