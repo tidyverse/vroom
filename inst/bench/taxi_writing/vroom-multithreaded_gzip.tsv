@@ -1,0 +1,3 @@
+exprs	process	real	size	rows	cols
+"{ library(vroom) data <- vroom(file, col_types = c(pickup_datetime = ""c"")) vr..."	36.61762899	15.07201337814331	1681610033	14776615	11
+"vroom_write(data, pipe(sprintf(""pigz > %s"", tempfile(fileext = "".gz""))), deli..."	25.118583588	8.794955492019653	1681610033	14776615	11

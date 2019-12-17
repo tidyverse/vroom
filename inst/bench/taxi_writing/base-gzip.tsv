@@ -1,0 +1,3 @@
+exprs	process	real	size	rows	cols
+"{ library(vroom) data <- vroom(file, col_types = c(pickup_datetime = ""c"")) vr..."	38.026138984	14.828693866729736	1681610033	14776615	11
+"{ con <- gzfile(tempfile(fileext = "".gz""), ""wb"") write.table(data, con, sep =..."	214.09848734000002	214.1178958415985	1681610033	14776615	11
