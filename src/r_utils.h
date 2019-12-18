@@ -28,7 +28,7 @@ static char guess_delim(
   }
 
   auto nl = find_next_newline(source, start);
-  while (nl > start && nl < end && guess_max > 0) {
+  while (nl > start && nl <= end && guess_max > 0) {
     auto str = std::string(source.data() + start, nl - start);
     lines.push_back(str);
     start = nl + 1;

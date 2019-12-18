@@ -8,6 +8,8 @@
 
 ## Features / Bugfixes
 
+* `vroom()` now can read single line files which contain only a header and no newline (#173).
+
 * `vroom()` can now select the id column if provided (#110).
 
 * `vroom_fwf()` is now more robust if not all lines are the expected length (#78)

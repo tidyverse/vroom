@@ -6,7 +6,7 @@ test_that("reading from connection is consistent with reading directly from a fi
   # This needs to be small enough to have a few blocks in the file, but big
   # enough to fit on the first line (until #47 is fixed)
   withr::with_envvar(c("VROOM_CONNECTION_SIZE" = 100), {
-    actual <- vroom(file(vroom_example("mtcars.csv"), ""))
+    actual <- vroom(file(vroom_example("mtcars.csv"), ""), delim = ",")
   })
   expect_equal(actual, expected)
 })
@@ -36,4 +36,15 @@ test_that("vroom errors when the connection buffer is too small", {
   withr::with_envvar(c("VROOM_CONNECTION_SIZE" = 32), {
     expect_error(vroom(file(vroom_example("mtcars.csv"))), "not large enough")
   })
+})
+
+test_that("vroom can read files with only a header and no newlines", {
+  f <- tempfile()
+  on.exit(unlink(f))
+
+  writeChar("a,b,c", eos = NULL, f)
+
+  expect_named(vroom(f, delim = ","), c("a", "b", "c"))
+
+  expect_named(vroom(f), c("a", "b", "c"))
 })

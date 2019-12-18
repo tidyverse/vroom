@@ -65,7 +65,7 @@ delimited_index_connection::delimited_index_connection(
   idx_[0].reserve(128);
 
   size_t sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
-  buf[i][sz] = '\0';
+  buf[i].resize(sz + 1);
 
   if (sz == 0) {
     if (should_close) {
@@ -86,6 +86,8 @@ delimited_index_connection::delimited_index_connection(
   delim_len_ = delim_.length();
 
   size_t first_nl = find_next_newline(buf[i], start);
+
+  bool single_line = first_nl == buf[i].size() - 1;
 
   if (sz > 1 && buf[i][first_nl] != '\n') {
     // This first newline must not have fit in the buffer, throw error
@@ -192,6 +194,7 @@ delimited_index_connection::delimited_index_connection(
     i = (i + 1) % 2;
     sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
     if (sz > 0) {
+      buf[i].resize(sz + 1);
       buf[i][sz] = '\0';
     }
 
@@ -225,9 +228,9 @@ delimited_index_connection::delimited_index_connection(
   size_t file_size = mmap_.size();
 
   if (mmap_[file_size - 1] != '\n') {
-    if (columns_ == 0) {
-      ++columns_;
+    if (columns_ == 0 || (has_header_ && single_line)) {
       idx_[0].push_back(file_size);
+      ++columns_;
     } else {
       idx_[1].push_back(file_size);
     }
