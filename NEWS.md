@@ -8,7 +8,7 @@
 
 ## Features / Bugfixes
 
-* `vroom()` now can read single line files which contain only a header and no newline (#173).
+* `vroom()` can now read single line files without a terminal newline (#173).
 
 * `vroom()` can now select the id column if provided (#110).
 

@@ -38,13 +38,17 @@ test_that("vroom errors when the connection buffer is too small", {
   })
 })
 
-test_that("vroom can read files with only a header and no newlines", {
+test_that("vroom can read files with only a single line and no newlines", {
   f <- tempfile()
   on.exit(unlink(f))
 
   writeChar("a,b,c", eos = NULL, f)
 
+  # with a header
   expect_named(vroom(f, delim = ","), c("a", "b", "c"))
-
   expect_named(vroom(f), c("a", "b", "c"))
+
+  # without a header
+  expect_equal(vroom(f, col_names = FALSE, delim = ","), tibble::tibble(X1 = "a", X2 = "b", X3 = "c"))
+  expect_equal(vroom(f, col_names = FALSE), tibble::tibble(X1 = "a", X2 = "b", X3 = "c"))
 })
