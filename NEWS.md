@@ -8,6 +8,8 @@
 
 ## Features / Bugfixes
 
+* `vroom()` can now select the id column if provided (#110).
+
 * `vroom_fwf()` is now more robust if not all lines are the expected length (#78)
 
 * `vroom_fwf()` and `fwf_empty()` now support passing `Inf` to `guess_max()`.

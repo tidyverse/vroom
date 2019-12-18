@@ -62,7 +62,7 @@ vroom_fwf <- function(file,
 
   out <- tibble::as_tibble(out, .name_repair = .name_repair)
 
-  out <- vroom_select(out, col_select)
+  out <- vroom_select(out, col_select, id)
 
   if (is.null(col_types)) {
     show_spec_summary(out, locale = locale)

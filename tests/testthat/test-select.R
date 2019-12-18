@@ -59,3 +59,16 @@ test_that("col_select works with vroom_fwf", {
     c("foo", "X2")
   )
 })
+
+test_that("col_select can select the id column", {
+
+  expect_named(
+    vroom(vroom_example("mtcars.csv"), id = "path", col_select = list(model, mpg, path)),
+    c("model", "mpg", "path")
+  )
+
+  expect_named(
+    vroom(vroom_example("mtcars.csv"), id = "path", col_select = list(path, model, mpg)),
+    c("path", "model", "mpg")
+  )
+})
