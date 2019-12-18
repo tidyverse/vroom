@@ -328,7 +328,7 @@ with or or two rows as above.</p></td>
 <span class='co'># 1. Guess based on position of empty columns</span>
 <span class='fu'>vroom_fwf</span>(<span class='no'>fwf_sample</span>, <span class='fu'>fwf_empty</span>(<span class='no'>fwf_sample</span>, <span class='kw'>col_names</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"first"</span>, <span class='st'>"last"</span>, <span class='st'>"state"</span>, <span class='st'>"ssn"</span>)))</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows:</span><span> 3</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 4</span>
-#&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ""</span>
+#&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [4]: first, last, state, ssn</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
@@ -340,7 +340,7 @@ with or or two rows as above.</p></td>
 #&gt; </span><span style='color: #555555;'>3</span><span> Evan  Nolan    IL    219-532-c301</div><div class='input'><span class='co'># 2. A vector of field widths</span>
 <span class='fu'>vroom_fwf</span>(<span class='no'>fwf_sample</span>, <span class='fu'>fwf_widths</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>10</span>, <span class='fl'>12</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"name"</span>, <span class='st'>"state"</span>, <span class='st'>"ssn"</span>)))</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 3</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 3</span>
-#&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ""</span>
+#&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [3]: name, state, ssn</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
@@ -352,7 +352,7 @@ with or or two rows as above.</p></td>
 #&gt; </span><span style='color: #555555;'>3</span><span> Evan Nolan    IL    219-532-c301</div><div class='input'><span class='co'># 3. Paired vectors of start and end positions</span>
 <span class='fu'>vroom_fwf</span>(<span class='no'>fwf_sample</span>, <span class='fu'>fwf_positions</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>30</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>42</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"name"</span>, <span class='st'>"ssn"</span>)))</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 3</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
-#&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ""</span>
+#&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [2]: name, ssn</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
@@ -364,7 +364,7 @@ with or or two rows as above.</p></td>
 #&gt; </span><span style='color: #555555;'>3</span><span> Evan Nolan    219-532-c301</div><div class='input'><span class='co'># 4. Named arguments with start and end positions</span>
 <span class='fu'>vroom_fwf</span>(<span class='no'>fwf_sample</span>, <span class='fu'>fwf_cols</span>(<span class='kw'>name</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>20</span>), <span class='kw'>ssn</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>30</span>, <span class='fl'>42</span>)))</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 3</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
-#&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ""</span>
+#&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [2]: name, ssn</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
@@ -376,7 +376,7 @@ with or or two rows as above.</p></td>
 #&gt; </span><span style='color: #555555;'>3</span><span> Evan Nolan    219-532-c301</div><div class='input'><span class='co'># 5. Named arguments with column widths</span>
 <span class='fu'>vroom_fwf</span>(<span class='no'>fwf_sample</span>, <span class='fu'>fwf_cols</span>(<span class='kw'>name</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>state</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>ssn</span> <span class='kw'>=</span> <span class='fl'>12</span>))</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 3</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 3</span>
-#&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ""</span>
+#&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [3]: name, state, ssn</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
