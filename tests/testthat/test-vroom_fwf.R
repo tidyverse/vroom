@@ -214,3 +214,63 @@ test_that("fwf_positions always returns col_names as character (#797)", {
   expect_type(info$end, "double")
   expect_type(info$col_names, "character")
 })
+
+# Robustness
+
+test_that("vroom_fwf() is robust to improper inputs", {
+  expect_error_free(
+    vroom_fwf("foo bar baz\n1   2\n")
+  )
+
+  expect_error_free(
+    vroom_fwf("foo bar baz\n1   2 \n")
+  )
+
+  expect_error_free(
+    vroom_fwf("foo bar baz\n1   2  \n")
+  )
+
+  expect_error_free(
+    vroom_fwf("foo bar baz\n1   2   \n")
+  )
+
+  expect_error_free(
+    vroom_fwf("foo bar baz\n1   2   \n4\n")
+  )
+
+  expect_error_free(
+    vroom_fwf("foo bar baz\n1   2   \n4 \n")
+  )
+
+  expect_error_free(
+    vroom_fwf("foo bar baz\n1   2   \n4  \n")
+  )
+
+  expect_error_free(
+    vroom_fwf("foo bar baz\n1   2   \n4   \n")
+  )
+
+  expect_error_free(
+    vroom_fwf("foo bar baz\n1   2   \n4   5\n")
+  )
+
+  expect_error_free(
+    vroom_fwf("foo bar baz\n1   2   \n4   5 \n")
+  )
+
+  expect_error_free(
+    vroom_fwf("foo bar baz\n1   2   \n4   5  \n")
+  )
+
+  expect_error_free(
+    vroom_fwf("foo bar baz\n1   2   \n4   5   \n")
+  )
+
+  expect_error_free(
+    vroom_fwf("foo bar baz\n1   2   \n4   5   6\n")
+  )
+
+  expect_error_free(
+    vroom_fwf("A\n  a\n")
+  )
+})

@@ -126,11 +126,18 @@ public:
 
   string get(size_t row, size_t col) const {
     auto begin = mmap_.data() + (newlines_[row] + 1 + col_starts_[col]);
+    auto line_end = mmap_.data() + (newlines_[row + 1]) - windows_newlines_;
     const char* end;
     if (col_ends_[col] == NA_INTEGER) {
       end = mmap_.data() + newlines_[row + 1] - windows_newlines_;
     } else {
       end = mmap_.data() + (newlines_[row] + 1 + col_ends_[col]);
+    }
+    if (begin > line_end) {
+      begin = line_end;
+    }
+    if (end > line_end) {
+      end = line_end;
     }
     if (trim_ws_) {
       trim_whitespace(begin, end);

@@ -8,6 +8,8 @@
 
 ## Features / Bugfixes
 
+* `vroom_fwf()` is now more robust if not all lines are the expected length (#78)
+
 * `vroom_fwf()` and `fwf_empty()` now support passing `Inf` to `guess_max()`.
 
 * `fwf_empty()` now uses the `skip` parameter, as intended.
