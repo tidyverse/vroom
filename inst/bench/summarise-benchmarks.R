@@ -23,7 +23,7 @@ summarise_dir <- function(dir, desc) {
     mutate(op = desc) %>%
     separate(path, c("reading_package", "manip_package"), "-") %>%
     pivot_longer(., cols = c(process, real), names_to = "type", values_to = "time") %>%
-    select(reading_package, manip_package, op, type, time, size, rows, cols) %>%
+    select(reading_package, manip_package, op, type, time, size, max_memory, rows, cols) %>%
     vroom_write(out_file, delim = "\t")
 }
 

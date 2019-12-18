@@ -182,5 +182,6 @@ out$rows <- nrow(x)
 out$cols <- ncol(x)
 out$process <- as.numeric(out$process)
 out$real <- as.numeric(out$real)
+out$max_memory <- as.numeric(bench::bench_max_memory())
 
 vroom::vroom_write(out, out_file)

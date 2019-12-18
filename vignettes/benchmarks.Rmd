@@ -24,22 +24,30 @@ pretty_sec <- function(x) {
   x
 }
 
+pretty_lgl <- function(x) {
+  case_when(
+    x == TRUE ~ "TRUE",
+    x == FALSE ~ "FALSE",
+    TRUE ~ ""
+  )
+}
+
 read_benchmark <- function(file, desc) {
-  vroom::vroom(file, col_types = c("ccccdddd")) %>%
+  vroom::vroom(file, col_types = c("ccccddddd")) %>%
     filter(op != "setup") %>%
     mutate(
       altrep = case_when(
-        grepl("^vroom_no_altrep", reading_package) ~ "none",
-        grepl("^vroom_", reading_package) ~ "normal",
-        TRUE ~ NA_character_
-        ),
+        grepl("^vroom_no_altrep", reading_package) ~ FALSE,
+        grepl("^vroom", reading_package) ~ TRUE,
+        TRUE ~ NA
+      ),
       reading_package = case_when(
         grepl("^vroom", reading_package) ~ "vroom",
         TRUE ~ reading_package
       ),
     label = fct_reorder(
       glue::glue("{reading_package}{altrep}\n{manip_package}",
-        altrep = ifelse(is.na(altrep), "", glue::glue("(altrep: {altrep})"))
+        altrep = ifelse(is.na(altrep), "", glue::glue("(altrep = {altrep})"))
       ),
       case_when(type == "real" ~ time, TRUE ~ 0),
       sum),
@@ -57,16 +65,30 @@ generate_subtitle <- function(data) {
 plot_benchmark <- function(data, title) {
 
   subtitle <- generate_subtitle(data)
+  data <- data %>%
+    filter(reading_package != "read.delim", type == "real")
 
-  data %>%
-    filter(reading_package != "read.delim", type == "real") %>%
+  p1 <- data %>%
     ggplot() +
     geom_bar(aes(x = label, y = time, fill = op, group = label), stat = "identity") +
     scale_fill_brewer(type = "qual", palette = "Set2") +
     scale_y_continuous(labels = scales::number_format(suffix = "s")) +
-    theme(legend.position = "bottom") +
     coord_flip() +
-    labs(title = title, subtitle = subtitle, x = NULL, y = NULL, fill = NULL)
+    labs(title = title, subtitle = subtitle, x = NULL, y = NULL, fill = NULL) +
+    theme(legend.position = "bottom")
+
+  p2 <- data %>%
+    group_by(label) %>%
+    summarise(max_memory = max(max_memory)) %>%
+    ggplot() +
+    geom_bar(aes(x = label, y = max_memory / (1024 * 1024)), stat = "identity") +
+    scale_y_continuous(labels = scales::number_format(suffix = "Mb")) +
+    coord_flip() +
+    labs(title = "Maximum memory usage", x = NULL, y = NULL) +
+    theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+
+  library(patchwork)
+  p1 + p2 + plot_layout(widths = c(2, 1))
 }
 
 make_table <- function(data) {
@@ -76,9 +98,17 @@ make_table <- function(data) {
     spread(op, time) %>%
     mutate(
       total = read + print + head + tail + sample + filter + aggregate,
+      max_memory = as.character(bench::as_bench_bytes(max_memory))
     ) %>%
     arrange(desc(total)) %>%
     mutate_if(is.numeric, pretty_sec) %>%
+    mutate_if(is.logical, pretty_lgl) %>%
+    select(reading_package, manip_package, altrep, max_memory, everything()) %>%
+    rename(
+      "reading\npackage" = reading_package,
+      "manipulating\npackage" = manip_package,
+      memory = max_memory
+    ) %>%
     knitr::kable(digits = 2, align = "r", format = "html")
 }
 
@@ -330,9 +360,9 @@ taxi_writing %>%
   labs(title = "Writing taxi trip data", subtitle = subtitle, x = NULL, y = NULL, fill = NULL)
 
 taxi_writing %>%
-  select(-size, -op, -rows, -cols, -type, -altrep, -label) %>%
+  select(-size, -op, -rows, -cols, -type, -altrep, -label, -max_memory) %>%
   mutate_if(is.numeric, pretty_sec) %>%
-  spread(package, time) %>%
+  pivot_wider(names_from = package, values_from = time) %>%
   arrange(desc(compression)) %>%
   knitr::kable(digits = 2, align = "r", format = "html")
 ```
