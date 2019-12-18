@@ -411,6 +411,7 @@ guess_parser <- function(x, locale = default_locale(), guess_integer = FALSE) {
 }
 
 #' @importFrom crayon silver
+#' @importFrom glue double_quote
 show_spec_summary <- function(x, width = getOption("width"), locale = default_locale()) {
   spec <- spec(x)
   if (length(spec$cols) == 0) {
@@ -437,7 +438,8 @@ show_spec_summary <- function(x, width = getOption("width"), locale = default_lo
     prettyNum(x, big.mark = locale$grouping_mark, decimal.mark = locale$decimal_mark)
   }
 
-  delim <- switch(spec$delim,
+  delim <-
+    switch(spec$delim,
     "\t" = "\\t",
     "\n" = "\\n",
     spec$delim
@@ -451,7 +453,7 @@ show_spec_summary <- function(x, width = getOption("width"), locale = default_lo
       '
       {bold("Rows:")} {fmt_num(NROW(x))}
       {bold("Columns:")} {fmt_num(NCOL(x))}
-      {bold("Delimiter:")} "{delim}"
+      {if (nzchar(delim)) paste(bold("Delimiter:"), double_quote(delim)) else ""}
       {entries*}
 
       {silver("Use `spec()` to retrieve the guessed column specification")}
