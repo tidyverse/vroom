@@ -77,12 +77,14 @@ SEXP vroom_(
 }
 
 // [[Rcpp::export]]
-bool has_trailing_newline(std::string filename) {
-  std::FILE* f = std::fopen(filename.c_str(), "rb");
+bool has_trailing_newline(CharacterVector filename) {
+  std::FILE* f = std::fopen(CHAR(filename[0]), "rb");
 
   if (!f) {
     return true;
   }
+
+  std::setvbuf(f, NULL, _IONBF, 0);
 
   fseek(f, -1, SEEK_END);
   char c = fgetc(f);

@@ -97,12 +97,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // has_trailing_newline
-bool has_trailing_newline(std::string filename);
+bool has_trailing_newline(CharacterVector filename);
 RcppExport SEXP _vroom_has_trailing_newline(SEXP filenameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type filename(filenameSEXP);
     rcpp_result_gen = Rcpp::wrap(has_trailing_newline(filename));
     return rcpp_result_gen;
 END_RCPP
