@@ -105,10 +105,11 @@ static bool isDateTime(const std::string& x, LocaleInfo* pLocale) {
   return parser.year() > 999;
 }
 
-// [[Rcpp::export]]
-std::string
-guess_type_(CharacterVector input, List locale, bool guess_integer = false) {
-  LocaleInfo locale_(locale);
+std::string guess_type__(
+    CharacterVector input,
+    CharacterVector na,
+    LocaleInfo* pLocale,
+    bool guess_integer = false) {
 
   if (input.size() == 0) {
     return "character";
@@ -118,22 +119,41 @@ guess_type_(CharacterVector input, List locale, bool guess_integer = false) {
     return "logical";
   }
 
+  for (R_xlen_t i = 0; i < input.size(); ++i) {
+    for (R_xlen_t j = 0; j < na.size(); ++j) {
+      if (input[i] == na[j]) {
+        input[i] = NA_STRING;
+        break;
+      }
+    }
+  }
+
   // Work from strictest to most flexible
-  if (canParse(input, isLogical, &locale_))
+  if (canParse(input, isLogical, pLocale))
     return "logical";
-  if (guess_integer && canParse(input, isInteger, &locale_))
+  if (guess_integer && canParse(input, isInteger, pLocale))
     return "integer";
-  if (canParse(input, isDouble, &locale_))
+  if (canParse(input, isDouble, pLocale))
     return "double";
-  if (canParse(input, isNumber, &locale_))
+  if (canParse(input, isNumber, pLocale))
     return "number";
-  if (canParse(input, isTime, &locale_))
+  if (canParse(input, isTime, pLocale))
     return "time";
-  if (canParse(input, isDate, &locale_))
+  if (canParse(input, isDate, pLocale))
     return "date";
-  if (canParse(input, isDateTime, &locale_))
+  if (canParse(input, isDateTime, pLocale))
     return "datetime";
 
   // Otherwise can always parse as a character
   return "character";
+}
+
+// [[Rcpp::export]]
+std::string guess_type_(
+    CharacterVector input,
+    CharacterVector na,
+    List locale,
+    bool guess_integer = false) {
+  LocaleInfo locale_(locale);
+  return guess_type__(input, na, &locale_, guess_integer);
 }

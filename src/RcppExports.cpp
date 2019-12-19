@@ -55,15 +55,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // guess_type_
-std::string guess_type_(CharacterVector input, List locale, bool guess_integer);
-RcppExport SEXP _vroom_guess_type_(SEXP inputSEXP, SEXP localeSEXP, SEXP guess_integerSEXP) {
+std::string guess_type_(CharacterVector input, CharacterVector na, List locale, bool guess_integer);
+RcppExport SEXP _vroom_guess_type_(SEXP inputSEXP, SEXP naSEXP, SEXP localeSEXP, SEXP guess_integerSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< CharacterVector >::type input(inputSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type na(naSEXP);
     Rcpp::traits::input_parameter< List >::type locale(localeSEXP);
     Rcpp::traits::input_parameter< bool >::type guess_integer(guess_integerSEXP);
-    rcpp_result_gen = Rcpp::wrap(guess_type_(input, locale, guess_integer));
+    rcpp_result_gen = Rcpp::wrap(guess_type_(input, na, locale, guess_integer));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -218,7 +219,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_vroom_materialize", (DL_FUNC) &_vroom_vroom_materialize, 2},
     {"_vroom_vroom_str_", (DL_FUNC) &_vroom_vroom_str_, 1},
     {"_vroom_gen_character_", (DL_FUNC) &_vroom_gen_character_, 6},
-    {"_vroom_guess_type_", (DL_FUNC) &_vroom_guess_type_, 3},
+    {"_vroom_guess_type_", (DL_FUNC) &_vroom_guess_type_, 4},
     {"_vroom_vroom_", (DL_FUNC) &_vroom_vroom_, 19},
     {"_vroom_has_trailing_newline", (DL_FUNC) &_vroom_has_trailing_newline, 1},
     {"_vroom_vroom_rle", (DL_FUNC) &_vroom_vroom_rle, 1},

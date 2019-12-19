@@ -17,8 +17,8 @@ gen_character_ <- function(n, min, max, values, seed, seed2) {
     .Call(`_vroom_gen_character_`, n, min, max, values, seed, seed2)
 }
 
-guess_type_ <- function(input, locale, guess_integer = FALSE) {
-    .Call(`_vroom_guess_type_`, input, locale, guess_integer)
+guess_type_ <- function(input, na, locale, guess_integer = FALSE) {
+    .Call(`_vroom_guess_type_`, input, na, locale, guess_integer)
 }
 
 vroom_ <- function(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip, n_max, progress, col_names, col_types, col_select, id, na, locale, guess_max, num_threads, altrep) {

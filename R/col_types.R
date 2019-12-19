@@ -410,15 +410,12 @@ col_types_standardise <- function(spec, col_names, col_select) {
 #'  guess_type(c("01:02:03 AM"))
 #' @export
 guess_type <- function(x, na = c("", "NA"), locale = default_locale(), guess_integer = FALSE) {
-
-  x[x %in% na] <- NA
-
-  type <- guess_type_(x, locale = locale, guess_integer = guess_integer)
+  type <- guess_type_(x, na = na, locale = locale, guess_integer = guess_integer)
   get(paste0("col_", type), asNamespace("vroom"))()
 }
 
-guess_parser <- function(x, locale = default_locale(), guess_integer = FALSE) {
-  guess_type_(x, locale = locale, guess_integer = guess_integer)
+guess_parser <- function(x, na = c("", "NA"), locale = default_locale(), guess_integer = FALSE) {
+  guess_type_(x, na = na, locale = locale, guess_integer = guess_integer)
 }
 
 #' @importFrom crayon silver

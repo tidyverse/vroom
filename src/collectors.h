@@ -111,6 +111,12 @@ inline CharacterVector read_column_names(
   return nms;
 }
 
+std::string guess_type__(
+    CharacterVector input,
+    CharacterVector na,
+    LocaleInfo* locale,
+    bool guess_integer);
+
 inline collectors resolve_collectors(
     RObject col_names,
     RObject col_types,
@@ -147,8 +153,6 @@ inline collectors resolve_collectors(
 
   auto guess_step = guess_num > 0 ? num_rows / guess_num : 0;
 
-  Rcpp::Function guess_type = vroom["guess_type"];
-
   Rcpp::List my_collectors = col_types_std["cols"];
 
   for (size_t col = 0; col < num_cols; ++col) {
@@ -163,8 +167,9 @@ inline collectors resolve_collectors(
         col_vals[j] =
             locale_info->encoder_.makeSEXP(str.begin(), str.end(), false);
       }
-      my_collectors[col] = Rcpp::as<Rcpp::List>(guess_type(
-          col_vals, Named("guess_integer") = false, Named("na") = na));
+      auto type = guess_type__(col_vals, na, locale_info.get(), false);
+      Rcpp::Function col_type = vroom[std::string("col_") + type];
+      my_collectors[col] = Rcpp::as<Rcpp::List>(col_type());
     }
   }
 
