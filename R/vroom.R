@@ -192,7 +192,7 @@ pb_file_format <- function(filename) {
 
   # Workaround RStudio bug https://github.com/rstudio/rstudio/issues/4777
   # TODO: change this version number from 1.3 once it is in a patch release
-  withr::with_options(list(crayon.enabled = (!is_rstudio_console() || is_rstudio_version("1.2.1522", "1.3")) && getOption("crayon.enabled", TRUE)),
+  withr::with_options(list(crayon.enabled = (!is_rstudio_console() || is_rstudio_version("1.2.1578")) && getOption("crayon.enabled", TRUE)),
     glue::glue_col("{bold}indexing{reset} {blue}{basename(filename)}{reset} [:bar] {green}:rate{reset}, eta: {cyan}:eta{reset}")
   )
 }
@@ -203,13 +203,13 @@ pb_width <- function(format) {
 }
 
 pb_connection_format <- function(unused) {
-  withr::with_options(list(crayon.enabled = (!is_rstudio_console() || is_rstudio_version("1.2.1522", "1.3")) && getOption("crayon.enabled", TRUE)),
+  withr::with_options(list(crayon.enabled = (!is_rstudio_console() || is_rstudio_version("1.2.1578")) && getOption("crayon.enabled", TRUE)),
     glue::glue_col("{bold}indexed{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}")
   )
 }
 
 pb_write_format <- function(unused) {
-  withr::with_options(list(crayon.enabled = (!is_rstudio_console() || is_rstudio_version("1.2.1522", "1.3")) && getOption("crayon.enabled", TRUE)),
+  withr::with_options(list(crayon.enabled = (!is_rstudio_console() || is_rstudio_version("1.2.1578")) && getOption("crayon.enabled", TRUE)),
     glue::glue_col("{bold}wrote{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}")
   )
 }
