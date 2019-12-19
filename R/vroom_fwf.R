@@ -52,6 +52,8 @@ vroom_fwf <- function(file,
 
   col_select <- vroom_enquo(rlang::enquo(col_select))
 
+  col_types <- as.col_spec(col_types)
+
   out <- vroom_fwf_(file, col_positions$begin, col_positions$end,
     trim_ws = trim_ws, col_names = col_positions$col_names,
     col_types = col_types, col_select = col_select,

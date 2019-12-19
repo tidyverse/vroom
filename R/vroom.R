@@ -130,8 +130,10 @@ vroom <- function(
 
   col_select <- vroom_enquo(rlang::enquo(col_select))
 
-  out <- vroom_(file, delim = delim, col_names = col_names, col_types = col_types,
-    id = id, skip = skip, col_select = col_select,
+  col_types <- as.col_spec(col_types)
+
+  out <- vroom_(file, delim = delim %||% col_types$delim, col_names = col_names,
+    col_types = col_types, id = id, skip = skip, col_select = col_select,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
     escape_backslash = escape_backslash, comment = comment, locale = locale,
     guess_max = guess_max, n_max = n_max, altrep = vroom_altrep(altrep),

@@ -48,7 +48,7 @@
 #' t3 <- t1
 #' t3$cols <- c(t1$cols, t2$cols)
 #' t3
-cols <- function(..., .default = col_guess()) {
+cols <- function(..., .default = col_guess(), .delim = NULL) {
   col_types <- rlang::list2(...)
   is_character <- vapply(col_types, is.character, logical(1))
   col_types[is_character] <- lapply(col_types[is_character], col_concise)
@@ -57,7 +57,7 @@ cols <- function(..., .default = col_guess()) {
     .default <- col_concise(.default)
   }
 
-  col_spec(col_types, .default)
+  col_spec(col_types, .default, .delim)
 }
 
 #' @export
@@ -69,7 +69,7 @@ cols_only <- function(...) {
 
 # col_spec ----------------------------------------------------------------
 
-col_spec <- function(col_types, default = col_guess()) {
+col_spec <- function(col_types, default = col_guess(), delim) {
   stopifnot(is.list(col_types))
   stopifnot(is.collector(default))
 
@@ -82,7 +82,8 @@ col_spec <- function(col_types, default = col_guess()) {
   structure(
     list(
       cols = col_types,
-      default = default
+      default = default,
+      delim = delim
     ),
     class = "col_spec"
   )
@@ -108,12 +109,12 @@ as.col_spec.character <- function(x) {
     return(as.col_spec(as.list(x)))
   }
   letters <- strsplit(x, "")[[1]]
-  col_spec(lapply(letters, col_concise), col_guess())
+  col_spec(lapply(letters, col_concise), col_guess(), delim = NULL)
 }
 
 #' @export
 as.col_spec.NULL <- function(x) {
-  col_spec(list())
+  col_spec(list(), delim = NULL)
 }
 
 #' @export
@@ -180,7 +181,14 @@ format.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_co
     default <- paste0(".default = col_", type, "()")
   }
 
-  cols_args <- c(default,
+  delim <- x$delim
+
+  if (!is.null(delim) && nzchar(delim)) {
+    delim <- paste0('.delim = ', double_quote(delim), '')
+  }
+
+  cols_args <- c(
+    default,
     vapply(seq_along(cols),
       function(i) {
         col_funs <- sub("^collector_", "col_", class(cols[[i]])[[1]])
@@ -203,7 +211,8 @@ format.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_co
         out
       },
       character(1)
-    )
+    ),
+    delim
   )
   if (length(x$cols) == 0 && length(cols_args) == 0) {
     return(paste0(fun_type, "()\n"))
@@ -327,8 +336,7 @@ vroom_select <- function(x, col_select, id) {
   x
 }
 
-col_types_standardise <- function(col_types, col_names, col_select) {
-  spec <- as.col_spec(col_types)
+col_types_standardise <- function(spec, col_names, col_select) {
   type_names <- names(spec$cols)
 
   if (length(spec$cols) == 0) {
@@ -443,7 +451,7 @@ show_spec_summary <- function(x, width = getOption("width"), locale = default_lo
     "\t" = "\\t",
     "\n" = "\\n",
     spec$delim
-  )
+  ) %||% ""
 
   message(
     glue::glue(

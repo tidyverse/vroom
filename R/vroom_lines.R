@@ -37,7 +37,7 @@ vroom_lines <- function(file, n_max = Inf, skip = 0, altrep = TRUE,
   # appear in modern text. This essentially means the only record breaks will
   # be newlines. Ideally this would be "\0", but R doesn't let you have nulls
   # in character vectors.
-  out <- vroom_(file, delim = "\1", col_names = "V1", col_types = "c",
+  out <- vroom_(file, delim = "\1", col_names = "V1", col_types = cols(col_character()),
     id = NULL, skip = skip, col_select = col_select, na = character(), quote = "",
     trim_ws = FALSE, escape_double = FALSE, escape_backslash = FALSE, comment = "",
     locale = default_locale(),

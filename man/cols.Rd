@@ -16,7 +16,7 @@
 \alias{col_time}
 \title{Create column specification}
 \usage{
-cols(..., .default = col_guess())
+cols(..., .default = col_guess(), .delim = NULL)
 
 cols_only(...)
 

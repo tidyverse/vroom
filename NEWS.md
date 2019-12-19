@@ -8,6 +8,9 @@
 
 ## Features / Bugfixes
 
+* `cols()` gains a `.delim` argument and `vroom()` now uses it as the delimiter
+  if it is provided (#192)
+
 * `vroom()` can now read single line files without a terminal newline (#173).
 
 * `vroom()` can now select the id column if provided (#110).

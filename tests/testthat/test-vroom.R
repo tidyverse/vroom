@@ -415,3 +415,22 @@ test_that("vroom handles files with trailing commas, windows newlines, missing a
     tibble::tibble(foo = 1, bar = 2, "...3" = NA)
   )
 })
+
+test_that("vroom uses the delim if it is specified in the col_types", {
+  # if we give a tab delim in the spec there should only be one column
+  expect_equal(
+    ncol(vroom("a,b,c\n1,2,3\n", col_types = list(.delim = "\t"))),
+    1
+  )
+
+  # But specifying an explicit delim overrides the spec
+  expect_equal(
+    ncol(vroom("a,b,c\n1,2,3\n", col_types = list(.delim = "\t"), delim = ",")),
+    3
+  )
+
+  expect_equal(
+    ncol(vroom("a,b,c\n1,2,3\n", col_types = list(.delim = ","), delim = "\t")),
+    1
+  )
+})
