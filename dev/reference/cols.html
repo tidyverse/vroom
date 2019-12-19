@@ -148,7 +148,7 @@ as the default. <code>cols_only()</code> includes only the columns you explicitl
 specify, skipping the rest.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cols</span>(<span class='no'>...</span>, <span class='kw'>.default</span> <span class='kw'>=</span> <span class='fu'>col_guess</span>())
+    <pre class="usage"><span class='fu'>cols</span>(<span class='no'>...</span>, <span class='kw'>.default</span> <span class='kw'>=</span> <span class='fu'>col_guess</span>(), <span class='kw'>.delim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
 <span class='fu'>cols_only</span>(<span class='no'>...</span>)
 
@@ -190,6 +190,12 @@ object.</p></td>
       <th>.default</th>
       <td><p>Any named columns not explicitly overridden in <code>...</code>
 will be read with this column type.</p></td>
+    </tr>
+    <tr>
+      <th>.delim</th>
+      <td><p>The delimiter to use when parsing. If the <code>delim</code> argument
+used in the call to <code><a href='vroom.html'>vroom()</a></code> it takes precedence over the one specified in
+<code>col_types</code>.</p></td>
     </tr>
     <tr>
       <th>levels</th>

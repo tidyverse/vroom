@@ -153,6 +153,9 @@
 <h2 class="hasAnchor">
 <a href="#features--bugfixes" class="anchor"></a>Features / Bugfixes</h2>
 <ul>
+<li><p><code><a href="../reference/cols.html">cols()</a></code> gains a <code>.delim</code> argument and <code><a href="../reference/vroom.html">vroom()</a></code> now uses it as the delimiter if it is provided (<a href='https://github.com/r-lib/vroom/issues/192'>#192</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> can now read single line files without a terminal newline (<a href='https://github.com/r-lib/vroom/issues/173'>#173</a>).</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> can now select the id column if provided (<a href='https://github.com/r-lib/vroom/issues/110'>#110</a>).</p></li>
 <li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> is now more robust if not all lines are the expected length (<a href='https://github.com/r-lib/vroom/issues/78'>#78</a>)</p></li>
 <li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> and <code><a href="../reference/vroom_fwf.html">fwf_empty()</a></code> now support passing <code>Inf</code> to <code>guess_max()</code>.</p></li>
 <li><p><code><a href="../reference/vroom_fwf.html">fwf_empty()</a></code> now uses the <code>skip</code> parameter, as intended.</p></li>

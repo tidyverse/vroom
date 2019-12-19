@@ -170,16 +170,10 @@ created by readr.</p>
     <p>A col_spec object.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='vroom.html'>vroom</a></span>(<span class='fu'><a href='vroom_example.html'>vroom_example</a></span>(<span class='st'>"mtcars.csv"</span>))</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows:</span><span> 32</span>
-#&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 12</span>
-#&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
-#&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [ 1]: model</span>
-#&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='input'><span class='no'>s</span> <span class='kw'>&lt;-</span> <span class='fu'>spec</span>(<span class='no'>df</span>)
+    <pre class="examples"><div class='input'><span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='vroom.html'>vroom</a></span>(<span class='fu'><a href='vroom_example.html'>vroom_example</a></span>(<span class='st'>"mtcars.csv"</span>))
+<span class='no'>s</span> <span class='kw'>&lt;-</span> <span class='fu'>spec</span>(<span class='no'>df</span>)
 <span class='no'>s</span></div><div class='output co'>#&gt; cols(
-#&gt;   model = </span><span style='color: #BB0000;'>col_character()</span><span>,
+#&gt;   model = <span style='color: #BB0000;'>col_character()</span><span>,
 #&gt;   mpg = </span><span style='color: #00BB00;'>col_double()</span><span>,
 #&gt;   cyl = </span><span style='color: #00BB00;'>col_double()</span><span>,
 #&gt;   disp = </span><span style='color: #00BB00;'>col_double()</span><span>,
@@ -190,11 +184,13 @@ created by readr.</p>
 #&gt;   vs = </span><span style='color: #00BB00;'>col_double()</span><span>,
 #&gt;   am = </span><span style='color: #00BB00;'>col_double()</span><span>,
 #&gt;   gear = </span><span style='color: #00BB00;'>col_double()</span><span>,
-#&gt;   carb = </span><span style='color: #00BB00;'>col_double()</span><span>
+#&gt;   carb = </span><span style='color: #00BB00;'>col_double()</span><span>,
+#&gt;   .delim = ","
 #&gt; )</div><div class='input'>
 <span class='fu'>cols_condense</span>(<span class='no'>s</span>)</div><div class='output co'>#&gt; cols(
 #&gt;   .default = col_double(),
-#&gt;   model = </span><span style='color: #BB0000;'>col_character()</span><span>
+#&gt;   model = </span><span style='color: #BB0000;'>col_character()</span><span>,
+#&gt;   .delim = ","
 #&gt; )</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
