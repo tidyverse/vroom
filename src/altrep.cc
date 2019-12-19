@@ -80,9 +80,12 @@ std::string vroom_str_(RObject x) {
     bool materialzied = R_altrep_data2(x) != R_NilValue;
 
     ss << std::boolalpha << "altrep:" << is_altrep << '\t'
-       << "type:" << CHAR(PRINTNAME(psym)) << "::" << CHAR(PRINTNAME(csym))
-       << '\t' << "length:" << LENGTH(x) << '\t'
-       << "materialized:" << materialzied << '\n';
+       << "type:" << CHAR(PRINTNAME(psym)) << "::" << CHAR(PRINTNAME(csym));
+    // We would have to dispatch to get the length of an object
+    if (!Rf_isObject(x)) {
+      ss << '\t' << "length:" << LENGTH(x);
+    }
+    ss << '\t' << "materialized:" << materialzied << '\n';
   }
 #else
   if (false) {
@@ -90,8 +93,11 @@ std::string vroom_str_(RObject x) {
 #endif
   else {
     ss << std::boolalpha << "altrep:" << false << '\t'
-       << "type: " << Rf_type2char(TYPEOF(x)) << '\t' << "length:" << LENGTH(x)
-       << '\n';
+       << "type: " << Rf_type2char(TYPEOF(x));
+    if (!Rf_isObject(x)) {
+      ss << '\t' << "length:" << LENGTH(x);
+    }
+    ss << '\n';
   }
 
   return ss.str();

@@ -8,6 +8,8 @@
 
 ## Features / Bugfixes
 
+* `vroom_str()` now works with S4 objects.
+
 * `cols()` gains a `.delim` argument and `vroom()` now uses it as the delimiter
   if it is provided (#192)
 
