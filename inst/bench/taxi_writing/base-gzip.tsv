@@ -1,3 +1,3 @@
 exprs	process	real	size	rows	cols	max_memory
-"{ library(vroom) data <- vroom(file, col_types = c(pickup_datetime = ""c"")) vr..."	0.403448	0.43747469899244606	112742	999	11	76574720
-"{ con <- gzfile(tempfile(fileext = "".gz""), ""wb"") write.table(data, con, sep =..."	0.026268999999999987	0.026894946000538766	112742	999	11	76574720
+"{ library(vroom) data <- vroom(file, col_types = c(pickup_datetime = ""c"")) vr..."	0.40304999999999996	0.440108495997265	112742	999	11	76664832
+"{ con <- gzfile(tempfile(fileext = "".gz""), ""wb"") write.table(data, con, sep =..."	0.02517999999999998	0.03239930793642998	112742	999	11	76664832
