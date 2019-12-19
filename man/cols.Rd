@@ -53,6 +53,10 @@ object.}
 \item{.default}{Any named columns not explicitly overridden in \code{...}
 will be read with this column type.}
 
+\item{.delim}{The delimiter to use when parsing. If the \code{delim} argument
+used in the call to \code{vroom()} it takes precedence over the one specified in
+\code{col_types}.}
+
 \item{levels}{Character vector providing set of allowed levels. if \code{NULL},
 will generate levels based on the unique values of \code{x}, ordered by order
 of appearance in \code{x}.}

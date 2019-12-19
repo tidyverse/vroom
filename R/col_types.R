@@ -26,6 +26,9 @@
 #'   object.
 #' @param .default Any named columns not explicitly overridden in `...`
 #'   will be read with this column type.
+#' @param .delim The delimiter to use when parsing. If the `delim` argument
+#'   used in the call to `vroom()` it takes precedence over the one specified in
+#'   `col_types`.
 #' @export
 #' @examples
 #' cols(a = col_integer())
