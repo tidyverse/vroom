@@ -8,6 +8,7 @@
 #'
 #' * `col_logical()` \[l\], containing only `T`, `F`, `TRUE` or `FALSE`.
 #' * `col_integer()` \[i\], integers.
+#' * `col_big_integer()` \[I\], Big Integers (64bit), requires the `bit64` package.
 #' * `col_double()` \[d\], doubles.
 #' * `col_character()` \[c\], everything else.
 #' * `col_factor(levels, ordered)` \[f\], a fixed set of values.
@@ -307,6 +308,7 @@ col_concise <- function(x) {
     f = col_factor(),
     d = col_double(),
     i = col_integer(),
+    I = col_big_integer(),
     l = col_logical(),
     n = col_number(),
     D = col_date(),
@@ -497,6 +499,12 @@ col_logical <- function(...) {
 #' @export
 col_integer <- function(...) {
   collector("integer", ...)
+}
+
+#' @rdname cols
+#' @export
+col_big_integer <- function(...) {
+  collector("big_integer", ...)
 }
 
 #' @rdname cols

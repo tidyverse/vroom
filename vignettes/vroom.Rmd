@@ -217,6 +217,7 @@ The available specifications are: (with single letter abbreviations in quotes)
 
 * `col_logical()` 'l', containing only `T`, `F`, `TRUE`, `FALSE`, `1` or `0`.
 * `col_integer()` 'i', integer values.
+* `col_big_integer()` 'I', Big integer values. (64bit integers)
 * `col_double()` 'd', floating point values.
 * `col_number()` 'n', numbers containing the `grouping_mark`
 * `col_date(format = "")` 'D': with the locale's `date_format`.

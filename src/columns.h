@@ -2,6 +2,7 @@
 
 #include "Rcpp.h"
 #include "vroom.h"
+#include "vroom_big_int.h"
 #include "vroom_chr.h"
 #include "vroom_date.h"
 #include "vroom_dbl.h"
@@ -156,6 +157,16 @@ inline List create_columns(
 #endif
       } else {
         res[i] = read_int(info);
+        delete info;
+      }
+      break;
+    case column_type::BigInt:
+      if (collector.use_altrep()) {
+#ifdef HAS_ALTREP
+        res[i] = vroom_big_int::Make(info);
+#endif
+      } else {
+        res[i] = read_big_int(info);
         delete info;
       }
       break;

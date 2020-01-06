@@ -231,6 +231,7 @@ static const R_CallMethodDef CallEntries[] = {
     {NULL, NULL, 0}
 };
 
+void init_vroom_big_int(DllInfo* dll);
 void init_vroom_chr(DllInfo* dll);
 void init_vroom_date(DllInfo* dll);
 void init_vroom_dbl(DllInfo* dll);
@@ -243,6 +244,7 @@ void init_vroom_time(DllInfo* dll);
 RcppExport void R_init_vroom(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
+    init_vroom_big_int(dll);
     init_vroom_chr(dll);
     init_vroom_date(dll);
     init_vroom_dbl(dll);

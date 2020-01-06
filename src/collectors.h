@@ -21,6 +21,9 @@ private:
     if (t == "collector_integer") {
       return column_type::Int;
     }
+    if (t == "collector_big_integer") {
+      return column_type::BigInt;
+    }
     if (t == "collector_number") {
       return column_type::Num;
     }
@@ -61,6 +64,8 @@ public:
       return altrep_ & column_type::Dbl;
     case column_type::Int:
       return altrep_ & column_type::Int;
+    case column_type::BigInt:
+      return altrep_ & column_type::BigInt;
     case column_type::Num:
       return altrep_ & column_type::Num;
     case column_type::Fct:

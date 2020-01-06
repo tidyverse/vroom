@@ -71,7 +71,7 @@ vroom has nearly all of the parsing features of
 - delimiter guessing\*
 - custom delimiters (including multi-byte\* and Unicode\* delimiters)
 - specification of column types (including type guessing)
-  - numeric types (double, integer, number)
+  - numeric types (double, integer, big integer\*, number)
   - logical types
   - datetime types (datetime, date, time)
   - categorical types (characters, factors)
@@ -204,6 +204,7 @@ There are also individual variables for each type. Currently only
 - `VROOM_USE_ALTREP_CHR`
 - `VROOM_USE_ALTREP_FCT`
 - `VROOM_USE_ALTREP_INT`
+- `VROOM_USE_ALTREP_BIG_INT`
 - `VROOM_USE_ALTREP_DBL`
 - `VROOM_USE_ALTREP_NUM`
 - `VROOM_USE_ALTREP_LGL`

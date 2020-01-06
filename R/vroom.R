@@ -1,5 +1,6 @@
 #' @useDynLib vroom, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
+#' @importFrom bit64 integer64
 NULL
 
 #' Read a delimited file into a tibble
@@ -291,6 +292,7 @@ vroom_tempfile <- function() {
 #' - `VROOM_USE_ALTREP_CHR`
 #' - `VROOM_USE_ALTREP_FCT`
 #' - `VROOM_USE_ALTREP_INT`
+#' - `VROOM_USE_ALTREP_BIG_INT`
 #' - `VROOM_USE_ALTREP_DBL`
 #' - `VROOM_USE_ALTREP_NUM`
 #' - `VROOM_USE_ALTREP_LGL`
@@ -327,6 +329,7 @@ vroom_altrep <- function(which = NULL) {
     getRversion() >= "3.5.0" && which$chr %||% vroom_use_altrep_chr(),
     getRversion() >= "3.5.0" && which$fct %||% vroom_use_altrep_fct(),
     getRversion() >= "3.5.0" && which$int %||% vroom_use_altrep_int(),
+    getRversion() >= "3.5.0" && which$int %||% vroom_use_altrep_big_int(),
     getRversion() >= "3.5.0" && which$dbl %||% vroom_use_altrep_dbl(),
     getRversion() >= "3.5.0" && which$num %||% vroom_use_altrep_num(),
     getRversion() >= "3.6.0" && which$lgl %||% vroom_use_altrep_lgl(), # logicals only supported in R 3.6.0+
@@ -365,7 +368,9 @@ altrep_vals <- function() c(
   "lgl" = 32L,
   "dttm" = 64L,
   "date" = 128L,
-  "time" = 256L
+  "time" = 256L,
+# "skip" = 512L
+  "big_int" = 1024L
 )
 
 #' @export
@@ -390,6 +395,10 @@ vroom_use_altrep_fct <- function() {
 
 vroom_use_altrep_int <- function() {
   env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_INT", FALSE)
+}
+
+vroom_use_altrep_big_int <- function() {
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_BIG_INT", FALSE)
 }
 
 vroom_use_altrep_dbl <- function() {

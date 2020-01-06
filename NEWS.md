@@ -8,6 +8,9 @@
 
 ## Features / Bugfixes
 
+* `vroom()` now supports reading Big Integer values with the `bit64` package.
+  Use `col_big_integer()` or the "I" shortcut to read a column as big integers. (#198)
+
 * `vroom_str()` now works with S4 objects.
 
 * `cols()` gains a `.delim` argument and `vroom()` now uses it as the delimiter

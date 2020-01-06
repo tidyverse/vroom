@@ -5,6 +5,7 @@
 \alias{cols_only}
 \alias{col_logical}
 \alias{col_integer}
+\alias{col_big_integer}
 \alias{col_double}
 \alias{col_character}
 \alias{col_skip}
@@ -23,6 +24,8 @@ cols_only(...)
 col_logical(...)
 
 col_integer(...)
+
+col_big_integer(...)
 
 col_double(...)
 
@@ -82,6 +85,7 @@ The available specifications are: (with string abbreviations in brackets)
 \itemize{
 \item \code{col_logical()} [l], containing only \code{T}, \code{F}, \code{TRUE} or \code{FALSE}.
 \item \code{col_integer()} [i], integers.
+\item \code{col_big_integer()} [I], Big Integers (64bit), requires the \code{bit64} package.
 \item \code{col_double()} [d], doubles.
 \item \code{col_character()} [c], everything else.
 \item \code{col_factor(levels, ordered)} [f], a fixed set of values.
