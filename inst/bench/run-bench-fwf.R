@@ -173,7 +173,7 @@ types <- cols(
 )
 
 cat(source_file, "\n")
-out <- bench::workout(parse(source_file, keep.source = FALSE))
+out <- bench::workout_expressions(as.list(parse(source_file, keep.source = FALSE)))
 
 x <- vroom::vroom(file, col_types = list())
 
