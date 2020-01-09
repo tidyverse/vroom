@@ -156,6 +156,8 @@ specify, skipping the rest.</p>
 
 <span class='fu'>col_integer</span>(<span class='no'>...</span>)
 
+<span class='fu'>col_big_integer</span>(<span class='no'>...</span>)
+
 <span class='fu'>col_double</span>(<span class='no'>...</span>)
 
 <span class='fu'>col_character</span>(<span class='no'>...</span>)
@@ -226,6 +228,7 @@ the complete string.</p></td>
     <p>The available specifications are: (with string abbreviations in brackets)</p><ul>
 <li><p><code>col_logical()</code> [l], containing only <code>T</code>, <code>F</code>, <code>TRUE</code> or <code>FALSE</code>.</p></li>
 <li><p><code>col_integer()</code> [i], integers.</p></li>
+<li><p><code>col_big_integer()</code> [I], Big Integers (64bit), requires the <code>bit64</code> package.</p></li>
 <li><p><code>col_double()</code> [d], doubles.</p></li>
 <li><p><code>col_character()</code> [c], everything else.</p></li>
 <li><p><code>col_factor(levels, ordered)</code> [f], a fixed set of values.</p></li>
