@@ -131,6 +131,8 @@ vroom <- function(
 
   col_select <- vroom_enquo(rlang::enquo(col_select))
 
+  has_spec <- !is.null(col_types)
+
   col_types <- as.col_spec(col_types)
 
   out <- vroom_(file, delim = delim %||% col_types$delim, col_names = col_names,
@@ -144,7 +146,7 @@ vroom <- function(
 
   out <- vroom_select(out, col_select, id)
 
-  if (is.null(col_types)) {
+  if (!has_spec) {
     show_spec_summary(out, locale = locale)
   }
 
