@@ -1,67 +1,110 @@
-#include "vroom_big_int.h"
-#include "parallel.h"
+#pragma once
 
-// A version of strtoll that doesn't need null terminated strings, to avoid
-// needing to copy the data
-long long strtoll(const char* begin, const char* end) {
-  unsigned long long val = 0;
-  bool is_neg = false;
+#include "altrep.h"
 
-  if (begin == end) {
-    return NA_INTEGER64;
-  }
+#include "vroom_vec.h"
 
-  if (begin != end && *begin == '-') {
-    is_neg = true;
-    ++begin;
-  }
+#include <Rcpp.h>
 
-  while (begin != end && isdigit(*begin)) {
-    val = val * 10 + ((*begin++) - '0');
-  }
+#define NA_INTEGER64 (0x8000000000000000)
 
-  if (val > LONG_LONG_MAX) {
-    return NA_INTEGER64;
-  }
+long long strtoll(const char* begin, const char* end);
 
-  // If there is more than digits, return NA
-  if (begin != end) {
-    return NA_INTEGER64;
-  }
-
-  return is_neg ? -val : val;
-}
-
-// Normal reading of integer vectors
-Rcpp::NumericVector read_big_int(vroom_vec_info* info) {
-
-  R_xlen_t n = info->column->size();
-
-  Rcpp::NumericVector out(n);
-
-  parallel_for(
-      n,
-      [&](size_t start, size_t end, size_t id) {
-        size_t i = start;
-        auto col = info->column->slice(start, end);
-        for (const auto& str : *col) {
-          long long res = strtoll(str.begin(), str.end());
-          out[i++] = *reinterpret_cast<double*>(&res);
-        }
-      },
-      info->num_threads);
-
-  out.attr("class") = "integer64";
-
-  return out;
-}
+Rcpp::NumericVector read_big_int(vroom_vec_info* info);
 
 #ifdef HAS_ALTREP
 
-R_altrep_class_t vroom_big_int::class_t;
+class vroom_big_int : public vroom_vec {
 
-void init_vroom_big_int(DllInfo* dll) { vroom_big_int::Init(dll); }
+public:
+  static R_altrep_class_t class_t;
 
-#else
-void init_vroom_big_int(DllInfo* dll) {}
+  static SEXP Make(vroom_vec_info* info) {
+
+    SEXP out = PROTECT(R_MakeExternalPtr(info, R_NilValue, R_NilValue));
+    R_RegisterCFinalizerEx(out, vroom_vec::Finalize, FALSE);
+
+    Rcpp::RObject res = R_new_altrep(class_t, out, R_NilValue);
+
+    res.attr("class") = Rcpp::CharacterVector::create("integer64");
+
+    UNPROTECT(1);
+
+    MARK_NOT_MUTABLE(res); /* force duplicate on modify */
+
+    return res;
+  }
+
+  // ALTREP methods -------------------
+
+  // What gets printed when .Internal(inspect()) is used
+  static Rboolean Inspect(
+      SEXP x,
+      int pre,
+      int deep,
+      int pvec,
+      void (*inspect_subtree)(SEXP, int, int, int)) {
+    Rprintf(
+        "vroom_big_int (len=%d, materialized=%s)\n",
+        Length(x),
+        R_altrep_data2(x) != R_NilValue ? "T" : "F");
+    return TRUE;
+  }
+
+  // ALTREAL methods -----------------
+
+  static SEXP Materialize(SEXP vec) {
+    SEXP data2 = R_altrep_data2(vec);
+    if (data2 != R_NilValue) {
+      return data2;
+    }
+
+    auto out = read_big_int(&Info(vec));
+    R_set_altrep_data2(vec, out);
+
+    // Once we have materialized we no longer need the info
+    Finalize(R_altrep_data1(vec));
+
+    return out;
+  }
+
+  // the element at the index `i`
+  static double real_Elt(SEXP vec, R_xlen_t i) {
+    SEXP data2 = R_altrep_data2(vec);
+    if (data2 != R_NilValue) {
+      return REAL(data2)[i];
+    }
+
+    auto str = vroom_vec::Get(vec, i);
+
+    long long res = strtoll(str.begin(), str.end());
+    return *reinterpret_cast<double*>(&res);
+  }
+
+  static void* Dataptr(SEXP vec, Rboolean writeable) {
+    return STDVEC_DATAPTR(Materialize(vec));
+  }
+
+  // -------- initialize the altrep class with the methods above
+  static void Init(DllInfo* dll) {
+    vroom_big_int::class_t =
+        R_make_altreal_class("vroom_big_int", "vroom", dll);
+
+    // altrep
+    R_set_altrep_Length_method(class_t, Length);
+    R_set_altrep_Inspect_method(class_t, Inspect);
+
+    // altvec
+    R_set_altvec_Dataptr_method(class_t, Dataptr);
+    R_set_altvec_Dataptr_or_null_method(class_t, Dataptr_or_null);
+    R_set_altvec_Extract_subset_method(class_t, Extract_subset<vroom_big_int>);
+
+    // altreal
+    R_set_altreal_Elt_method(class_t, real_Elt);
+  }
+};
 #endif
+
+// Called the package is loaded (needs Rcpp 0.12.18.3)
+// [[Rcpp::init]]
+void init_vroom_big_int(DllInfo* dll);
