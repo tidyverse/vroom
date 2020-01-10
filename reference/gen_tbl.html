@@ -8,21 +8,25 @@
 
 <title>Generate a random tibble — gen_tbl • vroom</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,11 +34,12 @@
 
 
 
-<meta property="og:title" content="Generate a random tibble — gen_tbl" />
 
+<meta property="og:title" content="Generate a random tibble — gen_tbl" />
 <meta property="og:description" content="This is useful for benchmarking, but also for bug reports when you cannot
 share the real dataset." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -58,6 +63,7 @@ share the real dataset." />
   gtag('config', 'UA-115082821-1');
 </script>
 
+
   </head>
 
   <body>
@@ -74,7 +80,7 @@ share the real dataset." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -110,11 +116,10 @@ share the real dataset." />
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/r-lib/vroom">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -125,6 +130,7 @@ share the real dataset." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -136,15 +142,18 @@ share the real dataset." />
     </div>
 
     <div class="ref-description">
-    
     <p>This is useful for benchmarking, but also for bug reports when you cannot
 share the real dataset.</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>gen_tbl</span>(<span class='no'>rows</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>locale</span> <span class='kw'>=</span> <span class='fu'><a href='locale.html'>default_locale</a></span>(), <span class='kw'>missing</span> <span class='kw'>=</span> <span class='fl'>0</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>gen_tbl</span>(
+  <span class='no'>rows</span>,
+  <span class='kw'>cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>locale</span> <span class='kw'>=</span> <span class='fu'><a href='locale.html'>default_locale</a></span>(),
+  <span class='kw'>missing</span> <span class='kw'>=</span> <span class='fl'>0</span>
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -158,14 +167,14 @@ share the real dataset.</p>
     </tr>
     <tr>
       <th>col_types</th>
-      <td><p>One of <code>NULL</code>, a <code><a href='cols.html'>cols()</a></code> specification, or
+      <td><p>One of <code>NULL</code>, a <code><a href='https://readr.tidyverse.org/reference/cols.html'>cols()</a></code> specification, or
 a string. See <code>vignette("readr")</code> for more details.</p>
 <p>If <code>NULL</code>, all column types will be imputed from the first 1000 rows
 on the input. This is convenient (and fast), but not robust. If the
 imputation fails, you'll need to supply the correct types yourself.</p>
-<p>If a column specification created by <code><a href='cols.html'>cols()</a></code>, it must contain
+<p>If a column specification created by <code><a href='https://readr.tidyverse.org/reference/cols.html'>cols()</a></code>, it must contain
 one column specification for each column. If you only want to read a
-subset of the columns, use <code><a href='cols.html'>cols_only()</a></code>.</p>
+subset of the columns, use <code><a href='https://readr.tidyverse.org/reference/cols.html'>cols_only()</a></code>.</p>
 <p>Alternatively, you can use a compact string representation where each
 character represents one column:
 c = character, i = integer, n = number, d = double,
@@ -176,7 +185,7 @@ l = logical, f = factor, D = date, T = date time, t = time, ? = guess, or
       <th>locale</th>
       <td><p>The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
-<code><a href='locale.html'>locale()</a></code> to create your own locale that controls things like
+<code><a href='https://readr.tidyverse.org/reference/locale.html'>locale()</a></code> to create your own locale that controls things like
 the default time zone, encoding, decimal mark, big mark, and day/month
 names.</p></td>
     </tr>
@@ -185,51 +194,49 @@ names.</p></td>
       <td><p>The percentage (from 0 to 1) of missing data to use</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>There is also a family of functions to generate individual vectors of each
 type.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><a href='generators.html'>generators</a> to generate individual vectors.</p></div>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># random 10 x 5 table with random column types</span>
 <span class='no'>rand_tbl</span> <span class='kw'>&lt;-</span> <span class='fu'>gen_tbl</span>(<span class='fl'>10</span>, <span class='fl'>5</span>)
-<span class='no'>rand_tbl</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 10 x 5</span><span>
-#&gt;         X1      X2 X3         X4                  X5    
-#&gt;      </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;date&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;dttm&gt;</span><span>              </span><span style='color: #949494;font-style: italic;'>&lt;drtn&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 1</span><span>  0.971   0.629  2007-05-02 2016-08-02 </span><span style='color: #949494;'>20:23:17</span><span> 22</span><span style='color: #949494;'>:</span><span>44 
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> -</span><span style='color: #BB0000;'>1.01</span><span>    2.07   2018-03-26 2005-01-31 </span><span style='color: #949494;'>12:32:49</span><span> 13</span><span style='color: #949494;'>:</span><span>01 
-#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> -</span><span style='color: #BB0000;'>0.084</span><span style='color: #BB0000;text-decoration: underline;'>3</span><span> -</span><span style='color: #BB0000;'>1.63</span><span>   2003-10-20 2015-04-09 </span><span style='color: #949494;'>08:48:39</span><span> 13</span><span style='color: #949494;'>:</span><span>04 
-#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> -</span><span style='color: #BB0000;'>0.554</span><span>   0.512  2004-07-13 2002-04-22 </span><span style='color: #949494;'>09:41:19</span><span> 06</span><span style='color: #949494;'>:</span><span>41 
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span>  0.747  -</span><span style='color: #BB0000;'>1.86</span><span>   2018-02-21 2008-02-01 </span><span style='color: #949494;'>11:32:09</span><span> 10</span><span style='color: #949494;'>:</span><span>43 
-#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> -</span><span style='color: #BB0000;'>0.935</span><span>  -</span><span style='color: #BB0000;'>0.522</span><span>  2003-07-19 2017-07-04 </span><span style='color: #949494;'>01:57:44</span><span> 08</span><span style='color: #949494;'>:</span><span>54 
-#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> -</span><span style='color: #BB0000;'>0.467</span><span>  -</span><span style='color: #BB0000;'>0.052</span><span style='color: #BB0000;text-decoration: underline;'>6</span><span> 2016-06-19 2006-06-24 </span><span style='color: #949494;'>05:48:53</span><span> 00</span><span style='color: #949494;'>:</span><span>40 
-#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> -</span><span style='color: #BB0000;'>0.857</span><span>   0.543  2012-09-15 2012-05-27 </span><span style='color: #949494;'>04:16:50</span><span> 11</span><span style='color: #949494;'>:</span><span>11 
-#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> -</span><span style='color: #BB0000;'>1.52</span><span>   -</span><span style='color: #BB0000;'>0.914</span><span>  2009-11-30 2007-09-19 </span><span style='color: #949494;'>10:16:09</span><span> 09</span><span style='color: #949494;'>:</span><span>21 
-#&gt; </span><span style='color: #BCBCBC;'>10</span><span>  1.97    0.468  2006-09-01 2012-12-04 </span><span style='color: #949494;'>16:47:31</span><span> 00</span><span style='color: #949494;'>:</span><span>28 </div><div class='input'>
+<span class='no'>rand_tbl</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 10 x 5</span><span>
+#&gt;         X1      X2 X3         X4                  X5      
+#&gt;      </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;date&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;dttm&gt;</span><span>              </span><span style='color: #555555;font-style: italic;'>&lt;time&gt;</span><span>  
+#&gt; </span><span style='color: #555555;'> 1</span><span>  0.971   0.629  2007-05-02 2016-08-02 </span><span style='color: #555555;'>20:23:17</span><span> 22</span><span style='color: #555555;'>:</span><span>44</span><span style='color: #555555;'>:</span><span>46
+#&gt; </span><span style='color: #555555;'> 2</span><span> -</span><span style='color: #BB0000;'>1.01</span><span>    2.07   2018-03-26 2005-01-31 </span><span style='color: #555555;'>12:32:49</span><span> 13</span><span style='color: #555555;'>:</span><span>01</span><span style='color: #555555;'>:</span><span>10
+#&gt; </span><span style='color: #555555;'> 3</span><span> -</span><span style='color: #BB0000;'>0.084</span><span style='color: #BB0000;text-decoration: underline;'>3</span><span> -</span><span style='color: #BB0000;'>1.63</span><span>   2003-10-20 2015-04-09 </span><span style='color: #555555;'>08:48:39</span><span> 13</span><span style='color: #555555;'>:</span><span>04</span><span style='color: #555555;'>:</span><span>13
+#&gt; </span><span style='color: #555555;'> 4</span><span> -</span><span style='color: #BB0000;'>0.554</span><span>   0.512  2004-07-13 2002-04-22 </span><span style='color: #555555;'>09:41:19</span><span> 06</span><span style='color: #555555;'>:</span><span>41</span><span style='color: #555555;'>:</span><span>10
+#&gt; </span><span style='color: #555555;'> 5</span><span>  0.747  -</span><span style='color: #BB0000;'>1.86</span><span>   2018-02-21 2008-02-01 </span><span style='color: #555555;'>11:32:09</span><span> 10</span><span style='color: #555555;'>:</span><span>43</span><span style='color: #555555;'>:</span><span>15
+#&gt; </span><span style='color: #555555;'> 6</span><span> -</span><span style='color: #BB0000;'>0.935</span><span>  -</span><span style='color: #BB0000;'>0.522</span><span>  2003-07-19 2017-07-04 </span><span style='color: #555555;'>01:57:44</span><span> 08</span><span style='color: #555555;'>:</span><span>54</span><span style='color: #555555;'>:</span><span>58
+#&gt; </span><span style='color: #555555;'> 7</span><span> -</span><span style='color: #BB0000;'>0.467</span><span>  -</span><span style='color: #BB0000;'>0.052</span><span style='color: #BB0000;text-decoration: underline;'>6</span><span> 2016-06-19 2006-06-24 </span><span style='color: #555555;'>05:48:53</span><span> 00</span><span style='color: #555555;'>:</span><span>40</span><span style='color: #555555;'>:</span><span>24
+#&gt; </span><span style='color: #555555;'> 8</span><span> -</span><span style='color: #BB0000;'>0.857</span><span>   0.543  2012-09-15 2012-05-27 </span><span style='color: #555555;'>04:16:50</span><span> 11</span><span style='color: #555555;'>:</span><span>11</span><span style='color: #555555;'>:</span><span>01
+#&gt; </span><span style='color: #555555;'> 9</span><span> -</span><span style='color: #BB0000;'>1.52</span><span>   -</span><span style='color: #BB0000;'>0.914</span><span>  2009-11-30 2007-09-19 </span><span style='color: #555555;'>10:16:09</span><span> 09</span><span style='color: #555555;'>:</span><span>21</span><span style='color: #555555;'>:</span><span>38
+#&gt; </span><span style='color: #555555;'>10</span><span>  1.97    0.468  2006-09-01 2012-12-04 </span><span style='color: #555555;'>16:47:31</span><span> 00</span><span style='color: #555555;'>:</span><span>28</span><span style='color: #555555;'>:</span><span>53</div><div class='input'>
 <span class='co'># all double 25 x 4 table</span>
 <span class='no'>dbl_tbl</span> <span class='kw'>&lt;-</span> <span class='fu'>gen_tbl</span>(<span class='fl'>25</span>, <span class='fl'>4</span>, <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='st'>"dddd"</span>)
-<span class='no'>dbl_tbl</span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 25 x 4</span><span>
+<span class='no'>dbl_tbl</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 25 x 4</span><span>
 #&gt;         X1     X2      X3     X4
-#&gt;      </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>  </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>  </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> -</span><span style='color: #BB0000;'>0.313</span><span>  -</span><span style='color: #BB0000;'>0.246</span><span>  0.434  -</span><span style='color: #BB0000;'>0.442</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span>  1.07   -</span><span style='color: #BB0000;'>1.18</span><span>  -</span><span style='color: #BB0000;'>0.382</span><span>   0.569
-#&gt; </span><span style='color: #BCBCBC;'> 3</span><span>  0.070</span><span style='text-decoration: underline;'>0</span><span> -</span><span style='color: #BB0000;'>0.976</span><span>  0.424   2.13 
-#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> -</span><span style='color: #BB0000;'>0.639</span><span>   1.07   1.06    0.425
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> -</span><span style='color: #BB0000;'>0.050</span><span style='color: #BB0000;text-decoration: underline;'>0</span><span>  0.132  1.05   -</span><span style='color: #BB0000;'>1.68</span><span> 
-#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> -</span><span style='color: #BB0000;'>0.251</span><span>   0.489 -</span><span style='color: #BB0000;'>0.038</span><span style='color: #BB0000;text-decoration: underline;'>1</span><span>  0.249
-#&gt; </span><span style='color: #BCBCBC;'> 7</span><span>  0.445  -</span><span style='color: #BB0000;'>1.70</span><span>   0.486   1.07 
-#&gt; </span><span style='color: #BCBCBC;'> 8</span><span>  2.76   -</span><span style='color: #BB0000;'>1.47</span><span>   1.67    2.04 
-#&gt; </span><span style='color: #BCBCBC;'> 9</span><span>  0.046</span><span style='text-decoration: underline;'>5</span><span>  0.284 -</span><span style='color: #BB0000;'>0.354</span><span>   0.449
-#&gt; </span><span style='color: #BCBCBC;'>10</span><span>  0.578   1.34   0.946   1.39 
-#&gt; </span><span style='color: #949494;'># … with 15 more rows</span><span></div><div class='input'>
+#&gt;      </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> -</span><span style='color: #BB0000;'>0.313</span><span>  -</span><span style='color: #BB0000;'>0.246</span><span>  0.434  -</span><span style='color: #BB0000;'>0.442</span><span>
+#&gt; </span><span style='color: #555555;'> 2</span><span>  1.07   -</span><span style='color: #BB0000;'>1.18</span><span>  -</span><span style='color: #BB0000;'>0.382</span><span>   0.569
+#&gt; </span><span style='color: #555555;'> 3</span><span>  0.070</span><span style='text-decoration: underline;'>0</span><span> -</span><span style='color: #BB0000;'>0.976</span><span>  0.424   2.13 
+#&gt; </span><span style='color: #555555;'> 4</span><span> -</span><span style='color: #BB0000;'>0.639</span><span>   1.07   1.06    0.425
+#&gt; </span><span style='color: #555555;'> 5</span><span> -</span><span style='color: #BB0000;'>0.050</span><span style='color: #BB0000;text-decoration: underline;'>0</span><span>  0.132  1.05   -</span><span style='color: #BB0000;'>1.68</span><span> 
+#&gt; </span><span style='color: #555555;'> 6</span><span> -</span><span style='color: #BB0000;'>0.251</span><span>   0.489 -</span><span style='color: #BB0000;'>0.038</span><span style='color: #BB0000;text-decoration: underline;'>1</span><span>  0.249
+#&gt; </span><span style='color: #555555;'> 7</span><span>  0.445  -</span><span style='color: #BB0000;'>1.70</span><span>   0.486   1.07 
+#&gt; </span><span style='color: #555555;'> 8</span><span>  2.76   -</span><span style='color: #BB0000;'>1.47</span><span>   1.67    2.04 
+#&gt; </span><span style='color: #555555;'> 9</span><span>  0.046</span><span style='text-decoration: underline;'>5</span><span>  0.284 -</span><span style='color: #BB0000;'>0.354</span><span>   0.449
+#&gt; </span><span style='color: #555555;'>10</span><span>  0.578   1.34   0.946   1.39 
+#&gt; </span><span style='color: #555555;'># … with 15 more rows</span><span></div><div class='input'>
 <span class='co'># Use the dots in long form column types to change the random function and options</span>
-<span class='no'>types</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='kw'>times</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fu'><a href='cols.html'>col_double</a></span>(<span class='kw'>f</span> <span class='kw'>=</span> <span class='kw pkg'>stats</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>, <span class='kw'>min</span> <span class='kw'>=</span> -<span class='fl'>10</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='fl'>25</span>)))
+<span class='no'>types</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='kw'>times</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='cols.html'>col_double</a></span>(<span class='kw'>f</span> <span class='kw'>=</span> <span class='kw pkg'>stats</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>, <span class='kw'>min</span> <span class='kw'>=</span> -<span class='fl'>10</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='fl'>25</span>)))
 <span class='no'>types</span></div><div class='output co'>#&gt; [[1]]
 #&gt; &lt;collector_double&gt;
 #&gt; 
@@ -242,35 +249,33 @@ type.</p>
 #&gt; [[4]]
 #&gt; &lt;collector_double&gt;
 #&gt; </div><div class='input'><span class='no'>dbl_tbl2</span> <span class='kw'>&lt;-</span> <span class='fu'>gen_tbl</span>(<span class='fl'>25</span>, <span class='fl'>4</span>, <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='no'>types</span>)
-<span class='no'>dbl_tbl2</span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 25 x 4</span><span>
+<span class='no'>dbl_tbl2</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 25 x 4</span><span>
 #&gt;       X1      X2    X3    X4
-#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> 18.5  -</span><span style='color: #BB0000;'>2.86</span><span>   11.1  16.0 
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> -</span><span style='color: #BB0000;'>7.52</span><span>  9.20   18.2   1.12
-#&gt; </span><span style='color: #BCBCBC;'> 3</span><span>  8.44 19.0    -</span><span style='color: #BB0000;'>8.72</span><span> -</span><span style='color: #BB0000;'>6.09</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> 16.7  -</span><span style='color: #BB0000;'>5.54</span><span>   15.7  -</span><span style='color: #BB0000;'>6.46</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span>  5.24 -</span><span style='color: #BB0000;'>0.858</span><span>  -</span><span style='color: #BB0000;'>2.47</span><span> 18.0 
-#&gt; </span><span style='color: #BCBCBC;'> 6</span><span>  9.34  0.094</span><span style='text-decoration: underline;'>6</span><span> -</span><span style='color: #BB0000;'>9.44</span><span>  3.30
-#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> -</span><span style='color: #BB0000;'>2.86</span><span> -</span><span style='color: #BB0000;'>9.48</span><span>   -</span><span style='color: #BB0000;'>5.50</span><span> -</span><span style='color: #BB0000;'>8.16</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> -</span><span style='color: #BB0000;'>8.91</span><span> 19.9    14.0  24.5 
-#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> 23.9   4.49   12.5  11.1 
-#&gt; </span><span style='color: #BCBCBC;'>10</span><span> -</span><span style='color: #BB0000;'>3.75</span><span> 16.3     1.46 -</span><span style='color: #BB0000;'>4.79</span><span>
-#&gt; </span><span style='color: #949494;'># … with 15 more rows</span><span></div></span></pre>
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> 18.5  -</span><span style='color: #BB0000;'>2.86</span><span>   11.1  16.0 
+#&gt; </span><span style='color: #555555;'> 2</span><span> -</span><span style='color: #BB0000;'>7.52</span><span>  9.20   18.2   1.12
+#&gt; </span><span style='color: #555555;'> 3</span><span>  8.44 19.0    -</span><span style='color: #BB0000;'>8.72</span><span> -</span><span style='color: #BB0000;'>6.09</span><span>
+#&gt; </span><span style='color: #555555;'> 4</span><span> 16.7  -</span><span style='color: #BB0000;'>5.54</span><span>   15.7  -</span><span style='color: #BB0000;'>6.46</span><span>
+#&gt; </span><span style='color: #555555;'> 5</span><span>  5.24 -</span><span style='color: #BB0000;'>0.858</span><span>  -</span><span style='color: #BB0000;'>2.47</span><span> 18.0 
+#&gt; </span><span style='color: #555555;'> 6</span><span>  9.34  0.094</span><span style='text-decoration: underline;'>6</span><span> -</span><span style='color: #BB0000;'>9.44</span><span>  3.30
+#&gt; </span><span style='color: #555555;'> 7</span><span> -</span><span style='color: #BB0000;'>2.86</span><span> -</span><span style='color: #BB0000;'>9.48</span><span>   -</span><span style='color: #BB0000;'>5.50</span><span> -</span><span style='color: #BB0000;'>8.16</span><span>
+#&gt; </span><span style='color: #555555;'> 8</span><span> -</span><span style='color: #BB0000;'>8.91</span><span> 19.9    14.0  24.5 
+#&gt; </span><span style='color: #555555;'> 9</span><span> 23.9   4.49   12.5  11.1 
+#&gt; </span><span style='color: #555555;'>10</span><span> -</span><span style='color: #BB0000;'>3.75</span><span> 16.3     1.46 -</span><span style='color: #BB0000;'>4.79</span><span>
+#&gt; </span><span style='color: #555555;'># … with 15 more rows</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#details">Details</a></li>
-
       <li><a href="#see-also">See also</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -278,13 +283,16 @@ type.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.9000.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

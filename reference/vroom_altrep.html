@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Show which column types are using Altrep — vroom_altrep_opts • vroom</title>
+<title>Show which column types are using Altrep — vroom_altrep • vroom</title>
 
 
 <!-- jquery -->
@@ -35,10 +35,9 @@
 
 
 
-<meta property="og:title" content="Show which column types are using Altrep — vroom_altrep_opts" />
-<meta property="og:description" content="
-
-This function is deprecated in favor of vroom_altrep()." />
+<meta property="og:title" content="Show which column types are using Altrep — vroom_altrep" />
+<meta property="og:description" content="vroom_altrep() can be used directly as input to the altrep
+argument of vroom()." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -139,16 +138,15 @@ This function is deprecated in favor of vroom_altrep()." />
     <div class="page-header">
     <h1>Show which column types are using Altrep</h1>
     <small class="dont-index">Source: <a href='https://github.com/r-lib/vroom/blob/master/R/vroom.R'><code>R/vroom.R</code></a></small>
-    <div class="hidden name"><code>vroom_altrep_opts.Rd</code></div>
+    <div class="hidden name"><code>vroom_altrep.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><img src='figures/lifecycle-deprecated.svg' alt='Deprecated lifecycle' />
-
-This function is deprecated in favor of <code><a href='vroom_altrep.html'>vroom_altrep()</a></code>.</p>
+    <p><code>vroom_altrep()</code> can be used directly as input to the <code>altrep</code>
+argument of <code><a href='vroom.html'>vroom()</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vroom_altrep_opts</span>(<span class='kw'>which</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>vroom_altrep</span>(<span class='kw'>which</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -161,12 +159,56 @@ types</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
+    <p>Alternatively there is also a family of environment variables to control use of
+the Altrep framework. These can then be set in your <code>.Renviron</code> file, e.g.
+with <code>usethis::edit_r_environ()</code>. For versions of R where the Altrep
+framework is unavailable (R &lt; 3.5.0) they are automatically turned off and
+the variables have no effect. The variables can take one of <code>true</code>, <code>false</code>,
+<code>TRUE</code>, <code>FALSE</code>, <code>1</code>, or <code>0</code>.</p><ul>
+<li><p><code>VROOM_USE_ALTREP_NUMERICS</code> - If set use Altrep for <em>all</em> numeric types
+(default <code>false</code>).</p></li>
+</ul>
+
+<p>There are also individual variables for each type. Currently only
+<code>VROOM_USE_ALTREP_CHR</code> defaults to <code>true</code>.</p><ul>
+<li><p><code>VROOM_USE_ALTREP_CHR</code></p></li>
+<li><p><code>VROOM_USE_ALTREP_FCT</code></p></li>
+<li><p><code>VROOM_USE_ALTREP_INT</code></p></li>
+<li><p><code>VROOM_USE_ALTREP_DBL</code></p></li>
+<li><p><code>VROOM_USE_ALTREP_NUM</code></p></li>
+<li><p><code>VROOM_USE_ALTREP_LGL</code></p></li>
+<li><p><code>VROOM_USE_ALTREP_DTTM</code></p></li>
+<li><p><code>VROOM_USE_ALTREP_DATE</code></p></li>
+<li><p><code>VROOM_USE_ALTREP_TIME</code></p></li>
+</ul>
+
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>vroom_altrep</span>()</div><div class='output co'>#&gt; Using Altrep representations for:
+#&gt;  * chr</div><div class='input'><span class='fu'>vroom_altrep</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"chr"</span>, <span class='st'>"fct"</span>, <span class='st'>"int"</span>))</div><div class='output co'>#&gt; Using Altrep representations for:
+#&gt;  * chr
+#&gt;  * fct
+#&gt;  * int
+#&gt;  * dbl</div><div class='input'><span class='fu'>vroom_altrep</span>(<span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; Using Altrep representations for:
+#&gt;  * chr
+#&gt;  * fct
+#&gt;  * int
+#&gt;  * dbl
+#&gt;  * num
+#&gt;  * lgl
+#&gt;  * dttm
+#&gt;  * date
+#&gt;  * time</div><div class='input'><span class='fu'>vroom_altrep</span>(<span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; Using Altrep representations for:
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#details">Details</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>

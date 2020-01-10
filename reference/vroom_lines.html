@@ -8,21 +8,25 @@
 
 <title>Read lines from a file — vroom_lines • vroom</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,12 +34,13 @@
 
 
 
-<meta property="og:title" content="Read lines from a file — vroom_lines" />
 
+<meta property="og:title" content="Read lines from a file — vroom_lines" />
 <meta property="og:description" content="vroom_lines() is similar to readLines(), however it reads the lines
 lazily like vroom(), so operations like length(), head(), tail() and sample()
 can be done much more efficiently without reading all the data into R." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -59,6 +64,7 @@ can be done much more efficiently without reading all the data into R." />
   gtag('config', 'UA-115082821-1');
 </script>
 
+
   </head>
 
   <body>
@@ -75,7 +81,7 @@ can be done much more efficiently without reading all the data into R." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -111,11 +117,10 @@ can be done much more efficiently without reading all the data into R." />
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/r-lib/vroom">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -126,6 +131,7 @@ can be done much more efficiently without reading all the data into R." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -137,16 +143,21 @@ can be done much more efficiently without reading all the data into R." />
     </div>
 
     <div class="ref-description">
-    
-    <p><code>vroom_lines()</code> is similar to <code><a href='https://www.rdocumentation.org/packages/base/topics/readLines'>readLines()</a></code>, however it reads the lines
-lazily like <code><a href='vroom.html'>vroom()</a></code>, so operations like <code><a href='https://www.rdocumentation.org/packages/base/topics/length'>length()</a></code>, <code><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head()</a></code>, <code><a href='https://www.rdocumentation.org/packages/utils/topics/head'>tail()</a></code> and <code><a href='https://www.rdocumentation.org/packages/base/topics/sample'>sample()</a></code>
+    <p><code>vroom_lines()</code> is similar to <code><a href='https://rdrr.io/r/base/readLines.html'>readLines()</a></code>, however it reads the lines
+lazily like <code><a href='vroom.html'>vroom()</a></code>, so operations like <code><a href='https://rdrr.io/r/base/length.html'>length()</a></code>, <code><a href='https://rdrr.io/r/utils/head.html'>head()</a></code>, <code><a href='https://rdrr.io/r/utils/head.html'>tail()</a></code> and <code><a href='https://rdrr.io/r/base/sample.html'>sample()</a></code>
 can be done much more efficiently without reading all the data into R.</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>vroom_lines</span>(<span class='no'>file</span>, <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>Inf</span>, <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>altrep_opts</span> <span class='kw'>=</span> <span class='st'>"chr"</span>,
-  <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(), <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>())</pre>
-    
+    <pre class="usage"><span class='fu'>vroom_lines</span>(
+  <span class='no'>file</span>,
+  <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>Inf</span>,
+  <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>altrep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>altrep_opts</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Deprecated.html'>deprecated</a></span>(),
+  <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(),
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>()
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -163,14 +174,20 @@ can be done much more efficiently without reading all the data into R.</p>
       <td><p>Number of lines to skip before reading data.</p></td>
     </tr>
     <tr>
-      <th>altrep_opts</th>
+      <th>altrep</th>
       <td><p>Control which column types use Altrep representations,
 either a character vector of types, <code>TRUE</code> or <code>FALSE</code>. See
-<code><a href='vroom_altrep_opts.html'>vroom_altrep_opts()</a></code> for for full details.</p></td>
+<code><a href='vroom_altrep.html'>vroom_altrep()</a></code> for for full details.</p></td>
+    </tr>
+    <tr>
+      <th>altrep_opts</th>
+      <td><p><img src='figures/lifecycle-deprecated.svg' alt='Deprecated lifecycle' /></p></td>
     </tr>
     <tr>
       <th>num_threads</th>
-      <td><p>Number of threads to use when reading and materializing vectors.</p></td>
+      <td><p>Number of threads to use when reading and materializing
+vectors. If your data contains embedded newlines (newlines within fields)
+you <em>must</em> use <code>num_threads = 1</code> to read the data properly.</p></td>
     </tr>
     <tr>
       <th>progress</th>
@@ -181,26 +198,26 @@ time is 5 seconds or more. The automatic progress bar can be disabled by
 setting option <code>readr.show_progress</code> to <code>FALSE</code>.</p></td>
     </tr>
     </table>
-    
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>lines</span> <span class='kw'>&lt;-</span> <span class='fu'>vroom_lines</span>(<span class='fu'><a href='vroom_example.html'>vroom_example</a></span>(<span class='st'>"mtcars.csv"</span>))
 
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/length'>length</a></span>(<span class='no'>lines</span>)</div><div class='output co'>#&gt; [1] 33</div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='no'>lines</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; [1] "model,mpg,cyl,disp,hp,drat,wt,qsec,vs,am,gear,carb"
-#&gt; [2] "Mazda RX4,21,6,160,110,3.9,2.62,16.46,0,1,4,4"     </div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>tail</a></span>(<span class='no'>lines</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; [1] "Maserati Bora,15,8,301,335,3.54,3.57,14.6,0,1,5,8"
-#&gt; [2] "Volvo 142E,21.4,4,121,109,4.11,2.78,18.6,1,1,4,2" </div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sample'>sample</a></span>(<span class='no'>lines</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; [1] "Merc 230,22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2"  
+<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>lines</span>)</div><div class='output co'>#&gt; [1] 33</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>lines</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; [1] "model,mpg,cyl,disp,hp,drat,wt,qsec,vs,am,gear,carb"
+#&gt; [2] "Mazda RX4,21,6,160,110,3.9,2.62,16.46,0,1,4,4"     </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>tail</a></span>(<span class='no'>lines</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; [1] "Maserati Bora,15,8,301,335,3.54,3.57,14.6,0,1,5,8"
+#&gt; [2] "Volvo 142E,21.4,4,121,109,4.11,2.78,18.6,1,1,4,2" </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='no'>lines</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; [1] "Merc 230,22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2"  
 #&gt; [2] "Maserati Bora,15,8,301,335,3.54,3.57,14.6,0,1,5,8"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-            
       <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -208,13 +225,16 @@ setting option <code>readr.show_progress</code> to <code>FALSE</code>.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.9000.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 
