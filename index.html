@@ -6,6 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Read and Write Rectangular Text Data Quickly • vroom</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
@@ -16,6 +22,7 @@
     indexing step, then reads the values lazily , so only the data you
     actually use needs to be read.  The writer formats the data in
     parallel and writes to disk asynchronously from formatting.">
+<meta property="og:image" content="http://vroom.r-lib.org/logo.png">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -99,11 +106,11 @@
 
 <div id="vroom-" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#vroom-" class="anchor"></a>🏎💨vroom <a href="http://r-lib.github.io/vroom"><img src="https://github.com/r-lib/vroom/raw/gh-pages/taylor.gif" align="right" width="30%"></a>
+<a href="#vroom-" class="anchor"></a>🏎💨vroom <a href="http:/vroom.r-lib.org"><img src="reference/figures/logo.png" align="right" height="135"></a>
 </h1></div>
 <!-- badges: start -->
 
-<p>The fastest delimited reader for R, <strong>1.27 GB/sec</strong>.</p>
+<p>The fastest delimited reader for R, <strong>1.40 GB/sec</strong>.</p>
 <p>But that’s impossible! How can it be <a href="http://vroom.r-lib.org/articles/benchmarks.html">so fast</a>?</p>
 <p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use. This lazy access is done automatically, so no changes to your R data-manipulation code are needed.</p>
 <p>vroom also uses multiple threads for indexing, materializing non-character columns, and when writing to further improve performance.</p>
@@ -118,31 +125,31 @@
 <tbody>
 <tr class="odd">
 <td align="left">vroom</td>
-<td align="right">1.0.2</td>
-<td align="right">1.33</td>
-<td align="right">56.02</td>
-<td align="right">1.27 GB</td>
+<td align="right">1.1.0</td>
+<td align="right">1.14</td>
+<td align="right">58.44</td>
+<td align="right">1.40 GB</td>
 </tr>
 <tr class="even">
 <td align="left">data.table</td>
-<td align="right">1.12.2</td>
-<td align="right">15.15</td>
-<td align="right">4.91</td>
-<td align="right">110.99 MB</td>
+<td align="right">1.12.8</td>
+<td align="right">11.88</td>
+<td align="right">5.62</td>
+<td align="right">134.13 MB</td>
 </tr>
 <tr class="odd">
 <td align="left">readr</td>
 <td align="right">1.3.1</td>
-<td align="right">34.81</td>
-<td align="right">2.14</td>
-<td align="right">48.31 MB</td>
+<td align="right">29.02</td>
+<td align="right">2.30</td>
+<td align="right">54.92 MB</td>
 </tr>
 <tr class="even">
 <td align="left">read.delim</td>
-<td align="right">3.6.0</td>
-<td align="right">74.45</td>
+<td align="right">3.6.2</td>
+<td align="right">66.74</td>
 <td align="right">1.00</td>
-<td align="right">22.59 MB</td>
+<td align="right">23.88 MB</td>
 </tr>
 </tbody>
 </table>
@@ -155,7 +162,7 @@
 <li>custom delimiters (including multi-byte* and Unicode* delimiters)</li>
 <li>specification of column types (including type guessing)
 <ul>
-<li>numeric types (double, integer, number)</li>
+<li>numeric types (double, integer, big integer*, number)</li>
 <li>logical types</li>
 <li>datetime types (datetime, date, time)</li>
 <li>categorical types (characters, factors)</li>
@@ -209,49 +216,35 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(nycflights13)</span>
 <span id="cb4-2"><a href="#cb4-2"></a>purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/imap.html">iwalk</a></span>(</span>
 <span id="cb4-3"><a href="#cb4-3"></a>  <span class="kw"><a href="https://rdrr.io/r/base/split.html">split</a></span>(flights, flights<span class="op">$</span>carrier),</span>
-<span id="cb4-4"><a href="#cb4-4"></a>  <span class="op">~</span><span class="st"> </span>{ <span class="kw"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(.x<span class="op">$</span>carrier[[<span class="dv">1</span>]]); vroom<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/vroom/man/vroom_write.html">vroom_write</a></span>(.x, glue<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/glue/man/glue.html">glue</a></span>(<span class="st">"flights_{.y}.tsv"</span>), <span class="dt">delim =</span> <span class="st">"</span><span class="ch">\t</span><span class="st">"</span>) }</span>
-<span id="cb4-5"><a href="#cb4-5"></a>)</span>
-<span id="cb4-6"><a href="#cb4-6"></a><span class="co">#&gt;  chr "9E"</span></span>
-<span id="cb4-7"><a href="#cb4-7"></a><span class="co">#&gt;  chr "AA"</span></span>
-<span id="cb4-8"><a href="#cb4-8"></a><span class="co">#&gt;  chr "AS"</span></span>
-<span id="cb4-9"><a href="#cb4-9"></a><span class="co">#&gt;  chr "B6"</span></span>
-<span id="cb4-10"><a href="#cb4-10"></a><span class="co">#&gt;  chr "DL"</span></span>
-<span id="cb4-11"><a href="#cb4-11"></a><span class="co">#&gt;  chr "EV"</span></span>
-<span id="cb4-12"><a href="#cb4-12"></a><span class="co">#&gt;  chr "F9"</span></span>
-<span id="cb4-13"><a href="#cb4-13"></a><span class="co">#&gt;  chr "FL"</span></span>
-<span id="cb4-14"><a href="#cb4-14"></a><span class="co">#&gt;  chr "HA"</span></span>
-<span id="cb4-15"><a href="#cb4-15"></a><span class="co">#&gt;  chr "MQ"</span></span>
-<span id="cb4-16"><a href="#cb4-16"></a><span class="co">#&gt;  chr "OO"</span></span>
-<span id="cb4-17"><a href="#cb4-17"></a><span class="co">#&gt;  chr "UA"</span></span>
-<span id="cb4-18"><a href="#cb4-18"></a><span class="co">#&gt;  chr "US"</span></span>
-<span id="cb4-19"><a href="#cb4-19"></a><span class="co">#&gt;  chr "VX"</span></span>
-<span id="cb4-20"><a href="#cb4-20"></a><span class="co">#&gt;  chr "WN"</span></span>
-<span id="cb4-21"><a href="#cb4-21"></a><span class="co">#&gt;  chr "YV"</span></span></code></pre></div>
+<span id="cb4-4"><a href="#cb4-4"></a>  <span class="op">~</span><span class="st"> </span>{ .x<span class="op">$</span>carrier[[<span class="dv">1</span>]]; vroom<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/vroom/man/vroom_write.html">vroom_write</a></span>(.x, glue<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/glue/man/glue.html">glue</a></span>(<span class="st">"flights_{.y}.tsv"</span>), <span class="dt">delim =</span> <span class="st">"</span><span class="ch">\t</span><span class="st">"</span>) }</span>
+<span id="cb4-5"><a href="#cb4-5"></a>)</span></code></pre></div>
 <p>Then we can efficiently read them into one tibble by passing the filenames directly to vroom.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>files &lt;-<span class="st"> </span>fs<span class="op">::</span><span class="kw"><a href="http://fs.r-lib.org/reference/dir_ls.html">dir_ls</a></span>(<span class="dt">glob =</span> <span class="st">"flights*tsv"</span>)</span>
 <span id="cb5-2"><a href="#cb5-2"></a>files</span>
-<span id="cb5-3"><a href="#cb5-3"></a><span class="co">#&gt; flights_9E.tsv flights_AA.tsv flights_AS.tsv flights_B6.tsv flights_DL.tsv </span></span>
-<span id="cb5-4"><a href="#cb5-4"></a><span class="co">#&gt; flights_EV.tsv flights_F9.tsv flights_FL.tsv flights_HA.tsv flights_MQ.tsv </span></span>
-<span id="cb5-5"><a href="#cb5-5"></a><span class="co">#&gt; flights_OO.tsv flights_UA.tsv flights_US.tsv flights_VX.tsv flights_WN.tsv </span></span>
-<span id="cb5-6"><a href="#cb5-6"></a><span class="co">#&gt; flights_YV.tsv</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co">#&gt; flights_9E.tsv flights_AA.tsv flights_AS.tsv flights_B6.tsv </span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co">#&gt; flights_DL.tsv flights_EV.tsv flights_F9.tsv flights_FL.tsv </span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="co">#&gt; flights_HA.tsv flights_MQ.tsv flights_OO.tsv flights_UA.tsv </span></span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="co">#&gt; flights_US.tsv flights_VX.tsv flights_WN.tsv flights_YV.tsv</span></span>
 <span id="cb5-7"><a href="#cb5-7"></a>vroom<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/vroom/man/vroom.html">vroom</a></span>(files)</span>
 <span id="cb5-8"><a href="#cb5-8"></a><span class="co">#&gt; Rows: 336,776</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a><span class="co">#&gt; Cols: 19</span></span>
-<span id="cb5-10"><a href="#cb5-10"></a><span class="co">#&gt; chr  [ 4]: carrier, tailnum, origin, dest</span></span>
-<span id="cb5-11"><a href="#cb5-11"></a><span class="co">#&gt; dbl  [14]: year, month, day, dep_time, sched_dep_time, dep_delay, arr_time, sched_arr_time...</span></span>
-<span id="cb5-12"><a href="#cb5-12"></a><span class="co">#&gt; dttm [ 1]: time_hour</span></span>
-<span id="cb5-13"><a href="#cb5-13"></a><span class="co">#&gt; </span></span>
-<span id="cb5-14"><a href="#cb5-14"></a><span class="co">#&gt; Call `spec()` for a copy-pastable column specification</span></span>
-<span id="cb5-15"><a href="#cb5-15"></a><span class="co">#&gt; Specify the column types with `col_types` to quiet this message</span></span>
-<span id="cb5-16"><a href="#cb5-16"></a><span class="co">#&gt; # A tibble: 336,776 x 19</span></span>
-<span id="cb5-17"><a href="#cb5-17"></a><span class="co">#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time</span></span>
-<span id="cb5-18"><a href="#cb5-18"></a><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;</span></span>
-<span id="cb5-19"><a href="#cb5-19"></a><span class="co">#&gt; 1  2013     1     1      810            810         0     1048           1037</span></span>
-<span id="cb5-20"><a href="#cb5-20"></a><span class="co">#&gt; 2  2013     1     1     1451           1500        -9     1634           1636</span></span>
-<span id="cb5-21"><a href="#cb5-21"></a><span class="co">#&gt; 3  2013     1     1     1452           1455        -3     1637           1639</span></span>
-<span id="cb5-22"><a href="#cb5-22"></a><span class="co">#&gt; # … with 3.368e+05 more rows, and 11 more variables: arr_delay &lt;dbl&gt;,</span></span>
-<span id="cb5-23"><a href="#cb5-23"></a><span class="co">#&gt; #   carrier &lt;chr&gt;, flight &lt;dbl&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,</span></span>
-<span id="cb5-24"><a href="#cb5-24"></a><span class="co">#&gt; #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></span></code></pre></div>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="co">#&gt; Columns: 19</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a><span class="co">#&gt; Delimiter: "\t"</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a><span class="co">#&gt; chr  [ 4]: carrier, tailnum, origin, dest</span></span>
+<span id="cb5-12"><a href="#cb5-12"></a><span class="co">#&gt; dbl  [14]: year, month, day, dep_time, sched_dep_time, dep_delay, arr_time, sched_ar...</span></span>
+<span id="cb5-13"><a href="#cb5-13"></a><span class="co">#&gt; dttm [ 1]: time_hour</span></span>
+<span id="cb5-14"><a href="#cb5-14"></a><span class="co">#&gt; </span></span>
+<span id="cb5-15"><a href="#cb5-15"></a><span class="co">#&gt; Use `spec()` to retrieve the guessed column specification</span></span>
+<span id="cb5-16"><a href="#cb5-16"></a><span class="co">#&gt; Pass a specification to the `col_types` argument to quiet this message</span></span>
+<span id="cb5-17"><a href="#cb5-17"></a><span class="co">#&gt; # A tibble: 336,776 x 19</span></span>
+<span id="cb5-18"><a href="#cb5-18"></a><span class="co">#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time</span></span>
+<span id="cb5-19"><a href="#cb5-19"></a><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;</span></span>
+<span id="cb5-20"><a href="#cb5-20"></a><span class="co">#&gt; 1  2013     1     1      810            810         0     1048</span></span>
+<span id="cb5-21"><a href="#cb5-21"></a><span class="co">#&gt; 2  2013     1     1     1451           1500        -9     1634</span></span>
+<span id="cb5-22"><a href="#cb5-22"></a><span class="co">#&gt; 3  2013     1     1     1452           1455        -3     1637</span></span>
+<span id="cb5-23"><a href="#cb5-23"></a><span class="co">#&gt; # … with 3.368e+05 more rows, and 12 more variables:</span></span>
+<span id="cb5-24"><a href="#cb5-24"></a><span class="co">#&gt; #   sched_arr_time &lt;dbl&gt;, arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;dbl&gt;,</span></span>
+<span id="cb5-25"><a href="#cb5-25"></a><span class="co">#&gt; #   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;,</span></span>
+<span id="cb5-26"><a href="#cb5-26"></a><span class="co">#&gt; #   distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></span></code></pre></div>
 </div>
 <div id="learning-more" class="section level2">
 <h2 class="hasAnchor">
@@ -266,7 +259,7 @@
 <div id="benchmarks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#benchmarks" class="anchor"></a>Benchmarks</h2>
-<p>The speed quoted above is from a real dataset with 14,776,615 rows and 11 columns, see the <a href="http://vroom.r-lib.org/articles/benchmarks.html">benchmark article</a> for full details of the dataset and <a href="https://github.com/r-lib/vroom/blob/master/inst/bench">bench/</a> for the code used to retrieve the data and perform the benchmarks.</p>
+<p>The speed quoted above is from a real 1.48G dataset with 13,971,118 rows and 11 columns, see the <a href="http://vroom.r-lib.org/articles/benchmarks.html">benchmark article</a> for full details of the dataset and <a href="https://github.com/r-lib/vroom/blob/master/inst/bench">bench/</a> for the code used to retrieve the data and perform the benchmarks.</p>
 </div>
 </div>
 <div id="environment-variables" class="section level1">
@@ -295,6 +288,7 @@
 <li><code>VROOM_USE_ALTREP_CHR</code></li>
 <li><code>VROOM_USE_ALTREP_FCT</code></li>
 <li><code>VROOM_USE_ALTREP_INT</code></li>
+<li><code>VROOM_USE_ALTREP_BIG_INT</code></li>
 <li><code>VROOM_USE_ALTREP_DBL</code></li>
 <li><code>VROOM_USE_ALTREP_NUM</code></li>
 <li><code>VROOM_USE_ALTREP_LGL</code></li>
