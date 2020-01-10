@@ -448,12 +448,7 @@ show_spec_summary <- function(x, width = getOption("width"), locale = default_lo
     prettyNum(x, big.mark = locale$grouping_mark, decimal.mark = locale$decimal_mark)
   }
 
-  delim <-
-    switch(spec$delim,
-    "\t" = "\\t",
-    "\n" = "\\n",
-    spec$delim
-  ) %||% ""
+  delim <- spec$delim %||% ""
 
   message(
     glue::glue(
