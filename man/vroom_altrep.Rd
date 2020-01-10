@@ -33,6 +33,7 @@ There are also individual variables for each type. Currently only
 \item \code{VROOM_USE_ALTREP_CHR}
 \item \code{VROOM_USE_ALTREP_FCT}
 \item \code{VROOM_USE_ALTREP_INT}
+\item \code{VROOM_USE_ALTREP_BIG_INT}
 \item \code{VROOM_USE_ALTREP_DBL}
 \item \code{VROOM_USE_ALTREP_NUM}
 \item \code{VROOM_USE_ALTREP_LGL}
