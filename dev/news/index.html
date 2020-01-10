@@ -149,32 +149,38 @@
 <code><a href="../reference/vroom_altrep_opts.html">vroom_altrep_opts()</a></code> and the argument <code><a href="../reference/vroom.html">vroom(altrep_opts =)</a></code> have been renamed to <code><a href="../reference/vroom_altrep.html">vroom_altrep()</a></code> and <code>altrep</code> respectively. The prior names have been deprecated.</li>
 </ul>
 </div>
-<div id="features--bugfixes" class="section level2">
+<div id="new-features" class="section level2">
 <h2 class="hasAnchor">
-<a href="#features--bugfixes" class="anchor"></a>Features / Bugfixes</h2>
+<a href="#new-features" class="anchor"></a>New Features</h2>
 <ul>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports reading Big Integer values with the <code>bit64</code> package. Use <code><a href="../reference/cols.html">col_big_integer()</a></code> or the “I” shortcut to read a column as big integers. (<a href='https://github.com/r-lib/vroom/issues/198'>#198</a>)</p></li>
-<li><p><code><a href="../reference/vroom_str.html">vroom_str()</a></code> now works with S4 objects.</p></li>
 <li><p><code><a href="../reference/cols.html">cols()</a></code> gains a <code>.delim</code> argument and <code><a href="../reference/vroom.html">vroom()</a></code> now uses it as the delimiter if it is provided (<a href='https://github.com/r-lib/vroom/issues/192'>#192</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports reading from <code><a href="https://rdrr.io/r/base/showConnections.html">stdin()</a></code> directly, interpreted as the C-level standard input (<a href='https://github.com/r-lib/vroom/issues/106'>#106</a>).</p></li>
+</ul>
+</div>
+<div id="minor-improvements-and-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-improvements-and-fixes" class="anchor"></a>Minor improvements and fixes</h2>
+<ul>
+<li><p><code>col_date</code> now parses single digit month and day (<a href='https://github.com/edzer'>@edzer</a>, <a href='https://github.com/r-lib/vroom/issues/123'>#123</a>, <a href='https://github.com/r-lib/vroom/issues/170'>#170</a>)</p></li>
+<li><p><code><a href="../reference/vroom_fwf.html">fwf_empty()</a></code> now uses the <code>skip</code> parameter, as intended.</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> can now read single line files without a terminal newline (<a href='https://github.com/r-lib/vroom/issues/173'>#173</a>).</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> can now select the id column if provided (<a href='https://github.com/r-lib/vroom/issues/110'>#110</a>).</p></li>
-<li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> is now more robust if not all lines are the expected length (<a href='https://github.com/r-lib/vroom/issues/78'>#78</a>)</p></li>
-<li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> and <code><a href="../reference/vroom_fwf.html">fwf_empty()</a></code> now support passing <code>Inf</code> to <code>guess_max()</code>.</p></li>
-<li><p><code><a href="../reference/vroom_fwf.html">fwf_empty()</a></code> now uses the <code>skip</code> parameter, as intended.</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now correctly copies string data for factor levels (<a href='https://github.com/r-lib/vroom/issues/184'>#184</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer crashes when files have trailing fields, windows newlines and the file is not newline or null terminated.</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now includes a spec object with the <code>col_types</code> class, as intended.</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now better handles floating point values with very large exponents (<a href='https://github.com/r-lib/vroom/issues/164'>#164</a>).</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now uses better heuristics to guess the delimiter and now throws an error if a delimiter cannot be guessed (<a href='https://github.com/r-lib/vroom/issues/126'>#126</a>, <a href='https://github.com/r-lib/vroom/issues/141'>#141</a>, <a href='https://github.com/r-lib/vroom/issues/167'>#167</a>).</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now has an improved error message when a file does not exist (<a href='https://github.com/r-lib/vroom/issues/169'>#169</a>).</p></li>
-<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now does not try to write anything when given empty inputs (<a href='https://github.com/r-lib/vroom/issues/172'>#172</a>).</p></li>
-<li><p>Dates, times, and datetimes now properly consider the locale when parsing.</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports reading from <code><a href="https://rdrr.io/r/base/showConnections.html">stdin()</a></code> directly, interpreted as the C-level standard input (<a href='https://github.com/r-lib/vroom/issues/106'>#106</a>).</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer leaks file handles (<a href='https://github.com/r-lib/vroom/issues/177'>#177</a>, <a href='https://github.com/r-lib/vroom/issues/180'>#180</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now outputs its messages on <code><a href="https://rdrr.io/r/base/showConnections.html">stdout()</a></code> rather than <code><a href="https://rdrr.io/r/base/showConnections.html">stderr()</a></code>, which avoids the text being red in RStudio and in the Windows GUI.</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer overflows when reading files with more than 2B entries (<a href='https://github.com/wlattner'>@wlattner</a>, <a href='https://github.com/r-lib/vroom/issues/183'>#183</a>).</p></li>
-<li><p><code>col_date</code> now parses single digit month and day (<a href='https://github.com/edzer'>@edzer</a>, <a href='https://github.com/r-lib/vroom/issues/123'>#123</a>, <a href='https://github.com/r-lib/vroom/issues/170'>#170</a>)</p></li>
+<li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> is now more robust if not all lines are the expected length (<a href='https://github.com/r-lib/vroom/issues/78'>#78</a>)</p></li>
+<li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> and <code><a href="../reference/vroom_fwf.html">fwf_empty()</a></code> now support passing <code>Inf</code> to <code>guess_max()</code>.</p></li>
+<li><p><code><a href="../reference/vroom_str.html">vroom_str()</a></code> now works with S4 objects.</p></li>
 <li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> now handles files with dos newlines properly.</p></li>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now does not try to write anything when given empty inputs (<a href='https://github.com/r-lib/vroom/issues/172'>#172</a>).</p></li>
+<li><p>Dates, times, and datetimes now properly consider the locale when parsing.</p></li>
 <li><p>Added benchmarks with <em>wide</em> data for both numeric and character data (<a href='https://github.com/r-lib/vroom/issues/87'>#87</a>, <a href='https://github.com/R3myG'>@R3myG</a>)</p></li>
 <li><p>The delimiter used for parsing is now shown in the message output (<a href='https://github.com/r-lib/vroom/issues/95'>#95</a> <a href='https://github.com/R3myG'>@R3myG</a>)</p></li>
 </ul>
@@ -184,16 +190,16 @@
 <h1 class="page-header">
 <a href="#vroom-102" class="anchor"></a>vroom 1.0.2<small> 2019-06-28 </small>
 </h1>
-<div id="new-features" class="section level2">
+<div id="new-features-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features" class="anchor"></a>New Features</h2>
+<a href="#new-features-1" class="anchor"></a>New Features</h2>
 <ul>
 <li>The column created by <code>id</code> is now stored as an run length encoded Altrep vector, which uses less memory and is much faster for large inputs. (<a href='https://github.com/r-lib/vroom/issues/111'>#111</a>)</li>
 </ul>
 </div>
-<div id="minor-improvements-and-fixes" class="section level2">
+<div id="minor-improvements-and-fixes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-improvements-and-fixes" class="anchor"></a>Minor improvements and fixes</h2>
+<a href="#minor-improvements-and-fixes-1" class="anchor"></a>Minor improvements and fixes</h2>
 <ul>
 <li><p><code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> now properly respects the <code>n_max</code> parameter (<a href='https://github.com/r-lib/vroom/issues/142'>#142</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> and <code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> now support reading files which do not end in newlines by using a file connection (<a href='https://github.com/r-lib/vroom/issues/40'>#40</a>).</p></li>
@@ -215,17 +221,17 @@
 <h1 class="page-header">
 <a href="#vroom-101" class="anchor"></a>vroom 1.0.1<small> 2019-05-14 </small>
 </h1>
-<div id="new-features-1" class="section level2">
+<div id="new-features-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-1" class="anchor"></a>New Features</h2>
+<a href="#new-features-2" class="anchor"></a>New Features</h2>
 <ul>
 <li>
 <code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> function added, to (lazily) read lines from a file into a character vector (<a href='https://github.com/r-lib/vroom/issues/90'>#90</a>).</li>
 </ul>
 </div>
-<div id="minor-improvements-and-fixes-1" class="section level2">
+<div id="minor-improvements-and-fixes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-improvements-and-fixes-1" class="anchor"></a>Minor improvements and fixes</h2>
+<a href="#minor-improvements-and-fixes-2" class="anchor"></a>Minor improvements and fixes</h2>
 <ul>
 <li><p>Fix for a hang on Windows caused by a race condition in the progress bar (<a href='https://github.com/r-lib/vroom/issues/98'>#98</a>)</p></li>
 <li><p>Remove accidental runtime dependency on testthat (<a href='https://github.com/r-lib/vroom/issues/104'>#104</a>)</p></li>
