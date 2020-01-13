@@ -335,7 +335,7 @@ The benchmarks write out the taxi trip dataset in a few different ways.
 - An uncompressed file
 - A gzip compressed file using `gzfile()` _(readr and vroom do this automatically for files ending in `.gz`)_
 - A gzip compressed file compressed with multiple threads (natively for data.table and using a `pipe()` connection to [pigz](https://zlib.net/pigz/) for the rest).
-- A [zstandard](https://facebook.github.io/zstd/) compressed file (data.table does not support this format).
+- A [Zstandard](https://facebook.github.io/zstd/) compressed file (data.table does not support this format).
 
 ```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
 taxi_writing <- read_benchmark(path_package("vroom", "bench", "taxi_writing.tsv"), c("setup", "writing")) %>%
