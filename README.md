@@ -15,7 +15,7 @@ status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
-The fastest delimited reader for R, **1.40 GB/sec**.
+The fastest delimited reader for R, **1.40 GB/sec/sec**.
 
 But that’s impossible\! How can it be [so
 fast](http://vroom.r-lib.org/articles/benchmarks.html)?
@@ -31,12 +31,12 @@ your R data-manipulation code are needed.
 vroom also uses multiple threads for indexing, materializing
 non-character columns, and when writing to further improve performance.
 
-| package    | version | time (sec) | speedup | throughput |
-| :--------- | ------: | ---------: | ------: | ---------: |
-| vroom      |   1.1.0 |       1.14 |   58.44 |    1.40 GB |
-| data.table |  1.12.8 |      11.88 |    5.62 |  134.13 MB |
-| readr      |   1.3.1 |      29.02 |    2.30 |   54.92 MB |
-| read.delim |   3.6.2 |      66.74 |    1.00 |   23.88 MB |
+| package    | version | time (sec) | speedup |    throughput |
+| :--------- | ------: | ---------: | ------: | ------------: |
+| vroom      |   1.1.0 |       1.14 |   58.44 |   1.40 GB/sec |
+| data.table |  1.12.8 |      11.88 |    5.62 | 134.13 MB/sec |
+| readr      |   1.3.1 |      29.02 |    2.30 |  54.92 MB/sec |
+| read.delim |   3.6.2 |      66.74 |    1.00 |  23.88 MB/sec |
 
 ## Features
 
@@ -81,7 +81,7 @@ Alternatively, if you need the development version from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("r-lib/vroom")
+devtools::install_dev("vroom")
 ```
 
 ## Usage
@@ -127,16 +127,16 @@ filenames directly to vroom.
 ``` r
 files <- fs::dir_ls(glob = "flights*tsv")
 files
-#> flights_9E.tsv flights_AA.tsv flights_AS.tsv flights_B6.tsv 
-#> flights_DL.tsv flights_EV.tsv flights_F9.tsv flights_FL.tsv 
-#> flights_HA.tsv flights_MQ.tsv flights_OO.tsv flights_UA.tsv 
-#> flights_US.tsv flights_VX.tsv flights_WN.tsv flights_YV.tsv
+#> flights_9E.tsv flights_AA.tsv flights_AS.tsv flights_B6.tsv flights_DL.tsv 
+#> flights_EV.tsv flights_F9.tsv flights_FL.tsv flights_HA.tsv flights_MQ.tsv 
+#> flights_OO.tsv flights_UA.tsv flights_US.tsv flights_VX.tsv flights_WN.tsv 
+#> flights_YV.tsv
 vroom::vroom(files)
 #> Rows: 336,776
 #> Columns: 19
 #> Delimiter: "\t"
 #> chr  [ 4]: carrier, tailnum, origin, dest
-#> dbl  [14]: year, month, day, dep_time, sched_dep_time, dep_delay, arr_time, sched_ar...
+#> dbl  [14]: year, month, day, dep_time, sched_dep_time, dep_delay, arr_time, sched_arr_...
 #> dttm [ 1]: time_hour
 #> 
 #> Use `spec()` to retrieve the guessed column specification
@@ -147,19 +147,21 @@ vroom::vroom(files)
 #> 1  2013     1     1      810            810         0     1048
 #> 2  2013     1     1     1451           1500        -9     1634
 #> 3  2013     1     1     1452           1455        -3     1637
-#> # … with 3.368e+05 more rows, and 12 more variables:
-#> #   sched_arr_time <dbl>, arr_delay <dbl>, carrier <chr>, flight <dbl>,
-#> #   tailnum <chr>, origin <chr>, dest <chr>, air_time <dbl>,
-#> #   distance <dbl>, hour <dbl>, minute <dbl>, time_hour <dttm>
+#> # … with 3.368e+05 more rows, and 12 more variables: sched_arr_time <dbl>,
+#> #   arr_delay <dbl>, carrier <chr>, flight <dbl>, tailnum <chr>,
+#> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
+#> #   minute <dbl>, time_hour <dttm>
 ```
 
 ## Learning more
 
-  - [vroom: Because Life is too short to read
+  - [Getting started with
+    vroom](https://r-lib.github.io/vroom/articles/vroom.html)
+  - [📽 vroom: Because Life is too short to read
     slow](https://www.youtube.com/watch?v=RA9AjqZXxMU&t=10s) -
     Presentation at UseR\!2019
     ([slides](https://speakerdeck.com/jimhester/vroom))
-  - [vroom: Read and write rectangular data
+  - [📹 vroom: Read and write rectangular data
     quickly](https://www.youtube.com/watch?v=ZP_y5eaAc60) - a video tour
     of the vroom features.
 

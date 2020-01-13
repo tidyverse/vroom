@@ -41,7 +41,7 @@ tbl <- tm %>% filter(type == "real", op == "read", reading_package %in% c("data.
     version = ondiskversion,
     "time (sec)" = time,
     speedup = max(time) / time,
-    "throughput" = paste0(prettyunits::pretty_bytes(size / time))
+    "throughput" = paste0(prettyunits::pretty_bytes(size / time), "/sec")
   ) %>%
   arrange(desc(speedup))
 ```
@@ -105,7 +105,7 @@ Alternatively, if you need the development version from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("r-lib/vroom")
+devtools::install_dev("vroom")
 ```
 ## Usage
 
@@ -160,8 +160,9 @@ fs::file_delete(files)
 
 ## Learning more
 
-- [vroom: Because Life is too short to read slow](https://www.youtube.com/watch?v=RA9AjqZXxMU&t=10s) - Presentation at UseR!2019 ([slides](https://speakerdeck.com/jimhester/vroom))
-- [vroom: Read and write rectangular data quickly](https://www.youtube.com/watch?v=ZP_y5eaAc60) - a video tour of the vroom features.
+- [Getting started with vroom](https://r-lib.github.io/vroom/articles/vroom.html)
+- [📽 vroom: Because Life is too short to read slow](https://www.youtube.com/watch?v=RA9AjqZXxMU&t=10s) - Presentation at UseR!2019 ([slides](https://speakerdeck.com/jimhester/vroom))
+- [📹 vroom: Read and write rectangular data quickly](https://www.youtube.com/watch?v=ZP_y5eaAc60) - a video tour of the vroom features.
 
 ## Benchmarks
 
