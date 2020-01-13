@@ -32,7 +32,7 @@ vroom(
 \item{file}{path to a local file.}
 
 \item{delim}{One of more characters used to delimiter fields within a
-record. If \code{NULL} the delimiter is guessed from the set of \code{c(",", "\\t", " ", "|", ":", ";", "\\n")}.}
+record. If \code{NULL} the delimiter is guessed from the set of \code{c(",", "\\t", " ", "|", ":", ";")}.}
 
 \item{col_names}{Either \code{TRUE}, \code{FALSE} or a character vector
 of column names.
