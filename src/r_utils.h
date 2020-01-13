@@ -18,6 +18,16 @@ inline int get_pb_width(const std::string& format) {
   return Rcpp::as<int>(fun(format));
 }
 
+inline void rethrow_rcpp_eval_error(const Rcpp::eval_error& e) {
+  std::string msg = e.what();
+  // Remove "Evaluation error: "
+  msg.erase(0, 18);
+  // Remove trailing period
+  msg.erase(msg.length() - 1);
+
+  throw Rcpp::exception(msg.c_str(), false);
+}
+
 template <typename T>
 static char guess_delim(
     const T& source, size_t start, size_t guess_max = 5, size_t end = 0) {
@@ -37,17 +47,14 @@ static char guess_delim(
   }
 
   Rcpp::Function fun = Rcpp::Environment::namespace_env("vroom")["guess_delim"];
-  return Rcpp::as<char>(fun(lines));
-}
 
-inline void rethrow_rcpp_eval_error(const Rcpp::eval_error& e) {
-  std::string msg = e.what();
-  // Remove "Evaluation error: "
-  msg.erase(0, 18);
-  // Remove trailing period
-  msg.erase(msg.length() - 1);
-
-  throw Rcpp::exception(msg.c_str(), false);
+  char delim;
+  try {
+    delim = Rcpp::as<char>(fun(lines));
+  } catch (const Rcpp::eval_error& e) {
+    rethrow_rcpp_eval_error(e);
+  }
+  return delim;
 }
 
 } // namespace vroom

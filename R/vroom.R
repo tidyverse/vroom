@@ -245,7 +245,10 @@ guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";")) {
     }
   }
   if (top_idx == 0) {
-    stop("Could not guess the delimiter", call. = FALSE)
+    stop(glue::glue('
+        Could not guess the delimiter.\n
+        {silver("Use `vroom(delim =)` to specify one explicitly.")}
+        '), call. = FALSE)
   }
 
   delims[[top_idx]]
