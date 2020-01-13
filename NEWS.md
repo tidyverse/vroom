@@ -1,4 +1,4 @@
-# vroom (development version)
+# vroom 1.2.0
 
 ## Breaking changes
 
