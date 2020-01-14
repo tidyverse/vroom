@@ -435,7 +435,7 @@ test_that("vroom uses the delim if it is specified in the col_types", {
   )
 })
 
-test_tht("vroom supports NA and NA_integer_ indices", {
+test_that("vroom supports NA and NA_integer_ indices", {
   data <- vroom(vroom_example("mtcars.csv"))
 
   expect_equal(data[NA, 1, drop = TRUE], rep(NA_character_, nrow(data)))
