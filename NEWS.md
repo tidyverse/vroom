@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` columns now support indexing with NA values (#201)
+
 # vroom 1.2.0
 
 ## Breaking changes

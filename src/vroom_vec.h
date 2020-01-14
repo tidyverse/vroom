@@ -84,10 +84,15 @@ public:
       Rcpp::IntegerVector in(indx);
 
       auto idx = std::make_shared<std::vector<size_t> >();
+      idx->reserve(in.size());
 
-      std::transform(in.begin(), in.end(), std::back_inserter(*idx), [](int i) {
-        return i - 1;
-      });
+      for (const auto& i : in) {
+        // If there are any NA indices fall back to the default implementation.
+        if (i == NA_INTEGER) {
+          return nullptr;
+        }
+        idx->push_back(i - 1);
+      }
 
       info = new vroom_vec_info{inf.column->subset(idx),
                                 inf.num_threads,
