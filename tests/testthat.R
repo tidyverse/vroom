@@ -1,8 +1,4 @@
 library(testthat)
 library(vroom)
 
-if (requireNamespace("xml2")) {
-  test_check("vroom", reporter = MultiReporter$new(reporters = list(JunitReporter$new(file = "test-results.xml"), CheckReporter$new())))
-} else {
-  test_check("vroom")
-}
+test_check("vroom")
