@@ -173,7 +173,7 @@ to disk. It provides a hook for S3 classes that need special handling.</p>
     <pre class="examples"><div class='input'><span class='co'># Most types are returned unchanged</span>
 <span class='fu'>output_column</span>(<span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'>output_column</span>(<span class='st'>"x"</span>)</div><div class='output co'>#&gt; [1] "x"</div><div class='input'>
 <span class='co'># datetimes are formatted in ISO 8601</span>
-<span class='fu'>output_column</span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span>())</div><div class='output co'>#&gt; [1] "2020-01-15"</div><div class='input'><span class='fu'>output_column</span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span>())</div><div class='output co'>#&gt; [1] "2020-01-15T14:57:25Z"</div></pre>
+<span class='fu'>output_column</span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span>())</div><div class='output co'>#&gt; [1] "2020-01-15"</div><div class='input'><span class='fu'>output_column</span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span>())</div><div class='output co'>#&gt; [1] "2020-01-15T15:18:42Z"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
