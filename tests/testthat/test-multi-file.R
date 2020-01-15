@@ -70,6 +70,7 @@ test_that("vroom works with many files", {
 })
 
 test_that("vroom works with many connections", {
+  skip_on_solaris()
 
   dir <- tempfile()
   dir.create(dir)
