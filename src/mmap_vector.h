@@ -1,9 +1,14 @@
 #pragma once
 
+#include <fcntl.h>
 #include <fstream>
 #include <mio/shared_mmap.hpp>
 #include <stdlib.h>
 #include <string>
+
+// https://stackoverflow.com/questions/11497567/fallocate-command-equivalent-in-os-x
+
+bool fallocate(int fd, size_t len);
 
 class mmap_vector {
   static int num;
@@ -23,15 +28,16 @@ public:
 
     std::FILE* f1 = std::fopen(filename_.c_str(), "wb");
     size_t end = size * sizeof(size_t) - 1;
-    constexpr size_t BUFFER_SIZE = 2 << 12;
-    char buf[BUFFER_SIZE] = {0};
-    size_t i = 0;
-    if (end > BUFFER_SIZE) {
-      for (; i < end - BUFFER_SIZE; i += BUFFER_SIZE) {
-        std::fwrite(buf, BUFFER_SIZE, 1, f1);
-      }
-    }
-    std::fwrite(buf, end - i, 1, f1);
+    fallocate(fileno(f1), end);
+    // constexpr size_t BUFFER_SIZE = 2 << 12;
+    // char buf[BUFFER_SIZE] = {0};
+    // size_t i = 0;
+    // if (end > BUFFER_SIZE) {
+    // for (; i < end - BUFFER_SIZE; i += BUFFER_SIZE) {
+    // std::fwrite(buf, BUFFER_SIZE, 1, f1);
+    //}
+    //}
+    // std::fwrite(buf, end - i, 1, f1);
     std::fclose(f1);
 
     sink_ =
