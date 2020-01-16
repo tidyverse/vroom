@@ -20,6 +20,8 @@
 
 #include "multi_progress.h"
 
+#include "mmap_vector.h"
+
 namespace vroom {
 
 struct cell {
@@ -149,7 +151,8 @@ public:
   }
 
 public:
-  using idx_t = std::vector<size_t>;
+  // using idx_t = std::vector<size_t>;
+  using idx_t = mmap_vector;
   std::string filename_;
   mio::mmap_source mmap_;
   std::vector<idx_t> idx_;
