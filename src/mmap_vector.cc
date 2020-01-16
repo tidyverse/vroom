@@ -2,8 +2,10 @@
 
 int mmap_vector::num = 0;
 
-bool fallocate(int fd, size_t len) {
-  fstore_t store = {F_ALLOCATECONTIG, F_PEOFPOSMODE, 0, (off_t)len};
+// https://stackoverflow.com/questions/11497567/fallocate-command-equivalent-in-os-x
+bool fallocate(int fd, size_t offset, size_t len) {
+  fstore_t store = {
+      F_ALLOCATECONTIG, F_PEOFPOSMODE, (off_t)offset, (off_t)len, 0};
   // Try to get a continuous chunk of disk space
   int ret = fcntl(fd, F_PREALLOCATE, &store);
   if (-1 == ret) {

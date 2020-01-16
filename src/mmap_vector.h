@@ -6,15 +6,13 @@
 #include <stdlib.h>
 #include <string>
 
-// https://stackoverflow.com/questions/11497567/fallocate-command-equivalent-in-os-x
-
-bool fallocate(int fd, size_t len);
+bool fallocate(int fd, size_t offset, size_t len);
 
 class mmap_vector {
   static int num;
 
 public:
-  mmap_vector() : pos_(0) {
+  mmap_vector() : pos_(0), size_(0) {
     filename_ = "foo" + std::to_string(num++);
     // Truncate any existing file;
     std::ofstream ofs(
@@ -26,18 +24,21 @@ public:
   void reserve(size_t size) {
     std::error_code error;
 
+    size_t len, offset;
+    // if (size_ > 0) {
+    // sink_.sync(error);
+    // if (error) {
+    // throw std::runtime_error(error.message());
+    //}
+    // sink_.unmap();
+    // offset = size_;
+    //} else {
+    offset = 0;
+    //}
+    len = (size - size_) * sizeof(size_t);
+
     std::FILE* f1 = std::fopen(filename_.c_str(), "wb");
-    size_t end = size * sizeof(size_t) - 1;
-    fallocate(fileno(f1), end);
-    // constexpr size_t BUFFER_SIZE = 2 << 12;
-    // char buf[BUFFER_SIZE] = {0};
-    // size_t i = 0;
-    // if (end > BUFFER_SIZE) {
-    // for (; i < end - BUFFER_SIZE; i += BUFFER_SIZE) {
-    // std::fwrite(buf, BUFFER_SIZE, 1, f1);
-    //}
-    //}
-    // std::fwrite(buf, end - i, 1, f1);
+    fallocate(fileno(f1), offset, len);
     std::fclose(f1);
 
     sink_ =
