@@ -200,7 +200,7 @@
 <a href="#usage" class="anchor"></a>Usage</h2>
 <p>See <a href="https://r-lib.github.io/vroom/articles/vroom.html">getting started</a> to jump start your use of vroom!</p>
 <p>vroom uses the same interface as readr to specify column types.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>vroom<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/vroom/man/vroom.html">vroom</a></span>(<span class="st">"mtcars.tsv"</span>,</span>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>vroom<span class="op">::</span><span class="kw"><a href="http://vroom.r-lib.org/reference/vroom.html">vroom</a></span>(<span class="st">"mtcars.tsv"</span>,</span>
 <span id="cb3-2"><a href="#cb3-2"></a>  <span class="dt">col_types =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">cyl =</span> <span class="st">"i"</span>, <span class="dt">gear =</span> <span class="st">"f"</span>,<span class="dt">hp =</span> <span class="st">"i"</span>, <span class="dt">disp =</span> <span class="st">"_"</span>,</span>
 <span id="cb3-3"><a href="#cb3-3"></a>                   <span class="dt">drat =</span> <span class="st">"_"</span>, <span class="dt">vs =</span> <span class="st">"l"</span>, <span class="dt">am =</span> <span class="st">"l"</span>, <span class="dt">carb =</span> <span class="st">"i"</span>)</span>
 <span id="cb3-4"><a href="#cb3-4"></a>)</span>
@@ -220,7 +220,7 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(nycflights13)</span>
 <span id="cb4-2"><a href="#cb4-2"></a>purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/imap.html">iwalk</a></span>(</span>
 <span id="cb4-3"><a href="#cb4-3"></a>  <span class="kw"><a href="https://rdrr.io/r/base/split.html">split</a></span>(flights, flights<span class="op">$</span>carrier),</span>
-<span id="cb4-4"><a href="#cb4-4"></a>  <span class="op">~</span><span class="st"> </span>{ .x<span class="op">$</span>carrier[[<span class="dv">1</span>]]; vroom<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/vroom/man/vroom_write.html">vroom_write</a></span>(.x, glue<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/glue/man/glue.html">glue</a></span>(<span class="st">"flights_{.y}.tsv"</span>), <span class="dt">delim =</span> <span class="st">"</span><span class="ch">\t</span><span class="st">"</span>) }</span>
+<span id="cb4-4"><a href="#cb4-4"></a>  <span class="op">~</span><span class="st"> </span>{ .x<span class="op">$</span>carrier[[<span class="dv">1</span>]]; vroom<span class="op">::</span><span class="kw"><a href="http://vroom.r-lib.org/reference/vroom_write.html">vroom_write</a></span>(.x, glue<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/glue/man/glue.html">glue</a></span>(<span class="st">"flights_{.y}.tsv"</span>), <span class="dt">delim =</span> <span class="st">"</span><span class="ch">\t</span><span class="st">"</span>) }</span>
 <span id="cb4-5"><a href="#cb4-5"></a>)</span></code></pre></div>
 <p>Then we can efficiently read them into one tibble by passing the filenames directly to vroom.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>files &lt;-<span class="st"> </span>fs<span class="op">::</span><span class="kw"><a href="http://fs.r-lib.org/reference/dir_ls.html">dir_ls</a></span>(<span class="dt">glob =</span> <span class="st">"flights*tsv"</span>)</span>
@@ -229,7 +229,7 @@
 <span id="cb5-4"><a href="#cb5-4"></a><span class="co">#&gt; flights_EV.tsv flights_F9.tsv flights_FL.tsv flights_HA.tsv flights_MQ.tsv </span></span>
 <span id="cb5-5"><a href="#cb5-5"></a><span class="co">#&gt; flights_OO.tsv flights_UA.tsv flights_US.tsv flights_VX.tsv flights_WN.tsv </span></span>
 <span id="cb5-6"><a href="#cb5-6"></a><span class="co">#&gt; flights_YV.tsv</span></span>
-<span id="cb5-7"><a href="#cb5-7"></a>vroom<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/vroom/man/vroom.html">vroom</a></span>(files)</span>
+<span id="cb5-7"><a href="#cb5-7"></a>vroom<span class="op">::</span><span class="kw"><a href="http://vroom.r-lib.org/reference/vroom.html">vroom</a></span>(files)</span>
 <span id="cb5-8"><a href="#cb5-8"></a><span class="co">#&gt; Rows: 336,776</span></span>
 <span id="cb5-9"><a href="#cb5-9"></a><span class="co">#&gt; Columns: 19</span></span>
 <span id="cb5-10"><a href="#cb5-10"></a><span class="co">#&gt; Delimiter: "\t"</span></span>
