@@ -7,7 +7,7 @@ NULL
 #'
 #' @inheritParams readr::read_delim
 #' @param file path to a local file.
-#' @param delim One of more characters used to delimiter fields within a
+#' @param delim One or more characters used to delimiter fields within a
 #'   record. If `NULL` the delimiter is guessed from the set of `c(",", "\t", " ",
 #'   "|", ":", ";")`.
 #' @param num_threads Number of threads to use when reading and materializing
