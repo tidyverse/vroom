@@ -31,8 +31,8 @@ vroom(
 \arguments{
 \item{file}{path to a local file.}
 
-\item{delim}{One of more characters used to delimiter fields within a
-record. If \code{NULL} the delimiter is guessed from the set of \code{c(",", "\\t", " ", "|", ":", ";")}.}
+\item{delim}{One or more characters used to delimit fields within a
+file. If \code{NULL} the delimiter is guessed from the set of \code{c(",", "\\t", " ", "|", ":", ";")}.}
 
 \item{col_names}{Either \code{TRUE}, \code{FALSE} or a character vector
 of column names.
