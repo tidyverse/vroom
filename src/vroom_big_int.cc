@@ -1,5 +1,6 @@
 #include "vroom_big_int.h"
 #include "parallel.h"
+#include <climits.h>
 
 // A version of strtoll that doesn't need null terminated strings, to avoid
 // needing to copy the data
@@ -20,7 +21,7 @@ long long strtoll(const char* begin, const char* end) {
     val = val * 10 + ((*begin++) - '0');
   }
 
-  if (val > LONG_LONG_MAX) {
+  if (val > LLONG_MAX) {
     return NA_INTEGER64;
   }
 
