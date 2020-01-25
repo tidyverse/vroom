@@ -1,4 +1,4 @@
-context("test-chr.R")
+context("test-int.R")
 
 test_that("integers are returned correctly", {
   # empty fields are returned as NAs
