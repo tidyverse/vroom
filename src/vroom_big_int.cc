@@ -1,6 +1,6 @@
 #include "vroom_big_int.h"
 #include "parallel.h"
-#include <climits.h>
+#include <climits>
 
 // A version of strtoll that doesn't need null terminated strings, to avoid
 // needing to copy the data
