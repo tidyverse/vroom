@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom_fwf()` now verifies that the positions are valid, namely that the begin value is always less than the previous end (#217).
+
 * `vroom_lines()` gains a `locale` argument so you can control the encoding of the file (#218)
 
 * `vroom()` columns now support indexing with NA values (#201)

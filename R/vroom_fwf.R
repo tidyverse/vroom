@@ -31,6 +31,8 @@ vroom_fwf <- function(file,
                       progress = vroom_progress(),
                       .name_repair = "unique") {
 
+  verify_fwf_positions(col_positions)
+
   if (!rlang::is_missing(altrep_opts)) {
     lifecycle::deprecate_warn("1.1.0", "vroom_fwf(altrep_opts = )", "vroom_fwf(altrep = )")
     altrep <- altrep_opts
@@ -153,4 +155,12 @@ fwf_col_names <- function(nm, n) {
   nm_empty <- (nm == "")
   nm[nm_empty] <- paste0("X", seq_len(n))[nm_empty]
   nm
+}
+
+verify_fwf_positions <- function(col_positions) {
+  is_greater <- na.omit(col_positions$begin > col_positions$end)
+  if (any(is_greater)) {
+    bad <- which(is_greater)
+    stop("`col_positions` must have begin less than end.\n* Invalid values at position(s): ", paste0(collapse = ", ", bad), call. = FALSE)
+  }
 }

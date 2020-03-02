@@ -274,3 +274,16 @@ test_that("vroom_fwf() is robust to improper inputs", {
     vroom_fwf("A\n  a\n")
   )
 })
+
+test_that("Errors if begin is greater than end", {
+  positions <- fwf_positions(
+    start = c(1, 3, 5),
+    end = c(3, 1, NA),
+    col_names = c("foo", "bar", "baz")
+  )
+
+  expect_error(
+    vroom_fwf("1  2  3\n", positions),
+    "`col_positions` must have begin less than end"
+  )
+})
