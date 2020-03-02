@@ -139,7 +139,7 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># See where the example file is stored on your machine</span></span>
 <span id="cb2-2"><a href="#cb2-2"></a>file &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>)</span>
 <span id="cb2-3"><a href="#cb2-3"></a>file</span>
-<span id="cb2-4"><a href="#cb2-4"></a><span class="co">#&gt; [1] "/Users/runner/runners/2.164.0/work/_temp/Library/vroom/extdata/mtcars.csv"</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="co">#&gt; [1] "/Users/runner/runners/2.165.2/work/_temp/Library/vroom/extdata/mtcars.csv"</span></span>
 <span id="cb2-5"><a href="#cb2-5"></a></span>
 <span id="cb2-6"><a href="#cb2-6"></a><span class="co"># Read the file, by default vroom will guess the delimiter automatically.</span></span>
 <span id="cb2-7"><a href="#cb2-7"></a><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file)</span>
@@ -345,10 +345,10 @@
 <span id="cb11-15"><a href="#cb11-15"></a><span class="co">#&gt; 3 Datsun 710        4     4</span></span>
 <span id="cb11-16"><a href="#cb11-16"></a><span class="co">#&gt; # … with 29 more rows</span></span></code></pre></div>
 <ul>
-<li>Using the selection helpers such as <code><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">starts_with()</a></code> and <code><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">ends_with()</a></code>
+<li>Using the selection helpers such as <code><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">starts_with()</a></code> and <code><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">ends_with()</a></code>
 </li>
 </ul>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_select =</span> <span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">starts_with</a></span>(<span class="st">"d"</span>))</span>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_select =</span> <span class="kw"><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">starts_with</a></span>(<span class="st">"d"</span>))</span>
 <span id="cb12-2"><a href="#cb12-2"></a><span class="co">#&gt; Rows: 32</span></span>
 <span id="cb12-3"><a href="#cb12-3"></a><span class="co">#&gt; Columns: 2</span></span>
 <span id="cb12-4"><a href="#cb12-4"></a><span class="co">#&gt; Delimiter: ","</span></span>
@@ -366,7 +366,7 @@
 <ul>
 <li>You can also rename columns</li>
 </ul>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_select =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">car =</span> model, <span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">everything</a></span>()))</span>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_select =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">car =</span> model, <span class="kw"><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">everything</a></span>()))</span>
 <span id="cb13-2"><a href="#cb13-2"></a><span class="co">#&gt; Rows: 32</span></span>
 <span id="cb13-3"><a href="#cb13-3"></a><span class="co">#&gt; Columns: 12</span></span>
 <span id="cb13-4"><a href="#cb13-4"></a><span class="co">#&gt; Delimiter: ","</span></span>

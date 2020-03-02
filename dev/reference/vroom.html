@@ -411,7 +411,7 @@ name repair functions.</p></td>
 #&gt; </span><span style='color: #555555;'>10</span><span> Merc 280              6     4
 #&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'>
 <span class='co'># Or use the selection helpers</span>
-<span class='fu'>vroom</span>(<span class='no'>input_file</span>, <span class='kw'>col_select</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/tidyselect/man/select_helpers.html'>starts_with</a></span>(<span class='st'>"d"</span>))</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
+<span class='fu'>vroom</span>(<span class='no'>input_file</span>, <span class='kw'>col_select</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>starts_with</a></span>(<span class='st'>"d"</span>))</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [2]: disp, drat</span>
@@ -432,7 +432,7 @@ name repair functions.</p></td>
 #&gt; </span><span style='color: #555555;'>10</span><span>  168.  3.92
 #&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'>
 <span class='co'># You can also rename specific columns</span>
-<span class='fu'>vroom</span>(<span class='no'>input_file</span>, <span class='kw'>col_select</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>car</span> <span class='kw'>=</span> <span class='no'>model</span>, <span class='fu'><a href='https://rdrr.io/pkg/tidyselect/man/select_helpers.html'>everything</a></span>()))</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
+<span class='fu'>vroom</span>(<span class='no'>input_file</span>, <span class='kw'>col_select</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>car</span> <span class='kw'>=</span> <span class='no'>model</span>, <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>()))</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 12</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
 #&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [ 1]: model</span>
