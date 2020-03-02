@@ -2,12 +2,13 @@
 % Please edit documentation in R/vroom_lines.R
 \name{vroom_lines}
 \alias{vroom_lines}
-\title{Read lines from a file}
+\title{Read lines from a  ile}
 \usage{
 vroom_lines(
   file,
   n_max = Inf,
   skip = 0,
+  locale = default_locale(),
   altrep = TRUE,
   altrep_opts = deprecated(),
   num_threads = vroom_threads(),
@@ -20,6 +21,12 @@ vroom_lines(
 \item{n_max}{Maximum number of records to read.}
 
 \item{skip}{Number of lines to skip before reading data.}
+
+\item{locale}{The locale controls defaults that vary from place to place.
+The default locale is US-centric (like R), but you can use
+\code{\link[readr:locale]{locale()}} to create your own locale that controls things like
+the default time zone, encoding, decimal mark, big mark, and day/month
+names.}
 
 \item{altrep}{Control which column types use Altrep representations,
 either a character vector of types, \code{TRUE} or \code{FALSE}. See

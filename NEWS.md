@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom_lines()` gains a `locale` argument so you can control the encoding of the file (#218)
+
 * `vroom()` columns now support indexing with NA values (#201)
 
 # vroom 1.2.0
