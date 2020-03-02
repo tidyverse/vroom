@@ -105,7 +105,6 @@ test_that("%p detects AM/PM", {
 })
 
 test_that("%b and %B are case insensitive", {
-  skip("not working")
   ref <- as.Date("2001-01-01")
 
   test_parse_date("2001 JAN 01", "%Y %b %d", expected = ref)
