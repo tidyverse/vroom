@@ -5,6 +5,6 @@ articles:
   benchmarks: benchmarks.html
   vroom: vroom.html
 urls:
-  reference: vroom.r-lib.org/reference
-  article: vroom.r-lib.org/articles
+  reference: https://vroom.r-lib.org/reference
+  article: https://vroom.r-lib.org/articles
 

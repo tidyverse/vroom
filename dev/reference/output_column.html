@@ -45,7 +45,7 @@
 <meta property="og:title" content="Preprocess column for output — output_column" />
 <meta property="og:description" content="This is a generic function that applied to each column before it is saved
 to disk. It provides a hook for S3 classes that need special handling." />
-<meta property="og:image" content="vroom.r-lib.org/logo.png" />
+<meta property="og:image" content="https://vroom.r-lib.org/logo.png" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -173,7 +173,7 @@ to disk. It provides a hook for S3 classes that need special handling.</p>
     <pre class="examples"><div class='input'><span class='co'># Most types are returned unchanged</span>
 <span class='fu'>output_column</span>(<span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'>output_column</span>(<span class='st'>"x"</span>)</div><div class='output co'>#&gt; [1] "x"</div><div class='input'>
 <span class='co'># datetimes are formatted in ISO 8601</span>
-<span class='fu'>output_column</span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span>())</div><div class='output co'>#&gt; [1] "2020-03-04"</div><div class='input'><span class='fu'>output_column</span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span>())</div><div class='output co'>#&gt; [1] "2020-03-04T14:43:12Z"</div></pre>
+<span class='fu'>output_column</span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span>())</div><div class='output co'>#&gt; [1] "2020-03-12"</div><div class='input'><span class='fu'>output_column</span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span>())</div><div class='output co'>#&gt; [1] "2020-03-12T13:50:40Z"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
