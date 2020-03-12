@@ -26,7 +26,5 @@
 ^CRAN-RELEASE$
 ^presentation$
 ^tools$
-^.github$
-^\.github/workflows/R-CMD-check\.yaml$
-^\.github/workflows/pr-commands\.yaml$
 ^revdep$
+^\.github$
