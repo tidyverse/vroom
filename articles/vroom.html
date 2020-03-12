@@ -13,13 +13,12 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.1/css/all.min.css" integrity="sha256-PbSmjxuVAzJ6FPvNYsrXygfGhNJYyZ2GktDbkMBqQZg=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.1/css/v4-shims.min.css" integrity="sha256-A6jcAdwFD48VMjlI3GDxUd+eCQa7/KWy6G9oe/ovaPA=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Get started with vroom">
-<meta property="og:description" content="">
+<meta property="og:description" content="vroom">
 <meta property="og:image" content="http://vroom.r-lib.org/logo.png">
-<meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -97,7 +96,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="vroom_files/header-attrs-2.1/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Get started with vroom</h1>
@@ -135,7 +134,7 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># See where the example file is stored on your machine</span></span>
 <span id="cb2-2"><a href="#cb2-2"></a>file &lt;-<span class="st"> </span><span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>)</span>
 <span id="cb2-3"><a href="#cb2-3"></a>file</span>
-<span id="cb2-4"><a href="#cb2-4"></a><span class="co">#&gt; [1] "/Users/runner/runners/2.163.1/work/_temp/Library/vroom/extdata/mtcars.csv"</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="co">#&gt; [1] "/Users/jhester/Library/R/3.6/library/vroom/extdata/mtcars.csv"</span></span>
 <span id="cb2-5"><a href="#cb2-5"></a></span>
 <span id="cb2-6"><a href="#cb2-6"></a><span class="co"># Read the file, by default vroom will guess the delimiter automatically.</span></span>
 <span id="cb2-7"><a href="#cb2-7"></a><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file)</span>
@@ -260,40 +259,10 @@
 <a href="#reading-remote-files" class="anchor"></a>Reading remote files</h2>
 <p>vroom can read files directly from the internet as well by passing the URL of the file to vroom.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>file &lt;-<span class="st"> "https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv"</span></span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file)</span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="co">#&gt; Rows: 32</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a><span class="co">#&gt; Columns: 12</span></span>
-<span id="cb8-5"><a href="#cb8-5"></a><span class="co">#&gt; Delimiter: ","</span></span>
-<span id="cb8-6"><a href="#cb8-6"></a><span class="co">#&gt; chr [ 1]: model</span></span>
-<span id="cb8-7"><a href="#cb8-7"></a><span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></span>
-<span id="cb8-8"><a href="#cb8-8"></a><span class="co">#&gt; </span></span>
-<span id="cb8-9"><a href="#cb8-9"></a><span class="co">#&gt; Use `spec()` to retrieve the guessed column specification</span></span>
-<span id="cb8-10"><a href="#cb8-10"></a><span class="co">#&gt; Pass a specification to the `col_types` argument to quiet this message</span></span>
-<span id="cb8-11"><a href="#cb8-11"></a><span class="co">#&gt; # A tibble: 32 x 12</span></span>
-<span id="cb8-12"><a href="#cb8-12"></a><span class="co">#&gt;   model          mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></span>
-<span id="cb8-13"><a href="#cb8-13"></a><span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span id="cb8-14"><a href="#cb8-14"></a><span class="co">#&gt; 1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></span>
-<span id="cb8-15"><a href="#cb8-15"></a><span class="co">#&gt; 2 Mazda RX4 W…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></span>
-<span id="cb8-16"><a href="#cb8-16"></a><span class="co">#&gt; 3 Datsun 710    22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
-<span id="cb8-17"><a href="#cb8-17"></a><span class="co">#&gt; # … with 29 more rows</span></span></code></pre></div>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file)</span></code></pre></div>
 <p>It can even read gzipped files from the internet (although not the other compressed formats).</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>file &lt;-<span class="st"> "https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv.gz"</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file)</span>
-<span id="cb9-3"><a href="#cb9-3"></a><span class="co">#&gt; Rows: 32</span></span>
-<span id="cb9-4"><a href="#cb9-4"></a><span class="co">#&gt; Columns: 12</span></span>
-<span id="cb9-5"><a href="#cb9-5"></a><span class="co">#&gt; Delimiter: ","</span></span>
-<span id="cb9-6"><a href="#cb9-6"></a><span class="co">#&gt; chr [ 1]: model</span></span>
-<span id="cb9-7"><a href="#cb9-7"></a><span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></span>
-<span id="cb9-8"><a href="#cb9-8"></a><span class="co">#&gt; </span></span>
-<span id="cb9-9"><a href="#cb9-9"></a><span class="co">#&gt; Use `spec()` to retrieve the guessed column specification</span></span>
-<span id="cb9-10"><a href="#cb9-10"></a><span class="co">#&gt; Pass a specification to the `col_types` argument to quiet this message</span></span>
-<span id="cb9-11"><a href="#cb9-11"></a><span class="co">#&gt; # A tibble: 32 x 12</span></span>
-<span id="cb9-12"><a href="#cb9-12"></a><span class="co">#&gt;   model          mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></span>
-<span id="cb9-13"><a href="#cb9-13"></a><span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span id="cb9-14"><a href="#cb9-14"></a><span class="co">#&gt; 1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></span>
-<span id="cb9-15"><a href="#cb9-15"></a><span class="co">#&gt; 2 Mazda RX4 W…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></span>
-<span id="cb9-16"><a href="#cb9-16"></a><span class="co">#&gt; 3 Datsun 710    22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
-<span id="cb9-17"><a href="#cb9-17"></a><span class="co">#&gt; # … with 29 more rows</span></span></code></pre></div>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file)</span></code></pre></div>
 </div>
 <div id="column-selection" class="section level2">
 <h2 class="hasAnchor">
@@ -341,10 +310,10 @@
 <span id="cb11-15"><a href="#cb11-15"></a><span class="co">#&gt; 3 Datsun 710        4     4</span></span>
 <span id="cb11-16"><a href="#cb11-16"></a><span class="co">#&gt; # … with 29 more rows</span></span></code></pre></div>
 <ul>
-<li>Using the selection helpers such as <code><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">starts_with()</a></code> and <code><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">ends_with()</a></code>
+<li>Using the selection helpers such as <code><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">starts_with()</a></code> and <code><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">ends_with()</a></code>
 </li>
 </ul>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_select =</span> <span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">starts_with</a></span>(<span class="st">"d"</span>))</span>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_select =</span> <span class="kw"><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">starts_with</a></span>(<span class="st">"d"</span>))</span>
 <span id="cb12-2"><a href="#cb12-2"></a><span class="co">#&gt; Rows: 32</span></span>
 <span id="cb12-3"><a href="#cb12-3"></a><span class="co">#&gt; Columns: 2</span></span>
 <span id="cb12-4"><a href="#cb12-4"></a><span class="co">#&gt; Delimiter: ","</span></span>
@@ -362,7 +331,7 @@
 <ul>
 <li>You can also rename columns</li>
 </ul>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_select =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">car =</span> model, <span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">everything</a></span>()))</span>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(file, <span class="dt">col_select =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">car =</span> model, <span class="kw"><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">everything</a></span>()))</span>
 <span id="cb13-2"><a href="#cb13-2"></a><span class="co">#&gt; Rows: 32</span></span>
 <span id="cb13-3"><a href="#cb13-3"></a><span class="co">#&gt; Columns: 12</span></span>
 <span id="cb13-4"><a href="#cb13-4"></a><span class="co">#&gt; Delimiter: ","</span></span>
@@ -542,10 +511,10 @@
 <div id="name-repair" class="section level2">
 <h2 class="hasAnchor">
 <a href="#name-repair" class="anchor"></a>Name repair</h2>
-<p>Often the names of columns in the original dataset are not ideal to work with. <code><a href="../reference/vroom.html">vroom()</a></code> uses the same <code>.name_repair</code> argument as tibble, so you can use one of the default name repair strategies or provide a custom function. A great approach is to use the <a href="http://sfirke.github.io/janitor/reference/make_clean_names.html"><code>janitor::make_clean_names()</code></a> function as the input. This will automatically clean the names to use whatever case you specify, here I am setting it to use <code>ALLCAPS</code> names.</p>
+<p>Often the names of columns in the original dataset are not ideal to work with. <code><a href="../reference/vroom.html">vroom()</a></code> uses the same <code>.name_repair</code> argument as tibble, so you can use one of the default name repair strategies or provide a custom function. A great approach is to use the <a href="http://sfirke.github.io/janitor/reference/make_clean_names.html"><code><a href="https://rdrr.io/pkg/janitor/man/make_clean_names.html">janitor::make_clean_names()</a></code></a> function as the input. This will automatically clean the names to use whatever case you specify, here I am setting it to use <code>ALLCAPS</code> names.</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="kw"><a href="../reference/vroom.html">vroom</a></span>(</span>
 <span id="cb24-2"><a href="#cb24-2"></a>  <span class="kw"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>),</span>
-<span id="cb24-3"><a href="#cb24-3"></a>  <span class="dt">.name_repair =</span> <span class="op">~</span><span class="st"> </span>janitor<span class="op">::</span><span class="kw">make_clean_names</span>(., <span class="dt">case =</span> <span class="st">"all_caps"</span>)</span>
+<span id="cb24-3"><a href="#cb24-3"></a>  <span class="dt">.name_repair =</span> <span class="op">~</span><span class="st"> </span>janitor<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/janitor/man/make_clean_names.html">make_clean_names</a></span>(., <span class="dt">case =</span> <span class="st">"all_caps"</span>)</span>
 <span id="cb24-4"><a href="#cb24-4"></a>)</span></code></pre></div>
 </div>
 <div id="writing-delimited-files" class="section level2">
@@ -605,7 +574,7 @@ Rscript -e 'vroom::vroom_write(iris, stdout())' | head</code></pre>
 </div>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
         <div id="tocnav">
       <h2 class="hasAnchor">

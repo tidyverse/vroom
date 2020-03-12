@@ -25,8 +25,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.1/css/all.min.css" integrity="sha256-PbSmjxuVAzJ6FPvNYsrXygfGhNJYyZ2GktDbkMBqQZg=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.1/css/v4-shims.min.css" integrity="sha256-A6jcAdwFD48VMjlI3GDxUd+eCQa7/KWy6G9oe/ovaPA=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
@@ -45,7 +45,6 @@
 <meta property="og:title" content="Read a delimited file into a tibble — vroom" />
 <meta property="og:description" content="Read a delimited file into a tibble" />
 <meta property="og:image" content="http://vroom.r-lib.org/logo.png" />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -331,20 +330,20 @@ name repair functions.</p></td>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 12</span><span>
+#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 32 x 12</span><span>
 #&gt;    model         mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> Mazda RX4    21       6  160    110  3.9   2.62  16.5     0     1     4     4
-#&gt; </span><span style='color: #555555;'> 2</span><span> Mazda RX4 …  21       6  160    110  3.9   2.88  17.0     0     1     4     4
-#&gt; </span><span style='color: #555555;'> 3</span><span> Datsun 710   22.8     4  108     93  3.85  2.32  18.6     1     1     4     1
-#&gt; </span><span style='color: #555555;'> 4</span><span> Hornet 4 D…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1
-#&gt; </span><span style='color: #555555;'> 5</span><span> Hornet Spo…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
-#&gt; </span><span style='color: #555555;'> 6</span><span> Valiant      18.1     6  225    105  2.76  3.46  20.2     1     0     3     1
-#&gt; </span><span style='color: #555555;'> 7</span><span> Duster 360   14.3     8  360    245  3.21  3.57  15.8     0     0     3     4
-#&gt; </span><span style='color: #555555;'> 8</span><span> Merc 240D    24.4     4  147.    62  3.69  3.19  20       1     0     4     2
-#&gt; </span><span style='color: #555555;'> 9</span><span> Merc 230     22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2
-#&gt; </span><span style='color: #555555;'>10</span><span> Merc 280     19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4
-#&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'><span class='co'># You can also use literal paths directly</span>
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> Mazda RX4    21       6  160    110  3.9   2.62  16.5     0     1     4     4
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> Mazda RX4 …  21       6  160    110  3.9   2.88  17.0     0     1     4     4
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> Datsun 710   22.8     4  108     93  3.85  2.32  18.6     1     1     4     1
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> Hornet 4 D…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> Hornet Spo…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> Valiant      18.1     6  225    105  2.76  3.46  20.2     1     0     3     1
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> Duster 360   14.3     8  360    245  3.21  3.57  15.8     0     0     3     4
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> Merc 240D    24.4     4  147.    62  3.69  3.19  20       1     0     4     2
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> Merc 230     22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span> Merc 280     19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4
+#&gt; </span><span style='color: #949494;'># … with 22 more rows</span><span></div><div class='input'><span class='co'># You can also use literal paths directly</span>
 <span class='co'># vroom("mtcars.csv")</span>
 
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
@@ -359,11 +358,11 @@ name repair functions.</p></td>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [2]: x, y</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 2 x 2</span><span>
+#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 2 x 2</span><span>
 #&gt;       x     y
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span>     1     2
-#&gt; </span><span style='color: #555555;'>2</span><span>     3     4</div><div class='input'>
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span>     1     2
+#&gt; </span><span style='color: #BCBCBC;'>2</span><span>     3     4</div><div class='input'>
 <span class='co'># Column selection ----------------------------------------------------------</span>
 <span class='co'># Pass column names or indexes directly to select them</span>
 <span class='fu'>vroom</span>(<span class='no'>input_file</span>, <span class='kw'>col_select</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>model</span>, <span class='no'>cyl</span>, <span class='no'>gear</span>))</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
@@ -373,98 +372,98 @@ name repair functions.</p></td>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [2]: cyl, gear</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 3</span><span>
+#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 32 x 3</span><span>
 #&gt;    model               cyl  gear
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> Mazda RX4             6     4
-#&gt; </span><span style='color: #555555;'> 2</span><span> Mazda RX4 Wag         6     4
-#&gt; </span><span style='color: #555555;'> 3</span><span> Datsun 710            4     4
-#&gt; </span><span style='color: #555555;'> 4</span><span> Hornet 4 Drive        6     3
-#&gt; </span><span style='color: #555555;'> 5</span><span> Hornet Sportabout     8     3
-#&gt; </span><span style='color: #555555;'> 6</span><span> Valiant               6     3
-#&gt; </span><span style='color: #555555;'> 7</span><span> Duster 360            8     3
-#&gt; </span><span style='color: #555555;'> 8</span><span> Merc 240D             4     4
-#&gt; </span><span style='color: #555555;'> 9</span><span> Merc 230              4     4
-#&gt; </span><span style='color: #555555;'>10</span><span> Merc 280              6     4
-#&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'><span class='fu'>vroom</span>(<span class='no'>input_file</span>, <span class='kw'>col_select</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>11</span>))</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> Mazda RX4             6     4
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> Mazda RX4 Wag         6     4
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> Datsun 710            4     4
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> Hornet 4 Drive        6     3
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> Hornet Sportabout     8     3
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> Valiant               6     3
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> Duster 360            8     3
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> Merc 240D             4     4
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> Merc 230              4     4
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span> Merc 280              6     4
+#&gt; </span><span style='color: #949494;'># … with 22 more rows</span><span></div><div class='input'><span class='fu'>vroom</span>(<span class='no'>input_file</span>, <span class='kw'>col_select</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>11</span>))</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 3</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
 #&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [1]: model</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [2]: cyl, gear</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 3</span><span>
+#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 32 x 3</span><span>
 #&gt;    model               cyl  gear
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> Mazda RX4             6     4
-#&gt; </span><span style='color: #555555;'> 2</span><span> Mazda RX4 Wag         6     4
-#&gt; </span><span style='color: #555555;'> 3</span><span> Datsun 710            4     4
-#&gt; </span><span style='color: #555555;'> 4</span><span> Hornet 4 Drive        6     3
-#&gt; </span><span style='color: #555555;'> 5</span><span> Hornet Sportabout     8     3
-#&gt; </span><span style='color: #555555;'> 6</span><span> Valiant               6     3
-#&gt; </span><span style='color: #555555;'> 7</span><span> Duster 360            8     3
-#&gt; </span><span style='color: #555555;'> 8</span><span> Merc 240D             4     4
-#&gt; </span><span style='color: #555555;'> 9</span><span> Merc 230              4     4
-#&gt; </span><span style='color: #555555;'>10</span><span> Merc 280              6     4
-#&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'>
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> Mazda RX4             6     4
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> Mazda RX4 Wag         6     4
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> Datsun 710            4     4
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> Hornet 4 Drive        6     3
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> Hornet Sportabout     8     3
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> Valiant               6     3
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> Duster 360            8     3
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> Merc 240D             4     4
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> Merc 230              4     4
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span> Merc 280              6     4
+#&gt; </span><span style='color: #949494;'># … with 22 more rows</span><span></div><div class='input'>
 <span class='co'># Or use the selection helpers</span>
-<span class='fu'>vroom</span>(<span class='no'>input_file</span>, <span class='kw'>col_select</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/tidyselect/man/select_helpers.html'>starts_with</a></span>(<span class='st'>"d"</span>))</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
+<span class='fu'>vroom</span>(<span class='no'>input_file</span>, <span class='kw'>col_select</span> <span class='kw'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>starts_with</a></span>(<span class='st'>"d"</span>))</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [2]: disp, drat</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 2</span><span>
+#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 32 x 2</span><span>
 #&gt;     disp  drat
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span>  160   3.9 
-#&gt; </span><span style='color: #555555;'> 2</span><span>  160   3.9 
-#&gt; </span><span style='color: #555555;'> 3</span><span>  108   3.85
-#&gt; </span><span style='color: #555555;'> 4</span><span>  258   3.08
-#&gt; </span><span style='color: #555555;'> 5</span><span>  360   3.15
-#&gt; </span><span style='color: #555555;'> 6</span><span>  225   2.76
-#&gt; </span><span style='color: #555555;'> 7</span><span>  360   3.21
-#&gt; </span><span style='color: #555555;'> 8</span><span>  147.  3.69
-#&gt; </span><span style='color: #555555;'> 9</span><span>  141.  3.92
-#&gt; </span><span style='color: #555555;'>10</span><span>  168.  3.92
-#&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'>
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span>  160   3.9 
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span>  160   3.9 
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span>  108   3.85
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span>  258   3.08
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span>  360   3.15
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span>  225   2.76
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span>  360   3.21
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span>  147.  3.69
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span>  141.  3.92
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span>  168.  3.92
+#&gt; </span><span style='color: #949494;'># … with 22 more rows</span><span></div><div class='input'>
 <span class='co'># You can also rename specific columns</span>
-<span class='fu'>vroom</span>(<span class='no'>input_file</span>, <span class='kw'>col_select</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>car</span> <span class='kw'>=</span> <span class='no'>model</span>, <span class='fu'><a href='https://rdrr.io/pkg/tidyselect/man/select_helpers.html'>everything</a></span>()))</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
+<span class='fu'>vroom</span>(<span class='no'>input_file</span>, <span class='kw'>col_select</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>car</span> <span class='kw'>=</span> <span class='no'>model</span>, <span class='fu'><a href='https://tidyselect.r-lib.org/reference/select_helpers.html'>everything</a></span>()))</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 12</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
 #&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [ 1]: model</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 12</span><span>
+#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 32 x 12</span><span>
 #&gt;    car           mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> Mazda RX4    21       6  160    110  3.9   2.62  16.5     0     1     4     4
-#&gt; </span><span style='color: #555555;'> 2</span><span> Mazda RX4 …  21       6  160    110  3.9   2.88  17.0     0     1     4     4
-#&gt; </span><span style='color: #555555;'> 3</span><span> Datsun 710   22.8     4  108     93  3.85  2.32  18.6     1     1     4     1
-#&gt; </span><span style='color: #555555;'> 4</span><span> Hornet 4 D…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1
-#&gt; </span><span style='color: #555555;'> 5</span><span> Hornet Spo…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
-#&gt; </span><span style='color: #555555;'> 6</span><span> Valiant      18.1     6  225    105  2.76  3.46  20.2     1     0     3     1
-#&gt; </span><span style='color: #555555;'> 7</span><span> Duster 360   14.3     8  360    245  3.21  3.57  15.8     0     0     3     4
-#&gt; </span><span style='color: #555555;'> 8</span><span> Merc 240D    24.4     4  147.    62  3.69  3.19  20       1     0     4     2
-#&gt; </span><span style='color: #555555;'> 9</span><span> Merc 230     22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2
-#&gt; </span><span style='color: #555555;'>10</span><span> Merc 280     19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4
-#&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'>
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> Mazda RX4    21       6  160    110  3.9   2.62  16.5     0     1     4     4
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> Mazda RX4 …  21       6  160    110  3.9   2.88  17.0     0     1     4     4
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> Datsun 710   22.8     4  108     93  3.85  2.32  18.6     1     1     4     1
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> Hornet 4 D…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> Hornet Spo…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> Valiant      18.1     6  225    105  2.76  3.46  20.2     1     0     3     1
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> Duster 360   14.3     8  360    245  3.21  3.57  15.8     0     0     3     4
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> Merc 240D    24.4     4  147.    62  3.69  3.19  20       1     0     4     2
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> Merc 230     22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span> Merc 280     19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4
+#&gt; </span><span style='color: #949494;'># … with 22 more rows</span><span></div><div class='input'>
 <span class='co'># Column types --------------------------------------------------------------</span>
 <span class='co'># By default, vroom guesses the columns types, looking at 1000 rows</span>
 <span class='co'># throughout the dataset.</span>
 <span class='co'># You can specify them explcitly with a compact specification:</span>
-<span class='fu'>vroom</span>(<span class='st'>"x,y\n1,2\n3,4\n"</span>, <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='st'>"dc"</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 2 x 2</span><span>
+<span class='fu'>vroom</span>(<span class='st'>"x,y\n1,2\n3,4\n"</span>, <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='st'>"dc"</span>)</div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 2 x 2</span><span>
 #&gt;       x y    
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span>     1 2    
-#&gt; </span><span style='color: #555555;'>2</span><span>     3 4    </div><div class='input'>
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span>     1 2    
+#&gt; </span><span style='color: #BCBCBC;'>2</span><span>     3 4    </div><div class='input'>
 <span class='co'># Or with a list of column types:</span>
-<span class='fu'>vroom</span>(<span class='st'>"x,y\n1,2\n3,4\n"</span>, <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='cols.html'>col_double</a></span>(), <span class='fu'><a href='cols.html'>col_character</a></span>()))</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 2 x 2</span><span>
+<span class='fu'>vroom</span>(<span class='st'>"x,y\n1,2\n3,4\n"</span>, <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='cols.html'>col_double</a></span>(), <span class='fu'><a href='cols.html'>col_character</a></span>()))</div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 2 x 2</span><span>
 #&gt;       x y    
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span>     1 2    
-#&gt; </span><span style='color: #555555;'>2</span><span>     3 4    </div><div class='input'>
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span>     1 2    
+#&gt; </span><span style='color: #BCBCBC;'>2</span><span>     3 4    </div><div class='input'>
 <span class='co'># File types ----------------------------------------------------------------</span>
 <span class='co'># csv</span>
 <span class='fu'>vroom</span>(<span class='st'>"a,b\n1.0,2.0\n"</span>, <span class='kw'>delim</span> <span class='kw'>=</span> <span class='st'>","</span>)</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 1</span>
@@ -473,32 +472,32 @@ name repair functions.</p></td>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [2]: a, b</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1 x 2</span><span>
+#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 1 x 2</span><span>
 #&gt;       a     b
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span>     1     2</div><div class='input'><span class='co'># tsv</span>
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span>     1     2</div><div class='input'><span class='co'># tsv</span>
 <span class='fu'>vroom</span>(<span class='st'>"a\tb\n1.0\t2.0\n"</span>)</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 1</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> "\t"</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [2]: a, b</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1 x 2</span><span>
+#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 1 x 2</span><span>
 #&gt;       a     b
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span>     1     2</div><div class='input'><span class='co'># Other delimiters</span>
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span>     1     2</div><div class='input'><span class='co'># Other delimiters</span>
 <span class='fu'>vroom</span>(<span class='st'>"a|b\n1.0|2.0\n"</span>, <span class='kw'>delim</span> <span class='kw'>=</span> <span class='st'>"|"</span>)</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 1</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> "|"</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [2]: a, b</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1 x 2</span><span>
+#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 1 x 2</span><span>
 #&gt;       a     b
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span>     1     2</div></span></pre>
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span>     1     2</div></span></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
