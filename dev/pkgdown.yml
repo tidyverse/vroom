@@ -1,9 +1,19 @@
 pandoc: 2.7.3
 pkgdown: 1.4.1.9000
-pkgdown_sha: 732fb5b9ccc0ef87a73dfd0772ae661a4039b2a8
+pkgdown_sha: f58a2bf5afee11aeddc7f27437cbe833a2f4686d
 articles:
   benchmarks: benchmarks.html
   vroom: vroom.html
+last_built:
+  sec: 0.0
+  min: 51
+  hour: 13
+  mday: 12
+  mon: 2
+  year: 120
+  wday: 4
+  yday: 71
+  isdst: 0
 urls:
   reference: https://vroom.r-lib.org/reference
   article: https://vroom.r-lib.org/articles
