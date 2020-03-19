@@ -2,6 +2,7 @@
 
 #include <fcntl.h>
 #include <fstream>
+#include <iostream>
 #include <mio/shared_mmap.hpp>
 #include <stdlib.h>
 #include <string>
@@ -25,19 +26,21 @@ public:
     std::error_code error;
 
     size_t len, offset;
-    // if (size_ > 0) {
-    // sink_.sync(error);
-    // if (error) {
-    // throw std::runtime_error(error.message());
-    //}
-    // sink_.unmap();
-    // offset = size_;
-    //} else {
-    offset = 0;
-    //}
-    len = (size - size_) * sizeof(size_t);
+    if (size_ > 0) {
+      sink_.sync(error);
+      if (error) {
+        throw std::runtime_error(error.message());
+      }
+      sink_.unmap();
+    }
 
-    std::FILE* f1 = std::fopen(filename_.c_str(), "wb");
+    offset = 0;
+    len = size * sizeof(size_t);
+
+    // std::cerr << "reserve(" << size << "): offset: " << offset
+    //<< " len: " << len << '\n';
+
+    std::FILE* f1 = std::fopen(filename_.c_str(), "ab");
     fallocate(fileno(f1), offset, len);
     std::fclose(f1);
 
@@ -57,7 +60,6 @@ public:
           (char*)&value + sizeof(size_t),
           sink_.data() + (pos_++ * sizeof(size_t)));
       // std::error_code error;
-      // sink_.sync(error);
     } else {
       reserve(size_ * 1.1);
       push_back(value);
