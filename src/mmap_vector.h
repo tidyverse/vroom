@@ -26,6 +26,11 @@ public:
     std::error_code error;
 
     size_t len, offset;
+
+    if (size < size_) {
+      return;
+    }
+
     if (size_ > 0) {
       sink_.sync(error);
       if (error) {
