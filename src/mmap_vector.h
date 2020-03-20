@@ -37,20 +37,20 @@ public:
         throw std::runtime_error(error.message());
       }
       sink_.unmap();
+      close(fd_);
     }
 
     offset = 0;
     len = size * sizeof(size_t);
 
-    // std::cerr << "reserve(" << size << "): offset: " << offset
-    //<< " len: " << len << '\n';
+    fd_ = open(filename_.c_str(), O_RDWR);
+    if (fd_ < 0) {
+      throw std::runtime_error(
+          std::string("open() failed: ") + strerror(errno));
+    }
+    fallocate(fd_, offset, len);
 
-    std::FILE* f1 = std::fopen(filename_.c_str(), "ab");
-    fallocate(fileno(f1), offset, len);
-    std::fclose(f1);
-
-    sink_ =
-        mio::make_mmap_sink(filename_.c_str(), 0, mio::map_entire_file, error);
+    sink_ = mio::make_mmap_sink(fd_, 0, len, error);
 
     if (error) {
       throw std::runtime_error(error.message());
@@ -86,9 +86,17 @@ public:
     return out;
   }
 
+  ~mmap_vector() {
+    if (fd_ >= 0) {
+      close(fd_);
+      unlink(filename_.c_str());
+    }
+  }
+
 private:
   size_t pos_;
   size_t size_;
+  int fd_;
   mio::mmap_sink sink_;
   std::string filename_;
 };
