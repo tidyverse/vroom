@@ -17,6 +17,8 @@
 #include "r_utils.h"
 #endif
 
+#include "unicode_fopen.h"
+
 using namespace vroom;
 
 delimited_index::delimited_index(
@@ -47,7 +49,7 @@ delimited_index::delimited_index(
       delim_len_(0) {
 
   std::error_code error;
-  mmap_ = mio::make_mmap_source(filename, error);
+  mmap_ = make_mmap_source(filename, error);
 
   if (error) {
     // We cannot actually portably compare error messages due to a bug in

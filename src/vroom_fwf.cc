@@ -4,6 +4,8 @@
 
 #include "LocaleInfo.h"
 
+#include "unicode_fopen.h"
+
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -90,7 +92,7 @@ List whitespace_columns_(
     std::string filename, size_t skip, ptrdiff_t n, std::string comment) {
 
   std::error_code error;
-  auto mmap = mio::make_mmap_source(filename, error);
+  auto mmap = make_mmap_source(filename, error);
   if (error) {
     // We cannot actually portably compare error messages due to a bug in
     // libstdc++ (https://stackoverflow.com/a/54316671/2055486), so just print

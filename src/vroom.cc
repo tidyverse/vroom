@@ -9,6 +9,8 @@
 #include <Rcpp.h>
 #include <algorithm>
 
+#include "unicode_fopen.h"
+
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -78,7 +80,7 @@ SEXP vroom_(
 
 // [[Rcpp::export]]
 bool has_trailing_newline(CharacterVector filename) {
-  std::FILE* f = std::fopen(CHAR(filename[0]), "rb");
+  std::FILE* f = unicode_fopen(CHAR(filename[0]), "rb");
 
   if (!f) {
     return true;

@@ -26,6 +26,8 @@
 #include "spdlog/spdlog.h"
 #endif
 
+#include "unicode_fopen.h"
+
 namespace vroom {
 
 class fixed_width_index
@@ -54,7 +56,7 @@ public:
       : col_starts_(col_starts), col_ends_(col_ends), trim_ws_(trim_ws) {
 
     std::error_code error;
-    mmap_ = mio::make_mmap_source(filename, error);
+    mmap_ = make_mmap_source(filename, error);
 
     if (error) {
       // We cannot actually portably compare error messages due to a bug in

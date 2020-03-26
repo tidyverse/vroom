@@ -8,6 +8,8 @@
 #include "connection.h"
 #include "r_utils.h"
 
+#include "unicode_fopen.h"
+
 typedef enum {
   quote_needed = 1,
   quote_all = 2,
@@ -316,7 +318,7 @@ void vroom_write_(
     strcpy(mode, "ab");
   }
 
-  std::FILE* out = std::fopen(filename.c_str(), mode);
+  std::FILE* out = unicode_fopen(filename.c_str(), mode);
   if (!out) {
     std::string msg("Cannot open file for writing:\n* ");
     msg += '\'' + filename + '\'';

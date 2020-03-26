@@ -13,6 +13,8 @@
 #include "spdlog/spdlog.h"
 #endif
 
+#include "unicode_fopen.h"
+
 using namespace vroom;
 
 delimited_index_connection::delimited_index_connection(
@@ -41,7 +43,7 @@ delimited_index_connection::delimited_index_connection(
   filename_ = Rcpp::as<std::string>(Rcpp::as<Rcpp::Function>(
       Rcpp::Environment::namespace_env("vroom")["vroom_tempfile"])());
 
-  std::FILE* out = std::fopen(filename_.c_str(), "wb");
+  std::FILE* out = unicode_fopen(filename_.c_str(), "wb");
 
   auto con = R_GetConnection(in);
 
@@ -220,7 +222,7 @@ delimited_index_connection::delimited_index_connection(
   }
 
   std::error_code error;
-  mmap_ = mio::make_mmap_source(filename_, error);
+  mmap_ = make_mmap_source(filename_, error);
   if (error) {
     throw Rcpp::exception(error.message().c_str(), false);
   }
