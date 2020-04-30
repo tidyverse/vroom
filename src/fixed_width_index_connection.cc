@@ -132,7 +132,7 @@ fixed_width_index_connection::fixed_width_index_connection(
   }
 
   std::error_code error;
-  mmap_ = make_mmap_source(filename_, error);
+  mmap_ = make_mmap_source(filename_.c_str(), error);
   if (error) {
     throw Rcpp::exception(error.message().c_str(), false);
   }
