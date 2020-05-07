@@ -28,20 +28,8 @@ tab separated value (TSV) files.}
 
 \item{na}{String used for missing values. Defaults to 'NA'.}
 
-\item{col_names}{Either \code{TRUE}, \code{FALSE} or a character vector
-of column names.
-
-If \code{TRUE}, the first row of the input will be used as the column
-names, and will not be included in the data frame. If \code{FALSE}, column
-names will be generated automatically: X1, X2, X3 etc.
-
-If \code{col_names} is a character vector, the values will be used as the
-names of the columns, and the first row of the input will be read into
-the first row of the output data frame.
-
-Missing (\code{NA}) column names will generate a warning, and be filled
-in with dummy names \code{X1}, \code{X2} etc. Duplicate column names
-will generate a warning and be made unique with a numeric prefix.}
+\item{col_names}{Write columns names at the top of the file? Must be either
+\code{TRUE} or \code{FALSE}.}
 
 \item{append}{If \code{FALSE}, will overwrite existing file. If \code{TRUE},
 will append to existing file. In both cases, if file does not exist a new

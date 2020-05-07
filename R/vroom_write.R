@@ -1,7 +1,7 @@
 #' Write a data frame to a delimited file
 #'
-#' @inheritParams vroom
 #' @inheritParams readr::write_tsv
+#' @inheritParams vroom
 #' @param escape The type of escape to use when quotes are in the data.
 #'   - `double` - quotes are escaped by doubling them.
 #'   - `backslash` - quotes are escaped by a preceding backslash.
