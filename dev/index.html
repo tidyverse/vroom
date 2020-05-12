@@ -115,6 +115,7 @@
 <!-- badges: start -->
 
 <p>The fastest delimited reader for R, <strong>1.40 GB/sec/sec</strong>.</p>
+<p><img src="https://github.com/r-lib/vroom/raw/gh-pages/taylor.gif" align="right" width="30%"></p>
 <p>But that’s impossible! How can it be <a href="http://vroom.r-lib.org/articles/benchmarks.html">so fast</a>?</p>
 <p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use. This lazy access is done automatically, so no changes to your R data-manipulation code are needed.</p>
 <p>vroom also uses multiple threads for indexing, materializing non-character columns, and when writing to further improve performance.</p>
@@ -245,7 +246,7 @@
 <span id="cb5-20"><a href="#cb5-20"></a><span class="co">#&gt; 1  2013     1     1      810            810         0     1048</span></span>
 <span id="cb5-21"><a href="#cb5-21"></a><span class="co">#&gt; 2  2013     1     1     1451           1500        -9     1634</span></span>
 <span id="cb5-22"><a href="#cb5-22"></a><span class="co">#&gt; 3  2013     1     1     1452           1455        -3     1637</span></span>
-<span id="cb5-23"><a href="#cb5-23"></a><span class="co">#&gt; # … with 3.368e+05 more rows, and 12 more variables: sched_arr_time &lt;dbl&gt;,</span></span>
+<span id="cb5-23"><a href="#cb5-23"></a><span class="co">#&gt; # … with 336,773 more rows, and 12 more variables: sched_arr_time &lt;dbl&gt;,</span></span>
 <span id="cb5-24"><a href="#cb5-24"></a><span class="co">#&gt; #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;dbl&gt;, tailnum &lt;chr&gt;,</span></span>
 <span id="cb5-25"><a href="#cb5-25"></a><span class="co">#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,</span></span>
 <span id="cb5-26"><a href="#cb5-26"></a><span class="co">#&gt; #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></span></code></pre></div>
