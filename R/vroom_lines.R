@@ -1,4 +1,4 @@
-#' Read lines from a  ile
+#' Read lines from a file
 #'
 #' `vroom_lines()` is similar to `readLines()`, however it reads the lines
 #' lazily like [vroom()], so operations like `length()`, `head()`, `tail()` and `sample()`

@@ -2,7 +2,7 @@
 % Please edit documentation in R/vroom_lines.R
 \name{vroom_lines}
 \alias{vroom_lines}
-\title{Read lines from a  ile}
+\title{Read lines from a file}
 \usage{
 vroom_lines(
   file,
