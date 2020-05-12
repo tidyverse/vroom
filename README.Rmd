@@ -49,17 +49,15 @@ tbl <- tm %>% filter(type == "real", op == "read", reading_package %in% c("data.
 
 The fastest delimited reader for R, **`r filter(tbl, package == "vroom") %>% pull("throughput") %>% paste0("/sec") %>% trimws()`**.
 
+<img src="https://github.com/r-lib/vroom/raw/gh-pages/taylor.gif" align="right" width = "30%"/>
+
 But that's impossible! How can it be [so fast](http://vroom.r-lib.org/articles/benchmarks.html)?
 
-vroom doesn't stop to actually _read_ all of your data, it simply indexes where
-each record is located so it can be read later. The vectors returned use the
-[Altrep framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html) to
-lazily load the data on-demand when it is accessed, so you only pay for what
-you use. This lazy access is done automatically, so no changes to your R
-data-manipulation code are needed.
+vroom doesn't stop to actually _read_ all of your data, it simply indexes where each record is located so it can be read later.
+The vectors returned use the [Altrep framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html) to lazily load the data on-demand when it is accessed, so you only pay for what you use.
+This lazy access is done automatically, so no changes to your R data-manipulation code are needed.
 
-vroom also uses multiple threads for indexing, materializing non-character
-columns, and when writing to further improve performance.
+vroom also uses multiple threads for indexing, materializing non-character columns, and when writing to further improve performance.
 
 ```{r, echo = FALSE}
 knitr::kable(tbl, digits = 2, align = "lrrrr")

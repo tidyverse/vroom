@@ -13,10 +13,13 @@ coverage](https://codecov.io/gh/r-lib/vroom/branch/master/graph/badge.svg)](http
 status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/package=vroom)
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![R build status](https://github.com/r-lib/vroom/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/vroom/actions)
+[![R build
+status](https://github.com/r-lib/vroom/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/vroom/actions)
 <!-- badges: end -->
 
 The fastest delimited reader for R, **1.40 GB/sec/sec**.
+
+<img src="https://github.com/r-lib/vroom/raw/gh-pages/taylor.gif" align="right" width = "30%"/>
 
 But that’s impossible\! How can it be [so
 fast](http://vroom.r-lib.org/articles/benchmarks.html)?
@@ -148,7 +151,7 @@ vroom::vroom(files)
 #> 1  2013     1     1      810            810         0     1048
 #> 2  2013     1     1     1451           1500        -9     1634
 #> 3  2013     1     1     1452           1455        -3     1637
-#> # … with 3.368e+05 more rows, and 12 more variables: sched_arr_time <dbl>,
+#> # … with 336,773 more rows, and 12 more variables: sched_arr_time <dbl>,
 #> #   arr_delay <dbl>, carrier <chr>, flight <dbl>, tailnum <chr>,
 #> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
 #> #   minute <dbl>, time_hour <dttm>
