@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` now writes the column names if given an input with no rows (#213)
+
 * `vroom(na = )` now works when the na value is encoded in non ASCII or UTF-8 locales _and_ the file encoding is not the same as the native encoding (#233).
 
 * `vroom()` no longer truncates the last value in a file if the file contains windows newlines but no final newline (#219).
