@@ -25,8 +25,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.1/css/all.min.css" integrity="sha256-PbSmjxuVAzJ6FPvNYsrXygfGhNJYyZ2GktDbkMBqQZg=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.1/css/v4-shims.min.css" integrity="sha256-A6jcAdwFD48VMjlI3GDxUd+eCQa7/KWy6G9oe/ovaPA=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
@@ -43,7 +43,8 @@
 
 
 <meta property="og:title" content="Changelog" />
-<meta property="og:image" content="http://vroom.r-lib.org/logo.png" />
+<meta property="og:image" content="https://vroom.r-lib.org/logo.png" />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -85,7 +86,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -111,6 +112,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
+    <li>
+      <a href="https://www.tidyverse.org/blog/2020/01/vroom-1-1-0/">Version 1.1.0</a>
+    </li>
     <li>
       <a href="https://www.tidyverse.org/articles/2019/05/vroom-1-0-0/">Version 1.0.0</a>
     </li>
@@ -145,6 +149,20 @@
       <small>Source: <a href='https://github.com/r-lib/vroom/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="vroom-121" class="section level1">
+<h1 class="page-header">
+<a href="#vroom-121" class="anchor"></a>vroom 1.2.1<small> Unreleased </small>
+</h1>
+<ul>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now writes the column names if given an input with no rows (<a href='https://github.com/r-lib/vroom/issues/213'>#213</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> columns now support indexing with NA values (<a href='https://github.com/r-lib/vroom/issues/201'>#201</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer truncates the last value in a file if the file contains windows newlines but no final newline (<a href='https://github.com/r-lib/vroom/issues/219'>#219</a>).</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now works when the <code>na</code> argument is encoded in non ASCII or UTF-8 locales <em>and</em> the file encoding is not the same as the native encoding (<a href='https://github.com/r-lib/vroom/issues/233'>#233</a>).</p></li>
+<li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> now verifies that the positions are valid, namely that the begin value is always less than the previous end (<a href='https://github.com/r-lib/vroom/issues/217'>#217</a>).</p></li>
+<li><p><code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> gains a <code>locale</code> argument so you can control the encoding of the file (<a href='https://github.com/r-lib/vroom/issues/218'>#218</a>)</p></li>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now supports the <code>append</code> argument with R connections (<a href='https://github.com/r-lib/vroom/issues/232'>#232</a>)</p></li>
+</ul>
+</div>
     <div id="vroom-120" class="section level1">
 <h1 class="page-header">
 <a href="#vroom-120" class="anchor"></a>vroom 1.2.0<small> 2020-01-13 </small>
@@ -263,10 +281,11 @@
 </div>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#vroom-121">1.2.1</a></li>
         <li><a href="#vroom-120">1.2.0</a></li>
         <li><a href="#vroom-102">1.0.2</a></li>
         <li><a href="#vroom-101">1.0.1</a></li>

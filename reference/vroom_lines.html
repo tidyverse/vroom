@@ -25,8 +25,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.1/css/all.min.css" integrity="sha256-PbSmjxuVAzJ6FPvNYsrXygfGhNJYyZ2GktDbkMBqQZg=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.1/css/v4-shims.min.css" integrity="sha256-A6jcAdwFD48VMjlI3GDxUd+eCQa7/KWy6G9oe/ovaPA=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
@@ -46,7 +46,8 @@
 <meta property="og:description" content="vroom_lines() is similar to readLines(), however it reads the lines
 lazily like vroom(), so operations like length(), head(), tail() and sample()
 can be done much more efficiently without reading all the data into R." />
-<meta property="og:image" content="http://vroom.r-lib.org/logo.png" />
+<meta property="og:image" content="https://vroom.r-lib.org/logo.png" />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -88,7 +89,7 @@ can be done much more efficiently without reading all the data into R." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -114,6 +115,9 @@ can be done much more efficiently without reading all the data into R." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
+    <li>
+      <a href="https://www.tidyverse.org/blog/2020/01/vroom-1-1-0/">Version 1.1.0</a>
+    </li>
     <li>
       <a href="https://www.tidyverse.org/articles/2019/05/vroom-1-0-0/">Version 1.0.0</a>
     </li>
@@ -159,6 +163,7 @@ can be done much more efficiently without reading all the data into R.</p>
   <span class='no'>file</span>,
   <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>Inf</span>,
   <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>locale</span> <span class='kw'>=</span> <span class='fu'><a href='locale.html'>default_locale</a></span>(),
   <span class='kw'>altrep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>altrep_opts</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Deprecated.html'>deprecated</a></span>(),
   <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(),
@@ -179,6 +184,14 @@ can be done much more efficiently without reading all the data into R.</p>
     <tr>
       <th>skip</th>
       <td><p>Number of lines to skip before reading data.</p></td>
+    </tr>
+    <tr>
+      <th>locale</th>
+      <td><p>The locale controls defaults that vary from place to place.
+The default locale is US-centric (like R), but you can use
+<code><a href='https://readr.tidyverse.org/reference/locale.html'>locale()</a></code> to create your own locale that controls things like
+the default time zone, encoding, decimal mark, big mark, and day/month
+names.</p></td>
     </tr>
     <tr>
       <th>altrep</th>
@@ -215,7 +228,7 @@ setting option <code>readr.show_progress</code> to <code>FALSE</code>.</p></td>
 #&gt; [2] "Volvo 142E,21.4,4,121,109,4.11,2.78,18.6,1,1,4,2" </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='no'>lines</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; [1] "Merc 230,22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2"  
 #&gt; [2] "Maserati Bora,15,8,301,335,3.54,3.57,14.6,0,1,5,8"</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
