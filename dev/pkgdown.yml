@@ -4,7 +4,7 @@ pkgdown_sha: c181e5c9ac09b28974a97f5e32deddc36690fcf2
 articles:
   benchmarks: benchmarks.html
   vroom: vroom.html
-last_built: 2020-04-30T00:59Z
+last_built: 2020-05-12T14:17Z
 urls:
   reference: https://vroom.r-lib.org/reference
   article: https://vroom.r-lib.org/articles

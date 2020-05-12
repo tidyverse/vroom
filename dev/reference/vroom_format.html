@@ -190,17 +190,8 @@ tab separated value (TSV) files.</p></td>
     </tr>
     <tr>
       <th>col_names</th>
-      <td><p>Either <code>TRUE</code>, <code>FALSE</code> or a character vector
-of column names.</p>
-<p>If <code>TRUE</code>, the first row of the input will be used as the column
-names, and will not be included in the data frame. If <code>FALSE</code>, column
-names will be generated automatically: X1, X2, X3 etc.</p>
-<p>If <code>col_names</code> is a character vector, the values will be used as the
-names of the columns, and the first row of the input will be read into
-the first row of the output data frame.</p>
-<p>Missing (<code>NA</code>) column names will generate a warning, and be filled
-in with dummy names <code>X1</code>, <code>X2</code> etc. Duplicate column names
-will generate a warning and be made unique with a numeric prefix.</p></td>
+      <td><p>Write columns names at the top of the file? Must be either
+<code>TRUE</code> or <code>FALSE</code>.</p></td>
     </tr>
     <tr>
       <th>escape</th>

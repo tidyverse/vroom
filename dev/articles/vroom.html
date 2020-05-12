@@ -345,10 +345,10 @@
 <span class="co">#&gt; 3 Datsun 710        4     4</span>
 <span class="co">#&gt; # … with 29 more rows</span></pre></body></html></div>
 <ul>
-<li>Using the selection helpers such as <code><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">starts_with()</a></code> and <code><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">ends_with()</a></code>
+<li>Using the selection helpers such as <code><a href="https://tidyselect.r-lib.org/reference/starts_with.html">starts_with()</a></code> and <code><a href="https://tidyselect.r-lib.org/reference/starts_with.html">ends_with()</a></code>
 </li>
 </ul>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="no">file</span>, <span class="kw">col_select</span> <span class="kw">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">starts_with</a></span>(<span class="st">"d"</span>))
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="no">file</span>, <span class="kw">col_select</span> <span class="kw">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">starts_with</a></span>(<span class="st">"d"</span>))
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 2</span>
 <span class="co">#&gt; Delimiter: ","</span>
@@ -366,7 +366,7 @@
 <ul>
 <li>You can also rename columns</li>
 </ul>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="no">file</span>, <span class="kw">col_select</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">car</span> <span class="kw">=</span> <span class="no">model</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/select_helpers.html">everything</a></span>()))
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="no">file</span>, <span class="kw">col_select</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">car</span> <span class="kw">=</span> <span class="no">model</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html">everything</a></span>()))
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 12</span>
 <span class="co">#&gt; Delimiter: ","</span>
