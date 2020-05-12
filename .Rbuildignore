@@ -28,3 +28,6 @@
 ^tools$
 ^revdep$
 ^\.github$
+^src/\.ycm_extra_conf.py$
+^\.clangd$
+^compile_commands.json$

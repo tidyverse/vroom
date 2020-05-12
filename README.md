@@ -140,21 +140,20 @@ vroom::vroom(files)
 #> Columns: 19
 #> Delimiter: "\t"
 #> chr  [ 4]: carrier, tailnum, origin, dest
-#> dbl  [14]: year, month, day, dep_time, sched_dep_time, dep_delay, arr_time, sched_arr_...
+#> dbl  [14]: year, month, day, dep_time, sched_dep_time, dep_delay, arr_time, sched_arr_time...
 #> dttm [ 1]: time_hour
 #> 
 #> Use `spec()` to retrieve the guessed column specification
 #> Pass a specification to the `col_types` argument to quiet this message
 #> # A tibble: 336,776 x 19
-#>    year month   day dep_time sched_dep_time dep_delay arr_time
-#>   <dbl> <dbl> <dbl>    <dbl>          <dbl>     <dbl>    <dbl>
-#> 1  2013     1     1      810            810         0     1048
-#> 2  2013     1     1     1451           1500        -9     1634
-#> 3  2013     1     1     1452           1455        -3     1637
-#> # … with 336,773 more rows, and 12 more variables: sched_arr_time <dbl>,
-#> #   arr_delay <dbl>, carrier <chr>, flight <dbl>, tailnum <chr>,
-#> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
-#> #   minute <dbl>, time_hour <dttm>
+#>    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+#>   <dbl> <dbl> <dbl>    <dbl>          <dbl>     <dbl>    <dbl>          <dbl>
+#> 1  2013     1     1      810            810         0     1048           1037
+#> 2  2013     1     1     1451           1500        -9     1634           1636
+#> 3  2013     1     1     1452           1455        -3     1637           1639
+#> # … with 336,773 more rows, and 11 more variables: arr_delay <dbl>,
+#> #   carrier <chr>, flight <dbl>, tailnum <chr>, origin <chr>, dest <chr>,
+#> #   air_time <dbl>, distance <dbl>, hour <dbl>, minute <dbl>, time_hour <dttm>
 ```
 
 ## Learning more
@@ -239,10 +238,11 @@ issue, so so it is recommended you use at least that version.
     and maintaining the [Altrep
     framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html)
   - [Romain François](https://twitter.com/romain_francois), whose
-    [Altrepisode](https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
+    [Altrepisode](https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
     package and [related
-    blog-posts](https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
+    blog-posts](https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
     were a great guide for creating new Altrep objects in C++.
   - [Matt Dowle](https://twitter.com/mattdowle) and the rest of the
     [Rdatatable](https://github.com/Rdatatable) team,
-    `data.table::fread()` is blazing fast and great motivation\!
+    `data.table::fread()` is blazing fast and great motivation to see
+    how fast we could goo faster\!

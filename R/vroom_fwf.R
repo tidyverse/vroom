@@ -158,7 +158,7 @@ fwf_col_names <- function(nm, n) {
 }
 
 verify_fwf_positions <- function(col_positions) {
-  is_greater <- na.omit(col_positions$begin > col_positions$end)
+  is_greater <- stats::na.omit(col_positions$begin > col_positions$end)
   if (any(is_greater)) {
     bad <- which(is_greater)
     stop("`col_positions` must have begin less than end.\n* Invalid values at position(s): ", paste0(collapse = ", ", bad), call. = FALSE)
