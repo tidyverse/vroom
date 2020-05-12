@@ -1,18 +1,18 @@
 # vroom (development version)
 
-* `vroom_write()` now supports the `append` argument with R connections (#232)
-
 * `vroom()` now writes the column names if given an input with no rows (#213)
 
-* `vroom(na = )` now works when the na value is encoded in non ASCII or UTF-8 locales _and_ the file encoding is not the same as the native encoding (#233).
+* `vroom()` columns now support indexing with NA values (#201)
 
 * `vroom()` no longer truncates the last value in a file if the file contains windows newlines but no final newline (#219).
+
+* `vroom()` now works when the `na` argument is encoded in non ASCII or UTF-8 locales _and_ the file encoding is not the same as the native encoding (#233).
 
 * `vroom_fwf()` now verifies that the positions are valid, namely that the begin value is always less than the previous end (#217).
 
 * `vroom_lines()` gains a `locale` argument so you can control the encoding of the file (#218)
 
-* `vroom()` columns now support indexing with NA values (#201)
+* `vroom_write()` now supports the `append` argument with R connections (#232)
 
 # vroom 1.2.0
 
