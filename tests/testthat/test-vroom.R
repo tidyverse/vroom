@@ -441,3 +441,12 @@ test_that("vroom supports NA and NA_integer_ indices", {
   expect_equal(data[NA, 1, drop = TRUE], rep(NA_character_, nrow(data)))
   expect_equal(data[NA_integer_, 1, drop = TRUE], NA_character_)
 })
+
+test_that("vroom works with windows newlines and files without a trailing newline (#219)", {
+  f <- tempfile()
+  on.exit(unlink(f))
+  writeBin(charToRaw("X,Y\r\n1,12/08/2016\r\n2,05/01/2018"), f)
+
+  res <- vroom(f, col_types = cols(Y = "c"))
+  expect_equal(res$Y[[2]], "05/01/2018")
+})

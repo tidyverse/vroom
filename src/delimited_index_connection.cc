@@ -234,7 +234,11 @@ delimited_index_connection::delimited_index_connection(
       idx_[0].push_back(file_size);
       ++columns_;
     } else {
-      idx_[1].push_back(file_size);
+      if (windows_newlines_) {
+        idx_[1].push_back(file_size + 1);
+      } else {
+        idx_[1].push_back(file_size);
+      }
     }
   }
 
