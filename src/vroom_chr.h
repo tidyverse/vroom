@@ -65,7 +65,7 @@ public:
     auto& inf = Info(vec);
 
     // Look for NAs
-    for (const auto& v : *inf.na) {
+    for (SEXP v : *inf.na) {
       // We can just compare the addresses directly because they should now
       // both be in the global string cache.
       if (v == val) {

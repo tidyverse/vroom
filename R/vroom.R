@@ -135,6 +135,8 @@ vroom <- function(
 
   col_types <- as.col_spec(col_types)
 
+  na <- enc2utf8(na)
+
   out <- vroom_(file, delim = delim %||% col_types$delim, col_names = col_names,
     col_types = col_types, id = id, skip = skip, col_select = col_select,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
