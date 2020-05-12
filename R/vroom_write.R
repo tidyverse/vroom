@@ -61,7 +61,7 @@ vroom_write <- function(x, path, delim = '\t', na = "NA", col_names = !append,
   if (inherits(path, "connection")) {
     vroom_write_connection_(xx, path, delim, na_str = na, col_names = col_names,
       options = opts, num_threads = num_threads, progress = progress, buf_lines = buf_lines,
-      is_stdout = path == stdout())
+      is_stdout = path == stdout(), append = append)
   } else {
     vroom_write_(xx, path, delim, na_str = na, col_names = col_names,
       append = append, options = opts,

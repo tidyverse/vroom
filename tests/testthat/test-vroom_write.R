@@ -197,3 +197,14 @@ test_that("vroom_write equals the same thing as vroom_format", {
 
   expect_equal(readChar(tf, file.info(tf)$size), vroom_format(df))
 })
+
+test_that("vroom_write(append = TRUE) works with R connections", {
+  df <- data.frame(x = 1, y = 2)
+  f <- tempfile(, fileext = ".tsv.gz")
+  on.exit(unlink(f))
+
+  vroom::vroom_write(df, f)
+  vroom::vroom_write(df, f, append = TRUE)
+
+  expect_equal(vroom_lines(f), c("x\ty", "1\t2", "1\t2"))
+})

@@ -407,7 +407,13 @@ void vroom_write_connection_(
     size_t num_threads,
     bool progress,
     size_t buf_lines,
-    bool is_stdout) {
+    bool is_stdout,
+    bool append) {
+
+  char mode[3] = "wb";
+  if (append) {
+    strcpy(mode, "ab");
+  }
 
   size_t begin = 0;
   size_t num_rows = Rf_xlength(input[0]);
@@ -416,7 +422,7 @@ void vroom_write_connection_(
 
   bool should_open = !is_open(con);
   if (should_open) {
-    Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(con, "wb");
+    Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(con, mode);
   }
 
   bool should_close = should_open;

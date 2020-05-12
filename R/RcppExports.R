@@ -45,8 +45,8 @@ vroom_write_ <- function(input, filename, delim, na_str, col_names, append, opti
     invisible(.Call(`_vroom_vroom_write_`, input, filename, delim, na_str, col_names, append, options, num_threads, progress, buf_lines))
 }
 
-vroom_write_connection_ <- function(input, con, delim, na_str, col_names, options, num_threads, progress, buf_lines, is_stdout) {
-    invisible(.Call(`_vroom_vroom_write_connection_`, input, con, delim, na_str, col_names, options, num_threads, progress, buf_lines, is_stdout))
+vroom_write_connection_ <- function(input, con, delim, na_str, col_names, options, num_threads, progress, buf_lines, is_stdout, append) {
+    invisible(.Call(`_vroom_vroom_write_connection_`, input, con, delim, na_str, col_names, options, num_threads, progress, buf_lines, is_stdout, append))
 }
 
 vroom_format_ <- function(input, delim, na_str, col_names, options) {

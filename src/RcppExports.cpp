@@ -180,8 +180,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // vroom_write_connection_
-void vroom_write_connection_(Rcpp::List input, Rcpp::RObject con, const char delim, const char* na_str, bool col_names, size_t options, size_t num_threads, bool progress, size_t buf_lines, bool is_stdout);
-RcppExport SEXP _vroom_vroom_write_connection_(SEXP inputSEXP, SEXP conSEXP, SEXP delimSEXP, SEXP na_strSEXP, SEXP col_namesSEXP, SEXP optionsSEXP, SEXP num_threadsSEXP, SEXP progressSEXP, SEXP buf_linesSEXP, SEXP is_stdoutSEXP) {
+void vroom_write_connection_(Rcpp::List input, Rcpp::RObject con, const char delim, const char* na_str, bool col_names, size_t options, size_t num_threads, bool progress, size_t buf_lines, bool is_stdout, bool append);
+RcppExport SEXP _vroom_vroom_write_connection_(SEXP inputSEXP, SEXP conSEXP, SEXP delimSEXP, SEXP na_strSEXP, SEXP col_namesSEXP, SEXP optionsSEXP, SEXP num_threadsSEXP, SEXP progressSEXP, SEXP buf_linesSEXP, SEXP is_stdoutSEXP, SEXP appendSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::List >::type input(inputSEXP);
@@ -194,7 +194,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
     Rcpp::traits::input_parameter< size_t >::type buf_lines(buf_linesSEXP);
     Rcpp::traits::input_parameter< bool >::type is_stdout(is_stdoutSEXP);
-    vroom_write_connection_(input, con, delim, na_str, col_names, options, num_threads, progress, buf_lines, is_stdout);
+    Rcpp::traits::input_parameter< bool >::type append(appendSEXP);
+    vroom_write_connection_(input, con, delim, na_str, col_names, options, num_threads, progress, buf_lines, is_stdout, append);
     return R_NilValue;
 END_RCPP
 }
@@ -226,7 +227,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_vroom_fwf_", (DL_FUNC) &_vroom_vroom_fwf_, 17},
     {"_vroom_whitespace_columns_", (DL_FUNC) &_vroom_whitespace_columns_, 4},
     {"_vroom_vroom_write_", (DL_FUNC) &_vroom_vroom_write_, 10},
-    {"_vroom_vroom_write_connection_", (DL_FUNC) &_vroom_vroom_write_connection_, 10},
+    {"_vroom_vroom_write_connection_", (DL_FUNC) &_vroom_vroom_write_connection_, 11},
     {"_vroom_vroom_format_", (DL_FUNC) &_vroom_vroom_format_, 5},
     {NULL, NULL, 0}
 };
