@@ -1,3 +1,5 @@
+# vroom (development version)
+
 # vroom 1.2.1
 
 * `vroom()` now writes the column names if given an input with no rows (#213)
