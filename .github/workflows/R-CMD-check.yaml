@@ -91,9 +91,3 @@ jobs:
         if: matrix.config.os == 'macOS-latest' && matrix.config.r == '3.6'
         run: covr::codecov()
         shell: Rscript {0}
-
-  rchk:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - uses: r-lib/actions/run-rchk@master
