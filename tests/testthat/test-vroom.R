@@ -442,6 +442,15 @@ test_that("vroom supports NA and NA_integer_ indices", {
   expect_equal(data[NA_integer_, 1, drop = TRUE], NA_character_)
 })
 
+test_that("vroom supports NA and NA_integer_ indices with factors and datetimes", {
+  data <- vroom("x\ty\nfoo\t2020-01-01 12:00:01", col_types = "fT")
+
+  expect_equal(data[NA, 1, drop = TRUE], factor(NA, levels = "foo"))
+  expect_equal(data[NA, 2, drop = TRUE], .POSIXct(NA_real_, tz = "UTC"))
+  expect_equal(data[NA_integer_, 1, drop = TRUE], factor(NA, levels = "foo"))
+  expect_equal(data[NA_integer_, 2, drop = TRUE], .POSIXct(NA_real_, tz = "UTC"))
+})
+
 test_that("vroom works with windows newlines and files without a trailing newline (#219)", {
   f <- tempfile()
   on.exit(unlink(f))

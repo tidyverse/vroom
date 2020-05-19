@@ -179,9 +179,15 @@ public:
 
     auto idx = std::make_shared<std::vector<size_t> >();
 
-    std::transform(in.begin(), in.end(), std::back_inserter(*idx), [](int i) {
-      return i - 1;
-    });
+    idx->reserve(in.size());
+
+    for (const auto& i : in) {
+      // If there are any NA indices fall back to the default implementation.
+      if (i == NA_INTEGER) {
+        return nullptr;
+      }
+      idx->push_back(i - 1);
+    }
 
     auto inf = Info(x);
 
