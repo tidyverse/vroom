@@ -2,8 +2,6 @@
 
 #include "altrep.h"
 
-#include <Rcpp.h>
-
 #ifdef HAS_ALTREP
 
 class vroom_rle {
@@ -131,6 +129,5 @@ public:
 
 #endif
 
-// Called the package is loaded (needs Rcpp 0.12.18.3)
-[[cpp11::init]]
-void init_vroom_rle(DllInfo* dll);
+// Called the package is loaded
+[[cpp11::init]] void init_vroom_rle(DllInfo* dll);
