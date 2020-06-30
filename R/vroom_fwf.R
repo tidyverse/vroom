@@ -56,7 +56,7 @@ vroom_fwf <- function(file,
 
   col_types <- as.col_spec(col_types)
 
-  out <- vroom_fwf_(file, col_positions$begin, col_positions$end,
+  out <- vroom_fwf_(file, as.integer(col_positions$begin), as.integer(col_positions$end),
     trim_ws = trim_ws, col_names = col_positions$col_names,
     col_types = col_types, col_select = col_select,
     id = id, na = na, guess_max = guess_max, skip = skip, comment = comment,

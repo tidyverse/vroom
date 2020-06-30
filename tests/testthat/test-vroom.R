@@ -361,7 +361,7 @@ test_that("guess_type works with long strings (#74)", {
 })
 
 test_that("vroom errors if unnamed column types do not match the number of columns", {
-  expect_error(vroom("a,b\n1,2\n", col_types = "i"), "must have the same length", class = "Rcpp::eval_error")
+  expect_error(vroom("a,b\n1,2\n", col_types = "i"), "must have the same length")
 })
 
 test_that("column names are properly encoded", {
@@ -391,8 +391,8 @@ test_that("vroom can read files with no trailing newline", {
 
 test_that("Missing files error with a nice error message", {
   f <- tempfile()
-  expect_error(vroom(f), "does not exist", class = "Rcpp::exception")
-  expect_error(vroom("foo"), "does not exist in current working directory", class = "Rcpp::exception")
+  expect_error(vroom(f), "does not exist")
+  expect_error(vroom("foo"), "does not exist in current working directory")
 })
 
 test_that("Can return the spec object", {

@@ -6,7 +6,7 @@ test_that("vroom errors if the file does not exist", {
 
   tf <- tempfile()
 
-  expect_error(vroom(tf), "does not exist", class = "Rcpp::exception")
+  expect_error(vroom(tf), "does not exist")
 })
 
 test_that("vroom works with compressed files", {
@@ -34,7 +34,7 @@ test_that("vroom errors via https on non-gz file", {
   skip_on_cran()
 
   url <- "https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv.bz2"
-  expect_error(vroom(url), "Reading from remote `bz2` compressed files is not supported", class = "Rcpp::exception")
+  expect_error(vroom(url), "Reading from remote `bz2` compressed files is not supported")
 })
 
 test_that("informative error message when writing to zip file", {
