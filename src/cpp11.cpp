@@ -42,14 +42,14 @@ extern "C" SEXP _vroom_guess_type_(SEXP input, SEXP na, SEXP locale, SEXP guess_
   END_CPP11
 }
 // vroom_fwf.cc
-List vroom_fwf_(cpp11::list inputs, std::vector<int> col_starts, std::vector<int> col_ends, bool trim_ws, RObject col_names, RObject col_types, RObject col_select, size_t skip, const char comment, ptrdiff_t n_max, SEXP id, CharacterVector na, List locale, ptrdiff_t guess_max, size_t num_threads, size_t altrep, bool progress);
+cpp11::list vroom_fwf_(cpp11::list inputs, std::vector<int> col_starts, std::vector<int> col_ends, bool trim_ws, cpp11::sexp col_names, cpp11::sexp col_types, cpp11::sexp col_select, size_t skip, const char comment, ptrdiff_t n_max, SEXP id, cpp11::strings na, cpp11::list locale, ptrdiff_t guess_max, size_t num_threads, size_t altrep, bool progress);
 extern "C" SEXP _vroom_vroom_fwf_(SEXP inputs, SEXP col_starts, SEXP col_ends, SEXP trim_ws, SEXP col_names, SEXP col_types, SEXP col_select, SEXP skip, SEXP comment, SEXP n_max, SEXP id, SEXP na, SEXP locale, SEXP guess_max, SEXP num_threads, SEXP altrep, SEXP progress) {
   BEGIN_CPP11
-    return cpp11::as_sexp(vroom_fwf_(cpp11::unmove(cpp11::as_cpp<cpp11::list>(inputs)), cpp11::unmove(cpp11::as_cpp<std::vector<int>>(col_starts)), cpp11::unmove(cpp11::as_cpp<std::vector<int>>(col_ends)), cpp11::unmove(cpp11::as_cpp<bool>(trim_ws)), cpp11::unmove(cpp11::as_cpp<RObject>(col_names)), cpp11::unmove(cpp11::as_cpp<RObject>(col_types)), cpp11::unmove(cpp11::as_cpp<RObject>(col_select)), cpp11::unmove(cpp11::as_cpp<size_t>(skip)), cpp11::unmove(cpp11::as_cpp<const char>(comment)), cpp11::unmove(cpp11::as_cpp<ptrdiff_t>(n_max)), cpp11::unmove(cpp11::as_cpp<SEXP>(id)), cpp11::unmove(cpp11::as_cpp<CharacterVector>(na)), cpp11::unmove(cpp11::as_cpp<List>(locale)), cpp11::unmove(cpp11::as_cpp<ptrdiff_t>(guess_max)), cpp11::unmove(cpp11::as_cpp<size_t>(num_threads)), cpp11::unmove(cpp11::as_cpp<size_t>(altrep)), cpp11::unmove(cpp11::as_cpp<bool>(progress))));
+    return cpp11::as_sexp(vroom_fwf_(cpp11::unmove(cpp11::as_cpp<cpp11::list>(inputs)), cpp11::unmove(cpp11::as_cpp<std::vector<int>>(col_starts)), cpp11::unmove(cpp11::as_cpp<std::vector<int>>(col_ends)), cpp11::unmove(cpp11::as_cpp<bool>(trim_ws)), cpp11::unmove(cpp11::as_cpp<cpp11::sexp>(col_names)), cpp11::unmove(cpp11::as_cpp<cpp11::sexp>(col_types)), cpp11::unmove(cpp11::as_cpp<cpp11::sexp>(col_select)), cpp11::unmove(cpp11::as_cpp<size_t>(skip)), cpp11::unmove(cpp11::as_cpp<const char>(comment)), cpp11::unmove(cpp11::as_cpp<ptrdiff_t>(n_max)), cpp11::unmove(cpp11::as_cpp<SEXP>(id)), cpp11::unmove(cpp11::as_cpp<cpp11::strings>(na)), cpp11::unmove(cpp11::as_cpp<cpp11::list>(locale)), cpp11::unmove(cpp11::as_cpp<ptrdiff_t>(guess_max)), cpp11::unmove(cpp11::as_cpp<size_t>(num_threads)), cpp11::unmove(cpp11::as_cpp<size_t>(altrep)), cpp11::unmove(cpp11::as_cpp<bool>(progress))));
   END_CPP11
 }
 // vroom_fwf.cc
-List whitespace_columns_(std::string filename, size_t skip, ptrdiff_t n, std::string comment);
+cpp11::list whitespace_columns_(std::string filename, size_t skip, ptrdiff_t n, std::string comment);
 extern "C" SEXP _vroom_whitespace_columns_(SEXP filename, SEXP skip, SEXP n, SEXP comment) {
   BEGIN_CPP11
     return cpp11::as_sexp(whitespace_columns_(cpp11::unmove(cpp11::as_cpp<std::string>(filename)), cpp11::unmove(cpp11::as_cpp<size_t>(skip)), cpp11::unmove(cpp11::as_cpp<ptrdiff_t>(n)), cpp11::unmove(cpp11::as_cpp<std::string>(comment))));
