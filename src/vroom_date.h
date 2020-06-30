@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cpp11/doubles.hpp>
+
 #include "vroom_dttm.h"
 
 using namespace vroom;
@@ -7,7 +9,7 @@ using namespace vroom;
 double parse_date(
     const string& str, DateTimeParser& parser, const std::string& format);
 
-Rcpp::NumericVector read_date(vroom_vec_info* info);
+cpp11::doubles read_date(vroom_vec_info* info);
 
 #if R_VERSION >= R_Version(3, 5, 0)
 /* no support for altrep before 3.5 */
@@ -27,9 +29,9 @@ public:
     SEXP out = PROTECT(R_MakeExternalPtr(dttm_info, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(out, vroom_dttm::Finalize, FALSE);
 
-    Rcpp::RObject res = R_new_altrep(class_t, out, R_NilValue);
+    cpp11::sexp res = R_new_altrep(class_t, out, R_NilValue);
 
-    res.attr("class") = Rcpp::CharacterVector::create("Date");
+    res.attr("class") = {"Date"};
 
     UNPROTECT(1);
 
@@ -107,6 +109,5 @@ public:
 };
 #endif
 
-// Called the package is loaded (needs Rcpp 0.12.18.3)
-[[cpp11::init]]
-void init_vroom_date(DllInfo* dll);
+// Called the package is loaded
+[[cpp11::init]] void init_vroom_date(DllInfo* dll);

@@ -16,15 +16,15 @@ double parse_date(
   return NA_REAL;
 }
 
-Rcpp::NumericVector read_date(vroom_vec_info* info) {
+cpp11::doubles read_date(vroom_vec_info* info) {
   R_xlen_t n = info->column->size();
 
-  Rcpp::NumericVector out(n);
+  cpp11::writable::doubles out(n);
 
   parallel_for(
       n,
       [&](size_t start, size_t end, size_t id) {
-        auto i = start;
+        R_xlen_t i = start;
         DateTimeParser parser(info->locale.get());
         auto col = info->column->slice(start, end);
         for (const auto& str : *col) {
