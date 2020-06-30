@@ -8,11 +8,9 @@
 #include "vroom_lgl.h"
 #include "vroom_num.h"
 #include "vroom_time.h"
+#include <cpp11/sexp.hpp>
+#include <sstream>
 #include <thread>
-
-#include <Rcpp.h>
-
-using namespace Rcpp;
 
 [[cpp11::register]] void force_materialization(SEXP x) {
 #ifdef HAS_ALTREP
@@ -65,7 +63,7 @@ bool vroom_altrep(SEXP x) {
   return x;
 }
 
-[[cpp11::register]] std::string vroom_str_(RObject x) {
+[[cpp11::register]] std::string vroom_str_(cpp11::sexp x) {
   std::stringstream ss;
 
 #ifdef HAS_ALTREP

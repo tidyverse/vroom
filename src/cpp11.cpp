@@ -21,10 +21,10 @@ extern "C" SEXP _vroom_vroom_materialize(SEXP x, SEXP replace) {
   END_CPP11
 }
 // altrep.cc
-std::string vroom_str_(RObject x);
+std::string vroom_str_(cpp11::sexp x);
 extern "C" SEXP _vroom_vroom_str_(SEXP x) {
   BEGIN_CPP11
-    return cpp11::as_sexp(vroom_str_(cpp11::unmove(cpp11::as_cpp<RObject>(x))));
+    return cpp11::as_sexp(vroom_str_(cpp11::unmove(cpp11::as_cpp<cpp11::sexp>(x))));
   END_CPP11
 }
 // gen.cc
