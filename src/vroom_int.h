@@ -4,11 +4,9 @@
 
 #include "vroom_vec.h"
 
-#include <Rcpp.h>
-
 int strtoi(const char* begin, const char* end);
 
-Rcpp::IntegerVector read_int(vroom_vec_info* info);
+cpp11::integers read_int(vroom_vec_info* info);
 
 #ifdef HAS_ALTREP
 
@@ -99,6 +97,5 @@ public:
 };
 #endif
 
-// Called the package is loaded (needs Rcpp 0.12.18.3)
-[[cpp11::init]]
-void init_vroom_int(DllInfo* dll);
+// Called the package is loaded
+[[cpp11::init]] void init_vroom_int(DllInfo* dll);

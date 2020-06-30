@@ -33,16 +33,16 @@ int strtoi(const char* begin, const char* end) {
 }
 
 // Normal reading of integer vectors
-Rcpp::IntegerVector read_int(vroom_vec_info* info) {
+cpp11::integers read_int(vroom_vec_info* info) {
 
   R_xlen_t n = info->column->size();
 
-  Rcpp::IntegerVector out(n);
+  cpp11::writable::integers out(n);
 
   parallel_for(
       n,
       [&](size_t start, size_t end, size_t id) {
-        size_t i = start;
+        R_xlen_t i = start;
         auto col = info->column->slice(start, end);
         for (const auto& str : *col) {
           out[i++] = strtoi(str.begin(), str.end());
