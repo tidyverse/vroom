@@ -63,7 +63,7 @@ public:
       // libstdc++ (https://stackoverflow.com/a/54316671/2055486), so just print
       // the message on stderr return
 #ifndef VROOM_STANDALONE
-      Rcpp::Rcerr << "mapping error: " << error.message() << '\n';
+      REprintf("mapping error: %s\n", error.message().c_str());
 #else
       std::cerr << "mapping error: " << error.message() << '\n';
 #endif
