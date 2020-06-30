@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <future> // std::async, std::future
+#include <numeric>
 
 #include "r_utils.h"
 
