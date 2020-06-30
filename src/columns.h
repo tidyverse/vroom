@@ -22,8 +22,6 @@
 
 #include "collectors.h"
 
-#include "Rcpp.h"
-
 namespace vroom {
 
 inline std::vector<std::string> get_filenames(SEXP in) {
@@ -134,7 +132,7 @@ inline List create_columns(
     // This is deleted in the finalizers when the vectors are GC'd by R
     auto info = new vroom_vec_info{idx->get_column(col),
                                    num_threads,
-                                   std::make_shared<Rcpp::CharacterVector>(na),
+                                   std::make_shared<cpp11::strings>(na),
                                    locale_info,
                                    std::string()};
 

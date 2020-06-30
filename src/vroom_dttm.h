@@ -12,6 +12,8 @@
 
 using namespace vroom;
 
+#include "Rcpp.h"
+
 double parse_dttm(
     const string& str, DateTimeParser& parser, const std::string& format);
 

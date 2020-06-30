@@ -1,19 +1,18 @@
 #pragma once
 
-#include "altrep.h"
-
-#include "index_collection.h"
+#include <cpp11/integers.hpp>
+#include <cpp11/strings.hpp>
 
 #include "LocaleInfo.h"
-
-#include <Rcpp.h>
+#include "altrep.h"
+#include "index_collection.h"
 
 using namespace vroom;
 
 struct vroom_vec_info {
   std::shared_ptr<vroom::index::column> column;
   size_t num_threads;
-  std::shared_ptr<Rcpp::CharacterVector> na;
+  std::shared_ptr<cpp11::strings> na;
   std::shared_ptr<LocaleInfo> locale;
   std::string format;
 };
@@ -81,7 +80,7 @@ public:
     {
       auto& inf = Info(x);
 
-      Rcpp::IntegerVector in(indx);
+      cpp11::writable::integers in(indx);
 
       auto idx = std::make_shared<std::vector<size_t> >();
       idx->reserve(in.size());
