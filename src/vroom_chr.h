@@ -1,16 +1,14 @@
 #pragma once
 
+#include <cpp11/strings.hpp>
+
 #include "altrep.h"
 
 #include "vroom_vec.h"
 
-#include <Rcpp.h>
-
-Rcpp::CharacterVector read_chr(vroom_vec_info* info);
+cpp11::strings read_chr(vroom_vec_info* info);
 
 #ifdef HAS_ALTREP
-
-using namespace Rcpp;
 
 struct vroom_chr : vroom_vec {
 
@@ -133,5 +131,5 @@ public:
 
 #endif
 
-// Called the package is loaded (needs Rcpp 0.12.18.3)
+// Called the package is loaded
 [[cpp11::init]] void init_vroom_chr(DllInfo* dll);

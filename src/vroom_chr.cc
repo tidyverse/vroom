@@ -1,10 +1,10 @@
 #include "vroom_chr.h"
 
-Rcpp::CharacterVector read_chr(vroom_vec_info* info) {
+cpp11::strings read_chr(vroom_vec_info* info) {
 
   R_xlen_t n = info->column->size();
 
-  Rcpp::CharacterVector out(n);
+  cpp11::writable::strings out(n);
 
   auto i = 0;
   for (const auto& str : *info->column) {
