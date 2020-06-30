@@ -28,7 +28,7 @@ extern "C" SEXP _vroom_vroom_str_(SEXP x) {
   END_CPP11
 }
 // gen.cc
-CharacterVector gen_character_(int n, int min, int max, std::string values, uint32_t seed, uint32_t seed2);
+cpp11::strings gen_character_(int n, int min, int max, std::string values, uint32_t seed, uint32_t seed2);
 extern "C" SEXP _vroom_gen_character_(SEXP n, SEXP min, SEXP max, SEXP values, SEXP seed, SEXP seed2) {
   BEGIN_CPP11
     return cpp11::as_sexp(gen_character_(cpp11::unmove(cpp11::as_cpp<int>(n)), cpp11::unmove(cpp11::as_cpp<int>(min)), cpp11::unmove(cpp11::as_cpp<int>(max)), cpp11::unmove(cpp11::as_cpp<std::string>(values)), cpp11::unmove(cpp11::as_cpp<uint32_t>(seed)), cpp11::unmove(cpp11::as_cpp<uint32_t>(seed2))));
