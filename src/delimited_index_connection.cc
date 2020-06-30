@@ -1,3 +1,5 @@
+#include <cpp11/function.hpp>
+
 #include "delimited_index_connection.h"
 
 #include "connection.h"
@@ -6,7 +8,6 @@
 #include <future> // std::async, std::future
 
 #include "r_utils.h"
-#include <Rcpp.h>
 
 #ifdef VROOM_LOG
 #include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
@@ -40,8 +41,8 @@ delimited_index_connection::delimited_index_connection(
   skip_ = skip;
   progress_ = progress;
 
-  filename_ = Rcpp::as<std::string>(Rcpp::as<Rcpp::Function>(
-      Rcpp::Environment::namespace_env("vroom")["vroom_tempfile"])());
+  filename_ =
+      cpp11::as_cpp<std::string>(cpp11::package("vroom")["vroom_tempfile"]());
 
   std::FILE* out = unicode_fopen(filename_.c_str(), "wb");
 
@@ -49,7 +50,7 @@ delimited_index_connection::delimited_index_connection(
 
   bool should_open = !is_open(in);
   if (should_open) {
-    Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(in, "rb");
+    cpp11::package("base")["open"](in, "rb");
   }
 
   /* raw connections are always created as open, but we should close them */
@@ -71,7 +72,7 @@ delimited_index_connection::delimited_index_connection(
 
   if (sz == 0) {
     if (should_close) {
-      Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["close"])(in);
+      cpp11::package("base")["close"](in);
     }
     return;
   }
@@ -100,7 +101,7 @@ delimited_index_connection::delimited_index_connection(
     size_t next_sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
     if (!(next_sz == 0)) {
       if (should_close) {
-        Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["close"])(in);
+        cpp11::package("base")["close"](in);
       }
       std::stringstream ss;
 
@@ -109,7 +110,7 @@ delimited_index_connection::delimited_index_connection(
             "by "
             "setting `Sys.setenv(\"VROOM_CONNECTION_SIZE\")`";
 
-      throw Rcpp::exception(ss.str().c_str(), false);
+      cpp11::stop("%s", ss.str().c_str());
     }
   }
 
@@ -218,13 +219,13 @@ delimited_index_connection::delimited_index_connection(
 
   /* raw connections are always created as open, but we should close them */
   if (should_close) {
-    Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["close"])(in);
+    cpp11::package("base")["close"](in);
   }
 
   std::error_code error;
   mmap_ = make_mmap_source(filename_.c_str(), error);
   if (error) {
-    throw Rcpp::exception(error.message().c_str(), false);
+    cpp11::stop("%s", error.message().c_str());
   }
 
   size_t file_size = mmap_.size();
