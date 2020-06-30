@@ -30,7 +30,7 @@ public:
 
 #else
 
-#include "Rcpp.h"
+#include <cpp11/R.hpp>
 
 #include "RProgress.h"
 
