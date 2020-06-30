@@ -12,6 +12,11 @@ long long strtoll(const char* begin, const char* end);
 
 cpp11::doubles read_big_int(vroom_vec_info* info);
 
+union vroom_big_int_t {
+  long long ll;
+  double dbl;
+};
+
 #ifdef HAS_ALTREP
 
 class vroom_big_int : public vroom_vec {
@@ -77,8 +82,9 @@ public:
 
     auto str = vroom_vec::Get(vec, i);
 
-    long long res = strtoll(str.begin(), str.end());
-    return *reinterpret_cast<double*>(&res);
+    vroom_big_int_t res;
+    res.ll = strtoll(str.begin(), str.end());
+    return res.dbl;
   }
 
   static void* Dataptr(SEXP vec, Rboolean writeable) {

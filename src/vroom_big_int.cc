@@ -46,8 +46,9 @@ cpp11::doubles read_big_int(vroom_vec_info* info) {
         R_xlen_t i = start;
         auto col = info->column->slice(start, end);
         for (const auto& str : *col) {
-          long long res = strtoll(str.begin(), str.end());
-          out[i++] = *reinterpret_cast<double*>(&res);
+          vroom_big_int_t res;
+          res.ll = strtoll(str.begin(), str.end());
+          out[i++] = res.dbl;
         }
       },
       info->num_threads);
