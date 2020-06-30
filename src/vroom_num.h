@@ -1,9 +1,10 @@
 #pragma once
 
+#include <cpp11/doubles.hpp>
+
 #include "altrep.h"
 
 #include "vroom_vec.h"
-#include <Rcpp.h>
 
 #include "parallel.h"
 
@@ -11,7 +12,7 @@ using namespace vroom;
 
 double parse_num(const string& str, const LocaleInfo& loc, bool strict = false);
 
-Rcpp::NumericVector read_num(vroom_vec_info* info);
+cpp11::doubles read_num(vroom_vec_info* info);
 
 #ifdef HAS_ALTREP
 
@@ -106,6 +107,5 @@ public:
 };
 #endif
 
-// Called the package is loaded (needs Rcpp 0.12.18.3)
-[[cpp11::init]]
-void init_vroom_num(DllInfo* dll);
+// Called the package is loaded
+[[cpp11::init]] void init_vroom_num(DllInfo* dll);

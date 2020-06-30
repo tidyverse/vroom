@@ -1,5 +1,4 @@
 #include "vroom_num.h"
-#include "Rcpp.h"
 
 enum NumberState { STATE_INIT, STATE_LHS, STATE_RHS, STATE_EXP, STATE_FIN };
 
@@ -127,16 +126,16 @@ double parse_num(const string& str, const LocaleInfo& loc, bool strict) {
   return NA_REAL;
 }
 
-Rcpp::NumericVector read_num(vroom_vec_info* info) {
+cpp11::doubles read_num(vroom_vec_info* info) {
 
   R_xlen_t n = info->column->size();
 
-  Rcpp::NumericVector out(n);
+  cpp11::writable::doubles out(n);
 
   parallel_for(
       n,
       [&](size_t start, size_t end, size_t id) {
-        size_t i = start;
+        R_xlen_t i = start;
         auto col = info->column->slice(start, end);
         for (const auto& str : *col) {
           out[i++] = parse_num(str, *info->locale);
