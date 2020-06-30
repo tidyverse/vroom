@@ -79,24 +79,24 @@ extern "C" SEXP _vroom_vroom_format_(SEXP input, SEXP delim, SEXP na_str, SEXP c
   END_CPP11
 }
 // vroom.cc
-SEXP vroom_(cpp11::list inputs, SEXP delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char comment, size_t skip, ptrdiff_t n_max, bool progress, RObject col_names, RObject col_types, RObject col_select, SEXP id, CharacterVector na, List locale, ptrdiff_t guess_max, size_t num_threads, size_t altrep);
+SEXP vroom_(cpp11::list inputs, SEXP delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char comment, size_t skip, ptrdiff_t n_max, bool progress, cpp11::sexp col_names, cpp11::sexp col_types, cpp11::sexp col_select, SEXP id, cpp11::strings na, cpp11::list locale, ptrdiff_t guess_max, size_t num_threads, size_t altrep);
 extern "C" SEXP _vroom_vroom_(SEXP inputs, SEXP delim, SEXP quote, SEXP trim_ws, SEXP escape_double, SEXP escape_backslash, SEXP comment, SEXP skip, SEXP n_max, SEXP progress, SEXP col_names, SEXP col_types, SEXP col_select, SEXP id, SEXP na, SEXP locale, SEXP guess_max, SEXP num_threads, SEXP altrep) {
   BEGIN_CPP11
-    return cpp11::as_sexp(vroom_(cpp11::unmove(cpp11::as_cpp<cpp11::list>(inputs)), cpp11::unmove(cpp11::as_cpp<SEXP>(delim)), cpp11::unmove(cpp11::as_cpp<const char>(quote)), cpp11::unmove(cpp11::as_cpp<bool>(trim_ws)), cpp11::unmove(cpp11::as_cpp<bool>(escape_double)), cpp11::unmove(cpp11::as_cpp<bool>(escape_backslash)), cpp11::unmove(cpp11::as_cpp<const char>(comment)), cpp11::unmove(cpp11::as_cpp<size_t>(skip)), cpp11::unmove(cpp11::as_cpp<ptrdiff_t>(n_max)), cpp11::unmove(cpp11::as_cpp<bool>(progress)), cpp11::unmove(cpp11::as_cpp<RObject>(col_names)), cpp11::unmove(cpp11::as_cpp<RObject>(col_types)), cpp11::unmove(cpp11::as_cpp<RObject>(col_select)), cpp11::unmove(cpp11::as_cpp<SEXP>(id)), cpp11::unmove(cpp11::as_cpp<CharacterVector>(na)), cpp11::unmove(cpp11::as_cpp<List>(locale)), cpp11::unmove(cpp11::as_cpp<ptrdiff_t>(guess_max)), cpp11::unmove(cpp11::as_cpp<size_t>(num_threads)), cpp11::unmove(cpp11::as_cpp<size_t>(altrep))));
+    return cpp11::as_sexp(vroom_(cpp11::unmove(cpp11::as_cpp<cpp11::list>(inputs)), cpp11::unmove(cpp11::as_cpp<SEXP>(delim)), cpp11::unmove(cpp11::as_cpp<const char>(quote)), cpp11::unmove(cpp11::as_cpp<bool>(trim_ws)), cpp11::unmove(cpp11::as_cpp<bool>(escape_double)), cpp11::unmove(cpp11::as_cpp<bool>(escape_backslash)), cpp11::unmove(cpp11::as_cpp<const char>(comment)), cpp11::unmove(cpp11::as_cpp<size_t>(skip)), cpp11::unmove(cpp11::as_cpp<ptrdiff_t>(n_max)), cpp11::unmove(cpp11::as_cpp<bool>(progress)), cpp11::unmove(cpp11::as_cpp<cpp11::sexp>(col_names)), cpp11::unmove(cpp11::as_cpp<cpp11::sexp>(col_types)), cpp11::unmove(cpp11::as_cpp<cpp11::sexp>(col_select)), cpp11::unmove(cpp11::as_cpp<SEXP>(id)), cpp11::unmove(cpp11::as_cpp<cpp11::strings>(na)), cpp11::unmove(cpp11::as_cpp<cpp11::list>(locale)), cpp11::unmove(cpp11::as_cpp<ptrdiff_t>(guess_max)), cpp11::unmove(cpp11::as_cpp<size_t>(num_threads)), cpp11::unmove(cpp11::as_cpp<size_t>(altrep))));
   END_CPP11
 }
 // vroom.cc
-bool has_trailing_newline(CharacterVector filename);
+bool has_trailing_newline(cpp11::strings filename);
 extern "C" SEXP _vroom_has_trailing_newline(SEXP filename) {
   BEGIN_CPP11
-    return cpp11::as_sexp(has_trailing_newline(cpp11::unmove(cpp11::as_cpp<CharacterVector>(filename))));
+    return cpp11::as_sexp(has_trailing_newline(cpp11::unmove(cpp11::as_cpp<cpp11::strings>(filename))));
   END_CPP11
 }
 // vroom.cc
-SEXP vroom_rle(Rcpp::IntegerVector input);
+SEXP vroom_rle(cpp11::integers input);
 extern "C" SEXP _vroom_vroom_rle(SEXP input) {
   BEGIN_CPP11
-    return cpp11::as_sexp(vroom_rle(cpp11::unmove(cpp11::as_cpp<Rcpp::IntegerVector>(input))));
+    return cpp11::as_sexp(vroom_rle(cpp11::unmove(cpp11::as_cpp<cpp11::integers>(input))));
   END_CPP11
 }
 
