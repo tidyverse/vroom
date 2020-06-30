@@ -1,21 +1,18 @@
-#include "fixed_width_index_connection.h"
+#include <cpp11/as.hpp>
+#include <cpp11/function.hpp>
 
 #include "connection.h"
-
+#include "fixed_width_index_connection.h"
+#include "r_utils.h"
+#include "unicode_fopen.h"
+#include <array>
 #include <fstream>
 #include <future> // std::async, std::future
-
-#include "r_utils.h"
-#include <Rcpp.h>
 
 #ifdef VROOM_LOG
 #include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
 #include "spdlog/spdlog.h"
 #endif
-
-#include <array>
-
-#include "unicode_fopen.h"
 
 using namespace vroom;
 
@@ -34,8 +31,8 @@ fixed_width_index_connection::fixed_width_index_connection(
   col_ends_ = col_ends;
   trim_ws_ = trim_ws;
 
-  filename_ = Rcpp::as<std::string>(Rcpp::as<Rcpp::Function>(
-      Rcpp::Environment::namespace_env("vroom")["vroom_tempfile"])());
+  filename_ =
+      cpp11::as_cpp<std::string>(cpp11::package("vroom")["vroom_tempfile"]());
 
   std::FILE* out = unicode_fopen(filename_.c_str(), "wb");
 
@@ -43,7 +40,7 @@ fixed_width_index_connection::fixed_width_index_connection(
 
   bool should_open = !is_open(in);
   if (should_open) {
-    Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(in, "rb");
+    cpp11::package("base")["open"](in, "rb");
   }
 
   std::array<std::vector<char>, 2> buf = {std::vector<char>(chunk_size),
@@ -53,9 +50,6 @@ fixed_width_index_connection::fixed_width_index_connection(
   auto i = 0;
 
   newlines_.reserve(128);
-
-  auto readBin =
-      Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["readBin"]);
 
   size_t sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
   buf[i][sz] = '\0';
@@ -128,13 +122,13 @@ fixed_width_index_connection::fixed_width_index_connection(
   /* raw connections are always created as open, but we should close them */
   bool should_close = should_open || Rf_inherits(in, "rawConnection");
   if (should_close) {
-    Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["close"])(in);
+    cpp11::package("base")["close"](in);
   }
 
   std::error_code error;
   mmap_ = make_mmap_source(filename_.c_str(), error);
   if (error) {
-    throw Rcpp::exception(error.message().c_str(), false);
+    cpp11::stop("%s", error.message().c_str());
   }
 
 #ifdef VROOM_LOG
