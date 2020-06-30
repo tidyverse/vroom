@@ -1,9 +1,10 @@
 #pragma once
 
-#include "DateTimeParser.h"
-#include "parallel.h"
 #include "vroom.h"
 #include "vroom_vec.h"
+
+#include "DateTimeParser.h"
+#include "parallel.h"
 
 #ifdef VROOM_LOG
 #include "spdlog/spdlog.h"
@@ -217,5 +218,4 @@ public:
 #endif
 
 // Called the package is loaded (needs Rcpp 0.12.18.3)
-[[cpp11::init]]
-void init_vroom_dttm(DllInfo* dll);
+[[cpp11::init]] void init_vroom_dttm(DllInfo* dll);

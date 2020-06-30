@@ -1,14 +1,17 @@
 #include "grisu3.h"
-#include <Rcpp.h>
 #include <array>
 #include <future>
 #include <iterator>
+
+#include <cpp11/R.hpp>
 
 #include "RProgress.h"
 #include "connection.h"
 #include "r_utils.h"
 
 #include "unicode_fopen.h"
+
+#include <Rcpp.h>
 
 typedef enum {
   quote_needed = 1,
@@ -297,8 +300,7 @@ get_header(const Rcpp::List& input, const char delim, size_t options) {
   return out;
 }
 
-[[cpp11::register]]
-void vroom_write_(
+[[cpp11::register]] void vroom_write_(
     Rcpp::List input,
     std::string filename,
     const char delim,
@@ -396,8 +398,7 @@ void vroom_write_(
 
 // TODO: Think about refactoring this so it and vroom_write_ can share some
 // code
-[[cpp11::register]]
-void vroom_write_connection_(
+[[cpp11::register]] void vroom_write_connection_(
     Rcpp::List input,
     Rcpp::RObject con,
     const char delim,
@@ -495,8 +496,7 @@ void vroom_write_connection_(
   }
 }
 
-[[cpp11::register]]
-Rcpp::CharacterVector vroom_format_(
+[[cpp11::register]] Rcpp::CharacterVector vroom_format_(
     Rcpp::List input,
     const char delim,
     const char* na_str,

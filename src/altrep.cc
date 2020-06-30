@@ -1,5 +1,3 @@
-#include <Rcpp.h>
-
 #include "altrep.h"
 #include "vroom_chr.h"
 #include "vroom_date.h"
@@ -12,10 +10,11 @@
 #include "vroom_time.h"
 #include <thread>
 
+#include <Rcpp.h>
+
 using namespace Rcpp;
 
-[[cpp11::register]]
-void force_materialization(SEXP x) {
+[[cpp11::register]] void force_materialization(SEXP x) {
 #ifdef HAS_ALTREP
   DATAPTR(x);
 #endif
@@ -37,8 +36,7 @@ bool vroom_altrep(SEXP x) {
 #endif
 }
 
-[[cpp11::register]]
-SEXP vroom_materialize(SEXP x, bool replace = false) {
+[[cpp11::register]] SEXP vroom_materialize(SEXP x, bool replace = false) {
 #ifdef HAS_ALTREP
   for (R_xlen_t i = 0; i < Rf_xlength(x); ++i) {
 
@@ -67,8 +65,7 @@ SEXP vroom_materialize(SEXP x, bool replace = false) {
   return x;
 }
 
-[[cpp11::register]]
-std::string vroom_str_(RObject x) {
+[[cpp11::register]] std::string vroom_str_(RObject x) {
   std::stringstream ss;
 
 #ifdef HAS_ALTREP

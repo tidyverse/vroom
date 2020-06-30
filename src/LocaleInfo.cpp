@@ -1,7 +1,6 @@
-#include <Rcpp.h>
-
 #include "LocaleInfo.h"
 
+#include <Rcpp.h>
 using namespace Rcpp;
 
 LocaleInfo::LocaleInfo(List x)

@@ -2,6 +2,10 @@
 #define FASTREAD_LOCALINFO
 
 #include "Iconv.h"
+#include <string>
+#include <vector>
+
+#include <Rcpp.h>
 
 class LocaleInfo {
 

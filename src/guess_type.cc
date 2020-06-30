@@ -1,6 +1,3 @@
-#include <Rcpp.h>
-using namespace Rcpp;
-
 #include "DateTime.h"
 #include "DateTimeParser.h"
 #include "LocaleInfo.h"
@@ -8,6 +5,9 @@ using namespace Rcpp;
 
 #include "vroom_lgl.h"
 #include "vroom_num.h"
+
+#include <Rcpp.h>
+using namespace Rcpp;
 
 typedef bool (*canParseFun)(const std::string&, LocaleInfo* pLocale);
 
@@ -148,8 +148,7 @@ std::string guess_type__(
   return "character";
 }
 
-[[cpp11::register]]
-std::string guess_type_(
+[[cpp11::register]] std::string guess_type_(
     CharacterVector input,
     CharacterVector na,
     List locale,

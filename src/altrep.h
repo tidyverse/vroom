@@ -1,4 +1,4 @@
-#include "Rcpp.h"
+#include <cpp11/R.hpp>
 
 #if R_VERSION >= R_Version(3, 5, 0)
 #define HAS_ALTREP

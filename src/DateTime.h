@@ -1,8 +1,8 @@
 #ifndef READR_DATE_TIME_H_
 #define READR_DATE_TIME_H_
 
-#include "Rcpp.h"
 #include "localtime.h"
+#include <cpp11/R.hpp>
 #include <ctime>
 #include <stdlib.h>
 #include <string>

@@ -1,9 +1,10 @@
 #pragma once
 
-#include <Rcpp.h>
-
 #include "altrep.h"
+
 #include "vroom_vec.h"
+
+#include <Rcpp.h>
 
 Rcpp::CharacterVector read_chr(vroom_vec_info* info);
 
@@ -133,5 +134,4 @@ public:
 #endif
 
 // Called the package is loaded (needs Rcpp 0.12.18.3)
-[[cpp11::init]]
-void init_vroom_chr(DllInfo* dll);
+[[cpp11::init]] void init_vroom_chr(DllInfo* dll);

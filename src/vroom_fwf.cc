@@ -1,15 +1,14 @@
-#include "columns.h"
+#include "LocaleInfo.h"
 
 #include "fixed_width_index.h"
 
-#include "LocaleInfo.h"
-
 #include "unicode_fopen.h"
+
+#include "columns.h"
 
 using namespace Rcpp;
 
-[[cpp11::register]]
-List vroom_fwf_(
+[[cpp11::register]] List vroom_fwf_(
     List inputs,
     std::vector<int> col_starts,
     std::vector<int> col_ends,
@@ -87,8 +86,7 @@ std::vector<bool> find_empty_cols(Iterator begin, Iterator end, ptrdiff_t n) {
   return is_white;
 }
 
-[[cpp11::register]]
-List whitespace_columns_(
+[[cpp11::register]] List whitespace_columns_(
     std::string filename, size_t skip, ptrdiff_t n, std::string comment) {
 
   std::error_code error;
