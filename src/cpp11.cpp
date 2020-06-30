@@ -64,10 +64,10 @@ extern "C" SEXP _vroom_vroom_write_(SEXP input, SEXP filename, SEXP delim, SEXP 
   END_CPP11
 }
 // vroom_write.cc
-void vroom_write_connection_(cpp11::list input, Rcpp::RObject con, const char delim, const char* na_str, bool col_names, size_t options, size_t num_threads, bool progress, size_t buf_lines, bool is_stdout, bool append);
+void vroom_write_connection_(cpp11::list input, cpp11::sexp con, const char delim, const char* na_str, bool col_names, size_t options, size_t num_threads, bool progress, size_t buf_lines, bool is_stdout, bool append);
 extern "C" SEXP _vroom_vroom_write_connection_(SEXP input, SEXP con, SEXP delim, SEXP na_str, SEXP col_names, SEXP options, SEXP num_threads, SEXP progress, SEXP buf_lines, SEXP is_stdout, SEXP append) {
   BEGIN_CPP11
-    vroom_write_connection_(cpp11::unmove(cpp11::as_cpp<cpp11::list>(input)), cpp11::unmove(cpp11::as_cpp<Rcpp::RObject>(con)), cpp11::unmove(cpp11::as_cpp<const char>(delim)), cpp11::unmove(cpp11::as_cpp<const char*>(na_str)), cpp11::unmove(cpp11::as_cpp<bool>(col_names)), cpp11::unmove(cpp11::as_cpp<size_t>(options)), cpp11::unmove(cpp11::as_cpp<size_t>(num_threads)), cpp11::unmove(cpp11::as_cpp<bool>(progress)), cpp11::unmove(cpp11::as_cpp<size_t>(buf_lines)), cpp11::unmove(cpp11::as_cpp<bool>(is_stdout)), cpp11::unmove(cpp11::as_cpp<bool>(append)));
+    vroom_write_connection_(cpp11::unmove(cpp11::as_cpp<cpp11::list>(input)), cpp11::unmove(cpp11::as_cpp<cpp11::sexp>(con)), cpp11::unmove(cpp11::as_cpp<const char>(delim)), cpp11::unmove(cpp11::as_cpp<const char*>(na_str)), cpp11::unmove(cpp11::as_cpp<bool>(col_names)), cpp11::unmove(cpp11::as_cpp<size_t>(options)), cpp11::unmove(cpp11::as_cpp<size_t>(num_threads)), cpp11::unmove(cpp11::as_cpp<bool>(progress)), cpp11::unmove(cpp11::as_cpp<size_t>(buf_lines)), cpp11::unmove(cpp11::as_cpp<bool>(is_stdout)), cpp11::unmove(cpp11::as_cpp<bool>(append)));
     return R_NilValue;
   END_CPP11
 }

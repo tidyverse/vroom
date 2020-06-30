@@ -4,6 +4,7 @@
 #include <iterator>
 
 #include <cpp11/R.hpp>
+#include <cpp11/function.hpp>
 #include <cpp11/list.hpp>
 #include <cpp11/strings.hpp>
 
@@ -12,8 +13,6 @@
 #include "r_utils.h"
 
 #include "unicode_fopen.h"
-
-#include <Rcpp.h>
 
 typedef enum {
   quote_needed = 1,
@@ -242,7 +241,7 @@ void write_buf_con(
   if (is_stdout) {
     std::string out;
     std::copy(buf.begin(), buf.end(), std::back_inserter(out));
-    Rcpp::Rcout << out;
+    Rprintf("%.*s", buf.size(), out.c_str());
   } else {
     R_WriteConnection(con, (void*)buf.data(), sizeof buf[0] * buf.size());
   }
@@ -252,7 +251,7 @@ void write_buf_con(const std::vector<char>& buf, SEXP con, bool is_stdout) {
   if (is_stdout) {
     std::string out;
     std::copy(buf.begin(), buf.end(), std::back_inserter(out));
-    Rcpp::Rcout << out;
+    Rprintf("%.*s", buf.size(), out.c_str());
   } else {
     R_WriteConnection(con, (void*)buf.data(), sizeof buf[0] * buf.size());
   }
@@ -325,7 +324,7 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
   if (!out) {
     std::string msg("Cannot open file for writing:\n* ");
     msg += '\'' + filename + '\'';
-    throw Rcpp::exception(msg.c_str(), false);
+    cpp11::stop(msg.c_str());
   }
 
   std::array<std::vector<std::future<std::vector<char> > >, 2> futures;
@@ -401,7 +400,7 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
 // code
 [[cpp11::register]] void vroom_write_connection_(
     cpp11::list input,
-    Rcpp::RObject con,
+    cpp11::sexp con,
     const char delim,
     const char* na_str,
     bool col_names,
@@ -424,7 +423,7 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
 
   bool should_open = !is_open(con);
   if (should_open) {
-    Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(con, mode);
+    cpp11::package("base")["open"](con, mode);
   }
 
   bool should_close = should_open;
@@ -493,7 +492,7 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
 
   // Close the connection
   if (should_close) {
-    Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["close"])(con);
+    cpp11::package("base")["close"](con);
   }
 }
 
