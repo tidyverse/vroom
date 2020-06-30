@@ -44,7 +44,6 @@ Imports:
     glue,
     hms,
     lifecycle,
-    Rcpp (>= 0.12.18.3),
     rlang (>= 0.4.2),
     stats,
     tibble (>= 2.0.0),
@@ -72,7 +71,6 @@ Suggests:
     xml2
 LinkingTo: 
     progress (>= 1.2.1),
-    Rcpp,
     cpp11
 VignetteBuilder: 
     knitr
@@ -81,5 +79,5 @@ Encoding: UTF-8
 Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 SystemRequirements: C++11
