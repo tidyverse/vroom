@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cpp11/doubles.hpp>
+#include <cpp11/integers.hpp>
+
 #include "vroom.h"
 #include "vroom_vec.h"
 
@@ -12,12 +15,10 @@
 
 using namespace vroom;
 
-#include "Rcpp.h"
-
 double parse_dttm(
     const string& str, DateTimeParser& parser, const std::string& format);
 
-Rcpp::NumericVector read_dttm(vroom_vec_info* info);
+cpp11::doubles read_dttm(vroom_vec_info* info);
 
 #ifdef HAS_ALTREP
 
@@ -43,9 +44,9 @@ public:
     SEXP out = PROTECT(R_MakeExternalPtr(dttm_info, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(out, vroom_dttm::Finalize, FALSE);
 
-    Rcpp::RObject res = R_new_altrep(class_t, out, R_NilValue);
+    cpp11::sexp res = R_new_altrep(class_t, out, R_NilValue);
 
-    res.attr("class") = Rcpp::CharacterVector::create("POSIXct", "POSIXt");
+    res.attr("class") = {"POSIXct", "POSIXt"};
     res.attr("tzone") = info->locale->tz_;
 
     UNPROTECT(1);
@@ -144,7 +145,7 @@ public:
       return nullptr;
     }
 
-    Rcpp::IntegerVector in(indx);
+    cpp11::integers in(indx);
 
     auto idx = std::make_shared<std::vector<size_t> >();
 
@@ -219,5 +220,5 @@ public:
 
 #endif
 
-// Called the package is loaded (needs Rcpp 0.12.18.3)
+// Called the package is loaded
 [[cpp11::init]] void init_vroom_dttm(DllInfo* dll);

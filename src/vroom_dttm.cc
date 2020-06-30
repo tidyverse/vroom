@@ -14,10 +14,10 @@ double parse_dttm(
   return NA_REAL;
 }
 
-Rcpp::NumericVector read_dttm(vroom_vec_info* info) {
+cpp11::doubles read_dttm(vroom_vec_info* info) {
   R_xlen_t n = info->column->size();
 
-  Rcpp::NumericVector out(n);
+  cpp11::writable::doubles out(n);
 
   parallel_for(
       n,
@@ -32,7 +32,7 @@ Rcpp::NumericVector read_dttm(vroom_vec_info* info) {
       info->num_threads,
       true);
 
-  out.attr("class") = Rcpp::CharacterVector::create("POSIXct", "POSIXt");
+  out.attr("class") = {"POSIXct", "POSIXt"};
   out.attr("tzone") = info->locale->tz_;
 
   return out;
