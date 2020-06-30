@@ -86,7 +86,7 @@ inline List create_columns(
   auto num_cols = idx->num_columns();
   auto num_rows = idx->num_rows();
 
-  auto locale_info = std::make_shared<LocaleInfo>(locale);
+  auto locale_info = std::make_shared<LocaleInfo>(static_cast<SEXP>(locale));
 
   size_t i = 0;
 

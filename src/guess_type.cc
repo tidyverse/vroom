@@ -153,6 +153,6 @@ std::string guess_type__(
     CharacterVector na,
     List locale,
     bool guess_integer = false) {
-  LocaleInfo locale_(locale);
+  LocaleInfo locale_(static_cast<SEXP>(locale));
   return guess_type__(input, na, &locale_, guess_integer);
 }

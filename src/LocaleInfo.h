@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include <Rcpp.h>
+#include <cpp11/list.hpp>
 
 class LocaleInfo {
 
@@ -22,7 +22,7 @@ public:
   std::string encoding_;
   Iconv encoder_;
 
-  LocaleInfo(Rcpp::List);
+  LocaleInfo(cpp11::list);
 };
 
 #endif
