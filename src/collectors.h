@@ -117,8 +117,8 @@ inline CharacterVector read_column_names(
 }
 
 std::string guess_type__(
-    CharacterVector input,
-    CharacterVector na,
+    cpp11::strings input,
+    cpp11::strings na,
     LocaleInfo* locale,
     bool guess_integer);
 
@@ -172,7 +172,11 @@ inline collectors resolve_collectors(
         col_vals[j] =
             locale_info->encoder_.makeSEXP(str.begin(), str.end(), false);
       }
-      auto type = guess_type__(col_vals, na, locale_info.get(), false);
+      auto type = guess_type__(
+          static_cast<SEXP>(col_vals),
+          static_cast<SEXP>(na),
+          locale_info.get(),
+          false);
       Rcpp::Function col_type = vroom[std::string("col_") + type];
       my_collectors[col] = Rcpp::as<Rcpp::List>(col_type());
     }

@@ -1,3 +1,6 @@
+#include <cpp11/list.hpp>
+#include <cpp11/strings.hpp>
+
 #include "DateTime.h"
 #include "DateTimeParser.h"
 #include "LocaleInfo.h"
@@ -6,13 +9,10 @@
 #include "vroom_lgl.h"
 #include "vroom_num.h"
 
-#include <Rcpp.h>
-using namespace Rcpp;
-
 typedef bool (*canParseFun)(const std::string&, LocaleInfo* pLocale);
 
 bool canParse(
-    CharacterVector x, const canParseFun& canParse, LocaleInfo* pLocale) {
+    cpp11::strings x, const canParseFun& canParse, LocaleInfo* pLocale) {
   for (int i = 0; i < x.size(); ++i) {
     if (x[i] == NA_STRING)
       continue;
@@ -26,7 +26,7 @@ bool canParse(
   return true;
 }
 
-bool allMissing(CharacterVector x) {
+bool allMissing(cpp11::strings x) {
   for (int i = 0; i < x.size(); ++i) {
     if (x[i] != NA_STRING && x[i].size() > 0)
       return false;
@@ -106,8 +106,8 @@ static bool isDateTime(const std::string& x, LocaleInfo* pLocale) {
 }
 
 std::string guess_type__(
-    CharacterVector input,
-    CharacterVector na,
+    cpp11::strings input,
+    cpp11::strings na,
     LocaleInfo* pLocale,
     bool guess_integer = false) {
 
@@ -122,7 +122,7 @@ std::string guess_type__(
   for (R_xlen_t i = 0; i < input.size(); ++i) {
     for (R_xlen_t j = 0; j < na.size(); ++j) {
       if (input[i] == na[j]) {
-        input[i] = NA_STRING;
+        SET_STRING_ELT(input, i, NA_STRING);
         break;
       }
     }
@@ -149,10 +149,10 @@ std::string guess_type__(
 }
 
 [[cpp11::register]] std::string guess_type_(
-    CharacterVector input,
-    CharacterVector na,
-    List locale,
+    cpp11::strings input,
+    cpp11::strings na,
+    cpp11::list locale,
     bool guess_integer = false) {
-  LocaleInfo locale_(static_cast<SEXP>(locale));
+  LocaleInfo locale_(locale);
   return guess_type__(input, na, &locale_, guess_integer);
 }
