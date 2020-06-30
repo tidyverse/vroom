@@ -34,16 +34,16 @@ long long strtoll(const char* begin, const char* end) {
 }
 
 // Normal reading of integer vectors
-Rcpp::NumericVector read_big_int(vroom_vec_info* info) {
+cpp11::doubles read_big_int(vroom_vec_info* info) {
 
   R_xlen_t n = info->column->size();
 
-  Rcpp::NumericVector out(n);
+  cpp11::writable::doubles out(n);
 
   parallel_for(
       n,
       [&](size_t start, size_t end, size_t id) {
-        size_t i = start;
+        R_xlen_t i = start;
         auto col = info->column->slice(start, end);
         for (const auto& str : *col) {
           long long res = strtoll(str.begin(), str.end());
@@ -52,7 +52,7 @@ Rcpp::NumericVector read_big_int(vroom_vec_info* info) {
       },
       info->num_threads);
 
-  out.attr("class") = "integer64";
+  out.attr("class") = {"integer64"};
 
   return out;
 }
