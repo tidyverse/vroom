@@ -224,5 +224,5 @@ public:
 #endif
 
 // Called the package is loaded (needs Rcpp 0.12.18.3)
-// [[Rcpp::init]]
+[[cpp11::init]]
 void init_vroom_fct(DllInfo* dll);

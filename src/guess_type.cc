@@ -148,7 +148,7 @@ std::string guess_type__(
   return "character";
 }
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 std::string guess_type_(
     CharacterVector input,
     CharacterVector na,

@@ -72,7 +72,8 @@ Suggests:
     xml2
 LinkingTo: 
     progress (>= 1.2.1),
-    Rcpp
+    Rcpp,
+    cpp11
 VignetteBuilder: 
     knitr
 Copyright: file COPYRIGHTS

@@ -3,7 +3,7 @@
 
 using namespace Rcpp;
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 CharacterVector gen_character_(
     int n,
     int min,

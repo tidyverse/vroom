@@ -8,7 +8,7 @@
 
 using namespace Rcpp;
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 List vroom_fwf_(
     List inputs,
     std::vector<int> col_starts,
@@ -87,7 +87,7 @@ std::vector<bool> find_empty_cols(Iterator begin, Iterator end, ptrdiff_t n) {
   return is_white;
 }
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 List whitespace_columns_(
     std::string filename, size_t skip, ptrdiff_t n, std::string comment) {
 

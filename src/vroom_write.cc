@@ -297,7 +297,7 @@ get_header(const Rcpp::List& input, const char delim, size_t options) {
   return out;
 }
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 void vroom_write_(
     Rcpp::List input,
     std::string filename,
@@ -396,7 +396,7 @@ void vroom_write_(
 
 // TODO: Think about refactoring this so it and vroom_write_ can share some
 // code
-// [[Rcpp::export]]
+[[cpp11::register]]
 void vroom_write_connection_(
     Rcpp::List input,
     Rcpp::RObject con,
@@ -495,7 +495,7 @@ void vroom_write_connection_(
   }
 }
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 Rcpp::CharacterVector vroom_format_(
     Rcpp::List input,
     const char delim,

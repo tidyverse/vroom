@@ -14,7 +14,7 @@
 
 using namespace Rcpp;
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 void force_materialization(SEXP x) {
 #ifdef HAS_ALTREP
   DATAPTR(x);
@@ -37,7 +37,7 @@ bool vroom_altrep(SEXP x) {
 #endif
 }
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 SEXP vroom_materialize(SEXP x, bool replace = false) {
 #ifdef HAS_ALTREP
   for (R_xlen_t i = 0; i < Rf_xlength(x); ++i) {
@@ -67,7 +67,7 @@ SEXP vroom_materialize(SEXP x, bool replace = false) {
   return x;
 }
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 std::string vroom_str_(RObject x) {
   std::stringstream ss;
 
