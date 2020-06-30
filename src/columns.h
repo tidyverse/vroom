@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Rcpp.h"
+#include <cpp11/as.hpp>
+#include <cpp11/strings.hpp>
+
 #include "vroom.h"
 #include "vroom_big_int.h"
 #include "vroom_chr.h"
@@ -20,7 +22,7 @@
 
 #include "collectors.h"
 
-using namespace Rcpp;
+#include "Rcpp.h"
 
 namespace vroom {
 
@@ -32,7 +34,7 @@ inline std::vector<std::string> get_filenames(SEXP in) {
   for (R_xlen_t i = 0; i < n; ++i) {
     SEXP x = VECTOR_ELT(in, i);
     if (TYPEOF(x) == STRSXP) {
-      out.emplace_back(Rcpp::as<std::string>(x));
+      out.emplace_back(cpp11::as_cpp<std::string>(x));
     } else {
       out.emplace_back(con_description(x));
     }
@@ -99,7 +101,7 @@ inline List create_columns(
   if (add_filename) {
     res[i] =
         generate_filename_column(filenames, idx->row_sizes(), idx->num_rows());
-    res_nms[i] = Rcpp::as<Rcpp::CharacterVector>(id)[0];
+    res_nms[i] = cpp11::strings(id)[0];
     ++i;
   }
 
@@ -120,7 +122,6 @@ inline List create_columns(
       to_parse += num_rows;
     }
   }
-  // Rcpp::Rcerr << to_parse << '\n';
 
   for (size_t col = 0; col < num_cols; ++col) {
     auto collector = my_collectors[col];
@@ -188,11 +189,11 @@ inline List create_columns(
     case column_type::Fct: {
       auto levels = collector["levels"];
       if (Rf_isNull(levels)) {
-        res[i] =
-            read_fct_implicit(info, Rcpp::as<bool>(collector["include_na"]));
+        res[i] = read_fct_implicit(
+            info, cpp11::as_cpp<bool>(collector["include_na"]));
         delete info;
       } else {
-        bool ordered = Rcpp::as<bool>(collector["ordered"]);
+        bool ordered = cpp11::as_cpp<bool>(collector["ordered"]);
         if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
           res[i] = vroom_fct::Make(info, levels, ordered);
@@ -205,7 +206,7 @@ inline List create_columns(
       break;
     }
     case column_type::Date:
-      info->format = Rcpp::as<std::string>(collector["format"]);
+      info->format = cpp11::as_cpp<std::string>(collector["format"]);
       if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
         res[i] = vroom_date::Make(info);
@@ -216,7 +217,7 @@ inline List create_columns(
       }
       break;
     case column_type::Dttm:
-      info->format = Rcpp::as<std::string>(collector["format"]);
+      info->format = cpp11::as_cpp<std::string>(collector["format"]);
       if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
         res[i] = vroom_dttm::Make(info);
@@ -227,7 +228,7 @@ inline List create_columns(
       }
       break;
     case column_type::Time:
-      info->format = Rcpp::as<std::string>(collector["format"]);
+      info->format = cpp11::as_cpp<std::string>(collector["format"]);
       if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
         res[i] = vroom_time::Make(info);
@@ -261,8 +262,8 @@ inline List create_columns(
   }
 
   res.attr("names") = res_nms;
-  Rcpp::List spec = my_collectors.spec();
-  spec["delim"] = idx->get_delim();
+  cpp11::writable::list spec(my_collectors.spec());
+  spec["delim"] = cpp11::writable::strings({idx->get_delim().c_str()});
   spec.attr("class") = "col_spec";
   res.attr("spec") = spec;
 
