@@ -1,6 +1,10 @@
 #pragma once
 
-#include "Rcpp.h"
+#include <cpp11/as.hpp>
+#include <cpp11/function.hpp>
+#include <cpp11/list.hpp>
+#include <cpp11/logicals.hpp>
+#include <cpp11/raws.hpp>
 
 #ifdef VROOM_USE_CONNECTIONS_API
 
@@ -39,24 +43,23 @@ static Rconnection R_GetConnection(SEXP sConn) {
 
 #pragma once
 
-#include "Rcpp.h"
-
 inline SEXP R_GetConnection(SEXP con) { return con; }
 
 inline size_t R_ReadConnection(SEXP con, void* buf, size_t n) {
-  static Rcpp::Function readBin = Rcpp::Environment::base_env()["readBin"];
+  static auto readBin = cpp11::package("base")["readBin"];
 
-  Rcpp::RawVector res = readBin(con, Rcpp::RawVector(0), n);
-  memcpy(buf, res.begin(), res.size());
+  cpp11::raws res(
+      readBin(con, cpp11::writable::raws(static_cast<R_xlen_t>(0)), n));
+  memcpy(buf, RAW(res), res.size());
 
-  return res.length();
+  return res.size();
 }
 
 inline size_t R_WriteConnection(SEXP con, void* buf, size_t n) {
-  static Rcpp::Function writeBin = Rcpp::Environment::base_env()["writeBin"];
+  static auto writeBin = cpp11::package("base")["writeBin"];
 
-  Rcpp::RawVector payload(n);
-  memcpy(payload.begin(), buf, n);
+  cpp11::writable::raws payload(n);
+  memcpy(RAW(payload), buf, n);
 
   writeBin(payload, con);
 
@@ -66,17 +69,14 @@ inline size_t R_WriteConnection(SEXP con, void* buf, size_t n) {
 #endif
 
 inline std::string con_description(SEXP con) {
-  auto summary_connection = Rcpp::as<Rcpp::Function>(
-      Rcpp::Environment::base_env()["summary.connection"]);
-  return Rcpp::as<std::string>(
-      Rcpp::as<Rcpp::List>(summary_connection(con))[0]);
+  static auto summary_connection = cpp11::package("base")["summary.connection"];
+  return cpp11::as_cpp<std::string>(cpp11::list(summary_connection(con))[0]);
 }
 
 inline bool is_open(SEXP con) {
-  auto isOpen =
-      Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["isOpen"]);
+  static auto isOpen = cpp11::package("base")["isOpen"];
 
-  Rcpp::LogicalVector res = isOpen(con);
+  cpp11::logicals res(isOpen(con));
 
   return res[0];
 }
