@@ -460,13 +460,6 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
       begin += num_lines;
     }
 
-    // if (write_fut.valid()) {
-    // auto sz = write_fut.get();
-    // Rcpp::checkUserInterrupt();
-    //}
-
-    // write_fut = std::async([&, idx, t] {
-    // size_t sz = 0;
     for (size_t i = 0; i < t; ++i) {
       auto buf = futures[idx][i].get();
       write_buf_con(buf, con_, is_stdout);
@@ -474,21 +467,14 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
       if (progress) {
         pb->tick(sz);
       }
-      // sz += buf.size();
     }
-    // return sz;
-    //});
 
     idx = (idx + 1) % 2;
   }
 
-  // Wait for the last writing to finish
-  // if (write_fut.valid()) {
-  // write_fut.get();
   if (progress) {
     pb->update(1);
   }
-  //}
 
   // Close the connection
   if (should_close) {
