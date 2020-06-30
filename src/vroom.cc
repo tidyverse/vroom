@@ -13,9 +13,8 @@
 
 using namespace Rcpp;
 
-[[cpp11::register]]
-SEXP vroom_(
-    List inputs,
+[[cpp11::register]] SEXP vroom_(
+    cpp11::list inputs,
     SEXP delim,
     const char quote,
     bool trim_ws,
@@ -78,8 +77,7 @@ SEXP vroom_(
       num_threads);
 }
 
-[[cpp11::register]]
-bool has_trailing_newline(CharacterVector filename) {
+[[cpp11::register]] bool has_trailing_newline(CharacterVector filename) {
   std::FILE* f = unicode_fopen(CHAR(filename[0]), "rb");
 
   if (!f) {
@@ -96,8 +94,7 @@ bool has_trailing_newline(CharacterVector filename) {
   return c == '\n';
 }
 
-[[cpp11::register]]
-SEXP vroom_rle(Rcpp::IntegerVector input) {
+[[cpp11::register]] SEXP vroom_rle(Rcpp::IntegerVector input) {
 #ifdef HAS_ALTREP
   return vroom_rle::Make(input);
 #else

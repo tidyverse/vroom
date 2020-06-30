@@ -1,14 +1,15 @@
-#include "index_collection.h"
+#include <cpp11/function.hpp>
+
 #include "delimited_index_connection.h"
 #include "fixed_width_index.h"
 #include "fixed_width_index_connection.h"
 #include "index.h"
+#include "index_collection.h"
 #include <memory>
 
 #include "r_utils.h"
 
 using namespace vroom;
-using namespace Rcpp;
 
 // Class index_collection::column::iterator
 
@@ -123,7 +124,7 @@ string index_collection::full_iterator::at(ptrdiff_t n) const {
 }
 
 std::shared_ptr<vroom::index> make_delimited_index(
-    RObject in,
+    Rcpp::RObject in,
     const char* delim,
     const char quote,
     const bool trim_ws,
@@ -136,10 +137,9 @@ std::shared_ptr<vroom::index> make_delimited_index(
     const size_t num_threads,
     const bool progress) {
 
-  Rcpp::Function standardise_one_path =
-      Rcpp::Environment::namespace_env("vroom")["standardise_one_path"];
+  auto standardise_one_path = cpp11::package("vroom")["standardise_one_path"];
 
-  RObject x;
+  Rcpp::RObject x;
   try {
     x = standardise_one_path(in);
   } catch (const Rcpp::eval_error& e) {
@@ -225,7 +225,7 @@ void check_column_consistency(
 
 // Index_collection
 index_collection::index_collection(
-    Rcpp::List in,
+    cpp11::list in,
     const char* delim,
     const char quote,
     const bool trim_ws,
@@ -294,7 +294,7 @@ std::shared_ptr<vroom::index> make_fixed_width_index(
   Rcpp::Function standardise_one_path =
       Rcpp::Environment::namespace_env("vroom")["standardise_one_path"];
 
-  RObject x;
+  Rcpp::RObject x;
   try {
     x = standardise_one_path(in);
   } catch (const Rcpp::eval_error& e) {
@@ -329,7 +329,7 @@ std::shared_ptr<vroom::index> make_fixed_width_index(
 }
 
 index_collection::index_collection(
-    Rcpp::List in,
+    cpp11::list in,
     const std::vector<int>& col_starts,
     const std::vector<int>& col_ends,
     const bool trim_ws,

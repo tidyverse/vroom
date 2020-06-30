@@ -1,15 +1,14 @@
+#include <cpp11/list.hpp>
+
 #include "LocaleInfo.h"
-
-#include "fixed_width_index.h"
-
-#include "unicode_fopen.h"
-
 #include "columns.h"
+#include "fixed_width_index.h"
+#include "unicode_fopen.h"
 
 using namespace Rcpp;
 
 [[cpp11::register]] List vroom_fwf_(
-    List inputs,
+    cpp11::list inputs,
     std::vector<int> col_starts,
     std::vector<int> col_ends,
     bool trim_ws,

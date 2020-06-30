@@ -3,8 +3,7 @@
 #include "index.h"
 #include "iterator.h"
 
-#include "Rcpp.h"
-
+#include <cpp11/list.hpp>
 #include <memory>
 
 #ifdef VROOM_LOG
@@ -19,7 +18,7 @@ class index_collection : public index,
 public:
   // For delimited files
   index_collection(
-      Rcpp::List in,
+      cpp11::list in,
       const char* delim,
       const char quote,
       const bool trim_ws,
@@ -34,7 +33,7 @@ public:
 
   // For fixed width files
   index_collection(
-      Rcpp::List in,
+      cpp11::list in,
       const std::vector<int>& col_starts,
       const std::vector<int>& col_ends,
       const bool trim_ws,
