@@ -4,6 +4,7 @@
 #include <iterator>
 
 #include <cpp11/R.hpp>
+#include <cpp11/list.hpp>
 
 #include "RProgress.h"
 #include "connection.h"
@@ -22,7 +23,7 @@ typedef enum {
 } vroom_write_opt_t;
 
 size_t get_buffer_size(
-    const Rcpp::List& input,
+    const cpp11::list& input,
     const std::vector<SEXPTYPE>& types,
     size_t start,
     size_t end) {
@@ -47,7 +48,7 @@ size_t get_buffer_size(
 
   size_t num_rows = end - start;
 
-  for (int i = 0; i < input.length(); ++i) {
+  for (int i = 0; i < input.size(); ++i) {
     switch (types[i]) {
     case STRSXP: {
       for (size_t j = start; j < end; ++j) {
@@ -69,7 +70,7 @@ size_t get_buffer_size(
   }
 
   // Add size of delimiters + newline
-  buf_size += input.length() * num_rows;
+  buf_size += input.size() * num_rows;
 
   return buf_size;
 }
@@ -153,7 +154,7 @@ void str_to_buf(
 }
 
 std::vector<char> fill_buf(
-    const Rcpp::List& input,
+    const cpp11::list& input,
     const char delim,
     const char* na_str,
     size_t options,
@@ -167,7 +168,7 @@ std::vector<char> fill_buf(
   auto na_len = strlen(na_str);
 
   for (size_t row = begin; row < end; ++row) {
-    for (int col = 0; col < input.length(); ++col) {
+    for (int col = 0; col < input.size(); ++col) {
       switch (types[col]) {
       case STRSXP: {
         auto str = STRING_ELT(input[col], row);
@@ -257,17 +258,17 @@ void write_buf_con(const std::vector<char>& buf, SEXP con, bool is_stdout) {
 }
 #endif
 
-std::vector<SEXPTYPE> get_types(const Rcpp::List& input) {
+std::vector<SEXPTYPE> get_types(const cpp11::list& input) {
   std::vector<SEXPTYPE> out;
-  for (int col = 0; col < input.length(); ++col) {
+  for (int col = 0; col < input.size(); ++col) {
     out.push_back(TYPEOF(input[col]));
   }
   return out;
 }
 
-std::vector<void*> get_ptrs(const Rcpp::List& input) {
+std::vector<void*> get_ptrs(const cpp11::list& input) {
   std::vector<void*> out;
-  for (int col = 0; col < input.length(); ++col) {
+  for (int col = 0; col < input.size(); ++col) {
     switch (TYPEOF(input[col])) {
     case REALSXP:
       out.push_back(REAL(input[col]));
@@ -286,7 +287,7 @@ std::vector<void*> get_ptrs(const Rcpp::List& input) {
 }
 
 std::vector<char>
-get_header(const Rcpp::List& input, const char delim, size_t options) {
+get_header(const cpp11::list& input, const char delim, size_t options) {
   Rcpp::CharacterVector names =
       Rcpp::as<Rcpp::CharacterVector>(input.attr("names"));
   std::vector<char> out;
@@ -301,7 +302,7 @@ get_header(const Rcpp::List& input, const char delim, size_t options) {
 }
 
 [[cpp11::register]] void vroom_write_(
-    Rcpp::List input,
+    cpp11::list input,
     std::string filename,
     const char delim,
     const char* na_str,
@@ -399,7 +400,7 @@ get_header(const Rcpp::List& input, const char delim, size_t options) {
 // TODO: Think about refactoring this so it and vroom_write_ can share some
 // code
 [[cpp11::register]] void vroom_write_connection_(
-    Rcpp::List input,
+    cpp11::list input,
     Rcpp::RObject con,
     const char delim,
     const char* na_str,
@@ -497,7 +498,7 @@ get_header(const Rcpp::List& input, const char delim, size_t options) {
 }
 
 [[cpp11::register]] Rcpp::CharacterVector vroom_format_(
-    Rcpp::List input,
+    cpp11::list input,
     const char delim,
     const char* na_str,
     bool col_names,
