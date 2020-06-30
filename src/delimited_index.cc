@@ -56,7 +56,7 @@ delimited_index::delimited_index(
     // libstdc++ (https://stackoverflow.com/a/54316671/2055486), so just print
     // the message on stderr return
 #ifndef VROOM_STANDALONE
-    Rcpp::Rcerr << "mapping error: " << error.message() << '\n';
+    REprintf("mapping error: %s\n", error.message().c_str());
 #else
     std::cerr << "mapping error: " << error.message() << '\n';
 #endif
@@ -68,7 +68,7 @@ delimited_index::delimited_index(
 
   if (mmap_[file_size - 1] != '\n') {
 #ifndef VROOM_STANDALONE
-    Rcpp::Rcerr << "Files must end with a newline\n";
+    REprintf("Files must end with a newline\n");
 #else
     std::cerr << "Files must end with a newline\n";
 #endif
