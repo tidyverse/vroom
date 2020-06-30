@@ -194,16 +194,16 @@ done:
   return sign ? -fraction : fraction;
 }
 
-Rcpp::NumericVector read_dbl(vroom_vec_info* info) {
+cpp11::doubles read_dbl(vroom_vec_info* info) {
 
   R_xlen_t n = info->column->size();
 
-  Rcpp::NumericVector out(n);
+  cpp11::writable::doubles out(n);
 
   parallel_for(
       n,
       [&](size_t start, size_t end, size_t id) {
-        size_t i = start;
+        R_xlen_t i = start;
         auto col = info->column->slice(start, end);
         for (const auto& str : *col) {
           out[i++] = bsd_strtod(str.begin(), str.end());

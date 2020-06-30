@@ -1,13 +1,12 @@
+#include <cpp11/doubles.hpp>
+
 #include "altrep.h"
-
-#include "vroom_vec.h"
-#include <Rcpp.h>
-
 #include "parallel.h"
+#include "vroom_vec.h"
 
 double bsd_strtod(const char* begin, const char* end);
 
-Rcpp::NumericVector read_dbl(vroom_vec_info* info);
+cpp11::doubles read_dbl(vroom_vec_info* info);
 
 #ifdef HAS_ALTREP
 
@@ -102,6 +101,5 @@ public:
 
 #endif
 
-// Called the package is loaded (needs Rcpp 0.12.18.3)
-[[cpp11::init]]
-void init_vroom_dbl(DllInfo* dll);
+// Called the package is loaded
+[[cpp11::init]] void init_vroom_dbl(DllInfo* dll);
