@@ -5,6 +5,7 @@
 
 #include <cpp11/R.hpp>
 #include <cpp11/list.hpp>
+#include <cpp11/strings.hpp>
 
 #include "RProgress.h"
 #include "connection.h"
@@ -288,8 +289,7 @@ std::vector<void*> get_ptrs(const cpp11::list& input) {
 
 std::vector<char>
 get_header(const cpp11::list& input, const char delim, size_t options) {
-  Rcpp::CharacterVector names =
-      Rcpp::as<Rcpp::CharacterVector>(input.attr("names"));
+  cpp11::strings names(input.attr("names"));
   std::vector<char> out;
   for (R_xlen_t i = 0; i < names.size(); ++i) {
     auto str = STRING_ELT(names, i);
@@ -497,7 +497,7 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
   }
 }
 
-[[cpp11::register]] Rcpp::CharacterVector vroom_format_(
+[[cpp11::register]] cpp11::strings vroom_format_(
     cpp11::list input,
     const char delim,
     const char* na_str,
@@ -505,7 +505,7 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
     size_t options) {
 
   size_t num_rows = Rf_xlength(input[0]);
-  Rcpp::CharacterVector out(1);
+  cpp11::writable::strings out(1);
 
   auto types = get_types(input);
   auto ptrs = get_ptrs(input);

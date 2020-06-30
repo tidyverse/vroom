@@ -72,7 +72,7 @@ extern "C" SEXP _vroom_vroom_write_connection_(SEXP input, SEXP con, SEXP delim,
   END_CPP11
 }
 // vroom_write.cc
-Rcpp::CharacterVector vroom_format_(cpp11::list input, const char delim, const char* na_str, bool col_names, size_t options);
+cpp11::strings vroom_format_(cpp11::list input, const char delim, const char* na_str, bool col_names, size_t options);
 extern "C" SEXP _vroom_vroom_format_(SEXP input, SEXP delim, SEXP na_str, SEXP col_names, SEXP options) {
   BEGIN_CPP11
     return cpp11::as_sexp(vroom_format_(cpp11::unmove(cpp11::as_cpp<cpp11::list>(input)), cpp11::unmove(cpp11::as_cpp<const char>(delim)), cpp11::unmove(cpp11::as_cpp<const char*>(na_str)), cpp11::unmove(cpp11::as_cpp<bool>(col_names)), cpp11::unmove(cpp11::as_cpp<size_t>(options))));
