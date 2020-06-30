@@ -51,8 +51,7 @@ public:
   collector(cpp11::list data, SEXP name, size_t altrep)
       : data_(data),
         name_(name),
-        type_(derive_type(Rcpp::as<std::string>(
-            Rcpp::as<Rcpp::CharacterVector>(data_.attr("class"))[0]))),
+        type_(derive_type(cpp11::strings(data_.attr("class"))[0])),
         altrep_(altrep) {}
   column_type type() const { return type_; }
   SEXP name() const { return name_; }

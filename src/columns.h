@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cpp11/as.hpp>
+#include <cpp11/list.hpp>
 #include <cpp11/strings.hpp>
 
 #include "vroom.h"
@@ -46,8 +47,8 @@ inline SEXP generate_filename_column(
     const std::vector<size_t>& lengths,
     size_t rows) {
 #ifdef HAS_ALTREP
-  IntegerVector rle(filenames.size());
-  for (size_t i = 0; i < lengths.size(); ++i) {
+  cpp11::writable::integers rle(filenames.size());
+  for (R_xlen_t i = 0; i < R_xlen_t(lengths.size()); ++i) {
     rle[i] = lengths[i];
   }
   rle.names() = filenames;
@@ -70,7 +71,7 @@ inline SEXP generate_filename_column(
 #endif
 }
 
-inline List create_columns(
+inline cpp11::list create_columns(
     std::shared_ptr<index_collection> idx,
     cpp11::sexp col_names,
     cpp11::sexp col_types,
@@ -78,7 +79,7 @@ inline List create_columns(
     SEXP id,
     std::vector<std::string>& filenames,
     cpp11::strings na,
-    List locale,
+    cpp11::list locale,
     size_t altrep,
     size_t guess_max,
     size_t num_threads) {
@@ -92,7 +93,7 @@ inline List create_columns(
 
   bool add_filename = !Rf_isNull(id);
 
-  List res(num_cols + add_filename);
+  cpp11::writable::list res(num_cols + add_filename);
 
   cpp11::writable::strings res_nms(num_cols + add_filename);
 
