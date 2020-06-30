@@ -72,29 +72,29 @@ inline SEXP generate_filename_column(
 
 inline List create_columns(
     std::shared_ptr<index_collection> idx,
-    RObject col_names,
-    RObject col_types,
-    RObject col_select,
+    cpp11::sexp col_names,
+    cpp11::sexp col_types,
+    cpp11::sexp col_select,
     SEXP id,
     std::vector<std::string>& filenames,
-    CharacterVector na,
+    cpp11::strings na,
     List locale,
     size_t altrep,
     size_t guess_max,
     size_t num_threads) {
 
-  auto num_cols = idx->num_columns();
+  R_xlen_t num_cols = idx->num_columns();
   auto num_rows = idx->num_rows();
 
   auto locale_info = std::make_shared<LocaleInfo>(static_cast<SEXP>(locale));
 
-  size_t i = 0;
+  R_xlen_t i = 0;
 
   bool add_filename = !Rf_isNull(id);
 
   List res(num_cols + add_filename);
 
-  CharacterVector res_nms(num_cols + add_filename);
+  cpp11::writable::strings res_nms(num_cols + add_filename);
 
   if (add_filename) {
     res[i] =
@@ -114,14 +114,14 @@ inline List create_columns(
       altrep);
 
   size_t to_parse = 0;
-  for (size_t col = 0; col < num_cols; ++col) {
+  for (R_xlen_t col = 0; col < num_cols; ++col) {
     auto collector = my_collectors[col];
     if (collector.use_altrep()) {
       to_parse += num_rows;
     }
   }
 
-  for (size_t col = 0; col < num_cols; ++col) {
+  for (R_xlen_t col = 0; col < num_cols; ++col) {
     auto collector = my_collectors[col];
     auto col_type = collector.type();
 
