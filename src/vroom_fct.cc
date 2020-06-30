@@ -1,4 +1,5 @@
 #include "vroom_fct.h"
+#include <unordered_map>
 
 bool matches(const string& needle, const std::vector<std::string>& haystack) {
   for (auto& hay : haystack) {
@@ -9,18 +10,18 @@ bool matches(const string& needle, const std::vector<std::string>& haystack) {
   return false;
 }
 
-Rcpp::IntegerVector read_fct_explicit(
-    vroom_vec_info* info, Rcpp::CharacterVector levels, bool ordered) {
+cpp11::integers
+read_fct_explicit(vroom_vec_info* info, cpp11::strings levels, bool ordered) {
   R_xlen_t n = info->column->size();
 
-  Rcpp::IntegerVector out(n);
+  cpp11::writable::integers out(n);
   std::unordered_map<SEXP, size_t> level_map;
 
   for (auto i = 0; i < levels.size(); ++i) {
     level_map[levels[i]] = i + 1;
   }
 
-  size_t i = 0;
+  R_xlen_t i = 0;
   for (const auto& str : *info->column) {
     auto search = level_map.find(
         info->locale->encoder_.makeSEXP(str.begin(), str.end(), false));
@@ -31,9 +32,9 @@ Rcpp::IntegerVector read_fct_explicit(
     }
   }
 
-  out.attr("levels") = levels;
+  out.attr("levels") = static_cast<SEXP>(levels);
   if (ordered) {
-    out.attr("class") = Rcpp::CharacterVector::create("ordered", "factor");
+    out.attr("class") = {"ordered", "factor"};
   } else {
     out.attr("class") = "factor";
   }
@@ -41,14 +42,14 @@ Rcpp::IntegerVector read_fct_explicit(
   return out;
 }
 
-Rcpp::IntegerVector read_fct_implicit(vroom_vec_info* info, bool include_na) {
+cpp11::integers read_fct_implicit(vroom_vec_info* info, bool include_na) {
   R_xlen_t n = info->column->size();
 
-  Rcpp::IntegerVector out(n);
+  cpp11::writable::integers out(n);
   std::vector<std::string> levels;
-  std::unordered_map<string, size_t> level_map;
+  std::unordered_map<vroom::string, size_t> level_map;
 
-  auto nas = Rcpp::as<std::vector<std::string> >(*info->na);
+  auto nas = cpp11::as_cpp<std::vector<std::string> >(*info->na);
 
   size_t max_level = 1;
 
@@ -71,8 +72,8 @@ Rcpp::IntegerVector read_fct_implicit(vroom_vec_info* info, bool include_na) {
     }
   }
 
-  Rcpp::CharacterVector out_lvls(levels.size());
-  for (size_t i = 0; i < levels.size(); ++i) {
+  cpp11::writable::strings out_lvls(levels.size());
+  for (R_xlen_t i = 0; i < static_cast<R_xlen_t>(levels.size()); ++i) {
     out_lvls[i] = info->locale->encoder_.makeSEXP(
         levels[i].c_str(), levels[i].c_str() + levels[i].size(), false);
   }
@@ -80,7 +81,7 @@ Rcpp::IntegerVector read_fct_implicit(vroom_vec_info* info, bool include_na) {
     out_lvls.push_back(NA_STRING);
   }
 
-  out.attr("levels") = out_lvls;
+  out.attr("levels") = static_cast<SEXP>(out_lvls);
   out.attr("class") = "factor";
 
   return out;

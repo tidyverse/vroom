@@ -1,25 +1,20 @@
+#include <cpp11/integers.hpp>
+#include <cpp11/strings.hpp>
+
 #include "altrep.h"
 #include "vroom.h"
 #include "vroom_vec.h"
 
-#include <Rcpp.h>
+#include <map>
 
 using namespace vroom;
 
-Rcpp::IntegerVector read_fct_explicit(
-    vroom_vec_info* info, Rcpp::CharacterVector levels, bool ordered);
+cpp11::integers
+read_fct_explicit(vroom_vec_info* info, cpp11::strings levels, bool ordered);
 
-Rcpp::IntegerVector read_fct_implicit(vroom_vec_info* info, bool include_na);
+cpp11::integers read_fct_implicit(vroom_vec_info* info, bool include_na);
 
 #ifdef HAS_ALTREP
-
-using namespace Rcpp;
-
-// inspired by Luke Tierney and the R Core Team
-// https://github.com/ALTREP-examples/Rpkg-mutable/blob/master/vroom_time.h|31
-// col 32| for (const autosrc str : info->column.slice(start, end)) {/mutable.c
-// and Romain François
-// https://purrple.cat/blog/2018/10/21/lazy-abs-altrep-cplusplus/ and Dirk
 
 struct vroom_factor_info {
   vroom_vec_info* info;
@@ -32,7 +27,7 @@ public:
   static R_altrep_class_t class_t;
 
   // Make an altrep object of class `vroom_factor::class_t`
-  static SEXP Make(vroom_vec_info* info, CharacterVector levels, bool ordered) {
+  static SEXP Make(vroom_vec_info* info, cpp11::strings levels, bool ordered) {
 
     vroom_factor_info* fct_info = new vroom_factor_info;
     fct_info->info = info;
@@ -45,11 +40,11 @@ public:
     R_RegisterCFinalizerEx(out, Finalize, FALSE);
 
     // make a new altrep object of class `vroom_factor::class_t`
-    RObject res = R_new_altrep(class_t, out, R_NilValue);
+    cpp11::sexp res = R_new_altrep(class_t, out, R_NilValue);
 
-    res.attr("levels") = levels;
+    res.attr("levels") = static_cast<SEXP>(levels);
     if (ordered) {
-      res.attr("class") = CharacterVector::create("ordered", "factor");
+      res.attr("class") = {"ordered", "factor"};
     } else {
       res.attr("class") = "factor";
     }
@@ -147,7 +142,7 @@ public:
 
     // allocate a standard character vector for data2
     R_xlen_t n = Length(vec);
-    IntegerVector out(n);
+    cpp11::writable::integers out(n);
 
     for (R_xlen_t i = 0; i < n; ++i) {
       out[i] = Val(vec, i);
@@ -173,9 +168,9 @@ public:
       return nullptr;
     }
 
-    RObject x_(x);
+    cpp11::sexp x_(x);
 
-    Rcpp::IntegerVector in(indx);
+    cpp11::integers in(indx);
 
     auto idx = std::make_shared<std::vector<size_t> >();
 
@@ -197,10 +192,8 @@ public:
                                    inf.info->locale,
                                    inf.info->format};
 
-    return Make(
-        info,
-        x_.attr("levels"),
-        Rcpp::as<CharacterVector>(x_.attr("class"))[0] == "ordered");
+    bool is_ordered = Rf_inherits(x_, "ordered");
+    return Make(info, cpp11::strings(x_.attr("levels")), is_ordered);
   }
 
   // -------- initialize the altrep class with the methods above
@@ -223,6 +216,5 @@ public:
 };
 #endif
 
-// Called the package is loaded (needs Rcpp 0.12.18.3)
-[[cpp11::init]]
-void init_vroom_fct(DllInfo* dll);
+// Called the package is loaded
+[[cpp11::init]] void init_vroom_fct(DllInfo* dll);
