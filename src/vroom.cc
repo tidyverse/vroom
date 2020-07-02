@@ -1,7 +1,8 @@
+#include <mio/shared_mmap.hpp>
+
+#include <cpp11/R.hpp>
 #include <cpp11/list.hpp>
 #include <cpp11/strings.hpp>
-
-#include <mio/shared_mmap.hpp>
 
 #include "LocaleInfo.h"
 #include "columns.h"
