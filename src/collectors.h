@@ -114,7 +114,7 @@ inline cpp11::strings read_column_names(
 }
 
 std::string guess_type__(
-    cpp11::strings input,
+    cpp11::writable::strings input,
     cpp11::strings na,
     LocaleInfo* locale,
     bool guess_integer);
@@ -168,11 +168,8 @@ inline collectors resolve_collectors(
         col_vals[j] =
             locale_info->encoder_.makeSEXP(str.begin(), str.end(), false);
       }
-      auto type = guess_type__(
-          static_cast<SEXP>(col_vals),
-          static_cast<SEXP>(na),
-          locale_info.get(),
-          false);
+      auto type =
+          guess_type__(std::move(col_vals), na, locale_info.get(), false);
       auto fun_name = std::string("col_") + type;
       auto col_type = vroom[fun_name.c_str()];
       my_collectors[col] = col_type();
