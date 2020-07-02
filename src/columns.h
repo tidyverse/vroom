@@ -87,7 +87,7 @@ inline cpp11::list create_columns(
   R_xlen_t num_cols = idx->num_columns();
   auto num_rows = idx->num_rows();
 
-  auto locale_info = std::make_shared<LocaleInfo>(static_cast<SEXP>(locale));
+  auto locale_info = std::make_shared<LocaleInfo>(locale);
 
   R_xlen_t i = 0;
 

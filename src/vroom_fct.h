@@ -172,7 +172,7 @@ public:
 
     cpp11::integers in(indx);
 
-    auto idx = std::make_shared<std::vector<size_t> >();
+    auto idx = std::make_shared<std::vector<size_t>>();
 
     idx->reserve(in.size());
 

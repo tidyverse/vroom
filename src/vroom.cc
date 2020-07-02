@@ -61,18 +61,18 @@
       num_threads,
       progress);
 
-  return static_cast<SEXP>(create_columns(
+  return create_columns(
       idx,
-      static_cast<SEXP>(col_names),
-      static_cast<SEXP>(col_types),
-      static_cast<SEXP>(col_select),
+      col_names,
+      col_types,
+      col_select,
       id,
       filenames,
-      static_cast<SEXP>(na),
-      static_cast<SEXP>(locale),
+      na,
+      locale,
       altrep,
       guess_max,
-      num_threads));
+      num_threads);
 }
 
 [[cpp11::register]] bool has_trailing_newline(cpp11::strings filename) {

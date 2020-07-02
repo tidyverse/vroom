@@ -39,18 +39,18 @@
   auto idx = std::make_shared<vroom::index_collection>(
       inputs, col_starts, col_ends, trim_ws, skip, comment, n_max, progress);
 
-  return static_cast<SEXP>(create_columns(
+  return create_columns(
       idx,
-      static_cast<SEXP>(col_names),
-      static_cast<SEXP>(col_types),
-      static_cast<SEXP>(col_select),
+      col_names,
+      col_types,
+      col_select,
       id,
       filenames,
-      static_cast<SEXP>(na),
-      static_cast<SEXP>(locale),
+      na,
+      locale,
       altrep,
       guess_max,
-      num_threads));
+      num_threads);
 }
 
 template <typename Iterator>

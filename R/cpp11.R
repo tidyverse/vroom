@@ -51,4 +51,3 @@ has_trailing_newline <- function(filename) {
 vroom_rle <- function(input) {
   .Call("_vroom_vroom_rle", input)
 }
-
