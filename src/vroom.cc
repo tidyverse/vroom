@@ -11,6 +11,7 @@
 #include "index_collection.h"
 #include "vroom_rle.h"
 #include <algorithm>
+#include <numeric>
 
 #include "unicode_fopen.h"
 
