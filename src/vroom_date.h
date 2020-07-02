@@ -11,7 +11,7 @@ double parse_date(
 
 cpp11::doubles read_date(vroom_vec_info* info);
 
-#if HAS_ALTREP
+#ifdef HAS_ALTREP
 /* no support for altrep before 3.5 */
 
 class vroom_date : public vroom_dttm {
