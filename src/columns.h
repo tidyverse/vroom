@@ -59,7 +59,7 @@ inline SEXP generate_filename_column(
   out.reserve(rows);
 
   if (static_cast<size_t>(filenames.size()) != lengths.size()) {
-    stop("inputs and lengths inconsistent");
+    cpp11stop("inputs and lengths inconsistent");
   }
 
   for (size_t i = 0; i < filenames.size(); ++i) {
@@ -67,7 +67,7 @@ inline SEXP generate_filename_column(
       out.push_back(filenames[i]);
     }
   }
-  return wrap(out);
+  return cpp11::as_sexp(out);
 #endif
 }
 
