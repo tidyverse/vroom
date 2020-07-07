@@ -56,7 +56,7 @@ vroom_write <- function(x, path, delim = '\t', na = "NA", col_names = !append,
   xx[] <- lapply(xx, output_column)
 
   # This seems to work ok in practice
-  buf_lines <- max(as.integer(Sys.getenv("VROOM_WRITE_BUFFER_SIZE", nrow(x) / 100 / num_threads)), 1)
+  buf_lines <- max(as.integer(Sys.getenv("VROOM_WRITE_BUFFER_LINES", nrow(x) / 100 / num_threads)), 1)
 
   if (inherits(path, "connection")) {
     vroom_write_connection_(xx, path, delim, na_str = na, col_names = col_names,
