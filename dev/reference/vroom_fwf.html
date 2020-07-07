@@ -159,32 +159,32 @@
     </div>
 
     <pre class="usage"><span class='fu'>vroom_fwf</span>(
-  <span class='no'>file</span>,
-  <span class='kw'>col_positions</span> <span class='kw'>=</span> <span class='fu'>fwf_empty</span>(<span class='no'>file</span>, <span class='no'>skip</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='no'>guess_max</span>),
-  <span class='kw'>col_types</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>col_select</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>id</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>locale</span> <span class='kw'>=</span> <span class='fu'><a href='locale.html'>default_locale</a></span>(),
-  <span class='kw'>na</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>""</span>, <span class='st'>"NA"</span>),
-  <span class='kw'>comment</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>trim_ws</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>Inf</span>,
-  <span class='kw'>guess_max</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>altrep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>altrep_opts</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Deprecated.html'>deprecated</a></span>(),
-  <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(),
-  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>(),
-  <span class='kw'>.name_repair</span> <span class='kw'>=</span> <span class='st'>"unique"</span>
+  <span class='kw'>file</span>,
+  col_positions = <span class='fu'>fwf_empty</span>(<span class='kw'>file</span>, <span class='kw'>skip</span>, n = <span class='kw'>guess_max</span>),
+  col_types = <span class='kw'>NULL</span>,
+  col_select = <span class='kw'>NULL</span>,
+  id = <span class='kw'>NULL</span>,
+  locale = <span class='fu'>default_locale</span>(),
+  na = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>""</span>, <span class='st'>"NA"</span>),
+  comment = <span class='st'>""</span>,
+  trim_ws = <span class='fl'>TRUE</span>,
+  skip = <span class='fl'>0</span>,
+  n_max = <span class='fl'>Inf</span>,
+  guess_max = <span class='fl'>100</span>,
+  altrep = <span class='fl'>TRUE</span>,
+  altrep_opts = <span class='fu'><a href='https://rdrr.io/r/base/Deprecated.html'>deprecated</a></span>(),
+  num_threads = <span class='fu'>vroom_threads</span>(),
+  progress = <span class='fu'>vroom_progress</span>(),
+  .name_repair = <span class='st'>"unique"</span>
 )
 
-<span class='fu'>fwf_empty</span>(<span class='no'>file</span>, <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>col_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>comment</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100L</span>)
+<span class='fu'>fwf_empty</span>(<span class='kw'>file</span>, skip = <span class='fl'>0</span>, col_names = <span class='kw'>NULL</span>, comment = <span class='st'>""</span>, n = <span class='fl'>100L</span>)
 
-<span class='fu'>fwf_widths</span>(<span class='no'>widths</span>, <span class='kw'>col_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='fu'>fwf_widths</span>(<span class='kw'>widths</span>, col_names = <span class='kw'>NULL</span>)
 
-<span class='fu'>fwf_positions</span>(<span class='no'>start</span>, <span class='kw'>end</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>col_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='fu'>fwf_positions</span>(<span class='kw'>start</span>, end = <span class='kw'>NULL</span>, col_names = <span class='kw'>NULL</span>)
 
-<span class='fu'>fwf_cols</span>(<span class='no'>...</span>)</pre>
+<span class='fu'>fwf_cols</span>(<span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -224,7 +224,7 @@ subset of the columns, use <code><a href='https://readr.tidyverse.org/reference/
 character represents one column:
 c = character, i = integer, n = number, d = double,
 l = logical, f = factor, D = date, T = date time, t = time, ? = guess, or
-<code>_</code>/<code>-</code> to skip the column.</p></td>
+<code>_</code>/<code><a href='https://rdrr.io/r/base/Arithmetic.html'>-</a></code> to skip the column.</p></td>
     </tr>
     <tr>
       <th>col_select</th>
@@ -277,7 +277,7 @@ each field before parsing it?</p></td>
       <th>altrep</th>
       <td><p>Control which column types use Altrep representations,
 either a character vector of types, <code>TRUE</code> or <code>FALSE</code>. See
-<code><a href='vroom_altrep.html'>vroom_altrep()</a></code> for for full details.</p></td>
+<code>vroom_altrep()</code> for for full details.</p></td>
     </tr>
     <tr>
       <th>altrep_opts</th>
@@ -336,35 +336,35 @@ with or or two rows as above.</p></td>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>fwf_sample</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='vroom_example.html'>vroom_example</a></span>(<span class='st'>"fwf-sample.txt"</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/readLines.html'>readLines</a></span>(<span class='no'>fwf_sample</span>))</div><div class='output co'>#&gt; John Smith          WA        418-Y11-4111 Mary Hartford       CA        319-Z19-4341 Evan Nolan          IL        219-532-c301</div><div class='input'>
+    <pre class="examples"><div class='input'><span class='kw'>fwf_sample</span> <span class='op'>&lt;-</span> <span class='fu'>vroom_example</span>(<span class='st'>"fwf-sample.txt"</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/readLines.html'>readLines</a></span>(<span class='kw'>fwf_sample</span>))</div><div class='output co'>#&gt; John Smith          WA        418-Y11-4111 Mary Hartford       CA        319-Z19-4341 Evan Nolan          IL        219-532-c301</div><div class='input'>
 <span class='co'># You can specify column positions in several ways:</span>
 <span class='co'># 1. Guess based on position of empty columns</span>
-<span class='fu'>vroom_fwf</span>(<span class='no'>fwf_sample</span>, <span class='fu'>fwf_empty</span>(<span class='no'>fwf_sample</span>, <span class='kw'>col_names</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"first"</span>, <span class='st'>"last"</span>, <span class='st'>"state"</span>, <span class='st'>"ssn"</span>)))</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 3 x 4</span><span>
+<span class='fu'>vroom_fwf</span>(<span class='kw'>fwf_sample</span>, <span class='fu'>fwf_empty</span>(<span class='kw'>fwf_sample</span>, col_names = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"first"</span>, <span class='st'>"last"</span>, <span class='st'>"state"</span>, <span class='st'>"ssn"</span>)))</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 3 x 4</span><span>
 #&gt;   first last     state ssn         
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       
 #&gt; </span><span style='color: #555555;'>1</span><span> John  Smith    WA    418-Y11-4111
 #&gt; </span><span style='color: #555555;'>2</span><span> Mary  Hartford CA    319-Z19-4341
 #&gt; </span><span style='color: #555555;'>3</span><span> Evan  Nolan    IL    219-532-c301</div><div class='input'><span class='co'># 2. A vector of field widths</span>
-<span class='fu'>vroom_fwf</span>(<span class='no'>fwf_sample</span>, <span class='fu'>fwf_widths</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>10</span>, <span class='fl'>12</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"name"</span>, <span class='st'>"state"</span>, <span class='st'>"ssn"</span>)))</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 3 x 3</span><span>
+<span class='fu'>vroom_fwf</span>(<span class='kw'>fwf_sample</span>, <span class='fu'>fwf_widths</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>10</span>, <span class='fl'>12</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"name"</span>, <span class='st'>"state"</span>, <span class='st'>"ssn"</span>)))</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 3 x 3</span><span>
 #&gt;   name          state ssn         
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       
 #&gt; </span><span style='color: #555555;'>1</span><span> John Smith    WA    418-Y11-4111
 #&gt; </span><span style='color: #555555;'>2</span><span> Mary Hartford CA    319-Z19-4341
 #&gt; </span><span style='color: #555555;'>3</span><span> Evan Nolan    IL    219-532-c301</div><div class='input'><span class='co'># 3. Paired vectors of start and end positions</span>
-<span class='fu'>vroom_fwf</span>(<span class='no'>fwf_sample</span>, <span class='fu'>fwf_positions</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>30</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>42</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"name"</span>, <span class='st'>"ssn"</span>)))</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 3 x 2</span><span>
+<span class='fu'>vroom_fwf</span>(<span class='kw'>fwf_sample</span>, <span class='fu'>fwf_positions</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>30</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>42</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"name"</span>, <span class='st'>"ssn"</span>)))</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 3 x 2</span><span>
 #&gt;   name          ssn         
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       
 #&gt; </span><span style='color: #555555;'>1</span><span> John Smith    418-Y11-4111
 #&gt; </span><span style='color: #555555;'>2</span><span> Mary Hartford 319-Z19-4341
 #&gt; </span><span style='color: #555555;'>3</span><span> Evan Nolan    219-532-c301</div><div class='input'><span class='co'># 4. Named arguments with start and end positions</span>
-<span class='fu'>vroom_fwf</span>(<span class='no'>fwf_sample</span>, <span class='fu'>fwf_cols</span>(<span class='kw'>name</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>20</span>), <span class='kw'>ssn</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>30</span>, <span class='fl'>42</span>)))</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 3 x 2</span><span>
+<span class='fu'>vroom_fwf</span>(<span class='kw'>fwf_sample</span>, <span class='fu'>fwf_cols</span>(name = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>20</span>), ssn = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>30</span>, <span class='fl'>42</span>)))</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 3 x 2</span><span>
 #&gt;   name          ssn         
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       
 #&gt; </span><span style='color: #555555;'>1</span><span> John Smith    418-Y11-4111
 #&gt; </span><span style='color: #555555;'>2</span><span> Mary Hartford 319-Z19-4341
 #&gt; </span><span style='color: #555555;'>3</span><span> Evan Nolan    219-532-c301</div><div class='input'><span class='co'># 5. Named arguments with column widths</span>
-<span class='fu'>vroom_fwf</span>(<span class='no'>fwf_sample</span>, <span class='fu'>fwf_cols</span>(<span class='kw'>name</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>state</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>ssn</span> <span class='kw'>=</span> <span class='fl'>12</span>))</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 3 x 3</span><span>
+<span class='fu'>vroom_fwf</span>(<span class='kw'>fwf_sample</span>, <span class='fu'>fwf_cols</span>(name = <span class='fl'>20</span>, state = <span class='fl'>10</span>, ssn = <span class='fl'>12</span>))</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 3 x 3</span><span>
 #&gt;   name          state ssn         
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       
 #&gt; </span><span style='color: #555555;'>1</span><span> John Smith    WA    418-Y11-4111

@@ -101,7 +101,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="vroom_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Get started with vroom</h1>
@@ -116,7 +116,9 @@
     
 <p>The vroom package contains one main function <code><a href="../reference/vroom.html">vroom()</a></code> which is used to read all types of delimited files. A delimited file is any file in which the data is separated (delimited) by one or more characters.</p>
 <p>The most common type of delimited files are CSV (Comma Separated Values) or TSV (Tab Separated Values) files, typically these files have a <code>.csv</code> and <code>.tsv</code> suffix respectively.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">vroom</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://vroom.r-lib.org">vroom</a></span>)
+</pre></div>
 <p>This vignette covers the following topics:</p>
 <ul>
 <li>The basics of reading files, including
@@ -136,13 +138,14 @@
 <a href="#reading-files" class="anchor"></a>Reading files</h2>
 <p>To read a CSV, or other type of delimited file with vroom pass the file to <code><a href="../reference/vroom.html">vroom()</a></code>. The delimiter will be automatically guessed if it is a common delimiter; e.g. (“,” “” " “|” “:” “;”). If the guessing fails or you are using a less common delimiter specify it with the <code>delim</code> parameter. (e.g. <code>delim = ","</code>).</p>
 <p>We have included an example CSV file in the vroom package for use in examples and tests. Access it with <code><a href="../reference/vroom_example.html">vroom_example("mtcars.csv")</a></code></p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># See where the example file is stored on your machine</span>
-<span class="no">file</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>)
-<span class="no">file</span>
-<span class="co">#&gt; [1] "/Users/runner/runners/2.262.1/work/_temp/Library/vroom/extdata/mtcars.csv"</span>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="co"># See where the example file is stored on your machine</span>
+<span class="kw">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>)
+<span class="kw">file</span>
+<span class="co">#&gt; [1] "/Users/runner/work/_temp/Library/vroom/extdata/mtcars.csv"</span>
 
 <span class="co"># Read the file, by default vroom will guess the delimiter automatically.</span>
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="no">file</span>)
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw">file</span>)
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 12</span>
 <span class="co">#&gt; Delimiter: ","</span>
@@ -161,7 +164,7 @@
 
 <span class="co"># You can also specify it explicitly, which is (slightly) faster, and safer if</span>
 <span class="co"># you know how the file is delimited.</span>
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="no">file</span>, <span class="kw">delim</span> <span class="kw">=</span> <span class="st">","</span>)
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw">file</span>, delim = <span class="st">","</span>)
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 12</span>
 <span class="co">#&gt; Delimiter: ","</span>
@@ -176,23 +179,27 @@
 <span class="co">#&gt; 1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
 <span class="co">#&gt; 2 Mazda RX4 W…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span>
 <span class="co">#&gt; 3 Datsun 710    22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span>
-<span class="co">#&gt; # … with 29 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 29 more rows</span>
+</pre></div>
 </div>
 <div id="reading-multiple-files" class="section level2">
 <h2 class="hasAnchor">
 <a href="#reading-multiple-files" class="anchor"></a>Reading multiple files</h2>
 <p>If you are reading a set of files which all have the same columns, you can pass the filenames directly to <code><a href="../reference/vroom.html">vroom()</a></code> and it will combine them into one result.</p>
 <p>First we will create some files to read by splitting the mtcars dataset by number of cylinders, (it is OK if you don’t currently understand this code).</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">mt</span> <span class="kw">&lt;-</span> <span class="kw pkg">tibble</span><span class="kw ns">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html">rownames_to_column</a></span>(<span class="no">mtcars</span>, <span class="st">"model"</span>)
-<span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/imap.html">iwalk</a></span>(
-  <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span>(<span class="no">mt</span>, <span class="no">mt</span>$<span class="no">cyl</span>),
-  ~ <span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span>(<span class="no">.x</span>, <span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"mtcars_{.y}.csv"</span>), <span class="st">"\t"</span>)
-)</pre></body></html></div>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="kw">mt</span> <span class="op">&lt;-</span> <span class="kw">tibble</span>::<span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html">rownames_to_column</a></span>(<span class="kw">mtcars</span>, <span class="st">"model"</span>)
+<span class="kw">purrr</span>::<span class="fu"><a href="https://purrr.tidyverse.org/reference/imap.html">iwalk</a></span>(
+  <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span>(<span class="kw">mt</span>, <span class="kw">mt</span><span class="op">$</span><span class="kw">cyl</span>),
+  <span class="op">~</span> <span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span>(<span class="kw">.x</span>, <span class="kw">glue</span>::<span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"mtcars_{.y}.csv"</span>), <span class="st">"\t"</span>)
+)
+</pre></div>
 <p>Then we can efficiently read them into one table by passing the filenames directly to vroom.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">files</span> <span class="kw">&lt;-</span> <span class="kw pkg">fs</span><span class="kw ns">::</span><span class="fu"><a href="http://fs.r-lib.org/reference/dir_ls.html">dir_ls</a></span>(<span class="kw">glob</span> <span class="kw">=</span> <span class="st">"mtcars*csv"</span>)
-<span class="no">files</span>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="kw">files</span> <span class="op">&lt;-</span> <span class="kw">fs</span>::<span class="fu"><a href="http://fs.r-lib.org/reference/dir_ls.html">dir_ls</a></span>(glob = <span class="st">"mtcars*csv"</span>)
+<span class="kw">files</span>
 <span class="co">#&gt; mtcars_4.csv mtcars_6.csv mtcars_8.csv</span>
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="no">files</span>)
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw">files</span>)
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 12</span>
 <span class="co">#&gt; Delimiter: "\t"</span>
@@ -207,9 +214,11 @@
 <span class="co">#&gt; 1 Datsun 710  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span>
 <span class="co">#&gt; 2 Merc 240D   24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span>
 <span class="co">#&gt; 3 Merc 230    22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span>
-<span class="co">#&gt; # … with 29 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 29 more rows</span>
+</pre></div>
 <p>Often the filename or directory where the files are stored contains information. The <code>id</code> parameter can be used to add an extra column to the result with the full path to each file. (in this case we name the column <code>path</code>).</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="no">files</span>, <span class="kw">id</span> <span class="kw">=</span> <span class="st">"path"</span>)
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw">files</span>, id = <span class="st">"path"</span>)
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 13</span>
 <span class="co">#&gt; Delimiter: "\t"</span>
@@ -224,15 +233,17 @@
 <span class="co">#&gt; 1 mtcar… Dats…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span>
 <span class="co">#&gt; 2 mtcar… Merc…  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span>
 <span class="co">#&gt; 3 mtcar… Merc…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span>
-<span class="co">#&gt; # … with 29 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 29 more rows</span>
+</pre></div>
 </div>
 <div id="reading-compressed-files" class="section level2">
 <h2 class="hasAnchor">
 <a href="#reading-compressed-files" class="anchor"></a>Reading compressed files</h2>
 <p>vroom supports reading zip, gz, bz2 and xz compressed files automatically, just pass the filename of the compressed file to vroom.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">file</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv.gz"</span>)
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="kw">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv.gz"</span>)
 
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="no">file</span>)
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw">file</span>)
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 12</span>
 <span class="co">#&gt; Delimiter: ","</span>
@@ -247,24 +258,28 @@
 <span class="co">#&gt; 1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
 <span class="co">#&gt; 2 Mazda RX4 W…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span>
 <span class="co">#&gt; 3 Datsun 710    22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span>
-<span class="co">#&gt; # … with 29 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 29 more rows</span>
+</pre></div>
 <p><code><a href="../reference/vroom.html">vroom()</a></code> decompresses, indexes and writes the decompressed data to a file in the temp directory in a single stream. The temporary file is used to lazily look up the values and will be automatically cleaned up when all values in the object have been fully read, the object is removed, or the R session ends.</p>
 <div id="reading-single-files-from-multiple-multi-file-zip-archives" class="section level3">
 <h3 class="hasAnchor">
 <a href="#reading-single-files-from-multiple-multi-file-zip-archives" class="anchor"></a>Reading single files from multiple multi-file zip archives</h3>
 <p>If you are reading a zip file that contains multiple files with the same format, you can use a wrapper function like this:</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">read_all_zip</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">file</span>, <span class="no">...</span>) {
-  <span class="no">filenames</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html">unzip</a></span>(<span class="no">file</span>, <span class="kw">list</span> <span class="kw">=</span> <span class="fl">TRUE</span>)$<span class="no">Name</span>
-  <span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">filenames</span>, ~ <span class="fu"><a href="https://rdrr.io/r/base/connections.html">unz</a></span>(<span class="no">file</span>, <span class="no">.x</span>)), <span class="no">...</span>)
-}</pre></body></html></div>
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="kw">read_all_zip</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">file</span>, <span class="kw">...</span>) {
+  <span class="kw">filenames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html">unzip</a></span>(<span class="kw">file</span>, list = <span class="fl">TRUE</span>)<span class="op">$</span><span class="kw">Name</span>
+  <span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw">purrr</span>::<span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="kw">filenames</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/connections.html">unz</a></span>(<span class="kw">file</span>, <span class="kw">.x</span>)), <span class="kw">...</span>)
+}
+</pre></div>
 </div>
 </div>
 <div id="reading-remote-files" class="section level2">
 <h2 class="hasAnchor">
 <a href="#reading-remote-files" class="anchor"></a>Reading remote files</h2>
 <p>vroom can read files directly from the internet as well by passing the URL of the file to vroom.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">file</span> <span class="kw">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv"</span>
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="no">file</span>)
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="kw">file</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv"</span>
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw">file</span>)
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 12</span>
 <span class="co">#&gt; Delimiter: ","</span>
@@ -279,10 +294,12 @@
 <span class="co">#&gt; 1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
 <span class="co">#&gt; 2 Mazda RX4 W…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span>
 <span class="co">#&gt; 3 Datsun 710    22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span>
-<span class="co">#&gt; # … with 29 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 29 more rows</span>
+</pre></div>
 <p>It can even read gzipped files from the internet (although not the other compressed formats).</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">file</span> <span class="kw">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv.gz"</span>
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="no">file</span>)
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="kw">file</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv.gz"</span>
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw">file</span>)
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 12</span>
 <span class="co">#&gt; Delimiter: ","</span>
@@ -297,7 +314,8 @@
 <span class="co">#&gt; 1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
 <span class="co">#&gt; 2 Mazda RX4 W…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span>
 <span class="co">#&gt; 3 Datsun 710    22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span>
-<span class="co">#&gt; # … with 29 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 29 more rows</span>
+</pre></div>
 </div>
 <div id="column-selection" class="section level2">
 <h2 class="hasAnchor">
@@ -306,9 +324,10 @@
 <ul>
 <li>A character vector of column names</li>
 </ul>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">file</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv.gz"</span>)
+<div class="sourceCode" id="cb10"><pre class="downlit">
+<span class="kw">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv.gz"</span>)
 
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="no">file</span>, <span class="kw">col_select</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">model</span>, <span class="no">cyl</span>, <span class="no">gear</span>))
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw">file</span>, col_select = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">model</span>, <span class="kw">cyl</span>, <span class="kw">gear</span>))
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 3</span>
 <span class="co">#&gt; Delimiter: ","</span>
@@ -323,12 +342,14 @@
 <span class="co">#&gt; 1 Mazda RX4         6     4</span>
 <span class="co">#&gt; 2 Mazda RX4 Wag     6     4</span>
 <span class="co">#&gt; 3 Datsun 710        4     4</span>
-<span class="co">#&gt; # … with 29 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 29 more rows</span>
+</pre></div>
 <ul>
 <li>A numeric vector of column indexes, e.g. <code><a href="https://rdrr.io/r/base/c.html">c(1, 2, 5)</a></code>
 </li>
 </ul>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="no">file</span>, <span class="kw">col_select</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">11</span>))
+<div class="sourceCode" id="cb11"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw">file</span>, col_select = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">11</span>))
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 3</span>
 <span class="co">#&gt; Delimiter: ","</span>
@@ -343,12 +364,14 @@
 <span class="co">#&gt; 1 Mazda RX4         6     4</span>
 <span class="co">#&gt; 2 Mazda RX4 Wag     6     4</span>
 <span class="co">#&gt; 3 Datsun 710        4     4</span>
-<span class="co">#&gt; # … with 29 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 29 more rows</span>
+</pre></div>
 <ul>
 <li>Using the selection helpers such as <code><a href="https://tidyselect.r-lib.org/reference/starts_with.html">starts_with()</a></code> and <code><a href="https://tidyselect.r-lib.org/reference/starts_with.html">ends_with()</a></code>
 </li>
 </ul>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="no">file</span>, <span class="kw">col_select</span> <span class="kw">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">starts_with</a></span>(<span class="st">"d"</span>))
+<div class="sourceCode" id="cb12"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw">file</span>, col_select = <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">starts_with</a></span>(<span class="st">"d"</span>))
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 2</span>
 <span class="co">#&gt; Delimiter: ","</span>
@@ -362,11 +385,13 @@
 <span class="co">#&gt; 1   160  3.9 </span>
 <span class="co">#&gt; 2   160  3.9 </span>
 <span class="co">#&gt; 3   108  3.85</span>
-<span class="co">#&gt; # … with 29 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 29 more rows</span>
+</pre></div>
 <ul>
 <li>You can also rename columns</li>
 </ul>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="no">file</span>, <span class="kw">col_select</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">car</span> <span class="kw">=</span> <span class="no">model</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html">everything</a></span>()))
+<div class="sourceCode" id="cb13"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="kw">file</span>, col_select = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(car = <span class="kw">model</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html">everything</a></span>()))
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 12</span>
 <span class="co">#&gt; Delimiter: ","</span>
@@ -381,70 +406,83 @@
 <span class="co">#&gt; 1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
 <span class="co">#&gt; 2 Mazda RX4 W…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span>
 <span class="co">#&gt; 3 Datsun 710    22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span>
-<span class="co">#&gt; # … with 29 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 29 more rows</span>
+</pre></div>
 </div>
 <div id="reading-fixed-width-files" class="section level2">
 <h2 class="hasAnchor">
 <a href="#reading-fixed-width-files" class="anchor"></a>Reading fixed width files</h2>
 <p>A fixed width file can be a very compact representation of numeric data. Unfortunately, it’s also often painful to read because you need to describe the length of every field. vroom aims to make it as easy as possible by providing a number of different ways to describe the field structure. Use <code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> in conjunction with one of the following helper functions to read the file.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">fwf_sample</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"fwf-sample.txt"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span>(<span class="no">fwf_sample</span>))
-<span class="co">#&gt; John Smith          WA        418-Y11-4111 Mary Hartford       CA        319-Z19-4341 Evan Nolan          IL        219-532-c301</span></pre></body></html></div>
+<div class="sourceCode" id="cb14"><pre class="downlit">
+<span class="kw">fwf_sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"fwf-sample.txt"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span>(<span class="kw">fwf_sample</span>))
+<span class="co">#&gt; John Smith          WA        418-Y11-4111 Mary Hartford       CA        319-Z19-4341 Evan Nolan          IL        219-532-c301</span>
+</pre></div>
 <ul>
 <li>
 <code><a href="../reference/vroom_fwf.html">fwf_empty()</a></code> - Guess based on the position of empty columns.</li>
 </ul>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span>(<span class="no">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_empty</a></span>(<span class="no">fwf_sample</span>, <span class="kw">col_names</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"first"</span>, <span class="st">"last"</span>, <span class="st">"state"</span>, <span class="st">"ssn"</span>)))
+<div class="sourceCode" id="cb15"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span>(<span class="kw">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_empty</a></span>(<span class="kw">fwf_sample</span>, col_names = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"first"</span>, <span class="st">"last"</span>, <span class="st">"state"</span>, <span class="st">"ssn"</span>)))
 <span class="co">#&gt; # A tibble: 3 x 4</span>
 <span class="co">#&gt;   first last     state ssn         </span>
 <span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;       </span>
 <span class="co">#&gt; 1 John  Smith    WA    418-Y11-4111</span>
 <span class="co">#&gt; 2 Mary  Hartford CA    319-Z19-4341</span>
-<span class="co">#&gt; 3 Evan  Nolan    IL    219-532-c301</span></pre></body></html></div>
+<span class="co">#&gt; 3 Evan  Nolan    IL    219-532-c301</span>
+</pre></div>
 <ul>
 <li>
 <code><a href="../reference/vroom_fwf.html">fwf_widths()</a></code> - Use user provided set of field widths.</li>
 </ul>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span>(<span class="no">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_widths</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">20</span>, <span class="fl">10</span>, <span class="fl">12</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"name"</span>, <span class="st">"state"</span>, <span class="st">"ssn"</span>)))
+<div class="sourceCode" id="cb16"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span>(<span class="kw">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_widths</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">20</span>, <span class="fl">10</span>, <span class="fl">12</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"name"</span>, <span class="st">"state"</span>, <span class="st">"ssn"</span>)))
 <span class="co">#&gt; # A tibble: 3 x 3</span>
 <span class="co">#&gt;   name          state ssn         </span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt;       </span>
 <span class="co">#&gt; 1 John Smith    WA    418-Y11-4111</span>
 <span class="co">#&gt; 2 Mary Hartford CA    319-Z19-4341</span>
-<span class="co">#&gt; 3 Evan Nolan    IL    219-532-c301</span></pre></body></html></div>
+<span class="co">#&gt; 3 Evan Nolan    IL    219-532-c301</span>
+</pre></div>
 <ul>
 <li>
 <code><a href="../reference/vroom_fwf.html">fwf_positions()</a></code> - Use user provided sets of start and end positions.</li>
 </ul>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span>(<span class="no">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_positions</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">30</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">20</span>, <span class="fl">42</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"name"</span>, <span class="st">"ssn"</span>)))
+<div class="sourceCode" id="cb17"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span>(<span class="kw">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_positions</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">30</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">20</span>, <span class="fl">42</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"name"</span>, <span class="st">"ssn"</span>)))
 <span class="co">#&gt; # A tibble: 3 x 2</span>
 <span class="co">#&gt;   name          ssn         </span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;chr&gt;       </span>
 <span class="co">#&gt; 1 John Smith    418-Y11-4111</span>
 <span class="co">#&gt; 2 Mary Hartford 319-Z19-4341</span>
-<span class="co">#&gt; 3 Evan Nolan    219-532-c301</span></pre></body></html></div>
+<span class="co">#&gt; 3 Evan Nolan    219-532-c301</span>
+</pre></div>
 <ul>
 <li>
 <code><a href="../reference/vroom_fwf.html">fwf_cols()</a></code> - Use user provided named widths.</li>
 </ul>
-<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span>(<span class="no">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_cols</a></span>(<span class="kw">name</span> <span class="kw">=</span> <span class="fl">20</span>, <span class="kw">state</span> <span class="kw">=</span> <span class="fl">10</span>, <span class="kw">ssn</span> <span class="kw">=</span> <span class="fl">12</span>))
+<div class="sourceCode" id="cb18"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span>(<span class="kw">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_cols</a></span>(name = <span class="fl">20</span>, state = <span class="fl">10</span>, ssn = <span class="fl">12</span>))
 <span class="co">#&gt; # A tibble: 3 x 3</span>
 <span class="co">#&gt;   name          state ssn         </span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt;       </span>
 <span class="co">#&gt; 1 John Smith    WA    418-Y11-4111</span>
 <span class="co">#&gt; 2 Mary Hartford CA    319-Z19-4341</span>
-<span class="co">#&gt; 3 Evan Nolan    IL    219-532-c301</span></pre></body></html></div>
+<span class="co">#&gt; 3 Evan Nolan    IL    219-532-c301</span>
+</pre></div>
 <ul>
 <li>
 <code><a href="../reference/vroom_fwf.html">fwf_cols()</a></code> - Use user provided named pairs of positions.</li>
 </ul>
-<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span>(<span class="no">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_cols</a></span>(<span class="kw">name</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">20</span>), <span class="kw">ssn</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">30</span>, <span class="fl">42</span>)))
+<div class="sourceCode" id="cb19"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span>(<span class="kw">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_cols</a></span>(name = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">20</span>), ssn = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">30</span>, <span class="fl">42</span>)))
 <span class="co">#&gt; # A tibble: 3 x 2</span>
 <span class="co">#&gt;   name          ssn         </span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;chr&gt;       </span>
 <span class="co">#&gt; 1 John Smith    418-Y11-4111</span>
 <span class="co">#&gt; 2 Mary Hartford 319-Z19-4341</span>
-<span class="co">#&gt; 3 Evan Nolan    219-532-c301</span></pre></body></html></div>
+<span class="co">#&gt; 3 Evan Nolan    219-532-c301</span>
+</pre></div>
 </div>
 <div id="column-types" class="section level2">
 <h2 class="hasAnchor">
@@ -480,8 +518,9 @@
 </ul>
 <p>You can tell vroom what columns to use with the <code>col_types()</code> argument in a number of ways.</p>
 <p>If you only need to override a single column the most concise way is to use a named vector.</p>
-<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="co"># read the 'hp' columns as an integer</span>
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>), <span class="kw">col_types</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">hp</span> <span class="kw">=</span> <span class="st">"i"</span>))
+<div class="sourceCode" id="cb20"><pre class="downlit">
+<span class="co"># read the 'hp' columns as an integer</span>
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>), col_types = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(hp = <span class="st">"i"</span>))
 <span class="co">#&gt; # A tibble: 32 x 12</span>
 <span class="co">#&gt;   model          mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
@@ -491,7 +530,7 @@
 <span class="co">#&gt; # … with 29 more rows</span>
 
 <span class="co"># also skip reading the 'cyl' column</span>
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>), <span class="kw">col_types</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">hp</span> <span class="kw">=</span> <span class="st">"i"</span>, <span class="kw">cyl</span> <span class="kw">=</span> <span class="st">"_"</span>))
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>), col_types = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(hp = <span class="st">"i"</span>, cyl = <span class="st">"_"</span>))
 <span class="co">#&gt; # A tibble: 32 x 11</span>
 <span class="co">#&gt;   model           mpg  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
@@ -501,27 +540,31 @@
 <span class="co">#&gt; # … with 29 more rows</span>
 
 <span class="co"># also read the gears as a factor</span>
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>), <span class="kw">col_types</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">hp</span> <span class="kw">=</span> <span class="st">"i"</span>, <span class="kw">cyl</span> <span class="kw">=</span> <span class="st">"_"</span>, <span class="kw">gear</span> <span class="kw">=</span> <span class="st">"f"</span>))
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>), col_types = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(hp = <span class="st">"i"</span>, cyl = <span class="st">"_"</span>, gear = <span class="st">"f"</span>))
 <span class="co">#&gt; # A tibble: 32 x 11</span>
 <span class="co">#&gt;   model           mpg  disp    hp  drat    wt  qsec    vs    am gear   carb</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Mazda RX4      21     160   110  3.9   2.62  16.5     0     1 4         4</span>
 <span class="co">#&gt; 2 Mazda RX4 Wag  21     160   110  3.9   2.88  17.0     0     1 4         4</span>
 <span class="co">#&gt; 3 Datsun 710     22.8   108    93  3.85  2.32  18.6     1     1 4         1</span>
-<span class="co">#&gt; # … with 29 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 29 more rows</span>
+</pre></div>
 <p>You can read all the columns with the same type, by using the <code>.default</code> argument. For example reading everything as a character.</p>
-<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>), <span class="kw">col_types</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">.default</span> <span class="kw">=</span> <span class="st">"c"</span>))
+<div class="sourceCode" id="cb21"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(<span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>), col_types = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(.default = <span class="st">"c"</span>))
 <span class="co">#&gt; # A tibble: 32 x 12</span>
 <span class="co">#&gt;   model        mpg   cyl   disp  hp    drat  wt    qsec  vs    am    gear  carb </span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;</span>
 <span class="co">#&gt; 1 Mazda RX4    21    6     160   110   3.9   2.62  16.46 0     1     4     4    </span>
 <span class="co">#&gt; 2 Mazda RX4 W… 21    6     160   110   3.9   2.875 17.02 0     1     4     4    </span>
 <span class="co">#&gt; 3 Datsun 710   22.8  4     108   93    3.85  2.32  18.61 1     1     4     1    </span>
-<span class="co">#&gt; # … with 29 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 29 more rows</span>
+</pre></div>
 <p>However you can also use the <code>col_*()</code> functions in a list.</p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom.html">vroom</a></span>(
+<div class="sourceCode" id="cb22"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(
   <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>),
-  <span class="kw">col_types</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">hp</span> <span class="kw">=</span> <span class="fu"><a href="../reference/cols.html">col_integer</a></span>(), <span class="kw">cyl</span> <span class="kw">=</span> <span class="fu"><a href="../reference/cols.html">col_skip</a></span>(), <span class="kw">gear</span> <span class="kw">=</span> <span class="fu"><a href="../reference/cols.html">col_factor</a></span>())
+  col_types = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(hp = <span class="fu"><a href="../reference/cols.html">col_integer</a></span>(), cyl = <span class="fu"><a href="../reference/cols.html">col_skip</a></span>(), gear = <span class="fu"><a href="../reference/cols.html">col_factor</a></span>())
 )
 <span class="co">#&gt; # A tibble: 32 x 11</span>
 <span class="co">#&gt;   model           mpg  disp    hp  drat    wt  qsec    vs    am gear   carb</span>
@@ -529,11 +572,13 @@
 <span class="co">#&gt; 1 Mazda RX4      21     160   110  3.9   2.62  16.5     0     1 4         4</span>
 <span class="co">#&gt; 2 Mazda RX4 Wag  21     160   110  3.9   2.88  17.0     0     1 4         4</span>
 <span class="co">#&gt; 3 Datsun 710     22.8   108    93  3.85  2.32  18.6     1     1 4         1</span>
-<span class="co">#&gt; # … with 29 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 29 more rows</span>
+</pre></div>
 <p>This is most useful when a column type needs additional information, such as for categorical data when you know all of the levels of a factor.</p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom.html">vroom</a></span>(
+<div class="sourceCode" id="cb23"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(
   <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>),
-  <span class="kw">col_types</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">gear</span> <span class="kw">=</span> <span class="fu"><a href="../reference/cols.html">col_factor</a></span>(<span class="kw">levels</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">gear</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span>))))
+  col_types = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(gear = <span class="fu"><a href="../reference/cols.html">col_factor</a></span>(levels = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(gear = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span>))))
 )
 <span class="co">#&gt; # A tibble: 32 x 12</span>
 <span class="co">#&gt;   model          mpg   cyl  disp    hp  drat    wt  qsec    vs    am gear   carb</span>
@@ -541,37 +586,46 @@
 <span class="co">#&gt; 1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1 4         4</span>
 <span class="co">#&gt; 2 Mazda RX4 W…  21       6   160   110  3.9   2.88  17.0     0     1 4         4</span>
 <span class="co">#&gt; 3 Datsun 710    22.8     4   108    93  3.85  2.32  18.6     1     1 4         1</span>
-<span class="co">#&gt; # … with 29 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 29 more rows</span>
+</pre></div>
 </div>
 <div id="name-repair" class="section level2">
 <h2 class="hasAnchor">
 <a href="#name-repair" class="anchor"></a>Name repair</h2>
 <p>Often the names of columns in the original dataset are not ideal to work with. <code><a href="../reference/vroom.html">vroom()</a></code> uses the same <code>.name_repair</code> argument as tibble, so you can use one of the default name repair strategies or provide a custom function. A great approach is to use the <a href="http://sfirke.github.io/janitor/reference/make_clean_names.html"><code>janitor::make_clean_names()</code></a> function as the input. This will automatically clean the names to use whatever case you specify, here I am setting it to use <code>ALLCAPS</code> names.</p>
-<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom.html">vroom</a></span>(
+<div class="sourceCode" id="cb24"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom.html">vroom</a></span>(
   <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span>(<span class="st">"mtcars.csv"</span>),
-  <span class="kw">.name_repair</span> <span class="kw">=</span> ~ <span class="kw pkg">janitor</span><span class="kw ns">::</span><span class="fu">make_clean_names</span>(<span class="no">.</span>, <span class="kw">case</span> <span class="kw">=</span> <span class="st">"all_caps"</span>)
-)</pre></body></html></div>
+  .name_repair = <span class="op">~</span> <span class="kw">janitor</span>::<span class="fu">make_clean_names</span>(<span class="kw">.</span>, case = <span class="st">"all_caps"</span>)
+)
+</pre></div>
 </div>
 <div id="writing-delimited-files" class="section level2">
 <h2 class="hasAnchor">
 <a href="#writing-delimited-files" class="anchor"></a>Writing delimited files</h2>
 <p>Use <code><a href="../reference/vroom_write.html">vroom_write()</a></code> to write delimited files, the default delimiter is tab, to write TSV files. Writing to TSV by default has the following benefits: - Avoids the issue of whether to use <code>;</code> (common in Europe) or <code>,</code> (common in the US) - Unlikely to require quoting in fields, as very few fields contain tabs - More easily and efficiently ingested by Unix command line tools such as <code>cut</code>, <code>perl</code> and <code>awk</code>.</p>
-<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span>(<span class="no">mtcars</span>, <span class="st">"mtcars.tsv"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb25"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span>(<span class="kw">mtcars</span>, <span class="st">"mtcars.tsv"</span>)
+</pre></div>
 <div id="writing-csv-delimited-files" class="section level3">
 <h3 class="hasAnchor">
 <a href="#writing-csv-delimited-files" class="anchor"></a>Writing CSV delimited files</h3>
 <p>However you can also use <code>delim = ','</code> to write CSV files, which are common as inputs to GUI spreadsheet tools like Excel or Google Sheets.</p>
-<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span>(<span class="no">mtcars</span>, <span class="st">"mtcars.csv"</span>, <span class="kw">delim</span> <span class="kw">=</span> <span class="st">","</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb26"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span>(<span class="kw">mtcars</span>, <span class="st">"mtcars.csv"</span>, delim = <span class="st">","</span>)
+</pre></div>
 </div>
 <div id="writing-compressed-files" class="section level3">
 <h3 class="hasAnchor">
 <a href="#writing-compressed-files" class="anchor"></a>Writing compressed files</h3>
 <p>For gzip, bzip2 and xz compression the outputs will be automatically compressed if the filename ends in <code>.gz</code>, <code>.bz2</code> or <code>.xz</code>.</p>
-<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span>(<span class="no">mtcars</span>, <span class="st">"mtcars.tsv.gz"</span>)
+<div class="sourceCode" id="cb27"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span>(<span class="kw">mtcars</span>, <span class="st">"mtcars.tsv.gz"</span>)
 
-<span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span>(<span class="no">mtcars</span>, <span class="st">"mtcars.tsv.bz2"</span>)
+<span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span>(<span class="kw">mtcars</span>, <span class="st">"mtcars.tsv.bz2"</span>)
 
-<span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span>(<span class="no">mtcars</span>, <span class="st">"mtcars.tsv.xz"</span>)</pre></body></html></div>
+<span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span>(<span class="kw">mtcars</span>, <span class="st">"mtcars.tsv.xz"</span>)
+</pre></div>
 <p>It is also possible to use other compressors by using <code><a href="https://rdrr.io/r/base/connections.html">pipe()</a></code> with <code><a href="../reference/vroom_write.html">vroom_write()</a></code> to create a pipe connection to command line utilities, such as</p>
 <ul>
 <li>
@@ -583,7 +637,9 @@
 <a href="https://facebook.github.io/zstd/">Zstandard</a>, a modern real-time compression algorithm.</li>
 </ul>
 <p>The parallel compression versions can be considerably faster for large output files and generally <code><a href="../reference/vroom_write.html">vroom_write()</a></code> is fast enough that the compression speed becomes the bottleneck when writing.</p>
-<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span>(<span class="no">mtcars</span>, <span class="fu"><a href="https://rdrr.io/r/base/connections.html">pipe</a></span>(<span class="st">"pigz &gt; mtcars.tsv.gz"</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb28"><pre class="downlit">
+<span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span>(<span class="kw">mtcars</span>, <span class="fu"><a href="https://rdrr.io/r/base/connections.html">pipe</a></span>(<span class="st">"pigz &gt; mtcars.tsv.gz"</span>))
+</pre></div>
 </div>
 <div id="reading-and-writing-from-standard-input-and-output" class="section level3">
 <h3 class="hasAnchor">
