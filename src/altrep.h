@@ -1,5 +1,7 @@
 #include <cpp11/R.hpp>
 
+#include <R_ext/Rdynload.h>
+
 #if R_VERSION >= R_Version(3, 5, 0)
 #define HAS_ALTREP
 #endif
