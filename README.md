@@ -228,7 +228,7 @@ pane, which for Altrep objects can be extremely slow. RStudio 1.2.1335+
 includes the fixes
 ([RStudio\#4210](https://github.com/rstudio/rstudio/pull/4210),
 [RStudio\#4292](https://github.com/rstudio/rstudio/pull/4292)) for this
-issue, so so it is recommended you use at least that version.
+issue, so it is recommended you use at least that version.
 
 ## Thanks
 
