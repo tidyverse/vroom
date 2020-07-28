@@ -47,7 +47,7 @@ tbl <- tm %>% filter(type == "real", op == "read", reading_package %in% c("data.
   arrange(desc(speedup))
 ```
 
-The fastest delimited reader for R, **`r filter(tbl, package == "vroom") %>% pull("throughput") %>% paste0("/sec") %>% trimws()`**.
+The fastest delimited reader for R, **`r filter(tbl, package == "vroom") %>% pull("throughput") %>% trimws()`**.
 
 <img src="https://github.com/r-lib/vroom/raw/gh-pages/taylor.gif" align="right" width = "30%"/>
 
