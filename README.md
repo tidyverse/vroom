@@ -233,7 +233,7 @@ issue, so it is recommended you use at least that version.
 ## Thanks
 
   - [Gabe Becker](https://twitter.com/groundwalkergmb), [Luke
-    Tierney](https://stat.uiowa.edu/~luke/) and [Tomas
+    Tierney](http://homepage.divms.uiowa.edu/~luke/) and [Tomas
     Kalibera](https://github.com/kalibera) for conceiving, Implementing
     and maintaining the [Altrep
     framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html)
