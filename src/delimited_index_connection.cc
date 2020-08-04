@@ -125,7 +125,9 @@ delimited_index_connection::delimited_index_connection(
     pb->tick(start);
   }
 
-  n_max = n_max != static_cast<size_t>(-1) ? n_max + has_header_ : n_max;
+  bool n_max_set = n_max != static_cast<size_t>(-1);
+
+  n_max = n_max_set ? n_max + has_header_ : n_max;
 
   std::unique_ptr<multi_progress> empty_pb = nullptr;
 
@@ -165,23 +167,24 @@ delimited_index_connection::delimited_index_connection(
     if (parse_fut.valid()) {
       parse_fut.wait();
     }
-    parse_fut = std::async([&, i, sz, first_nl, total_read] {
-      n_max -= lines_read;
-
-      lines_read = index_region(
-          buf[i],
-          idx_[1],
-          delim_.c_str(),
-          quote,
-          in_quote,
-          first_nl,
-          sz,
-          total_read,
-          n_max,
-          cols,
-          columns_,
-          empty_pb);
-    });
+    n_max -= lines_read;
+    if (n_max > 0) {
+      parse_fut = std::async([&, i, sz, first_nl, total_read] {
+        lines_read = index_region(
+            buf[i],
+            idx_[1],
+            delim_.c_str(),
+            quote,
+            in_quote,
+            first_nl,
+            sz,
+            total_read,
+            n_max,
+            cols,
+            columns_,
+            empty_pb);
+      });
+    }
 
     if (write_fut.valid()) {
       write_fut.wait();
@@ -231,7 +234,7 @@ delimited_index_connection::delimited_index_connection(
 
   size_t file_size = mmap_.size();
 
-  if (mmap_[file_size - 1] != '\n') {
+  if (!n_max_set && mmap_[file_size - 1] != '\n') {
     if (columns_ == 0 || single_line) {
       idx_[0].push_back(file_size);
       ++columns_;

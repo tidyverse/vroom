@@ -8,6 +8,8 @@
 
 * `vroom()` now supports column selections when there are some empty column names (#238)
 
+* `vroom()` argument `n_max` now works properly for files with windows newlines and no final newline (#244)
+
 # vroom 1.2.1
 
 * `vroom()` now writes the column names if given an input with no rows (#213)

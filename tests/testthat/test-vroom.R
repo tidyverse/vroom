@@ -467,3 +467,16 @@ test_that("vroom works with `id` and skipped columns", {
   expect_true(names(data)[[1]] == "File")
   expect_false("mpg" %in% names(data))
 })
+
+test_that("vroom works with n_max, windows newlines and files larger than the connection buffer", {
+  f <- tempfile()
+  on.exit(unlink(f))
+  writeBin(charToRaw("X,Y\r\n1,2\r\n3342343242312312,442342432423432432\r\n432424324,532432324"), f)
+
+  withr::with_envvar(c("VROOM_CONNECTION_SIZE" = 25),
+    res <- vroom(f, delim = ",", n_max = 1)
+  )
+
+  expect_equal(res$X, 1)
+  expect_equal(res$Y, 2)
+})
