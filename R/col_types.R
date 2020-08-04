@@ -326,6 +326,9 @@ vroom_enquo <- function(x) {
 }
 
 vroom_select <- function(x, col_select, id) {
+  # Drop any NULL columns
+  is_null <- vapply(x, is.null, logical(1))
+  x[is_null] <- NULL
   # reorder and rename columns
   if (inherits(col_select, "quosures") || !rlang::quo_is_null(col_select)) {
     if (inherits(col_select, "quosures")) {

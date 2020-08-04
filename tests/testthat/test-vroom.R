@@ -459,3 +459,11 @@ test_that("vroom works with windows newlines and files without a trailing newlin
   res <- vroom(f, col_types = cols(Y = "c"))
   expect_equal(res$Y[[2]], "05/01/2018")
 })
+
+test_that("vroom works with `id` and skipped columns", {
+  data <- vroom(vroom_example("mtcars.csv"), col_types = c(mpg = "_"), id = "File")
+
+  expect_true(ncol(data) == 12)
+  expect_true(names(data)[[1]] == "File")
+  expect_false("mpg" %in% names(data))
+})

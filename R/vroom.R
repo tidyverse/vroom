@@ -143,6 +143,10 @@ vroom <- function(
     guess_max = guess_max, n_max = n_max, altrep = vroom_altrep(altrep),
     num_threads = num_threads, progress = progress)
 
+  # Drop any NULL columns
+  is_null <- vapply(out, is.null, logical(1))
+  out[is_null] <- NULL
+
   out <- tibble::as_tibble(out, .name_repair = .name_repair)
 
   out <- vroom_select(out, col_select, id)

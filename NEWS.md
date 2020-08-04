@@ -2,6 +2,10 @@
 
 * Subsetting datetime columns now works with `NA` indices (#236).
 
+* The Rcpp dependency has been removed in favor of cpp11.
+
+* `vroom()` now handles cases when `id` is set and a column in skipped (#237)
+
 # vroom 1.2.1
 
 * `vroom()` now writes the column names if given an input with no rows (#213)
