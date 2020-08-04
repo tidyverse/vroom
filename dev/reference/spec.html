@@ -162,13 +162,13 @@ created by readr." />
     <p><code>cols_condense()</code> takes a spec object and condenses its definition by setting
 the default column type to the most frequent type and only listing columns
 with a different type.</p>
-<p><code><a href='https://rdrr.io/r/stats/spectrum.html'>spec()</a></code> extracts the full column specification from a tibble
+<p><code>spec()</code> extracts the full column specification from a tibble
 created by readr.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cols_condense</span>(<span class='kw'>x</span>)
+    <pre class="usage"><span class='fu'>cols_condense</span>(<span class='no'>x</span>)
 
-<span class='fu'><a href='https://rdrr.io/r/stats/spectrum.html'>spec</a></span>(<span class='kw'>x</span>)</pre>
+<span class='fu'>spec</span>(<span class='no'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -184,15 +184,15 @@ created by readr.</p>
     <p>A col_spec object.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>df</span> <span class='op'>&lt;-</span> <span class='fu'>vroom</span>(<span class='fu'>vroom_example</span>(<span class='st'>"mtcars.csv"</span>))</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows:</span><span> 32</span>
+    <pre class="examples"><div class='input'><span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='vroom.html'>vroom</a></span>(<span class='fu'><a href='vroom_example.html'>vroom_example</a></span>(<span class='st'>"mtcars.csv"</span>))</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 12</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
 #&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [ 1]: model</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='input'><span class='kw'>s</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/spectrum.html'>spec</a></span>(<span class='kw'>df</span>)
-<span class='kw'>s</span></div><div class='output co'>#&gt; cols(
+#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='input'><span class='no'>s</span> <span class='kw'>&lt;-</span> <span class='fu'>spec</span>(<span class='no'>df</span>)
+<span class='no'>s</span></div><div class='output co'>#&gt; cols(
 #&gt;   model = </span><span style='color: #BB0000;'>col_character()</span><span>,
 #&gt;   mpg = </span><span style='color: #00BB00;'>col_double()</span><span>,
 #&gt;   cyl = </span><span style='color: #00BB00;'>col_double()</span><span>,
@@ -207,7 +207,7 @@ created by readr.</p>
 #&gt;   carb = </span><span style='color: #00BB00;'>col_double()</span><span>,
 #&gt;   .delim = ","
 #&gt; )</div><div class='input'>
-<span class='fu'>cols_condense</span>(<span class='kw'>s</span>)</div><div class='output co'>#&gt; cols(
+<span class='fu'>cols_condense</span>(<span class='no'>s</span>)</div><div class='output co'>#&gt; cols(
 #&gt;   .default = col_double(),
 #&gt;   model = </span><span style='color: #BB0000;'>col_character()</span><span>,
 #&gt;   .delim = ","
@@ -227,7 +227,7 @@ created by readr.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

@@ -159,17 +159,17 @@
     </div>
 
     <pre class="usage"><span class='fu'>vroom_write</span>(
-  <span class='kw'>x</span>,
-  <span class='kw'>path</span>,
-  delim = <span class='st'>"\t"</span>,
-  na = <span class='st'>"NA"</span>,
-  col_names = <span class='op'>!</span><span class='kw'>append</span>,
-  append = <span class='fl'>FALSE</span>,
-  quote = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"needed"</span>, <span class='st'>"all"</span>, <span class='st'>"none"</span>),
-  escape = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"double"</span>, <span class='st'>"backslash"</span>, <span class='st'>"none"</span>),
-  bom = <span class='fl'>FALSE</span>,
-  num_threads = <span class='fu'>vroom_threads</span>(),
-  progress = <span class='fu'>vroom_progress</span>()
+  <span class='no'>x</span>,
+  <span class='no'>path</span>,
+  <span class='kw'>delim</span> <span class='kw'>=</span> <span class='st'>"\t"</span>,
+  <span class='kw'>na</span> <span class='kw'>=</span> <span class='st'>"NA"</span>,
+  <span class='kw'>col_names</span> <span class='kw'>=</span> !<span class='no'>append</span>,
+  <span class='kw'>append</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>quote</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"needed"</span>, <span class='st'>"all"</span>, <span class='st'>"none"</span>),
+  <span class='kw'>escape</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"double"</span>, <span class='st'>"backslash"</span>, <span class='st'>"none"</span>),
+  <span class='kw'>bom</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(),
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>()
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -245,8 +245,8 @@ setting option <code>readr.show_progress</code> to <code>FALSE</code>.</p></td>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># If you only specify a file name, vroom_write() will write</span>
 <span class='co'># the file to your current working directory.</span>
-<span class='kw'>out_file</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span>(fileext = <span class='st'>"csv"</span>)
-<span class='fu'>vroom_write</span>(<span class='kw'>mtcars</span>, <span class='kw'>out_file</span>, <span class='st'>","</span>)
+<span class='no'>out_file</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span>(<span class='kw'>fileext</span> <span class='kw'>=</span> <span class='st'>"csv"</span>)
+<span class='fu'>vroom_write</span>(<span class='no'>mtcars</span>, <span class='no'>out_file</span>, <span class='st'>","</span>)
 
 <span class='co'># You can also use a literal filename</span>
 <span class='co'># vroom_write(mtcars, "mtcars.tsv")</span>
@@ -271,7 +271,7 @@ setting option <code>readr.show_progress</code> to <code>FALSE</code>.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
