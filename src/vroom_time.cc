@@ -21,7 +21,7 @@ cpp11::doubles read_time(vroom_vec_info* info) {
 
   parallel_for(
       n,
-      [&](size_t start, size_t end, size_t id) {
+      [&](size_t start, size_t end, size_t) {
         R_xlen_t i = start;
         DateTimeParser parser(info->locale.get());
         auto col = info->column->slice(start, end);

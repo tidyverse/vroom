@@ -222,7 +222,7 @@ public:
     return lines_read;
   }
 
-  std::shared_ptr<vroom::index::row> get_row(size_t row) const {
+  std::shared_ptr<vroom::index::row> get_row(size_t) const {
     // TODO: UNUSED
     return nullptr;
   }

@@ -47,6 +47,10 @@ inline SEXP generate_filename_column(
     const std::vector<size_t>& lengths,
     size_t rows) {
 #ifdef HAS_ALTREP
+  // suppress compiler warning about unused parameter, as this is only used
+  // without altrep.
+  (void)rows;
+
   cpp11::writable::integers rle(filenames.size());
   for (R_xlen_t i = 0; i < R_xlen_t(lengths.size()); ++i) {
     rle[i] = lengths[i];

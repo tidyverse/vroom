@@ -34,7 +34,7 @@ bool allMissing(cpp11::strings x) {
   return true;
 }
 
-bool isLogical(const std::string& x, LocaleInfo* pLocale) {
+bool isLogical(const std::string& x, LocaleInfo* /* pLocale */) {
   const char* const str = x.data();
   int res = parse_logical(str, str + x.size());
   return res != NA_LOGICAL;
@@ -51,7 +51,7 @@ bool isNumber(const std::string& x, LocaleInfo* pLocale) {
   return !ISNA(num);
 }
 
-bool isInteger(const std::string& x, LocaleInfo* pLocale) {
+bool isInteger(const std::string& x, LocaleInfo* /* pLocale */) {
   // Leading zero
   if (x[0] == '0' && x.size() > 1)
     return false;

@@ -61,10 +61,10 @@ public:
   // What gets printed when .Internal(inspect()) is used
   static Rboolean Inspect(
       SEXP x,
-      int pre,
-      int deep,
-      int pvec,
-      void (*inspect_subtree)(SEXP, int, int, int)) {
+      int,
+      int,
+      int,
+      void (*)(SEXP, int, int, int)) {
     Rprintf(
         "vroom_dttm (len=%d, materialized=%s)\n",
         Length(x),
@@ -137,7 +137,7 @@ public:
   }
 
   template <typename T>
-  static SEXP Extract_subset(SEXP x, SEXP indx, SEXP call) {
+  static SEXP Extract_subset(SEXP x, SEXP indx, SEXP) {
     SEXP data2 = R_altrep_data2(x);
     // If the vector is already materialized, just fall back to the default
     // implementation
@@ -195,7 +195,7 @@ public:
     return Make(info);
   }
 
-  static void* Dataptr(SEXP vec, Rboolean writeable) {
+  static void* Dataptr(SEXP vec, Rboolean) {
     return STDVEC_DATAPTR(Materialize(vec));
   }
 

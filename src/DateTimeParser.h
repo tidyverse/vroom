@@ -38,7 +38,7 @@ inline bool parseInt(Iterator& first, Iterator& last, Attr& res) {
 
 template <typename Iterator, typename Attr>
 inline bool parseDouble(
-    const char decimalMark, Iterator& first, Iterator& last, Attr& res) {
+    const char /* decimalMark */, Iterator& first, Iterator& last, Attr& res) {
 
   char buf[65];
 
@@ -92,7 +92,7 @@ public:
   // Parse ISO8601 date time. In benchmarks this only seems ~30% faster than
   // parsing with a format string so it doesn't seem necessary to add individual
   // parsers for other common formats.
-  bool parseISO8601(bool partial = true) {
+  bool parseISO8601(bool /* partial */ = true) {
     // Date: YYYY-MM-DD, YYYYMMDD
     if (!consumeInteger(4, &year_))
       return false;
@@ -436,7 +436,8 @@ private:
 
   // Integer indexed from 1 (i.e. month and date) which can take 1 or 2
   // positions
-  inline bool consumeInteger1length1_or_2(int n, int* pOut, bool exact = true) {
+  inline bool
+  consumeInteger1length1_or_2(int /* n */, int* pOut, bool /* exact */ = true) {
     int out1, out2;
     if (!consumeInteger(1, &out1, true))
       return false;

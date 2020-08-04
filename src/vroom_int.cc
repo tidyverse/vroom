@@ -41,7 +41,7 @@ cpp11::integers read_int(vroom_vec_info* info) {
 
   parallel_for(
       n,
-      [&](size_t start, size_t end, size_t id) {
+      [&](size_t start, size_t end, size_t) {
         R_xlen_t i = start;
         auto col = info->column->slice(start, end);
         for (const auto& str : *col) {

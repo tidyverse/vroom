@@ -66,7 +66,7 @@ public:
   }
 
   template <typename T>
-  static SEXP Extract_subset(SEXP x, SEXP indx, SEXP call) {
+  static SEXP Extract_subset(SEXP x, SEXP indx, SEXP) {
     SEXP data2 = R_altrep_data2(x);
     // If the vector is already materialized, just fall back to the default
     // implementation
