@@ -138,6 +138,7 @@ vroom <- function(
 
   out <- vroom_(file, delim = delim %||% col_types$delim, col_names = col_names,
     col_types = col_types, id = id, skip = skip, col_select = col_select,
+    name_repair = .name_repair,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
     escape_backslash = escape_backslash, comment = comment, locale = locale,
     guess_max = guess_max, n_max = n_max, altrep = vroom_altrep(altrep),

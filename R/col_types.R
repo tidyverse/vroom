@@ -344,7 +344,7 @@ vroom_select <- function(x, col_select, id) {
   x
 }
 
-col_types_standardise <- function(spec, col_names, col_select) {
+col_types_standardise <- function(spec, col_names, col_select, name_repair) {
   type_names <- names(spec$cols)
 
   if (length(spec$cols) == 0) {
@@ -380,6 +380,8 @@ col_types_standardise <- function(spec, col_names, col_select) {
 
     spec$cols <- spec$cols[col_names]
   }
+
+  names(spec$cols) <- vctrs::vec_as_names(names(spec$cols), repair = name_repair)
 
   if (inherits(col_select, "quosures") || !rlang::quo_is_null(col_select)) {
     if (inherits(col_select, "quosures")) {

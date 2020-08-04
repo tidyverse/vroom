@@ -20,8 +20,8 @@ guess_type_ <- function(input, na, locale, guess_integer) {
   .Call("_vroom_guess_type_", input, na, locale, guess_integer)
 }
 
-vroom_fwf_ <- function(inputs, col_starts, col_ends, trim_ws, col_names, col_types, col_select, skip, comment, n_max, id, na, locale, guess_max, num_threads, altrep, progress) {
-  .Call("_vroom_vroom_fwf_", inputs, col_starts, col_ends, trim_ws, col_names, col_types, col_select, skip, comment, n_max, id, na, locale, guess_max, num_threads, altrep, progress)
+vroom_fwf_ <- function(inputs, col_starts, col_ends, trim_ws, col_names, col_types, col_select, name_repair, skip, comment, n_max, id, na, locale, guess_max, num_threads, altrep, progress) {
+  .Call("_vroom_vroom_fwf_", inputs, col_starts, col_ends, trim_ws, col_names, col_types, col_select, name_repair, skip, comment, n_max, id, na, locale, guess_max, num_threads, altrep, progress)
 }
 
 whitespace_columns_ <- function(filename, skip, n, comment) {
@@ -40,8 +40,8 @@ vroom_format_ <- function(input, delim, na_str, col_names, options) {
   .Call("_vroom_vroom_format_", input, delim, na_str, col_names, options)
 }
 
-vroom_ <- function(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip, n_max, progress, col_names, col_types, col_select, id, na, locale, guess_max, num_threads, altrep) {
-  .Call("_vroom_vroom_", inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip, n_max, progress, col_names, col_types, col_select, id, na, locale, guess_max, num_threads, altrep)
+vroom_ <- function(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip, n_max, progress, col_names, col_types, col_select, name_repair, id, na, locale, guess_max, num_threads, altrep) {
+  .Call("_vroom_vroom_", inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip, n_max, progress, col_names, col_types, col_select, name_repair, id, na, locale, guess_max, num_threads, altrep)
 }
 
 has_trailing_newline <- function(filename) {

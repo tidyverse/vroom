@@ -123,6 +123,7 @@ inline collectors resolve_collectors(
     cpp11::sexp col_names,
     cpp11::sexp col_types,
     cpp11::sexp col_select,
+    cpp11::sexp name_repair,
     std::shared_ptr<index_collection> idx,
     cpp11::strings na,
     std::shared_ptr<LocaleInfo> locale_info,
@@ -148,7 +149,7 @@ inline collectors resolve_collectors(
 
   auto col_types_standardise = vroom["col_types_standardise"];
   cpp11::list col_types_std(
-      col_types_standardise(col_types, col_nms, col_select));
+      col_types_standardise(col_types, col_nms, col_select, name_repair));
 
   R_xlen_t guess_num = std::min(num_rows, guess_max);
 
