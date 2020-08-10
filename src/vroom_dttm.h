@@ -59,8 +59,12 @@ public:
   // ALTREP methods -------------------
 
   // What gets printed when .Internal(inspect()) is used
-  static Rboolean
-  Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
+  static Rboolean Inspect(
+      SEXP x,
+      int,
+      int,
+      int,
+      void (*)(SEXP, int, int, int)) {
     Rprintf(
         "vroom_dttm (len=%d, materialized=%s)\n",
         Length(x),
@@ -132,6 +136,40 @@ public:
     return out;
   }
 
+  template <typename T>
+  static SEXP Extract_subset(SEXP x, SEXP indx, SEXP) {
+    SEXP data2 = R_altrep_data2(x);
+    // If the vector is already materialized, just fall back to the default
+    // implementation
+    if (data2 != R_NilValue) {
+      return nullptr;
+    }
+
+    cpp11::integers in(indx);
+
+    auto idx = std::make_shared<std::vector<size_t> >();
+
+    idx->reserve(in.size());
+
+    for (const auto& i : in) {
+      // If there are any NA indices fall back to the default implementation.
+      if (i == NA_INTEGER) {
+        return nullptr;
+      }
+      idx->push_back(i - 1);
+    }
+
+    auto inf = Info(x);
+
+    auto info = new vroom_vec_info{inf->info->column->subset(idx),
+                                   inf->info->num_threads,
+                                   inf->info->na,
+                                   inf->info->locale,
+                                   inf->info->format};
+
+    return T::Make(info);
+  }
+
   static SEXP Duplicate(SEXP x, Rboolean deep) {
     SEXP data2 = R_altrep_data2(x);
 
@@ -149,12 +187,11 @@ public:
 
     auto inf = Info(x);
 
-    auto info = new vroom_vec_info{
-        inf->info->column,
-        inf->info->num_threads,
-        inf->info->na,
-        inf->info->locale,
-        inf->info->format};
+    auto info = new vroom_vec_info{inf->info->column,
+                                   inf->info->num_threads,
+                                   inf->info->na,
+                                   inf->info->locale,
+                                   inf->info->format};
     return Make(info);
   }
 
