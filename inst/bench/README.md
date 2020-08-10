@@ -8,6 +8,13 @@ The benchmarks are run with a makefile, run `make` to run them.
 - Create new volume from previous vroom snapshot - `io1` volume type - 2500 IOPS
 - Attach volume to instance - `/dev/sda1`
 
+### Attach to instance
+
+`ssh vroom-bench`
+
+When you first start there may be some unattended upgrades installing, use top
+to monitor and wait until they are done.
+
 ### running
 
 ```
