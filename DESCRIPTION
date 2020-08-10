@@ -72,7 +72,7 @@ Suggests:
     xml2
 LinkingTo: 
     progress (>= 1.2.1),
-    cpp11
+    cpp11 (>= 0.2.0)
 VignetteBuilder: 
     knitr
 Copyright: file COPYRIGHTS
@@ -82,5 +82,3 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 SystemRequirements: C++11
-Remotes:
-  r-lib/cpp11
