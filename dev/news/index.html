@@ -157,6 +157,7 @@
 <a href="#vroom-development-version" class="anchor"></a>vroom (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p>Subsetting vectors now works with <code><a href="https://rdrr.io/r/utils/View.html">View()</a></code> in RStudio if there are now rows to subset (<a href='https://github.com/r-lib/vroom/issues/253'>#253</a>).</p></li>
 <li><p>Subsetting datetime columns now works with <code>NA</code> indices (<a href='https://github.com/r-lib/vroom/issues/236'>#236</a>).</p></li>
 <li><p>The Rcpp dependency has been removed in favor of cpp11.</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now handles cases when <code>id</code> is set and a column in skipped (<a href='https://github.com/r-lib/vroom/issues/237'>#237</a>)</p></li>
