@@ -164,6 +164,11 @@ public:
       return nullptr;
     }
 
+    // If there are no indices to subset fall back to default implementation.
+    if (Rf_xlength(indx) == 0) {
+      return nullptr;
+    }
+
     cpp11::sexp x_(x);
 
     cpp11::integers in(indx);
@@ -182,11 +187,12 @@ public:
 
     auto inf = Info(x);
 
-    auto info = new vroom_vec_info{inf.info->column->subset(idx),
-                                   inf.info->num_threads,
-                                   inf.info->na,
-                                   inf.info->locale,
-                                   inf.info->format};
+    auto info = new vroom_vec_info{
+        inf.info->column->subset(idx),
+        inf.info->num_threads,
+        inf.info->na,
+        inf.info->locale,
+        inf.info->format};
 
     bool is_ordered = Rf_inherits(x_, "ordered");
     return Make(info, cpp11::strings(x_.attr("levels")), is_ordered);

@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Subsetting vectors now works with `View()` in RStudio if there are now rows to subset (#253).
+
 * Subsetting datetime columns now works with `NA` indices (#236).
 
 * The Rcpp dependency has been removed in favor of cpp11.

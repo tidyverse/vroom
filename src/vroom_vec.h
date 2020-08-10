@@ -65,12 +65,16 @@ public:
     return STDVEC_DATAPTR(data2);
   }
 
-  template <typename T>
-  static SEXP Extract_subset(SEXP x, SEXP indx, SEXP) {
+  template <typename T> static SEXP Extract_subset(SEXP x, SEXP indx, SEXP) {
     SEXP data2 = R_altrep_data2(x);
     // If the vector is already materialized, just fall back to the default
     // implementation
     if (data2 != R_NilValue) {
+      return nullptr;
+    }
+
+    // If there are no indices to subset fall back to default implementation.
+    if (Rf_xlength(indx) == 0) {
       return nullptr;
     }
 
@@ -82,7 +86,7 @@ public:
 
       cpp11::writable::integers in(indx);
 
-      auto idx = std::make_shared<std::vector<size_t> >();
+      auto idx = std::make_shared<std::vector<size_t>>();
       idx->reserve(in.size());
 
       for (const auto& i : in) {
@@ -93,11 +97,12 @@ public:
         idx->push_back(i - 1);
       }
 
-      info = new vroom_vec_info{inf.column->subset(idx),
-                                inf.num_threads,
-                                inf.na,
-                                inf.locale,
-                                inf.format};
+      info = new vroom_vec_info{
+          inf.column->subset(idx),
+          inf.num_threads,
+          inf.na,
+          inf.locale,
+          inf.format};
     }
 
     return T::Make(info);
