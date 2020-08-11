@@ -7,6 +7,7 @@
 #include "vroom_vec.h"
 
 cpp11::strings read_chr(vroom_vec_info* info);
+SEXP check_na(SEXP na, SEXP val);
 
 #ifdef HAS_ALTREP
 
@@ -34,12 +35,8 @@ public:
   // ALTREP methods -------------------
 
   // What gets printed when .Internal(inspect()) is used
-  static Rboolean Inspect(
-      SEXP x,
-      int,
-      int,
-      int,
-      void (*)(SEXP, int, int, int)) {
+  static Rboolean
+  Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
         "vroom_chr (len=%d, materialized=%s)\n",
         Length(x),
@@ -55,23 +52,8 @@ public:
     auto str = Get(vec, i);
 
     auto val = inf.locale->encoder_.makeSEXP(str.begin(), str.end(), false);
-    val = check_na(vec, val);
+    val = check_na(*inf.na, val);
 
-    return val;
-  }
-
-  static SEXP check_na(SEXP vec, SEXP val) {
-    auto& inf = Info(vec);
-
-    // Look for NAs
-    for (SEXP v : *inf.na) {
-      // We can just compare the addresses directly because they should now
-      // both be in the global string cache.
-      if (v == val) {
-        val = NA_STRING;
-        break;
-      }
-    }
     return val;
   }
 

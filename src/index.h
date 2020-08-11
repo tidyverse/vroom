@@ -13,12 +13,11 @@ public:
   class subset_iterator : public base_iterator {
     size_t i_;
     iterator it_;
-    std::shared_ptr<std::vector<size_t> > indexes_;
+    std::shared_ptr<std::vector<size_t>> indexes_;
 
   public:
     subset_iterator(
-        const iterator& it,
-        const std::shared_ptr<std::vector<size_t> >& indexes)
+        const iterator& it, const std::shared_ptr<std::vector<size_t>>& indexes)
         : i_(0), it_(it), indexes_(indexes) {}
     void next() { ++i_; }
     void prev() { --i_; }
@@ -56,7 +55,7 @@ public:
     size_t size() const { return end_ - begin_; }
     string at(size_t i) const { return begin_[i]; }
     std::shared_ptr<vroom::index::range>
-    subset(const std::shared_ptr<std::vector<size_t> >& idx) const {
+    subset(const std::shared_ptr<std::vector<size_t>>& idx) const {
       auto begin = new subset_iterator(begin_, idx);
       auto end = new subset_iterator(begin_, idx);
       end->advance(idx->size());
