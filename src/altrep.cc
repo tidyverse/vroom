@@ -34,7 +34,7 @@ bool vroom_altrep(SEXP x) {
 #endif
 }
 
-[[cpp11::register]] SEXP vroom_materialize(SEXP x, bool replace = false) {
+[[cpp11::register]] SEXP vroom_materialize(SEXP x, bool replace) {
 #ifdef HAS_ALTREP
   for (R_xlen_t i = 0; i < Rf_xlength(x); ++i) {
 
