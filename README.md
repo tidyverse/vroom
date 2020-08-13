@@ -17,7 +17,7 @@ maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www
 status](https://github.com/r-lib/vroom/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/vroom/actions)
 <!-- badges: end -->
 
-The fastest delimited reader for R, **1.40 GB/sec**.
+The fastest delimited reader for R, **1.48 GB/sec**.
 
 <img src="https://github.com/r-lib/vroom/raw/gh-pages/taylor.gif" align="right" width = "30%"/>
 
@@ -37,10 +37,10 @@ non-character columns, and when writing to further improve performance.
 
 | package    | version | time (sec) | speedup |    throughput |
 | :--------- | ------: | ---------: | ------: | ------------: |
-| vroom      |   1.1.0 |       1.14 |   58.44 |   1.40 GB/sec |
-| data.table |  1.12.8 |      11.88 |    5.62 | 134.13 MB/sec |
-| readr      |   1.3.1 |      29.02 |    2.30 |  54.92 MB/sec |
-| read.delim |   3.6.2 |      66.74 |    1.00 |  23.88 MB/sec |
+| vroom      |   1.2.2 |       1.11 |   67.13 |   1.48 GB/sec |
+| data.table |  1.13.0 |      13.12 |    5.67 | 125.19 MB/sec |
+| readr      |   1.3.1 |      32.57 |    2.28 |  50.41 MB/sec |
+| read.delim |   4.0.2 |      74.37 |    1.00 |  22.08 MB/sec |
 
 ## Features
 
@@ -170,7 +170,7 @@ vroom::vroom(files)
 
 ## Benchmarks
 
-The speed quoted above is from a real 1.48G dataset with 13,971,118 rows
+The speed quoted above is from a real 1.53G dataset with 14,388,451 rows
 and 11 columns, see the [benchmark
 article](http://vroom.r-lib.org/articles/benchmarks.html) for full
 details of the dataset and
