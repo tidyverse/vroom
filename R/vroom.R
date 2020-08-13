@@ -288,7 +288,7 @@ vroom_tempfile <- function() {
 #'
 #' Alternatively there is also a family of environment variables to control use of
 #' the Altrep framework. These can then be set in your `.Renviron` file, e.g.
-#' with [usethis::edit_r_environ()]. For versions of R where the Altrep
+#' with `usethis::edit_r_environ()`. For versions of R where the Altrep
 #' framework is unavailable (R < 3.5.0) they are automatically turned off and
 #' the variables have no effect. The variables can take one of `true`, `false`,
 #' `TRUE`, `FALSE`, `1`, or `0`.

@@ -1,9 +1,5 @@
 # vroom (development version)
 
-* Subsetting vectors now works with `View()` in RStudio if there are now rows to subset (#253).
-
-* Subsetting datetime columns now works with `NA` indices (#236).
-
 * The Rcpp dependency has been removed in favor of cpp11.
 
 * `vroom()` now handles cases when `id` is set and a column in skipped (#237)
@@ -11,6 +7,10 @@
 * `vroom()` now supports column selections when there are some empty column names (#238)
 
 * `vroom()` argument `n_max` now works properly for files with windows newlines and no final newline (#244)
+
+* Subsetting vectors now works with `View()` in RStudio if there are now rows to subset (#253).
+
+* Subsetting datetime columns now works with `NA` indices (#236).
 
 # vroom 1.2.1
 
