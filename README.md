@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# 🏎💨vroom <a href='http:/vroom.r-lib.org'><img src='man/figures/logo.png' align="right" height="135" /></a>
+# 🏎💨vroom <a href='https:/vroom.r-lib.org'><img src='man/figures/logo.png' align="right" height="135" /></a>
 
 <!-- badges: start -->
 
@@ -22,7 +22,7 @@ The fastest delimited reader for R, **1.48 GB/sec**.
 <img src="https://github.com/r-lib/vroom/raw/gh-pages/taylor.gif" align="right" width = "30%"/>
 
 But that’s impossible\! How can it be [so
-fast](http://vroom.r-lib.org/articles/benchmarks.html)?
+fast](https://vroom.r-lib.org/articles/benchmarks.html)?
 
 vroom doesn’t stop to actually *read* all of your data, it simply
 indexes where each record is located so it can be read later. The
@@ -37,7 +37,7 @@ non-character columns, and when writing to further improve performance.
 
 | package    | version | time (sec) | speedup |    throughput |
 | :--------- | ------: | ---------: | ------: | ------------: |
-| vroom      |   1.2.2 |       1.11 |   67.13 |   1.48 GB/sec |
+| vroom      |   1.3.0 |       1.11 |   67.13 |   1.48 GB/sec |
 | data.table |  1.13.0 |      13.12 |    5.67 | 125.19 MB/sec |
 | readr      |   1.3.1 |      32.57 |    2.28 |  50.41 MB/sec |
 | read.delim |   4.0.2 |      74.37 |    1.00 |  22.08 MB/sec |
@@ -66,7 +66,7 @@ files, including
   - embedded newlines in headers and fields\*\*
   - writing delimited files with as-needed quoting.
   - robust to invalid inputs (vroom has been extensively tested with the
-    [afl](http://lcamtuf.coredump.cx/afl/) fuzz tester)\*.
+    [afl](https://lcamtuf.coredump.cx/afl/) fuzz tester)\*.
 
 \* *these are additional features not in readr.*
 
@@ -172,9 +172,9 @@ vroom::vroom(files)
 
 The speed quoted above is from a real 1.53G dataset with 14,388,451 rows
 and 11 columns, see the [benchmark
-article](http://vroom.r-lib.org/articles/benchmarks.html) for full
+article](https://vroom.r-lib.org/articles/benchmarks.html) for full
 details of the dataset and
-[bench/](https://github.com/r-lib/vroom/blob/master/inst/bench) for the
+[bench/](https://github.com/r-lib/vroom/tree/master/inst/bench) for the
 code used to retrieve the data and perform the benchmarks.
 
 # Environment variables
@@ -233,7 +233,7 @@ issue, so it is recommended you use at least that version.
 ## Thanks
 
   - [Gabe Becker](https://twitter.com/groundwalkergmb), [Luke
-    Tierney](http://homepage.divms.uiowa.edu/~luke/) and [Tomas
+    Tierney](https://homepage.divms.uiowa.edu/~luke/) and [Tomas
     Kalibera](https://github.com/kalibera) for conceiving, Implementing
     and maintaining the [Altrep
     framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html)
