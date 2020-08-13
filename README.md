@@ -90,8 +90,8 @@ devtools::install_dev("vroom")
 
 ## Usage
 
-See [getting started](https://r-lib.github.io/vroom/articles/vroom.html)
-to jump start your use of vroom\!
+See [getting started](https://vroom.r-lib.org/articles/vroom.html) to
+jump start your use of vroom\!
 
 vroom uses the same interface as readr to specify column types.
 
