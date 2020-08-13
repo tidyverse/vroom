@@ -1,3 +1,3 @@
 exprs	process	real	size	rows	cols	max_memory
-"{ library(vroom) data <- vroom(file, col_types = c(pickup_datetime = ""c"")) vr..."	37.838674608	14.576970338821411	1641999923	14388451	11	6761271296
-"readr::write_tsv(data, pipe(sprintf(""pigz > %s"", tempfile(fileext = "".gz""))))"	53.884970777999996	53.90429067611694	1641999923	14388451	11	6761271296
+"{ library(vroom) data <- vroom(file, col_types = c(pickup_datetime = ""c"")) vr..."	36.191488801	14.226377725601196	1641999923	14388451	11	6824542208
+"readr::write_tsv(data, pipe(sprintf(""pigz > %s"", tempfile(fileext = "".gz""))))"	50.492317435	50.5124454498291	1641999923	14388451	11	6824542208
