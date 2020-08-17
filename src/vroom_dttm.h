@@ -59,12 +59,8 @@ public:
   // ALTREP methods -------------------
 
   // What gets printed when .Internal(inspect()) is used
-  static Rboolean Inspect(
-      SEXP x,
-      int,
-      int,
-      int,
-      void (*)(SEXP, int, int, int)) {
+  static Rboolean
+  Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
         "vroom_dttm (len=%d, materialized=%s)\n",
         Length(x),
@@ -136,8 +132,7 @@ public:
     return out;
   }
 
-  template <typename T>
-  static SEXP Extract_subset(SEXP x, SEXP indx, SEXP) {
+  template <typename T> static SEXP Extract_subset(SEXP x, SEXP indx, SEXP) {
     SEXP data2 = R_altrep_data2(x);
     // If the vector is already materialized, just fall back to the default
     // implementation
@@ -145,27 +140,25 @@ public:
       return nullptr;
     }
 
-    cpp11::integers in(indx);
+    // If there are no indices to subset fall back to default implementation.
+    if (Rf_xlength(indx) == 0) {
+      return nullptr;
+    }
 
-    auto idx = std::make_shared<std::vector<size_t> >();
+    auto idx = get_subset_index(indx);
 
-    idx->reserve(in.size());
-
-    for (const auto& i : in) {
-      // If there are any NA indices fall back to the default implementation.
-      if (i == NA_INTEGER) {
-        return nullptr;
-      }
-      idx->push_back(i - 1);
+    if (idx == nullptr) {
+      return nullptr;
     }
 
     auto inf = Info(x);
 
-    auto info = new vroom_vec_info{inf->info->column->subset(idx),
-                                   inf->info->num_threads,
-                                   inf->info->na,
-                                   inf->info->locale,
-                                   inf->info->format};
+    auto info = new vroom_vec_info{
+        inf->info->column->subset(idx),
+        inf->info->num_threads,
+        inf->info->na,
+        inf->info->locale,
+        inf->info->format};
 
     return T::Make(info);
   }
@@ -187,11 +180,12 @@ public:
 
     auto inf = Info(x);
 
-    auto info = new vroom_vec_info{inf->info->column,
-                                   inf->info->num_threads,
-                                   inf->info->na,
-                                   inf->info->locale,
-                                   inf->info->format};
+    auto info = new vroom_vec_info{
+        inf->info->column,
+        inf->info->num_threads,
+        inf->info->na,
+        inf->info->locale,
+        inf->info->format};
     return Make(info);
   }
 

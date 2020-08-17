@@ -65,6 +65,37 @@ public:
     return STDVEC_DATAPTR(data2);
   }
 
+  static std::shared_ptr<std::vector<size_t>> get_subset_index(SEXP indx) {
+    auto idx = std::make_shared<std::vector<size_t>>();
+    R_xlen_t n = Rf_xlength(indx);
+    idx->reserve(n);
+
+    int i_val;
+    double d_val;
+
+    for (R_xlen_t i = 0; i < n; ++i) {
+      switch (TYPEOF(indx)) {
+      case INTSXP:
+        i_val = INTEGER_ELT(indx, i);
+        if (i_val == NA_INTEGER) {
+          return nullptr;
+        }
+        idx->push_back(i_val - 1);
+        break;
+      case REALSXP:
+        d_val = REAL_ELT(indx, i);
+        if (ISNA(d_val)) {
+          return nullptr;
+        }
+        idx->push_back(d_val - 1);
+        break;
+      default:
+        Rf_error("Invalid index");
+      }
+    }
+    return idx;
+  }
+
   template <typename T> static SEXP Extract_subset(SEXP x, SEXP indx, SEXP) {
     SEXP data2 = R_altrep_data2(x);
     // If the vector is already materialized, just fall back to the default
@@ -84,17 +115,10 @@ public:
     {
       auto& inf = Info(x);
 
-      cpp11::writable::integers in(indx);
+      auto idx = get_subset_index(indx);
 
-      auto idx = std::make_shared<std::vector<size_t>>();
-      idx->reserve(in.size());
-
-      for (const auto& i : in) {
-        // If there are any NA indices fall back to the default implementation.
-        if (i == NA_INTEGER) {
-          return nullptr;
-        }
-        idx->push_back(i - 1);
+      if (idx == nullptr) {
+        return nullptr;
       }
 
       info = new vroom_vec_info{

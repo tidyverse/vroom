@@ -136,3 +136,12 @@ test_that("Results are correct with backslash escapes", {
   obj2 <- vroom("A,T\nB,F\n", col_names = FALSE, col_types = list("f", "f"), escape_backslash = FALSE)
   expect_equal(obj2, exp)
 })
+
+
+test_that("subsetting works with both double and integer indexes", {
+  x <- vroom("X1\nfoo", delim = ",", col_types = "f")
+  expect_equal(x$X1[1L], factor("foo"))
+  expect_equal(x$X1[1], factor("foo"))
+  expect_equal(x$X1[NA_integer_], factor(NA_character_, levels = "foo"))
+  expect_equal(x$X1[NA_real_], factor(NA_character_, levels = "foo"))
+})

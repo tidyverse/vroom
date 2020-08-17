@@ -480,3 +480,11 @@ test_that("vroom works with n_max, windows newlines and files larger than the co
   expect_equal(res$X, 1)
   expect_equal(res$Y, 2)
 })
+
+test_that("subsetting works with both double and integer indexes", {
+  x <- vroom("X1\nfoo", delim = ",")
+  expect_equal(x$X1[1L], "foo")
+  expect_equal(x$X1[1], "foo")
+  expect_equal(x$X1[NA_integer_], NA_character_)
+  expect_equal(x$X1[NA_real_], NA_character_)
+})
