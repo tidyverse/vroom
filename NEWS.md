@@ -1,4 +1,4 @@
-# vroom (development version)
+# vroom 1.3.1
 
 * Test failures on R 4.1 related to POSIXct classes fixed (#260)
 
