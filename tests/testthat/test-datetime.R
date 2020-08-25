@@ -10,7 +10,7 @@ test_that("datetime parsing works", {
     equals = tibble::tibble(
       date = c(as.Date("2018-01-01"), as.Date("2019-01-01")),
       time = c(hms::hms(1, 1, 10), hms::hms(3, 4, 5)),
-      datetime = c(as.POSIXct("2018-01-01 10:01:01", tz = "UTC"), as.POSIXct("2019-01-01 05:04:03", tz = "UTC"))
+      datetime = vctrs::vec_c(as.POSIXct("2018-01-01 10:01:01", tz = "UTC"), as.POSIXct("2019-01-01 05:04:03", tz = "UTC"))
     )
   )
 })
@@ -58,23 +58,23 @@ test_that("%Y requires 4 digits", {
 })
 
 test_that("invalid dates return NA", {
-  test_parse_datetime("2010-02-30", "%Y-%m-%d", expected = NA)
+  test_parse_datetime("2010-02-30", "%Y-%m-%d", expected = .POSIXct(NA_real_, tz = "UTC"))
 })
 
 test_that("failed parsing returns NA", {
   test_parse_datetime(c("2010-02-ab", "2010-02", "2010/02/01"), "%Y-%m-%d",
-    expected = rep(NA, 3)
+    expected = .POSIXct(rep(NA_real_, 3), tz = "UTC")
   )
 })
 
 test_that("invalid specs returns NA", {
-  test_parse_datetime("2010-02-20", "%Y-%m-%m", expected = NA)
+  test_parse_datetime("2010-02-20", "%Y-%m-%m", expected = .POSIXct(NA_real_, tz = "UTC"))
 })
 
 test_that("ISO8601 partial dates are not parsed", {
-  test_parse_datetime("20", "", expected = NA)
-  test_parse_datetime("2001", "", expected = NA)
-  test_parse_datetime("2001-01", "", expected = NA)
+  test_parse_datetime("20", "", expected = .POSIXct(NA_real_, tz = "UTC"))
+  test_parse_datetime("2001", "", expected = .POSIXct(NA_real_, tz = "UTC"))
+  test_parse_datetime("2001-01", "", expected = .POSIXct(NA_real_, tz = "UTC"))
 })
 
 test_that("Year only gets parsed", {
@@ -101,7 +101,7 @@ test_that("%p detects AM/PM", {
     expected = .POSIXct(694141260, "UTC"))
 
   test_parse_datetime(c("12/31/1991 00:01 PM", "12/31/1991 13:01 PM"),
-      "%m/%d/%Y %I:%M %p", expected = rep(NA, 2))
+      "%m/%d/%Y %I:%M %p", expected = .POSIXct(rep(NA_real_, 2), tz = "UTC"))
 })
 
 test_that("%b and %B are case insensitive", {
@@ -136,7 +136,7 @@ test_that("parse_date returns a double like as.Date()", {
 test_that("parses NA/empty correctly", {
   expect_equal(
     vroom("x\n\n", delim = ",", col_types = list(x = "T")),
-    tibble::tibble(x = .POSIXct(NA_real_))
+    tibble::tibble(x = .POSIXct(NA_real_, tz = "UTC"))
   )
 
   expect_equal(
@@ -144,7 +144,7 @@ test_that("parses NA/empty correctly", {
     tibble::tibble(x = as.Date(NA))
   )
 
-  test_parse_datetime("TeSt", "", na = "TeSt", expected = .POSIXct(NA_real_))
+  test_parse_datetime("TeSt", "", na = "TeSt", expected = .POSIXct(NA_real_, tz = "UTC"))
   test_parse_date("TeSt", "", na = "TeSt", expected = as.Date(NA))
 })
 
@@ -160,7 +160,7 @@ test_that("locale affects months", {
 
 test_that("locale affects day of week", {
   a <- as.POSIXct("2010-01-01", tz = "UTC")
-  b <- as.Date("2010-01-01")
+  b <- .POSIXct(unclass(as.Date("2010-01-01")) * 86400, tz = "UTC")
   fr <- locale("fr")
 
   test_parse_datetime("Ven. 1 janv. 2010", "%a %d %b %Y", locale=fr, expected = a)
