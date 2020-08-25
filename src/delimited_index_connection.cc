@@ -57,8 +57,8 @@ delimited_index_connection::delimited_index_connection(
   /* raw connections are always created as open, but we should close them */
   bool should_close = should_open || Rf_inherits(in, "rawConnection");
 
-  std::array<std::vector<char>, 2> buf = {std::vector<char>(chunk_size),
-                                          std::vector<char>(chunk_size)};
+  std::array<std::vector<char>, 2> buf = {
+      std::vector<char>(chunk_size), std::vector<char>(chunk_size)};
   // std::vector<char>(chunk_size)};
 
   // A buf index that alternates between 0,1
@@ -168,6 +168,7 @@ delimited_index_connection::delimited_index_connection(
       parse_fut.wait();
     }
     n_max -= lines_read;
+
     if (n_max > 0) {
       parse_fut = std::async([&, i, sz, first_nl, total_read] {
         lines_read = index_region(
@@ -188,6 +189,9 @@ delimited_index_connection::delimited_index_connection(
 
     if (write_fut.valid()) {
       write_fut.wait();
+      if (n_max == 0) {
+        break;
+      }
     }
     write_fut = std::async(
         [&, i, sz] { std::fwrite(buf[i].data(), sizeof(char), sz, out); });
