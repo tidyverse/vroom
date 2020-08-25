@@ -49,6 +49,7 @@ Only’
 parsers
 pigz
 pixz
+POSIXct
 Preprocess
 Rcpp
 Rdatatable
