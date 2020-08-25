@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Test failures on R 4.1 related to POSIXct classes fixed (#260)
+
 * Column subsetting with double indexes now works again (#257)
 
 # vroom 1.3.0
