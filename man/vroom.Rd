@@ -131,8 +131,9 @@ name repair functions.}
 Read a delimited file into a tibble
 }
 \examples{
-# Show path to example file
+# get path to example file
 input_file <- vroom_example("mtcars.csv")
+input_file
 
 # Read from a path
 
@@ -177,4 +178,11 @@ vroom("a,b\n1.0,2.0\n", delim = ",")
 vroom("a\tb\n1.0\t2.0\n")
 # Other delimiters
 vroom("a|b\n1.0|2.0\n", delim = "|")
+
+# Read datasets across multiple files ---------------------------------------
+mtcars_by_cyl <- vroom_example(vroom_examples("mtcars-"))
+mtcars_by_cyl
+
+# Pass the filenames directly to vroom, they are efficiently combined
+vroom(mtcars_by_cyl)
 }
