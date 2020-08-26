@@ -159,7 +159,7 @@ fs::file_delete(files)
 
 ## Learning more
 
-- [Getting started with vroom](https://r-lib.github.io/vroom/articles/vroom.html)
+- [Getting started with vroom](https://vroom.r-lib.org/articles/vroom.html)
 - [📽 vroom: Because Life is too short to read slow](https://www.youtube.com/watch?v=RA9AjqZXxMU&t=10s) - Presentation at UseR!2019 ([slides](https://speakerdeck.com/jimhester/vroom))
 - [📹 vroom: Read and write rectangular data quickly](https://www.youtube.com/watch?v=ZP_y5eaAc60) - a video tour of the vroom features.
 

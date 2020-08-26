@@ -17,6 +17,8 @@ maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www
 status](https://github.com/r-lib/vroom/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/vroom/actions)
 <!-- badges: end -->
 
+    #> Warning: package 'dplyr' was built under R version 4.0.2
+
 The fastest delimited reader for R, **1.48 GB/sec**.
 
 <img src="https://github.com/r-lib/vroom/raw/gh-pages/taylor.gif" align="right" width = "30%"/>
@@ -159,7 +161,7 @@ vroom::vroom(files)
 ## Learning more
 
   - [Getting started with
-    vroom](https://r-lib.github.io/vroom/articles/vroom.html)
+    vroom](https://vroom.r-lib.org/articles/vroom.html)
   - [📽 vroom: Because Life is too short to read
     slow](https://www.youtube.com/watch?v=RA9AjqZXxMU&t=10s) -
     Presentation at UseR\!2019
