@@ -253,6 +253,15 @@ vroom(
 )
 ```
 
+More generally, you can use `vroom::cols()`. 
+
+```{r}
+vroom(
+  vroom_example("mtcars.csv"),
+  col_types = cols(gear = col_factor(levels = c(gear = c("3", "4", "5"))))
+)
+```
+
 ## Name repair
 
 Often the names of columns in the original dataset are not ideal to work with.
