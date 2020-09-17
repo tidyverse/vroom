@@ -161,7 +161,7 @@ vroom::vroom(files)
 ## Learning more
 
   - [Getting started with
-    vroom](https://vroom.r-lib.org/articles/vroom.html)
+    vroom](http://vroom.r-lib.org/articles/vroom.html)
   - [📽 vroom: Because Life is too short to read
     slow](https://www.youtube.com/watch?v=RA9AjqZXxMU&t=10s) -
     Presentation at UseR\!2019
