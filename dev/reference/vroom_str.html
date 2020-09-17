@@ -90,7 +90,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.1.9000</span>
       </span>
     </div>
 
@@ -158,7 +158,7 @@
     <p>Similar to <code><a href='https://rdrr.io/r/utils/str.html'>str()</a></code> but with more information for Altrep objects.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vroom_str</span>(<span class='no'>x</span>)</pre>
+    <pre class="usage"><span class='fu'>vroom_str</span>(<span class='kw'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -172,7 +172,8 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># when used on non-altrep objects altrep will always be false</span>
-<span class='fu'>vroom_str</span>(<span class='no'>mtcars</span>)</div><div class='output co'>#&gt; 'data.frame': 32 obs., 11 vars.:
+<span class='fu'>vroom_str</span>(<span class='kw'>mtcars</span>)
+</div><div class='output co'>#&gt; 'data.frame': 32 obs., 11 vars.:
 #&gt; $mpg:	altrep:false	type: double	length:32
 #&gt; $cyl:	altrep:false	type: double	length:32
 #&gt; $disp:	altrep:false	type: double	length:32
@@ -184,14 +185,16 @@
 #&gt; $am:	altrep:false	type: double	length:32
 #&gt; $gear:	altrep:false	type: double	length:32
 #&gt; $carb:	altrep:false	type: double	length:32</div><div class='input'>
-<span class='no'>mt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='vroom.html'>vroom</a></span>(<span class='fu'><a href='vroom_example.html'>vroom_example</a></span>(<span class='st'>"mtcars.csv"</span>), <span class='st'>","</span>, <span class='kw'>altrep</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"chr"</span>, <span class='st'>"dbl"</span>))</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows:</span><span> 32</span>
+<span class='kw'>mt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vroom.html'>vroom</a></span>(<span class='fu'><a href='vroom_example.html'>vroom_example</a></span>(<span class='st'>"mtcars.csv"</span>), <span class='st'>","</span>, altrep = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"chr"</span>, <span class='st'>"dbl"</span>))
+</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 12</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
 #&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [ 1]: model</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='input'><span class='fu'>vroom_str</span>(<span class='no'>mt</span>)</div><div class='output co'>#&gt; 'tbl_df', 'tbl', and 'data.frame': 32 obs., 12 vars.:
+#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='input'><span class='fu'>vroom_str</span>(<span class='kw'>mt</span>)
+</div><div class='output co'>#&gt; 'tbl_df', 'tbl', and 'data.frame': 32 obs., 12 vars.:
 #&gt; $model:	altrep:true	type:vroom::vroom_chr	length:32	materialized:false
 #&gt; $mpg:	altrep:false	type: double	length:32
 #&gt; $cyl:	altrep:false	type: double	length:32
@@ -219,7 +222,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

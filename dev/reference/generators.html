@@ -90,7 +90,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.1.9000</span>
       </span>
     </div>
 
@@ -158,37 +158,37 @@
     <p>Generate individual vectors of the types supported by vroom</p>
     </div>
 
-    <pre class="usage"><span class='fu'>gen_character</span>(<span class='no'>n</span>, <span class='kw'>min</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='fl'>25</span>, <span class='kw'>values</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>letters</span>, <span class='no'>LETTERS</span>, <span class='fl'>0</span>:<span class='fl'>9</span>), <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>gen_character</span>(<span class='kw'>n</span>, min = <span class='fl'>5</span>, max = <span class='fl'>25</span>, values = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>letters</span>, <span class='kw'>LETTERS</span>, <span class='fl'>0</span><span class='op'>:</span><span class='fl'>9</span>), <span class='kw'>...</span>)
 
-<span class='fu'>gen_double</span>(<span class='no'>n</span>, <span class='kw'>f</span> <span class='kw'>=</span> <span class='kw pkg'>stats</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>, <span class='no'>...</span>)
+<span class='fu'>gen_double</span>(<span class='kw'>n</span>, f = <span class='kw'>stats</span>::<span class='kw'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>, <span class='kw'>...</span>)
 
-<span class='fu'>gen_number</span>(<span class='no'>n</span>, <span class='kw'>f</span> <span class='kw'>=</span> <span class='kw pkg'>stats</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>, <span class='no'>...</span>)
+<span class='fu'>gen_number</span>(<span class='kw'>n</span>, f = <span class='kw'>stats</span>::<span class='kw'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>, <span class='kw'>...</span>)
 
-<span class='fu'>gen_integer</span>(<span class='no'>n</span>, <span class='kw'>min</span> <span class='kw'>=</span> <span class='fl'>1L</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='no'>.Machine</span>$<span class='no'>integer.max</span>, <span class='kw'>prob</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+<span class='fu'>gen_integer</span>(<span class='kw'>n</span>, min = <span class='fl'>1L</span>, max = <span class='kw'>.Machine</span><span class='op'>$</span><span class='kw'>integer.max</span>, prob = <span class='kw'>NULL</span>, <span class='kw'>...</span>)
 
 <span class='fu'>gen_factor</span>(
-  <span class='no'>n</span>,
-  <span class='kw'>levels</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>ordered</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>num_levels</span> <span class='kw'>=</span> <span class='fu'>gen_integer</span>(<span class='fl'>1L</span>, <span class='fl'>1L</span>, <span class='fl'>25L</span>),
-  <span class='no'>...</span>
+  <span class='kw'>n</span>,
+  levels = <span class='kw'>NULL</span>,
+  ordered = <span class='fl'>FALSE</span>,
+  num_levels = <span class='fu'>gen_integer</span>(<span class='fl'>1L</span>, <span class='fl'>1L</span>, <span class='fl'>25L</span>),
+  <span class='kw'>...</span>
 )
 
-<span class='fu'>gen_time</span>(<span class='no'>n</span>, <span class='kw'>min</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw pkg'>hms</span><span class='kw ns'>::</span><span class='fu'><a href='https://hms.tidyverse.org/reference/hms.html'>hms</a></span>(<span class='kw'>days</span> <span class='kw'>=</span> <span class='fl'>1</span>), <span class='kw'>fractional</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>gen_time</span>(<span class='kw'>n</span>, min = <span class='fl'>0</span>, max = <span class='kw'>hms</span>::<span class='fu'><a href='https://hms.tidyverse.org/reference/hms.html'>hms</a></span>(days = <span class='fl'>1</span>), fractional = <span class='fl'>FALSE</span>, <span class='kw'>...</span>)
 
-<span class='fu'>gen_date</span>(<span class='no'>n</span>, <span class='kw'>min</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span>(<span class='st'>"2001-01-01"</span>), <span class='kw'>max</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span>(<span class='st'>"2021-01-01"</span>), <span class='no'>...</span>)
+<span class='fu'>gen_date</span>(<span class='kw'>n</span>, min = <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span>(<span class='st'>"2001-01-01"</span>), max = <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span>(<span class='st'>"2021-01-01"</span>), <span class='kw'>...</span>)
 
 <span class='fu'>gen_datetime</span>(
-  <span class='no'>n</span>,
-  <span class='kw'>min</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span>(<span class='st'>"2001-01-01"</span>),
-  <span class='kw'>max</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span>(<span class='st'>"2021-01-01"</span>),
-  <span class='kw'>tz</span> <span class='kw'>=</span> <span class='st'>"UTC"</span>,
-  <span class='no'>...</span>
+  <span class='kw'>n</span>,
+  min = <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span>(<span class='st'>"2001-01-01"</span>),
+  max = <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span>(<span class='st'>"2021-01-01"</span>),
+  tz = <span class='st'>"UTC"</span>,
+  <span class='kw'>...</span>
 )
 
-<span class='fu'>gen_logical</span>(<span class='no'>n</span>, <span class='no'>...</span>)
+<span class='fu'>gen_logical</span>(<span class='kw'>n</span>, <span class='kw'>...</span>)
 
-<span class='fu'>gen_name</span>(<span class='no'>n</span>)</pre>
+<span class='fu'>gen_name</span>(<span class='kw'>n</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -247,20 +247,28 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># characters</span>
-<span class='fu'>gen_character</span>(<span class='fl'>4</span>)</div><div class='output co'>#&gt; [1] "rDDQHwIV"                 "S2FSr1WfjnMnHl90FJwWH6IN"
+<span class='fu'>gen_character</span>(<span class='fl'>4</span>)
+</div><div class='output co'>#&gt; [1] "rDDQHwIV"                 "S2FSr1WfjnMnHl90FJwWH6IN"
 #&gt; [3] "852jvQzU4p9K7c746VQEA"    "eME2Ecpgix"              </div><div class='input'>
 <span class='co'># factors</span>
-<span class='fu'>gen_factor</span>(<span class='fl'>4</span>)</div><div class='output co'>#&gt; [1] bad_ape      big_puma     big_puma     panicky_newt
+<span class='fu'>gen_factor</span>(<span class='fl'>4</span>)
+</div><div class='output co'>#&gt; [1] bad_ape      big_puma     big_puma     panicky_newt
 #&gt; 7 Levels: old_ram ancient_gorilla obnoxious_lizard big_puma ... cooing_hartebeest</div><div class='input'>
 <span class='co'># logical</span>
-<span class='fu'>gen_logical</span>(<span class='fl'>4</span>)</div><div class='output co'>#&gt; [1]  TRUE  TRUE  TRUE FALSE</div><div class='input'>
+<span class='fu'>gen_logical</span>(<span class='fl'>4</span>)
+</div><div class='output co'>#&gt; [1]  TRUE  TRUE  TRUE FALSE</div><div class='input'>
 <span class='co'># numbers</span>
-<span class='fu'>gen_double</span>(<span class='fl'>4</span>)</div><div class='output co'>#&gt; [1] -1.0985089 -0.6331782 -2.0636545  2.6489320</div><div class='input'><span class='fu'>gen_integer</span>(<span class='fl'>4</span>)</div><div class='output co'>#&gt; [1]  534125950 1574926487 1220509067  437907847</div><div class='input'>
+<span class='fu'>gen_double</span>(<span class='fl'>4</span>)
+</div><div class='output co'>#&gt; [1] -1.0985089 -0.6331782 -2.0636545  2.6489320</div><div class='input'><span class='fu'>gen_integer</span>(<span class='fl'>4</span>)
+</div><div class='output co'>#&gt; [1]  534125950 1574926487 1220509067  437907847</div><div class='input'>
 <span class='co'># temporal data</span>
-<span class='fu'>gen_time</span>(<span class='fl'>4</span>)</div><div class='output co'>#&gt; 16:56:50
+<span class='fu'>gen_time</span>(<span class='fl'>4</span>)
+</div><div class='output co'>#&gt; 16:56:50
 #&gt; 12:03:15
 #&gt; 12:43:06
-#&gt; 06:12:08</div><div class='input'><span class='fu'>gen_date</span>(<span class='fl'>4</span>)</div><div class='output co'>#&gt; [1] "2016-07-26" "2017-10-09" "2007-06-23" "2009-04-20"</div><div class='input'><span class='fu'>gen_datetime</span>(<span class='fl'>4</span>)</div><div class='output co'>#&gt; [1] "2002-06-19 19:01:30 UTC" "2018-09-12 01:07:20 UTC"
+#&gt; 06:12:08</div><div class='input'><span class='fu'>gen_date</span>(<span class='fl'>4</span>)
+</div><div class='output co'>#&gt; [1] "2016-07-26" "2017-10-09" "2007-06-23" "2009-04-20"</div><div class='input'><span class='fu'>gen_datetime</span>(<span class='fl'>4</span>)
+</div><div class='output co'>#&gt; [1] "2002-06-19 19:01:30 UTC" "2018-09-12 01:07:20 UTC"
 #&gt; [3] "2017-07-15 01:06:36 UTC" "2015-07-08 16:56:14 UTC"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -277,7 +285,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

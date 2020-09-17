@@ -92,7 +92,7 @@ can be done much more efficiently without reading all the data into R." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.1.9000</span>
       </span>
     </div>
 
@@ -163,14 +163,14 @@ can be done much more efficiently without reading all the data into R.</p>
     </div>
 
     <pre class="usage"><span class='fu'>vroom_lines</span>(
-  <span class='no'>file</span>,
-  <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>Inf</span>,
-  <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>locale</span> <span class='kw'>=</span> <span class='fu'><a href='locale.html'>default_locale</a></span>(),
-  <span class='kw'>altrep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>altrep_opts</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Deprecated.html'>deprecated</a></span>(),
-  <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fu'>vroom_threads</span>(),
-  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>()
+  <span class='kw'>file</span>,
+  n_max = <span class='fl'>Inf</span>,
+  skip = <span class='fl'>0</span>,
+  locale = <span class='fu'><a href='locale.html'>default_locale</a></span>(),
+  altrep = <span class='fl'>TRUE</span>,
+  altrep_opts = <span class='fu'><a href='https://rdrr.io/r/base/Deprecated.html'>deprecated</a></span>(),
+  num_threads = <span class='fu'>vroom_threads</span>(),
+  progress = <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>()
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -224,11 +224,15 @@ setting option <code>readr.show_progress</code> to <code>FALSE</code>.</p></td>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>lines</span> <span class='kw'>&lt;-</span> <span class='fu'>vroom_lines</span>(<span class='fu'><a href='vroom_example.html'>vroom_example</a></span>(<span class='st'>"mtcars.csv"</span>))
+    <pre class="examples"><div class='input'><span class='kw'>lines</span> <span class='op'>&lt;-</span> <span class='fu'>vroom_lines</span>(<span class='fu'><a href='vroom_example.html'>vroom_example</a></span>(<span class='st'>"mtcars.csv"</span>))
 
-<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>lines</span>)</div><div class='output co'>#&gt; [1] 33</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>lines</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; [1] "model,mpg,cyl,disp,hp,drat,wt,qsec,vs,am,gear,carb"
-#&gt; [2] "Mazda RX4,21,6,160,110,3.9,2.62,16.46,0,1,4,4"     </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>tail</a></span>(<span class='no'>lines</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; [1] "Maserati Bora,15,8,301,335,3.54,3.57,14.6,0,1,5,8"
-#&gt; [2] "Volvo 142E,21.4,4,121,109,4.11,2.78,18.6,1,1,4,2" </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='no'>lines</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; [1] "Merc 230,22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2"  
+<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='kw'>lines</span>)
+</div><div class='output co'>#&gt; [1] 33</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>lines</span>, n = <span class='fl'>2</span>)
+</div><div class='output co'>#&gt; [1] "model,mpg,cyl,disp,hp,drat,wt,qsec,vs,am,gear,carb"
+#&gt; [2] "Mazda RX4,21,6,160,110,3.9,2.62,16.46,0,1,4,4"     </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>tail</a></span>(<span class='kw'>lines</span>, n = <span class='fl'>2</span>)
+</div><div class='output co'>#&gt; [1] "Maserati Bora,15,8,301,335,3.54,3.57,14.6,0,1,5,8"
+#&gt; [2] "Volvo 142E,21.4,4,121,109,4.11,2.78,18.6,1,1,4,2" </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='kw'>lines</span>, size = <span class='fl'>2</span>)
+</div><div class='output co'>#&gt; [1] "Merc 230,22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2"  
 #&gt; [2] "Maserati Bora,15,8,301,335,3.54,3.57,14.6,0,1,5,8"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -245,7 +249,7 @@ setting option <code>readr.show_progress</code> to <code>FALSE</code>.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
