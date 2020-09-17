@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Test failures on R 4.1 related to factors with NA values fixed (#262)
+
 # vroom 1.3.1
 
 * Test failures on R 4.1 related to POSIXct classes fixed (#260)
