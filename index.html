@@ -113,6 +113,7 @@
 </h1></div>
 <!-- badges: start -->
 
+<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#&gt; Warning: package 'dplyr' was built under R version 4.0.2</span></span></code></pre></div>
 <p>The fastest delimited reader for R, <strong>1.48 GB/sec</strong>.</p>
 <p><img src="https://github.com/r-lib/vroom/raw/gh-pages/taylor.gif" align="right" width="30%"></p>
 <p>But that’s impossible! How can it be <a href="https://vroom.r-lib.org/articles/benchmarks.html">so fast</a>?</p>
@@ -190,19 +191,24 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>Install vroom from CRAN with:</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"vroom"</span>)</pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"vroom"</span>)
+</pre></div>
 <p>Alternatively, if you need the development version from <a href="https://github.com/">GitHub</a> install it with:</p>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="co"># install.packages("devtools")</span>
-<span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu">install_dev</span>(<span class="st">"vroom"</span>)</pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="co"># install.packages("devtools")</span>
+<span class="kw">devtools</span>::<span class="fu">install_dev</span>(<span class="st">"vroom"</span>)
+</pre></div>
 </div>
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
 <p>See <a href="https://vroom.r-lib.org/articles/vroom.html">getting started</a> to jump start your use of vroom!</p>
 <p>vroom uses the same interface as readr to specify column types.</p>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="kw pkg">vroom</span><span class="kw ns">::</span><span class="fu"><a href="reference/vroom.html">vroom</a></span>(<span class="st">"mtcars.tsv"</span>,
-  <span class="kw">col_types</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">cyl</span> <span class="kw">=</span> <span class="st">"i"</span>, <span class="kw">gear</span> <span class="kw">=</span> <span class="st">"f"</span>,<span class="kw">hp</span> <span class="kw">=</span> <span class="st">"i"</span>, <span class="kw">disp</span> <span class="kw">=</span> <span class="st">"_"</span>,
-                   <span class="kw">drat</span> <span class="kw">=</span> <span class="st">"_"</span>, <span class="kw">vs</span> <span class="kw">=</span> <span class="st">"l"</span>, <span class="kw">am</span> <span class="kw">=</span> <span class="st">"l"</span>, <span class="kw">carb</span> <span class="kw">=</span> <span class="st">"i"</span>)
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="kw">vroom</span>::<span class="fu"><a href="reference/vroom.html">vroom</a></span>(<span class="st">"mtcars.tsv"</span>,
+  col_types = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(cyl = <span class="st">"i"</span>, gear = <span class="st">"f"</span>,hp = <span class="st">"i"</span>, disp = <span class="st">"_"</span>,
+                   drat = <span class="st">"_"</span>, vs = <span class="st">"l"</span>, am = <span class="st">"l"</span>, carb = <span class="st">"i"</span>)
 )
 <span class="co">#&gt; # A tibble: 32 x 10</span>
 <span class="co">#&gt;   model           mpg   cyl    hp    wt  qsec vs    am    gear   carb</span>
@@ -210,26 +216,30 @@
 <span class="co">#&gt; 1 Mazda RX4      21       6   110  2.62  16.5 FALSE TRUE  4         4</span>
 <span class="co">#&gt; 2 Mazda RX4 Wag  21       6   110  2.88  17.0 FALSE TRUE  4         4</span>
 <span class="co">#&gt; 3 Datsun 710     22.8     4    93  2.32  18.6 TRUE  TRUE  4         1</span>
-<span class="co">#&gt; # … with 29 more rows</span></pre></div>
+<span class="co">#&gt; # … with 29 more rows</span>
+</pre></div>
 </div>
 <div id="reading-multiple-files" class="section level2">
 <h2 class="hasAnchor">
 <a href="#reading-multiple-files" class="anchor"></a>Reading multiple files</h2>
 <p>vroom natively supports reading from multiple files (or even multiple connections!).</p>
 <p>First we generate some files to read by splitting the nycflights dataset by airline.</p>
-<div class="sourceCode" id="cb4"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">nycflights13</span>)
-<span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/imap.html">iwalk</a></span>(
-  <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span>(<span class="no">flights</span>, <span class="no">flights</span>$<span class="no">carrier</span>),
-  ~ { <span class="no">.x</span>$<span class="no">carrier</span><span class="kw">[[</span><span class="fl">1</span>]]; <span class="kw pkg">vroom</span><span class="kw ns">::</span><span class="fu"><a href="reference/vroom_write.html">vroom_write</a></span>(<span class="no">.x</span>, <span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"flights_{.y}.tsv"</span>), <span class="kw">delim</span> <span class="kw">=</span> <span class="st">"\t"</span>) }
-)</pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">nycflights13</span>)
+<span class="kw">purrr</span>::<span class="fu"><a href="https://purrr.tidyverse.org/reference/imap.html">iwalk</a></span>(
+  <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span>(<span class="kw">flights</span>, <span class="kw">flights</span><span class="op">$</span><span class="kw">carrier</span>),
+  <span class="op">~</span> { <span class="kw">.x</span><span class="op">$</span><span class="kw">carrier</span>[[<span class="fl">1</span>]]; <span class="kw">vroom</span>::<span class="fu"><a href="reference/vroom_write.html">vroom_write</a></span>(<span class="kw">.x</span>, <span class="kw">glue</span>::<span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"flights_{.y}.tsv"</span>), delim = <span class="st">"\t"</span>) }
+)
+</pre></div>
 <p>Then we can efficiently read them into one tibble by passing the filenames directly to vroom.</p>
-<div class="sourceCode" id="cb5"><pre class="r"><span class="no">files</span> <span class="kw">&lt;-</span> <span class="kw pkg">fs</span><span class="kw ns">::</span><span class="fu"><a href="http://fs.r-lib.org/reference/dir_ls.html">dir_ls</a></span>(<span class="kw">glob</span> <span class="kw">=</span> <span class="st">"flights*tsv"</span>)
-<span class="no">files</span>
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="kw">files</span> <span class="op">&lt;-</span> <span class="kw">fs</span>::<span class="fu"><a href="http://fs.r-lib.org/reference/dir_ls.html">dir_ls</a></span>(glob = <span class="st">"flights*tsv"</span>)
+<span class="kw">files</span>
 <span class="co">#&gt; flights_9E.tsv flights_AA.tsv flights_AS.tsv flights_B6.tsv flights_DL.tsv </span>
 <span class="co">#&gt; flights_EV.tsv flights_F9.tsv flights_FL.tsv flights_HA.tsv flights_MQ.tsv </span>
 <span class="co">#&gt; flights_OO.tsv flights_UA.tsv flights_US.tsv flights_VX.tsv flights_WN.tsv </span>
 <span class="co">#&gt; flights_YV.tsv</span>
-<span class="kw pkg">vroom</span><span class="kw ns">::</span><span class="fu"><a href="reference/vroom.html">vroom</a></span>(<span class="no">files</span>)
+<span class="kw">vroom</span>::<span class="fu"><a href="reference/vroom.html">vroom</a></span>(<span class="kw">files</span>)
 <span class="co">#&gt; Rows: 336,776</span>
 <span class="co">#&gt; Columns: 19</span>
 <span class="co">#&gt; Delimiter: "\t"</span>
@@ -247,13 +257,14 @@
 <span class="co">#&gt; 3  2013     1     1     1452           1455        -3     1637           1639</span>
 <span class="co">#&gt; # … with 336,773 more rows, and 11 more variables: arr_delay &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   carrier &lt;chr&gt;, flight &lt;dbl&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,</span>
-<span class="co">#&gt; #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></pre></div>
+<span class="co">#&gt; #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span>
+</pre></div>
 </div>
 <div id="learning-more" class="section level2">
 <h2 class="hasAnchor">
 <a href="#learning-more" class="anchor"></a>Learning more</h2>
 <ul>
-<li><a href="https://r-lib.github.io/vroom/articles/vroom.html">Getting started with vroom</a></li>
+<li><a href="http://vroom.r-lib.org/articles/vroom.html">Getting started with vroom</a></li>
 <li>
 <a href="https://www.youtube.com/watch?v=RA9AjqZXxMU&amp;t=10s">📽 vroom: Because Life is too short to read slow</a> - Presentation at UseR!2019 (<a href="https://speakerdeck.com/jimhester/vroom">slides</a>)</li>
 <li>
@@ -373,7 +384,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

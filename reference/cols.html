@@ -162,33 +162,33 @@ as the default. <code>cols_only()</code> includes only the columns you explicitl
 specify, skipping the rest.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cols</span>(<span class='no'>...</span>, <span class='kw'>.default</span> <span class='kw'>=</span> <span class='fu'>col_guess</span>(), <span class='kw'>.delim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>cols</span>(<span class='kw'>...</span>, .default = <span class='fu'>col_guess</span>(), .delim = <span class='kw'>NULL</span>)
 
-<span class='fu'>cols_only</span>(<span class='no'>...</span>)
+<span class='fu'>cols_only</span>(<span class='kw'>...</span>)
 
-<span class='fu'>col_logical</span>(<span class='no'>...</span>)
+<span class='fu'>col_logical</span>(<span class='kw'>...</span>)
 
-<span class='fu'>col_integer</span>(<span class='no'>...</span>)
+<span class='fu'>col_integer</span>(<span class='kw'>...</span>)
 
-<span class='fu'>col_big_integer</span>(<span class='no'>...</span>)
+<span class='fu'>col_big_integer</span>(<span class='kw'>...</span>)
 
-<span class='fu'>col_double</span>(<span class='no'>...</span>)
+<span class='fu'>col_double</span>(<span class='kw'>...</span>)
 
-<span class='fu'>col_character</span>(<span class='no'>...</span>)
+<span class='fu'>col_character</span>(<span class='kw'>...</span>)
 
-<span class='fu'>col_skip</span>(<span class='no'>...</span>)
+<span class='fu'>col_skip</span>(<span class='kw'>...</span>)
 
-<span class='fu'>col_number</span>(<span class='no'>...</span>)
+<span class='fu'>col_number</span>(<span class='kw'>...</span>)
 
-<span class='fu'>col_guess</span>(<span class='no'>...</span>)
+<span class='fu'>col_guess</span>(<span class='kw'>...</span>)
 
-<span class='fu'>col_factor</span>(<span class='kw'>levels</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ordered</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>include_na</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>col_factor</span>(levels = <span class='kw'>NULL</span>, ordered = <span class='fl'>FALSE</span>, include_na = <span class='fl'>FALSE</span>, <span class='kw'>...</span>)
 
-<span class='fu'>col_datetime</span>(<span class='kw'>format</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>...</span>)
+<span class='fu'>col_datetime</span>(format = <span class='st'>""</span>, <span class='kw'>...</span>)
 
-<span class='fu'>col_date</span>(<span class='kw'>format</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>...</span>)
+<span class='fu'>col_date</span>(format = <span class='st'>""</span>, <span class='kw'>...</span>)
 
-<span class='fu'>col_time</span>(<span class='kw'>format</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>col_time</span>(format = <span class='st'>""</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -256,15 +256,19 @@ the complete string.</p></td>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>cols</span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fu'>col_integer</span>())</div><div class='output co'>#&gt; cols(
+    <pre class="examples"><div class='input'><span class='fu'>cols</span>(a = <span class='fu'>col_integer</span>())
+</div><div class='output co'>#&gt; cols(
 #&gt;   a = <span style='color: #00BB00;'>col_integer()</span><span>
-#&gt; )</div><div class='input'><span class='fu'>cols_only</span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fu'>col_integer</span>())</div><div class='output co'>#&gt; cols_only(
+#&gt; )</div><div class='input'><span class='fu'>cols_only</span>(a = <span class='fu'>col_integer</span>())
+</div><div class='output co'>#&gt; cols_only(
 #&gt;   a = </span><span style='color: #00BB00;'>col_integer()</span><span>
 #&gt; )</div><div class='input'>
 <span class='co'># You can also use the standard abbreviations</span>
-<span class='fu'>cols</span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='st'>"i"</span>)</div><div class='output co'>#&gt; cols(
+<span class='fu'>cols</span>(a = <span class='st'>"i"</span>)
+</div><div class='output co'>#&gt; cols(
 #&gt;   a = </span><span style='color: #00BB00;'>col_integer()</span><span>
-#&gt; )</div><div class='input'><span class='fu'>cols</span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='st'>"i"</span>, <span class='kw'>b</span> <span class='kw'>=</span> <span class='st'>"d"</span>, <span class='kw'>c</span> <span class='kw'>=</span> <span class='st'>"_"</span>)</div><div class='output co'>#&gt; cols(
+#&gt; )</div><div class='input'><span class='fu'>cols</span>(a = <span class='st'>"i"</span>, b = <span class='st'>"d"</span>, c = <span class='st'>"_"</span>)
+</div><div class='output co'>#&gt; cols(
 #&gt;   a = </span><span style='color: #00BB00;'>col_integer()</span><span>,
 #&gt;   b = </span><span style='color: #00BB00;'>col_double()</span><span>,
 #&gt;   c = col_skip()
@@ -272,16 +276,17 @@ the complete string.</p></td>
 <span class='co'># You can also use multiple sets of column definitions by combining</span>
 <span class='co'># them like so:</span>
 
-<span class='no'>t1</span> <span class='kw'>&lt;-</span> <span class='fu'>cols</span>(
-  <span class='kw'>column_one</span> <span class='kw'>=</span> <span class='fu'>col_integer</span>(),
-  <span class='kw'>column_two</span> <span class='kw'>=</span> <span class='fu'>col_number</span>())
+<span class='kw'>t1</span> <span class='op'>&lt;-</span> <span class='fu'>cols</span>(
+  column_one = <span class='fu'>col_integer</span>(),
+  column_two = <span class='fu'>col_number</span>())
 
-<span class='no'>t2</span> <span class='kw'>&lt;-</span> <span class='fu'>cols</span>(
- <span class='kw'>column_three</span> <span class='kw'>=</span> <span class='fu'>col_character</span>())
+<span class='kw'>t2</span> <span class='op'>&lt;-</span> <span class='fu'>cols</span>(
+ column_three = <span class='fu'>col_character</span>())
 
-<span class='no'>t3</span> <span class='kw'>&lt;-</span> <span class='no'>t1</span>
-<span class='no'>t3</span>$<span class='no'>cols</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>t1</span>$<span class='no'>cols</span>, <span class='no'>t2</span>$<span class='no'>cols</span>)
-<span class='no'>t3</span></div><div class='output co'>#&gt; cols(
+<span class='kw'>t3</span> <span class='op'>&lt;-</span> <span class='kw'>t1</span>
+<span class='kw'>t3</span><span class='op'>$</span><span class='kw'>cols</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>t1</span><span class='op'>$</span><span class='kw'>cols</span>, <span class='kw'>t2</span><span class='op'>$</span><span class='kw'>cols</span>)
+<span class='kw'>t3</span>
+</div><div class='output co'>#&gt; cols(
 #&gt;   column_one = </span><span style='color: #00BB00;'>col_integer()</span><span>,
 #&gt;   column_two = </span><span style='color: #00BB00;'>col_number()</span><span>,
 #&gt;   column_three = </span><span style='color: #BB0000;'>col_character()</span><span>
@@ -301,7 +306,7 @@ the complete string.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

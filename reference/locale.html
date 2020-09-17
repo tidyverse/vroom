@@ -167,13 +167,13 @@ match R (i.e. US English) as closely as possible. See
     </div>
 
     <pre class="usage"><span class='fu'>locale</span>(
-  <span class='kw'>date_names</span> <span class='kw'>=</span> <span class='st'>"en"</span>,
-  <span class='kw'>date_format</span> <span class='kw'>=</span> <span class='st'>"%AD"</span>,
-  <span class='kw'>time_format</span> <span class='kw'>=</span> <span class='st'>"%AT"</span>,
-  <span class='kw'>decimal_mark</span> <span class='kw'>=</span> <span class='st'>"."</span>,
-  <span class='kw'>grouping_mark</span> <span class='kw'>=</span> <span class='st'>","</span>,
-  <span class='kw'>tz</span> <span class='kw'>=</span> <span class='st'>"UTC"</span>,
-  <span class='kw'>encoding</span> <span class='kw'>=</span> <span class='st'>"UTF-8"</span>
+  date_names = <span class='st'>"en"</span>,
+  date_format = <span class='st'>"%AD"</span>,
+  time_format = <span class='st'>"%AT"</span>,
+  decimal_mark = <span class='st'>"."</span>,
+  grouping_mark = <span class='st'>","</span>,
+  tz = <span class='st'>"UTC"</span>,
+  encoding = <span class='st'>"UTF-8"</span>
 )
 
 <span class='fu'>default_locale</span>()</pre>
@@ -220,7 +220,8 @@ DST. It is <em>not</em> Eastern Standard Time. It's better to use
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>locale</span>()</div><div class='output co'>#&gt; &lt;locale&gt;
+    <pre class="examples"><div class='input'><span class='fu'>locale</span>()
+</div><div class='output co'>#&gt; &lt;locale&gt;
 #&gt; Numbers:  123,456.78
 #&gt; Formats:  %AD / %AT
 #&gt; Timezone: UTC
@@ -231,7 +232,8 @@ DST. It is <em>not</em> Eastern Standard Time. It's better to use
 #&gt; Months: January (Jan), February (Feb), March (Mar), April (Apr), May (May),
 #&gt;         June (Jun), July (Jul), August (Aug), September (Sep), October
 #&gt;         (Oct), November (Nov), December (Dec)
-#&gt; AM/PM:  AM/PM</div><div class='input'><span class='fu'>locale</span>(<span class='st'>"fr"</span>)</div><div class='output co'>#&gt; &lt;locale&gt;
+#&gt; AM/PM:  AM/PM</div><div class='input'><span class='fu'>locale</span>(<span class='st'>"fr"</span>)
+</div><div class='output co'>#&gt; &lt;locale&gt;
 #&gt; Numbers:  123,456.78
 #&gt; Formats:  %AD / %AT
 #&gt; Timezone: UTC
@@ -244,7 +246,8 @@ DST. It is <em>not</em> Eastern Standard Time. It's better to use
 #&gt;         octobre (oct.), novembre (nov.), décembre (déc.)
 #&gt; AM/PM:  AM/PM</div><div class='input'>
 <span class='co'># South American locale</span>
-<span class='fu'>locale</span>(<span class='st'>"es"</span>, <span class='kw'>decimal_mark</span> <span class='kw'>=</span> <span class='st'>","</span>)</div><div class='output co'>#&gt; &lt;locale&gt;
+<span class='fu'>locale</span>(<span class='st'>"es"</span>, decimal_mark = <span class='st'>","</span>)
+</div><div class='output co'>#&gt; &lt;locale&gt;
 #&gt; Numbers:  123.456,78
 #&gt; Formats:  %AD / %AT
 #&gt; Timezone: UTC
@@ -271,7 +274,7 @@ DST. It is <em>not</em> Eastern Standard Time. It's better to use
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
