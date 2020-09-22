@@ -33,7 +33,13 @@ public:
     fct_info->info = info;
 
     for (auto i = 0; i < levels.size(); ++i) {
-      fct_info->levels[levels[i]] = i + 1;
+      if (levels[i] == NA_STRING) {
+        for (const auto& str : *info->na) {
+          fct_info->levels[str] = i + 1;
+        }
+      } else {
+        fct_info->levels[levels[i]] = i + 1;
+      }
     }
 
     SEXP out = PROTECT(R_MakeExternalPtr(fct_info, R_NilValue, R_NilValue));

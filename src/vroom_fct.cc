@@ -18,7 +18,13 @@ read_fct_explicit(vroom_vec_info* info, cpp11::strings levels, bool ordered) {
   std::unordered_map<SEXP, size_t> level_map;
 
   for (auto i = 0; i < levels.size(); ++i) {
-    level_map[levels[i]] = i + 1;
+    if (levels[i] == NA_STRING) {
+      for (const auto& str : *info->na) {
+        level_map[str] = i + 1;
+      }
+    } else {
+      level_map[levels[i]] = i + 1;
+    }
   }
 
   R_xlen_t i = 0;
@@ -46,10 +52,10 @@ cpp11::integers read_fct_implicit(vroom_vec_info* info, bool include_na) {
   R_xlen_t n = info->column->size();
 
   cpp11::writable::integers out(n);
-  std::vector<std::string> levels;
+  cpp11::writable::strings levels;
   std::unordered_map<vroom::string, size_t> level_map;
 
-  auto nas = cpp11::as_cpp<std::vector<std::string> >(*info->na);
+  auto nas = cpp11::as_cpp<std::vector<std::string>>(*info->na);
 
   size_t max_level = 1;
 
@@ -57,31 +63,29 @@ cpp11::integers read_fct_implicit(vroom_vec_info* info, bool include_na) {
   auto end = n;
   auto i = start;
   auto col = info->column->slice(start, end);
+  int na_level = NA_INTEGER;
   for (const auto& str : *col) {
-    if (include_na && matches(str, nas)) {
-      out[i++] = NA_INTEGER;
+    auto val = level_map.find(str);
+    if (val != level_map.end()) {
+      out[i++] = val->second;
     } else {
-      auto val = level_map.find(str);
-      if (val != level_map.end()) {
-        out[i++] = val->second;
+      if (include_na && matches(str, nas)) {
+        if (na_level == NA_INTEGER) {
+          na_level = max_level++;
+          levels.push_back(NA_STRING);
+          out[i++] = na_level;
+          level_map[str] = na_level;
+        }
       } else {
         out[i++] = max_level;
         level_map[str] = max_level++;
-        levels.emplace_back(str.str());
+        levels.push_back(
+            info->locale->encoder_.makeSEXP(str.begin(), str.end(), false));
       }
     }
   }
 
-  cpp11::writable::strings out_lvls(levels.size());
-  for (R_xlen_t i = 0; i < static_cast<R_xlen_t>(levels.size()); ++i) {
-    out_lvls[i] = info->locale->encoder_.makeSEXP(
-        levels[i].c_str(), levels[i].c_str() + levels[i].size(), false);
-  }
-  if (include_na) {
-    out_lvls.push_back(NA_STRING);
-  }
-
-  out.attr("levels") = static_cast<SEXP>(out_lvls);
+  out.attr("levels") = levels;
   out.attr("class") = "factor";
 
   return out;
