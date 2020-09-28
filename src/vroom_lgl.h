@@ -33,7 +33,7 @@ inline bool isFalse(const char* start, const char* end) {
   return false;
 }
 
-inline Rboolean
+inline int
 parse_logical(const char* start, const char* end, bool strict = true) {
   auto len = end - start;
 
