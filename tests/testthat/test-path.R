@@ -1,5 +1,3 @@
-context("test-path.R")
-
 mt <- vroom(vroom_example("mtcars.csv"))
 
 test_that("vroom errors if the file does not exist", {

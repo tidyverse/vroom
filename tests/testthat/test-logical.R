@@ -1,5 +1,3 @@
-context("test-logical.R")
-
 test_that("TRUE and FALSE parsed", {
   test_vroom("TRUE\nFALSE\n", col_names = FALSE, equals = tibble::tibble(X1 = c(TRUE, FALSE)))
 })

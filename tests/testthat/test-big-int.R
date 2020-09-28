@@ -1,5 +1,3 @@
-context("test-chr.R")
-
 as.integer64 <- bit64::as.integer64
 
 test_that("integers are returned correctly", {

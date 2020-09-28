@@ -1,5 +1,3 @@
-context("col_select")
-
 test_that("col_select works", {
   expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_select = 1)), "model")
 

@@ -1,5 +1,3 @@
-context("test-chr.R")
-
 # Encoding ----------------------------------------------------------------
 
 test_that("locale encoding affects parsing", {

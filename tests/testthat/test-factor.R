@@ -1,5 +1,3 @@
-context("test-factor")
-
 test_that("strings mapped to levels", {
   test_vroom("a\nb\n", col_names = FALSE,
     col_types = list(X1 = col_factor(levels = c("a", "b"))),

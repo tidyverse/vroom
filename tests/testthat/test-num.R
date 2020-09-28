@@ -1,5 +1,3 @@
-context("test-num.R")
-
 # Flexible number parsing -------------------------------------------------
 test_that("col_number only takes first number", {
   test_parse_number("XYZ 123,000 BLAH 456", 123000)

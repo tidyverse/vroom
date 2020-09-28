@@ -1,5 +1,3 @@
-context("test-vroom.R")
-
 test_that("vroom can read a tsv", {
   test_vroom("a\tb\tc\n1\t2\t3\n", delim = "\t",
     equals = tibble::tibble(a = 1, b = 2, c = 3)
@@ -122,7 +120,10 @@ test_that("vroom handles UTF byte order marks", {
     vroom(as.raw(c(0xef, 0xbb, 0xbf, # BOM
                 0x41, # A
                 0x0A # newline
-             )), delim = "\n", col_names = FALSE
+             )),
+         delim = "\n",
+         col_names = FALSE,
+         col_types = list()
     )[[1]],
     "A")
 
@@ -131,7 +132,10 @@ test_that("vroom handles UTF byte order marks", {
     vroom(as.raw(c(0xfe, 0xff, # BOM
                 0x41, # A
                 0x0A # newline
-             )), delim = "\n", col_names = FALSE
+             )),
+         delim = "\n",
+         col_names = FALSE,
+         col_types = list()
     )[[1]],
     "A")
 
@@ -140,7 +144,10 @@ test_that("vroom handles UTF byte order marks", {
     vroom(as.raw(c(0xff, 0xfe, # BOM
                 0x41, # A
                 0x0A # newline
-             )), delim = "\n", col_names = FALSE
+             )),
+         delim = "\n",
+         col_names = FALSE,
+         col_types = list()
     )[[1]],
     "A")
 
@@ -149,7 +156,10 @@ test_that("vroom handles UTF byte order marks", {
     vroom(as.raw(c(0x00, 0x00, 0xfe, 0xff, # BOM
                 0x41, # A
                 0x0A # newline
-             )), delim = "\n", col_names = FALSE
+             )),
+         delim = "\n",
+         col_names = FALSE,
+         col_types = list()
     )[[1]],
     "A")
 
@@ -158,7 +168,10 @@ test_that("vroom handles UTF byte order marks", {
     vroom(as.raw(c(0xff, 0xfe, 0x00, 0x00, # BOM
                 0x41, # A
                 0x0A # newline
-             )), delim = "\n", col_names = FALSE
+             )),
+         delim = "\n",
+         col_names = FALSE,
+         col_types = list()
     )[[1]],
     "A")
 })
@@ -166,17 +179,17 @@ test_that("vroom handles UTF byte order marks", {
 test_that("vroom handles vectors shorter than the UTF byte order marks", {
 
   expect_equal(
-    charToRaw(vroom(as.raw(c(0xef, 0xbb, 0x0A)), delim = "\n", col_names = FALSE)[[1]]),
+    charToRaw(vroom(as.raw(c(0xef, 0xbb, 0x0A)), delim = "\n", col_names = FALSE, col_types = list())[[1]]),
     as.raw(c(0xef, 0xbb))
   )
 
   expect_equal(
-    charToRaw(vroom(as.raw(c(0xfe, 0x0A)), delim = "\n", col_names = FALSE)[[1]]),
+    charToRaw(vroom(as.raw(c(0xfe, 0x0A)), delim = "\n", col_names = FALSE, col_types = list())[[1]]),
     as.raw(c(0xfe))
   )
 
   expect_equal(
-    charToRaw(vroom(as.raw(c(0xff, 0x0A)), delim = "\n", col_names = FALSE)[[1]]),
+    charToRaw(vroom(as.raw(c(0xff, 0x0A)), delim = "\n", col_names = FALSE, col_types = list())[[1]]),
     as.raw(c(0xff))
   )
 })
@@ -184,7 +197,7 @@ test_that("vroom handles vectors shorter than the UTF byte order marks", {
 test_that("vroom handles windows newlines", {
 
   expect_equal(
-    vroom("a\tb\r\n1\t2\r\n", trim_ws = FALSE)[[1]],
+    vroom("a\tb\r\n1\t2\r\n", trim_ws = FALSE, col_types = list())[[1]],
     1
   )
 })
@@ -209,14 +222,14 @@ test_that("vroom can read an empty file", {
   on.exit(unlink(f))
 
   capture.output(type = "message",
-    expect_equal(vroom(f), tibble::tibble())
+    expect_equal(vroom(f, col_types = list()), tibble::tibble())
   )
 
   capture.output(type = "message",
-    expect_equal(vroom(f, col_names = FALSE), tibble::tibble())
+    expect_equal(vroom(f, col_names = FALSE, col_types = list()), tibble::tibble())
   )
 
-  expect_equal(vroom(character()), tibble::tibble())
+  expect_equal(vroom(character(), col_types = list()), tibble::tibble())
 })
 
 test_that("vroom_examples() returns the example files", {
@@ -228,7 +241,7 @@ test_that("vroom_example() returns a single example files", {
 })
 
 test_that("subsets work", {
-  res <- vroom("1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14", delim = "\n", col_names = FALSE)
+  res <- vroom("1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14", delim = "\n", col_names = FALSE, col_types = list())
   expect_equal(head(res[[1]]), c(1:6))
   expect_equal(tail(res[[1]]), c(9:14))
 
@@ -237,50 +250,50 @@ test_that("subsets work", {
 
 test_that("n_max works with normal files", {
     expect_equal(
-      NROW(vroom(vroom_example("mtcars.csv"), n_max = 2)),
+      NROW(vroom(vroom_example("mtcars.csv"), n_max = 2, col_types = list())),
       2
     )
 
     # headers don't count
     expect_equal(
-      NROW(vroom(vroom_example("mtcars.csv"), n_max = 2, col_names = FALSE)),
+      NROW(vroom(vroom_example("mtcars.csv"), n_max = 2, col_names = FALSE, col_types = list())),
       2
     )
 
     # Zero rows with headers should just have the headers
     expect_equal(
-      dim(vroom(vroom_example("mtcars.csv"), n_max = 0)),
+      dim(vroom(vroom_example("mtcars.csv"), n_max = 0, col_types = list())),
       c(0, 12)
     )
 
     # If you don't read the header or any rows it must be empty
     expect_equal(
-      dim(vroom(vroom_example("mtcars.csv"), n_max = 0, col_names = FALSE)),
+      dim(vroom(vroom_example("mtcars.csv"), n_max = 0, col_names = FALSE, col_types = list())),
       c(0, 0)
     )
 })
 
 test_that("n_max works with connections files", {
     expect_equal(
-      NROW(vroom(vroom_example("mtcars.csv.gz"), n_max = 2)),
+      NROW(vroom(vroom_example("mtcars.csv.gz"), n_max = 2, col_types = list())),
       2
     )
 
     # headers don't count
     expect_equal(
-      NROW(vroom(vroom_example("mtcars.csv.gz"), n_max = 2, col_names = FALSE)),
+      NROW(vroom(vroom_example("mtcars.csv.gz"), n_max = 2, col_names = FALSE, col_types = list())),
       2
     )
 
     # Zero rows with headers should just have the headers
     expect_equal(
-      dim(vroom(vroom_example("mtcars.csv.gz"), n_max = 0)),
+      dim(vroom(vroom_example("mtcars.csv.gz"), n_max = 0, col_types = list())),
       c(0, 12)
     )
 
     # If you don't read the header or any rows it must be empty
     expect_equal(
-      dim(vroom(vroom_example("mtcars.csv.gz"), n_max = 0, col_names = FALSE)),
+      dim(vroom(vroom_example("mtcars.csv.gz"), n_max = 0, col_names = FALSE, col_types = list())),
       c(0, 0)
     )
 })
@@ -324,13 +337,13 @@ test_that("vroom uses the number of rows when guess_max = Inf", {
   vroom_write(df, tf, delim = "\t")
 
   # The type should be guessed wrong, because the character comes at the end
-  res <- vroom(tf, delim = "\n")
-  expect_is(res[["x"]], "numeric")
+  res <- vroom(tf, delim = "\n", col_types = list())
+  expect_type(res[["x"]], "double")
   expect_true(is.na(res[["x"]][[NROW(res)]]))
 
   # The value should exist with guess_max = Inf
-  res <- vroom(tf, delim = "\n", guess_max = Inf)
-  expect_is(res[["x"]], "character")
+  res <- vroom(tf, delim = "\n", guess_max = Inf, col_types = list())
+  expect_type(res[["x"]], "character")
   expect_equal(res[["x"]][[NROW(res)]], "foo")
 })
 
@@ -354,7 +367,7 @@ test_that("vroom adds removes columns if a row is too long", {
 #})
 
 test_that("guess_type works with long strings (#74)", {
-  expect_is(
+  expect_s3_class(
     guess_type("https://www.bing.com/search?q=mr+popper%27s+penguins+worksheets+free&FORM=QSRE1"),
     "collector_character"
   )
@@ -365,7 +378,7 @@ test_that("vroom errors if unnamed column types do not match the number of colum
 })
 
 test_that("column names are properly encoded", {
-  nms <- vroom("f\U00F6\U00F6\nbar\n", delim = "\n")
+  nms <- vroom("f\U00F6\U00F6\nbar\n", delim = "\n", col_types = list())
   expect_equal(Encoding(colnames(nms)), "UTF-8")
 })
 
@@ -380,25 +393,25 @@ test_that("vroom can read files with no trailing newline", {
   on.exit(unlink(f))
 
   writeBin(charToRaw("foo\nbar"), f)
-  expect_equal(vroom(f, col_names = FALSE, delim = "\n")[[1]], c("foo", "bar"))
+  expect_equal(vroom(f, col_names = FALSE, delim = "\n", col_types = list())[[1]], c("foo", "bar"))
 
   f2 <- tempfile()
   on.exit(unlink(f2), add = TRUE)
 
   writeBin(charToRaw("foo,bar\n1,2"), f2)
-  expect_equal(vroom(f2, delim = ","), tibble::tibble(foo = 1, bar = 2))
+  expect_equal(vroom(f2, delim = ",", col_types = list()), tibble::tibble(foo = 1, bar = 2))
 })
 
 test_that("Missing files error with a nice error message", {
   f <- tempfile()
-  expect_error(vroom(f), "does not exist")
-  expect_error(vroom("foo"), "does not exist in current working directory")
+  expect_error(vroom(f, col_types = list()), "does not exist")
+  expect_error(vroom("foo", col_types = list()), "does not exist in current working directory")
 })
 
 test_that("Can return the spec object", {
-  x <- vroom("foo,bar\n1,c\n")
+  x <- vroom("foo,bar\n1,c\n", col_types = list())
   obj <- spec(x)
-  expect_is(obj, "col_spec")
+  expect_s3_class(obj, "col_spec")
   exp <- as.col_spec(list(foo = "d", bar = "c"))
   exp$delim <- ","
   expect_equal(obj, exp)
@@ -411,7 +424,7 @@ test_that("vroom handles files with trailing commas, windows newlines, missing a
   writeChar(paste(collapse = "\r\n", c('foo,bar,', '1,2,')), con = f, eos = NULL)
 
   expect_equal(
-    vroom(f),
+    vroom(f, col_types = list()),
     tibble::tibble(foo = 1, bar = 2, "...3" = NA)
   )
 })
@@ -436,7 +449,7 @@ test_that("vroom uses the delim if it is specified in the col_types", {
 })
 
 test_that("vroom supports NA and NA_integer_ indices", {
-  data <- vroom(vroom_example("mtcars.csv"))
+  data <- vroom(vroom_example("mtcars.csv"), col_types = list())
 
   expect_equal(data[NA, 1, drop = TRUE], rep(NA_character_, nrow(data)))
   expect_equal(data[NA_integer_, 1, drop = TRUE], NA_character_)
@@ -474,7 +487,7 @@ test_that("vroom works with n_max, windows newlines and files larger than the co
   writeBin(charToRaw("X,Y\r\n1,2\r\n3342343242312312,442342432423432432\r\n432424324,532432324"), f)
 
   withr::with_envvar(c("VROOM_CONNECTION_SIZE" = 25),
-    res <- vroom(f, delim = ",", n_max = 1)
+    res <- vroom(f, delim = ",", n_max = 1, col_types = list())
   )
 
   expect_equal(res$X, 1)
@@ -482,7 +495,7 @@ test_that("vroom works with n_max, windows newlines and files larger than the co
 })
 
 test_that("subsetting works with both double and integer indexes", {
-  x <- vroom("X1\nfoo", delim = ",")
+  x <- vroom("X1\nfoo", delim = ",", col_types = list())
   expect_equal(x$X1[1L], "foo")
   expect_equal(x$X1[1], "foo")
   expect_equal(x$X1[NA_integer_], NA_character_)

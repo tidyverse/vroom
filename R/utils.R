@@ -53,6 +53,13 @@ compare.tbl_df <- function (x, y, ...) {
   NextMethod("compare")
 }
 
+# Conditionally exported in zzz.R
+# @export
+compare_proxy.tbl_df <- function(x) {
+  attr(x, "spec") <- NULL
+  x
+}
+
 is_rstudio_console <- function() {
   !(Sys.getenv("RSTUDIO", "") == "" || Sys.getenv("RSTUDIO_TERM", "") != "")
 }

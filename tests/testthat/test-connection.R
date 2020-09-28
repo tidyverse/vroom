@@ -1,5 +1,3 @@
-context("test-connection.R")
-
 test_that("reading from connection is consistent with reading directly from a file", {
   expected <- vroom(vroom_example("mtcars.csv"))
 

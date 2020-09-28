@@ -1,5 +1,3 @@
-context("vroom_fwf")
-
 test_that("trailing spaces omitted", {
   spec <- fwf_empty(test_path("fwf-trailing.txt"))
   expect_equal(spec$begin, c(0, 4))
@@ -174,12 +172,12 @@ test_that("fwf spec can overlap", {
 # fwf_cols
 test_that("fwf_cols produces correct fwf_positions object with elements of length 2", {
   expected <- fwf_positions(c(1L, 9L, 4L), c(2L, 12L, 6L), c("a", "b", "d"))
-  expect_equivalent(fwf_cols(a = c(1, 2), b = c(9, 12), d = c(4, 6)), expected)
+  expect_equal(fwf_cols(a = c(1, 2), b = c(9, 12), d = c(4, 6)), expected, ignore_attr = TRUE)
 })
 
 test_that("fwf_cols produces correct fwf_positions object with elements of length 1", {
   expected <- fwf_widths(c(2L, 4L, 3L), c("a", "b", "c"))
-  expect_equivalent(fwf_cols(a = 2, b = 4, c = 3), expected)
+  expect_equal(fwf_cols(a = 2, b = 4, c = 3), expected, ignore_attr = TRUE)
 })
 
 
@@ -189,11 +187,11 @@ test_that("fwf_cols throws error when arguments are not length 1 or 2", {
 })
 
 test_that("fwf_cols works with unnamed columns", {
-  expect_equivalent(
+  expect_equal(ignore_attr = TRUE,
     fwf_cols(c(1, 2), c(9, 12), c(4, 6)),
     fwf_positions(c(1L, 9L, 4L), c(2L, 12L, 6L), c("X1", "X2", "X3"))
   )
-  expect_equivalent(
+  expect_equal(ignore_attr = TRUE,
     fwf_cols(a = c(1, 2), c(9, 12), c(4, 6)),
     fwf_positions(c(1L, 9L, 4L), c(2L, 12L, 6L), c("a", "X2", "X3"))
   )

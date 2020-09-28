@@ -1,5 +1,3 @@
-context("test-vroom_write.R")
-
 test_that("empty columns just return themselves without writing anything", {
   out <- tempfile()
 

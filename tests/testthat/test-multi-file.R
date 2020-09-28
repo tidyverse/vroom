@@ -1,6 +1,3 @@
-context("test-multi-file.R")
-
-
 test_that("vroom adds the id column from the filename for one file", {
   res <- vroom(vroom_example("mtcars.csv"), id = "filename")
   expect_true(all(res$filename == vroom_example("mtcars.csv")))
