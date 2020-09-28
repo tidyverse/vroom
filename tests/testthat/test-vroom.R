@@ -423,9 +423,11 @@ test_that("vroom handles files with trailing commas, windows newlines, missing a
 
   writeChar(paste(collapse = "\r\n", c('foo,bar,', '1,2,')), con = f, eos = NULL)
 
-  expect_equal(
-    vroom(f, col_types = list()),
-    tibble::tibble(foo = 1, bar = 2, "...3" = NA)
+  expect_message(regexp = "New names",
+    expect_equal(
+      vroom(f, col_types = list()),
+      tibble::tibble(foo = 1, bar = 2, "...3" = NA)
+    )
   )
 })
 

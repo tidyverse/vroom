@@ -1,5 +1,5 @@
 test_that("vroom adds the id column from the filename for one file", {
-  res <- vroom(vroom_example("mtcars.csv"), id = "filename")
+  res <- vroom(vroom_example("mtcars.csv"), id = "filename", col_types = list())
   expect_true(all(res$filename == vroom_example("mtcars.csv")))
 })
 
@@ -14,7 +14,7 @@ test_that("vroom adds the id column from the filename for multiple files", {
 
   files <- list.files(dir, full.names = TRUE)
 
-  res <- vroom(files, id = "filename")
+  res <- vroom(files, id = "filename", col_types = list())
 
   # construct what the filename column should look like
   filenames <- paste0("mtcars_", rep(names(splits), vapply(splits, nrow, integer(1))), ".tsv")
@@ -34,7 +34,7 @@ test_that("vroom adds the id column from the filename for multiple connections",
 
   files <- list.files(dir, full.names = TRUE)
 
-  res <- vroom(files, id = "filename")
+  res <- vroom(files, id = "filename", col_types = list())
 
   # construct what the filename column should look like
   filenames <- paste0("mtcars_", rep(names(splits), vapply(splits, nrow, integer(1))), ".tsv.gz")
@@ -61,7 +61,7 @@ test_that("vroom works with many files", {
 
   files <- list.files(dir, pattern = ".*[.]csv", full.names = TRUE)
 
-  res <- vroom::vroom(files)
+  res <- vroom::vroom(files, col_types = list())
 
   expect_equal(colnames(res), c("x", "y"))
   expect_equal(NROW(res), 2000)
@@ -86,7 +86,7 @@ test_that("vroom works with many connections", {
 
   files <- list.files(dir, pattern = ".*[.]csv[.]gz", full.names = TRUE)
 
-  res <- vroom::vroom(files)
+  res <- vroom::vroom(files, col_types = list())
 
   expect_equal(colnames(res), c("x", "y"))
   expect_equal(NROW(res), 2000)
@@ -95,11 +95,11 @@ test_that("vroom works with many connections", {
 test_that("vroom errors if numbers of columns are inconsistent", {
 
   files <- test_path("multi-file", c("foo", "baz"))
-  expect_error(vroom::vroom(files), "must all have")
+  expect_error(vroom::vroom(files, col_types = list()), "must all have")
 })
 
 test_that("vroom errors if column names are inconsistent", {
 
   files <- test_path("multi-file", c("foo", "bar"))
-  expect_error(vroom::vroom(files), "consistent column names")
+  expect_error(vroom::vroom(files, col_types = list()), "consistent column names")
 })

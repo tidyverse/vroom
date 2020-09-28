@@ -1,5 +1,3 @@
-context("test-int.R")
-
 test_that("integers are returned correctly", {
   # empty fields are returned as NAs
   test_vroom("foo,bar,baz\n1,,3\n", col_types = list(.default = "i"), delim = ",",
