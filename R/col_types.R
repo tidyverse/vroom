@@ -126,7 +126,12 @@ as.col_spec.list <- function(x) {
   do.call(cols, x)
 }
 #' @export
-as.col_spec.col_spec <- function(x) x
+as.col_spec.col_spec <- function(x) {
+  if (!"delim" %in% names(x)) {
+    x["delim"] <- list(NULL)
+  }
+  x
+}
 
 #' @export
 as.col_spec.default <- function(x) {
