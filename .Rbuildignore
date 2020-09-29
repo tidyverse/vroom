@@ -32,3 +32,7 @@
 ^\.clangd$
 ^compile_commands.json$
 ^inst/bench/.+/.*\.tsv$
+^src/mio/cmake/
+^src/mio/single_include/
+^src/mio/test/
+^src/mio/.*CMakeLists\.txt$
