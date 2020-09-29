@@ -378,6 +378,8 @@ test_that("vroom errors if unnamed column types do not match the number of colum
 })
 
 test_that("column names are properly encoded", {
+  skip_on_os("solaris")
+
   nms <- vroom("f\U00F6\U00F6\nbar\n", delim = "\n", col_types = list())
   expect_equal(Encoding(colnames(nms)), "UTF-8")
 })
