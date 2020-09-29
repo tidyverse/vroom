@@ -48,7 +48,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.2</span>
       </span>
     </div>
 
@@ -113,7 +113,6 @@
 </h1></div>
 <!-- badges: start -->
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#&gt; Warning: package 'dplyr' was built under R version 4.0.2</span></span></code></pre></div>
 <p>The fastest delimited reader for R, <strong>1.48 GB/sec</strong>.</p>
 <p><img src="https://github.com/r-lib/vroom/raw/gh-pages/taylor.gif" align="right" width="30%"></p>
 <p>But that’s impossible! How can it be <a href="https://vroom.r-lib.org/articles/benchmarks.html">so fast</a>?</p>
@@ -191,11 +190,11 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>Install vroom from CRAN with:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
+<div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"vroom"</span>)
 </pre></div>
 <p>Alternatively, if you need the development version from <a href="https://github.com/">GitHub</a> install it with:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
+<div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="co"># install.packages("devtools")</span>
 <span class="kw">devtools</span>::<span class="fu">install_dev</span>(<span class="st">"vroom"</span>)
 </pre></div>
@@ -205,7 +204,7 @@
 <a href="#usage" class="anchor"></a>Usage</h2>
 <p>See <a href="https://vroom.r-lib.org/articles/vroom.html">getting started</a> to jump start your use of vroom!</p>
 <p>vroom uses the same interface as readr to specify column types.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
+<div class="sourceCode" id="cb3"><pre class="downlit">
 <span class="kw">vroom</span>::<span class="fu"><a href="reference/vroom.html">vroom</a></span>(<span class="st">"mtcars.tsv"</span>,
   col_types = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(cyl = <span class="st">"i"</span>, gear = <span class="st">"f"</span>,hp = <span class="st">"i"</span>, disp = <span class="st">"_"</span>,
                    drat = <span class="st">"_"</span>, vs = <span class="st">"l"</span>, am = <span class="st">"l"</span>, carb = <span class="st">"i"</span>)
@@ -224,7 +223,7 @@
 <a href="#reading-multiple-files" class="anchor"></a>Reading multiple files</h2>
 <p>vroom natively supports reading from multiple files (or even multiple connections!).</p>
 <p>First we generate some files to read by splitting the nycflights dataset by airline.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
+<div class="sourceCode" id="cb4"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">nycflights13</span>)
 <span class="kw">purrr</span>::<span class="fu"><a href="https://purrr.tidyverse.org/reference/imap.html">iwalk</a></span>(
   <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span>(<span class="kw">flights</span>, <span class="kw">flights</span><span class="op">$</span><span class="kw">carrier</span>),
@@ -232,7 +231,7 @@
 )
 </pre></div>
 <p>Then we can efficiently read them into one tibble by passing the filenames directly to vroom.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
+<div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="kw">files</span> <span class="op">&lt;-</span> <span class="kw">fs</span>::<span class="fu"><a href="http://fs.r-lib.org/reference/dir_ls.html">dir_ls</a></span>(glob = <span class="st">"flights*tsv"</span>)
 <span class="kw">files</span>
 <span class="co">#&gt; flights_9E.tsv flights_AA.tsv flights_AS.tsv flights_B6.tsv flights_DL.tsv </span>
@@ -264,7 +263,7 @@
 <h2 class="hasAnchor">
 <a href="#learning-more" class="anchor"></a>Learning more</h2>
 <ul>
-<li><a href="http://vroom.r-lib.org/articles/vroom.html">Getting started with vroom</a></li>
+<li><a href="https://vroom.r-lib.org/articles/vroom.html">Getting started with vroom</a></li>
 <li>
 <a href="https://www.youtube.com/watch?v=RA9AjqZXxMU&amp;t=10s">📽 vroom: Because Life is too short to read slow</a> - Presentation at UseR!2019 (<a href="https://speakerdeck.com/jimhester/vroom">slides</a>)</li>
 <li>
