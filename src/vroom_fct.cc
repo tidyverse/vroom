@@ -37,7 +37,6 @@ read_fct_explicit(vroom_vec_info* info, cpp11::strings levels, bool ordered) {
       out[i++] = NA_INTEGER;
     }
   }
-
   out.attr("levels") = static_cast<SEXP>(levels);
   if (ordered) {
     out.attr("class") = {"ordered", "factor"};
@@ -85,7 +84,7 @@ cpp11::integers read_fct_implicit(vroom_vec_info* info, bool include_na) {
     }
   }
 
-  out.attr("levels") = levels;
+  out.attr("levels") = static_cast<SEXP>(levels);
   out.attr("class") = "factor";
 
   return out;
