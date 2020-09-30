@@ -3,8 +3,12 @@
 #include <cpp11/as.hpp>
 #include <cpp11/function.hpp>
 #include <cpp11/list.hpp>
-#include <cpp11/logicals.hpp>
 #include <cpp11/raws.hpp>
+
+// We need to undefine these here as they may be previously defined in windows headers
+#undef TRUE
+#undef FALSE
+#include <cpp11/logicals.hpp>
 
 #ifdef VROOM_USE_CONNECTIONS_API
 
