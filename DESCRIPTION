@@ -47,7 +47,7 @@ Imports:
     rlang (>= 0.4.2),
     stats,
     tibble (>= 2.0.0),
-    vctrs,
+    vctrs (>= 0.2.0),
     tidyselect,
     withr
 Suggests: 
