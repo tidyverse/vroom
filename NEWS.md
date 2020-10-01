@@ -1,3 +1,5 @@
+# vroom (development version)
+
 # vroom 1.3.2
 
 * Test failures on R 4.1 related to factors with NA values fixed (#262)
