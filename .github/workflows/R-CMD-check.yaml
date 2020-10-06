@@ -47,7 +47,7 @@ jobs:
         if: matrix.config.locale == 'en_US'
         run: |
           sudo locale-gen en_US
-          echo "::set-env name=LC_ALL::en_US"
+          echo "LC_ALL=en_US" >> $GITHUB_ENV
 
       - name: Install XQuartz on macOS
         if: runner.os == 'macOS'
