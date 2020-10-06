@@ -49,6 +49,10 @@ jobs:
           sudo locale-gen en_US
           echo "::set-env name=LC_ALL::en_US"
 
+      - name: Install XQuartz on macOS
+        if: runner.os == 'macOS'
+        run: brew cask install xquartz
+
       - uses: r-lib/actions/setup-r@master
         with:
           r-version: ${{ matrix.config.r }}
