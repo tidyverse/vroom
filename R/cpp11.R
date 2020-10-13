@@ -8,8 +8,8 @@ vroom_materialize <- function(x, replace) {
   .Call("_vroom_vroom_materialize", x, replace, PACKAGE = "vroom")
 }
 
-vroom_str_ <- function(x) {
-  .Call("_vroom_vroom_str_", x, PACKAGE = "vroom")
+vroom_convert <- function(x) {
+  .Call("_vroom_vroom_convert", x, PACKAGE = "vroom")
 }
 
 gen_character_ <- function(n, min, max, values, seed, seed2) {

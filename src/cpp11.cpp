@@ -20,10 +20,10 @@ extern "C" SEXP _vroom_vroom_materialize(SEXP x, SEXP replace) {
   END_CPP11
 }
 // altrep.cc
-std::string vroom_str_(cpp11::sexp x);
-extern "C" SEXP _vroom_vroom_str_(SEXP x) {
+SEXP vroom_convert(SEXP x);
+extern "C" SEXP _vroom_vroom_convert(SEXP x) {
   BEGIN_CPP11
-    return cpp11::as_sexp(vroom_str_(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(x)));
+    return cpp11::as_sexp(vroom_convert(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x)));
   END_CPP11
 }
 // gen.cc
@@ -106,11 +106,11 @@ extern SEXP _vroom_gen_character_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _vroom_guess_type_(SEXP, SEXP, SEXP, SEXP);
 extern SEXP _vroom_has_trailing_newline(SEXP);
 extern SEXP _vroom_vroom_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP _vroom_vroom_convert(SEXP);
 extern SEXP _vroom_vroom_format_(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _vroom_vroom_fwf_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _vroom_vroom_materialize(SEXP, SEXP);
 extern SEXP _vroom_vroom_rle(SEXP);
-extern SEXP _vroom_vroom_str_(SEXP);
 extern SEXP _vroom_vroom_write_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _vroom_vroom_write_connection_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _vroom_whitespace_columns_(SEXP, SEXP, SEXP, SEXP);
@@ -121,11 +121,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_guess_type_",             (DL_FUNC) &_vroom_guess_type_,              4},
     {"_vroom_has_trailing_newline",    (DL_FUNC) &_vroom_has_trailing_newline,     1},
     {"_vroom_vroom_",                  (DL_FUNC) &_vroom_vroom_,                  20},
+    {"_vroom_vroom_convert",           (DL_FUNC) &_vroom_vroom_convert,            1},
     {"_vroom_vroom_format_",           (DL_FUNC) &_vroom_vroom_format_,            5},
     {"_vroom_vroom_fwf_",              (DL_FUNC) &_vroom_vroom_fwf_,              18},
     {"_vroom_vroom_materialize",       (DL_FUNC) &_vroom_vroom_materialize,        2},
     {"_vroom_vroom_rle",               (DL_FUNC) &_vroom_vroom_rle,                1},
-    {"_vroom_vroom_str_",              (DL_FUNC) &_vroom_vroom_str_,               1},
     {"_vroom_vroom_write_",            (DL_FUNC) &_vroom_vroom_write_,            10},
     {"_vroom_vroom_write_connection_", (DL_FUNC) &_vroom_vroom_write_connection_, 11},
     {"_vroom_whitespace_columns_",     (DL_FUNC) &_vroom_whitespace_columns_,      4},

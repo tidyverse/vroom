@@ -49,9 +49,9 @@ vroom_write <- function(x, path, delim = '\t', na = "NA", col_names = !append,
   # Standardise path returns a list, but we will only ever have 1 output file.
   path <- standardise_one_path(path, write = TRUE)
 
-  # We need to materialize any altrep vector as otherwise we can't fill the
+  # We need to convert any altrep vectors to normal vectors otherwise we can't fill the
   # write buffers from other threads.
-  xx <- vroom_materialize(x, replace = TRUE)
+  xx <- vroom_convert(x)
 
   xx[] <- lapply(xx, output_column)
 
