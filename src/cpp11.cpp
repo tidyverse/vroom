@@ -26,6 +26,13 @@ extern "C" SEXP _vroom_vroom_convert(SEXP x) {
     return cpp11::as_sexp(vroom_convert(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x)));
   END_CPP11
 }
+// altrep.cc
+std::string vroom_str_(cpp11::sexp x);
+extern "C" SEXP _vroom_vroom_str_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(vroom_str_(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(x)));
+  END_CPP11
+}
 // gen.cc
 cpp11::strings gen_character_(int n, int min, int max, std::string values, uint32_t seed, uint32_t seed2);
 extern "C" SEXP _vroom_gen_character_(SEXP n, SEXP min, SEXP max, SEXP values, SEXP seed, SEXP seed2) {
@@ -111,6 +118,7 @@ extern SEXP _vroom_vroom_format_(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _vroom_vroom_fwf_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _vroom_vroom_materialize(SEXP, SEXP);
 extern SEXP _vroom_vroom_rle(SEXP);
+extern SEXP _vroom_vroom_str_(SEXP);
 extern SEXP _vroom_vroom_write_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _vroom_vroom_write_connection_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _vroom_whitespace_columns_(SEXP, SEXP, SEXP, SEXP);
@@ -126,6 +134,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_vroom_fwf_",              (DL_FUNC) &_vroom_vroom_fwf_,              18},
     {"_vroom_vroom_materialize",       (DL_FUNC) &_vroom_vroom_materialize,        2},
     {"_vroom_vroom_rle",               (DL_FUNC) &_vroom_vroom_rle,                1},
+    {"_vroom_vroom_str_",              (DL_FUNC) &_vroom_vroom_str_,               1},
     {"_vroom_vroom_write_",            (DL_FUNC) &_vroom_vroom_write_,            10},
     {"_vroom_vroom_write_connection_", (DL_FUNC) &_vroom_vroom_write_connection_, 11},
     {"_vroom_whitespace_columns_",     (DL_FUNC) &_vroom_whitespace_columns_,      4},

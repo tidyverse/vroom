@@ -12,6 +12,10 @@ vroom_convert <- function(x) {
   .Call("_vroom_vroom_convert", x, PACKAGE = "vroom")
 }
 
+vroom_str_ <- function(x) {
+  .Call("_vroom_vroom_str_", x, PACKAGE = "vroom")
+}
+
 gen_character_ <- function(n, min, max, values, seed, seed2) {
   .Call("_vroom_gen_character_", n, min, max, values, seed, seed2, PACKAGE = "vroom")
 }

@@ -74,7 +74,6 @@ bool vroom_altrep(SEXP x) {
       SET_VECTOR_ELT(out, col, elt);
     } else {
       R_xlen_t nrow = Rf_xlength(elt);
-      SHALLOW_DUPLICATE_ATTRIB(VECTOR_ELT(out, col), elt);
       switch (TYPEOF(elt)) {
       case LGLSXP: {
         SET_VECTOR_ELT(out, col, Rf_allocVector(LGLSXP, nrow));
@@ -109,6 +108,7 @@ bool vroom_altrep(SEXP x) {
         break;
       }
       }
+      SHALLOW_DUPLICATE_ATTRIB(VECTOR_ELT(out, col), elt);
     }
   }
   UNPROTECT(1);
@@ -116,4 +116,39 @@ bool vroom_altrep(SEXP x) {
 #else
   return x;
 #endif
+}
+
+[[cpp11::register]] std::string vroom_str_(cpp11::sexp x) {
+  std::stringstream ss;
+
+#ifdef HAS_ALTREP
+  if (ALTREP(x)) {
+
+    auto csym = CAR(ATTRIB(ALTREP_CLASS(x)));
+    auto psym = CADR(ATTRIB(ALTREP_CLASS(x)));
+    bool is_altrep = ALTREP(x);
+    bool materialzied = R_altrep_data2(x) != R_NilValue;
+
+    ss << std::boolalpha << "altrep:" << is_altrep << '\t'
+       << "type:" << CHAR(PRINTNAME(psym)) << "::" << CHAR(PRINTNAME(csym));
+    // We would have to dispatch to get the length of an object
+    if (!Rf_isObject(x)) {
+      ss << '\t' << "length:" << LENGTH(x);
+    }
+    ss << '\t' << "materialized:" << materialzied << '\n';
+  }
+#else
+  if (false) {
+  }
+#endif
+  else {
+    ss << std::boolalpha << "altrep:" << false << '\t'
+       << "type: " << Rf_type2char(TYPEOF(x));
+    if (!Rf_isObject(x)) {
+      ss << '\t' << "length:" << LENGTH(x);
+    }
+    ss << '\n';
+  }
+
+  return ss.str();
 }

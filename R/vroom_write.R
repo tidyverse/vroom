@@ -52,7 +52,6 @@ vroom_write <- function(x, path, delim = '\t', na = "NA", col_names = !append,
   # We need to convert any altrep vectors to normal vectors otherwise we can't fill the
   # write buffers from other threads.
   xx <- vroom_convert(x)
-
   xx[] <- lapply(xx, output_column)
 
   # This seems to work ok in practice
