@@ -177,11 +177,11 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A data frame to write to disk</p></td>
+      <td><p>A data frame or tibble to write to disk.</p></td>
     </tr>
     <tr>
       <th>path</th>
-      <td><p>Path or connection to write to.</p></td>
+      <td><p><img src='figures/lifecycle-deprecated.svg' alt='Deprecated lifecycle' /></p></td>
     </tr>
     <tr>
       <th>delim</th>
@@ -194,13 +194,13 @@ tab separated value (TSV) files.</p></td>
     </tr>
     <tr>
       <th>col_names</th>
-      <td><p>Write columns names at the top of the file? Must be either
-<code>TRUE</code> or <code>FALSE</code>.</p></td>
+      <td><p>If <code>FALSE</code>, column names will not be included at the top of the file. If <code>TRUE</code>,
+column names will be included. If not specified, <code>col_names</code> will take the opposite value given to <code>append</code>.</p></td>
     </tr>
     <tr>
       <th>append</th>
       <td><p>If <code>FALSE</code>, will overwrite existing file. If <code>TRUE</code>,
-will append to existing file. In both cases, if file does not exist a new
+will append to existing file. In both cases, if the file does not exist a new
 file is created.</p></td>
     </tr>
     <tr>

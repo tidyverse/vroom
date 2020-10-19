@@ -177,7 +177,7 @@ testing.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A data frame to write to disk</p></td>
+      <td><p>A data frame or tibble to write to disk.</p></td>
     </tr>
     <tr>
       <th>delim</th>
@@ -190,8 +190,8 @@ tab separated value (TSV) files.</p></td>
     </tr>
     <tr>
       <th>col_names</th>
-      <td><p>Write columns names at the top of the file? Must be either
-<code>TRUE</code> or <code>FALSE</code>.</p></td>
+      <td><p>If <code>FALSE</code>, column names will not be included at the top of the file. If <code>TRUE</code>,
+column names will be included. If not specified, <code>col_names</code> will take the opposite value given to <code>append</code>.</p></td>
     </tr>
     <tr>
       <th>escape</th>
