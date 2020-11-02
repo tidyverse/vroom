@@ -162,33 +162,33 @@ as the default. <code>cols_only()</code> includes only the columns you explicitl
 specify, skipping the rest.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cols</span>(<span class='kw'>...</span>, .default = <span class='fu'>col_guess</span>(), .delim = <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>cols</span><span class='op'>(</span><span class='va'>...</span>, .default <span class='op'>=</span> <span class='fu'>col_guess</span><span class='op'>(</span><span class='op'>)</span>, .delim <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
 
-<span class='fu'>cols_only</span>(<span class='kw'>...</span>)
+<span class='fu'>cols_only</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>col_logical</span>(<span class='kw'>...</span>)
+<span class='fu'>col_logical</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>col_integer</span>(<span class='kw'>...</span>)
+<span class='fu'>col_integer</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>col_big_integer</span>(<span class='kw'>...</span>)
+<span class='fu'>col_big_integer</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>col_double</span>(<span class='kw'>...</span>)
+<span class='fu'>col_double</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>col_character</span>(<span class='kw'>...</span>)
+<span class='fu'>col_character</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>col_skip</span>(<span class='kw'>...</span>)
+<span class='fu'>col_skip</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>col_number</span>(<span class='kw'>...</span>)
+<span class='fu'>col_number</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>col_guess</span>(<span class='kw'>...</span>)
+<span class='fu'>col_guess</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>col_factor</span>(levels = <span class='kw'>NULL</span>, ordered = <span class='fl'>FALSE</span>, include_na = <span class='fl'>FALSE</span>, <span class='kw'>...</span>)
+<span class='fu'>col_factor</span><span class='op'>(</span>levels <span class='op'>=</span> <span class='cn'>NULL</span>, ordered <span class='op'>=</span> <span class='cn'>FALSE</span>, include_na <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>col_datetime</span>(format = <span class='st'>""</span>, <span class='kw'>...</span>)
+<span class='fu'>col_datetime</span><span class='op'>(</span>format <span class='op'>=</span> <span class='st'>""</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>col_date</span>(format = <span class='st'>""</span>, <span class='kw'>...</span>)
+<span class='fu'>col_date</span><span class='op'>(</span>format <span class='op'>=</span> <span class='st'>""</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>col_time</span>(format = <span class='st'>""</span>, <span class='kw'>...</span>)</pre>
+<span class='fu'>col_time</span><span class='op'>(</span>format <span class='op'>=</span> <span class='st'>""</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -256,18 +256,18 @@ the complete string.</p></td>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>cols</span>(a = <span class='fu'>col_integer</span>())
+    <pre class="examples"><div class='input'><span class='fu'>cols</span><span class='op'>(</span>a <span class='op'>=</span> <span class='fu'>col_integer</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; cols(
 #&gt;   a = <span style='color: #00BB00;'>col_integer()</span><span>
-#&gt; )</div><div class='input'><span class='fu'>cols_only</span>(a = <span class='fu'>col_integer</span>())
+#&gt; )</div><div class='input'><span class='fu'>cols_only</span><span class='op'>(</span>a <span class='op'>=</span> <span class='fu'>col_integer</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; cols_only(
 #&gt;   a = </span><span style='color: #00BB00;'>col_integer()</span><span>
 #&gt; )</div><div class='input'>
 <span class='co'># You can also use the standard abbreviations</span>
-<span class='fu'>cols</span>(a = <span class='st'>"i"</span>)
+<span class='fu'>cols</span><span class='op'>(</span>a <span class='op'>=</span> <span class='st'>"i"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; cols(
 #&gt;   a = </span><span style='color: #00BB00;'>col_integer()</span><span>
-#&gt; )</div><div class='input'><span class='fu'>cols</span>(a = <span class='st'>"i"</span>, b = <span class='st'>"d"</span>, c = <span class='st'>"_"</span>)
+#&gt; )</div><div class='input'><span class='fu'>cols</span><span class='op'>(</span>a <span class='op'>=</span> <span class='st'>"i"</span>, b <span class='op'>=</span> <span class='st'>"d"</span>, c <span class='op'>=</span> <span class='st'>"_"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; cols(
 #&gt;   a = </span><span style='color: #00BB00;'>col_integer()</span><span>,
 #&gt;   b = </span><span style='color: #00BB00;'>col_double()</span><span>,
@@ -276,16 +276,16 @@ the complete string.</p></td>
 <span class='co'># You can also use multiple sets of column definitions by combining</span>
 <span class='co'># them like so:</span>
 
-<span class='kw'>t1</span> <span class='op'>&lt;-</span> <span class='fu'>cols</span>(
-  column_one = <span class='fu'>col_integer</span>(),
-  column_two = <span class='fu'>col_number</span>())
+<span class='va'>t1</span> <span class='op'>&lt;-</span> <span class='fu'>cols</span><span class='op'>(</span>
+  column_one <span class='op'>=</span> <span class='fu'>col_integer</span><span class='op'>(</span><span class='op'>)</span>,
+  column_two <span class='op'>=</span> <span class='fu'>col_number</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='kw'>t2</span> <span class='op'>&lt;-</span> <span class='fu'>cols</span>(
- column_three = <span class='fu'>col_character</span>())
+<span class='va'>t2</span> <span class='op'>&lt;-</span> <span class='fu'>cols</span><span class='op'>(</span>
+ column_three <span class='op'>=</span> <span class='fu'>col_character</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='kw'>t3</span> <span class='op'>&lt;-</span> <span class='kw'>t1</span>
-<span class='kw'>t3</span><span class='op'>$</span><span class='kw'>cols</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>t1</span><span class='op'>$</span><span class='kw'>cols</span>, <span class='kw'>t2</span><span class='op'>$</span><span class='kw'>cols</span>)
-<span class='kw'>t3</span>
+<span class='va'>t3</span> <span class='op'>&lt;-</span> <span class='va'>t1</span>
+<span class='va'>t3</span><span class='op'>$</span><span class='va'>cols</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>t1</span><span class='op'>$</span><span class='va'>cols</span>, <span class='va'>t2</span><span class='op'>$</span><span class='va'>cols</span><span class='op'>)</span>
+<span class='va'>t3</span>
 </div><div class='output co'>#&gt; cols(
 #&gt;   column_one = </span><span style='color: #00BB00;'>col_integer()</span><span>,
 #&gt;   column_two = </span><span style='color: #00BB00;'>col_number()</span><span>,

@@ -158,7 +158,7 @@
     <p>Similar to <code><a href='https://rdrr.io/r/utils/str.html'>str()</a></code> but with more information for Altrep objects.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vroom_str</span>(<span class='kw'>x</span>)</pre>
+    <pre class="usage"><span class='fu'>vroom_str</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -172,7 +172,7 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># when used on non-altrep objects altrep will always be false</span>
-<span class='fu'>vroom_str</span>(<span class='kw'>mtcars</span>)
+<span class='fu'>vroom_str</span><span class='op'>(</span><span class='va'>mtcars</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 'data.frame': 32 obs., 11 vars.:
 #&gt; $mpg:	altrep:false	type: double	length:32
 #&gt; $cyl:	altrep:false	type: double	length:32
@@ -185,7 +185,7 @@
 #&gt; $am:	altrep:false	type: double	length:32
 #&gt; $gear:	altrep:false	type: double	length:32
 #&gt; $carb:	altrep:false	type: double	length:32</div><div class='input'>
-<span class='kw'>mt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vroom.html'>vroom</a></span>(<span class='fu'><a href='vroom_example.html'>vroom_example</a></span>(<span class='st'>"mtcars.csv"</span>), <span class='st'>","</span>, altrep = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"chr"</span>, <span class='st'>"dbl"</span>))
+<span class='va'>mt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vroom.html'>vroom</a></span><span class='op'>(</span><span class='fu'><a href='vroom_example.html'>vroom_example</a></span><span class='op'>(</span><span class='st'>"mtcars.csv"</span><span class='op'>)</span>, <span class='st'>","</span>, altrep <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"chr"</span>, <span class='st'>"dbl"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 12</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
@@ -193,7 +193,7 @@
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='input'><span class='fu'>vroom_str</span>(<span class='kw'>mt</span>)
+#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='input'><span class='fu'>vroom_str</span><span class='op'>(</span><span class='va'>mt</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 'tbl_df', 'tbl', and 'data.frame': 32 obs., 12 vars.:
 #&gt; $model:	altrep:true	type:vroom::vroom_chr	length:32	materialized:false
 #&gt; $mpg:	altrep:false	type: double	length:32

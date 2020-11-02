@@ -158,29 +158,29 @@
     <p>Read a delimited file into a tibble</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vroom</span>(
-  <span class='kw'>file</span>,
-  delim = <span class='kw'>NULL</span>,
-  col_names = <span class='fl'>TRUE</span>,
-  col_types = <span class='kw'>NULL</span>,
-  col_select = <span class='kw'>NULL</span>,
-  id = <span class='kw'>NULL</span>,
-  skip = <span class='fl'>0</span>,
-  n_max = <span class='fl'>Inf</span>,
-  na = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>""</span>, <span class='st'>"NA"</span>),
-  quote = <span class='st'>"\""</span>,
-  comment = <span class='st'>""</span>,
-  trim_ws = <span class='fl'>TRUE</span>,
-  escape_double = <span class='fl'>TRUE</span>,
-  escape_backslash = <span class='fl'>FALSE</span>,
-  locale = <span class='fu'><a href='locale.html'>default_locale</a></span>(),
-  guess_max = <span class='fl'>100</span>,
-  altrep = <span class='fl'>TRUE</span>,
-  altrep_opts = <span class='fu'><a href='https://rdrr.io/r/base/Deprecated.html'>deprecated</a></span>(),
-  num_threads = <span class='fu'>vroom_threads</span>(),
-  progress = <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span>(),
-  .name_repair = <span class='st'>"unique"</span>
-)</pre>
+    <pre class="usage"><span class='fu'>vroom</span><span class='op'>(</span>
+  <span class='va'>file</span>,
+  delim <span class='op'>=</span> <span class='cn'>NULL</span>,
+  col_names <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  col_types <span class='op'>=</span> <span class='cn'>NULL</span>,
+  col_select <span class='op'>=</span> <span class='cn'>NULL</span>,
+  id <span class='op'>=</span> <span class='cn'>NULL</span>,
+  skip <span class='op'>=</span> <span class='fl'>0</span>,
+  n_max <span class='op'>=</span> <span class='cn'>Inf</span>,
+  na <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>""</span>, <span class='st'>"NA"</span><span class='op'>)</span>,
+  quote <span class='op'>=</span> <span class='st'>"\""</span>,
+  comment <span class='op'>=</span> <span class='st'>""</span>,
+  trim_ws <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  escape_double <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  escape_backslash <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  locale <span class='op'>=</span> <span class='fu'><a href='locale.html'>default_locale</a></span><span class='op'>(</span><span class='op'>)</span>,
+  guess_max <span class='op'>=</span> <span class='fl'>100</span>,
+  altrep <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  altrep_opts <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Deprecated.html'>deprecated</a></span><span class='op'>(</span><span class='op'>)</span>,
+  num_threads <span class='op'>=</span> <span class='fu'>vroom_threads</span><span class='op'>(</span><span class='op'>)</span>,
+  progress <span class='op'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span><span class='op'>(</span><span class='op'>)</span>,
+  .name_repair <span class='op'>=</span> <span class='st'>"unique"</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -336,14 +336,14 @@ name repair functions.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># get path to example file</span>
-<span class='kw'>input_file</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vroom_example.html'>vroom_example</a></span>(<span class='st'>"mtcars.csv"</span>)
-<span class='kw'>input_file</span>
+<span class='va'>input_file</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vroom_example.html'>vroom_example</a></span><span class='op'>(</span><span class='st'>"mtcars.csv"</span><span class='op'>)</span>
+<span class='va'>input_file</span>
 </div><div class='output co'>#&gt; [1] "/Users/runner/work/_temp/Library/vroom/extdata/mtcars.csv"</div><div class='input'>
 <span class='co'># Read from a path</span>
 
 <span class='co'># Input sources -------------------------------------------------------------</span>
 <span class='co'># Read from a path</span>
-<span class='fu'>vroom</span>(<span class='kw'>input_file</span>)
+<span class='fu'>vroom</span><span class='op'>(</span><span class='va'>input_file</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 12</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
@@ -367,13 +367,13 @@ name repair functions.</p></td>
 #&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'><span class='co'># You can also use literal paths directly</span>
 <span class='co'># vroom("mtcars.csv")</span>
 
-<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># Including remote paths</span>
-<span class='fu'>vroom</span>(<span class='st'>"https://github.com/r-lib/vroom/raw/master/inst/extdata/mtcars.csv"</span>)
-}
+<span class='fu'>vroom</span><span class='op'>(</span><span class='st'>"https://github.com/r-lib/vroom/raw/master/inst/extdata/mtcars.csv"</span><span class='op'>)</span>
+<span class='op'>}</span>
 
 <span class='co'># Or directly from a string (must contain a trailing newline)</span>
-<span class='fu'>vroom</span>(<span class='st'>"x,y\n1,2\n3,4\n"</span>)
+<span class='fu'>vroom</span><span class='op'>(</span><span class='st'>"x,y\n1,2\n3,4\n"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
@@ -387,7 +387,7 @@ name repair functions.</p></td>
 #&gt; </span><span style='color: #555555;'>2</span><span>     3     4</div><div class='input'>
 <span class='co'># Column selection ----------------------------------------------------------</span>
 <span class='co'># Pass column names or indexes directly to select them</span>
-<span class='fu'>vroom</span>(<span class='kw'>input_file</span>, col_select = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>model</span>, <span class='kw'>cyl</span>, <span class='kw'>gear</span>))
+<span class='fu'>vroom</span><span class='op'>(</span><span class='va'>input_file</span>, col_select <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>model</span>, <span class='va'>cyl</span>, <span class='va'>gear</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 3</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
@@ -408,7 +408,7 @@ name repair functions.</p></td>
 #&gt; </span><span style='color: #555555;'> 8</span><span> Merc 240D             4     4
 #&gt; </span><span style='color: #555555;'> 9</span><span> Merc 230              4     4
 #&gt; </span><span style='color: #555555;'>10</span><span> Merc 280              6     4
-#&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'><span class='fu'>vroom</span>(<span class='kw'>input_file</span>, col_select = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>11</span>))
+#&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'><span class='fu'>vroom</span><span class='op'>(</span><span class='va'>input_file</span>, col_select <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>11</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 3</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
@@ -431,7 +431,7 @@ name repair functions.</p></td>
 #&gt; </span><span style='color: #555555;'>10</span><span> Merc 280              6     4
 #&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'>
 <span class='co'># Or use the selection helpers</span>
-<span class='fu'>vroom</span>(<span class='kw'>input_file</span>, col_select = <span class='fu'><a href='https://tidyselect.r-lib.org/reference/starts_with.html'>starts_with</a></span>(<span class='st'>"d"</span>))
+<span class='fu'>vroom</span><span class='op'>(</span><span class='va'>input_file</span>, col_select <span class='op'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/starts_with.html'>starts_with</a></span><span class='op'>(</span><span class='st'>"d"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
@@ -453,7 +453,7 @@ name repair functions.</p></td>
 #&gt; </span><span style='color: #555555;'>10</span><span>  168.  3.92
 #&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'>
 <span class='co'># You can also rename specific columns</span>
-<span class='fu'>vroom</span>(<span class='kw'>input_file</span>, col_select = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(car = <span class='kw'>model</span>, <span class='fu'><a href='https://tidyselect.r-lib.org/reference/everything.html'>everything</a></span>()))
+<span class='fu'>vroom</span><span class='op'>(</span><span class='va'>input_file</span>, col_select <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>car <span class='op'>=</span> <span class='va'>model</span>, <span class='fu'><a href='https://tidyselect.r-lib.org/reference/everything.html'>everything</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 12</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
@@ -479,14 +479,14 @@ name repair functions.</p></td>
 <span class='co'># By default, vroom guesses the columns types, looking at 1000 rows</span>
 <span class='co'># throughout the dataset.</span>
 <span class='co'># You can specify them explcitly with a compact specification:</span>
-<span class='fu'>vroom</span>(<span class='st'>"x,y\n1,2\n3,4\n"</span>, col_types = <span class='st'>"dc"</span>)
+<span class='fu'>vroom</span><span class='op'>(</span><span class='st'>"x,y\n1,2\n3,4\n"</span>, col_types <span class='op'>=</span> <span class='st'>"dc"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 2 x 2</span><span>
 #&gt;       x y    
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span>     1 2    
 #&gt; </span><span style='color: #555555;'>2</span><span>     3 4    </div><div class='input'>
 <span class='co'># Or with a list of column types:</span>
-<span class='fu'>vroom</span>(<span class='st'>"x,y\n1,2\n3,4\n"</span>, col_types = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='cols.html'>col_double</a></span>(), <span class='fu'><a href='cols.html'>col_character</a></span>()))
+<span class='fu'>vroom</span><span class='op'>(</span><span class='st'>"x,y\n1,2\n3,4\n"</span>, col_types <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='cols.html'>col_double</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='cols.html'>col_character</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 2 x 2</span><span>
 #&gt;       x y    
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
@@ -494,7 +494,7 @@ name repair functions.</p></td>
 #&gt; </span><span style='color: #555555;'>2</span><span>     3 4    </div><div class='input'>
 <span class='co'># File types ----------------------------------------------------------------</span>
 <span class='co'># csv</span>
-<span class='fu'>vroom</span>(<span class='st'>"a,b\n1.0,2.0\n"</span>, delim = <span class='st'>","</span>)
+<span class='fu'>vroom</span><span class='op'>(</span><span class='st'>"a,b\n1.0,2.0\n"</span>, delim <span class='op'>=</span> <span class='st'>","</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 1</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
@@ -505,7 +505,7 @@ name repair functions.</p></td>
 #&gt;       a     b
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span>     1     2</div><div class='input'><span class='co'># tsv</span>
-<span class='fu'>vroom</span>(<span class='st'>"a\tb\n1.0\t2.0\n"</span>)
+<span class='fu'>vroom</span><span class='op'>(</span><span class='st'>"a\tb\n1.0\t2.0\n"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 1</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> "\t"</span>
@@ -516,7 +516,7 @@ name repair functions.</p></td>
 #&gt;       a     b
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span>     1     2</div><div class='input'><span class='co'># Other delimiters</span>
-<span class='fu'>vroom</span>(<span class='st'>"a|b\n1.0|2.0\n"</span>, delim = <span class='st'>"|"</span>)
+<span class='fu'>vroom</span><span class='op'>(</span><span class='st'>"a|b\n1.0|2.0\n"</span>, delim <span class='op'>=</span> <span class='st'>"|"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 1</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> "|"</span>
@@ -528,13 +528,13 @@ name repair functions.</p></td>
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span>     1     2</div><div class='input'>
 <span class='co'># Read datasets across multiple files ---------------------------------------</span>
-<span class='kw'>mtcars_by_cyl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vroom_example.html'>vroom_example</a></span>(<span class='fu'><a href='vroom_example.html'>vroom_examples</a></span>(<span class='st'>"mtcars-"</span>))
-<span class='kw'>mtcars_by_cyl</span>
+<span class='va'>mtcars_by_cyl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vroom_example.html'>vroom_example</a></span><span class='op'>(</span><span class='fu'><a href='vroom_example.html'>vroom_examples</a></span><span class='op'>(</span><span class='st'>"mtcars-"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>mtcars_by_cyl</span>
 </div><div class='output co'>#&gt; [1] "/Users/runner/work/_temp/Library/vroom/extdata/mtcars-4.csv"
 #&gt; [2] "/Users/runner/work/_temp/Library/vroom/extdata/mtcars-6.csv"
 #&gt; [3] "/Users/runner/work/_temp/Library/vroom/extdata/mtcars-8.csv"</div><div class='input'>
 <span class='co'># Pass the filenames directly to vroom, they are efficiently combined</span>
-<span class='fu'>vroom</span>(<span class='kw'>mtcars_by_cyl</span>)
+<span class='fu'>vroom</span><span class='op'>(</span><span class='va'>mtcars_by_cyl</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 12</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
