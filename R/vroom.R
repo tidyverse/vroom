@@ -267,7 +267,7 @@ guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";")) {
   delims[[top_idx]]
 }
 
-cached <- new.env(emptyenv())
+cached <- new.env(parent = emptyenv())
 
 vroom_threads <- function() {
   res <- as.integer(

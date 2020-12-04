@@ -2,6 +2,8 @@
 
 * `vroom_write()` now works with all ALTREP vectors, including string vectors (#270)
 
+* An internal call to `new.env()` now correctly uses the `parent` argument (#281)
+
 # vroom 1.3.2
 
 * Test failures on R 4.1 related to factors with NA values fixed (#262)
