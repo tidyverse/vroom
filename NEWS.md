@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Quotes are now only valid next to newlines or delimiters (#224)
+
 * `vroom_write()` now works with all ALTREP vectors, including string vectors (#270)
 
 * An internal call to `new.env()` now correctly uses the `parent` argument (#281)

@@ -505,3 +505,21 @@ test_that("subsetting works with both double and integer indexes", {
   expect_equal(x$X1[NA_integer_], NA_character_)
   expect_equal(x$X1[NA_real_], NA_character_)
 })
+
+test_that("quotes inside fields are ignored", {
+  x <- vroom("x\nfoo\"bar\nbaz\n", delim = ",", quote = "\"")
+  expect_equal(x$x[[1]], "foo\"bar")
+  expect_equal(x$x[[2]], "baz")
+})
+
+test_that("quotes at the beginning and end of lines are used", {
+  y <- vroom("x\n\"foo\"\"bar\"\nbaz\n", delim = ",", quote = "\"")
+  expect_equal(y$x[[1]], "foo\"bar")
+  expect_equal(y$x[[2]], "baz")
+})
+
+test_that("quotes at delimiters are used", {
+  z <- vroom("x,y,z\n1,\"foo\"\"bar\",2\n3,baz,4", delim = ",", quote = "\"")
+  expect_equal(z$y[[1]], "foo\"bar")
+  expect_equal(z$y[[2]], "baz")
+})

@@ -273,7 +273,23 @@ public:
       }
 
       else if (c == quote) {
-        in_quote = !in_quote;
+        /* not already in a quote */
+        if (!in_quote &&
+            /* right after the start of file or line */
+            (pos == start || buf[pos - 1] == '\n' ||
+             /* or after a delimiter */
+             strncmp(delim, buf + (pos - delim_len_), delim_len_) == 0)) {
+          in_quote = !in_quote;
+        } else if (
+            /* already in a quote */
+            in_quote &&
+            /* right at the end of the file or line */
+            (pos == end - 1 || (pos + 1 < end && buf[pos + 1] == '\n') ||
+             /* or before a delimiter */
+             (pos + delim_len_ + 1 < end &&
+              strncmp(delim, buf + (pos + 1), delim_len_) == 0))) {
+          in_quote = !in_quote;
+        }
       }
 
       ++pos;
