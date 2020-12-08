@@ -32,6 +32,7 @@ delimited_index::delimited_index(
     const size_t skip,
     size_t n_max,
     const char comment,
+    std::shared_ptr<vroom_errors> errors,
     size_t num_threads,
     bool progress,
     const bool use_threads)
@@ -149,6 +150,7 @@ delimited_index::delimited_index(
       n_max,
       cols,
       0,
+      errors,
       pb,
       -1);
   columns_ = idx_[0].size() - 1;
@@ -170,6 +172,7 @@ delimited_index::delimited_index(
           n_max,
           cols,
           columns_,
+          errors,
           pb,
           file_size / 100);
     });
@@ -194,6 +197,7 @@ delimited_index::delimited_index(
               n_max,
               cols,
               columns_,
+              errors,
               pb,
               file_size / 100);
         },
@@ -295,8 +299,9 @@ delimited_index::get_cell(size_t i, bool is_first) const {
       // By relying on 0 and 1 being true and false we can remove a branch
       // here, which improves performance a bit, as this function is called a
       // lot.
-      return {mmap_.data() + (start + (!is_first * delim_len_) + is_first),
-              mmap_.data() + end};
+      return {
+          mmap_.data() + (start + (!is_first * delim_len_) + is_first),
+          mmap_.data() + end};
     }
 
     i -= (sz - 1);

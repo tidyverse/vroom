@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cpp11/as.hpp>
+#include <cpp11/external_pointer.hpp>
 #include <cpp11/list.hpp>
 #include <cpp11/strings.hpp>
 
@@ -87,6 +88,7 @@ inline cpp11::list create_columns(
     cpp11::list locale,
     size_t altrep,
     size_t guess_max,
+    cpp11::external_pointer<std::shared_ptr<vroom_errors>> errors,
     size_t num_threads) {
 
   R_xlen_t num_cols = idx->num_columns();
@@ -137,11 +139,13 @@ inline cpp11::list create_columns(
     }
 
     // This is deleted in the finalizers when the vectors are GC'd by R
-    auto info = new vroom_vec_info{idx->get_column(col),
-                                   num_threads,
-                                   std::make_shared<cpp11::strings>(na),
-                                   locale_info,
-                                   std::string()};
+    auto info = new vroom_vec_info{
+        idx->get_column(col),
+        num_threads,
+        std::make_shared<cpp11::strings>(na),
+        locale_info,
+        *errors,
+        std::string()};
 
     res_nms[i] = collector.name();
 
@@ -271,6 +275,7 @@ inline cpp11::list create_columns(
   spec["delim"] = cpp11::writable::strings({idx->get_delim().c_str()});
   spec.attr("class") = "col_spec";
   res.attr("spec") = spec;
+  res.attr("errors") = errors;
 
   return res;
 }

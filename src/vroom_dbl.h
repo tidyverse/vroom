@@ -34,12 +34,8 @@ public:
   // ALTREP methods -------------------
 
   // What gets printed when .Internal(inspect()) is used
-  static Rboolean Inspect(
-      SEXP x,
-      int,
-      int,
-      int,
-      void (*)(SEXP, int, int, int)) {
+  static Rboolean
+  Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
         "vroom_dbl (len=%d, materialized=%s)\n",
         Length(x),
@@ -58,7 +54,13 @@ public:
 
     auto str = vroom_vec::Get(vec, i);
 
-    return bsd_strtod(str.begin(), str.end());
+    double out = bsd_strtod(str.begin(), str.end());
+    if (cpp11::is_na(out)) {
+      vroom_vec::Info(vec).errors->add_error(
+          i, 0, "a double", std::string(str.begin(), str.end() - str.begin()));
+    }
+
+    return out;
   }
 
   // --- Altvec

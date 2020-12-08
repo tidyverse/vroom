@@ -19,6 +19,7 @@
 #include <array>
 
 #include "multi_progress.h"
+#include "vroom_errors.h"
 
 namespace vroom {
 
@@ -42,6 +43,7 @@ public:
       const size_t skip,
       size_t n_max,
       const char comment,
+      std::shared_ptr<vroom_errors> errors,
       const size_t num_threads,
       const bool progress,
       const bool use_threads = true);
@@ -203,6 +205,7 @@ public:
       const size_t n_max,
       size_t& cols,
       const size_t num_cols,
+      std::shared_ptr<vroom_errors> errors,
       P& pb,
       const size_t update_size = -1) {
 

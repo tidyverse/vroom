@@ -206,7 +206,15 @@ cpp11::doubles read_dbl(vroom_vec_info* info) {
         R_xlen_t i = start;
         auto col = info->column->slice(start, end);
         for (const auto& str : *col) {
-          out[i++] = bsd_strtod(str.begin(), str.end());
+          double val = bsd_strtod(str.begin(), str.end());
+          if (cpp11::is_na(val)) {
+            info->errors->add_error(
+                i,
+                0,
+                "a double",
+                std::string(str.begin(), str.end() - str.begin()));
+          }
+          out[i++] = val;
         }
       },
       info->num_threads,

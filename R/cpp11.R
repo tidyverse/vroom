@@ -24,6 +24,10 @@ guess_type_ <- function(input, na, locale, guess_integer) {
   .Call("_vroom_guess_type_", input, na, locale, guess_integer, PACKAGE = "vroom")
 }
 
+vroom_errors_ <- function(errors) {
+  .Call("_vroom_vroom_errors_", errors, PACKAGE = "vroom")
+}
+
 vroom_fwf_ <- function(inputs, col_starts, col_ends, trim_ws, col_names, col_types, col_select, name_repair, skip, comment, n_max, id, na, locale, guess_max, num_threads, altrep, progress) {
   .Call("_vroom_vroom_fwf_", inputs, col_starts, col_ends, trim_ws, col_names, col_types, col_select, name_repair, skip, comment, n_max, id, na, locale, guess_max, num_threads, altrep, progress, PACKAGE = "vroom")
 }

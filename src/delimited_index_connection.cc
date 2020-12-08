@@ -148,6 +148,7 @@ delimited_index_connection::delimited_index_connection(
       n_max,
       cols,
       0,
+      nullptr,
       empty_pb);
 
   columns_ = idx_[0].size() - 1;
@@ -183,6 +184,7 @@ delimited_index_connection::delimited_index_connection(
             n_max,
             cols,
             columns_,
+            nullptr,
             empty_pb);
       });
     }

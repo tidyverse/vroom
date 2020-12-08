@@ -6,6 +6,7 @@
 #include "LocaleInfo.h"
 #include "altrep.h"
 #include "index_collection.h"
+#include "vroom_errors.h"
 
 using namespace vroom;
 
@@ -14,6 +15,7 @@ struct vroom_vec_info {
   size_t num_threads;
   std::shared_ptr<cpp11::strings> na;
   std::shared_ptr<LocaleInfo> locale;
+  std::shared_ptr<vroom_errors> errors;
   std::string format;
 };
 
@@ -126,6 +128,7 @@ public:
           inf.num_threads,
           inf.na,
           inf.locale,
+          inf.errors,
           inf.format};
     }
 

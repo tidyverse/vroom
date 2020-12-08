@@ -158,6 +158,7 @@ public:
         inf->info->num_threads,
         inf->info->na,
         inf->info->locale,
+        inf->info->errors,
         inf->info->format};
 
     return T::Make(info);
@@ -185,6 +186,7 @@ public:
         inf->info->num_threads,
         inf->info->na,
         inf->info->locale,
+        inf->info->errors,
         inf->info->format};
     return Make(info);
   }

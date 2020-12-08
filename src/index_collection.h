@@ -2,6 +2,7 @@
 
 #include "index.h"
 #include "iterator.h"
+#include "vroom_errors.h"
 
 #include <cpp11/list.hpp>
 #include <memory>
@@ -28,6 +29,7 @@ public:
       const size_t skip,
       const size_t n_max,
       const char comment,
+      std::shared_ptr<vroom_errors> errors,
       const size_t num_threads,
       const bool progress);
 
@@ -112,7 +114,7 @@ public:
   }
 
 private:
-  std::vector<std::shared_ptr<index> > indexes_;
+  std::vector<std::shared_ptr<index>> indexes_;
 
   size_t rows_;
   size_t columns_;
