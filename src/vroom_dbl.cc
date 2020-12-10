@@ -208,14 +208,16 @@ cpp11::doubles read_dbl(vroom_vec_info* info) {
       [&](size_t start, size_t end, size_t) {
         R_xlen_t i = start;
         auto col = info->column->slice(start, end);
-        for (const auto& str : *col) {
+        for (auto b = col->begin(), e = col->end(); b != e; ++b) {
+          const auto& str = *b;
           double val = bsd_strtod(str.begin(), str.end());
           if (cpp11::is_na(val)) {
             info->errors->add_error(
-                i,
+                b.index(),
                 col->get_index(),
                 "a double",
-                std::string(str.begin(), str.end() - str.begin()));
+                std::string(str.begin(), str.end() - str.begin()),
+                b.filename().str());
           }
           out[i++] = val;
         }

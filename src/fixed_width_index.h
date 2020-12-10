@@ -42,6 +42,7 @@ protected:
   mio::mmap_source mmap_;
   bool trim_ws_;
   bool windows_newlines_;
+  std::string filename_;
 
 public:
   fixed_width_index(
@@ -53,7 +54,10 @@ public:
       const char comment,
       const size_t n_max,
       const bool progress)
-      : col_starts_(col_starts), col_ends_(col_ends), trim_ws_(trim_ws) {
+      : col_starts_(col_starts),
+        col_ends_(col_ends),
+        trim_ws_(trim_ws),
+        filename_(filename) {
 
     std::error_code error;
     mmap_ = make_mmap_source(filename, error);
@@ -169,6 +173,8 @@ public:
     string value() const { return idx_->get(i_, column_); }
     column_iterator* clone() const { return new column_iterator(*this); }
     string at(ptrdiff_t n) const { return idx_->get(n, column_); }
+    string filename() const { return idx_->filename_; }
+    size_t index() const { return i_; }
     virtual ~column_iterator() = default;
   };
 
@@ -230,5 +236,7 @@ public:
     // TODO: UNUSED
     return nullptr;
   }
+
+  std::string filename() const { return filename_; }
 };
 } // namespace vroom

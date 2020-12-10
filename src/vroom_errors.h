@@ -13,12 +13,17 @@ public:
   vroom_errors() {}
 
   void add_error(
-      size_t row, size_t column, std::string expected, std::string actual) {
+      size_t row,
+      size_t column,
+      std::string expected = "",
+      std::string actual = "",
+      std::string filename = "") {
     std::lock_guard<std::mutex> guard(mutex_);
     rows_.push_back(row + 1);
     columns_.push_back(column + 1);
-    expected_.push_back(expected);
-    actual_.push_back(actual);
+    expected_.emplace_back(expected);
+    actual_.emplace_back(actual);
+    filenames_.emplace_back(filename);
   }
 
   cpp11::data_frame error_table() const {

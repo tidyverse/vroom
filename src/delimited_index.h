@@ -82,6 +82,8 @@ public:
       size_t i = ((n + idx_->has_header_) * idx_->columns_) + column_;
       return idx_->get_trimmed_val(i, is_first_, is_last_);
     }
+    string filename() const { return idx_->filename_; }
+    size_t index() const { return i_; }
     virtual ~column_iterator() = default;
   };
 
@@ -114,6 +116,8 @@ public:
       size_t i = (row_ + idx_->has_header_) * idx_->columns_ + n;
       return idx_->get_trimmed_val(i, i == 0, i == (idx_->columns_ - 1));
     }
+    string filename() const { return idx_->filename_; }
+    size_t index() const { return i_; }
     virtual ~row_iterator() = default;
   };
 

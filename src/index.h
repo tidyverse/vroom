@@ -38,6 +38,9 @@ public:
 
     string at(ptrdiff_t n) const { return it_[(*indexes_)[n]]; }
 
+    string filename() const { return it_.filename(); }
+    size_t index() const { return it_.index(); }
+
     virtual ~subset_iterator() {}
   };
 
