@@ -29,15 +29,17 @@ public:
          "actual"_nm = actual_});
   }
 
+  bool has_errors() const { return rows_.size() > 0; }
+
   void warn_for_errors() const {
     if (!have_warned_ && rows_.size() > 0) {
-      cpp11::warning(
-          "One or more parsing issues, use `problems()` for details");
+      have_warned_ = true;
+      Rf_warning("One or more parsing issues, see `problems()` for details");
     }
   }
 
 private:
-  bool have_warned_ = false;
+  mutable bool have_warned_ = false;
   std::mutex mutex_;
   std::vector<std::string> filenames_;
   std::vector<size_t> rows_;

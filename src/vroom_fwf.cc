@@ -40,6 +40,8 @@
   auto idx = std::make_shared<vroom::index_collection>(
       inputs, col_starts, col_ends, trim_ws, skip, comment, n_max, progress);
 
+  auto errors = new std::shared_ptr<vroom_errors>(new vroom_errors());
+
   return create_columns(
       idx,
       col_names,
@@ -52,7 +54,7 @@
       locale,
       altrep,
       guess_max,
-      nullptr,
+      errors,
       num_threads);
 }
 
