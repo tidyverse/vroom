@@ -217,7 +217,7 @@ cpp11::doubles read_dbl(vroom_vec_info* info) {
                 col->get_index(),
                 "a double",
                 std::string(str.begin(), str.end() - str.begin()),
-                b.filename().str());
+                b.filename());
           }
           out[i++] = val;
         }

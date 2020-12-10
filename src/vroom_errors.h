@@ -31,7 +31,8 @@ public:
         {"row"_nm = rows_,
          "col"_nm = columns_,
          "expected"_nm = expected_,
-         "actual"_nm = actual_});
+         "actual"_nm = actual_,
+         "file"_nm = filenames_});
   }
 
   bool has_errors() const { return rows_.size() > 0; }

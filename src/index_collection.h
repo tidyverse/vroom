@@ -84,7 +84,7 @@ public:
     string value() const;
     full_iterator* clone() const;
     string at(ptrdiff_t n) const;
-    string filename() const { return it_.filename(); }
+    std::string filename() const { return it_.filename(); }
     size_t index() const { return it_.index(); }
     virtual ~full_iterator() {}
   };

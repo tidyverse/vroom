@@ -52,13 +52,18 @@ public:
       return REAL(data2)[i];
     }
 
-    auto str = vroom_vec::Get(vec, i);
+    auto& info = vroom_vec::Info(vec);
+    auto itr = info.column->begin() + i;
+    auto str = *itr;
 
     double out = bsd_strtod(str.begin(), str.end());
     if (cpp11::is_na(out)) {
-      auto& info = vroom_vec::Info(vec);
       info.errors->add_error(
-          i, 0, "a double", std::string(str.begin(), str.end() - str.begin()));
+          itr.index(),
+          info.column->get_index(),
+          "a double",
+          std::string(str.begin(), str.end() - str.begin()),
+          itr.filename());
       info.errors->warn_for_errors();
     }
 
