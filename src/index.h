@@ -44,12 +44,13 @@ public:
   class range {
     const iterator begin_;
     const iterator end_;
+    const size_t index_;
 
   public:
-    range(const iterator& begin, const iterator& end)
-        : begin_(begin), end_(end) {}
-    range(base_iterator* begin, base_iterator* end)
-        : begin_(begin), end_(end) {}
+    range(const iterator& begin, const iterator& end, size_t index)
+        : begin_(begin), end_(end), index_(index) {}
+    range(base_iterator* begin, base_iterator* end, size_t index)
+        : begin_(begin), end_(end), index_(index) {}
     iterator begin() { return begin_; }
     iterator end() { return end_; }
     size_t size() const { return end_ - begin_; }
@@ -59,12 +60,13 @@ public:
       auto begin = new subset_iterator(begin_, idx);
       auto end = new subset_iterator(begin_, idx);
       end->advance(idx->size());
-      return std::make_shared<vroom::index::range>(begin, end);
+      return std::make_shared<vroom::index::range>(begin, end, index_);
     }
     std::shared_ptr<vroom::index::range> slice(size_t start, size_t end) const {
       return std::make_shared<vroom::index::range>(
-          begin_ + start, begin_ + end);
+          begin_ + start, begin_ + end, index_);
     }
+    size_t get_index() { return index_; }
   };
 
   using column = range;

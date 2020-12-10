@@ -92,7 +92,7 @@ public:
     auto end = new full_iterator(shared_from_this(), column);
     end->advance(rows_);
 
-    return std::make_shared<vroom::index::column>(begin, end);
+    return std::make_shared<vroom::index::column>(begin, end, column);
   }
 
   std::shared_ptr<index::row> get_row(size_t row) const {

@@ -133,21 +133,21 @@ public:
     auto begin = new column_iterator(shared_from_this(), column);
     auto end = new column_iterator(shared_from_this(), column);
     end->advance(num_rows());
-    return std::make_shared<vroom::delimited_index::column>(begin, end);
+    return std::make_shared<vroom::delimited_index::column>(begin, end, column);
   }
 
   std::shared_ptr<vroom::index::row> get_row(size_t row) const {
     auto begin = new row_iterator(shared_from_this(), row);
     auto end = new row_iterator(shared_from_this(), row);
     end->advance(num_columns());
-    return std::make_shared<vroom::delimited_index::row>(begin, end);
+    return std::make_shared<vroom::delimited_index::row>(begin, end, row);
   }
 
   std::shared_ptr<vroom::index::row> get_header() const {
     auto begin = new row_iterator(shared_from_this(), -1);
     auto end = new row_iterator(shared_from_this(), -1);
     end->advance(num_columns());
-    return std::make_shared<vroom::delimited_index::row>(begin, end);
+    return std::make_shared<vroom::delimited_index::row>(begin, end, 0);
   }
 
 public:

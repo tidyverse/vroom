@@ -177,7 +177,7 @@ public:
     auto end = new column_iterator(shared_from_this(), column);
     end->advance(num_rows());
 
-    return std::make_shared<vroom::index::column>(begin, end);
+    return std::make_shared<vroom::index::column>(begin, end, column);
   }
 
   template <typename T>

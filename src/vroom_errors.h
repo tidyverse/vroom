@@ -29,6 +29,13 @@ public:
          "actual"_nm = actual_});
   }
 
+  void warn_for_errors() const {
+    if (!have_warned_ && rows_.size() > 0) {
+      cpp11::warning(
+          "One or more parsing issues, use `problems()` for details");
+    }
+  }
+
 private:
   bool have_warned_ = false;
   std::mutex mutex_;

@@ -56,8 +56,10 @@ public:
 
     double out = bsd_strtod(str.begin(), str.end());
     if (cpp11::is_na(out)) {
-      vroom_vec::Info(vec).errors->add_error(
+      auto& info = vroom_vec::Info(vec);
+      info.errors->add_error(
           i, 0, "a double", std::string(str.begin(), str.end() - str.begin()));
+      info.errors->warn_for_errors();
     }
 
     return out;

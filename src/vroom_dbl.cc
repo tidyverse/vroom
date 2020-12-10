@@ -191,6 +191,9 @@ double bsd_strtod(const char* begin, const char* end) {
     fraction *= dblExp;
 
 done:
+  if (p != end) {
+    return NA_REAL;
+  }
   return sign ? -fraction : fraction;
 }
 
@@ -210,7 +213,7 @@ cpp11::doubles read_dbl(vroom_vec_info* info) {
           if (cpp11::is_na(val)) {
             info->errors->add_error(
                 i,
-                0,
+                col->get_index(),
                 "a double",
                 std::string(str.begin(), str.end() - str.begin()));
           }
@@ -219,6 +222,8 @@ cpp11::doubles read_dbl(vroom_vec_info* info) {
       },
       info->num_threads,
       true);
+
+  info->errors->warn_for_errors();
 
   return out;
 }
