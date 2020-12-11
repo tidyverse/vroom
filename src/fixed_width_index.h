@@ -174,7 +174,8 @@ public:
     column_iterator* clone() const { return new column_iterator(*this); }
     string at(ptrdiff_t n) const { return idx_->get(n, column_); }
     std::string filename() const { return idx_->filename_; }
-    size_t index() const { return i_; }
+    size_t index() const { return i_ / idx_->num_columns(); }
+    size_t position() const { return i_; }
     virtual ~column_iterator() = default;
   };
 

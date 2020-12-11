@@ -86,6 +86,7 @@ public:
     string at(ptrdiff_t n) const;
     std::string filename() const { return it_.filename(); }
     size_t index() const { return it_.index(); }
+    size_t position() const { return it_.position(); }
     virtual ~full_iterator() {}
   };
 

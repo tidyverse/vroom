@@ -70,6 +70,8 @@
       num_threads,
       progress);
 
+  (*errors)->resolve_parse_errors(*idx);
+
   return create_columns(
       idx,
       col_names,

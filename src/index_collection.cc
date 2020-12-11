@@ -156,6 +156,7 @@ std::shared_ptr<vroom::index> make_delimited_index(
         skip,
         n_max,
         comment,
+        errors,
         get_env("VROOM_CONNECTION_SIZE", 1 << 17),
         progress);
   }

@@ -19,6 +19,7 @@ public:
   virtual ~base_iterator() {}
   virtual std::string filename() const = 0;
   virtual size_t index() const = 0;
+  virtual size_t position() const = 0;
 };
 
 class iterator {
@@ -108,6 +109,8 @@ public:
   std::string filename() const { return it_->filename(); }
 
   size_t index() const { return it_->index(); }
+
+  size_t position() const { return it_->position(); }
 
   ~iterator() {
     if (it_ != nullptr) {

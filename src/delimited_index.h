@@ -84,6 +84,7 @@ public:
     }
     std::string filename() const { return idx_->filename_; }
     size_t index() const { return i_ / idx_->columns_; }
+    size_t position() const { return i_; }
     virtual ~column_iterator() = default;
   };
 
@@ -117,7 +118,10 @@ public:
       return idx_->get_trimmed_val(i, i == 0, i == (idx_->columns_ - 1));
     }
     std::string filename() const { return idx_->filename_; }
-    size_t index() const { return i_; }
+    size_t index() const {
+      return i_ - (row_ + idx_->has_header_) * idx_->columns_;
+    }
+    size_t position() const { return i_; }
     virtual ~row_iterator() = default;
   };
 
@@ -242,14 +246,19 @@ public:
         // Ensure columns are consistent
         if (num_cols > 0 && pos > start) {
           // Remove extra columns if there are too many
-          while (cols >= num_cols) {
-            destination.pop_back();
-            --cols;
-          }
-          // Add additional columns if there are too few
-          while (cols < num_cols - 1) {
-            destination.push_back(pos + file_offset - windows_newlines_);
-            ++cols;
+          if (cols >= num_cols) {
+            errors->add_parse_error(pos + file_offset, cols);
+            while (cols >= num_cols) {
+              destination.pop_back();
+              --cols;
+            }
+          } else if (cols < num_cols - 1) {
+            errors->add_parse_error(pos + file_offset, cols);
+            // Add additional columns if there are too few
+            while (cols < num_cols - 1) {
+              destination.push_back(pos + file_offset - windows_newlines_);
+              ++cols;
+            }
           }
         }
 

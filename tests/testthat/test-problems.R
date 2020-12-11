@@ -1,6 +1,6 @@
-test_that("problems works for single files", {
+test_that("problems with data parsing works for single files", {
   x <- vroom("x,y\n1,2\n1,1.x\n", col_types = "dd", altrep = FALSE)
-  probs <- vroom_problems(x)
+  probs <- problems(x)
 
   expect_equal(probs$row, 3)
   expect_equal(probs$col, 2)
@@ -8,7 +8,7 @@ test_that("problems works for single files", {
   expect_equal(probs$actual, "1.x")
 })
 
-test_that("problems works for single files", {
+test_that("problems works for multiple files", {
 
   out1 <- file.path(tempdir(), "out1.txt")
   out2 <- file.path(tempdir(), "out2.txt")
@@ -18,11 +18,37 @@ test_that("problems works for single files", {
   writeLines("x,y\n3.x,4\n1,2\n2,2", out2)
 
   x <- vroom::vroom(c(out1, out2), delim = ",", col_types = "dd", altrep=F)
-  probs <- vroom_problems(x)
+  probs <- problems(x)
 
   expect_equal(probs$row, c(3, 2))
   expect_equal(probs$col, c(2, 1))
   expect_equal(probs$expected, c("a double", "a double"))
   expect_equal(probs$actual, c("1.x", "3.x"))
   expect_equal(basename(probs$file), basename(c(out1, out2)))
+})
+
+test_that("problems with number of columns works for single files", {
+  probs3 <- problems(vroom("x,y,z\n1,2\n", col_names = TRUE))
+  expect_equal(probs3$row, 2)
+  expect_equal(probs3$col, 2)
+  expect_equal(probs3$expected, "3 columns")
+  expect_equal(probs3$actual, "2 columns")
+
+  probs3 <- problems(vroom("x,y,z\n1,2\n", col_names = FALSE))
+  expect_equal(probs3$row, 2)
+  expect_equal(probs3$col, 2)
+  expect_equal(probs3$expected, "3 columns")
+  expect_equal(probs3$actual, "2 columns")
+
+  probs4 <- problems(vroom("x,y\n1,2,3,4\n", col_names = TRUE))
+  expect_equal(probs4$row, 2)
+  expect_equal(probs4$col, 4)
+  expect_equal(probs4$expected, "2 columns")
+  expect_equal(probs4$actual, "4 columns")
+
+  probs2 <- problems(vroom("x,y\n1,2,3,4\n", col_names = FALSE))
+  expect_equal(probs2$row, 2)
+  expect_equal(probs2$col, 4)
+  expect_equal(probs2$expected, "2 columns")
+  expect_equal(probs2$actual, "4 columns")
 })

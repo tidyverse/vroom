@@ -40,6 +40,7 @@ public:
 
     std::string filename() const { return it_.filename(); }
     size_t index() const { return it_.index(); }
+    size_t position() const { return (it_ + (*indexes_)[i_]).position(); }
 
     virtual ~subset_iterator() {}
   };
