@@ -71,7 +71,8 @@ public:
         info.column,
         strtoi,
         info.errors,
-        "an integer");
+        "an integer",
+        *info.na);
     info.errors->warn_for_errors();
 
     return out;

@@ -28,25 +28,25 @@ test_that("problems works for multiple files", {
 })
 
 test_that("problems with number of columns works for single files", {
-  probs3 <- problems(vroom("x,y,z\n1,2\n", col_names = TRUE))
+  probs3 <- problems(vroom("x,y,z\n1,2\n", col_names = TRUE, col_types = "ddd"))
   expect_equal(probs3$row, 2)
   expect_equal(probs3$col, 2)
   expect_equal(probs3$expected, "3 columns")
   expect_equal(probs3$actual, "2 columns")
 
-  probs3 <- problems(vroom("x,y,z\n1,2\n", col_names = FALSE))
+  probs3 <- problems(vroom("x,y,z\n1,2\n", col_names = FALSE, col_types = "ddd"))
   expect_equal(probs3$row, 2)
   expect_equal(probs3$col, 2)
   expect_equal(probs3$expected, "3 columns")
   expect_equal(probs3$actual, "2 columns")
 
-  probs4 <- problems(vroom("x,y\n1,2,3,4\n", col_names = TRUE))
+  probs4 <- problems(vroom("x,y\n1,2,3,4\n", col_names = TRUE, col_types = "dd"))
   expect_equal(probs4$row, 2)
   expect_equal(probs4$col, 4)
   expect_equal(probs4$expected, "2 columns")
   expect_equal(probs4$actual, "4 columns")
 
-  probs2 <- problems(vroom("x,y\n1,2,3,4\n", col_names = FALSE))
+  probs2 <- problems(vroom("x,y\n1,2,3,4\n", col_names = FALSE, col_types = "dd"))
   expect_equal(probs2$row, 2)
   expect_equal(probs2$col, 4)
   expect_equal(probs2$expected, "2 columns")

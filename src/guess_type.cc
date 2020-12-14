@@ -46,7 +46,7 @@ bool isNumber(const std::string& x, LocaleInfo* pLocale) {
     return false;
 
   auto str = vroom::string(x);
-  auto num = parse_num(str, *pLocale, true);
+  auto num = parse_num(str.begin(), str.end(), *pLocale, true);
 
   return !ISNA(num);
 }

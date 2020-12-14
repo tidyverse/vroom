@@ -46,7 +46,7 @@ cpp11::integers read_int(vroom_vec_info* info) {
         auto col = info->column->slice(start, end);
         for (auto b = col->begin(), e = col->end(); b != e; ++b) {
           out[i++] = vroom_vec::parse_value(
-              b, col, strtoi, info->errors, "an integer");
+              b, col, strtoi, info->errors, "an integer", *info->na);
         }
       },
       info->num_threads);

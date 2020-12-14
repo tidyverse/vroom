@@ -58,7 +58,8 @@ public:
         info.column,
         bsd_strtod,
         info.errors,
-        "a double");
+        "a double",
+        *info.na);
     info.errors->warn_for_errors();
     return out;
   }

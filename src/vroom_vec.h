@@ -135,16 +135,30 @@ public:
     return T::Make(info);
   }
 
+  static bool is_explicit_na(SEXP na, const char* begin, const char* end) {
+    R_xlen_t n = end - begin;
+    for (R_xlen_t i = 0; i < Rf_xlength(na); ++i) {
+      SEXP str = STRING_ELT(na, i);
+      R_xlen_t str_n = Rf_xlength(str);
+      const char* v = CHAR(STRING_ELT(na, i));
+      if (n == str_n && strncmp(v, begin, n) == 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   template <typename F, typename I, typename C>
   static auto parse_value(
       I itr,
       C col,
       F f,
       std::shared_ptr<vroom_errors>& errors,
-      const char* expected) -> decltype(f("", "")) {
+      const char* expected,
+      SEXP na) -> decltype(f("", "")) {
     auto str = *itr;
     decltype(f("", "")) out = f(str.begin(), str.end());
-    if (cpp11::is_na(out)) {
+    if (cpp11::is_na(out) && !is_explicit_na(na, str.begin(), str.end())) {
       errors->add_error(
           itr.index(),
           col->get_index(),
