@@ -209,21 +209,11 @@ cpp11::doubles read_dbl(vroom_vec_info* info) {
         R_xlen_t i = start;
         auto col = info->column->slice(start, end);
         for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-          const auto& str = *b;
-          double val = bsd_strtod(str.begin(), str.end());
-          if (cpp11::is_na(val)) {
-            info->errors->add_error(
-                b.index(),
-                col->get_index(),
-                "a double",
-                std::string(str.begin(), str.end() - str.begin()),
-                b.filename());
-          }
-          out[i++] = val;
+          out[i++] = vroom_vec::parse_value(
+              b, col, bsd_strtod, info->errors, "a double");
         }
       },
-      info->num_threads,
-      true);
+      info->num_threads);
 
   info->errors->warn_for_errors();
 

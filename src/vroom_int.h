@@ -65,9 +65,16 @@ public:
       return INTEGER(data2)[i];
     }
 
-    auto str = vroom_vec::Get(vec, i);
+    auto& info = vroom_vec::Info(vec);
+    double out = parse_value(
+        info.column->begin() + i,
+        info.column,
+        strtoi,
+        info.errors,
+        "an integer");
+    info.errors->warn_for_errors();
 
-    return strtoi(str.begin(), str.end());
+    return out;
   }
 
   static void* Dataptr(SEXP vec, Rboolean) {

@@ -53,20 +53,13 @@ public:
     }
 
     auto& info = vroom_vec::Info(vec);
-    auto itr = info.column->begin() + i;
-    auto str = *itr;
-
-    double out = bsd_strtod(str.begin(), str.end());
-    if (cpp11::is_na(out)) {
-      info.errors->add_error(
-          itr.index(),
-          info.column->get_index(),
-          "a double",
-          std::string(str.begin(), str.end() - str.begin()),
-          itr.filename());
-      info.errors->warn_for_errors();
-    }
-
+    double out = parse_value(
+        info.column->begin() + i,
+        info.column,
+        bsd_strtod,
+        info.errors,
+        "a double");
+    info.errors->warn_for_errors();
     return out;
   }
 

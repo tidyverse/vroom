@@ -134,6 +134,26 @@ public:
 
     return T::Make(info);
   }
+
+  template <typename F, typename I, typename C>
+  static auto parse_value(
+      I itr,
+      C col,
+      F f,
+      std::shared_ptr<vroom_errors>& errors,
+      const char* expected) -> decltype(f("", "")) {
+    auto str = *itr;
+    decltype(f("", "")) out = f(str.begin(), str.end());
+    if (cpp11::is_na(out)) {
+      errors->add_error(
+          itr.index(),
+          col->get_index(),
+          expected,
+          std::string(str.begin(), str.end() - str.begin()),
+          itr.filename());
+    }
+    return out;
+  }
 };
 
 #endif

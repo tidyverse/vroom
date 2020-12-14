@@ -44,8 +44,9 @@ cpp11::integers read_int(vroom_vec_info* info) {
       [&](size_t start, size_t end, size_t) {
         R_xlen_t i = start;
         auto col = info->column->slice(start, end);
-        for (const auto& str : *col) {
-          out[i++] = strtoi(str.begin(), str.end());
+        for (auto b = col->begin(), e = col->end(); b != e; ++b) {
+          out[i++] = vroom_vec::parse_value(
+              b, col, strtoi, info->errors, "an integer");
         }
       },
       info->num_threads);
