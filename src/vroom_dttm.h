@@ -16,7 +16,10 @@
 using namespace vroom;
 
 double parse_dttm(
-    const string& str, DateTimeParser& parser, const std::string& format);
+    const char* begin,
+    const char* end,
+    DateTimeParser& parser,
+    const std::string& format);
 
 cpp11::doubles read_dttm(vroom_vec_info* info);
 
@@ -107,10 +110,24 @@ public:
       return REAL(data2)[i];
     }
 
-    auto str = Get(vec, i);
-    auto inf = Info(vec);
+    auto info = Info(vec);
 
-    return parse_dttm(str, *inf->parser, inf->info->format);
+    auto err_msg = info->info->format.size() == 0
+                       ? std::string("date in ISO8601")
+                       : std::string("date like ") + info->info->format;
+
+    double out = parse_value(
+        info->info->column->begin() + i,
+        info->info->column,
+        [&](const char* begin, const char* end) -> double {
+          return parse_dttm(begin, end, *info->parser, info->info->format);
+        },
+        info->info->errors,
+        err_msg.c_str(),
+        *info->info->na);
+    info->info->errors->warn_for_errors();
+
+    return out;
   }
 
   // --- Altvec
