@@ -353,11 +353,11 @@ test_that("vroom adds columns if a row is too short", {
   )
 })
 
-#test_that("vroom adds removes columns if a row is too long", {
-  #test_vroom("a,b,c,d\n1,2,3,4,5,6,7\n8,9,10,11\n", delim = ",", col_types = c(d = "c"),
-    #equals = tibble::tibble("a" = c(1,8), "b" = c(2,9), "c" = c(3, 10), "d" = c("4,5,6,7", "11"))
-  #)
-#})
+test_that("vroom removes columns if a row is too long", {
+  test_vroom("a,b,c,d\n1,2,3,4,5,6,7\n8,9,10,11\n", delim = ",", col_types = c(d = "c"),
+    equals = tibble::tibble("a" = c(1,8), "b" = c(2,9), "c" = c(3, 10), "d" = c("4,5,6,7", "11"))
+  )
+})
 
 # Figure out a better way to test progress bars...
 #test_that("progress bars work", {
