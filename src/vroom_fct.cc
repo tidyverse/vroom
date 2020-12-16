@@ -10,6 +10,19 @@ bool matches(const string& needle, const std::vector<std::string>& haystack) {
   return false;
 }
 
+int parse_factor(
+    const char* begin,
+    const char* end,
+    const std::unordered_map<SEXP, size_t>& level_map,
+    LocaleInfo& locale) {
+  auto search = level_map.find(locale.encoder_.makeSEXP(begin, end, false));
+  if (search != level_map.end()) {
+    return search->second;
+  } else {
+    return NA_INTEGER;
+  }
+}
+
 cpp11::integers
 read_fct_explicit(vroom_vec_info* info, cpp11::strings levels, bool ordered) {
   R_xlen_t n = info->column->size();
@@ -27,16 +40,22 @@ read_fct_explicit(vroom_vec_info* info, cpp11::strings levels, bool ordered) {
     }
   }
 
+  auto col = info->column;
   R_xlen_t i = 0;
-  for (const auto& str : *info->column) {
-    auto search = level_map.find(
-        info->locale->encoder_.makeSEXP(str.begin(), str.end(), false));
-    if (search != level_map.end()) {
-      out[i++] = search->second;
-    } else {
-      out[i++] = NA_INTEGER;
-    }
+  for (auto b = col->begin(), e = col->end(); b != e; ++b) {
+    out[i++] = vroom_vec::parse_value(
+        b,
+        col,
+        [&](const char* begin, const char* end) -> double {
+          return parse_factor(begin, end, level_map, *info->locale);
+        },
+        info->errors,
+        "value in level set",
+        *info->na);
   }
+
+  info->errors->warn_for_errors();
+
   out.attr("levels") = static_cast<SEXP>(levels);
   if (ordered) {
     out.attr("class") = {"ordered", "factor"};

@@ -5,7 +5,7 @@
 #include "vroom.h"
 #include "vroom_vec.h"
 
-#include <map>
+#include <unordered_map>
 
 using namespace vroom;
 
@@ -14,11 +14,17 @@ read_fct_explicit(vroom_vec_info* info, cpp11::strings levels, bool ordered);
 
 cpp11::integers read_fct_implicit(vroom_vec_info* info, bool include_na);
 
+int parse_factor(
+    const char* begin,
+    const char* end,
+    const std::unordered_map<SEXP, size_t>& level_map,
+    LocaleInfo& locale);
+
 #ifdef HAS_ALTREP
 
 struct vroom_factor_info {
   vroom_vec_info* info;
-  std::map<SEXP, size_t> levels;
+  std::unordered_map<SEXP, size_t> levels;
 };
 
 struct vroom_fct : vroom_vec {
@@ -108,18 +114,21 @@ public:
   // ALTSTRING methods -----------------
 
   static int Val(SEXP vec, R_xlen_t i) {
-    auto inf = Info(vec);
+    auto info = Info(vec);
 
-    auto str = Get(vec, i);
+    double out = parse_value(
+        info.info->column->begin() + i,
+        info.info->column,
+        [&](const char* begin, const char* end) -> double {
+          return parse_factor(begin, end, info.levels, *info.info->locale);
+        },
+        info.info->errors,
+        "value in level set",
+        *info.info->na);
 
-    auto search = inf.levels.find(
-        inf.info->locale->encoder_.makeSEXP(str.begin(), str.end(), false));
-    if (search != inf.levels.end()) {
-      return search->second;
-    }
-    // val = check_na(vec, val);
+    info.info->errors->warn_for_errors();
 
-    return NA_INTEGER;
+    return out;
   }
 
   // the element at the index `i`
