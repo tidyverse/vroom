@@ -51,6 +51,8 @@ cpp11::integers read_int(vroom_vec_info* info) {
       },
       info->num_threads);
 
+  info->errors->warn_for_errors();
+
   return out;
 }
 

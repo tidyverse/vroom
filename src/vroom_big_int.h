@@ -4,11 +4,15 @@
 
 #include "altrep.h"
 
+#define NA_INTEGER64 (0x8000000000000000ll)
+
+namespace cpp11 {
+inline bool is_na(long long x) { return x == NA_INTEGER64; }
+} // namespace cpp11
+
 #include "vroom_vec.h"
 
-#define NA_INTEGER64 (0x8000000000000000)
-
-long long strtoll(const char* begin, const char* end);
+long long vroom_strtoll(const char* begin, const char* end);
 
 cpp11::doubles read_big_int(vroom_vec_info* info);
 
@@ -43,12 +47,8 @@ public:
   // ALTREP methods -------------------
 
   // What gets printed when .Internal(inspect()) is used
-  static Rboolean Inspect(
-      SEXP x,
-      int,
-      int,
-      int,
-      void (*)(SEXP, int, int, int)) {
+  static Rboolean
+  Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
         "vroom_big_int (len=%d, materialized=%s)\n",
         Length(x),
@@ -80,10 +80,19 @@ public:
       return REAL(data2)[i];
     }
 
-    auto str = vroom_vec::Get(vec, i);
+    auto info = vroom_vec::Info(vec);
 
     vroom_big_int_t res;
-    res.ll = strtoll(str.begin(), str.end());
+    res.ll = parse_value(
+        info.column->begin() + i,
+        info.column,
+        vroom_strtoll,
+        info.errors,
+        "a big integer",
+        *info.na);
+
+    info.errors->warn_for_errors();
+
     return res.dbl;
   }
 
