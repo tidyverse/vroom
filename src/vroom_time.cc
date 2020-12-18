@@ -33,7 +33,7 @@ cpp11::doubles read_time(vroom_vec_info* info) {
         DateTimeParser parser(info->locale.get());
         auto col = info->column->slice(start, end);
         for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-          out[i++] = vroom_vec::parse_value<double>(
+          out[i++] = parse_value<double>(
               b,
               col,
               [&](const char* begin, const char* end) -> double {

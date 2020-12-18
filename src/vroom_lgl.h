@@ -58,7 +58,7 @@ inline cpp11::logicals read_lgl(vroom_vec_info* info) {
         R_xlen_t i = start;
         auto col = info->column->slice(start, end);
         for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-          out[i++] = vroom_vec::parse_value<int>(
+          out[i++] = parse_value<int>(
               b,
               col,
               [&](const char* begin, const char* end) -> int {

@@ -209,7 +209,7 @@ cpp11::doubles read_dbl(vroom_vec_info* info) {
         R_xlen_t i = start;
         auto col = info->column->slice(start, end);
         for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-          out[i++] = vroom_vec::parse_value<double>(
+          out[i++] = parse_value<double>(
               b, col, bsd_strtod, info->errors, "a double", *info->na);
         }
       },

@@ -43,7 +43,7 @@ read_fct_explicit(vroom_vec_info* info, cpp11::strings levels, bool ordered) {
   auto col = info->column;
   R_xlen_t i = 0;
   for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-    out[i++] = vroom_vec::parse_value<int>(
+    out[i++] = parse_value<int>(
         b,
         col,
         [&](const char* begin, const char* end) -> double {
