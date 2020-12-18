@@ -134,6 +134,7 @@ std::shared_ptr<vroom::index> make_delimited_index(
     const size_t skip,
     const size_t n_max,
     const char comment,
+    std::shared_ptr<vroom_errors> errors,
     const size_t num_threads,
     const bool progress) {
 
@@ -155,6 +156,7 @@ std::shared_ptr<vroom::index> make_delimited_index(
         skip,
         n_max,
         comment,
+        errors,
         get_env("VROOM_CONNECTION_SIZE", 1 << 17),
         progress);
   }
@@ -171,6 +173,7 @@ std::shared_ptr<vroom::index> make_delimited_index(
       skip,
       n_max,
       comment,
+      errors,
       num_threads,
       progress);
 }
@@ -230,6 +233,7 @@ index_collection::index_collection(
     const size_t skip,
     const size_t n_max,
     const char comment,
+    std::shared_ptr<vroom_errors> errors,
     const size_t num_threads,
     const bool progress)
     : rows_(0), columns_(0) {
@@ -245,6 +249,7 @@ index_collection::index_collection(
       skip,
       n_max,
       comment,
+      errors,
       num_threads,
       progress);
 
@@ -265,6 +270,7 @@ index_collection::index_collection(
         skip,
         n_max,
         comment,
+        errors,
         num_threads,
         progress);
 

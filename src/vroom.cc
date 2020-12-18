@@ -1,6 +1,7 @@
 #include <mio/shared_mmap.hpp>
 
 #include <cpp11/R.hpp>
+#include <cpp11/external_pointer.hpp>
 #include <cpp11/list.hpp>
 #include <cpp11/strings.hpp>
 
@@ -11,9 +12,11 @@
 #include "index_collection.h"
 #include "vroom_rle.h"
 #include <algorithm>
+#include <memory>
 #include <numeric>
 
 #include "unicode_fopen.h"
+#include "vroom_errors.h"
 
 [[cpp11::register]] SEXP vroom_(
     cpp11::list inputs,
@@ -50,6 +53,8 @@
     filenames = get_filenames(inputs);
   }
 
+  auto errors = new std::shared_ptr<vroom_errors>(new vroom_errors());
+
   auto idx = std::make_shared<vroom::index_collection>(
       inputs,
       Rf_isNull(delim) ? nullptr : cpp11::as_cpp<const char*>(delim),
@@ -61,8 +66,11 @@
       skip,
       n_max,
       comment,
+      *errors,
       num_threads,
       progress);
+
+  (*errors)->resolve_parse_errors(*idx);
 
   return create_columns(
       idx,
@@ -76,6 +84,7 @@
       locale,
       altrep,
       guess_max,
+      errors,
       num_threads);
 }
 

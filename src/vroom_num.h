@@ -10,7 +10,11 @@
 
 using namespace vroom;
 
-double parse_num(const string& str, const LocaleInfo& loc, bool strict = false);
+double parse_num(
+    const char* begin,
+    const char* end,
+    const LocaleInfo& loc,
+    bool strict = false);
 
 cpp11::doubles read_num(vroom_vec_info* info);
 
@@ -58,10 +62,21 @@ public:
       return REAL(data2)[i];
     }
 
-    auto str = vroom_vec::Get(vec, i);
-    auto& inf = vroom_vec::Info(vec);
+    auto& info = vroom_vec::Info(vec);
 
-    return parse_num(str, *inf.locale);
+    double out = parse_value<double>(
+        info.column->begin() + i,
+        info.column,
+        [&](const char* begin, const char* end) -> double {
+          return parse_num(begin, end, *info.locale);
+        },
+        info.errors,
+        "a number",
+        *info.na);
+
+    info.errors->warn_for_errors();
+
+    return out;
   }
 
   // --- Altvec

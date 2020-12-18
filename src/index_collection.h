@@ -2,6 +2,7 @@
 
 #include "index.h"
 #include "iterator.h"
+#include "vroom_errors.h"
 
 #include <cpp11/list.hpp>
 #include <memory>
@@ -28,6 +29,7 @@ public:
       const size_t skip,
       const size_t n_max,
       const char comment,
+      std::shared_ptr<vroom_errors> errors,
       const size_t num_threads,
       const bool progress);
 
@@ -82,6 +84,9 @@ public:
     string value() const;
     full_iterator* clone() const;
     string at(ptrdiff_t n) const;
+    std::string filename() const { return it_.filename(); }
+    size_t index() const { return it_.index(); }
+    size_t position() const { return it_.position(); }
     virtual ~full_iterator() {}
   };
 
@@ -90,7 +95,7 @@ public:
     auto end = new full_iterator(shared_from_this(), column);
     end->advance(rows_);
 
-    return std::make_shared<vroom::index::column>(begin, end);
+    return std::make_shared<vroom::index::column>(begin, end, column);
   }
 
   std::shared_ptr<index::row> get_row(size_t row) const {
@@ -112,7 +117,7 @@ public:
   }
 
 private:
-  std::vector<std::shared_ptr<index> > indexes_;
+  std::vector<std::shared_ptr<index>> indexes_;
 
   size_t rows_;
   size_t columns_;

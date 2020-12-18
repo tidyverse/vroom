@@ -57,6 +57,7 @@ compare.tbl_df <- function (x, y, ...) {
 # @export
 compare_proxy.tbl_df <- function(x) {
   attr(x, "spec") <- NULL
+  attr(x, "problems") <- NULL
   x
 }
 

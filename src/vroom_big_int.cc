@@ -4,7 +4,7 @@
 
 // A version of strtoll that doesn't need null terminated strings, to avoid
 // needing to copy the data
-long long strtoll(const char* begin, const char* end) {
+long long vroom_strtoll(const char* begin, const char* end) {
   unsigned long long val = 0;
   bool is_neg = false;
 
@@ -45,13 +45,16 @@ cpp11::doubles read_big_int(vroom_vec_info* info) {
       [&](size_t start, size_t end, size_t) {
         R_xlen_t i = start;
         auto col = info->column->slice(start, end);
-        for (const auto& str : *col) {
+        for (auto b = col->begin(), e = col->end(); b != e; ++b) {
           vroom_big_int_t res;
-          res.ll = strtoll(str.begin(), str.end());
+          res.ll = parse_value<long long>(
+              b, col, vroom_strtoll, info->errors, "a big integer", *info->na);
           out[i++] = res.dbl;
         }
       },
       info->num_threads);
+
+  info->errors->warn_for_errors();
 
   out.attr("class") = {"integer64"};
 

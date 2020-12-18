@@ -7,13 +7,17 @@ test_that("integers are returned correctly", {
   )
 
   # numbers which are not integers are returned as NAs
-  test_vroom("foo,bar,baz\n1,1.5,3\n", col_types = list(.default = "I"), delim = ",",
-    equals = tibble::tibble(foo = as.integer64(1), bar = as.integer64(NA), baz = as.integer64(3))
+  expect_warning(
+    test_vroom("foo,bar,baz\n1,1.5,3\n", col_types = list(.default = "I"), delim = ",",
+      equals = tibble::tibble(foo = as.integer64(1), bar = as.integer64(NA), baz = as.integer64(3))
+    )
   )
 
   # fields with non-digits are returned as NAs
-  test_vroom("foo,bar,baz\n1,32xyz,3\n", col_types = list(.default = "I"), delim = ",",
-    equals = tibble::tibble(foo = as.integer64(1), bar = as.integer64(NA), baz = as.integer64(3))
+  expect_warning(
+    test_vroom("foo,bar,baz\n1,32xyz,3\n", col_types = list(.default = "I"), delim = ",",
+      equals = tibble::tibble(foo = as.integer64(1), bar = as.integer64(NA), baz = as.integer64(3))
+    )
   )
 
   # 2^31 - 1 is the maximum representable integer with 32 bit ints
@@ -32,7 +36,9 @@ test_that("integers are returned correctly", {
   )
 
   # But 2^63 should be NA
-  test_vroom("foo,bar,baz\n1,9223372036854775808,3\n", col_types = list(.default = "I"), delim = ",",
-    equals = tibble::tibble(foo = as.integer64(1), bar = as.integer64(NA), baz = as.integer64(3))
+  expect_warning(
+    test_vroom("foo,bar,baz\n1,9223372036854775808,3\n", col_types = list(.default = "I"), delim = ",",
+      equals = tibble::tibble(foo = as.integer64(1), bar = as.integer64(NA), baz = as.integer64(3))
+    )
   )
 })

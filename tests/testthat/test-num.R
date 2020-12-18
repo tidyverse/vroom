@@ -11,5 +11,7 @@ test_that("col_number helps with currency", {
 })
 
 test_that("invalid numbers don't parse", {
-  test_parse_number(c("..", "--", "3.3.3", "4-1"), c(NA, NA, 3.3, 4.0))
+  expect_warning(
+    test_parse_number(c("..", "--", "3.3.3", "4-1"), c(NA, NA, 3.3, 4.0))
+  )
 })

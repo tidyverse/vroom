@@ -30,6 +30,7 @@ delimited_index_connection::delimited_index_connection(
     const size_t skip,
     size_t n_max,
     const char comment,
+    const std::shared_ptr<vroom_errors> errors,
     const size_t chunk_size,
     const bool progress) {
 
@@ -148,6 +149,7 @@ delimited_index_connection::delimited_index_connection(
       n_max,
       cols,
       0,
+      errors,
       empty_pb);
 
   columns_ = idx_[0].size() - 1;
@@ -183,6 +185,7 @@ delimited_index_connection::delimited_index_connection(
             n_max,
             cols,
             columns_,
+            errors,
             empty_pb);
       });
     }

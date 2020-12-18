@@ -7,7 +7,10 @@
 using namespace vroom;
 
 double parse_date(
-    const string& str, DateTimeParser& parser, const std::string& format);
+    const char* begin,
+    const char* end,
+    DateTimeParser& parser,
+    const std::string& format);
 
 cpp11::doubles read_date(vroom_vec_info* info);
 
@@ -41,12 +44,8 @@ public:
   }
 
   // What gets printed when .Internal(inspect()) is used
-  static Rboolean Inspect(
-      SEXP x,
-      int,
-      int,
-      int,
-      void (*)(SEXP, int, int, int)) {
+  static Rboolean
+  Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
         "vroom_date (len=%d, materialized=%s)\n",
         Length(x),
@@ -61,10 +60,25 @@ public:
       return REAL(data2)[i];
     }
 
-    auto str = Get(vec, i);
-    auto inf = Info(vec);
+    auto info = Info(vec);
 
-    return parse_date(str, *inf->parser, inf->info->format);
+    auto err_msg = info->info->format.size() == 0
+                       ? std::string("date in ISO8601")
+                       : std::string("date like ") + info->info->format;
+
+    double out = parse_value<double>(
+        info->info->column->begin() + i,
+        info->info->column,
+        [&](const char* begin, const char* end) -> double {
+          return parse_date(begin, end, *info->parser, info->info->format);
+        },
+        info->info->errors,
+        err_msg.c_str(),
+        *info->info->na);
+
+    info->info->errors->warn_for_errors();
+
+    return out;
   }
 
   // --- Altvec

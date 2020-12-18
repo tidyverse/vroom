@@ -114,12 +114,14 @@ end:
   return seenNumber;
 }
 
-double parse_num(const string& str, const LocaleInfo& loc, bool strict) {
+double parse_num(
+    const char* start, const char* end, const LocaleInfo& loc, bool strict) {
   double ret;
-  auto start = str.begin();
-  auto end = str.end();
-  bool ok = parseNumber(loc.decimalMark_, loc.groupingMark_, start, end, ret);
-  if (ok && (!strict || (start == str.begin() && end == str.end()))) {
+  auto start_p = start;
+  auto end_p = end;
+  bool ok =
+      parseNumber(loc.decimalMark_, loc.groupingMark_, start_p, end_p, ret);
+  if (ok && (!strict || (start_p == start && end_p == end))) {
     return ret;
   }
 
@@ -137,11 +139,21 @@ cpp11::doubles read_num(vroom_vec_info* info) {
       [&](size_t start, size_t end, size_t) {
         R_xlen_t i = start;
         auto col = info->column->slice(start, end);
-        for (const auto& str : *col) {
-          out[i++] = parse_num(str, *info->locale);
+        for (auto b = col->begin(), e = col->end(); b != e; ++b) {
+          out[i++] = parse_value<double>(
+              b,
+              col,
+              [&](const char* begin, const char* end) -> double {
+                return parse_num(begin, end, *info->locale);
+              },
+              info->errors,
+              "a number",
+              *info->na);
         }
       },
       info->num_threads);
+
+  info->errors->warn_for_errors();
 
   return out;
 }

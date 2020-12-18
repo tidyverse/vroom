@@ -19,6 +19,7 @@
 #include <array>
 
 #include "multi_progress.h"
+#include "vroom_errors.h"
 
 namespace vroom {
 
@@ -42,6 +43,7 @@ public:
       const size_t skip,
       size_t n_max,
       const char comment,
+      std::shared_ptr<vroom_errors> errors,
       const size_t num_threads,
       const bool progress,
       const bool use_threads = true);
@@ -80,6 +82,9 @@ public:
       size_t i = ((n + idx_->has_header_) * idx_->columns_) + column_;
       return idx_->get_trimmed_val(i, is_first_, is_last_);
     }
+    std::string filename() const { return idx_->filename_; }
+    size_t index() const { return i_ / idx_->columns_; }
+    size_t position() const { return i_; }
     virtual ~column_iterator() = default;
   };
 
@@ -112,6 +117,11 @@ public:
       size_t i = (row_ + idx_->has_header_) * idx_->columns_ + n;
       return idx_->get_trimmed_val(i, i == 0, i == (idx_->columns_ - 1));
     }
+    std::string filename() const { return idx_->filename_; }
+    size_t index() const {
+      return i_ - (row_ + idx_->has_header_) * idx_->columns_;
+    }
+    size_t position() const { return i_; }
     virtual ~row_iterator() = default;
   };
 
@@ -131,21 +141,21 @@ public:
     auto begin = new column_iterator(shared_from_this(), column);
     auto end = new column_iterator(shared_from_this(), column);
     end->advance(num_rows());
-    return std::make_shared<vroom::delimited_index::column>(begin, end);
+    return std::make_shared<vroom::delimited_index::column>(begin, end, column);
   }
 
   std::shared_ptr<vroom::index::row> get_row(size_t row) const {
     auto begin = new row_iterator(shared_from_this(), row);
     auto end = new row_iterator(shared_from_this(), row);
     end->advance(num_columns());
-    return std::make_shared<vroom::delimited_index::row>(begin, end);
+    return std::make_shared<vroom::delimited_index::row>(begin, end, row);
   }
 
   std::shared_ptr<vroom::index::row> get_header() const {
     auto begin = new row_iterator(shared_from_this(), -1);
     auto end = new row_iterator(shared_from_this(), -1);
     end->advance(num_columns());
-    return std::make_shared<vroom::delimited_index::row>(begin, end);
+    return std::make_shared<vroom::delimited_index::row>(begin, end, 0);
   }
 
 public:
@@ -203,6 +213,7 @@ public:
       const size_t n_max,
       size_t& cols,
       const size_t num_cols,
+      std::shared_ptr<vroom_errors> errors,
       P& pb,
       const size_t update_size = -1) {
 
@@ -235,14 +246,19 @@ public:
         // Ensure columns are consistent
         if (num_cols > 0 && pos > start) {
           // Remove extra columns if there are too many
-          while (cols >= num_cols) {
-            destination.pop_back();
-            --cols;
-          }
-          // Add additional columns if there are too few
-          while (cols < num_cols - 1) {
-            destination.push_back(pos + file_offset - windows_newlines_);
-            ++cols;
+          if (cols >= num_cols) {
+            errors->add_parse_error(pos + file_offset, cols);
+            while (cols >= num_cols) {
+              destination.pop_back();
+              --cols;
+            }
+          } else if (cols < num_cols - 1) {
+            errors->add_parse_error(pos + file_offset, cols);
+            // Add additional columns if there are too few
+            while (cols < num_cols - 1) {
+              destination.push_back(pos + file_offset - windows_newlines_);
+              ++cols;
+            }
           }
         }
 
