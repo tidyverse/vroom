@@ -191,9 +191,14 @@ inline cpp11::list create_columns(
       }
       break;
     case column_type::Lgl:
-      // No altrep for logicals as of R 3.5
+      // if (collector.use_altrep()) {
+      //#if defined HAS_ALTREP && R_VERSION >= R_Version(3, 6, 0)
+      // res[i] = vroom_lgl::Make(info);
+      //#endif
+      //} else {
       res[i] = read_lgl(info);
       delete info;
+      //}
       break;
     case column_type::Fct: {
       auto levels = collector["levels"];

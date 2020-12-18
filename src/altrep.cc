@@ -1,4 +1,5 @@
 #include "altrep.h"
+#include "vroom_big_int.h"
 #include "vroom_chr.h"
 #include "vroom_date.h"
 #include "vroom_dbl.h"
@@ -28,7 +29,8 @@ bool vroom_altrep(SEXP x) {
          R_altrep_inherits(x, vroom_int::class_t) ||
          // R_altrep_inherits(x, vroom_lgl::class_t) ||
          R_altrep_inherits(x, vroom_num::class_t) ||
-         R_altrep_inherits(x, vroom_time::class_t);
+         R_altrep_inherits(x, vroom_time::class_t) ||
+         R_altrep_inherits(x, vroom_big_int::class_t);
 #else
   return false;
 #endif

@@ -52,3 +52,36 @@ test_that("problems with number of columns works for single files", {
   expect_equal(probs2$expected, "2 columns")
   expect_equal(probs2$actual, "4 columns")
 })
+
+test_that("parsing problems are shown for all datatypes", {
+  types <- list(
+    "an integer" = col_integer(),
+    "a big integer" = col_big_integer(),
+    "a double" = col_double(),
+    "a number" = col_number(),
+    "value in level set" = col_factor(levels = "foo"),
+    "date in ISO8601" = col_date(),
+    "date in ISO8601" = col_datetime(),
+    "time in ISO8601" = col_time()
+  )
+
+  for (i in seq_along(types)) {
+    type <- types[[i]]
+    expected <- names(types)[[i]]
+
+    res <- vroom::vroom("x\nxyz\n", delim = ",", col_types = list(type), altrep = TRUE)
+
+    # This calls the type_Elt function
+    expect_warning(res[[1]][[1]], "One or more parsing issues")
+    expect_equal(problems(res)$expected, expected)
+
+    res <- vroom::vroom("x\nxyz\n", delim = ",", col_types = list(type), altrep = TRUE)
+
+    # This calls the read_type function
+    expect_warning(vroom_materialize(res, replace = FALSE), "One or more parsing issues")
+    expect_equal(problems(res)$expected, expected)
+  }
+
+
+    expect_warning(res <- vroom::vroom("x\nxyz\n", delim = ",", col_types = list(col_logical())), "One or more parsing issues")
+})

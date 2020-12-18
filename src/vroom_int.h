@@ -73,6 +73,7 @@ public:
         info.errors,
         "an integer",
         *info.na);
+
     info.errors->warn_for_errors();
 
     return out;

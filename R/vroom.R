@@ -347,13 +347,13 @@ vroom_altrep <- function(which = NULL) {
     getRversion() >= "3.5.0" && which$chr %||% vroom_use_altrep_chr(),
     getRversion() >= "3.5.0" && which$fct %||% vroom_use_altrep_fct(),
     getRversion() >= "3.5.0" && which$int %||% vroom_use_altrep_int(),
-    getRversion() >= "3.5.0" && which$int %||% vroom_use_altrep_big_int(),
     getRversion() >= "3.5.0" && which$dbl %||% vroom_use_altrep_dbl(),
     getRversion() >= "3.5.0" && which$num %||% vroom_use_altrep_num(),
     getRversion() >= "3.6.0" && which$lgl %||% vroom_use_altrep_lgl(), # logicals only supported in R 3.6.0+
     getRversion() >= "3.5.0" && which$dttm %||% vroom_use_altrep_dttm(),
     getRversion() >= "3.5.0" && which$date %||% vroom_use_altrep_date(),
-    getRversion() >= "3.5.0" && which$time %||% vroom_use_altrep_time()
+    getRversion() >= "3.5.0" && which$time %||% vroom_use_altrep_time(),
+    getRversion() >= "3.5.0" && which$big_int %||% vroom_use_altrep_big_int()
   )
 
   out <-  0L
@@ -387,8 +387,8 @@ altrep_vals <- function() c(
   "dttm" = 64L,
   "date" = 128L,
   "time" = 256L,
-# "skip" = 512L
-  "big_int" = 1024L
+  "big_int" = 512L,
+  "skip" = 1024L
 )
 
 #' @export

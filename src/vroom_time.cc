@@ -47,6 +47,8 @@ cpp11::doubles read_time(vroom_vec_info* info) {
       info->num_threads,
       true);
 
+  info->errors->warn_for_errors();
+
   out.attr("class") = {"hms", "difftime"};
   out.attr("units") = "secs";
 
