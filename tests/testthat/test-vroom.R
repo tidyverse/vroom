@@ -339,7 +339,7 @@ test_that("vroom uses the number of rows when guess_max = Inf", {
   # The type should be guessed wrong, because the character comes at the end
   res <- vroom(tf, delim = "\n", col_types = list())
   expect_type(res[["x"]], "double")
-  expect_true(is.na(res[["x"]][[NROW(res)]]))
+  expect_warning(expect_true(is.na(res[["x"]][[NROW(res)]])))
 
   # The value should exist with guess_max = Inf
   res <- vroom(tf, delim = "\n", guess_max = Inf, col_types = list())
@@ -348,14 +348,18 @@ test_that("vroom uses the number of rows when guess_max = Inf", {
 })
 
 test_that("vroom adds columns if a row is too short", {
-  test_vroom("a,b,c,d\n1,2\n3,4,5,6\n", delim = ",",
+  expect_warning(
+    test_vroom("a,b,c,d\n1,2\n3,4,5,6\n", delim = ",",
     equals = tibble::tibble("a" = c(1,3), "b" = c(2,4), "c" = c(NA, 5), "d" = c(NA, 6))
+    )
   )
 })
 
 test_that("vroom removes columns if a row is too long", {
-  test_vroom("a,b,c,d\n1,2,3,4,5,6,7\n8,9,10,11\n", delim = ",", col_types = c(d = "c"),
-    equals = tibble::tibble("a" = c(1,8), "b" = c(2,9), "c" = c(3, 10), "d" = c("4,5,6,7", "11"))
+  expect_warning(
+    test_vroom("a,b,c,d\n1,2,3,4,5,6,7\n8,9,10,11\n", delim = ",", col_types = c(d = "c"),
+      equals = tibble::tibble("a" = c(1,8), "b" = c(2,9), "c" = c(3, 10), "d" = c("4,5,6,7", "11"))
+    )
   )
 })
 
@@ -385,8 +389,10 @@ test_that("column names are properly encoded", {
 })
 
 test_that("Files with windows newlines and missing fields work", {
-  test_vroom("a,b,c,d\r\nm,\r\n\r\n", delim = ",",
-    equals = tibble::tibble(a = c("m", NA), b = c(NA, NA), c = c(NA, NA), d = c(NA, NA))
+  expect_warning(
+    test_vroom("a,b,c,d\r\nm,\r\n\r\n", delim = ",",
+      equals = tibble::tibble(a = c("m", NA), b = c(NA, NA), c = c(NA, NA), d = c(NA, NA))
+    )
   )
 })
 

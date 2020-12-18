@@ -1,5 +1,7 @@
 test_that("problems with data parsing works for single files", {
-  x <- vroom("x,y\n1,2\n1,1.x\n", col_types = "dd", altrep = FALSE)
+  expect_warning(
+    x <- vroom("x,y\n1,2\n1,1.x\n", col_types = "dd", altrep = FALSE)
+  )
   probs <- problems(x)
 
   expect_equal(probs$row, 3)
@@ -17,7 +19,9 @@ test_that("problems works for multiple files", {
   writeLines("x,y\n1,2\n1,1.x\n2,2", out1)
   writeLines("x,y\n3.x,4\n1,2\n2,2", out2)
 
-  x <- vroom::vroom(c(out1, out2), delim = ",", col_types = "dd", altrep=F)
+  expect_warning(
+    x <- vroom::vroom(c(out1, out2), delim = ",", col_types = "dd", altrep=F)
+  )
   probs <- problems(x)
 
   expect_equal(probs$row, c(3, 2))
