@@ -47,7 +47,7 @@ cpp11::doubles read_big_int(vroom_vec_info* info) {
         auto col = info->column->slice(start, end);
         for (auto b = col->begin(), e = col->end(); b != e; ++b) {
           vroom_big_int_t res;
-          res.ll = vroom_vec::parse_value(
+          res.ll = vroom_vec::parse_value<long long>(
               b, col, vroom_strtoll, info->errors, "a big integer", *info->na);
           out[i++] = res.dbl;
         }

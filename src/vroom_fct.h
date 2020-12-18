@@ -116,7 +116,7 @@ public:
   static int Val(SEXP vec, R_xlen_t i) {
     auto info = Info(vec);
 
-    double out = parse_value(
+    double out = parse_value<double>(
         info.info->column->begin() + i,
         info.info->column,
         [&](const char* begin, const char* end) -> double {

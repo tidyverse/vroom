@@ -148,16 +148,16 @@ public:
     return false;
   }
 
-  template <typename F, typename I, typename C>
+  template <typename V, typename F, typename I, typename C>
   static auto parse_value(
       I itr,
       C col,
       F f,
       std::shared_ptr<vroom_errors>& errors,
       const char* expected,
-      SEXP na) -> decltype(f("", "")) {
+      SEXP na) -> V {
     auto str = *itr;
-    decltype(f("", "")) out = f(str.begin(), str.end());
+    V out = f(str.begin(), str.end());
     if (cpp11::is_na(out) && !is_explicit_na(na, str.begin(), str.end())) {
       errors->add_error(
           itr.index(),

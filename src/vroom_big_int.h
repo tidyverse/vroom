@@ -85,7 +85,7 @@ public:
     auto info = vroom_vec::Info(vec);
 
     vroom_big_int_t res;
-    res.ll = parse_value(
+    res.ll = parse_value<long long>(
         info.column->begin() + i,
         info.column,
         vroom_strtoll,

@@ -45,7 +45,7 @@ cpp11::integers read_int(vroom_vec_info* info) {
         R_xlen_t i = start;
         auto col = info->column->slice(start, end);
         for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-          out[i++] = vroom_vec::parse_value(
+          out[i++] = vroom_vec::parse_value<int>(
               b, col, strtoi, info->errors, "an integer", *info->na);
         }
       },

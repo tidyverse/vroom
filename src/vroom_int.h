@@ -66,7 +66,7 @@ public:
     }
 
     auto& info = vroom_vec::Info(vec);
-    double out = parse_value(
+    int out = parse_value<int>(
         info.column->begin() + i,
         info.column,
         strtoi,

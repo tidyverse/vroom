@@ -66,7 +66,7 @@ public:
                        ? std::string("time in ISO8601")
                        : std::string("time like ") + info->info->format;
 
-    double out = parse_value(
+    double out = parse_value<double>(
         info->info->column->begin() + i,
         info->info->column,
         [&](const char* begin, const char* end) -> double {
