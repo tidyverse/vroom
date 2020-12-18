@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Structure of objects — vroom_str • vroom</title>
+<title>Retrieve parsing problems — problems • vroom</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,11 @@
 
 
 
-<meta property="og:title" content="Structure of objects — vroom_str" />
-<meta property="og:description" content="Similar to str() but with more information for Altrep objects." />
+<meta property="og:title" content="Retrieve parsing problems — problems" />
+<meta property="og:description" content="vroom will only fail to parse a file if the file is invalid in a way that is
+unrecoverable. However there are a number of non-fatal problems that you
+might want to know about. You can retrieve a data frame of these problems
+with this function." />
 <meta property="og:image" content="https://vroom.r-lib.org/logo.png" />
 
 
@@ -149,64 +152,39 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Structure of objects</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vroom/blob/master/R/altrep.R'><code>R/altrep.R</code></a></small>
-    <div class="hidden name"><code>vroom_str.Rd</code></div>
+    <h1>Retrieve parsing problems</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vroom/blob/master/R/problems.R'><code>R/problems.R</code></a></small>
+    <div class="hidden name"><code>problems.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Similar to <code><a href='https://rdrr.io/r/utils/str.html'>str()</a></code> but with more information for Altrep objects.</p>
+    <p>vroom will only fail to parse a file if the file is invalid in a way that is
+unrecoverable. However there are a number of non-fatal problems that you
+might want to know about. You can retrieve a data frame of these problems
+with this function.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vroom_str</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>problems</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>a vector</p></td>
+      <td><p>A data frame from <code><a href='vroom.html'>vroom::vroom()</a></code>.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># when used on non-altrep objects altrep will always be false</span>
-<span class='fu'>vroom_str</span><span class='op'>(</span><span class='va'>mtcars</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 'data.frame': 32 obs., 11 vars.:
-#&gt; $mpg:	altrep:false	type: double	length:32
-#&gt; $cyl:	altrep:false	type: double	length:32
-#&gt; $disp:	altrep:false	type: double	length:32
-#&gt; $hp:	altrep:false	type: double	length:32
-#&gt; $drat:	altrep:false	type: double	length:32
-#&gt; $wt:	altrep:false	type: double	length:32
-#&gt; $qsec:	altrep:false	type: double	length:32
-#&gt; $vs:	altrep:false	type: double	length:32
-#&gt; $am:	altrep:false	type: double	length:32
-#&gt; $gear:	altrep:false	type: double	length:32
-#&gt; $carb:	altrep:false	type: double	length:32</div><div class='input'>
-<span class='va'>mt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vroom.html'>vroom</a></span><span class='op'>(</span><span class='fu'><a href='vroom_example.html'>vroom_example</a></span><span class='op'>(</span><span class='st'>"mtcars.csv"</span><span class='op'>)</span>, <span class='st'>","</span>, altrep <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"chr"</span>, <span class='st'>"dbl"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows:</span><span> 32</span>
-#&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 12</span>
-#&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
-#&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [ 1]: model</span>
-#&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='input'><span class='fu'>vroom_str</span><span class='op'>(</span><span class='va'>mt</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 'tbl_df', 'tbl', and 'data.frame': 32 obs., 12 vars.:
-#&gt; $model:	altrep:true	type:vroom::vroom_chr	length:32	materialized:false
-#&gt; $mpg:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $cyl:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $disp:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $hp:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $drat:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $wt:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $qsec:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $vs:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $am:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $gear:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $carb:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false</div></span></pre>
+    <p>A data frame with one row for each problem and four columns:</p><ul>
+<li><p>row,col - Row and column of problem</p></li>
+<li><p>expected - What vroom expected to find</p></li>
+<li><p>actual - What it actually found</p></li>
+<li><p>file - The file with the problem</p></li>
+</ul>
+
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
