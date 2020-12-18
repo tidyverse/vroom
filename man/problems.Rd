@@ -2,10 +2,25 @@
 % Please edit documentation in R/problems.R
 \name{problems}
 \alias{problems}
-\title{keywords internal}
+\title{Retrieve parsing problems}
 \usage{
 problems(x)
 }
+\arguments{
+\item{x}{A data frame from \code{vroom::vroom()}.}
+}
+\value{
+A data frame with one row for each problem and four columns:
+\itemize{
+\item row,col - Row and column of problem
+\item expected - What vroom expected to find
+\item actual - What it actually found
+\item file - The file with the problem
+}
+}
 \description{
-keywords internal
+vroom will only fail to parse a file if the file is invalid in a way that is
+unrecoverable. However there are a number of non-fatal problems that you
+might want to know about. You can retrieve a data frame of these problems
+with this function.
 }
