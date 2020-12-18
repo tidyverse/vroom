@@ -75,7 +75,9 @@ public:
   void warn_for_errors() const {
     if (!have_warned_ && rows_.size() > 0) {
       have_warned_ = true;
-      Rf_warning("One or more parsing issues, see `problems()` for details");
+      Rf_warningcall(
+          R_NilValue,
+          "One or more parsing issues, see `problems()` for details");
     }
   }
 
