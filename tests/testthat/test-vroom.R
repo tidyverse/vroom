@@ -337,9 +337,9 @@ test_that("vroom uses the number of rows when guess_max = Inf", {
   vroom_write(df, tf, delim = "\t")
 
   # The type should be guessed wrong, because the character comes at the end
-  res <- vroom(tf, delim = "\n", col_types = list())
+  res <- expect_warning(vroom(tf, delim = "\n", col_types = list(), altrep = FALSE))
   expect_type(res[["x"]], "double")
-  expect_warning(expect_true(is.na(res[["x"]][[NROW(res)]])))
+  expect_true(is.na(res[["x"]][[NROW(res)]]))
 
   # The value should exist with guess_max = Inf
   res <- vroom(tf, delim = "\n", guess_max = Inf, col_types = list())

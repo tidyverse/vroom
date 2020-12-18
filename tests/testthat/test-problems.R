@@ -32,32 +32,34 @@ test_that("problems works for multiple files", {
 })
 
 test_that("problems with number of columns works for single files", {
-  probs3 <- problems(vroom("x,y,z\n1,2\n", col_names = TRUE, col_types = "ddd"))
+  probs3 <- expect_warning(problems(vroom("x,y,z\n1,2\n", col_names = TRUE, col_types = "ddd", altrep = FALSE)))
   expect_equal(probs3$row, 2)
   expect_equal(probs3$col, 2)
   expect_equal(probs3$expected, "3 columns")
   expect_equal(probs3$actual, "2 columns")
 
-  probs3 <- problems(vroom("x,y,z\n1,2\n", col_names = FALSE, col_types = "ddd"))
-  expect_equal(probs3$row, 2)
-  expect_equal(probs3$col, 2)
-  expect_equal(probs3$expected, "3 columns")
-  expect_equal(probs3$actual, "2 columns")
+  probs3 <- expect_warning(problems(vroom("x,y,z\n1,2\n", col_names = FALSE, col_types = "ddd", altrep = FALSE)))
+  expect_equal(probs3$row[[4]], 2)
+  expect_equal(probs3$col[[4]], 2)
+  expect_equal(probs3$expected[[4]], "3 columns")
+  expect_equal(probs3$actual[[4]], "2 columns")
 
-  probs4 <- problems(vroom("x,y\n1,2,3,4\n", col_names = TRUE, col_types = "dd"))
-  expect_equal(probs4$row, 2)
-  expect_equal(probs4$col, 4)
-  expect_equal(probs4$expected, "2 columns")
-  expect_equal(probs4$actual, "4 columns")
+  probs4 <- expect_warning(problems(vroom("x,y\n1,2,3,4\n", col_names = TRUE, col_types = "dd", altrep = FALSE)))
+  expect_equal(probs4$row[[2]], 2)
+  expect_equal(probs4$col[[2]], 4)
+  expect_equal(probs4$expected[[2]], "2 columns")
+  expect_equal(probs4$actual[[2]], "4 columns")
 
-  probs2 <- problems(vroom("x,y\n1,2,3,4\n", col_names = FALSE, col_types = "dd"))
-  expect_equal(probs2$row, 2)
-  expect_equal(probs2$col, 4)
-  expect_equal(probs2$expected, "2 columns")
-  expect_equal(probs2$actual, "4 columns")
+  probs2 <- expect_warning(problems(vroom("x,y\n1,2,3,4\n", col_names = FALSE, col_types = "dd", altrep = FALSE)))
+  expect_equal(probs2$row[[4]], 2)
+  expect_equal(probs2$col[[4]], 4)
+  expect_equal(probs2$expected[[4]], "2 columns")
+  expect_equal(probs2$actual[[4]], "4 columns")
 })
 
 test_that("parsing problems are shown for all datatypes", {
+  skip_if(getRversion() < "3.5")
+
   types <- list(
     "an integer" = col_integer(),
     "a big integer" = col_big_integer(),
