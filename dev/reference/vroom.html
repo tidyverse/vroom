@@ -313,8 +313,8 @@ either a character vector of types, <code>TRUE</code> or <code>FALSE</code>. See
     <tr>
       <th>num_threads</th>
       <td><p>Number of threads to use when reading and materializing
-vectors. If your data contains embedded newlines (newlines within fields)
-you <em>must</em> use <code>num_threads = 1</code> to read the data properly.</p></td>
+vectors. If your data contains newlines within fields the parser will
+automatically be forced to use a single thread only.</p></td>
     </tr>
     <tr>
       <th>progress</th>
