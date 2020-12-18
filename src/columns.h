@@ -280,7 +280,7 @@ inline cpp11::list create_columns(
   spec["delim"] = cpp11::writable::strings({idx->get_delim().c_str()});
   spec.attr("class") = "col_spec";
   res.attr("spec") = spec;
-  res.attr("errors") = errors;
+  res.attr("problems") = errors;
 
   return res;
 }
