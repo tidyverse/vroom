@@ -1,5 +1,9 @@
 # vroom (development version)
 
+* Vectors are now subset properly when given invalid subscripts (#283)
+
+* vroom now tracks indexing and parsing errors like readr. The first time an issue is encountered a warning will be signalled. A tibble of all found problems can be retrieved with `vroom::problems()`. (#247)
+
 * Quotes are now only valid next to newlines or delimiters (#224)
 
 * `vroom_write()` now works with all ALTREP vectors, including string vectors (#270)

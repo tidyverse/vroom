@@ -145,7 +145,7 @@ public:
       return nullptr;
     }
 
-    auto idx = get_subset_index(indx);
+    auto idx = get_subset_index(indx, Rf_xlength(x));
 
     if (idx == nullptr) {
       return nullptr;
