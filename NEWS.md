@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Data with newlines within quoted fields will now automatically revert to using a single thread and be properly read (#282)
+
 * Vectors are now subset properly when given invalid subscripts (#283)
 
 * vroom now tracks indexing and parsing errors like readr. The first time an issue is encountered a warning will be signalled. A tibble of all found problems can be retrieved with `vroom::problems()`. (#247)

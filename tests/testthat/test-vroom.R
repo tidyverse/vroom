@@ -529,3 +529,13 @@ test_that("quotes at delimiters are used", {
   expect_equal(z$y[[1]], "foo\"bar")
   expect_equal(z$y[[2]], "baz")
 })
+
+test_that("vroom reads files with embedded newlines even when num_threads > 1", {
+  tf <- tempfile()
+  on.exit(unlink(tf))
+  writeLines(c("x", rep("foo", 1000), '"bar\nbaz"', rep("qux", 1000)), tf)
+
+  res <- vroom(tf, delim = ",", num_threads = 5)
+  expect_equal(nrow(res), 1000 + 1 + 1000)
+  expect_equal(res$x[[1001]], "bar\nbaz")
+})

@@ -54,8 +54,8 @@ recommended when saving data for consumption by excel, as it will force
 excel to read the data with the correct encoding (UTF-8)}
 
 \item{num_threads}{Number of threads to use when reading and materializing
-vectors. If your data contains embedded newlines (newlines within fields)
-you \emph{must} use \code{num_threads = 1} to read the data properly.}
+vectors. If your data contains newlines within fields the parser will
+automatically be forced to use a single thread only.}
 
 \item{progress}{Display a progress bar? By default it will only display
 in an interactive session and not while knitting a document. The display

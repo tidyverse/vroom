@@ -150,7 +150,9 @@ delimited_index_connection::delimited_index_connection(
       cols,
       0,
       errors,
-      empty_pb);
+      empty_pb,
+      1,
+      -1);
 
   columns_ = idx_[0].size() - 1;
 
@@ -186,7 +188,9 @@ delimited_index_connection::delimited_index_connection(
             cols,
             columns_,
             errors,
-            empty_pb);
+            empty_pb,
+            1,
+            -1);
       });
     }
 

@@ -132,90 +132,101 @@ delimited_index::delimited_index(
     num_threads = 1;
   }
 
-  idx_ = std::vector<idx_t>(num_threads + 1);
+start_indexing:
 
-  // Index the first row
-  idx_[0].push_back(start - 1);
-  size_t cols = 0;
-  bool in_quote = false;
-  size_t lines_read = index_region(
-      mmap_,
-      idx_[0],
-      delim_.c_str(),
-      quote,
-      in_quote,
-      start,
-      first_nl + 1,
-      0,
-      n_max,
-      cols,
-      0,
-      errors,
-      pb,
-      -1);
-  columns_ = idx_[0].size() - 1;
+  try {
 
-  std::vector<std::thread> threads;
+    idx_ = std::vector<idx_t>(num_threads + 1);
 
-  if (nmax_set) {
-    threads.emplace_back([&] {
-      n_max -= lines_read;
-      index_region(
-          mmap_,
-          idx_[1],
-          delim_.c_str(),
-          quote,
-          in_quote,
-          first_nl,
-          file_size,
-          0,
-          n_max,
-          cols,
-          columns_,
-          errors,
-          pb,
-          file_size / 100);
-    });
-  } else {
-    threads = parallel_for(
-        file_size - first_nl,
-        [&](size_t start, size_t end, size_t id) {
-          idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
-          start = find_next_newline(mmap_, first_nl + start, false);
-          end = find_next_newline(mmap_, first_nl + end, false) + 1;
-          size_t cols = 0;
-          bool in_quote = false;
-          index_region(
-              mmap_,
-              idx_[id + 1],
-              delim_.c_str(),
-              quote,
-              in_quote,
-              start,
-              end,
-              0,
-              n_max,
-              cols,
-              columns_,
-              errors,
-              pb,
-              file_size / 100);
-        },
+    // Index the first row
+    idx_[0].push_back(start - 1);
+    size_t cols = 0;
+    bool in_quote = false;
+    size_t lines_read = index_region(
+        mmap_,
+        idx_[0],
+        delim_.c_str(),
+        quote,
+        in_quote,
+        start,
+        first_nl + 1,
+        0,
+        n_max,
+        cols,
+        0,
+        errors,
+        pb,
         num_threads,
-        use_threads,
-        false);
-  }
+        -1);
+    columns_ = idx_[0].size() - 1;
 
-  if (progress_) {
+    std::vector<std::future<void>> threads;
+
+    if (nmax_set) {
+      threads.emplace_back(std::async(std::launch::async, [&] {
+        n_max -= lines_read;
+        index_region(
+            mmap_,
+            idx_[1],
+            delim_.c_str(),
+            quote,
+            in_quote,
+            first_nl,
+            file_size,
+            0,
+            n_max,
+            cols,
+            columns_,
+            errors,
+            pb,
+            num_threads,
+            file_size / 100);
+      }));
+    } else {
+      threads = parallel_for(
+          file_size - first_nl,
+          [&](size_t start, size_t end, size_t id) {
+            idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
+            start = find_next_newline(mmap_, first_nl + start, false);
+            end = find_next_newline(mmap_, first_nl + end, false) + 1;
+            size_t cols = 0;
+            bool in_quote = false;
+            index_region(
+                mmap_,
+                idx_[id + 1],
+                delim_.c_str(),
+                quote,
+                in_quote,
+                start,
+                end,
+                0,
+                n_max,
+                cols,
+                columns_,
+                errors,
+                pb,
+                num_threads,
+                file_size / 100);
+          },
+          num_threads,
+          use_threads,
+          false);
+    }
+
+    if (progress_) {
 #ifndef VROOM_STANDALONE
-    pb->display_progress();
+      pb->display_progress();
 #endif
-  }
+    }
 
-  for (auto& t : threads) {
-    t.join();
-  }
+    for (auto& t : threads) {
+      t.get();
+    }
 
+  } catch (newline_error& e) {
+    num_threads = 1;
+    goto start_indexing;
+  }
   size_t total_size = std::accumulate(
       idx_.begin(), idx_.end(), std::size_t{0}, [](size_t sum, const idx_t& v) {
         sum += v.size() > 0 ? v.size() - 1 : 0;

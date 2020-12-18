@@ -10,8 +10,8 @@ NULL
 #'   file. If `NULL` the delimiter is guessed from the set of `c(",", "\t", " ",
 #'   "|", ":", ";")`.
 #' @param num_threads Number of threads to use when reading and materializing
-#'   vectors. If your data contains embedded newlines (newlines within fields)
-#'   you _must_ use `num_threads = 1` to read the data properly.
+#'   vectors. If your data contains newlines within fields the parser will
+#'   automatically be forced to use a single thread only.
 #' @param escape_double Does the file escape quotes by doubling them?
 #'   i.e. If this option is `TRUE`, the value '""' represents
 #'   a single quote, '"'.

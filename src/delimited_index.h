@@ -30,6 +30,7 @@ struct cell {
 
 class delimited_index : public index,
                         public std::enable_shared_from_this<delimited_index> {
+  class newline_error {};
 
 public:
   delimited_index(
@@ -215,7 +216,8 @@ public:
       const size_t num_cols,
       std::shared_ptr<vroom_errors> errors,
       P& pb,
-      const size_t update_size = -1) {
+      const size_t num_threads,
+      const size_t update_size) {
 
     // If there are no quotes quote will be '\0', so will just work
     std::array<char, 5> query = {delim[0], '\n', '\\', quote, '\0'};
@@ -239,6 +241,12 @@ public:
 
       else if (c == '\n') {
         if (in_quote) { // This will work as long as num_threads = 1
+          if (num_threads != 1) {
+            if (progress_ && pb) {
+              pb->finish();
+            }
+            throw newline_error();
+          }
           ++pos;
           continue;
         }
