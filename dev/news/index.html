@@ -131,7 +131,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/r-lib/vroom/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -157,8 +157,9 @@
 <a href="#vroom-development-version" class="anchor"></a>vroom (development version)<small> Unreleased </small>
 </h1>
 <ul>
-<li>
-<code><a href="../reference/vroom_write.html">vroom_write()</a></code> now works with all ALTREP vectors, including string vectors (<a href='https://github.com/r-lib/vroom/issues/270'>#270</a>)</li>
+<li><p>Quotes are now only valid next to newlines or delimiters (<a href='https://github.com/r-lib/vroom/issues/224'>#224</a>)</p></li>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now works with all ALTREP vectors, including string vectors (<a href='https://github.com/r-lib/vroom/issues/270'>#270</a>)</p></li>
+<li><p>An internal call to <code><a href="https://rdrr.io/r/base/environment.html">new.env()</a></code> now correctly uses the <code>parent</code> argument (<a href='https://github.com/r-lib/vroom/issues/281'>#281</a>)</p></li>
 </ul>
 </div>
     <div id="vroom-132" class="section level1">
