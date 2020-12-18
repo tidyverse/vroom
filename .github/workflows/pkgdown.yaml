@@ -36,6 +36,7 @@ jobs:
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
+          install.packages("nycflights13")
           install.packages("pkgdown")
         shell: Rscript {0}
 
