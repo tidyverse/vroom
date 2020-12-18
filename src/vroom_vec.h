@@ -67,7 +67,8 @@ public:
     return STDVEC_DATAPTR(data2);
   }
 
-  static std::shared_ptr<std::vector<size_t>> get_subset_index(SEXP indx) {
+  static std::shared_ptr<std::vector<size_t>>
+  get_subset_index(SEXP indx, R_xlen_t x_len) {
     auto idx = std::make_shared<std::vector<size_t>>();
     R_xlen_t n = Rf_xlength(indx);
     idx->reserve(n);
@@ -79,14 +80,14 @@ public:
       switch (TYPEOF(indx)) {
       case INTSXP:
         i_val = INTEGER_ELT(indx, i);
-        if (i_val == NA_INTEGER) {
+        if (i_val == NA_INTEGER || i_val >= x_len) {
           return nullptr;
         }
         idx->push_back(i_val - 1);
         break;
       case REALSXP:
         d_val = REAL_ELT(indx, i);
-        if (ISNA(d_val)) {
+        if (ISNA(d_val) || d_val >= x_len) {
           return nullptr;
         }
         idx->push_back(d_val - 1);
@@ -117,7 +118,7 @@ public:
     {
       auto& inf = Info(x);
 
-      auto idx = get_subset_index(indx);
+      auto idx = get_subset_index(indx, Rf_xlength(x));
 
       if (idx == nullptr) {
         return nullptr;
