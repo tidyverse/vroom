@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   benchmarks: benchmarks.html
   vroom: vroom.html
-last_built: 2020-12-18T21:27Z
+last_built: 2020-12-21T14:11Z
 urls:
   reference: https://vroom.r-lib.org/reference
   article: https://vroom.r-lib.org/articles
