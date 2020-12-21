@@ -117,14 +117,14 @@ public:
       switch (TYPEOF(indx)) {
       case INTSXP:
         i_val = INTEGER_ELT(indx, i);
-        if (i_val == NA_INTEGER || i_val >= x_len) {
+        if (i_val == NA_INTEGER || i_val > x_len) {
           return nullptr;
         }
         idx->push_back(i_val - 1);
         break;
       case REALSXP:
         d_val = REAL_ELT(indx, i);
-        if (ISNA(d_val) || d_val >= x_len) {
+        if (ISNA(d_val) || d_val > x_len) {
           return nullptr;
         }
         idx->push_back(d_val - 1);
