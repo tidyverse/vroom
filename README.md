@@ -6,15 +6,13 @@
 <!-- badges: start -->
 
 [![R build
-status](https://github.com/r-lib/vroom/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/vroom)
+status](https://github.com/r-lib/vroom/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/vroom/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/r-lib/vroom/branch/master/graph/badge.svg)](https://codecov.io/gh/r-lib/vroom?branch=master)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/package=vroom)
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![R build
-status](https://github.com/r-lib/vroom/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/vroom/actions)
 <!-- badges: end -->
 
 The fastest delimited reader for R, **1.48 GB/sec**.
@@ -245,4 +243,4 @@ issue, so it is recommended you use at least that version.
   - [Matt Dowle](https://twitter.com/mattdowle) and the rest of the
     [Rdatatable](https://github.com/Rdatatable) team,
     `data.table::fread()` is blazing fast and great motivation to see
-    how fast we could goo faster\!
+    how fast we could go faster\!
