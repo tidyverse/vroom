@@ -1,5 +1,3 @@
-context("test-factor")
-
 test_that("strings mapped to levels", {
   test_vroom("a\nb\n", col_names = FALSE,
     col_types = list(X1 = col_factor(levels = c("a", "b"))),
@@ -17,9 +15,11 @@ test_that("can generate ordered factor", {
 })
 
 test_that("NA if value not in levels", {
-  test_vroom("a\nb\nc\n", col_names = FALSE,
-    col_types = list(X1 = col_factor(levels = c("a", "b"))),
-    equals = tibble::tibble(X1 = factor(c("a", "b", NA)))
+  expect_warning(
+    test_vroom("a\nb\nc\n", col_names = FALSE,
+      col_types = list(X1 = col_factor(levels = c("a", "b"))),
+      equals = tibble::tibble(X1 = factor(c("a", "b", NA)))
+    )
   )
 })
 
@@ -69,7 +69,7 @@ test_that("NAs included in levels if desired", {
 
   test_vroom("NA\nb\na\n", col_names = FALSE,
     col_types = list(X1 = col_factor(levels = NULL, include_na = TRUE)),
-    equals = tibble::tibble(X1 = factor(c(NA, "b", "a"), levels = c("b", "a", NA), exclude = NULL))
+    equals = tibble::tibble(X1 = factor(c(NA, "b", "a"), levels = c(NA, "b", "a"), exclude = NULL))
   )
 })
 
@@ -83,13 +83,17 @@ test_that("NAs included in levels if desired", {
 #})
 
 test_that("factors parse like factor if trim_ws = FALSE", {
-  test_vroom("a\na \n", col_names = FALSE, trim_ws = FALSE,
-    col_types = list(X1 = col_factor(levels = "a")),
-    equals = tibble::tibble(X1 = factor(c("a", "a "), levels = c("a")))
+  expect_warning(
+    test_vroom("a\na \n", col_names = FALSE, trim_ws = FALSE,
+      col_types = list(X1 = col_factor(levels = "a")),
+      equals = tibble::tibble(X1 = factor(c("a", "a "), levels = c("a")))
+    )
   )
-  test_vroom("a\na \n", col_names = FALSE, trim_ws = FALSE,
-    col_types = list(X1 = col_factor(levels = "a ")),
-    equals = tibble::tibble(X1 = factor(c("a", "a "), levels = c("a ")))
+  expect_warning(
+    test_vroom("a\na \n", col_names = FALSE, trim_ws = FALSE,
+      col_types = list(X1 = col_factor(levels = "a ")),
+      equals = tibble::tibble(X1 = factor(c("a", "a "), levels = c("a ")))
+    )
   )
   test_vroom("a\na \n", col_names = FALSE, trim_ws = FALSE,
     col_types = list(X1 = col_factor(levels = c("a ", "a"))),
@@ -135,4 +139,13 @@ test_that("Results are correct with backslash escapes", {
 
   obj2 <- vroom("A,T\nB,F\n", col_names = FALSE, col_types = list("f", "f"), escape_backslash = FALSE)
   expect_equal(obj2, exp)
+})
+
+
+test_that("subsetting works with both double and integer indexes", {
+  x <- vroom("X1\nfoo", delim = ",", col_types = "f")
+  expect_equal(x$X1[1L], factor("foo"))
+  expect_equal(x$X1[1], factor("foo"))
+  expect_equal(x$X1[NA_integer_], factor(NA_character_, levels = "foo"))
+  expect_equal(x$X1[NA_real_], factor(NA_character_, levels = "foo"))
 })

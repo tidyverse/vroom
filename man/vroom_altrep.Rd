@@ -18,7 +18,7 @@ argument of \code{\link[=vroom]{vroom()}}.
 \details{
 Alternatively there is also a family of environment variables to control use of
 the Altrep framework. These can then be set in your \code{.Renviron} file, e.g.
-with \code{\link[usethis:edit_r_environ]{usethis::edit_r_environ()}}. For versions of R where the Altrep
+with \code{usethis::edit_r_environ()}. For versions of R where the Altrep
 framework is unavailable (R < 3.5.0) they are automatically turned off and
 the variables have no effect. The variables can take one of \code{true}, \code{false},
 \code{TRUE}, \code{FALSE}, \code{1}, or \code{0}.

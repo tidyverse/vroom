@@ -1,7 +1,6 @@
-#include <Rcpp.h>
-using namespace Rcpp;
-
 #include "Iconv.h"
+#include <cpp11/protect.hpp>
+#include <string.h>
 
 Iconv::Iconv(const std::string& from, const std::string& to) {
   if (from == "UTF-8") {
@@ -10,9 +9,9 @@ Iconv::Iconv(const std::string& from, const std::string& to) {
     cd_ = Riconv_open(to.c_str(), from.c_str());
     if (cd_ == (void*)-1) {
       if (errno == EINVAL) {
-        stop("Can't convert from %s to %s", from, to);
+        cpp11::stop("Can't convert from %s to %s", from.c_str(), to.c_str());
       } else {
-        stop("Iconv initialisation failed");
+        cpp11::stop("Iconv initialisation failed");
       }
     }
 
@@ -44,13 +43,13 @@ size_t Iconv::convert(const char* start, const char* end) {
   if (res == (size_t)-1) {
     switch (errno) {
     case EILSEQ:
-      stop("Invalid multibyte sequence");
+      cpp11::stop("Invalid multibyte sequence");
     case EINVAL:
-      stop("Incomplete multibyte sequence");
+      cpp11::stop("Incomplete multibyte sequence");
     case E2BIG:
-      stop("Iconv buffer too small");
+      cpp11::stop("Iconv buffer too small");
     default:
-      stop("Iconv failed to convert for unknown reason");
+      cpp11::stop("Iconv failed to convert for unknown reason");
     }
   }
 

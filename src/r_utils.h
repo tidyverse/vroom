@@ -2,30 +2,25 @@
 
 #include "utils.h"
 
-#include <Rcpp.h>
+#include <cpp11/R.hpp>
+#include <cpp11/as.hpp>
+#include <cpp11/function.hpp>
+
+#include <string>
+#include <vector>
 
 namespace vroom {
 
 inline std::string
 get_pb_format(const std::string& which, const std::string& filename = "") {
-  Rcpp::Function fun = Rcpp::Environment::namespace_env(
-      "vroom")[std::string("pb_") + which + "_format"];
-  return Rcpp::as<std::string>(fun(filename));
+  auto fun_name = std::string("pb_") + which + "_format";
+  auto fun = cpp11::package("vroom")[fun_name.c_str()];
+  return cpp11::as_cpp<std::string>(fun(filename));
 }
 
 inline int get_pb_width(const std::string& format) {
-  Rcpp::Function fun = Rcpp::Environment::namespace_env("vroom")["pb_width"];
-  return Rcpp::as<int>(fun(format));
-}
-
-inline void rethrow_rcpp_eval_error(const Rcpp::eval_error& e) {
-  std::string msg = e.what();
-  // Remove "Evaluation error: "
-  msg.erase(0, 18);
-  // Remove trailing period
-  msg.erase(msg.length() - 1);
-
-  throw Rcpp::exception(msg.c_str(), false);
+  auto pb_width = cpp11::package("vroom")["pb_width"];
+  return cpp11::as_cpp<int>(pb_width(format));
 }
 
 template <typename T>
@@ -46,14 +41,10 @@ static char guess_delim(
     --guess_max;
   }
 
-  Rcpp::Function fun = Rcpp::Environment::namespace_env("vroom")["guess_delim"];
+  auto guess_delim = cpp11::package("vroom")["guess_delim"];
 
   char delim;
-  try {
-    delim = Rcpp::as<char>(fun(lines));
-  } catch (const Rcpp::eval_error& e) {
-    rethrow_rcpp_eval_error(e);
-  }
+  delim = cpp11::as_cpp<char>(guess_delim(lines));
   return delim;
 }
 

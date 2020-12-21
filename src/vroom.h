@@ -23,8 +23,8 @@ enum column_type {
   Dttm = 64,
   Date = 128,
   Time = 256,
-  Skip = 512,
-  BigInt = 1024
+  BigInt = 512,
+  Skip = 1024
 };
 
 // A custom string wrapper that avoids constructing a string object unless

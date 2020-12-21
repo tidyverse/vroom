@@ -1,15 +1,15 @@
 #pragma once
 
-#include <Rcpp.h>
+#include <cpp11/strings.hpp>
 
 #include "altrep.h"
+
 #include "vroom_vec.h"
 
-Rcpp::CharacterVector read_chr(vroom_vec_info* info);
+cpp11::strings read_chr(vroom_vec_info* info);
+SEXP check_na(SEXP na, SEXP val);
 
 #ifdef HAS_ALTREP
-
-using namespace Rcpp;
 
 struct vroom_chr : vroom_vec {
 
@@ -35,12 +35,8 @@ public:
   // ALTREP methods -------------------
 
   // What gets printed when .Internal(inspect()) is used
-  static Rboolean Inspect(
-      SEXP x,
-      int pre,
-      int deep,
-      int pvec,
-      void (*inspect_subtree)(SEXP, int, int, int)) {
+  static Rboolean
+  Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
         "vroom_chr (len=%d, materialized=%s)\n",
         Length(x),
@@ -56,23 +52,8 @@ public:
     auto str = Get(vec, i);
 
     auto val = inf.locale->encoder_.makeSEXP(str.begin(), str.end(), false);
-    val = check_na(vec, val);
+    val = check_na(*inf.na, val);
 
-    return val;
-  }
-
-  static SEXP check_na(SEXP vec, SEXP val) {
-    auto& inf = Info(vec);
-
-    // Look for NAs
-    for (const auto& v : *inf.na) {
-      // We can just compare the addresses directly because they should now
-      // both be in the global string cache.
-      if (v == val) {
-        val = NA_STRING;
-        break;
-      }
-    }
     return val;
   }
 
@@ -107,7 +88,7 @@ public:
     return out;
   }
 
-  static void* Dataptr(SEXP vec, Rboolean writeable) {
+  static void* Dataptr(SEXP vec, Rboolean) {
     return STDVEC_DATAPTR(Materialize(vec));
   }
 
@@ -132,6 +113,5 @@ public:
 
 #endif
 
-// Called the package is loaded (needs Rcpp 0.12.18.3)
-// [[Rcpp::init]]
-void init_vroom_chr(DllInfo* dll);
+// Called the package is loaded
+[[cpp11::init]] void init_vroom_chr(DllInfo* dll);

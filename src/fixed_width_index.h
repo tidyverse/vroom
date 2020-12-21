@@ -26,6 +26,8 @@
 #include "spdlog/spdlog.h"
 #endif
 
+#include "unicode_fopen.h"
+
 namespace vroom {
 
 class fixed_width_index
@@ -40,6 +42,7 @@ protected:
   mio::mmap_source mmap_;
   bool trim_ws_;
   bool windows_newlines_;
+  std::string filename_;
 
 public:
   fixed_width_index(
@@ -51,17 +54,20 @@ public:
       const char comment,
       const size_t n_max,
       const bool progress)
-      : col_starts_(col_starts), col_ends_(col_ends), trim_ws_(trim_ws) {
+      : col_starts_(col_starts),
+        col_ends_(col_ends),
+        trim_ws_(trim_ws),
+        filename_(filename) {
 
     std::error_code error;
-    mmap_ = mio::make_mmap_source(filename, error);
+    mmap_ = make_mmap_source(filename, error);
 
     if (error) {
       // We cannot actually portably compare error messages due to a bug in
       // libstdc++ (https://stackoverflow.com/a/54316671/2055486), so just print
       // the message on stderr return
 #ifndef VROOM_STANDALONE
-      Rcpp::Rcerr << "mapping error: " << error.message() << '\n';
+      REprintf("mapping error: %s\n", error.message().c_str());
 #else
       std::cerr << "mapping error: " << error.message() << '\n';
 #endif
@@ -167,6 +173,9 @@ public:
     string value() const { return idx_->get(i_, column_); }
     column_iterator* clone() const { return new column_iterator(*this); }
     string at(ptrdiff_t n) const { return idx_->get(n, column_); }
+    std::string filename() const { return idx_->filename_; }
+    size_t index() const { return i_ / idx_->num_columns(); }
+    size_t position() const { return i_; }
     virtual ~column_iterator() = default;
   };
 
@@ -175,7 +184,7 @@ public:
     auto end = new column_iterator(shared_from_this(), column);
     end->advance(num_rows());
 
-    return std::make_shared<vroom::index::column>(begin, end);
+    return std::make_shared<vroom::index::column>(begin, end, column);
   }
 
   template <typename T>
@@ -220,7 +229,7 @@ public:
     return lines_read;
   }
 
-  std::shared_ptr<vroom::index::row> get_row(size_t row) const {
+  std::shared_ptr<vroom::index::row> get_row(size_t) const {
     // TODO: UNUSED
     return nullptr;
   }
@@ -228,5 +237,7 @@ public:
     // TODO: UNUSED
     return nullptr;
   }
+
+  std::string filename() const { return filename_; }
 };
 } // namespace vroom

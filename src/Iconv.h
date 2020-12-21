@@ -1,9 +1,11 @@
 #ifndef READ_ICONV_H_
 #define READ_ICONV_H_
 
+#include <cpp11/R.hpp>
+
 #include "R_ext/Riconv.h"
-#include <Rcpp.h>
 #include <errno.h>
+#include <string>
 
 class Iconv {
   void* cd_;

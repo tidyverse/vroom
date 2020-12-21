@@ -1,16 +1,27 @@
 #pragma once
 
+#include <cpp11/doubles.hpp>
+
 #include "altrep.h"
-
-#include "vroom_vec.h"
-
-#include <Rcpp.h>
 
 #define NA_INTEGER64 (0x8000000000000000)
 
-long long strtoll(const char* begin, const char* end);
+namespace cpp11 {
+inline bool is_na(long long x) {
+  return x == static_cast<long long>(NA_INTEGER64);
+}
+} // namespace cpp11
 
-Rcpp::NumericVector read_big_int(vroom_vec_info* info);
+#include "vroom_vec.h"
+
+long long vroom_strtoll(const char* begin, const char* end);
+
+cpp11::doubles read_big_int(vroom_vec_info* info);
+
+union vroom_big_int_t {
+  long long ll;
+  double dbl;
+};
 
 #ifdef HAS_ALTREP
 
@@ -24,9 +35,9 @@ public:
     SEXP out = PROTECT(R_MakeExternalPtr(info, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(out, vroom_vec::Finalize, FALSE);
 
-    Rcpp::RObject res = R_new_altrep(class_t, out, R_NilValue);
+    cpp11::sexp res = R_new_altrep(class_t, out, R_NilValue);
 
-    res.attr("class") = Rcpp::CharacterVector::create("integer64");
+    res.attr("class") = {"integer64"};
 
     UNPROTECT(1);
 
@@ -38,12 +49,8 @@ public:
   // ALTREP methods -------------------
 
   // What gets printed when .Internal(inspect()) is used
-  static Rboolean Inspect(
-      SEXP x,
-      int pre,
-      int deep,
-      int pvec,
-      void (*inspect_subtree)(SEXP, int, int, int)) {
+  static Rboolean
+  Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
         "vroom_big_int (len=%d, materialized=%s)\n",
         Length(x),
@@ -75,13 +82,23 @@ public:
       return REAL(data2)[i];
     }
 
-    auto str = vroom_vec::Get(vec, i);
+    auto info = vroom_vec::Info(vec);
 
-    long long res = strtoll(str.begin(), str.end());
-    return *reinterpret_cast<double*>(&res);
+    vroom_big_int_t res;
+    res.ll = parse_value<long long>(
+        info.column->begin() + i,
+        info.column,
+        vroom_strtoll,
+        info.errors,
+        "a big integer",
+        *info.na);
+
+    info.errors->warn_for_errors();
+
+    return res.dbl;
   }
 
-  static void* Dataptr(SEXP vec, Rboolean writeable) {
+  static void* Dataptr(SEXP vec, Rboolean) {
     return STDVEC_DATAPTR(Materialize(vec));
   }
 
@@ -105,6 +122,5 @@ public:
 };
 #endif
 
-// Called the package is loaded (needs Rcpp 0.12.18.3)
-// [[Rcpp::init]]
-void init_vroom_big_int(DllInfo* dll);
+// Called the package is loaded
+[[cpp11::init]] void init_vroom_big_int(DllInfo* dll);

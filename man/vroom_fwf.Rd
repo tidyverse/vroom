@@ -41,8 +41,8 @@ fwf_cols(...)
 (either a single string or a raw vector).
 
 Files ending in \code{.gz}, \code{.bz2}, \code{.xz}, or \code{.zip} will
-be automatically uncompressed. Files starting with \code{http://},
-\code{https://}, \code{ftp://}, or \code{ftps://} will be automatically
+be automatically uncompressed. Files starting with \verb{http://},
+\verb{https://}, \verb{ftp://}, or \verb{ftps://} will be automatically
 downloaded. Remote gz files can also be automatically downloaded and
 decompressed.
 
@@ -52,9 +52,9 @@ vector of greater than length 1.
 
 Using a value of \code{\link[readr:clipboard]{clipboard()}} will read from the system clipboard.}
 
-\item{col_positions}{Column positions, as created by \code{\link[readr:fwf_empty]{fwf_empty()}},
-\code{\link[readr:fwf_widths]{fwf_widths()}} or \code{\link[readr:fwf_positions]{fwf_positions()}}. To read in only selected fields,
-use \code{\link[readr:fwf_positions]{fwf_positions()}}. If the width of the last column is variable (a
+\item{col_positions}{Column positions, as created by \code{\link[readr:read_fwf]{fwf_empty()}},
+\code{\link[readr:read_fwf]{fwf_widths()}} or \code{\link[readr:read_fwf]{fwf_positions()}}. To read in only selected fields,
+use \code{\link[readr:read_fwf]{fwf_positions()}}. If the width of the last column is variable (a
 ragged fwf file), supply the last end position as NA.}
 
 \item{col_types}{One of \code{NULL}, a \code{\link[readr:cols]{cols()}} specification, or
@@ -66,13 +66,27 @@ imputation fails, you'll need to supply the correct types yourself.
 
 If a column specification created by \code{\link[readr:cols]{cols()}}, it must contain
 one column specification for each column. If you only want to read a
-subset of the columns, use \code{\link[readr:cols_only]{cols_only()}}.
+subset of the columns, use \code{\link[readr:cols]{cols_only()}}.
 
 Alternatively, you can use a compact string representation where each
 character represents one column:
-c = character, i = integer, n = number, d = double,
-l = logical, f = factor, D = date, T = date time, t = time, ? = guess, or
-\code{_}/\code{-} to skip the column.}
+\itemize{
+\item c = character
+\item i = integer
+\item n = number
+\item d = double
+\item l = logical
+\item f = factor
+\item D = date
+\item T = date time
+\item t = time
+\item ? = guess
+\item _ or - = skip
+
+By default, reading a file without a column specification will print a
+message showing what \code{readr} guessed they were. To remove this message,
+use \code{col_types = cols()}.
+}}
 
 \item{col_select}{One or more selection expressions, like in
 \code{dplyr::select()}. Use \code{c()} or \code{list()} to use more than one expression.
@@ -110,8 +124,8 @@ either a character vector of types, \code{TRUE} or \code{FALSE}. See
 \item{altrep_opts}{\Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}}
 
 \item{num_threads}{Number of threads to use when reading and materializing
-vectors. If your data contains embedded newlines (newlines within fields)
-you \emph{must} use \code{num_threads = 1} to read the data properly.}
+vectors. If your data contains newlines within fields the parser will
+automatically be forced to use a single thread only.}
 
 \item{progress}{Display a progress bar? By default it will only display
 in an interactive session and not while knitting a document. The display

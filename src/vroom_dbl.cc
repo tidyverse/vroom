@@ -191,26 +191,31 @@ double bsd_strtod(const char* begin, const char* end) {
     fraction *= dblExp;
 
 done:
+  if (p != end) {
+    return NA_REAL;
+  }
   return sign ? -fraction : fraction;
 }
 
-Rcpp::NumericVector read_dbl(vroom_vec_info* info) {
+cpp11::doubles read_dbl(vroom_vec_info* info) {
 
   R_xlen_t n = info->column->size();
 
-  Rcpp::NumericVector out(n);
+  cpp11::writable::doubles out(n);
 
   parallel_for(
       n,
-      [&](size_t start, size_t end, size_t id) {
-        size_t i = start;
+      [&](size_t start, size_t end, size_t) {
+        R_xlen_t i = start;
         auto col = info->column->slice(start, end);
-        for (const auto& str : *col) {
-          out[i++] = bsd_strtod(str.begin(), str.end());
+        for (auto b = col->begin(), e = col->end(); b != e; ++b) {
+          out[i++] = parse_value<double>(
+              b, col, bsd_strtod, info->errors, "a double", *info->na);
         }
       },
-      info->num_threads,
-      true);
+      info->num_threads);
+
+  info->errors->warn_for_errors();
 
   return out;
 }

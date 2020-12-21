@@ -2,6 +2,10 @@
 #define FASTREAD_LOCALINFO
 
 #include "Iconv.h"
+#include <string>
+#include <vector>
+
+#include <cpp11/list.hpp>
 
 class LocaleInfo {
 
@@ -18,7 +22,7 @@ public:
   std::string encoding_;
   Iconv encoder_;
 
-  LocaleInfo(Rcpp::List);
+  LocaleInfo(cpp11::list);
 };
 
 #endif

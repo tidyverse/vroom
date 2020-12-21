@@ -19,32 +19,20 @@ vroom_write(
 )
 }
 \arguments{
-\item{x}{A data frame to write to disk}
+\item{x}{A data frame or tibble to write to disk.}
 
-\item{path}{Path or connection to write to.}
+\item{path}{\Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}}
 
 \item{delim}{Delimiter used to separate values. Defaults to \verb{\\t} to write
 tab separated value (TSV) files.}
 
 \item{na}{String used for missing values. Defaults to 'NA'.}
 
-\item{col_names}{Either \code{TRUE}, \code{FALSE} or a character vector
-of column names.
-
-If \code{TRUE}, the first row of the input will be used as the column
-names, and will not be included in the data frame. If \code{FALSE}, column
-names will be generated automatically: X1, X2, X3 etc.
-
-If \code{col_names} is a character vector, the values will be used as the
-names of the columns, and the first row of the input will be read into
-the first row of the output data frame.
-
-Missing (\code{NA}) column names will generate a warning, and be filled
-in with dummy names \code{X1}, \code{X2} etc. Duplicate column names
-will generate a warning and be made unique with a numeric prefix.}
+\item{col_names}{If \code{FALSE}, column names will not be included at the top of the file. If \code{TRUE},
+column names will be included. If not specified, \code{col_names} will take the opposite value given to \code{append}.}
 
 \item{append}{If \code{FALSE}, will overwrite existing file. If \code{TRUE},
-will append to existing file. In both cases, if file does not exist a new
+will append to existing file. In both cases, if the file does not exist a new
 file is created.}
 
 \item{quote}{How to handle fields which contain characters that need to be quoted.
@@ -66,8 +54,8 @@ recommended when saving data for consumption by excel, as it will force
 excel to read the data with the correct encoding (UTF-8)}
 
 \item{num_threads}{Number of threads to use when reading and materializing
-vectors. If your data contains embedded newlines (newlines within fields)
-you \emph{must} use \code{num_threads = 1} to read the data properly.}
+vectors. If your data contains newlines within fields the parser will
+automatically be forced to use a single thread only.}
 
 \item{progress}{Display a progress bar? By default it will only display
 in an interactive session and not while knitting a document. The display

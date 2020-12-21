@@ -1,10 +1,9 @@
-#include <Rcpp.h>
+#include <cpp11/strings.hpp>
+
 #include <random>
+#include <string>
 
-using namespace Rcpp;
-
-// [[Rcpp::export]]
-CharacterVector gen_character_(
+[[cpp11::register]] cpp11::strings gen_character_(
     int n,
     int min,
     int max,
@@ -14,7 +13,7 @@ CharacterVector gen_character_(
   std::mt19937 gen1(seed);
   std::mt19937 gen2(seed2);
 
-  CharacterVector out(n);
+  cpp11::writable::strings out(n);
 
   std::uniform_int_distribution<> char_dis(0, values.length() - 1);
 
@@ -27,7 +26,7 @@ CharacterVector gen_character_(
       auto c = char_dis(gen2);
       str.push_back(values[c]);
     }
-    out[i] = str;
+    out[i] = str.c_str();
   }
 
   return out;

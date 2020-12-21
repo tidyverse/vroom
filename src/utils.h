@@ -2,6 +2,7 @@
 
 #include <array>
 #include <sstream>
+#include <string.h>
 
 namespace vroom {
 
@@ -82,7 +83,7 @@ template <typename T> T get_env(const char* name, T default_value) {
 }
 
 inline bool is_space(const char* c) {
-  return *c == ' ' || *c == '\t' || *c == '\0';
+  return *c == ' ' || *c == '\t' || *c == '\0' || *c == '\r';
 }
 
 inline void trim_whitespace(const char*& begin, const char*& end) {

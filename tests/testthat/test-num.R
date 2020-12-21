@@ -1,5 +1,3 @@
-context("test-num.R")
-
 # Flexible number parsing -------------------------------------------------
 test_that("col_number only takes first number", {
   test_parse_number("XYZ 123,000 BLAH 456", 123000)
@@ -13,5 +11,7 @@ test_that("col_number helps with currency", {
 })
 
 test_that("invalid numbers don't parse", {
-  test_parse_number(c("..", "--", "3.3.3", "4-1"), c(NA, NA, 3.3, 4.0))
+  expect_warning(
+    test_parse_number(c("..", "--", "3.3.3", "4-1"), c(NA, NA, 3.3, 4.0))
+  )
 })

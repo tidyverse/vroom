@@ -1,6 +1,60 @@
 # vroom (development version)
 
+* Data with newlines within quoted fields will now automatically revert to using a single thread and be properly read (#282)
+
+* Vectors are now subset properly when given invalid subscripts (#283)
+
+* vroom now tracks indexing and parsing errors like readr. The first time an issue is encountered a warning will be signaled. A tibble of all found problems can be retrieved with `vroom::problems()`. (#247)
+
+* Quotes are now only valid next to newlines or delimiters (#224)
+
+* `vroom_write()` now works with all ALTREP vectors, including string vectors (#270)
+
+* An internal call to `new.env()` now correctly uses the `parent` argument (#281)
+
+# vroom 1.3.2
+
+* Test failures on R 4.1 related to factors with NA values fixed (#262)
+
+* `vroom()` now works without error with readr versions of col specs (#256, #264, #266)
+
+# vroom 1.3.1
+
+* Test failures on R 4.1 related to POSIXct classes fixed (#260)
+
+* Column subsetting with double indexes now works again (#257)
+
+* `vroom(n_max=)` now only partially downloads files from connections, as intended (#259)
+
+# vroom 1.3.0
+
+* The Rcpp dependency has been removed in favor of cpp11.
+
+* `vroom()` now handles cases when `id` is set and a column in skipped (#237)
+
+* `vroom()` now supports column selections when there are some empty column names (#238)
+
+* `vroom()` argument `n_max` now works properly for files with windows newlines and no final newline (#244)
+
+* Subsetting vectors now works with `View()` in RStudio if there are now rows to subset (#253).
+
+* Subsetting datetime columns now works with `NA` indices (#236).
+
+# vroom 1.2.1
+
+* `vroom()` now writes the column names if given an input with no rows (#213)
+
 * `vroom()` columns now support indexing with NA values (#201)
+
+* `vroom()` no longer truncates the last value in a file if the file contains windows newlines but no final newline (#219).
+
+* `vroom()` now works when the `na` argument is encoded in non ASCII or UTF-8 locales _and_ the file encoding is not the same as the native encoding (#233).
+
+* `vroom_fwf()` now verifies that the positions are valid, namely that the begin value is always less than the previous end (#217).
+
+* `vroom_lines()` gains a `locale` argument so you can control the encoding of the file (#218)
+
+* `vroom_write()` now supports the `append` argument with R connections (#232)
 
 # vroom 1.2.0
 

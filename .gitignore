@@ -9,3 +9,5 @@ vroom*.tgz
 logs/
 script.R
 presentation/
+compile_commands.json
+.clangd/

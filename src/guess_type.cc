@@ -1,5 +1,5 @@
-#include <Rcpp.h>
-using namespace Rcpp;
+#include <cpp11/list.hpp>
+#include <cpp11/strings.hpp>
 
 #include "DateTime.h"
 #include "DateTimeParser.h"
@@ -12,7 +12,7 @@ using namespace Rcpp;
 typedef bool (*canParseFun)(const std::string&, LocaleInfo* pLocale);
 
 bool canParse(
-    CharacterVector x, const canParseFun& canParse, LocaleInfo* pLocale) {
+    cpp11::strings x, const canParseFun& canParse, LocaleInfo* pLocale) {
   for (int i = 0; i < x.size(); ++i) {
     if (x[i] == NA_STRING)
       continue;
@@ -26,7 +26,7 @@ bool canParse(
   return true;
 }
 
-bool allMissing(CharacterVector x) {
+bool allMissing(cpp11::strings x) {
   for (int i = 0; i < x.size(); ++i) {
     if (x[i] != NA_STRING && x[i].size() > 0)
       return false;
@@ -34,7 +34,7 @@ bool allMissing(CharacterVector x) {
   return true;
 }
 
-bool isLogical(const std::string& x, LocaleInfo* pLocale) {
+bool isLogical(const std::string& x, LocaleInfo* /* pLocale */) {
   const char* const str = x.data();
   int res = parse_logical(str, str + x.size());
   return res != NA_LOGICAL;
@@ -46,12 +46,12 @@ bool isNumber(const std::string& x, LocaleInfo* pLocale) {
     return false;
 
   auto str = vroom::string(x);
-  auto num = parse_num(str, *pLocale, true);
+  auto num = parse_num(str.begin(), str.end(), *pLocale, true);
 
   return !ISNA(num);
 }
 
-bool isInteger(const std::string& x, LocaleInfo* pLocale) {
+bool isInteger(const std::string& x, LocaleInfo* /* pLocale */) {
   // Leading zero
   if (x[0] == '0' && x.size() > 1)
     return false;
@@ -106,8 +106,8 @@ static bool isDateTime(const std::string& x, LocaleInfo* pLocale) {
 }
 
 std::string guess_type__(
-    CharacterVector input,
-    CharacterVector na,
+    cpp11::writable::strings input,
+    cpp11::strings na,
     LocaleInfo* pLocale,
     bool guess_integer = false) {
 
@@ -148,11 +148,10 @@ std::string guess_type__(
   return "character";
 }
 
-// [[Rcpp::export]]
-std::string guess_type_(
-    CharacterVector input,
-    CharacterVector na,
-    List locale,
+[[cpp11::register]] std::string guess_type_(
+    cpp11::strings input,
+    cpp11::strings na,
+    cpp11::list locale,
     bool guess_integer = false) {
   LocaleInfo locale_(locale);
   return guess_type__(input, na, &locale_, guess_integer);

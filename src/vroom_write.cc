@@ -1,12 +1,18 @@
 #include "grisu3.h"
-#include <Rcpp.h>
 #include <array>
 #include <future>
 #include <iterator>
 
+#include <cpp11/R.hpp>
+#include <cpp11/function.hpp>
+#include <cpp11/list.hpp>
+#include <cpp11/strings.hpp>
+
 #include "RProgress.h"
 #include "connection.h"
 #include "r_utils.h"
+
+#include "unicode_fopen.h"
 
 typedef enum {
   quote_needed = 1,
@@ -17,7 +23,7 @@ typedef enum {
 } vroom_write_opt_t;
 
 size_t get_buffer_size(
-    const Rcpp::List& input,
+    const cpp11::list& input,
     const std::vector<SEXPTYPE>& types,
     size_t start,
     size_t end) {
@@ -42,7 +48,7 @@ size_t get_buffer_size(
 
   size_t num_rows = end - start;
 
-  for (int i = 0; i < input.length(); ++i) {
+  for (int i = 0; i < input.size(); ++i) {
     switch (types[i]) {
     case STRSXP: {
       for (size_t j = start; j < end; ++j) {
@@ -64,7 +70,7 @@ size_t get_buffer_size(
   }
 
   // Add size of delimiters + newline
-  buf_size += input.length() * num_rows;
+  buf_size += input.size() * num_rows;
 
   return buf_size;
 }
@@ -148,7 +154,7 @@ void str_to_buf(
 }
 
 std::vector<char> fill_buf(
-    const Rcpp::List& input,
+    const cpp11::list& input,
     const char delim,
     const char* na_str,
     size_t options,
@@ -162,7 +168,7 @@ std::vector<char> fill_buf(
   auto na_len = strlen(na_str);
 
   for (size_t row = begin; row < end; ++row) {
-    for (int col = 0; col < input.length(); ++col) {
+    for (int col = 0; col < input.size(); ++col) {
       switch (types[col]) {
       case STRSXP: {
         auto str = STRING_ELT(input[col], row);
@@ -235,7 +241,7 @@ void write_buf_con(
   if (is_stdout) {
     std::string out;
     std::copy(buf.begin(), buf.end(), std::back_inserter(out));
-    Rcpp::Rcout << out;
+    Rprintf("%.*s", buf.size(), out.c_str());
   } else {
     R_WriteConnection(con, (void*)buf.data(), sizeof buf[0] * buf.size());
   }
@@ -245,24 +251,24 @@ void write_buf_con(const std::vector<char>& buf, SEXP con, bool is_stdout) {
   if (is_stdout) {
     std::string out;
     std::copy(buf.begin(), buf.end(), std::back_inserter(out));
-    Rcpp::Rcout << out;
+    Rprintf("%.*s", buf.size(), out.c_str());
   } else {
     R_WriteConnection(con, (void*)buf.data(), sizeof buf[0] * buf.size());
   }
 }
 #endif
 
-std::vector<SEXPTYPE> get_types(const Rcpp::List& input) {
+std::vector<SEXPTYPE> get_types(const cpp11::list& input) {
   std::vector<SEXPTYPE> out;
-  for (int col = 0; col < input.length(); ++col) {
+  for (int col = 0; col < input.size(); ++col) {
     out.push_back(TYPEOF(input[col]));
   }
   return out;
 }
 
-std::vector<void*> get_ptrs(const Rcpp::List& input) {
+std::vector<void*> get_ptrs(const cpp11::list& input) {
   std::vector<void*> out;
-  for (int col = 0; col < input.length(); ++col) {
+  for (int col = 0; col < input.size(); ++col) {
     switch (TYPEOF(input[col])) {
     case REALSXP:
       out.push_back(REAL(input[col]));
@@ -281,9 +287,8 @@ std::vector<void*> get_ptrs(const Rcpp::List& input) {
 }
 
 std::vector<char>
-get_header(const Rcpp::List& input, const char delim, size_t options) {
-  Rcpp::CharacterVector names =
-      Rcpp::as<Rcpp::CharacterVector>(input.attr("names"));
+get_header(const cpp11::list& input, const char delim, size_t options) {
+  cpp11::strings names(input.attr("names"));
   std::vector<char> out;
   for (R_xlen_t i = 0; i < names.size(); ++i) {
     auto str = STRING_ELT(names, i);
@@ -295,9 +300,8 @@ get_header(const Rcpp::List& input, const char delim, size_t options) {
   return out;
 }
 
-// [[Rcpp::export]]
-void vroom_write_(
-    Rcpp::List input,
+[[cpp11::register]] void vroom_write_(
+    cpp11::list input,
     std::string filename,
     const char delim,
     const char* na_str,
@@ -316,11 +320,11 @@ void vroom_write_(
     strcpy(mode, "ab");
   }
 
-  std::FILE* out = std::fopen(filename.c_str(), mode);
+  std::FILE* out = unicode_fopen(filename.c_str(), mode);
   if (!out) {
     std::string msg("Cannot open file for writing:\n* ");
     msg += '\'' + filename + '\'';
-    throw Rcpp::exception(msg.c_str(), false);
+    cpp11::stop(msg.c_str());
   }
 
   std::array<std::vector<std::future<std::vector<char> > >, 2> futures;
@@ -394,10 +398,9 @@ void vroom_write_(
 
 // TODO: Think about refactoring this so it and vroom_write_ can share some
 // code
-// [[Rcpp::export]]
-void vroom_write_connection_(
-    Rcpp::List input,
-    Rcpp::RObject con,
+[[cpp11::register]] void vroom_write_connection_(
+    cpp11::list input,
+    cpp11::sexp con,
     const char delim,
     const char* na_str,
     bool col_names,
@@ -405,7 +408,13 @@ void vroom_write_connection_(
     size_t num_threads,
     bool progress,
     size_t buf_lines,
-    bool is_stdout) {
+    bool is_stdout,
+    bool append) {
+
+  char mode[3] = "wb";
+  if (append) {
+    strcpy(mode, "ab");
+  }
 
   size_t begin = 0;
   size_t num_rows = Rf_xlength(input[0]);
@@ -414,7 +423,7 @@ void vroom_write_connection_(
 
   bool should_open = !is_open(con);
   if (should_open) {
-    Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["open"])(con, "wb");
+    cpp11::package("base")["open"](con, mode);
   }
 
   bool should_close = should_open;
@@ -451,13 +460,6 @@ void vroom_write_connection_(
       begin += num_lines;
     }
 
-    // if (write_fut.valid()) {
-    // auto sz = write_fut.get();
-    // Rcpp::checkUserInterrupt();
-    //}
-
-    // write_fut = std::async([&, idx, t] {
-    // size_t sz = 0;
     for (size_t i = 0; i < t; ++i) {
       auto buf = futures[idx][i].get();
       write_buf_con(buf, con_, is_stdout);
@@ -465,38 +467,30 @@ void vroom_write_connection_(
       if (progress) {
         pb->tick(sz);
       }
-      // sz += buf.size();
     }
-    // return sz;
-    //});
 
     idx = (idx + 1) % 2;
   }
 
-  // Wait for the last writing to finish
-  // if (write_fut.valid()) {
-  // write_fut.get();
   if (progress) {
     pb->update(1);
   }
-  //}
 
   // Close the connection
   if (should_close) {
-    Rcpp::as<Rcpp::Function>(Rcpp::Environment::base_env()["close"])(con);
+    cpp11::package("base")["close"](con);
   }
 }
 
-// [[Rcpp::export]]
-Rcpp::CharacterVector vroom_format_(
-    Rcpp::List input,
+[[cpp11::register]] cpp11::strings vroom_format_(
+    cpp11::list input,
     const char delim,
     const char* na_str,
     bool col_names,
     size_t options) {
 
   size_t num_rows = Rf_xlength(input[0]);
-  Rcpp::CharacterVector out(1);
+  cpp11::writable::strings out(1);
 
   auto types = get_types(input);
   auto ptrs = get_ptrs(input);

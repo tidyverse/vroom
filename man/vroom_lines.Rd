@@ -8,6 +8,7 @@ vroom_lines(
   file,
   n_max = Inf,
   skip = 0,
+  locale = default_locale(),
   altrep = TRUE,
   altrep_opts = deprecated(),
   num_threads = vroom_threads(),
@@ -21,6 +22,12 @@ vroom_lines(
 
 \item{skip}{Number of lines to skip before reading data.}
 
+\item{locale}{The locale controls defaults that vary from place to place.
+The default locale is US-centric (like R), but you can use
+\code{\link[readr:locale]{locale()}} to create your own locale that controls things like
+the default time zone, encoding, decimal mark, big mark, and day/month
+names.}
+
 \item{altrep}{Control which column types use Altrep representations,
 either a character vector of types, \code{TRUE} or \code{FALSE}. See
 \code{\link[=vroom_altrep]{vroom_altrep()}} for for full details.}
@@ -28,8 +35,8 @@ either a character vector of types, \code{TRUE} or \code{FALSE}. See
 \item{altrep_opts}{\Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}}
 
 \item{num_threads}{Number of threads to use when reading and materializing
-vectors. If your data contains embedded newlines (newlines within fields)
-you \emph{must} use \code{num_threads = 1} to read the data properly.}
+vectors. If your data contains newlines within fields the parser will
+automatically be forced to use a single thread only.}
 
 \item{progress}{Display a progress bar? By default it will only display
 in an interactive session and not while knitting a document. The display

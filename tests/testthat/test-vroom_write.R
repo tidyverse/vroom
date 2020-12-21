@@ -1,17 +1,24 @@
-context("test-vroom_write.R")
-
-test_that("empty inputs just return themselves without writing anything", {
+test_that("empty columns just return themselves without writing anything", {
   out <- tempfile()
 
-  no_rows <- mtcars[FALSE, ]
   no_cols <- mtcars[, FALSE]
   no_rows_or_cols <- mtcars[FALSE, FALSE]
 
-  expect_equal(vroom_write(no_rows, out), no_rows)
   expect_equal(vroom_write(no_cols, out), no_cols)
   expect_equal(vroom_write(no_rows_or_cols, out), no_rows_or_cols)
 
   expect_false(file.exists(out))
+})
+
+test_that("empty rows print the headers", {
+  out <- tempfile()
+  on.exit(unlink(out))
+
+  no_rows <- mtcars[FALSE, ]
+
+  expect_equal(vroom_write(no_rows, out), no_rows)
+
+  expect_equal(strsplit(readLines(out), "\t")[[1]], colnames(mtcars))
 })
 
 test_that("strings are only quoted if needed", {
@@ -36,9 +43,9 @@ test_that("read_delim/csv/tsv and write_delim round trip special chars", {
   x <- stats::setNames(list("a", '"', ",", "\n","at\t"), paste0("V", seq_len(5)))
 
   output <- tibble::as_tibble(x)
-  output_space <- vroom(vroom_format(output, delim = " "), trim_ws = FALSE, progress = FALSE)
-  output_csv <- vroom(vroom_format(output, delim = ","), trim_ws = FALSE, progress = FALSE)
-  output_tsv <- vroom(vroom_format(output, delim = "\t"), trim_ws = FALSE, progress = FALSE)
+  output_space <- vroom(vroom_format(output, delim = " "), trim_ws = FALSE, progress = FALSE, col_types = list())
+  output_csv <- vroom(vroom_format(output, delim = ","), trim_ws = FALSE, progress = FALSE, col_types = list())
+  output_tsv <- vroom(vroom_format(output, delim = "\t"), trim_ws = FALSE, progress = FALSE, col_types = list())
   expect_equal(output_space, output)
   expect_equal(output_csv, output)
   expect_equal(output_tsv, output)
@@ -61,7 +68,7 @@ test_that("logical values give long names", {
 
 test_that("roundtrip preserved floating point numbers", {
   input <- data.frame(x = runif(100))
-  output <- vroom(vroom_format(input, delim = " "), delim = " ")
+  output <- vroom(vroom_format(input, delim = " "), delim = " ", col_types = list())
 
   expect_equal(input$x, output$x)
 })
@@ -72,7 +79,7 @@ test_that("roundtrip preserves dates and datetimes", {
   attr(y, "tzone") <- "UTC"
 
   input <- data.frame(x, y)
-  output <- vroom(vroom_format(input, delim = " "), delim = " ")
+  output <- vroom(vroom_format(input, delim = " "), delim = " ", col_types = list())
 
   expect_equal(output$x, x)
   expect_equal(output$y, y)
@@ -116,7 +123,7 @@ test_that("does not writes a trailing .0 for whole number doubles", {
 })
 
 test_that("write_csv can write to compressed files", {
-  mt <- vroom(vroom_example("mtcars.csv"))
+  mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
 
   filename <- file.path(tempdir(), "mtcars.csv.bz2")
   on.exit(unlink(filename))
@@ -131,7 +138,7 @@ test_that("write_csv can write to compressed files", {
 
   expect_true(is_bz2_file(filename))
 
-  expect_equal(vroom(filename), mt)
+  expect_equal(vroom(filename, col_types = list()), mt)
 })
 
 test_that("write_csv writes large integers without scientific notation #671", {
@@ -187,4 +194,15 @@ test_that("vroom_write equals the same thing as vroom_format", {
   )
 
   expect_equal(readChar(tf, file.info(tf)$size), vroom_format(df))
+})
+
+test_that("vroom_write(append = TRUE) works with R connections", {
+  df <- data.frame(x = 1, y = 2)
+  f <- tempfile(, fileext = ".tsv.gz")
+  on.exit(unlink(f))
+
+  vroom::vroom_write(df, f)
+  vroom::vroom_write(df, f, append = TRUE)
+
+  expect_equal(vroom_lines(f), c("x\ty", "1\t2", "1\t2"))
 })

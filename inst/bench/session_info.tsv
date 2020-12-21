@@ -1,6 +1,6 @@
 package	ondiskversion	loadedversion	path	loadedpath	attached	is_base	date	source	md5ok	library
-base	3.6.2	NA	/opt/R/3.6.2/lib/R/library/base	NA	TRUE	TRUE	2019-12-12	local	NA	/opt/R/3.6.2/lib/R/library
-data.table	1.12.8	NA	/home/ubuntu/R/x86_64-pc-linux-gnu-library/3.6/data.table	NA	FALSE	FALSE	2019-12-09	RSPM (R 3.6.1)	NA	/home/ubuntu/R/x86_64-pc-linux-gnu-library/3.6
-dplyr	0.8.3	NA	/home/ubuntu/R/x86_64-pc-linux-gnu-library/3.6/dplyr	NA	FALSE	FALSE	2019-07-04	RSPM (R 3.6.2)	NA	/home/ubuntu/R/x86_64-pc-linux-gnu-library/3.6
-readr	1.3.1	NA	/home/ubuntu/R/x86_64-pc-linux-gnu-library/3.6/readr	NA	FALSE	FALSE	2018-12-21	RSPM (R 3.6.2)	NA	/home/ubuntu/R/x86_64-pc-linux-gnu-library/3.6
-vroom	1.1.0	1.1.0	/home/ubuntu/R/x86_64-pc-linux-gnu-library/3.6/vroom	/home/ubuntu/R/x86_64-pc-linux-gnu-library/3.6/vroom	FALSE	FALSE	2020-01-10	local	NA	/home/ubuntu/R/x86_64-pc-linux-gnu-library/3.6
+base	4.0.2	NA	/opt/R/4.0.2/lib/R/library/base	NA	TRUE	TRUE	2020-06-22	local	NA	/opt/R/4.0.2/lib/R/library
+data.table	1.13.0	NA	/home/ubuntu/R/x86_64-pc-linux-gnu-library/4.0/data.table	NA	FALSE	FALSE	2020-07-24	RSPM (R 4.0.2)	NA	/home/ubuntu/R/x86_64-pc-linux-gnu-library/4.0
+dplyr	1.0.1	NA	/home/ubuntu/R/x86_64-pc-linux-gnu-library/4.0/dplyr	NA	FALSE	FALSE	2020-07-31	RSPM (R 4.0.2)	NA	/home/ubuntu/R/x86_64-pc-linux-gnu-library/4.0
+readr	1.3.1	NA	/home/ubuntu/R/x86_64-pc-linux-gnu-library/4.0/readr	NA	FALSE	FALSE	2018-12-21	RSPM (R 4.0.2)	NA	/home/ubuntu/R/x86_64-pc-linux-gnu-library/4.0
+vroom	1.3.0	1.3.0	/home/ubuntu/R/x86_64-pc-linux-gnu-library/4.0/vroom	/home/ubuntu/R/x86_64-pc-linux-gnu-library/4.0/vroom	FALSE	FALSE	2020-08-13	local	NA	/home/ubuntu/R/x86_64-pc-linux-gnu-library/4.0

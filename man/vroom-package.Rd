@@ -17,6 +17,7 @@ The goal of 'vroom' is to read and write data (like
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://vroom.r-lib.org}
   \item \url{https://github.com/r-lib/vroom}
   \item Report bugs at \url{https://github.com/r-lib/vroom/issues}
 }

@@ -1,27 +1,33 @@
 #include "vroom_chr.h"
 
-Rcpp::CharacterVector read_chr(vroom_vec_info* info) {
+SEXP check_na(SEXP na, SEXP val) {
+  for (R_xlen_t i = 0; i < Rf_xlength(na); ++i) {
+    SEXP v = STRING_ELT(na, i);
+    // We can just compare the addresses directly because they should now
+    // both be in the global string cache.
+    if (v == val) {
+      return NA_STRING;
+    }
+  }
+  return val;
+}
+
+cpp11::strings read_chr(vroom_vec_info* info) {
 
   R_xlen_t n = info->column->size();
 
-  Rcpp::CharacterVector out(n);
+  cpp11::writable::strings out(n);
 
-  auto i = 0;
-  for (const auto& str : *info->column) {
-    auto val = info->locale->encoder_.makeSEXP(str.begin(), str.end(), false);
+  SEXP nas = *info->na;
 
-    // Look for NAs
-    for (const auto& v : *info->na) {
-      // We can just compare the addresses directly because they should now
-      // both be in the global string cache.
-      if (v == val) {
-        val = NA_STRING;
-        break;
-      }
+  cpp11::unwind_protect([&] {
+    auto i = 0;
+    for (const auto& str : *info->column) {
+      auto val = info->locale->encoder_.makeSEXP(str.begin(), str.end(), false);
+
+      SET_STRING_ELT(out, i++, check_na(nas, val));
     }
-
-    out[i++] = val;
-  }
+  });
 
   return out;
 }

@@ -17,6 +17,9 @@ public:
   virtual base_iterator* clone() const = 0;
   virtual string at(ptrdiff_t n) const = 0;
   virtual ~base_iterator() {}
+  virtual std::string filename() const = 0;
+  virtual size_t index() const = 0;
+  virtual size_t position() const = 0;
 };
 
 class iterator {
@@ -102,6 +105,12 @@ public:
   }
 
   string operator[](ptrdiff_t n) const { return it_->at(n); }
+
+  std::string filename() const { return it_->filename(); }
+
+  size_t index() const { return it_->index(); }
+
+  size_t position() const { return it_->position(); }
 
   ~iterator() {
     if (it_ != nullptr) {

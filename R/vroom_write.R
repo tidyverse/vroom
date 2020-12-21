@@ -1,7 +1,7 @@
 #' Write a data frame to a delimited file
 #'
-#' @inheritParams vroom
 #' @inheritParams readr::write_tsv
+#' @inheritParams vroom
 #' @param escape The type of escape to use when quotes are in the data.
 #'   - `double` - quotes are escaped by doubling them.
 #'   - `backslash` - quotes are escaped by a preceding backslash.
@@ -36,8 +36,8 @@ vroom_write <- function(x, path, delim = '\t', na = "NA", col_names = !append,
     c("double", "backslash", "none"), bom = FALSE, num_threads =
     vroom_threads(), progress = vroom_progress()) {
 
-  # If there are no rows or columns in the data frame, just return
-  if (NROW(x) == 0 || NCOL(x) == 0) {
+  # If there are no columns in the data frame, just return
+  if (NCOL(x) == 0) {
     return(invisible(x))
   }
 
@@ -49,19 +49,18 @@ vroom_write <- function(x, path, delim = '\t', na = "NA", col_names = !append,
   # Standardise path returns a list, but we will only ever have 1 output file.
   path <- standardise_one_path(path, write = TRUE)
 
-  # We need to materialize any altrep vector as otherwise we can't fill the
+  # We need to convert any altrep vectors to normal vectors otherwise we can't fill the
   # write buffers from other threads.
-  xx <- vroom_materialize(x, replace = TRUE)
-
+  xx <- vroom_convert(x)
   xx[] <- lapply(xx, output_column)
 
   # This seems to work ok in practice
-  buf_lines <- max(as.integer(Sys.getenv("VROOM_WRITE_BUFFER_SIZE", nrow(x) / 100 / num_threads)), 1)
+  buf_lines <- max(as.integer(Sys.getenv("VROOM_WRITE_BUFFER_LINES", nrow(x) / 100 / num_threads)), 1)
 
   if (inherits(path, "connection")) {
     vroom_write_connection_(xx, path, delim, na_str = na, col_names = col_names,
       options = opts, num_threads = num_threads, progress = progress, buf_lines = buf_lines,
-      is_stdout = path == stdout())
+      is_stdout = path == stdout(), append = append)
   } else {
     vroom_write_(xx, path, delim, na_str = na, col_names = col_names,
       append = append, options = opts,

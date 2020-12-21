@@ -1,8 +1,11 @@
 #include "vroom_dttm.h"
 
 double parse_dttm(
-    const string& str, DateTimeParser& parser, const std::string& format) {
-  parser.setDate(str.begin(), str.end());
+    const char* begin,
+    const char* end,
+    DateTimeParser& parser,
+    const std::string& format) {
+  parser.setDate(begin, end);
   bool res = (format == "") ? parser.parseISO8601() : parser.parse(format);
 
   if (res) {
@@ -14,25 +17,38 @@ double parse_dttm(
   return NA_REAL;
 }
 
-Rcpp::NumericVector read_dttm(vroom_vec_info* info) {
+cpp11::doubles read_dttm(vroom_vec_info* info) {
   R_xlen_t n = info->column->size();
 
-  Rcpp::NumericVector out(n);
+  cpp11::writable::doubles out(n);
+  auto err_msg = info->format.size() == 0
+                     ? std::string("date in ISO8601")
+                     : std::string("date like ") + info->format;
 
   parallel_for(
       n,
-      [&](size_t start, size_t end, size_t id) {
+      [&](size_t start, size_t end, size_t) {
         R_xlen_t i = start;
         DateTimeParser parser(info->locale.get());
         auto col = info->column->slice(start, end);
-        for (const auto& str : *col) {
-          out[i++] = parse_dttm(str, parser, info->format);
+        for (auto b = col->begin(), e = col->end(); b != e; ++b) {
+          out[i++] = parse_value<double>(
+              b,
+              col,
+              [&](const char* begin, const char* end) -> double {
+                return parse_dttm(begin, end, parser, info->format);
+              },
+              info->errors,
+              err_msg.c_str(),
+              *info->na);
         }
       },
       info->num_threads,
       true);
 
-  out.attr("class") = Rcpp::CharacterVector::create("POSIXct", "POSIXt");
+  info->errors->warn_for_errors();
+
+  out.attr("class") = {"POSIXct", "POSIXt"};
   out.attr("tzone") = info->locale->tz_;
 
   return out;

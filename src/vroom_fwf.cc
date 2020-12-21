@@ -1,26 +1,27 @@
-#include "columns.h"
-
-#include "fixed_width_index.h"
+#include <cpp11/list.hpp>
+#include <cpp11/sexp.hpp>
+#include <cpp11/strings.hpp>
 
 #include "LocaleInfo.h"
+#include "columns.h"
+#include "fixed_width_index.h"
+#include "unicode_fopen.h"
 
-using namespace Rcpp;
-
-// [[Rcpp::export]]
-List vroom_fwf_(
-    List inputs,
+[[cpp11::register]] cpp11::list vroom_fwf_(
+    cpp11::list inputs,
     std::vector<int> col_starts,
     std::vector<int> col_ends,
     bool trim_ws,
-    RObject col_names,
-    RObject col_types,
-    RObject col_select,
+    cpp11::sexp col_names,
+    cpp11::sexp col_types,
+    cpp11::sexp col_select,
+    cpp11::sexp name_repair,
     size_t skip,
     const char comment,
     ptrdiff_t n_max,
     SEXP id,
-    CharacterVector na,
-    List locale,
+    cpp11::strings na,
+    cpp11::list locale,
     ptrdiff_t guess_max,
     size_t num_threads,
     size_t altrep,
@@ -39,17 +40,21 @@ List vroom_fwf_(
   auto idx = std::make_shared<vroom::index_collection>(
       inputs, col_starts, col_ends, trim_ws, skip, comment, n_max, progress);
 
+  auto errors = new std::shared_ptr<vroom_errors>(new vroom_errors());
+
   return create_columns(
       idx,
       col_names,
       col_types,
       col_select,
+      name_repair,
       id,
       filenames,
       na,
       locale,
       altrep,
       guess_max,
+      errors,
       num_threads);
 }
 
@@ -85,18 +90,17 @@ std::vector<bool> find_empty_cols(Iterator begin, Iterator end, ptrdiff_t n) {
   return is_white;
 }
 
-// [[Rcpp::export]]
-List whitespace_columns_(
+[[cpp11::register]] cpp11::list whitespace_columns_(
     std::string filename, size_t skip, ptrdiff_t n, std::string comment) {
 
   std::error_code error;
-  auto mmap = mio::make_mmap_source(filename, error);
+  auto mmap = make_mmap_source(filename.c_str(), error);
   if (error) {
     // We cannot actually portably compare error messages due to a bug in
     // libstdc++ (https://stackoverflow.com/a/54316671/2055486), so just print
     // the message on stderr return
-    Rcpp::Rcerr << "mapping error: " << error.message();
-    return List();
+    REprintf("mapping error: %s", error.message().c_str());
+    return cpp11::list();
   }
 
   size_t s = find_first_line(mmap, skip, comment[0]);
@@ -119,5 +123,6 @@ List whitespace_columns_(
   if (in_col)
     end.push_back(empty.size());
 
-  return List::create(_["begin"] = begin, _["end"] = end);
+  using namespace cpp11::literals;
+  return cpp11::writable::list({"begin"_nm = begin, "end"_nm = end});
 }

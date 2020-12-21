@@ -1,5 +1,4 @@
 #' @useDynLib vroom, .registration = TRUE
-#' @importFrom Rcpp sourceCpp
 #' @importFrom bit64 integer64
 NULL
 
@@ -7,12 +6,12 @@ NULL
 #'
 #' @inheritParams readr::read_delim
 #' @param file path to a local file.
-#' @param delim One of more characters used to delimiter fields within a
-#'   record. If `NULL` the delimiter is guessed from the set of `c(",", "\t", " ",
+#' @param delim One or more characters used to delimit fields within a
+#'   file. If `NULL` the delimiter is guessed from the set of `c(",", "\t", " ",
 #'   "|", ":", ";")`.
 #' @param num_threads Number of threads to use when reading and materializing
-#'   vectors. If your data contains embedded newlines (newlines within fields)
-#'   you _must_ use `num_threads = 1` to read the data properly.
+#'   vectors. If your data contains newlines within fields the parser will
+#'   automatically be forced to use a single thread only.
 #' @param escape_double Does the file escape quotes by doubling them?
 #'   i.e. If this option is `TRUE`, the value '""' represents
 #'   a single quote, '"'.
@@ -32,8 +31,9 @@ NULL
 #' @param altrep_opts \Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}
 #' @export
 #' @examples
-#' # Show path to example file
+#' # get path to example file
 #' input_file <- vroom_example("mtcars.csv")
+#' input_file
 #'
 #' # Read from a path
 #'
@@ -78,6 +78,13 @@ NULL
 #' vroom("a\tb\n1.0\t2.0\n")
 #' # Other delimiters
 #' vroom("a|b\n1.0|2.0\n", delim = "|")
+#'
+#' # Read datasets across multiple files ---------------------------------------
+#' mtcars_by_cyl <- vroom_example(vroom_examples("mtcars-"))
+#' mtcars_by_cyl
+#'
+#' # Pass the filenames directly to vroom, they are efficiently combined
+#' vroom(mtcars_by_cyl)
 vroom <- function(
   file,
   delim = NULL,
@@ -135,12 +142,19 @@ vroom <- function(
 
   col_types <- as.col_spec(col_types)
 
+  na <- enc2utf8(na)
+
   out <- vroom_(file, delim = delim %||% col_types$delim, col_names = col_names,
     col_types = col_types, id = id, skip = skip, col_select = col_select,
+    name_repair = .name_repair,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
     escape_backslash = escape_backslash, comment = comment, locale = locale,
     guess_max = guess_max, n_max = n_max, altrep = vroom_altrep(altrep),
     num_threads = num_threads, progress = progress)
+
+  # Drop any NULL columns
+  is_null <- vapply(out, is.null, logical(1))
+  out[is_null] <- NULL
 
   out <- tibble::as_tibble(out, .name_repair = .name_repair)
 
@@ -253,7 +267,7 @@ guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";")) {
   delims[[top_idx]]
 }
 
-cached <- new.env(emptyenv())
+cached <- new.env(parent = emptyenv())
 
 vroom_threads <- function() {
   res <- as.integer(
@@ -282,7 +296,7 @@ vroom_tempfile <- function() {
 #'
 #' Alternatively there is also a family of environment variables to control use of
 #' the Altrep framework. These can then be set in your `.Renviron` file, e.g.
-#' with [usethis::edit_r_environ()]. For versions of R where the Altrep
+#' with `usethis::edit_r_environ()`. For versions of R where the Altrep
 #' framework is unavailable (R < 3.5.0) they are automatically turned off and
 #' the variables have no effect. The variables can take one of `true`, `false`,
 #' `TRUE`, `FALSE`, `1`, or `0`.
@@ -333,13 +347,13 @@ vroom_altrep <- function(which = NULL) {
     getRversion() >= "3.5.0" && which$chr %||% vroom_use_altrep_chr(),
     getRversion() >= "3.5.0" && which$fct %||% vroom_use_altrep_fct(),
     getRversion() >= "3.5.0" && which$int %||% vroom_use_altrep_int(),
-    getRversion() >= "3.5.0" && which$int %||% vroom_use_altrep_big_int(),
     getRversion() >= "3.5.0" && which$dbl %||% vroom_use_altrep_dbl(),
     getRversion() >= "3.5.0" && which$num %||% vroom_use_altrep_num(),
     getRversion() >= "3.6.0" && which$lgl %||% vroom_use_altrep_lgl(), # logicals only supported in R 3.6.0+
     getRversion() >= "3.5.0" && which$dttm %||% vroom_use_altrep_dttm(),
     getRversion() >= "3.5.0" && which$date %||% vroom_use_altrep_date(),
-    getRversion() >= "3.5.0" && which$time %||% vroom_use_altrep_time()
+    getRversion() >= "3.5.0" && which$time %||% vroom_use_altrep_time(),
+    getRversion() >= "3.5.0" && which$big_int %||% vroom_use_altrep_big_int()
   )
 
   out <-  0L
@@ -373,8 +387,8 @@ altrep_vals <- function() c(
   "dttm" = 64L,
   "date" = 128L,
   "time" = 256L,
-# "skip" = 512L
-  "big_int" = 1024L
+  "big_int" = 512L,
+  "skip" = 1024L
 )
 
 #' @export

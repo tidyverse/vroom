@@ -3,8 +3,8 @@
 
 #include "DateTime.h"
 #include "LocaleInfo.h"
-#include <Rcpp.h>
 #include <algorithm>
+#include <cpp11/protect.hpp>
 #include <ctime>
 
 // Parsing ---------------------------------------------------------------------
@@ -38,7 +38,7 @@ inline bool parseInt(Iterator& first, Iterator& last, Attr& res) {
 
 template <typename Iterator, typename Attr>
 inline bool parseDouble(
-    const char decimalMark, Iterator& first, Iterator& last, Attr& res) {
+    const char /* decimalMark */, Iterator& first, Iterator& last, Attr& res) {
 
   char buf[65];
 
@@ -92,7 +92,7 @@ public:
   // Parse ISO8601 date time. In benchmarks this only seems ~30% faster than
   // parsing with a format string so it doesn't seem necessary to add individual
   // parsers for other common formats.
-  bool parseISO8601(bool partial = true) {
+  bool parseISO8601(bool /* partial */ = true) {
     // Date: YYYY-MM-DD, YYYYMMDD
     if (!consumeInteger(4, &year_))
       return false;
@@ -200,7 +200,7 @@ public:
       }
 
       if (formatItr + 1 == formatEnd)
-        Rcpp::stop("Invalid format: trailing %");
+        cpp11::stop("Invalid format: trailing %");
       formatItr++;
 
       switch (*formatItr) {
@@ -259,7 +259,7 @@ public:
         break;
       case 'O': // seconds (double)
         if (formatItr + 1 == formatEnd || *(formatItr + 1) != 'S')
-          Rcpp::stop("Invalid format: %%O must be followed by %%S");
+          cpp11::stop("Invalid format: %%O must be followed by %%S");
         formatItr++;
         if (!consumeSeconds(&sec_, &psec_))
           return false;
@@ -297,7 +297,7 @@ public:
 
       case 'A': // auto date / time
         if (formatItr + 1 == formatEnd)
-          Rcpp::stop("Invalid format: %%A must be followed by another letter");
+          cpp11::stop("Invalid format: %%A must be followed by another letter");
         formatItr++;
         switch (*formatItr) {
         case 'D':
@@ -309,7 +309,7 @@ public:
             return false;
           break;
         default:
-          Rcpp::stop("Invalid %%A auto parser");
+          cpp11::stop("Invalid %%A auto parser");
         }
         break;
 
@@ -332,7 +332,7 @@ public:
         break;
 
       default:
-        Rcpp::stop("Unsupported format %%%s", *formatItr);
+        cpp11::stop("Unsupported format %%%s", *formatItr);
       }
     }
 
@@ -436,7 +436,8 @@ private:
 
   // Integer indexed from 1 (i.e. month and date) which can take 1 or 2
   // positions
-  inline bool consumeInteger1length1_or_2(int n, int* pOut, bool exact = true) {
+  inline bool
+  consumeInteger1length1_or_2(int /* n */, int* pOut, bool /* exact */ = true) {
     int out1, out2;
     if (!consumeInteger(1, &out1, true))
       return false;

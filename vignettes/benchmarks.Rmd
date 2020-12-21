@@ -10,7 +10,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  dev = "svg"
 )
 
 library(ggplot2)
@@ -164,7 +165,7 @@ excluded from the plots, but are retained in the tables.
 
 This real world dataset is from Freedom of Information Law (FOIL)
 Taxi Trip Data from the NYC Taxi and Limousine Commission 2013, originally
-posted at <http://chriswhong.com/open-data/foil_nyc_taxi/>. It is also hosted
+posted at <https://chriswhong.com/open-data/foil_nyc_taxi/>. It is also hosted
 on [archive.org](https://archive.org/details/nycTaxiTripData2013).
 
 The first table trip_fare_1.csv is 1.55G in size.
@@ -311,7 +312,7 @@ make_table(mult)
 fwf <- read_benchmark(path_package("vroom", "bench", "fwf.tsv"), desc)
 ```
 
-This fixed width dataset contains individual records of the characteristics of a 5 percent sample of people and housing units from the year 2000 and is freely available at <https://www2.census.gov/census_2000/datasets/PUMS/FivePercent/California/all_California.zip>. The data is split into files by state, and the state of California was used in this benchmark.
+This fixed width dataset contains individual records of the characteristics of a 5 percent sample of people and housing units from the year 2000 and is freely available at <https://web.archive.org/web/20150908055439/https://www2.census.gov/census_2000/datasets/PUMS/FivePercent/California/all_California.zip>. The data is split into files by state, and the state of California was used in this benchmark.
 
 The data totals `r scales::comma(fwf$rows[[1]])` rows 
 and `r fwf$cols[[1]]` columns with a total file size of `r format(fs_bytes(fwf$size[[1]]))`.

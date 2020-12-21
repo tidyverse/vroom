@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Rcpp.h"
-
-using namespace Rcpp;
+#include <cpp11/function.hpp>
+#include <cpp11/list.hpp>
+#include <cpp11/sexp.hpp>
+#include <cpp11/strings.hpp>
 
 class collector {
-  const Rcpp::List data_;
+  const cpp11::list data_;
   const SEXP name_;
   const column_type type_;
   const size_t altrep_;
@@ -47,11 +48,10 @@ private:
   }
 
 public:
-  collector(Rcpp::List data, SEXP name, size_t altrep)
+  collector(cpp11::list data, SEXP name, size_t altrep)
       : data_(data),
         name_(name),
-        type_(derive_type(Rcpp::as<std::string>(
-            Rcpp::as<Rcpp::CharacterVector>(data_.attr("class"))[0]))),
+        type_(derive_type(cpp11::strings(data_.attr("class"))[0])),
         altrep_(altrep) {}
   column_type type() const { return type_; }
   SEXP name() const { return name_; }
@@ -85,27 +85,24 @@ public:
 };
 
 class collectors {
-  Rcpp::List spec_;
-  Rcpp::List collectors_;
+  cpp11::list spec_;
+  cpp11::list collectors_;
   size_t altrep_;
 
 public:
-  collectors(Rcpp::List col_types, size_t altrep)
-      : spec_(col_types),
-        collectors_(Rcpp::as<Rcpp::List>(col_types["cols"])),
-        altrep_(altrep) {}
+  collectors(cpp11::list col_types, size_t altrep)
+      : spec_(col_types), collectors_(col_types["cols"]), altrep_(altrep) {}
   collector operator[](int i) {
-    return {collectors_[i],
-            Rcpp::as<Rcpp::CharacterVector>(collectors_.attr("names"))[i],
-            altrep_};
+    return {
+        collectors_[i], cpp11::strings(collectors_.attr("names"))[i], altrep_};
   }
-  Rcpp::List spec() { return spec_; }
+  cpp11::list spec() { return spec_; }
 };
 
-inline CharacterVector read_column_names(
+inline cpp11::strings read_column_names(
     std::shared_ptr<vroom::index_collection> idx,
     std::shared_ptr<LocaleInfo> locale_info) {
-  CharacterVector nms(idx->num_columns());
+  cpp11::writable::strings nms(idx->num_columns());
 
   auto col = 0;
   auto header = idx->get_header();
@@ -117,64 +114,66 @@ inline CharacterVector read_column_names(
 }
 
 std::string guess_type__(
-    CharacterVector input,
-    CharacterVector na,
+    cpp11::writable::strings input,
+    cpp11::strings na,
     LocaleInfo* locale,
     bool guess_integer);
 
 inline collectors resolve_collectors(
-    RObject col_names,
-    RObject col_types,
-    RObject col_select,
+    cpp11::sexp col_names,
+    cpp11::sexp col_types,
+    cpp11::sexp col_select,
+    cpp11::sexp name_repair,
     std::shared_ptr<index_collection> idx,
-    CharacterVector na,
+    cpp11::strings na,
     std::shared_ptr<LocaleInfo> locale_info,
     size_t guess_max,
     size_t altrep) {
 
-  auto num_cols = idx->num_columns();
+  R_xlen_t num_cols = idx->num_columns();
   auto num_rows = idx->num_rows();
 
-  auto vroom = Rcpp::Environment::namespace_env("vroom");
+  auto vroom = cpp11::package("vroom");
 
-  CharacterVector col_nms;
+  cpp11::writable::strings col_nms;
 
-  Rcpp::Function make_names = vroom["make_names"];
+  auto make_names = vroom["make_names"];
 
-  if (col_names.sexp_type() == STRSXP) {
-    col_nms = make_names(col_names, num_cols);
-  } else if (
-      col_names.sexp_type() == LGLSXP && as<LogicalVector>(col_names)[0]) {
+  if (TYPEOF(col_names) == STRSXP) {
+    col_nms = static_cast<SEXP>(make_names(col_names, num_cols));
+  } else if (TYPEOF(col_names) == LGLSXP && cpp11::logicals(col_names)[0]) {
     col_nms = read_column_names(idx, locale_info);
   } else {
-    col_nms = make_names(R_NilValue, num_cols);
+    col_nms = static_cast<SEXP>(make_names(R_NilValue, num_cols));
   }
 
-  Rcpp::Function col_types_standardise = vroom["col_types_standardise"];
-  Rcpp::List col_types_std =
-      col_types_standardise(col_types, col_nms, col_select);
+  auto col_types_standardise = vroom["col_types_standardise"];
+  cpp11::list col_types_std(
+      col_types_standardise(col_types, col_nms, col_select, name_repair));
 
-  auto guess_num = std::min(num_rows, guess_max);
+  R_xlen_t guess_num = std::min(num_rows, guess_max);
 
   auto guess_step = guess_num > 0 ? num_rows / guess_num : 0;
 
-  Rcpp::List my_collectors = col_types_std["cols"];
+  cpp11::writable::list my_collectors(col_types_std["cols"]);
 
-  for (size_t col = 0; col < num_cols; ++col) {
-    Rcpp::List my_collector = my_collectors[col];
-    std::string my_col_type = Rcpp::as<std::string>(
-        Rcpp::as<Rcpp::CharacterVector>(my_collector.attr("class"))[0]);
+  for (R_xlen_t col = 0; col < num_cols; ++col) {
+    cpp11::writable::list my_collector(my_collectors[col]);
+    std::string my_col_type = cpp11::strings(my_collector.attr("class"))[0];
+
     if (my_col_type == "collector_guess") {
-      CharacterVector col_vals(guess_num);
-      for (size_t j = 0; j < guess_num; ++j) {
+      cpp11::writable::strings col_vals(guess_num);
+      for (R_xlen_t j = 0; j < guess_num; ++j) {
         auto row = j * guess_step;
         auto str = idx->get(row, col);
         col_vals[j] =
             locale_info->encoder_.makeSEXP(str.begin(), str.end(), false);
       }
-      auto type = guess_type__(col_vals, na, locale_info.get(), false);
-      Rcpp::Function col_type = vroom[std::string("col_") + type];
-      my_collectors[col] = Rcpp::as<Rcpp::List>(col_type());
+      auto type =
+          guess_type__(std::move(col_vals), na, locale_info.get(), false);
+      auto fun_name = std::string("col_") + type;
+      auto col_type = vroom[fun_name.c_str()];
+      my_collectors[col] = col_type();
     }
   }
 

@@ -4,11 +4,9 @@
 
 #include "vroom_vec.h"
 
-#include <Rcpp.h>
-
 int strtoi(const char* begin, const char* end);
 
-Rcpp::IntegerVector read_int(vroom_vec_info* info);
+cpp11::integers read_int(vroom_vec_info* info);
 
 #ifdef HAS_ALTREP
 
@@ -34,12 +32,8 @@ public:
   // ALTREP methods -------------------
 
   // What gets printed when .Internal(inspect()) is used
-  static Rboolean Inspect(
-      SEXP x,
-      int pre,
-      int deep,
-      int pvec,
-      void (*inspect_subtree)(SEXP, int, int, int)) {
+  static Rboolean
+  Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
         "vroom_int (len=%d, materialized=%s)\n",
         Length(x),
@@ -71,12 +65,21 @@ public:
       return INTEGER(data2)[i];
     }
 
-    auto str = vroom_vec::Get(vec, i);
+    auto& info = vroom_vec::Info(vec);
+    int out = parse_value<int>(
+        info.column->begin() + i,
+        info.column,
+        strtoi,
+        info.errors,
+        "an integer",
+        *info.na);
 
-    return strtoi(str.begin(), str.end());
+    info.errors->warn_for_errors();
+
+    return out;
   }
 
-  static void* Dataptr(SEXP vec, Rboolean writeable) {
+  static void* Dataptr(SEXP vec, Rboolean) {
     return STDVEC_DATAPTR(Materialize(vec));
   }
 
@@ -99,6 +102,5 @@ public:
 };
 #endif
 
-// Called the package is loaded (needs Rcpp 0.12.18.3)
-// [[Rcpp::init]]
-void init_vroom_int(DllInfo* dll);
+// Called the package is loaded
+[[cpp11::init]] void init_vroom_int(DllInfo* dll);

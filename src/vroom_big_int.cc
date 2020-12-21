@@ -1,9 +1,10 @@
 #include "vroom_big_int.h"
 #include "parallel.h"
+#include <climits>
 
 // A version of strtoll that doesn't need null terminated strings, to avoid
 // needing to copy the data
-long long strtoll(const char* begin, const char* end) {
+long long vroom_strtoll(const char* begin, const char* end) {
   unsigned long long val = 0;
   bool is_neg = false;
 
@@ -20,7 +21,7 @@ long long strtoll(const char* begin, const char* end) {
     val = val * 10 + ((*begin++) - '0');
   }
 
-  if (val > LONG_LONG_MAX) {
+  if (val > LLONG_MAX) {
     return NA_INTEGER64;
   }
 
@@ -33,25 +34,29 @@ long long strtoll(const char* begin, const char* end) {
 }
 
 // Normal reading of integer vectors
-Rcpp::NumericVector read_big_int(vroom_vec_info* info) {
+cpp11::doubles read_big_int(vroom_vec_info* info) {
 
   R_xlen_t n = info->column->size();
 
-  Rcpp::NumericVector out(n);
+  cpp11::writable::doubles out(n);
 
   parallel_for(
       n,
-      [&](size_t start, size_t end, size_t id) {
-        size_t i = start;
+      [&](size_t start, size_t end, size_t) {
+        R_xlen_t i = start;
         auto col = info->column->slice(start, end);
-        for (const auto& str : *col) {
-          long long res = strtoll(str.begin(), str.end());
-          out[i++] = *reinterpret_cast<double*>(&res);
+        for (auto b = col->begin(), e = col->end(); b != e; ++b) {
+          vroom_big_int_t res;
+          res.ll = parse_value<long long>(
+              b, col, vroom_strtoll, info->errors, "a big integer", *info->na);
+          out[i++] = res.dbl;
         }
       },
       info->num_threads);
 
-  out.attr("class") = "integer64";
+  info->errors->warn_for_errors();
+
+  out.attr("class") = {"integer64"};
 
   return out;
 }

@@ -1,13 +1,18 @@
 #pragma once
 
+#include <cpp11/doubles.hpp>
+
 #include "vroom.h"
 #include "vroom_dttm.h"
 
 using namespace vroom;
 
 double parse_time(
-    const string& str, DateTimeParser& parser, const std::string& format);
-Rcpp::NumericVector read_time(vroom_vec_info* info);
+    const char* begin,
+    const char* end,
+    DateTimeParser& parser,
+    const std::string& format);
+cpp11::doubles read_time(vroom_vec_info* info);
 
 #ifdef HAS_ALTREP
 
@@ -26,9 +31,9 @@ public:
     SEXP out = PROTECT(R_MakeExternalPtr(dttm_info, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(out, vroom_dttm::Finalize, FALSE);
 
-    Rcpp::RObject res = R_new_altrep(class_t, out, R_NilValue);
+    cpp11::sexp res = R_new_altrep(class_t, out, R_NilValue);
 
-    res.attr("class") = Rcpp::CharacterVector::create("hms", "difftime");
+    res.attr("class") = {"hms", "difftime"};
     res.attr("units") = "secs";
 
     UNPROTECT(1);
@@ -39,12 +44,8 @@ public:
   }
 
   // What gets printed when .Internal(inspect()) is used
-  static Rboolean Inspect(
-      SEXP x,
-      int pre,
-      int deep,
-      int pvec,
-      void (*inspect_subtree)(SEXP, int, int, int)) {
+  static Rboolean
+  Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
         "vroom_time (len=%d, materialized=%s)\n",
         Length(x),
@@ -59,10 +60,25 @@ public:
       return REAL(data2)[i];
     }
 
-    auto str = Get(vec, i);
-    auto inf = Info(vec);
+    auto info = Info(vec);
 
-    return parse_time(str, *inf->parser, inf->info->format);
+    auto err_msg = info->info->format.size() == 0
+                       ? std::string("time in ISO8601")
+                       : std::string("time like ") + info->info->format;
+
+    double out = parse_value<double>(
+        info->info->column->begin() + i,
+        info->info->column,
+        [&](const char* begin, const char* end) -> double {
+          return parse_time(begin, end, *info->parser, info->info->format);
+        },
+        info->info->errors,
+        err_msg.c_str(),
+        *info->info->na);
+
+    info->info->errors->warn_for_errors();
+
+    return out;
   }
 
   // --- Altvec
@@ -84,7 +100,7 @@ public:
     return out;
   }
 
-  static void* Dataptr(SEXP vec, Rboolean writeable) {
+  static void* Dataptr(SEXP vec, Rboolean) {
     return STDVEC_DATAPTR(Materialize(vec));
   }
 
@@ -107,6 +123,5 @@ public:
 };
 #endif
 
-// Called the package is loaded (needs Rcpp 0.12.18.3)
-// [[Rcpp::init]]
-void init_vroom_time(DllInfo* dll);
+// Called the package is loaded
+[[cpp11::init]] void init_vroom_time(DllInfo* dll);

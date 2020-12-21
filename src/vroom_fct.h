@@ -1,29 +1,30 @@
+#include <cpp11/integers.hpp>
+#include <cpp11/strings.hpp>
+
 #include "altrep.h"
 #include "vroom.h"
 #include "vroom_vec.h"
 
-#include <Rcpp.h>
+#include <unordered_map>
 
 using namespace vroom;
 
-Rcpp::IntegerVector read_fct_explicit(
-    vroom_vec_info* info, Rcpp::CharacterVector levels, bool ordered);
+cpp11::integers
+read_fct_explicit(vroom_vec_info* info, cpp11::strings levels, bool ordered);
 
-Rcpp::IntegerVector read_fct_implicit(vroom_vec_info* info, bool include_na);
+cpp11::integers read_fct_implicit(vroom_vec_info* info, bool include_na);
+
+int parse_factor(
+    const char* begin,
+    const char* end,
+    const std::unordered_map<SEXP, size_t>& level_map,
+    LocaleInfo& locale);
 
 #ifdef HAS_ALTREP
 
-using namespace Rcpp;
-
-// inspired by Luke Tierney and the R Core Team
-// https://github.com/ALTREP-examples/Rpkg-mutable/blob/master/vroom_time.h|31
-// col 32| for (const autosrc str : info->column.slice(start, end)) {/mutable.c
-// and Romain François
-// https://purrple.cat/blog/2018/10/21/lazy-abs-altrep-cplusplus/ and Dirk
-
 struct vroom_factor_info {
   vroom_vec_info* info;
-  std::map<SEXP, size_t> levels;
+  std::unordered_map<SEXP, size_t> levels;
 };
 
 struct vroom_fct : vroom_vec {
@@ -32,24 +33,30 @@ public:
   static R_altrep_class_t class_t;
 
   // Make an altrep object of class `vroom_factor::class_t`
-  static SEXP Make(vroom_vec_info* info, CharacterVector levels, bool ordered) {
+  static SEXP Make(vroom_vec_info* info, cpp11::strings levels, bool ordered) {
 
     vroom_factor_info* fct_info = new vroom_factor_info;
     fct_info->info = info;
 
     for (auto i = 0; i < levels.size(); ++i) {
-      fct_info->levels[levels[i]] = i + 1;
+      if (levels[i] == NA_STRING) {
+        for (const auto& str : *info->na) {
+          fct_info->levels[str] = i + 1;
+        }
+      } else {
+        fct_info->levels[levels[i]] = i + 1;
+      }
     }
 
     SEXP out = PROTECT(R_MakeExternalPtr(fct_info, R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(out, Finalize, FALSE);
 
     // make a new altrep object of class `vroom_factor::class_t`
-    RObject res = R_new_altrep(class_t, out, R_NilValue);
+    cpp11::sexp res = R_new_altrep(class_t, out, R_NilValue);
 
-    res.attr("levels") = levels;
+    res.attr("levels") = static_cast<SEXP>(levels);
     if (ordered) {
-      res.attr("class") = CharacterVector::create("ordered", "factor");
+      res.attr("class") = {"ordered", "factor"};
     } else {
       res.attr("class") = "factor";
     }
@@ -64,12 +71,8 @@ public:
   // ALTREP methods -------------------
 
   // What gets printed when .Internal(inspect()) is used
-  static Rboolean Inspect(
-      SEXP x,
-      int pre,
-      int deep,
-      int pvec,
-      void (*inspect_subtree)(SEXP, int, int, int)) {
+  static Rboolean
+  Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
         "vroom_factor (len=%d, materialized=%s)\n",
         Length(x),
@@ -111,18 +114,21 @@ public:
   // ALTSTRING methods -----------------
 
   static int Val(SEXP vec, R_xlen_t i) {
-    auto inf = Info(vec);
+    auto info = Info(vec);
 
-    auto str = Get(vec, i);
+    double out = parse_value<double>(
+        info.info->column->begin() + i,
+        info.info->column,
+        [&](const char* begin, const char* end) -> double {
+          return parse_factor(begin, end, info.levels, *info.info->locale);
+        },
+        info.info->errors,
+        "value in level set",
+        *info.info->na);
 
-    auto search = inf.levels.find(
-        inf.info->locale->encoder_.makeSEXP(str.begin(), str.end(), false));
-    if (search != inf.levels.end()) {
-      return search->second;
-    }
-    // val = check_na(vec, val);
+    info.info->errors->warn_for_errors();
 
-    return NA_INTEGER;
+    return out;
   }
 
   // the element at the index `i`
@@ -147,7 +153,7 @@ public:
 
     // allocate a standard character vector for data2
     R_xlen_t n = Length(vec);
-    IntegerVector out(n);
+    cpp11::writable::integers out(n);
 
     for (R_xlen_t i = 0; i < n; ++i) {
       out[i] = Val(vec, i);
@@ -161,11 +167,11 @@ public:
     return out;
   }
 
-  static void* Dataptr(SEXP vec, Rboolean writeable) {
+  static void* Dataptr(SEXP vec, Rboolean) {
     return STDVEC_DATAPTR(Materialize(vec));
   }
 
-  static SEXP Extract_subset(SEXP x, SEXP indx, SEXP call) {
+  static SEXP Extract_subset(SEXP x, SEXP indx, SEXP) {
     SEXP data2 = R_altrep_data2(x);
     // If the vector is already materialized, just fall back to the default
     // implementation
@@ -173,28 +179,31 @@ public:
       return nullptr;
     }
 
-    RObject x_(x);
+    // If there are no indices to subset fall back to default implementation.
+    if (Rf_xlength(indx) == 0) {
+      return nullptr;
+    }
 
-    Rcpp::IntegerVector in(indx);
+    cpp11::sexp x_(x);
 
-    auto idx = std::make_shared<std::vector<size_t> >();
+    auto idx = get_subset_index(indx, Rf_xlength(x));
 
-    std::transform(in.begin(), in.end(), std::back_inserter(*idx), [](int i) {
-      return i - 1;
-    });
+    if (idx == nullptr) {
+      return nullptr;
+    }
 
     auto inf = Info(x);
 
-    auto info = new vroom_vec_info{inf.info->column->subset(idx),
-                                   inf.info->num_threads,
-                                   inf.info->na,
-                                   inf.info->locale,
-                                   inf.info->format};
+    auto info = new vroom_vec_info{
+        inf.info->column->subset(idx),
+        inf.info->num_threads,
+        inf.info->na,
+        inf.info->locale,
+        inf.info->errors,
+        inf.info->format};
 
-    return Make(
-        info,
-        x_.attr("levels"),
-        Rcpp::as<CharacterVector>(x_.attr("class"))[0] == "ordered");
+    bool is_ordered = Rf_inherits(x_, "ordered");
+    return Make(info, cpp11::strings(x_.attr("levels")), is_ordered);
   }
 
   // -------- initialize the altrep class with the methods above
@@ -217,6 +226,5 @@ public:
 };
 #endif
 
-// Called the package is loaded (needs Rcpp 0.12.18.3)
-// [[Rcpp::init]]
-void init_vroom_fct(DllInfo* dll);
+// Called the package is loaded
+[[cpp11::init]] void init_vroom_fct(DllInfo* dll);

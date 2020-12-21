@@ -1,6 +1,10 @@
 #pragma once
 
-#include "Rcpp.h"
+#include <cpp11/as.hpp>
+#include <cpp11/external_pointer.hpp>
+#include <cpp11/list.hpp>
+#include <cpp11/strings.hpp>
+
 #include "vroom.h"
 #include "vroom_big_int.h"
 #include "vroom_chr.h"
@@ -20,8 +24,6 @@
 
 #include "collectors.h"
 
-using namespace Rcpp;
-
 namespace vroom {
 
 inline std::vector<std::string> get_filenames(SEXP in) {
@@ -32,7 +34,7 @@ inline std::vector<std::string> get_filenames(SEXP in) {
   for (R_xlen_t i = 0; i < n; ++i) {
     SEXP x = VECTOR_ELT(in, i);
     if (TYPEOF(x) == STRSXP) {
-      out.emplace_back(Rcpp::as<std::string>(x));
+      out.emplace_back(cpp11::as_cpp<std::string>(x));
     } else {
       out.emplace_back(con_description(x));
     }
@@ -46,8 +48,12 @@ inline SEXP generate_filename_column(
     const std::vector<size_t>& lengths,
     size_t rows) {
 #ifdef HAS_ALTREP
-  IntegerVector rle(filenames.size());
-  for (size_t i = 0; i < lengths.size(); ++i) {
+  // suppress compiler warning about unused parameter, as this is only used
+  // without altrep.
+  (void)rows;
+
+  cpp11::writable::integers rle(filenames.size());
+  for (R_xlen_t i = 0; i < R_xlen_t(lengths.size()); ++i) {
     rle[i] = lengths[i];
   }
   rle.names() = filenames;
@@ -58,7 +64,7 @@ inline SEXP generate_filename_column(
   out.reserve(rows);
 
   if (static_cast<size_t>(filenames.size()) != lengths.size()) {
-    stop("inputs and lengths inconsistent");
+    cpp11::stop("inputs and lengths inconsistent");
   }
 
   for (size_t i = 0; i < filenames.size(); ++i) {
@@ -66,40 +72,42 @@ inline SEXP generate_filename_column(
       out.push_back(filenames[i]);
     }
   }
-  return wrap(out);
+  return cpp11::as_sexp(out);
 #endif
 }
 
-inline List create_columns(
+inline cpp11::list create_columns(
     std::shared_ptr<index_collection> idx,
-    RObject col_names,
-    RObject col_types,
-    RObject col_select,
+    cpp11::sexp col_names,
+    cpp11::sexp col_types,
+    cpp11::sexp col_select,
+    cpp11::sexp name_repair,
     SEXP id,
     std::vector<std::string>& filenames,
-    CharacterVector na,
-    List locale,
+    cpp11::strings na,
+    cpp11::list locale,
     size_t altrep,
     size_t guess_max,
+    cpp11::external_pointer<std::shared_ptr<vroom_errors>> errors,
     size_t num_threads) {
 
-  auto num_cols = idx->num_columns();
+  R_xlen_t num_cols = idx->num_columns();
   auto num_rows = idx->num_rows();
 
   auto locale_info = std::make_shared<LocaleInfo>(locale);
 
-  size_t i = 0;
+  R_xlen_t i = 0;
 
   bool add_filename = !Rf_isNull(id);
 
-  List res(num_cols + add_filename);
+  cpp11::writable::list res(num_cols + add_filename);
 
-  CharacterVector res_nms(num_cols + add_filename);
+  cpp11::writable::strings res_nms(num_cols + add_filename);
 
   if (add_filename) {
     res[i] =
         generate_filename_column(filenames, idx->row_sizes(), idx->num_rows());
-    res_nms[i] = Rcpp::as<Rcpp::CharacterVector>(id)[0];
+    res_nms[i] = cpp11::strings(id)[0];
     ++i;
   }
 
@@ -107,6 +115,7 @@ inline List create_columns(
       col_names,
       col_types,
       col_select,
+      name_repair,
       idx,
       na,
       locale_info,
@@ -114,15 +123,14 @@ inline List create_columns(
       altrep);
 
   size_t to_parse = 0;
-  for (size_t col = 0; col < num_cols; ++col) {
+  for (R_xlen_t col = 0; col < num_cols; ++col) {
     auto collector = my_collectors[col];
     if (collector.use_altrep()) {
       to_parse += num_rows;
     }
   }
-  // Rcpp::Rcerr << to_parse << '\n';
 
-  for (size_t col = 0; col < num_cols; ++col) {
+  for (R_xlen_t col = 0; col < num_cols; ++col) {
     auto collector = my_collectors[col];
     auto col_type = collector.type();
 
@@ -131,11 +139,13 @@ inline List create_columns(
     }
 
     // This is deleted in the finalizers when the vectors are GC'd by R
-    auto info = new vroom_vec_info{idx->get_column(col),
-                                   num_threads,
-                                   std::make_shared<Rcpp::CharacterVector>(na),
-                                   locale_info,
-                                   std::string()};
+    auto info = new vroom_vec_info{
+        idx->get_column(col),
+        num_threads,
+        std::make_shared<cpp11::strings>(na),
+        locale_info,
+        *errors,
+        std::string()};
 
     res_nms[i] = collector.name();
 
@@ -181,18 +191,23 @@ inline List create_columns(
       }
       break;
     case column_type::Lgl:
-      // No altrep for logicals as of R 3.5
+      // if (collector.use_altrep()) {
+      //#if defined HAS_ALTREP && R_VERSION >= R_Version(3, 6, 0)
+      // res[i] = vroom_lgl::Make(info);
+      //#endif
+      //} else {
       res[i] = read_lgl(info);
       delete info;
+      //}
       break;
     case column_type::Fct: {
       auto levels = collector["levels"];
       if (Rf_isNull(levels)) {
-        res[i] =
-            read_fct_implicit(info, Rcpp::as<bool>(collector["include_na"]));
+        res[i] = read_fct_implicit(
+            info, cpp11::as_cpp<bool>(collector["include_na"]));
         delete info;
       } else {
-        bool ordered = Rcpp::as<bool>(collector["ordered"]);
+        bool ordered = cpp11::as_cpp<bool>(collector["ordered"]);
         if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
           res[i] = vroom_fct::Make(info, levels, ordered);
@@ -205,7 +220,7 @@ inline List create_columns(
       break;
     }
     case column_type::Date:
-      info->format = Rcpp::as<std::string>(collector["format"]);
+      info->format = cpp11::as_cpp<std::string>(collector["format"]);
       if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
         res[i] = vroom_date::Make(info);
@@ -216,7 +231,7 @@ inline List create_columns(
       }
       break;
     case column_type::Dttm:
-      info->format = Rcpp::as<std::string>(collector["format"]);
+      info->format = cpp11::as_cpp<std::string>(collector["format"]);
       if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
         res[i] = vroom_dttm::Make(info);
@@ -227,7 +242,7 @@ inline List create_columns(
       }
       break;
     case column_type::Time:
-      info->format = Rcpp::as<std::string>(collector["format"]);
+      info->format = cpp11::as_cpp<std::string>(collector["format"]);
       if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
         res[i] = vroom_time::Make(info);
@@ -261,10 +276,11 @@ inline List create_columns(
   }
 
   res.attr("names") = res_nms;
-  Rcpp::List spec = my_collectors.spec();
-  spec["delim"] = idx->get_delim();
+  cpp11::writable::list spec(my_collectors.spec());
+  spec["delim"] = cpp11::writable::strings({idx->get_delim().c_str()});
   spec.attr("class") = "col_spec";
   res.attr("spec") = spec;
+  res.attr("problems") = errors;
 
   return res;
 }

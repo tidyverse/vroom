@@ -126,7 +126,12 @@ as.col_spec.list <- function(x) {
   do.call(cols, x)
 }
 #' @export
-as.col_spec.col_spec <- function(x) x
+as.col_spec.col_spec <- function(x) {
+  if (!"delim" %in% names(x)) {
+    x["delim"] <- list(NULL)
+  }
+  x
+}
 
 #' @export
 as.col_spec.default <- function(x) {
@@ -326,6 +331,9 @@ vroom_enquo <- function(x) {
 }
 
 vroom_select <- function(x, col_select, id) {
+  # Drop any NULL columns
+  is_null <- vapply(x, is.null, logical(1))
+  x[is_null] <- NULL
   # reorder and rename columns
   if (inherits(col_select, "quosures") || !rlang::quo_is_null(col_select)) {
     if (inherits(col_select, "quosures")) {
@@ -341,7 +349,7 @@ vroom_select <- function(x, col_select, id) {
   x
 }
 
-col_types_standardise <- function(spec, col_names, col_select) {
+col_types_standardise <- function(spec, col_names, col_select, name_repair) {
   type_names <- names(spec$cols)
 
   if (length(spec$cols) == 0) {
@@ -377,6 +385,8 @@ col_types_standardise <- function(spec, col_names, col_select) {
 
     spec$cols <- spec$cols[col_names]
   }
+
+  names(spec$cols) <- vctrs::vec_as_names(names(spec$cols), repair = name_repair)
 
   if (inherits(col_select, "quosures") || !rlang::quo_is_null(col_select)) {
     if (inherits(col_select, "quosures")) {
