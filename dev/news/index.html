@@ -157,6 +157,7 @@
 <a href="#vroom-development-version" class="anchor"></a>vroom (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now works when the delimiter is empty, e.g. <code>delim = ""</code> (<a href='https://github.com/r-lib/vroom/issues/287'>#287</a>).</p></li>
 <li><p>Data with newlines within quoted fields will now automatically revert to using a single thread and be properly read (<a href='https://github.com/r-lib/vroom/issues/282'>#282</a>)</p></li>
 <li><p>Vectors are now subset properly when given invalid subscripts (<a href='https://github.com/r-lib/vroom/issues/283'>#283</a>)</p></li>
 <li><p>vroom now tracks indexing and parsing errors like readr. The first time an issue is encountered a warning will be signaled. A tibble of all found problems can be retrieved with <code><a href="../reference/problems.html">vroom::problems()</a></code>. (<a href='https://github.com/r-lib/vroom/issues/247'>#247</a>)</p></li>
