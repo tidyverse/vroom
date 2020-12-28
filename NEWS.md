@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom_write()` now works when the delimiter is empty, e.g. `delim = ""` (#287).
+
 * Data with newlines within quoted fields will now automatically revert to using a single thread and be properly read (#282)
 
 * Vectors are now subset properly when given invalid subscripts (#283)

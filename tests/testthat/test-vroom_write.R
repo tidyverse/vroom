@@ -206,3 +206,13 @@ test_that("vroom_write(append = TRUE) works with R connections", {
 
   expect_equal(vroom_lines(f), c("x\ty", "1\t2", "1\t2"))
 })
+
+test_that("vroom_write() works with an empty delimiter", {
+  df <- data.frame(x = "foo", y = "bar")
+
+  f <- tempfile(, fileext = ".tsv.gz")
+  on.exit(unlink(f))
+
+  vroom::vroom_write(df, f, delim = "")
+  expect_equal(vroom_lines(f), c("xy", "foobar"))
+})

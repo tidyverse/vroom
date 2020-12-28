@@ -223,9 +223,15 @@ std::vector<char> fill_buf(
         break;
       }
       }
-      buf.push_back(delim);
+      if (delim != '\0') {
+        buf.push_back(delim);
+      }
     }
-    buf[buf.size() - 1] = '\n';
+    if (delim == '\0') {
+      buf.push_back('\n');
+    } else {
+      buf[buf.size() - 1] = '\n';
+    }
   }
 
   return buf;
@@ -294,9 +300,15 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
     auto str = STRING_ELT(names, i);
 
     str_to_buf(str, out, delim, "", 0, options);
-    out.push_back(delim);
+    if (delim != '\0') {
+      out.push_back(delim);
+    }
   }
-  out[out.size() - 1] = '\n';
+  if (delim != '\0') {
+    out[out.size() - 1] = '\n';
+  } else {
+    out.push_back('\n');
+  }
   return out;
 }
 
@@ -327,7 +339,7 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
     cpp11::stop(msg.c_str());
   }
 
-  std::array<std::vector<std::future<std::vector<char> > >, 2> futures;
+  std::array<std::vector<std::future<std::vector<char>>>, 2> futures;
   futures[0].resize(num_threads);
   futures[1].resize(num_threads);
 
@@ -428,7 +440,7 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
 
   bool should_close = should_open;
 
-  std::array<std::vector<std::future<std::vector<char> > >, 2> futures;
+  std::array<std::vector<std::future<std::vector<char>>>, 2> futures;
   futures[0].resize(num_threads);
   futures[1].resize(num_threads);
 
