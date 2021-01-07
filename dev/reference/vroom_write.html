@@ -162,6 +162,7 @@
   <span class='va'>x</span>,
   <span class='va'>path</span>,
   delim <span class='op'>=</span> <span class='st'>"\t"</span>,
+  eol <span class='op'>=</span> <span class='st'>"\n"</span>,
   na <span class='op'>=</span> <span class='st'>"NA"</span>,
   col_names <span class='op'>=</span> <span class='op'>!</span><span class='va'>append</span>,
   append <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -187,6 +188,11 @@
       <th>delim</th>
       <td><p>Delimiter used to separate values. Defaults to <code>\t</code> to write
 tab separated value (TSV) files.</p></td>
+    </tr>
+    <tr>
+      <th>eol</th>
+      <td><p>The end of line character to use. Most commonly either <code>"\n"</code> for
+Unix style newlines, or <code>"\r\n"</code> for Windows style newlines.</p></td>
     </tr>
     <tr>
       <th>na</th>

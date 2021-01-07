@@ -157,6 +157,7 @@
 <a href="#vroom-development-version" class="anchor"></a>vroom (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> gains a <code>eol=</code> parameter to specify the end of line character(s) to use. Use <code><a href="../reference/vroom_write.html">vroom_write(eol = "\r\n")</a></code> to write a file with Windows style newlines (<a href='https://github.com/r-lib/vroom/issues/263'>#263</a>).</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom(comment)</a></code> now accepts multi-character comments (<a href='https://github.com/r-lib/vroom/issues/286'>#286</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now signals an R error for invalid date and datetime formats, instead of crashing the session (<a href='https://github.com/r-lib/vroom/issues/220'>#220</a>).</p></li>
 <li><p>Datetime formats used when guessing now match those used when parsing (<a href='https://github.com/r-lib/vroom/issues/240'>#240</a>)</p></li>
