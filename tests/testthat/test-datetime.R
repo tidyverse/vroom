@@ -246,5 +246,17 @@ test_that("subsetting works with both double and integer indexes", {
 })
 
 test_that("guessing datetime uses the same logic as parsing", {
-  expect_s3_class(vroom("date\n2015-06-14T09Z\n2015-06-14T09Z", delim=",")[[1]], "character")
+  expect_type(vroom("date\n2015-06-14T09Z\n2015-06-14T09Z", delim=",")[[1]], "character")
+})
+
+test_that("malformed date / datetime formats cause R errors", {
+  expect_error(
+    vroom("x\n6/28/2016", delim = ",", col_types = list(x = col_date("%m/%/%Y")), altrep = FALSE),
+    "Unsupported format"
+  )
+
+  expect_error(
+    vroom("x\n6/28/2016", delim = ",", col_types = list(x = col_datetime("%m/%/%Y")), altrep = FALSE),
+    "Unsupported format"
+  )
 })
