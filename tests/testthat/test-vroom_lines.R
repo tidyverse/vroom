@@ -51,3 +51,11 @@ test_that("vroom_lines respects n_max", {
   infile <- vroom_example("mtcars.csv")
   expect_equal(vroom_lines(infile, n_max = 2), readLines(infile, n = 2))
 })
+
+test_that("vroom_lines works with empty files", {
+  f <- tempfile()
+  file.create(f)
+  on.exit(unlink(f))
+
+  expect_equal(vroom_lines(f), character())
+})

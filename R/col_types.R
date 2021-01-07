@@ -350,6 +350,9 @@ vroom_select <- function(x, col_select, id) {
 }
 
 col_types_standardise <- function(spec, col_names, col_select, name_repair) {
+  if (length(col_names) == 0) {
+    return(spec)
+  }
   type_names <- names(spec$cols)
 
   if (length(spec$cols) == 0) {

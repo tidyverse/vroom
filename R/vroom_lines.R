@@ -45,6 +45,9 @@ vroom_lines <- function(file, n_max = Inf, skip = 0,
     n_max = n_max, altrep = vroom_altrep(altrep), num_threads = num_threads,
     progress = progress
   )
+  if (length(out) == 0) {
+    return(character())
+  }
 
   out[[1]]
 }
