@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom_write()` gains a `eol=` parameter to specify the end of line character(s) to use. Use `vroom_write(eol = "\r\n")` to write a file with Windows style newlines (#263).
+
 * `vroom(comment)` now accepts multi-character comments (#286)
 
 * `vroom()` now signals an R error for invalid date and datetime formats, instead of crashing the session (#220).

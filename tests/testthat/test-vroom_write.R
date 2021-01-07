@@ -122,6 +122,10 @@ test_that("does not writes a trailing .0 for whole number doubles", {
   expect_equal(vroom_format(tibble::tibble(x = -123456789)), "x\n-123456789\n")
 })
 
+test_that("can write windows eol characters if desired (#263)", {
+  expect_equal(vroom_format(tibble::tibble(x = 1), eol = "\r\n"), "x\r\n1\r\n")
+})
+
 test_that("write_csv can write to compressed files", {
   mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
 

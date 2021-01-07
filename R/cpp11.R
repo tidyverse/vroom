@@ -36,16 +36,16 @@ whitespace_columns_ <- function(filename, skip, n, comment) {
   .Call("_vroom_whitespace_columns_", filename, skip, n, comment, PACKAGE = "vroom")
 }
 
-vroom_write_ <- function(input, filename, delim, na_str, col_names, append, options, num_threads, progress, buf_lines) {
-  invisible(.Call("_vroom_vroom_write_", input, filename, delim, na_str, col_names, append, options, num_threads, progress, buf_lines, PACKAGE = "vroom"))
+vroom_write_ <- function(input, filename, delim, eol, na_str, col_names, append, options, num_threads, progress, buf_lines) {
+  invisible(.Call("_vroom_vroom_write_", input, filename, delim, eol, na_str, col_names, append, options, num_threads, progress, buf_lines, PACKAGE = "vroom"))
 }
 
-vroom_write_connection_ <- function(input, con, delim, na_str, col_names, options, num_threads, progress, buf_lines, is_stdout, append) {
-  invisible(.Call("_vroom_vroom_write_connection_", input, con, delim, na_str, col_names, options, num_threads, progress, buf_lines, is_stdout, append, PACKAGE = "vroom"))
+vroom_write_connection_ <- function(input, con, delim, eol, na_str, col_names, options, num_threads, progress, buf_lines, is_stdout, append) {
+  invisible(.Call("_vroom_vroom_write_connection_", input, con, delim, eol, na_str, col_names, options, num_threads, progress, buf_lines, is_stdout, append, PACKAGE = "vroom"))
 }
 
-vroom_format_ <- function(input, delim, na_str, col_names, options) {
-  .Call("_vroom_vroom_format_", input, delim, na_str, col_names, options, PACKAGE = "vroom")
+vroom_format_ <- function(input, delim, eol, na_str, col_names, options) {
+  .Call("_vroom_vroom_format_", input, delim, eol, na_str, col_names, options, PACKAGE = "vroom")
 }
 
 vroom_ <- function(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip, n_max, progress, col_names, col_types, col_select, name_repair, id, na, locale, guess_max, num_threads, altrep) {

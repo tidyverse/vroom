@@ -31,7 +31,7 @@
 #' # vroom_write(mtcars, "mtcars.tsv.gz")
 #' # vroom_write(mtcars, "mtcars.tsv.bz2")
 #' # vroom_write(mtcars, "mtcars.tsv.xz")
-vroom_write <- function(x, path, delim = '\t', na = "NA", col_names = !append,
+vroom_write <- function(x, path, delim = '\t', eol = "\n", na = "NA", col_names = !append,
   append = FALSE, quote = c("needed", "all", "none"), escape =
     c("double", "backslash", "none"), bom = FALSE, num_threads =
     vroom_threads(), progress = vroom_progress()) {
@@ -58,11 +58,11 @@ vroom_write <- function(x, path, delim = '\t', na = "NA", col_names = !append,
   buf_lines <- max(as.integer(Sys.getenv("VROOM_WRITE_BUFFER_LINES", nrow(x) / 100 / num_threads)), 1)
 
   if (inherits(path, "connection")) {
-    vroom_write_connection_(xx, path, delim, na_str = na, col_names = col_names,
+    vroom_write_connection_(xx, path, delim, eol, na_str = na, col_names = col_names,
       options = opts, num_threads = num_threads, progress = progress, buf_lines = buf_lines,
       is_stdout = path == stdout(), append = append)
   } else {
-    vroom_write_(xx, path, delim, na_str = na, col_names = col_names,
+    vroom_write_(xx, path, delim, eol, na_str = na, col_names = col_names,
       append = append, options = opts,
       num_threads = num_threads, progress = progress, buf_lines = buf_lines)
   }
@@ -99,7 +99,7 @@ vroom_write_opts <- function() c(
 #'
 #' @inheritParams vroom_write
 #' @export
-vroom_format <- function(x, delim = '\t', na = "NA", col_names = TRUE,
+vroom_format <- function(x, delim = "\t", eol = "\n", na = "NA", col_names = TRUE,
                          escape = c("double", "backslash", "none"),
                          quote = c("needed", "all", "none"),
                          bom = FALSE) {
@@ -110,7 +110,7 @@ vroom_format <- function(x, delim = '\t', na = "NA", col_names = TRUE,
   opts <- get_vroom_write_opts(quote, escape, bom)
 
   x[] <- lapply(x, output_column)
-  vroom_format_(x, delim = delim, na_str = na, col_names = col_names,
+  vroom_format_(x, delim = delim, eol = eol, na_str = na, col_names = col_names,
                 options = opts)
 }
 

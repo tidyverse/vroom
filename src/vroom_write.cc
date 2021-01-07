@@ -156,6 +156,7 @@ void str_to_buf(
 std::vector<char> fill_buf(
     const cpp11::list& input,
     const char delim,
+    const std::string& eol,
     const char* na_str,
     size_t options,
     const std::vector<SEXPTYPE>& types,
@@ -227,10 +228,11 @@ std::vector<char> fill_buf(
         buf.push_back(delim);
       }
     }
-    if (delim == '\0') {
-      buf.push_back('\n');
-    } else {
-      buf[buf.size() - 1] = '\n';
+    if (delim != '\0') {
+      buf.pop_back();
+    }
+    for (auto c : eol) {
+      buf.push_back(c);
     }
   }
 
@@ -292,8 +294,11 @@ std::vector<void*> get_ptrs(const cpp11::list& input) {
   return out;
 }
 
-std::vector<char>
-get_header(const cpp11::list& input, const char delim, size_t options) {
+std::vector<char> get_header(
+    const cpp11::list& input,
+    const char delim,
+    const std::string& eol,
+    size_t options) {
   cpp11::strings names(input.attr("names"));
   std::vector<char> out;
   for (R_xlen_t i = 0; i < names.size(); ++i) {
@@ -305,9 +310,10 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
     }
   }
   if (delim != '\0') {
-    out[out.size() - 1] = '\n';
-  } else {
-    out.push_back('\n');
+    out.pop_back();
+  }
+  for (auto c : eol) {
+    out.push_back(c);
   }
   return out;
 }
@@ -316,6 +322,7 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
     cpp11::list input,
     std::string filename,
     const char delim,
+    std::string eol,
     const char* na_str,
     bool col_names,
     bool append,
@@ -356,7 +363,7 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
   }
 
   if (col_names) {
-    auto header = get_header(input, delim, options);
+    auto header = get_header(input, delim, eol, options);
     write_buf(header, out);
   }
 
@@ -372,7 +379,16 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
       auto num_lines = std::min(buf_lines, num_rows - begin);
       auto end = begin + num_lines;
       futures[idx][t++] = std::async(
-          fill_buf, input, delim, na_str, options, types, ptrs, begin, end);
+          fill_buf,
+          input,
+          delim,
+          eol,
+          na_str,
+          options,
+          types,
+          ptrs,
+          begin,
+          end);
       begin += num_lines;
     }
 
@@ -414,6 +430,7 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
     cpp11::list input,
     cpp11::sexp con,
     const char delim,
+    std::string eol,
     const char* na_str,
     bool col_names,
     size_t options,
@@ -452,7 +469,7 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
   auto ptrs = get_ptrs(input);
 
   if (col_names) {
-    auto header = get_header(input, delim, options);
+    auto header = get_header(input, delim, eol, options);
     write_buf_con(header, con_, is_stdout);
   }
 
@@ -468,7 +485,16 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
       auto num_lines = std::min(buf_lines, num_rows - begin);
       auto end = begin + num_lines;
       futures[idx][t++] = std::async(
-          fill_buf, input, delim, na_str, options, types, ptrs, begin, end);
+          fill_buf,
+          input,
+          delim,
+          eol,
+          na_str,
+          options,
+          types,
+          ptrs,
+          begin,
+          end);
       begin += num_lines;
     }
 
@@ -497,6 +523,7 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
 [[cpp11::register]] cpp11::strings vroom_format_(
     cpp11::list input,
     const char delim,
+    std::string eol,
     const char* na_str,
     bool col_names,
     size_t options) {
@@ -515,10 +542,11 @@ get_header(const cpp11::list& input, const char delim, size_t options) {
   }
 
   if (col_names) {
-    data = get_header(input, delim, options);
+    data = get_header(input, delim, eol, options);
   }
 
-  auto buf = fill_buf(input, delim, na_str, options, types, ptrs, 0, num_rows);
+  auto buf =
+      fill_buf(input, delim, eol, na_str, options, types, ptrs, 0, num_rows);
   std::copy(buf.begin(), buf.end(), std::back_inserter(data));
 
   out[0] = Rf_mkCharLenCE(data.data(), data.size(), CE_UTF8);

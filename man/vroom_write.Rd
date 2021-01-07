@@ -8,6 +8,7 @@ vroom_write(
   x,
   path,
   delim = "\\t",
+  eol = "\\n",
   na = "NA",
   col_names = !append,
   append = FALSE,
@@ -25,6 +26,9 @@ vroom_write(
 
 \item{delim}{Delimiter used to separate values. Defaults to \verb{\\t} to write
 tab separated value (TSV) files.}
+
+\item{eol}{The end of line character to use. Most commonly either \code{"\n"} for
+Unix style newlines, or \code{"\r\n"} for Windows style newlines.}
 
 \item{na}{String used for missing values. Defaults to 'NA'.}
 
