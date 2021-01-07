@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Datetime formats used when guessing now match those used when parsing (#240)
+
 * `vroom_lines()` now works with empty files (#285)
 
 * `vroom_write()` now works when the delimiter is empty, e.g. `delim = ""` (#287).

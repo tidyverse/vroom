@@ -218,7 +218,7 @@ test_that("DDDD-DD not parsed as date (i.e. doesn't trigger partial date match)"
 })
 
 test_that("leading zeros don't get parsed as date without explicit separator", {
-  expect_type(vroom("00010203\n", col_names = FALSE, delim = "\n", col_types = list())[[1]], "character")
+  expect_type(vroom("00010203\n", col_names = FALSE, delim = "\n", col_types = list())[[1]], "double")
   expect_s3_class(vroom("0001-02-03\n", col_names = FALSE, delim = "\n", col_types = list())[[1]], "Date")
 })
 
@@ -243,4 +243,8 @@ test_that("subsetting works with both double and integer indexes", {
   expect_equal(x$X1[1], dt)
   expect_equal(x$X1[NA_integer_], na_dt)
   expect_equal(x$X1[NA_real_], na_dt)
+})
+
+test_that("guessing datetime uses the same logic as parsing", {
+  expect_s3_class(vroom("date\n2015-06-14T09Z\n2015-06-14T09Z", delim=",")[[1]], "character")
 })
