@@ -43,7 +43,7 @@ public:
       const bool has_header,
       const size_t skip,
       size_t n_max,
-      const char comment,
+      const char* comment,
       std::shared_ptr<vroom_errors> errors,
       const size_t num_threads,
       const bool progress,
@@ -171,7 +171,7 @@ public:
   bool escape_backslash_;
   bool windows_newlines_;
   size_t skip_;
-  char comment_;
+  const char* comment_;
   size_t rows_;
   size_t columns_;
   bool progress_;

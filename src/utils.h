@@ -96,7 +96,7 @@ inline void trim_whitespace(const char*& begin, const char*& end) {
   }
 }
 
-inline bool is_blank_or_comment_line(const char* begin, const char comment) {
+inline bool is_blank_or_comment_line(const char* begin, const char* comment) {
   if (*begin == '\n') {
     return true;
   }
@@ -105,7 +105,9 @@ inline bool is_blank_or_comment_line(const char* begin, const char comment) {
     ++begin;
   }
 
-  if (*begin == '\n' || *begin == comment) {
+  size_t comment_len = strlen(comment);
+  if (*begin == '\n' ||
+      (comment_len > 0 && strncmp(begin, comment, strlen(comment)) == 0)) {
     return true;
   }
 
@@ -167,7 +169,7 @@ EF BB BF:    UTF-8
 
 // This skips leading blank lines and comments (if needed)
 template <typename T>
-size_t find_first_line(const T& source, size_t skip, const char comment) {
+size_t find_first_line(const T& source, size_t skip, const char* comment) {
 
   auto begin = skip_bom(source);
   /* Skip skip parameters, comments and blank lines */

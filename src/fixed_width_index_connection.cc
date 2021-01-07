@@ -22,7 +22,7 @@ fixed_width_index_connection::fixed_width_index_connection(
     std::vector<int> col_ends,
     bool trim_ws,
     const size_t skip,
-    const char comment,
+    const char* comment,
     const size_t n_max,
     const bool progress,
     const size_t chunk_size) {
@@ -43,8 +43,8 @@ fixed_width_index_connection::fixed_width_index_connection(
     cpp11::package("base")["open"](in, "rb");
   }
 
-  std::array<std::vector<char>, 2> buf = {std::vector<char>(chunk_size),
-                                          std::vector<char>(chunk_size)};
+  std::array<std::vector<char>, 2> buf = {
+      std::vector<char>(chunk_size), std::vector<char>(chunk_size)};
 
   // A buf index that alternates between 0,1
   auto i = 0;

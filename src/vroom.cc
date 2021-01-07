@@ -25,7 +25,7 @@
     bool trim_ws,
     bool escape_double,
     bool escape_backslash,
-    const char comment,
+    const char* comment,
     size_t skip,
     ptrdiff_t n_max,
     bool progress,

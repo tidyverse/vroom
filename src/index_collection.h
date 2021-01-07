@@ -28,7 +28,7 @@ public:
       const bool has_header,
       const size_t skip,
       const size_t n_max,
-      const char comment,
+      const char* comment,
       std::shared_ptr<vroom_errors> errors,
       const size_t num_threads,
       const bool progress);
@@ -40,7 +40,7 @@ public:
       const std::vector<int>& col_ends,
       const bool trim_ws,
       const size_t skip,
-      const char comment,
+      const char* comment,
       const size_t n_max,
       const bool progress);
 

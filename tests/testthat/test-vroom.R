@@ -543,3 +543,8 @@ test_that("vroom reads files with embedded newlines even when num_threads > 1", 
   expect_equal(nrow(res), 1000 + 1 + 1000)
   expect_equal(res$x[[1001]], "bar\nbaz")
 })
+
+test_that("multi-character comments are supported", {
+  res <- vroom("## this is a comment\n# this is not", delim = "\t", comment = "##", col_names = FALSE)
+  expect_equal(res[[1]], "# this is not")
+})

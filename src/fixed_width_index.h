@@ -51,7 +51,7 @@ public:
       std::vector<int> col_ends,
       bool trim_ws,
       const size_t skip,
-      const char comment,
+      const char* comment,
       const size_t n_max,
       const bool progress)
       : col_starts_(col_starts),

@@ -31,7 +31,7 @@ delimited_index::delimited_index(
     const bool has_header,
     const size_t skip,
     size_t n_max,
-    const char comment,
+    const char* comment,
     std::shared_ptr<vroom_errors> errors,
     size_t num_threads,
     bool progress,

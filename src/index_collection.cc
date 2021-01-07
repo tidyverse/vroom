@@ -133,7 +133,7 @@ std::shared_ptr<vroom::index> make_delimited_index(
     const bool has_header,
     const size_t skip,
     const size_t n_max,
-    const char comment,
+    const char* comment,
     std::shared_ptr<vroom_errors> errors,
     const size_t num_threads,
     const bool progress) {
@@ -232,7 +232,7 @@ index_collection::index_collection(
     const bool has_header,
     const size_t skip,
     const size_t n_max,
-    const char comment,
+    const char* comment,
     std::shared_ptr<vroom_errors> errors,
     const size_t num_threads,
     const bool progress)
@@ -288,7 +288,7 @@ std::shared_ptr<vroom::index> make_fixed_width_index(
     const std::vector<int>& col_ends,
     const bool trim_ws,
     const size_t skip,
-    const char comment,
+    const char* comment,
     const size_t n_max,
     const bool progress) {
 
@@ -329,7 +329,7 @@ index_collection::index_collection(
     const std::vector<int>& col_ends,
     const bool trim_ws,
     const size_t skip,
-    const char comment,
+    const char* comment,
     const size_t n_max,
     const bool progress)
     : rows_(0), columns_(0) {

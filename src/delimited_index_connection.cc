@@ -29,7 +29,7 @@ delimited_index_connection::delimited_index_connection(
     const bool has_header,
     const size_t skip,
     size_t n_max,
-    const char comment,
+    const char* comment,
     const std::shared_ptr<vroom_errors> errors,
     const size_t chunk_size,
     const bool progress) {

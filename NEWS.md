@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom(comment)` now accepts multi-character comments (#286)
+
 * `vroom()` now signals an R error for invalid date and datetime formats, instead of crashing the session (#220).
 
 * Datetime formats used when guessing now match those used when parsing (#240)
