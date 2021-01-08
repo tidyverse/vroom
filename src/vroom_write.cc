@@ -197,7 +197,7 @@ std::vector<char> fill_buf(
           if (ISNA(value)) {
             std::copy(na_str, na_str + na_len, std::back_inserter(buf));
           } else if (ISNAN(value)) {
-            append_literal(buf, "NaN");
+            std::copy(na_str, na_str + na_len, std::back_inserter(buf));
           } else if (value > 0) {
             append_literal(buf, "Inf");
           } else {
