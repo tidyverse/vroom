@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Preprocess column for output — output_column • vroom</title>
+<title>Write lines to a file — vroom_write_lines • vroom</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,8 @@
 
 
 
-<meta property="og:title" content="Preprocess column for output — output_column" />
-<meta property="og:description" content="This is a generic function that applied to each column before it is saved
-to disk. It provides a hook for S3 classes that need special handling." />
+<meta property="og:title" content="Write lines to a file — vroom_write_lines" />
+<meta property="og:description" content="Write lines to a file" />
 <meta property="og:image" content="https://vroom.r-lib.org/logo.png" />
 
 
@@ -150,37 +149,32 @@ to disk. It provides a hook for S3 classes that need special handling." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Preprocess column for output</h1>
+    <h1>Write lines to a file</h1>
     <small class="dont-index">Source: <a href='https://github.com/r-lib/vroom/blob/master/R/vroom_write.R'><code>R/vroom_write.R</code></a></small>
-    <div class="hidden name"><code>output_column.Rd</code></div>
+    <div class="hidden name"><code>vroom_write_lines.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This is a generic function that applied to each column before it is saved
-to disk. It provides a hook for S3 classes that need special handling.</p>
+    <p>Write lines to a file</p>
     </div>
 
-    <pre class="usage"><span class='fu'>output_column</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>vroom_write_lines</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>file</span>, eol <span class='op'>=</span> <span class='st'>"\n"</span>, na <span class='op'>=</span> <span class='st'>"NA"</span>, append <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>A vector</p></td>
+      <th>file</th>
+      <td><p>path to a local file.</p></td>
+    </tr>
+    <tr>
+      <th>na</th>
+      <td><p>Character vector of strings to interpret as missing values. Set this
+option to <code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> to indicate no missing values.</p></td>
     </tr>
     </table>
 
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Most types are returned unchanged</span>
-<span class='fu'>output_column</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'>output_column</span><span class='op'>(</span><span class='st'>"x"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "x"</div><div class='input'>
-<span class='co'># datetimes are formatted in ISO 8601</span>
-<span class='fu'>output_column</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "2021-01-13"</div><div class='input'><span class='fu'>output_column</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "2021-01-13T19:43:37Z"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
