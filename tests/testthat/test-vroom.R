@@ -548,3 +548,11 @@ test_that("multi-character comments are supported", {
   res <- vroom("## this is a comment\n# this is not", delim = "\t", comment = "##", col_names = FALSE)
   expect_equal(res[[1]], "# this is not")
 })
+
+test_that("vroom works with quoted fields at the end of a windows newline", {
+  f <- tempfile()
+  on.exit(unlink(f))
+  writeLines(c('"x"', 1), f, sep = "\r\n")
+  res <- vroom(f, delim = ",", col_names = FALSE)
+  expect_equal(res[[1]], c("x", 1))
+})

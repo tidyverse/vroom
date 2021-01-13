@@ -308,7 +308,9 @@ public:
             /* already in a quote */
             in_quote &&
             /* right at the end of the file or line */
-            (pos == end - 1 || (pos + 1 < end && buf[pos + 1] == '\n') ||
+            (pos == end - 1 ||
+             ((!windows_newlines_ && (pos + 1 < end && buf[pos + 1] == '\n')) ||
+              (windows_newlines_ && (pos + 2 < end && buf[pos + 2] == '\n'))) ||
              /* or before a delimiter */
              (pos + delim_len_ + 1 < end &&
               strncmp(delim, buf + (pos + 1), delim_len_) == 0))) {
