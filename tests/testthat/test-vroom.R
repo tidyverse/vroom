@@ -552,7 +552,9 @@ test_that("multi-character comments are supported", {
 test_that("vroom works with quoted fields at the end of a windows newline", {
   f <- tempfile()
   on.exit(unlink(f))
-  writeLines(c('"x"', 1), f, sep = "\r\n")
+  con <- file(f, "wb")
+  writeLines(c('"x"', 1), con, sep = "\r\n")
+  close(con)
   res <- vroom(f, delim = ",", col_names = FALSE)
   expect_equal(res[[1]], c("x", 1))
 })
