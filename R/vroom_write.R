@@ -114,6 +114,21 @@ vroom_format <- function(x, delim = "\t", eol = "\n", na = "NA", col_names = TRU
                 options = opts)
 }
 
+#' Write lines to a file
+#'
+#' @inheritParams vroom
+#' @export
+vroom_write_lines <- function(x, file, eol = "\n", na = "NA", append = FALSE) {
+  stopifnot(is.character(x))
+
+  x <- list(x)
+  names(x) <- "X1"
+  class(x) <- "data.frame"
+  attr(x, "row.names") <- c(-1L, length(x))
+
+  vroom_write(x, path = file, delim = "", eol = eol, na = na, append = append)
+}
+
 #' Preprocess column for output
 #'
 #' This is a generic function that applied to each column before it is saved

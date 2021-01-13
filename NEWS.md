@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* New `vroom_write_lines()` function to write a character vector to a file (#291)
+
 * `vroom_write()` gains a `eol=` parameter to specify the end of line character(s) to use. Use `vroom_write(eol = "\r\n")` to write a file with Windows style newlines (#263).
 
 * `vroom(comment)` now accepts multi-character comments (#286)
