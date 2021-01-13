@@ -4,13 +4,21 @@
 \alias{vroom_write_lines}
 \title{Write lines to a file}
 \usage{
-vroom_write_lines(x, file, eol = "\\n", na = "NA", append = FALSE)
+vroom_write_lines(x, path, eol = "\\n", na = "NA", append = FALSE)
 }
 \arguments{
-\item{file}{path to a local file.}
+\item{x}{A data frame or tibble to write to disk.}
 
-\item{na}{Character vector of strings to interpret as missing values. Set this
-option to \code{character()} to indicate no missing values.}
+\item{path}{\Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}}
+
+\item{eol}{The end of line character to use. Most commonly either \code{"\n"} for
+Unix style newlines, or \code{"\r\n"} for Windows style newlines.}
+
+\item{na}{String used for missing values. Defaults to 'NA'.}
+
+\item{append}{If \code{FALSE}, will overwrite existing file. If \code{TRUE},
+will append to existing file. In both cases, if the file does not exist a new
+file is created.}
 }
 \description{
 Write lines to a file

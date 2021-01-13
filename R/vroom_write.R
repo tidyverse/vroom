@@ -116,9 +116,9 @@ vroom_format <- function(x, delim = "\t", eol = "\n", na = "NA", col_names = TRU
 
 #' Write lines to a file
 #'
-#' @inheritParams vroom
+#' @inheritParams vroom_write
 #' @export
-vroom_write_lines <- function(x, file, eol = "\n", na = "NA", append = FALSE) {
+vroom_write_lines <- function(x, path, eol = "\n", na = "NA", append = FALSE) {
   stopifnot(is.character(x))
 
   x <- list(x)
