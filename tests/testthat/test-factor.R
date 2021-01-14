@@ -73,14 +73,21 @@ test_that("NAs included in levels if desired", {
   )
 })
 
-#test_that("Factors handle encodings properly (#615)", {
-  #x <- test_vroom(encoded("test\nA\n\xC4\n", "latin1"),
-    #col_types = cols(col_factor(c("A", "\uC4"))),
-    #locale = locale(encoding = "latin1"), progress = FALSE)
-
-  #expect_is(x$test, "factor")
-  #expect_equal(x$test, factor(c("A", "\uC4")))
-#})
+test_that("Factors handle encodings properly (#615)", {
+  encoded <- function(x, encoding) {
+    Encoding(x) <- encoding
+    x
+  }
+  f <- tempfile()
+  on.exit(unlink(f))
+  writeBin(charToRaw(encoded("test\nA\n\xC4\n", "latin1")), f)
+  x <- test_vroom(f,
+    delim = ",",
+    col_types = cols(col_factor(c("A", "\uC4"))),
+    locale = locale(encoding = "latin1"),
+    equals = tibble::tibble(test = factor(c("A", "\uC4"), levels = c("A", "\uC4")))
+  )
+})
 
 test_that("factors parse like factor if trim_ws = FALSE", {
   expect_warning(

@@ -15,7 +15,8 @@ int parse_factor(
     const char* end,
     const std::unordered_map<SEXP, size_t>& level_map,
     LocaleInfo& locale) {
-  auto search = level_map.find(locale.encoder_.makeSEXP(begin, end, false));
+  SEXP str = locale.encoder_.makeSEXP(begin, end, false);
+  auto search = level_map.find(str);
   if (search != level_map.end()) {
     return search->second;
   } else {
