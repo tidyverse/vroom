@@ -292,10 +292,6 @@ public:
         ++pos;
       }
 
-      else if (c == '\0') {
-        break;
-      }
-
       else if (c == quote) {
         /* not already in a quote */
         if (!in_quote &&

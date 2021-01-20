@@ -558,3 +558,11 @@ test_that("vroom works with quoted fields at the end of a windows newline", {
   res <- vroom(f, delim = ",", col_names = FALSE)
   expect_equal(res[[1]], c("x", 1))
 })
+
+test_that("vroom can handle NUL characters in strings", {
+  expect_warning(
+  expect_warning(
+  expect_warning(test_vroom(test_path("raw.csv"), delim = ",", progress = FALSE,
+    equals = tibble::tibble(abc = "ab", def = "def")
+  ))))
+})

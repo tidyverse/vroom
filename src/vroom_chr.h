@@ -47,12 +47,22 @@ public:
   // ALTSTRING methods -----------------
 
   static SEXP Val(SEXP vec, R_xlen_t i) {
-    auto& inf = Info(vec);
+    auto& info = Info(vec);
 
-    auto str = Get(vec, i);
+    auto&& col = info.column;
+    auto&& itr = col->begin() + i;
+    auto str = *itr;
 
-    auto val = inf.locale->encoder_.makeSEXP(str.begin(), str.end(), false);
-    val = check_na(*inf.na, val);
+    auto val = info.locale->encoder_.makeSEXP(str.begin(), str.end(), true);
+
+    if (Rf_xlength(val) < str.end() - str.begin()) {
+      info.errors->add_error(
+          itr.index(), col->get_index(), "", "embedded null", itr.filename());
+    }
+
+    val = check_na(*info.na, val);
+
+    info.errors->warn_for_errors();
 
     return val;
   }

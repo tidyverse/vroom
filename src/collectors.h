@@ -167,7 +167,7 @@ inline collectors resolve_collectors(
         auto row = j * guess_step;
         auto str = idx->get(row, col);
         col_vals[j] =
-            locale_info->encoder_.makeSEXP(str.begin(), str.end(), false);
+            locale_info->encoder_.makeSEXP(str.begin(), str.end(), true);
       }
       auto type =
           guess_type__(std::move(col_vals), na, locale_info.get(), false);
