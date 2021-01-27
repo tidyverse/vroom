@@ -157,6 +157,7 @@ vroom <- function(
   out[is_null] <- NULL
 
   out <- tibble::as_tibble(out, .name_repair = .name_repair)
+  class(out) <- c("spec_tbl_df", class(out))
 
   out <- vroom_select(out, col_select, id)
 
