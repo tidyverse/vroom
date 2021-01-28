@@ -47,18 +47,34 @@ is_syntactic <- function(x) make.names(x) == x
 
 # Conditionally exported in zzz.R
 # @export
-compare.tbl_df <- function (x, y, ...) {
+compare.spec_tbl_df <- function (x, y, ...) {
   attr(x, "spec") <- NULL
+  attr(x, "problems") <- NULL
   attr(y, "spec") <- NULL
+  attr(y, "problems") <- NULL
+  class(x) <- setdiff(class(x), "spec_tbl_df")
+  class(y) <- setdiff(class(y), "spec_tbl_df")
   NextMethod("compare")
 }
 
 # Conditionally exported in zzz.R
 # @export
-compare_proxy.tbl_df <- function(x) {
+compare_proxy.spec_tbl_df <- function(x) {
   attr(x, "spec") <- NULL
   attr(x, "problems") <- NULL
+  class(x) <- setdiff(class(x), "spec_tbl_df")
   x
+}
+
+#' @export
+all.equal.spec_tbl_df <- function(target, current) {
+  attr(x, "spec") <- NULL
+  attr(x, "problems") <- NULL
+  attr(y, "spec") <- NULL
+  attr(y, "problems") <- NULL
+  class(x) <- setdiff(class(x), "spec_tbl_df")
+  class(y) <- setdiff(class(y), "spec_tbl_df")
+  NextMethod("all.equal")
 }
 
 is_rstudio_console <- function() {

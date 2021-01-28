@@ -41,7 +41,9 @@ vroom_fwf <- function(file,
   file <- standardise_path(file)
 
   if (length(file) == 0 || (n_max == 0 & identical(col_positions$col_names, FALSE))) {
-    return(tibble::tibble())
+    out <- tibble::tibble()
+    class(out) <- c("spec_tbl_df", class(out))
+    return(out)
   }
 
   if (n_max < 0 || is.infinite(n_max)) {
@@ -68,6 +70,7 @@ vroom_fwf <- function(file,
   out <- tibble::as_tibble(out, .name_repair = .name_repair)
 
   out <- vroom_select(out, col_select, id)
+  class(out) <- c("spec_tbl_df", class(out))
 
   if (is.null(col_types)) {
     show_spec_summary(out, locale = locale)
