@@ -67,7 +67,7 @@ compare_proxy.spec_tbl_df <- function(x) {
 }
 
 #' @export
-all.equal.spec_tbl_df <- function(target, current) {
+all.equal.spec_tbl_df <- function(target, current, ...) {
   attr(x, "spec") <- NULL
   attr(x, "problems") <- NULL
   attr(y, "spec") <- NULL
