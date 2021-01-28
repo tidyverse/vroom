@@ -51,7 +51,7 @@ jobs:
 
       - name: Install XQuartz on macOS
         if: runner.os == 'macOS'
-        run: brew cask install xquartz
+        run: brew install --cask xquartz
 
       - uses: r-lib/actions/setup-r@master
         id: install-r
