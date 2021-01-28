@@ -68,12 +68,12 @@ compare_proxy.spec_tbl_df <- function(x) {
 
 #' @export
 all.equal.spec_tbl_df <- function(target, current, ...) {
-  attr(x, "spec") <- NULL
-  attr(x, "problems") <- NULL
-  attr(y, "spec") <- NULL
-  attr(y, "problems") <- NULL
-  class(x) <- setdiff(class(x), "spec_tbl_df")
-  class(y) <- setdiff(class(y), "spec_tbl_df")
+  attr(target, "spec") <- NULL
+  attr(target, "problems") <- NULL
+  attr(current, "spec") <- NULL
+  attr(current, "problems") <- NULL
+  class(target) <- setdiff(class(target), "spec_tbl_df")
+  class(current) <- setdiff(class(current), "spec_tbl_df")
   NextMethod("all.equal")
 }
 
