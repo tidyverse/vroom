@@ -12,7 +12,7 @@ coverage](https://codecov.io/gh/r-lib/vroom/branch/master/graph/badge.svg)](http
 [![CRAN
 status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/package=vroom)
 [![Lifecycle:
-maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 <!-- badges: end -->
 
 The fastest delimited reader for R, **1.48 GB/sec**.
