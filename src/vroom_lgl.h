@@ -58,7 +58,7 @@ inline cpp11::logicals read_lgl(vroom_vec_info* info) {
         R_xlen_t i = start;
         auto col = info->column->slice(start, end);
         for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-          out[i++] = static_cast<Rboolean>(parse_value<int>(
+          out[i++] = parse_value<int>(
               b,
               col,
               [&](const char* begin, const char* end) -> int {
@@ -66,7 +66,7 @@ inline cpp11::logicals read_lgl(vroom_vec_info* info) {
               },
               info->errors,
               "1/0/T/F/TRUE/FALSE",
-              *info->na));
+              *info->na);
         }
       },
       info->num_threads);
