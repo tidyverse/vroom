@@ -175,4 +175,5 @@ extern "C" void R_init_vroom(DllInfo* dll){
   init_vroom_num(dll);
   init_vroom_rle(dll);
   init_vroom_time(dll);
+  R_forceSymbols(dll, TRUE);
 }
