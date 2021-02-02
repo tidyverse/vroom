@@ -132,12 +132,12 @@ test_that("parse_date returns a double like as.Date()", {
 
 test_that("parses NA/empty correctly", {
   expect_equal(
-    vroom("x\n\n", delim = ",", col_types = list(x = "T")),
+    vroom(I("x\n\n"), delim = ",", col_types = list(x = "T")),
     tibble::tibble(x = .POSIXct(NA_real_, tz = "UTC"))
   )
 
   expect_equal(
-    vroom("x\n\n", delim = ",", col_types = list(x = "D")),
+    vroom(I("x\n\n"), delim = ",", col_types = list(x = "D")),
     tibble::tibble(x = as.Date(NA))
   )
 
@@ -174,11 +174,10 @@ test_that("locale affects am/pm", {
   test_parse_time("\UC624\UD6C4 01\UC2DC 30\UBD84", "%p %H\UC2DC %M\UBD84", expected = expected, locale = locale("ko"))
 })
 
-#test_that("locale affects both guessing and parsing", {
-  ##TODO: not working
-  #out <- vroom("01/02/2013\n", col_names = FALSE, locale = locale(date_format = "%m/%d/%Y"))
-  #expect_equal(out, as.Date("2013-01-02"))
-#})
+test_that("locale affects both guessing and parsing", {
+  out <- vroom(I("01/02/2013\n"), delim = ",", col_names = FALSE, locale = locale(date_format = "%m/%d/%Y"))
+  expect_equal(out[[1]][[1]], as.Date("2013-01-02"))
+})
 
 ## Time zones ------------------------------------------------------------------
 
@@ -214,19 +213,19 @@ test_that("unambiguous times with and without daylight savings", {
 ## Guessing ---------------------------------------------------------------------
 
 test_that("DDDD-DD not parsed as date (i.e. doesn't trigger partial date match)", {
-  expect_type(vroom("1989-90\n1990-91\n", delim = "\n", col_types = list())[[1]], "character")
+  expect_type(vroom(I("1989-90\n1990-91\n"), delim = "\n", col_types = list())[[1]], "character")
 })
 
 test_that("leading zeros don't get parsed as date without explicit separator", {
-  expect_type(vroom("00010203\n", col_names = FALSE, delim = "\n", col_types = list())[[1]], "double")
-  expect_s3_class(vroom("0001-02-03\n", col_names = FALSE, delim = "\n", col_types = list())[[1]], "Date")
+  expect_type(vroom(I("00010203\n"), col_names = FALSE, delim = "\n", col_types = list())[[1]], "double")
+  expect_s3_class(vroom(I("0001-02-03\n"), col_names = FALSE, delim = "\n", col_types = list())[[1]], "Date")
 })
 
 test_that("must have either two - or none", {
-  expect_s3_class(vroom("2000-10-10\n", col_names = FALSE, delim = "\n", col_types = list())[[1]], "Date")
-  expect_type(vroom("2000-1010\n", col_names = FALSE, delim = "\n", col_types = list())[[1]], "character")
-  expect_type(vroom("200010-10\n", col_names = FALSE, delim = "\n", col_types = list())[[1]], "character")
-  expect_type(vroom("20001010\n", col_names = FALSE, delim = "\n", col_types = list())[[1]], "double")
+  expect_s3_class(vroom(I("2000-10-10\n"), col_names = FALSE, delim = "\n", col_types = list())[[1]], "Date")
+  expect_type(vroom(I("2000-1010\n"), col_names = FALSE, delim = "\n", col_types = list())[[1]], "character")
+  expect_type(vroom(I("200010-10\n"), col_names = FALSE, delim = "\n", col_types = list())[[1]], "character")
+  expect_type(vroom(I("20001010\n"), col_names = FALSE, delim = "\n", col_types = list())[[1]], "double")
 })
 
 test_that("times are guessed even without AM / PM", {
@@ -236,7 +235,7 @@ test_that("times are guessed even without AM / PM", {
 })
 
 test_that("subsetting works with both double and integer indexes", {
-  x <- vroom("X1\n2020-01-01 01:01:01", delim = ",", col_type = "T")
+  x <- vroom(I("X1\n2020-01-01 01:01:01"), delim = ",", col_type = "T")
   dt <- as.POSIXct("2020-01-01 01:01:01", tz = "UTC")
   na_dt <- .POSIXct(NA_real_, tz = "UTC")
   expect_equal(x$X1[1L], dt)
@@ -246,17 +245,17 @@ test_that("subsetting works with both double and integer indexes", {
 })
 
 test_that("guessing datetime uses the same logic as parsing", {
-  expect_type(vroom("date\n2015-06-14T09Z\n2015-06-14T09Z", delim=",")[[1]], "character")
+  expect_type(vroom(I("date\n2015-06-14T09Z\n2015-06-14T09Z"), delim=",")[[1]], "character")
 })
 
 test_that("malformed date / datetime formats cause R errors", {
   expect_error(
-    vroom("x\n6/28/2016", delim = ",", col_types = list(x = col_date("%m/%/%Y")), altrep = FALSE),
+    vroom(I("x\n6/28/2016"), delim = ",", col_types = list(x = col_date("%m/%/%Y")), altrep = FALSE),
     "Unsupported format"
   )
 
   expect_error(
-    vroom("x\n6/28/2016", delim = ",", col_types = list(x = col_datetime("%m/%/%Y")), altrep = FALSE),
+    vroom(I("x\n6/28/2016"), delim = ",", col_types = list(x = col_datetime("%m/%/%Y")), altrep = FALSE),
     "Unsupported format"
   )
 })

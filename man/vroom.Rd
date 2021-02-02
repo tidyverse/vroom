@@ -154,7 +154,7 @@ input_file
 # Input sources -------------------------------------------------------------
 # Read from a path
 vroom(input_file)
-# You can also use literal paths directly
+# You can also use paths directly
 # vroom("mtcars.csv")
 
 \dontrun{
@@ -162,8 +162,8 @@ vroom(input_file)
 vroom("https://github.com/r-lib/vroom/raw/master/inst/extdata/mtcars.csv")
 }
 
-# Or directly from a string (must contain a trailing newline)
-vroom("x,y\n1,2\n3,4\n")
+# Or directly from a string with `I()`
+vroom(I("x,y\n1,2\n3,4\n"))
 
 # Column selection ----------------------------------------------------------
 # Pass column names or indexes directly to select them
@@ -179,19 +179,19 @@ vroom(input_file, col_select = list(car = model, everything()))
 # Column types --------------------------------------------------------------
 # By default, vroom guesses the columns types, looking at 1000 rows
 # throughout the dataset.
-# You can specify them explcitly with a compact specification:
-vroom("x,y\n1,2\n3,4\n", col_types = "dc")
+# You can specify them explicitly with a compact specification:
+vroom(I("x,y\n1,2\n3,4\n"), col_types = "dc")
 
 # Or with a list of column types:
-vroom("x,y\n1,2\n3,4\n", col_types = list(col_double(), col_character()))
+vroom(I("x,y\n1,2\n3,4\n"), col_types = list(col_double(), col_character()))
 
 # File types ----------------------------------------------------------------
 # csv
-vroom("a,b\n1.0,2.0\n", delim = ",")
+vroom(I("a,b\n1.0,2.0\n"), delim = ",")
 # tsv
-vroom("a\tb\n1.0\t2.0\n")
+vroom(I("a\tb\n1.0\t2.0\n"))
 # Other delimiters
-vroom("a|b\n1.0|2.0\n", delim = "|")
+vroom(I("a|b\n1.0|2.0\n"), delim = "|")
 
 # Read datasets across multiple files ---------------------------------------
 mtcars_by_cyl <- vroom_example(vroom_examples("mtcars-"))

@@ -1,6 +1,6 @@
 test_that("problems with data parsing works for single files", {
   expect_warning(
-    x <- vroom("x,y\n1,2\n1,1.x\n", col_types = "dd", altrep = FALSE)
+    x <- vroom(I("x,y\n1,2\n1,1.x\n"), col_types = "dd", altrep = FALSE)
   )
   probs <- problems(x)
 
@@ -20,7 +20,7 @@ test_that("problems works for multiple files", {
   writeLines("x,y\n3.x,4\n1,2\n2,2", out2)
 
   expect_warning(
-    x <- vroom::vroom(c(out1, out2), delim = ",", col_types = "dd", altrep=F)
+    x <- vroom(c(out1, out2), delim = ",", col_types = "dd", altrep=F)
   )
   probs <- problems(x)
 
@@ -32,25 +32,25 @@ test_that("problems works for multiple files", {
 })
 
 test_that("problems with number of columns works for single files", {
-  probs3 <- expect_warning(problems(vroom("x,y,z\n1,2\n", col_names = TRUE, col_types = "ddd", altrep = FALSE)))
+  probs3 <- expect_warning(problems(vroom(I("x,y,z\n1,2\n"), col_names = TRUE, col_types = "ddd", altrep = FALSE)))
   expect_equal(probs3$row, 2)
   expect_equal(probs3$col, 2)
   expect_equal(probs3$expected, "3 columns")
   expect_equal(probs3$actual, "2 columns")
 
-  probs3 <- expect_warning(problems(vroom("x,y,z\n1,2\n", col_names = FALSE, col_types = "ddd", altrep = FALSE)))
+  probs3 <- expect_warning(problems(vroom(I("x,y,z\n1,2\n"), col_names = FALSE, col_types = "ddd", altrep = FALSE)))
   expect_equal(probs3$row[[4]], 2)
   expect_equal(probs3$col[[4]], 2)
   expect_equal(probs3$expected[[4]], "3 columns")
   expect_equal(probs3$actual[[4]], "2 columns")
 
-  probs4 <- expect_warning(problems(vroom("x,y\n1,2,3,4\n", col_names = TRUE, col_types = "dd", altrep = FALSE)))
+  probs4 <- expect_warning(problems(vroom(I("x,y\n1,2,3,4\n"), col_names = TRUE, col_types = "dd", altrep = FALSE)))
   expect_equal(probs4$row[[2]], 2)
   expect_equal(probs4$col[[2]], 4)
   expect_equal(probs4$expected[[2]], "2 columns")
   expect_equal(probs4$actual[[2]], "4 columns")
 
-  probs2 <- expect_warning(problems(vroom("x,y\n1,2,3,4\n", col_names = FALSE, col_types = "dd", altrep = FALSE)))
+  probs2 <- expect_warning(problems(vroom(I("x,y\n1,2,3,4\n"), col_names = FALSE, col_types = "dd", altrep = FALSE)))
   expect_equal(probs2$row[[4]], 2)
   expect_equal(probs2$col[[4]], 4)
   expect_equal(probs2$expected[[4]], "2 columns")
@@ -75,13 +75,13 @@ test_that("parsing problems are shown for all datatypes", {
     type <- types[[i]]
     expected <- names(types)[[i]]
 
-    res <- vroom::vroom("x\nxyz\n", delim = ",", col_types = list(type), altrep = TRUE)
+    res <- vroom(I("x\nxyz\n"), delim = ",", col_types = list(type), altrep = TRUE)
 
     # This calls the type_Elt function
     expect_warning(res[[1]][[1]], "One or more parsing issues")
     expect_equal(problems(res)$expected, expected)
 
-    res <- vroom::vroom("x\nxyz\n", delim = ",", col_types = list(type), altrep = TRUE)
+    res <- vroom(I("x\nxyz\n"), delim = ",", col_types = list(type), altrep = TRUE)
 
     # This calls the read_type function
     expect_warning(vroom_materialize(res, replace = FALSE), "One or more parsing issues")
@@ -89,5 +89,5 @@ test_that("parsing problems are shown for all datatypes", {
   }
 
 
-    expect_warning(res <- vroom::vroom("x\nxyz\n", delim = ",", col_types = list(col_logical())), "One or more parsing issues")
+    expect_warning(res <- vroom(I("x\nxyz\n"), delim = ",", col_types = list(col_logical())), "One or more parsing issues")
 })

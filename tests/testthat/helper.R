@@ -1,4 +1,7 @@
 test_vroom <- function(content, delim = "\n", col_types = list(), ..., equals) {
+  if(any(grepl("\n", content))) {
+    content <- I(content)
+  }
   # with altrep
   withr::with_envvar(c("VROOM_USE_ALTREP_CHR" = "true", "VROOM_USE_ALTREP_NUMERICS" = "true"), {
     expect_equal(

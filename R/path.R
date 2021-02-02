@@ -15,8 +15,27 @@ standardise_path <- function(path) {
     return(list(path))
   }
 
-  if (is.character(path) && any(grepl("\n", path))) {
-    return(list(chr_to_file(path, envir = parent.frame())))
+  if (is.character(path)) {
+    if (inherits(path, "AsIs")) {
+      if (length(path) > 1) {
+        path <- paste(path, collapse = "\n")
+      }
+      return(list(chr_to_file(path, envir = parent.frame())))
+    }
+
+    if (any(grepl("\n", path))) {
+      lifecycle::deprecate_soft("1.5.0", "vroom(file = 'must use `I()` for literal data')",
+        details = glue::glue('
+
+          # Bad:
+          vroom("foo\\nbar\\n")
+
+          # Good:
+          vroom(I("foo\\nbar\\n"))
+        ')
+      )
+      return(list(chr_to_file(path, envir = parent.frame())))
+    }
   }
 
   as.list(path)

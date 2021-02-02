@@ -197,7 +197,7 @@ test_that("vroom handles vectors shorter than the UTF byte order marks", {
 test_that("vroom handles windows newlines", {
 
   expect_equal(
-    vroom("a\tb\r\n1\t2\r\n", trim_ws = FALSE, col_types = list())[[1]],
+    vroom(I("a\tb\r\n1\t2\r\n"), trim_ws = FALSE, col_types = list())[[1]],
     1
   )
 })
@@ -241,7 +241,7 @@ test_that("vroom_example() returns a single example files", {
 })
 
 test_that("subsets work", {
-  res <- vroom("1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14", delim = "\n", col_names = FALSE, col_types = list())
+  res <- vroom(I("1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14"), delim = "\n", col_names = FALSE, col_types = list())
   expect_equal(head(res[[1]]), c(1:6))
   expect_equal(tail(res[[1]]), c(9:14))
 
@@ -378,13 +378,13 @@ test_that("guess_type works with long strings (#74)", {
 })
 
 test_that("vroom errors if unnamed column types do not match the number of columns", {
-  expect_error(vroom("a,b\n1,2\n", col_types = "i"), "must have the same length")
+  expect_error(vroom(I("a,b\n1,2\n"), col_types = "i"), "must have the same length")
 })
 
 test_that("column names are properly encoded", {
   skip_on_os("solaris")
 
-  nms <- vroom("f\U00F6\U00F6\nbar\n", delim = "\n", col_types = list())
+  nms <- vroom(I("f\U00F6\U00F6\nbar\n"), delim = "\n", col_types = list())
   expect_equal(Encoding(colnames(nms)), "UTF-8")
 })
 
@@ -417,7 +417,7 @@ test_that("Missing files error with a nice error message", {
 })
 
 test_that("Can return the spec object", {
-  x <- vroom("foo,bar\n1,c\n", col_types = list())
+  x <- vroom(I("foo,bar\n1,c\n"), col_types = list())
   obj <- spec(x)
   expect_s3_class(obj, "col_spec")
   exp <- as.col_spec(list(foo = "d", bar = "c"))
@@ -442,18 +442,18 @@ test_that("vroom handles files with trailing commas, windows newlines, missing a
 test_that("vroom uses the delim if it is specified in the col_types", {
   # if we give a tab delim in the spec there should only be one column
   expect_equal(
-    ncol(vroom("a,b,c\n1,2,3\n", col_types = list(.delim = "\t"))),
+    ncol(vroom(I("a,b,c\n1,2,3\n"), col_types = list(.delim = "\t"))),
     1
   )
 
   # But specifying an explicit delim overrides the spec
   expect_equal(
-    ncol(vroom("a,b,c\n1,2,3\n", col_types = list(.delim = "\t"), delim = ",")),
+    ncol(vroom(I("a,b,c\n1,2,3\n"), col_types = list(.delim = "\t"), delim = ",")),
     3
   )
 
   expect_equal(
-    ncol(vroom("a,b,c\n1,2,3\n", col_types = list(.delim = ","), delim = "\t")),
+    ncol(vroom(I("a,b,c\n1,2,3\n"), col_types = list(.delim = ","), delim = "\t")),
     1
   )
 })
@@ -466,7 +466,7 @@ test_that("vroom supports NA and NA_integer_ indices", {
 })
 
 test_that("vroom supports NA and NA_integer_ indices with factors and datetimes", {
-  data <- vroom("x\ty\nfoo\t2020-01-01 12:00:01", col_types = "fT")
+  data <- vroom(I("x\ty\nfoo\t2020-01-01 12:00:01"), col_types = "fT")
 
   expect_equal(data[NA, 1, drop = TRUE], factor(NA, levels = "foo"))
   expect_equal(data[NA, 2, drop = TRUE], .POSIXct(NA_real_, tz = "UTC"))
@@ -505,7 +505,7 @@ test_that("vroom works with n_max, windows newlines and files larger than the co
 })
 
 test_that("subsetting works with both double and integer indexes", {
-  x <- vroom("X1\nfoo", delim = ",", col_types = list())
+  x <- vroom(I("X1\nfoo"), delim = ",", col_types = list())
   expect_equal(x$X1[1L], "foo")
   expect_equal(x$X1[1], "foo")
   expect_equal(x$X1[NA_integer_], NA_character_)
@@ -513,19 +513,19 @@ test_that("subsetting works with both double and integer indexes", {
 })
 
 test_that("quotes inside fields are ignored", {
-  x <- vroom("x\nfoo\"bar\nbaz\n", delim = ",", quote = "\"")
+  x <- vroom(I("x\nfoo\"bar\nbaz\n"), delim = ",", quote = "\"")
   expect_equal(x$x[[1]], "foo\"bar")
   expect_equal(x$x[[2]], "baz")
 })
 
 test_that("quotes at the beginning and end of lines are used", {
-  y <- vroom("x\n\"foo\"\"bar\"\nbaz\n", delim = ",", quote = "\"")
+  y <- vroom(I("x\n\"foo\"\"bar\"\nbaz\n"), delim = ",", quote = "\"")
   expect_equal(y$x[[1]], "foo\"bar")
   expect_equal(y$x[[2]], "baz")
 })
 
 test_that("quotes at delimiters are used", {
-  z <- vroom("x,y,z\n1,\"foo\"\"bar\",2\n3,baz,4", delim = ",", quote = "\"")
+  z <- vroom(I("x,y,z\n1,\"foo\"\"bar\",2\n3,baz,4"), delim = ",", quote = "\"")
   expect_equal(z$y[[1]], "foo\"bar")
   expect_equal(z$y[[2]], "baz")
 })
@@ -545,7 +545,7 @@ test_that("vroom reads files with embedded newlines even when num_threads > 1", 
 })
 
 test_that("multi-character comments are supported", {
-  res <- vroom("## this is a comment\n# this is not", delim = "\t", comment = "##", col_names = FALSE)
+  res <- vroom(I("## this is a comment\n# this is not"), delim = "\t", comment = "##", col_names = FALSE)
   expect_equal(res[[1]], "# this is not")
 })
 
