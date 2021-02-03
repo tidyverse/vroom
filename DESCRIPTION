@@ -44,6 +44,7 @@ Imports:
     glue,
     hms,
     lifecycle,
+    methods,
     rlang (>= 0.4.2),
     stats,
     tibble (>= 2.0.0),

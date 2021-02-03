@@ -90,3 +90,6 @@ is_rstudio_version <- function(min, max = .Machine$integer.max) {
     error = function(e) FALSE
   )
 }
+
+#' @importFrom methods setOldClass
+setOldClass(c("spec_tbl_df", "tbl_df", "tbl", "data.frame"))

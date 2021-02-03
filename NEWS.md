@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* vroom now registers the S3 class with `methods::setOldClass()` (r-dbi/DBI#345)
+
 # vroom 1.4.0
 
 ## Major changes and new functions
