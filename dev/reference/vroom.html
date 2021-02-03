@@ -90,7 +90,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.2.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.0.9000</span>
       </span>
     </div>
 
@@ -364,7 +364,7 @@ name repair functions.</p></td>
 #&gt; </span><span style='color: #555555;'> 8</span><span> Merc 240D    24.4     4  147.    62  3.69  3.19  20       1     0     4     2
 #&gt; </span><span style='color: #555555;'> 9</span><span> Merc 230     22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2
 #&gt; </span><span style='color: #555555;'>10</span><span> Merc 280     19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4
-#&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'><span class='co'># You can also use literal paths directly</span>
+#&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'><span class='co'># You can also use paths directly</span>
 <span class='co'># vroom("mtcars.csv")</span>
 
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
@@ -372,8 +372,8 @@ name repair functions.</p></td>
 <span class='fu'>vroom</span><span class='op'>(</span><span class='st'>"https://github.com/r-lib/vroom/raw/master/inst/extdata/mtcars.csv"</span><span class='op'>)</span>
 <span class='op'>}</span>
 
-<span class='co'># Or directly from a string (must contain a trailing newline)</span>
-<span class='fu'>vroom</span><span class='op'>(</span><span class='st'>"x,y\n1,2\n3,4\n"</span><span class='op'>)</span>
+<span class='co'># Or directly from a string with `I()`</span>
+<span class='fu'>vroom</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='st'>"x,y\n1,2\n3,4\n"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
@@ -478,15 +478,15 @@ name repair functions.</p></td>
 <span class='co'># Column types --------------------------------------------------------------</span>
 <span class='co'># By default, vroom guesses the columns types, looking at 1000 rows</span>
 <span class='co'># throughout the dataset.</span>
-<span class='co'># You can specify them explcitly with a compact specification:</span>
-<span class='fu'>vroom</span><span class='op'>(</span><span class='st'>"x,y\n1,2\n3,4\n"</span>, col_types <span class='op'>=</span> <span class='st'>"dc"</span><span class='op'>)</span>
+<span class='co'># You can specify them explicitly with a compact specification:</span>
+<span class='fu'>vroom</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='st'>"x,y\n1,2\n3,4\n"</span><span class='op'>)</span>, col_types <span class='op'>=</span> <span class='st'>"dc"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 2 x 2</span><span>
 #&gt;       x y    
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span>     1 2    
 #&gt; </span><span style='color: #555555;'>2</span><span>     3 4    </div><div class='input'>
 <span class='co'># Or with a list of column types:</span>
-<span class='fu'>vroom</span><span class='op'>(</span><span class='st'>"x,y\n1,2\n3,4\n"</span>, col_types <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='cols.html'>col_double</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='cols.html'>col_character</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'>vroom</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='st'>"x,y\n1,2\n3,4\n"</span><span class='op'>)</span>, col_types <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='cols.html'>col_double</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='cols.html'>col_character</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 2 x 2</span><span>
 #&gt;       x y    
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
@@ -494,7 +494,7 @@ name repair functions.</p></td>
 #&gt; </span><span style='color: #555555;'>2</span><span>     3 4    </div><div class='input'>
 <span class='co'># File types ----------------------------------------------------------------</span>
 <span class='co'># csv</span>
-<span class='fu'>vroom</span><span class='op'>(</span><span class='st'>"a,b\n1.0,2.0\n"</span>, delim <span class='op'>=</span> <span class='st'>","</span><span class='op'>)</span>
+<span class='fu'>vroom</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='st'>"a,b\n1.0,2.0\n"</span><span class='op'>)</span>, delim <span class='op'>=</span> <span class='st'>","</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 1</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
@@ -505,7 +505,7 @@ name repair functions.</p></td>
 #&gt;       a     b
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span>     1     2</div><div class='input'><span class='co'># tsv</span>
-<span class='fu'>vroom</span><span class='op'>(</span><span class='st'>"a\tb\n1.0\t2.0\n"</span><span class='op'>)</span>
+<span class='fu'>vroom</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='st'>"a\tb\n1.0\t2.0\n"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 1</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> "\t"</span>
@@ -516,7 +516,7 @@ name repair functions.</p></td>
 #&gt;       a     b
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span>     1     2</div><div class='input'><span class='co'># Other delimiters</span>
-<span class='fu'>vroom</span><span class='op'>(</span><span class='st'>"a|b\n1.0|2.0\n"</span>, delim <span class='op'>=</span> <span class='st'>"|"</span><span class='op'>)</span>
+<span class='fu'>vroom</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='st'>"a|b\n1.0|2.0\n"</span><span class='op'>)</span>, delim <span class='op'>=</span> <span class='st'>"|"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 1</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> "|"</span>
