@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` now preserves the spec attribute when vroom and readr are both loaded (#303)
+
 * vroom now registers the S3 class with `methods::setOldClass()` (r-dbi/DBI#345)
 
 * vroom parser is now more robust to quoting issues when tracking the CSV state (#301)

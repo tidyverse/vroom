@@ -331,6 +331,8 @@ vroom_enquo <- function(x) {
 }
 
 vroom_select <- function(x, col_select, id) {
+  spec <- attr(x, "spec")
+
   # Drop any NULL columns
   is_null <- vapply(x, is.null, logical(1))
   x[is_null] <- NULL
@@ -346,6 +348,7 @@ vroom_select <- function(x, col_select, id) {
     x <- x[vars]
     names(x) <- names(vars)
   }
+  attr(x, "spec") <- spec
   x
 }
 
