@@ -141,13 +141,13 @@ start_indexing:
     // Index the first row
     idx_[0].push_back(start - 1);
     size_t cols = 0;
-    bool in_quote = false;
+    csv_state state = RECORD_START;
     size_t lines_read = index_region(
         mmap_,
         idx_[0],
         delim_.c_str(),
         quote,
-        in_quote,
+        state,
         start,
         first_nl + 1,
         0,
@@ -170,7 +170,7 @@ start_indexing:
             idx_[1],
             delim_.c_str(),
             quote,
-            in_quote,
+            state,
             first_nl,
             file_size,
             0,
@@ -190,13 +190,13 @@ start_indexing:
             start = find_next_newline(mmap_, first_nl + start, false);
             end = find_next_newline(mmap_, first_nl + end, false) + 1;
             size_t cols = 0;
-            bool in_quote = false;
+            csv_state state = RECORD_START;
             index_region(
                 mmap_,
                 idx_[id + 1],
                 delim_.c_str(),
                 quote,
-                in_quote,
+                state,
                 start,
                 end,
                 0,

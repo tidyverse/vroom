@@ -189,6 +189,78 @@ public:
 
   std::pair<const char*, const char*> get_cell(size_t i, bool is_first) const;
 
+  enum csv_state {
+    RECORD_START,
+    FIELD_START,
+    UNQUOTED_FIELD,
+    QUOTED_FIELD,
+    QUOTED_END
+  };
+
+  inline static csv_state quoted_state(csv_state in) {
+    switch (in) {
+    case RECORD_START:
+      return QUOTED_FIELD;
+    case FIELD_START:
+      return QUOTED_FIELD;
+    case UNQUOTED_FIELD:
+      return UNQUOTED_FIELD; // throw std::runtime_error("invalid 1");
+    case QUOTED_FIELD:
+      return QUOTED_END;
+    case QUOTED_END:
+      return QUOTED_FIELD;
+    }
+    throw std::runtime_error("should never happen");
+  }
+
+  inline static csv_state comma_state(csv_state in) {
+    switch (in) {
+    case RECORD_START:
+      return FIELD_START;
+    case FIELD_START:
+      return FIELD_START;
+    case UNQUOTED_FIELD:
+      return FIELD_START;
+    case QUOTED_FIELD:
+      return QUOTED_FIELD;
+    case QUOTED_END:
+      return FIELD_START;
+    }
+    throw std::runtime_error("should never happen");
+  }
+
+  inline static csv_state newline_state(csv_state in) {
+    switch (in) {
+    case RECORD_START:
+      return RECORD_START;
+    case FIELD_START:
+      return RECORD_START;
+    case UNQUOTED_FIELD:
+      return RECORD_START;
+    case QUOTED_FIELD:
+      return QUOTED_FIELD;
+    case QUOTED_END:
+      return RECORD_START;
+    }
+    throw std::runtime_error("should never happen");
+  }
+
+  inline static csv_state other_state(csv_state in) {
+    switch (in) {
+    case RECORD_START:
+      return UNQUOTED_FIELD;
+    case FIELD_START:
+      return UNQUOTED_FIELD;
+    case UNQUOTED_FIELD:
+      return UNQUOTED_FIELD;
+    case QUOTED_FIELD:
+      return QUOTED_FIELD;
+    case QUOTED_END:
+      throw std::runtime_error("invalid 5");
+    }
+    throw std::runtime_error("should never happen");
+  }
+
   /*
    * @param source the source to index
    * @param destination the index to push to
@@ -207,7 +279,7 @@ public:
       idx_t& destination,
       const char* delim,
       const char quote,
-      bool& in_quote,
+      csv_state& state,
       const size_t start,
       const size_t end,
       const size_t file_offset,
@@ -230,17 +302,16 @@ public:
     size_t pos = start;
     size_t lines_read = 0;
     while (pos < end) {
-      size_t buf_offset = strcspn(buf + pos, query.data());
-      pos = pos + buf_offset;
       auto c = buf[pos];
-
-      if (!in_quote && strncmp(delim, buf + pos, delim_len_) == 0) {
+      if (state != QUOTED_FIELD && strncmp(delim, buf + pos, delim_len_) == 0) {
+        state = comma_state(state);
         destination.push_back(pos + file_offset);
         ++cols;
       }
 
       else if (c == '\n') {
-        if (in_quote) { // This will work as long as num_threads = 1
+        if (state ==
+            QUOTED_FIELD) { // This will work as long as num_threads = 1
           if (num_threads != 1) {
             if (progress_ && pb) {
               pb->finish();
@@ -270,6 +341,7 @@ public:
           }
         }
 
+        state = newline_state(state);
         cols = 0;
         destination.push_back(pos + file_offset);
         if (lines_read >= n_max) {
@@ -293,26 +365,30 @@ public:
       }
 
       else if (c == quote) {
-        /* not already in a quote */
-        if (!in_quote &&
-            /* right after the start of file or line */
-            (pos == start || buf[pos - 1] == '\n' ||
-             /* or after a delimiter */
-             strncmp(delim, buf + (pos - delim_len_), delim_len_) == 0)) {
-          in_quote = !in_quote;
-        } else if (
-            /* already in a quote */
-            in_quote &&
-            /* right at the end of the file or line */
-            (pos == end - 1 ||
-             ((!windows_newlines_ && (pos + 1 < end && buf[pos + 1] == '\n')) ||
-              (windows_newlines_ && (pos + 2 < end && buf[pos + 2] == '\n'))) ||
-             /* or before a delimiter */
-             (pos + delim_len_ + 1 < end &&
-              strncmp(delim, buf + (pos + 1), delim_len_) == 0))) {
-          in_quote = !in_quote;
-        }
+        state = quoted_state(state);
       }
+
+      else if (c != '\r') {
+        state = other_state(state);
+        ++pos;
+        size_t buf_offset = strcspn(buf + pos, query.data());
+        pos = pos + buf_offset;
+        continue;
+      }
+
+      // REprintf(
+      //"%i\t'%c'\t%c\n",
+      // pos,
+      // c,
+      // state == RECORD_START
+      //? 'R'
+      //: state == FIELD_START
+      //? 'F'
+      //: state == UNQUOTED_FIELD
+      //? 'U'
+      //: state == QUOTED_FIELD
+      //? 'Q'
+      //: state == QUOTED_END ? 'E' : 'X');
 
       ++pos;
     }
