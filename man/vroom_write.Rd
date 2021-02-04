@@ -6,7 +6,7 @@
 \usage{
 vroom_write(
   x,
-  path,
+  file,
   delim = "\\t",
   eol = "\\n",
   na = "NA",
@@ -22,7 +22,7 @@ vroom_write(
 \arguments{
 \item{x}{A data frame or tibble to write to disk.}
 
-\item{path}{\Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}}
+\item{file}{File or connection to write to.}
 
 \item{delim}{Delimiter used to separate values. Defaults to \verb{\\t} to write
 tab separated value (TSV) files.}

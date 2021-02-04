@@ -4,12 +4,12 @@
 \alias{vroom_write_lines}
 \title{Write lines to a file}
 \usage{
-vroom_write_lines(x, path, eol = "\\n", na = "NA", append = FALSE)
+vroom_write_lines(x, file, eol = "\\n", na = "NA", append = FALSE)
 }
 \arguments{
 \item{x}{A data frame or tibble to write to disk.}
 
-\item{path}{\Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}}
+\item{file}{File or connection to write to.}
 
 \item{eol}{The end of line character to use. Most commonly either \code{"\n"} for
 Unix style newlines, or \code{"\r\n"} for Windows style newlines.}

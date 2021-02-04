@@ -31,7 +31,7 @@
 #' # vroom_write(mtcars, "mtcars.tsv.gz")
 #' # vroom_write(mtcars, "mtcars.tsv.bz2")
 #' # vroom_write(mtcars, "mtcars.tsv.xz")
-vroom_write <- function(x, path, delim = '\t', eol = "\n", na = "NA", col_names = !append,
+vroom_write <- function(x, file, delim = '\t', eol = "\n", na = "NA", col_names = !append,
   append = FALSE, quote = c("needed", "all", "none"), escape =
     c("double", "backslash", "none"), bom = FALSE, num_threads =
     vroom_threads(), progress = vroom_progress()) {
@@ -47,7 +47,7 @@ vroom_write <- function(x, path, delim = '\t', eol = "\n", na = "NA", col_names 
   opts <- get_vroom_write_opts(quote, escape, bom)
 
   # Standardise path returns a list, but we will only ever have 1 output file.
-  path <- standardise_one_path(path, write = TRUE)
+  file <- standardise_one_path(file, write = TRUE)
 
   # We need to convert any altrep vectors to normal vectors otherwise we can't fill the
   # write buffers from other threads.
@@ -57,12 +57,12 @@ vroom_write <- function(x, path, delim = '\t', eol = "\n", na = "NA", col_names 
   # This seems to work ok in practice
   buf_lines <- max(as.integer(Sys.getenv("VROOM_WRITE_BUFFER_LINES", nrow(x) / 100 / num_threads)), 1)
 
-  if (inherits(path, "connection")) {
-    vroom_write_connection_(xx, path, delim, eol, na_str = na, col_names = col_names,
+  if (inherits(file, "connection")) {
+    vroom_write_connection_(xx, file, delim, eol, na_str = na, col_names = col_names,
       options = opts, num_threads = num_threads, progress = progress, buf_lines = buf_lines,
-      is_stdout = path == stdout(), append = append)
+      is_stdout = file == stdout(), append = append)
   } else {
-    vroom_write_(xx, path, delim, eol, na_str = na, col_names = col_names,
+    vroom_write_(xx, file, delim, eol, na_str = na, col_names = col_names,
       append = append, options = opts,
       num_threads = num_threads, progress = progress, buf_lines = buf_lines)
   }
@@ -118,7 +118,7 @@ vroom_format <- function(x, delim = "\t", eol = "\n", na = "NA", col_names = TRU
 #'
 #' @inheritParams vroom_write
 #' @export
-vroom_write_lines <- function(x, path, eol = "\n", na = "NA", append = FALSE) {
+vroom_write_lines <- function(x, file, eol = "\n", na = "NA", append = FALSE) {
   stopifnot(is.character(x))
 
   x <- list(x)
@@ -126,7 +126,7 @@ vroom_write_lines <- function(x, path, eol = "\n", na = "NA", append = FALSE) {
   class(x) <- "data.frame"
   attr(x, "row.names") <- c(-1L, length(x))
 
-  vroom_write(x, path = file, delim = "", eol = eol, na = na, append = append)
+  vroom_write(x, file = file, delim = "", eol = eol, na = na, append = append)
 }
 
 #' Preprocess column for output
