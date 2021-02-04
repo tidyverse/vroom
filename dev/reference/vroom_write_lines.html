@@ -158,7 +158,7 @@
     <p>Write lines to a file</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vroom_write_lines</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>path</span>, eol <span class='op'>=</span> <span class='st'>"\n"</span>, na <span class='op'>=</span> <span class='st'>"NA"</span>, append <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>vroom_write_lines</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>file</span>, eol <span class='op'>=</span> <span class='st'>"\n"</span>, na <span class='op'>=</span> <span class='st'>"NA"</span>, append <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -168,8 +168,8 @@
       <td><p>A data frame or tibble to write to disk.</p></td>
     </tr>
     <tr>
-      <th>path</th>
-      <td><p><img src='figures/lifecycle-deprecated.svg' alt='Deprecated lifecycle' /></p></td>
+      <th>file</th>
+      <td><p>File or connection to write to.</p></td>
     </tr>
     <tr>
       <th>eol</th>
