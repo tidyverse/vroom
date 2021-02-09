@@ -12,7 +12,11 @@
 #'   - file - The file with the problem
 #' @export
 problems <- function(x) {
-  probs <- vroom_errors_(attr(x, "problems"))
+  probs <- attr(x, "problems")
+  if (typeof(probs) != "externalptr") {
+    rlang::abort("`x` must have a problems attribute that is an external pointer.\n  Is this object from readr and not vroom?")
+  }
+  probs <- vroom_errors_(probs)
   probs <- probs[order(probs$file, probs$row, probs$col), ]
 
   tibble::as_tibble(probs)

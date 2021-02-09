@@ -315,10 +315,16 @@ public:
       const size_t update_size) {
 
     // If there are no quotes quote will be '\0', so will just work
-    std::array<char, 7> query = {
-        delim[0], '\n', '\r', '\\', quote, comment[0], '\0'};
-
+    std::array<char, 7> query = {delim[0], '\n', '\r', '\\', '\0', '\0', '\0'};
+    auto query_i = 4;
+    if (quote != '\0') {
+      query[query_i++] = quote;
+    }
     auto comment_len = strlen(comment);
+
+    if (comment_len > 0) {
+      query[query_i++] = comment[0];
+    }
 
     auto last_tick = start;
 
