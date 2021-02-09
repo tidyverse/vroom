@@ -301,8 +301,23 @@ public:
     // The actual parsing is here
     size_t pos = start;
     size_t lines_read = 0;
-    while (pos < end) {
+    while (pos < end && lines_read < n_max) {
       auto c = buf[pos];
+
+      if (escape_backslash_ && c == '\\') {
+        ++pos;
+        if (state == RECORD_START) {
+          destination.push_back(pos + file_offset);
+          state = FIELD_START;
+        }
+        ++pos;
+        continue;
+      }
+
+      if (state == RECORD_START) {
+        destination.push_back(pos + file_offset);
+      }
+
       if (state != QUOTED_FIELD && strncmp(delim, buf + pos, delim_len_) == 0) {
         state = comma_state(state);
         destination.push_back(pos + file_offset);
@@ -344,13 +359,13 @@ public:
         state = newline_state(state);
         cols = 0;
         destination.push_back(pos + file_offset);
+        ++lines_read;
         if (lines_read >= n_max) {
           if (progress_ && pb) {
             pb->finish();
           }
           return lines_read;
         }
-        ++lines_read;
         if (progress_ && pb) {
           size_t tick_size = pos - last_tick;
           if (tick_size > update_size) {
@@ -358,10 +373,6 @@ public:
             last_tick = pos;
           }
         }
-      }
-
-      else if (escape_backslash_ && c == '\\') {
-        ++pos;
       }
 
       else if (c == quote) {

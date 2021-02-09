@@ -1,4 +1,4 @@
-test_vroom <- function(content, delim = "\n", col_types = list(), ..., equals) {
+test_vroom <- function(content, delim = ",", col_types = list(), ..., equals) {
   if(any(grepl("\n", content))) {
     content <- I(content)
   }
@@ -43,28 +43,28 @@ test_vroom <- function(content, delim = "\n", col_types = list(), ..., equals) {
 }
 
 test_parse_number <- function(x, expected, ...) {
-  test_vroom(paste0(paste0(x, collapse = "\n"), "\n"), delim = "\n",
+  test_vroom(paste0(paste0(x, collapse = "\n"), "\n"), delim = "\t",
     col_names = FALSE, col_types = "n", ...,
     equals = tibble::tibble(X1 = expected)
   )
 }
 
 test_parse_datetime <- function(x, expected, format = "", ...) {
-  test_vroom(paste0(paste0(x, collapse = "\n"), "\n"), delim = "\n",
+  test_vroom(paste0(paste0(x, collapse = "\n"), "\n"), delim = "\t",
     col_names = FALSE, col_types = cols(X1 = col_datetime(format = format)), ...,
     equals = tibble::tibble(X1 = expected)
   )
 }
 
 test_parse_date <- function(x, expected, format = "", ...) {
-  test_vroom(paste0(paste0(x, collapse = "\n"), "\n"), delim = "\n",
+  test_vroom(paste0(paste0(x, collapse = "\n"), "\n"), delim = "\t",
     col_names = FALSE, col_types = cols(X1 = col_date(format = format)), ...,
     equals = tibble::tibble(X1 = expected)
   )
 }
 
 test_parse_time <- function(x, expected, format = "", ...) {
-  test_vroom(paste0(paste0(x, collapse = "\n"), "\n"), delim = "\n",
+  test_vroom(paste0(paste0(x, collapse = "\n"), "\n"), delim = "\t",
     col_names = FALSE, col_types = cols(X1 = col_time(format = format)), ...,
     equals = tibble::tibble(X1 = expected)
   )

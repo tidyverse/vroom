@@ -241,7 +241,7 @@ test_that("vroom_example() returns a single example files", {
 })
 
 test_that("subsets work", {
-  res <- vroom(I("1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14"), delim = "\n", col_names = FALSE, col_types = list())
+  res <- vroom(I("1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14"), delim = "\t", col_names = FALSE, col_types = list())
   expect_equal(head(res[[1]]), c(1:6))
   expect_equal(tail(res[[1]]), c(9:14))
 
@@ -337,12 +337,12 @@ test_that("vroom uses the number of rows when guess_max = Inf", {
   vroom_write(df, tf, delim = "\t")
 
   # The type should be guessed wrong, because the character comes at the end
-  res <- expect_warning(vroom(tf, delim = "\n", col_types = list(), altrep = FALSE))
+  res <- expect_warning(vroom(tf, delim = "\t", col_types = list(), altrep = FALSE))
   expect_type(res[["x"]], "double")
   expect_true(is.na(res[["x"]][[NROW(res)]]))
 
   # The value should exist with guess_max = Inf
-  res <- vroom(tf, delim = "\n", guess_max = Inf, col_types = list())
+  res <- vroom(tf, delim = "\t", guess_max = Inf, col_types = list())
   expect_type(res[["x"]], "character")
   expect_equal(res[["x"]][[NROW(res)]], "foo")
 })
@@ -401,7 +401,7 @@ test_that("vroom can read files with no trailing newline", {
   on.exit(unlink(f))
 
   writeBin(charToRaw("foo\nbar"), f)
-  expect_equal(vroom(f, col_names = FALSE, delim = "\n", col_types = list())[[1]], c("foo", "bar"))
+  expect_equal(vroom(f, col_names = FALSE, delim = ",", col_types = list())[[1]], c("foo", "bar"))
 
   f2 <- tempfile()
   on.exit(unlink(f2), add = TRUE)

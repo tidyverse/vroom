@@ -1,2 +1,2 @@
-PKG_CXXFLAGS=-Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include
+PKG_CXXFLAGS=-Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -DFMT_HEADER_ONLY
 # PKG_LIBS=-lprofiler -ltcmalloc

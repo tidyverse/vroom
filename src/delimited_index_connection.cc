@@ -133,8 +133,6 @@ delimited_index_connection::delimited_index_connection(
   std::unique_ptr<multi_progress> empty_pb = nullptr;
 
   // Index the first row
-  idx_[0].push_back(start - 1);
-
   size_t cols = 0;
   csv_state state = RECORD_START;
   size_t lines_read = index_region(
@@ -181,7 +179,7 @@ delimited_index_connection::delimited_index_connection(
             delim_.c_str(),
             quote,
             state,
-            first_nl,
+            first_nl + 1,
             sz,
             total_read,
             n_max,
@@ -216,7 +214,7 @@ delimited_index_connection::delimited_index_connection(
       buf[i][sz] = '\0';
     }
 
-    first_nl = 0;
+    first_nl = -1;
 
     // SPDLOG_DEBUG("first_nl_loc: {0} size: {1}", first_nl, sz);
   }
@@ -260,11 +258,11 @@ delimited_index_connection::delimited_index_connection(
 
   size_t total_size = std::accumulate(
       idx_.begin(), idx_.end(), std::size_t{0}, [](size_t sum, const idx_t& v) {
-        sum += v.size() > 0 ? v.size() - 1 : 0;
+        sum += v.size() > 0 ? v.size() : 0;
         return sum;
       });
 
-  rows_ = columns_ > 0 ? total_size / columns_ : 0;
+  rows_ = columns_ > 0 ? total_size / (columns_ + 1) : 0;
 
   if (rows_ > 0 && has_header_) {
     --rows_;

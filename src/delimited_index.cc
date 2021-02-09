@@ -139,7 +139,6 @@ start_indexing:
     idx_ = std::vector<idx_t>(num_threads + 1);
 
     // Index the first row
-    idx_[0].push_back(start - 1);
     size_t cols = 0;
     csv_state state = RECORD_START;
     size_t lines_read = index_region(
@@ -171,7 +170,7 @@ start_indexing:
             delim_.c_str(),
             quote,
             state,
-            first_nl,
+            first_nl + 1,
             file_size,
             0,
             n_max,
@@ -187,7 +186,7 @@ start_indexing:
           file_size - first_nl,
           [&](size_t start, size_t end, size_t id) {
             idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
-            start = find_next_newline(mmap_, first_nl + start, false);
+            start = find_next_newline(mmap_, first_nl + start, false) + 1;
             end = find_next_newline(mmap_, first_nl + end, false) + 1;
             size_t cols = 0;
             csv_state state = RECORD_START;
@@ -229,19 +228,21 @@ start_indexing:
   }
   size_t total_size = std::accumulate(
       idx_.begin(), idx_.end(), std::size_t{0}, [](size_t sum, const idx_t& v) {
-        sum += v.size() > 0 ? v.size() - 1 : 0;
+        sum += v.size() > 0 ? v.size() : 0;
         return sum;
       });
 
-  rows_ = columns_ > 0 ? total_size / columns_ : 0;
+  rows_ = columns_ > 0 ? total_size / (columns_ + 1) : 0;
 
   if (rows_ > 0 && has_header_) {
     --rows_;
   }
 
+  // REprintf("columns_: %i rows_: %i\n", columns_, rows_);
+
 #ifdef VROOM_LOG
-  //#if SPDLOG_ACTIVE_LEVEL <= SPD_LOG_LEVEL_DEBUG
-  auto log = spdlog::basic_logger_mt("basic_logger", "logs/index.idx", true);
+  auto log = spdlog::basic_logger_mt("basic_logger", "logs/index.idx");
+  log->set_level(spdlog::level::debug);
   for (auto& i : idx_) {
     for (auto& v : i) {
       SPDLOG_LOGGER_DEBUG(log, "{}", v);
@@ -249,7 +250,6 @@ start_indexing:
     SPDLOG_LOGGER_DEBUG(log, "end of idx {0:x}", (size_t)&i);
   }
   spdlog::drop("basic_logger");
-//#endif
 #endif
 
   SPDLOG_DEBUG(
@@ -298,6 +298,12 @@ delimited_index::get_cell(size_t i, bool is_first) const {
 
   auto oi = i;
 
+  auto i_row = i / (columns_);
+  auto i_col = i % (columns_);
+
+  auto ni = i_row * (columns_ + 1) + i_col;
+  i = ni;
+
   for (const auto& idx : idx_) {
     auto sz = idx.size();
     if (i + 1 < sz) {
@@ -310,12 +316,16 @@ delimited_index::get_cell(size_t i, bool is_first) const {
       // By relying on 0 and 1 being true and false we can remove a branch
       // here, which improves performance a bit, as this function is called a
       // lot.
-      return {
-          mmap_.data() + (start + (!is_first * delim_len_) + is_first),
-          mmap_.data() + end};
+      if (!is_first) {
+        start = start + delim_len_;
+      }
+
+      // REprintf(
+      //"oi: %i ni: %i i: %i start: %i end: %i\n", oi, ni, i, start, end);
+      return {mmap_.data() + start, mmap_.data() + end};
     }
 
-    i -= (sz - 1);
+    i -= sz;
   }
 
   std::stringstream ss;
@@ -333,10 +343,6 @@ delimited_index::get_trimmed_val(size_t i, bool is_first, bool is_last) const {
   const char* end;
 
   std::tie(begin, end) = get_cell(i, is_first);
-
-  if (is_last && windows_newlines_ && end > begin) {
-    end--;
-  }
 
   if (trim_ws_) {
     trim_whitespace(begin, end);
