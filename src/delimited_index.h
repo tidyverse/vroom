@@ -292,7 +292,7 @@ public:
       const size_t update_size) {
 
     // If there are no quotes quote will be '\0', so will just work
-    std::array<char, 5> query = {delim[0], '\n', '\\', quote, '\0'};
+    std::array<char, 6> query = {delim[0], '\n', '\r', '\\', quote, '\0'};
 
     auto last_tick = start;
 
@@ -324,7 +324,7 @@ public:
         ++cols;
       }
 
-      else if (c == '\n') {
+      else if ((windows_newlines_ && c == '\r') || c == '\n') {
         if (state ==
             QUOTED_FIELD) { // This will work as long as num_threads = 1
           if (num_threads != 1) {
@@ -372,6 +372,9 @@ public:
             pb->tick(pos - last_tick);
             last_tick = pos;
           }
+        }
+        if ((windows_newlines_ && c == '\r')) {
+          ++pos;
         }
       }
 
