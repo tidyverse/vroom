@@ -93,3 +93,8 @@ is_rstudio_version <- function(min, max = .Machine$integer.max) {
 
 #' @importFrom methods setOldClass
 setOldClass(c("spec_tbl_df", "tbl_df", "tbl", "data.frame"))
+
+utctime <- function(year, month, day, hour, min, sec, psec) {
+  utctime_(as.integer(year), as.integer(month), as.integer(day),
+    as.integer(hour), as.integer(min), as.integer(sec), as.numeric(psec))
+}

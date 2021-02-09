@@ -2,6 +2,8 @@ test_vroom <- function(content, delim = ",", col_types = list(), ..., equals) {
   if(any(grepl("\n", content))) {
     content <- I(content)
   }
+  suppressWarnings({
+
   # with altrep
   withr::with_envvar(c("VROOM_USE_ALTREP_CHR" = "true", "VROOM_USE_ALTREP_NUMERICS" = "true"), {
     expect_equal(
@@ -38,6 +40,7 @@ test_vroom <- function(content, delim = ",", col_types = list(), ..., equals) {
     force_materialization(res[[i]])
   }
   expect_equal(res, equals)
+  })
 
   invisible(res)
 }

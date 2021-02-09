@@ -15,11 +15,9 @@ test_that("can generate ordered factor", {
 })
 
 test_that("NA if value not in levels", {
-  expect_warning(
-    test_vroom("a\nb\nc\n", col_names = FALSE,
-      col_types = list(X1 = col_factor(levels = c("a", "b"))),
-      equals = tibble::tibble(X1 = factor(c("a", "b", NA)))
-    )
+  test_vroom("a\nb\nc\n", col_names = FALSE,
+    col_types = list(X1 = col_factor(levels = c("a", "b"))),
+    equals = tibble::tibble(X1 = factor(c("a", "b", NA)))
   )
 })
 
@@ -90,17 +88,13 @@ test_that("Factors handle encodings properly (#615)", {
 })
 
 test_that("factors parse like factor if trim_ws = FALSE", {
-  expect_warning(
-    test_vroom("a\na \n", col_names = FALSE, trim_ws = FALSE,
-      col_types = list(X1 = col_factor(levels = "a")),
-      equals = tibble::tibble(X1 = factor(c("a", "a "), levels = c("a")))
-    )
+  test_vroom("a\na \n", col_names = FALSE, trim_ws = FALSE,
+    col_types = list(X1 = col_factor(levels = "a")),
+    equals = tibble::tibble(X1 = factor(c("a", "a "), levels = c("a")))
   )
-  expect_warning(
-    test_vroom("a\na \n", col_names = FALSE, trim_ws = FALSE,
-      col_types = list(X1 = col_factor(levels = "a ")),
-      equals = tibble::tibble(X1 = factor(c("a", "a "), levels = c("a ")))
-    )
+  test_vroom("a\na \n", col_names = FALSE, trim_ws = FALSE,
+    col_types = list(X1 = col_factor(levels = "a ")),
+    equals = tibble::tibble(X1 = factor(c("a", "a "), levels = c("a ")))
   )
   test_vroom("a\na \n", col_names = FALSE, trim_ws = FALSE,
     col_types = list(X1 = col_factor(levels = c("a ", "a"))),

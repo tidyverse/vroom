@@ -5,17 +5,13 @@ test_that("integers are returned correctly", {
   )
 
   # numbers which are not integers are returned as NAs
-  expect_warning(
-    test_vroom("foo,bar,baz\n1,1.5,3\n", col_types = list(.default = "i"), delim = ",",
-      equals = tibble::tibble(foo = 1L, bar = NA_integer_, baz = 3L)
-    )
+  test_vroom("foo,bar,baz\n1,1.5,3\n", col_types = list(.default = "i"), delim = ",",
+    equals = tibble::tibble(foo = 1L, bar = NA_integer_, baz = 3L)
   )
 
   # fields with non-digits are returned as NAs
-  expect_warning(
-    test_vroom("foo,bar,baz\n1,32xyz,3\n", col_types = list(.default = "i"), delim = ",",
-      equals = tibble::tibble(foo = 1L, bar = NA_integer_, baz = 3L)
-    )
+  test_vroom("foo,bar,baz\n1,32xyz,3\n", col_types = list(.default = "i"), delim = ",",
+    equals = tibble::tibble(foo = 1L, bar = NA_integer_, baz = 3L)
   )
 
   # 2^31 - 1 is the maximum representable integer with 32 bit ints
@@ -23,9 +19,7 @@ test_that("integers are returned correctly", {
     equals = tibble::tibble(foo = 1L, bar = 2147483647L, baz = 3L)
   )
 
-  expect_warning(
-    test_vroom("foo,bar,baz\n1,2147483648,3\n", col_types = list(.default = "i"), delim = ",",
-      equals = tibble::tibble(foo = 1L, bar = NA_integer_, baz = 3L)
-    )
+  test_vroom("foo,bar,baz\n1,2147483648,3\n", col_types = list(.default = "i"), delim = ",",
+    equals = tibble::tibble(foo = 1L, bar = NA_integer_, baz = 3L)
   )
 })

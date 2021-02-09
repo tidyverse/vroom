@@ -47,6 +47,13 @@ extern "C" SEXP _vroom_guess_type_(SEXP input, SEXP na, SEXP locale, SEXP guess_
     return cpp11::as_sexp(guess_type_(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(input), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(na), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(locale), cpp11::as_cpp<cpp11::decay_t<bool>>(guess_integer)));
   END_CPP11
 }
+// vroom_dttm.cc
+cpp11::writable::doubles utctime_(cpp11::integers year, cpp11::integers month, cpp11::integers day, cpp11::integers hour, cpp11::integers min, cpp11::integers sec, cpp11::doubles psec);
+extern "C" SEXP _vroom_utctime_(SEXP year, SEXP month, SEXP day, SEXP hour, SEXP min, SEXP sec, SEXP psec) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(utctime_(cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(year), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(month), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(day), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(hour), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(min), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(sec), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(psec)));
+  END_CPP11
+}
 // vroom_errors.cpp
 cpp11::data_frame vroom_errors_(cpp11::external_pointer<std::shared_ptr<vroom_errors>> errors);
 extern "C" SEXP _vroom_vroom_errors_(SEXP errors) {
@@ -119,6 +126,7 @@ extern SEXP _vroom_force_materialization(SEXP);
 extern SEXP _vroom_gen_character_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _vroom_guess_type_(SEXP, SEXP, SEXP, SEXP);
 extern SEXP _vroom_has_trailing_newline(SEXP);
+extern SEXP _vroom_utctime_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _vroom_vroom_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _vroom_vroom_convert(SEXP);
 extern SEXP _vroom_vroom_errors_(SEXP);
@@ -136,6 +144,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_gen_character_",          (DL_FUNC) &_vroom_gen_character_,           6},
     {"_vroom_guess_type_",             (DL_FUNC) &_vroom_guess_type_,              4},
     {"_vroom_has_trailing_newline",    (DL_FUNC) &_vroom_has_trailing_newline,     1},
+    {"_vroom_utctime_",                (DL_FUNC) &_vroom_utctime_,                 7},
     {"_vroom_vroom_",                  (DL_FUNC) &_vroom_vroom_,                  20},
     {"_vroom_vroom_convert",           (DL_FUNC) &_vroom_vroom_convert,            1},
     {"_vroom_vroom_errors_",           (DL_FUNC) &_vroom_vroom_errors_,            1},

@@ -18,7 +18,7 @@ test_that("datetime parsing works", {
 r_parse <- function(x, fmt) as.POSIXct(strptime(x, fmt, tz = "UTC"))
 
 test_that("%d, %m and %y", {
-  target <- readr:::utctime(2010, 2, 3, 0, 0, 0, 0)
+  target <- utctime(2010, 2, 3, 0, 0, 0, 0)
 
   test_parse_datetime("10-02-03", "%y-%m-%d", expected = target)
   test_parse_datetime("10-03-02", "%y-%d-%m", expected = target)
@@ -27,7 +27,7 @@ test_that("%d, %m and %y", {
 })
 
 test_that("Compound formats work", {
-  target <- readr:::utctime(2010, 2, 3, 0, 0, 0, 0)
+  target <- utctime(2010, 2, 3, 0, 0, 0, 0)
 
   test_parse_datetime("02/03/10", "%D", expected = target)
   test_parse_datetime("2010-02-03", "%F", expected = target)
@@ -40,38 +40,38 @@ test_that("%y matches R behaviour", {
 })
 
 test_that("%e allows leading space", {
-  test_parse_datetime("201010 1", "%Y%m%e", expected = readr:::utctime(2010, 10, 1, 0, 0, 0, 0))
+  test_parse_datetime("201010 1", "%Y%m%e", expected = utctime(2010, 10, 1, 0, 0, 0, 0))
 })
 
 test_that("%OS captures partial seconds", {
-  test_parse_datetime("2001-01-01 00:00:01.125", "%Y-%m-%d %H:%M:%OS", expected = readr:::utctime(2001, 1, 1, 0, 0, 1, .125))
-  test_parse_datetime("2001-01-01 00:00:01.133", "%Y-%m-%d %H:%M:%OS", expected = readr:::utctime(2001, 1, 1, 0, 0, 1, .133))
+  test_parse_datetime("2001-01-01 00:00:01.125", "%Y-%m-%d %H:%M:%OS", expected = utctime(2001, 1, 1, 0, 0, 1, .125))
+  test_parse_datetime("2001-01-01 00:00:01.133", "%Y-%m-%d %H:%M:%OS", expected = utctime(2001, 1, 1, 0, 0, 1, .133))
 })
 
 test_that("%Y requires 4 digits", {
-  expect_warning(test_parse_date("03-01-01", "%Y-%m-%d", expected = as.Date(NA)))
-  expect_warning(test_parse_date("003-01-01", "%Y-%m-%d", expected = as.Date(NA)))
+  test_parse_date("03-01-01", "%Y-%m-%d", expected = as.Date(NA))
+  test_parse_date("003-01-01", "%Y-%m-%d", expected = as.Date(NA))
   test_parse_date("0003-01-01", "%Y-%m-%d", expected = as.Date("0003-01-01"))
-  expect_warning(test_parse_date("00003-01-01", "%Y-%m-%d", expected = as.Date(NA)))
+  test_parse_date("00003-01-01", "%Y-%m-%d", expected = as.Date(NA))
 })
 
 test_that("invalid dates return NA", {
-  expect_warning(test_parse_datetime("2010-02-30", "%Y-%m-%d", expected = .POSIXct(NA_real_, tz = "UTC")))
+  test_parse_datetime("2010-02-30", "%Y-%m-%d", expected = .POSIXct(NA_real_, tz = "UTC"))
 })
 
 test_that("failed parsing returns NA", {
-  expect_warning(test_parse_datetime(c("2010-02-ab", "2010-02", "2010/02/01"), "%Y-%m-%d",
-    expected = .POSIXct(rep(NA_real_, 3), tz = "UTC")))
+  test_parse_datetime(c("2010-02-ab", "2010-02", "2010/02/01"), "%Y-%m-%d",
+    expected = .POSIXct(rep(NA_real_, 3), tz = "UTC"))
 })
 
 test_that("invalid specs returns NA", {
-  expect_warning(test_parse_datetime("2010-02-20", "%Y-%m-%m", expected = .POSIXct(NA_real_, tz = "UTC")))
+  test_parse_datetime("2010-02-20", "%Y-%m-%m", expected = .POSIXct(NA_real_, tz = "UTC"))
 })
 
 test_that("ISO8601 partial dates are not parsed", {
-  expect_warning(test_parse_datetime("20", "", expected = .POSIXct(NA_real_, tz = "UTC")))
-  expect_warning(test_parse_datetime("2001", "", expected = .POSIXct(NA_real_, tz = "UTC")))
-  expect_warning(test_parse_datetime("2001-01", "", expected = .POSIXct(NA_real_, tz = "UTC")))
+  test_parse_datetime("20", "", expected = .POSIXct(NA_real_, tz = "UTC"))
+  test_parse_datetime("2001", "", expected = .POSIXct(NA_real_, tz = "UTC"))
+  test_parse_datetime("2001-01", "", expected = .POSIXct(NA_real_, tz = "UTC"))
 })
 
 test_that("Year only gets parsed", {
@@ -97,8 +97,8 @@ test_that("%p detects AM/PM", {
   test_parse_datetime("12/31/1991 01:01 AM", "%m/%d/%Y %I:%M %p",
     expected = .POSIXct(694141260, "UTC"))
 
-  expect_warning(test_parse_datetime(c("12/31/1991 00:01 PM", "12/31/1991 13:01 PM"),
-      "%m/%d/%Y %I:%M %p", expected = .POSIXct(rep(NA_real_, 2), tz = "UTC")))
+  test_parse_datetime(c("12/31/1991 00:01 PM", "12/31/1991 13:01 PM"),
+      "%m/%d/%Y %I:%M %p", expected = .POSIXct(rep(NA_real_, 2), tz = "UTC"))
 })
 
 test_that("%b and %B are case insensitive", {
@@ -112,7 +112,7 @@ test_that("%. requires a value", {
   ref <- as.Date("2001-01-01")
 
   test_parse_date("2001?01?01", "%Y%.%m%.%d", expected = ref)
-  expect_warning(test_parse_date("20010101", "%Y%.%m%.%d", expected = as.Date(NA)))
+  test_parse_date("20010101", "%Y%.%m%.%d", expected = as.Date(NA))
 })
 
 test_that("%Z detects named time zones", {
@@ -175,7 +175,7 @@ test_that("locale affects am/pm", {
 })
 
 test_that("locale affects both guessing and parsing", {
-  out <- vroom(I("01/02/2013\n"), delim = ",", col_names = FALSE, locale = locale(date_format = "%m/%d/%Y"))
+  out <- vroom(I("01/02/2013\n"), delim = ",", col_names = FALSE, col_types = list(), locale = locale(date_format = "%m/%d/%Y"))
   expect_equal(out[[1]][[1]], as.Date("2013-01-02"))
 })
 
@@ -184,7 +184,7 @@ test_that("locale affects both guessing and parsing", {
 test_that("same times with different offsets parsed as same time", {
   # From http://en.wikipedia.org/wiki/ISO_8601#Time_offsets_from_UTC
   same_time <- paste("2010-02-03", c("18:30Z", "22:30+04", "1130-0700", "15:00-03:30"))
-  test_parse_datetime(same_time, format = "", expected = rep(readr:::utctime(2010, 2, 3, 18, 30, 0, 0), 4))
+  test_parse_datetime(same_time, format = "", expected = rep(utctime(2010, 2, 3, 18, 30, 0, 0), 4))
 })
 
 test_that("offsets can cross date boundaries", {
@@ -245,7 +245,7 @@ test_that("subsetting works with both double and integer indexes", {
 })
 
 test_that("guessing datetime uses the same logic as parsing", {
-  expect_type(vroom(I("date\n2015-06-14T09Z\n2015-06-14T09Z"), delim=",")[[1]], "character")
+  expect_type(vroom(I("date\n2015-06-14T09Z\n2015-06-14T09Z"), delim=",", col_types = list())[[1]], "character")
 })
 
 test_that("malformed date / datetime formats cause R errors", {

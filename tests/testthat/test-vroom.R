@@ -348,18 +348,14 @@ test_that("vroom uses the number of rows when guess_max = Inf", {
 })
 
 test_that("vroom adds columns if a row is too short", {
-  expect_warning(
-    test_vroom("a,b,c,d\n1,2\n3,4,5,6\n", delim = ",",
+  test_vroom("a,b,c,d\n1,2\n3,4,5,6\n", delim = ",",
     equals = tibble::tibble("a" = c(1,3), "b" = c(2,4), "c" = c(NA, 5), "d" = c(NA, 6))
-    )
   )
 })
 
 test_that("vroom removes columns if a row is too long", {
-  expect_warning(
-    test_vroom("a,b,c,d\n1,2,3,4,5,6,7\n8,9,10,11\n", delim = ",", col_types = c(d = "c"),
-      equals = tibble::tibble("a" = c(1,8), "b" = c(2,9), "c" = c(3, 10), "d" = c("4,5,6,7", "11"))
-    )
+  test_vroom("a,b,c,d\n1,2,3,4,5,6,7\n8,9,10,11\n", delim = ",", col_types = c(d = "c"),
+    equals = tibble::tibble("a" = c(1,8), "b" = c(2,9), "c" = c(3, 10), "d" = c("4,5,6,7", "11"))
   )
 })
 
@@ -389,10 +385,8 @@ test_that("column names are properly encoded", {
 })
 
 test_that("Files with windows newlines and missing fields work", {
-  expect_warning(
-    test_vroom("a,b,c,d\r\nm,\r\n\r\n", delim = ",",
-      equals = tibble::tibble(a = c("m", NA), b = c(NA, NA), c = c(NA, NA), d = c(NA, NA))
-    )
+  test_vroom("a,b,c,d\r\nm,\r\n\r\n", delim = ",",
+    equals = tibble::tibble(a = c("m", NA), b = c(NA, NA), c = c(NA, NA), d = c(NA, NA))
   )
 })
 
@@ -513,19 +507,19 @@ test_that("subsetting works with both double and integer indexes", {
 })
 
 test_that("quotes inside fields are ignored", {
-  x <- vroom(I("x\nfoo\"bar\nbaz\n"), delim = ",", quote = "\"")
+  x <- vroom(I("x\nfoo\"bar\nbaz\n"), delim = ",", quote = "\"", col_types = list())
   expect_equal(x$x[[1]], "foo\"bar")
   expect_equal(x$x[[2]], "baz")
 })
 
 test_that("quotes at the beginning and end of lines are used", {
-  y <- vroom(I("x\n\"foo\"\"bar\"\nbaz\n"), delim = ",", quote = "\"")
+  y <- vroom(I("x\n\"foo\"\"bar\"\nbaz\n"), delim = ",", quote = "\"", col_types = list())
   expect_equal(y$x[[1]], "foo\"bar")
   expect_equal(y$x[[2]], "baz")
 })
 
 test_that("quotes at delimiters are used", {
-  z <- vroom(I("x,y,z\n1,\"foo\"\"bar\",2\n3,baz,4"), delim = ",", quote = "\"")
+  z <- vroom(I("x,y,z\n1,\"foo\"\"bar\",2\n3,baz,4"), delim = ",", quote = "\"", col_types = list())
   expect_equal(z$y[[1]], "foo\"bar")
   expect_equal(z$y[[2]], "baz")
 })
@@ -539,13 +533,13 @@ test_that("vroom reads files with embedded newlines even when num_threads > 1", 
   writeLines(c("x", rep("foo", 1000), '"bar\nbaz"', rep("qux", 1000)), con, sep = "\n")
   close(con)
 
-  res <- vroom(tf, delim = ",", num_threads = 5)
+  res <- vroom(tf, delim = ",", num_threads = 5, col_types = list())
   expect_equal(nrow(res), 1000 + 1 + 1000)
   expect_equal(res$x[[1001]], "bar\nbaz")
 })
 
 test_that("multi-character comments are supported", {
-  res <- vroom(I("## this is a comment\n# this is not"), delim = "\t", comment = "##", col_names = FALSE)
+  res <- vroom(I("## this is a comment\n# this is not"), delim = "\t", comment = "##", col_names = FALSE, col_types = list())
   expect_equal(res[[1]], "# this is not")
 })
 
@@ -555,18 +549,16 @@ test_that("vroom works with quoted fields at the end of a windows newline", {
   con <- file(f, "wb")
   writeLines(c('"x"', 1), con, sep = "\r\n")
   close(con)
-  res <- vroom(f, delim = ",", col_names = FALSE)
+  res <- vroom(f, delim = ",", col_names = FALSE, col_types = list())
   expect_equal(res[[1]], c("x", 1))
 })
 
 test_that("vroom can handle NUL characters in strings", {
-  expect_warning(
-  expect_warning(
-  expect_warning(test_vroom(test_path("raw.csv"), delim = ",", progress = FALSE,
+  test_vroom(test_path("raw.csv"), delim = ",", progress = FALSE,
     equals = tibble::tibble(abc = "ab", def = "def")
-  ))))
+  )
 })
 
 test_that("n_max is respected in all cases", {
-  expect_equal(dim(vroom(I("x\ty\tz\n1\t2\t3\n4\t5\t6\n"), n_max = 1)), c(1, 3))
+  expect_equal(dim(vroom(I("x\ty\tz\n1\t2\t3\n4\t5\t6\n"), n_max = 1, col_types = list())), c(1, 3))
 })
