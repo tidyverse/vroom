@@ -568,5 +568,5 @@ test_that("vroom can handle NUL characters in strings", {
 })
 
 test_that("n_max is respected in all cases", {
-  expect_equal(dim(vroom("x\ty\tz\n1\t2\t3\n4\t5\t6\n", n_max = 1)), c(1, 3))
+  expect_equal(dim(vroom(I("x\ty\tz\n1\t2\t3\n4\t5\t6\n"), n_max = 1)), c(1, 3))
 })
