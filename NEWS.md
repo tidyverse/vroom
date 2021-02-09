@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` now supports comments within data, not just at the start of the file (#294)
+
 * `n_max` argument is correctly respected in edge cases (#306)
 
 * `vroom()` now preserves the spec attribute when vroom and readr are both loaded (#303)

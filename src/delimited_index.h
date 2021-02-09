@@ -260,6 +260,28 @@ public:
     }
     throw std::runtime_error("should never happen");
   }
+  void resolve_columns(
+      size_t pos,
+      size_t& cols,
+      size_t num_cols,
+      idx_t& destination,
+      std::shared_ptr<vroom_errors> errors) {
+    // Remove extra columns if there are too many
+    if (cols >= num_cols) {
+      errors->add_parse_error(pos, cols);
+      while (cols >= num_cols) {
+        destination.pop_back();
+        --cols;
+      }
+    } else if (cols < num_cols - 1) {
+      errors->add_parse_error(pos, cols);
+      // Add additional columns if there are too few
+      while (cols < num_cols - 1) {
+        destination.push_back(pos - windows_newlines_);
+        ++cols;
+      }
+    }
+  }
 
   /*
    * @param source the source to index
@@ -279,6 +301,7 @@ public:
       idx_t& destination,
       const char* delim,
       const char quote,
+      const char* comment,
       csv_state& state,
       const size_t start,
       const size_t end,
@@ -292,7 +315,10 @@ public:
       const size_t update_size) {
 
     // If there are no quotes quote will be '\0', so will just work
-    std::array<char, 6> query = {delim[0], '\n', '\r', '\\', quote, '\0'};
+    std::array<char, 7> query = {
+        delim[0], '\n', '\r', '\\', quote, comment[0], '\0'};
+
+    auto comment_len = strlen(comment);
 
     auto last_tick = start;
 
@@ -311,6 +337,21 @@ public:
           state = FIELD_START;
         }
         ++pos;
+        continue;
+      }
+
+      else if (
+          comment_len > 0 && strncmp(comment, buf + pos, comment_len) == 0) {
+        if (state != RECORD_START) {
+          destination.push_back(pos + file_offset);
+          resolve_columns(
+              pos + file_offset, cols, num_cols, destination, errors);
+        }
+        cols = 0;
+        pos =
+            static_cast<const char*>(memchr(buf + pos, '\n', end - pos)) - buf;
+        ++pos;
+        state = newline_state(state);
         continue;
       }
 
@@ -336,24 +377,9 @@ public:
           ++pos;
           continue;
         }
-
-        // Ensure columns are consistent
         if (num_cols > 0 && pos > start) {
-          // Remove extra columns if there are too many
-          if (cols >= num_cols) {
-            errors->add_parse_error(pos + file_offset, cols);
-            while (cols >= num_cols) {
-              destination.pop_back();
-              --cols;
-            }
-          } else if (cols < num_cols - 1) {
-            errors->add_parse_error(pos + file_offset, cols);
-            // Add additional columns if there are too few
-            while (cols < num_cols - 1) {
-              destination.push_back(pos + file_offset - windows_newlines_);
-              ++cols;
-            }
-          }
+          resolve_columns(
+              pos + file_offset, cols, num_cols, destination, errors);
         }
 
         state = newline_state(state);

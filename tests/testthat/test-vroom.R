@@ -562,3 +562,30 @@ test_that("vroom can handle NUL characters in strings", {
 test_that("n_max is respected in all cases", {
   expect_equal(dim(vroom(I("x\ty\tz\n1\t2\t3\n4\t5\t6\n"), n_max = 1, col_types = list())), c(1, 3))
 })
+
+test_that("comments are ignored regardless of where they appear", {
+
+  out1 <- vroom(I('x\n1#comment'), comment = "#", col_types = "d", delim = ",")
+  out2 <- vroom(I('x\n1#comment\n#comment'), comment = "#", col_types = "d", delim = ",")
+  out3 <- vroom(I('x\n"1"#comment'), comment = "#", col_types = "d", delim = ",")
+
+  expect_equal(out1$x, 1)
+  expect_equal(out2$x, 1)
+  expect_equal(out3$x, 1)
+
+  out4 <- vroom(I('x,y\n1,#comment'), comment = "#", delim = ",", col_types = "cc", progress = FALSE, altrep = FALSE)
+  expect_equal(out4$y, NA_character_)
+
+  expect_warning(out5 <- vroom(I("x1,x2,x3\nA2,B2,C2\nA3#,B2,C2\nA4,A5,A6"), comment = "#", delim = ",", col_types = "ccc", altrep = FALSE, progress = FALSE))
+  expect_warning(out6 <- vroom(I("x1,x2,x3\nA2,B2,C2\nA3,#B2,C2\nA4,A5,A6"), comment = "#", delim = ",", col_types = "ccc", altrep = FALSE, progress = FALSE))
+  expect_warning(out7 <- vroom(I("x1,x2,x3\nA2,B2,C2\nA3,#B2,C2\n#comment\nA4,A5,A6"), comment = "#", delim = ",", col_types = "ccc", altrep = FALSE, progress = FALSE))
+
+  chk <- tibble::tibble(
+    x1 = c("A2", "A3", "A4"),
+    x2 = c("B2", NA_character_, "A5"),
+    x3 = c("C2", NA_character_, "A6"))
+
+  expect_true(all.equal(chk, out5, check.attributes = FALSE))
+  expect_true(all.equal(chk, out6, check.attributes = FALSE))
+  expect_true(all.equal(chk, out7, check.attributes = FALSE))
+})
