@@ -163,7 +163,7 @@ start_indexing:
 
     if (nmax_set) {
       threads.emplace_back(std::async(std::launch::async, [&] {
-        n_max -= lines_read;
+        n_max = n_max > lines_read ? n_max - lines_read : 0;
         index_region(
             mmap_,
             idx_[1],

@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `n_max` argument is correctly respected in edge cases (#306)
+
 * `vroom()` now preserves the spec attribute when vroom and readr are both loaded (#303)
 
 * vroom now registers the S3 class with `methods::setOldClass()` (r-dbi/DBI#345)

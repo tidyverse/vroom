@@ -169,7 +169,7 @@ delimited_index_connection::delimited_index_connection(
     if (parse_fut.valid()) {
       parse_fut.wait();
     }
-    n_max -= lines_read;
+    n_max = n_max > lines_read ? n_max - lines_read : 0;
 
     if (n_max > 0) {
       parse_fut = std::async([&, i, sz, first_nl, total_read] {
