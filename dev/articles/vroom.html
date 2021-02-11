@@ -145,14 +145,16 @@
 
 <span class="co"># Read the file, by default vroom will guess the delimiter automatically.</span>
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span>
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 12</span>
 <span class="co">#&gt; Delimiter: ","</span>
 <span class="co">#&gt; chr [ 1]: model</span>
 <span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Use `spec()` to retrieve the guessed column specification</span>
-<span class="co">#&gt; Pass a specification to the `col_types` argument to quiet this message</span>
+<span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specifications.</span>
+<span class="co">#&gt; ℹ Pass a specification to `col_types` argument to quiet this message.</span>
 <span class="co">#&gt; # A tibble: 32 x 12</span>
 <span class="co">#&gt;   model          mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
@@ -164,14 +166,16 @@
 <span class="co"># You can also specify it explicitly, which is (slightly) faster, and safer if</span>
 <span class="co"># you know how the file is delimited.</span>
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, delim <span class="op">=</span> <span class="st">","</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span>
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 12</span>
 <span class="co">#&gt; Delimiter: ","</span>
 <span class="co">#&gt; chr [ 1]: model</span>
 <span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Use `spec()` to retrieve the guessed column specification</span>
-<span class="co">#&gt; Pass a specification to the `col_types` argument to quiet this message</span>
+<span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specifications.</span>
+<span class="co">#&gt; ℹ Pass a specification to `col_types` argument to quiet this message.</span>
 <span class="co">#&gt; # A tibble: 32 x 12</span>
 <span class="co">#&gt;   model          mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
@@ -197,14 +201,16 @@
 <span class="va">files</span>
 <span class="co">#&gt; mtcars_4.csv mtcars_6.csv mtcars_8.csv</span>
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">files</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span>
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 12</span>
 <span class="co">#&gt; Delimiter: "\t"</span>
 <span class="co">#&gt; chr [ 1]: model</span>
 <span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Use `spec()` to retrieve the guessed column specification</span>
-<span class="co">#&gt; Pass a specification to the `col_types` argument to quiet this message</span>
+<span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specifications.</span>
+<span class="co">#&gt; ℹ Pass a specification to `col_types` argument to quiet this message.</span>
 <span class="co">#&gt; # A tibble: 32 x 12</span>
 <span class="co">#&gt;   model        mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
@@ -215,14 +221,16 @@
 <p>Often the filename or directory where the files are stored contains information. The <code>id</code> parameter can be used to add an extra column to the result with the full path to each file. (in this case we name the column <code>path</code>).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">files</span>, id <span class="op">=</span> <span class="st">"path"</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span>
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 13</span>
 <span class="co">#&gt; Delimiter: "\t"</span>
 <span class="co">#&gt; chr [ 1]: model</span>
 <span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Use `spec()` to retrieve the guessed column specification</span>
-<span class="co">#&gt; Pass a specification to the `col_types` argument to quiet this message</span>
+<span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specifications.</span>
+<span class="co">#&gt; ℹ Pass a specification to `col_types` argument to quiet this message.</span>
 <span class="co">#&gt; # A tibble: 32 x 13</span>
 <span class="co">#&gt;   path   model   mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
@@ -239,14 +247,16 @@
 <code class="sourceCode R"><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv.gz"</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span>
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 12</span>
 <span class="co">#&gt; Delimiter: ","</span>
 <span class="co">#&gt; chr [ 1]: model</span>
 <span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Use `spec()` to retrieve the guessed column specification</span>
-<span class="co">#&gt; Pass a specification to the `col_types` argument to quiet this message</span>
+<span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specifications.</span>
+<span class="co">#&gt; ℹ Pass a specification to `col_types` argument to quiet this message.</span>
 <span class="co">#&gt; # A tibble: 32 x 12</span>
 <span class="co">#&gt;   model          mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
@@ -273,14 +283,16 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">file</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv"</span>
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span>
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 12</span>
 <span class="co">#&gt; Delimiter: ","</span>
 <span class="co">#&gt; chr [ 1]: model</span>
 <span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Use `spec()` to retrieve the guessed column specification</span>
-<span class="co">#&gt; Pass a specification to the `col_types` argument to quiet this message</span>
+<span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specifications.</span>
+<span class="co">#&gt; ℹ Pass a specification to `col_types` argument to quiet this message.</span>
 <span class="co">#&gt; # A tibble: 32 x 12</span>
 <span class="co">#&gt;   model          mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
@@ -292,14 +304,16 @@
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">file</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv.gz"</span>
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span>
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 12</span>
 <span class="co">#&gt; Delimiter: ","</span>
 <span class="co">#&gt; chr [ 1]: model</span>
 <span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Use `spec()` to retrieve the guessed column specification</span>
-<span class="co">#&gt; Pass a specification to the `col_types` argument to quiet this message</span>
+<span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specifications.</span>
+<span class="co">#&gt; ℹ Pass a specification to `col_types` argument to quiet this message.</span>
 <span class="co">#&gt; # A tibble: 32 x 12</span>
 <span class="co">#&gt;   model          mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
@@ -319,14 +333,16 @@
 <code class="sourceCode R"><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv.gz"</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, col_select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">model</span>, <span class="va">cyl</span>, <span class="va">gear</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span>
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 3</span>
 <span class="co">#&gt; Delimiter: ","</span>
 <span class="co">#&gt; chr [1]: model</span>
 <span class="co">#&gt; dbl [2]: cyl, gear</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Use `spec()` to retrieve the guessed column specification</span>
-<span class="co">#&gt; Pass a specification to the `col_types` argument to quiet this message</span>
+<span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specifications.</span>
+<span class="co">#&gt; ℹ Pass a specification to `col_types` argument to quiet this message.</span>
 <span class="co">#&gt; # A tibble: 32 x 3</span>
 <span class="co">#&gt;   model           cyl  gear</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;</span>
@@ -340,14 +356,16 @@
 </ul>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, col_select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">11</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span>
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 3</span>
 <span class="co">#&gt; Delimiter: ","</span>
 <span class="co">#&gt; chr [1]: model</span>
 <span class="co">#&gt; dbl [2]: cyl, gear</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Use `spec()` to retrieve the guessed column specification</span>
-<span class="co">#&gt; Pass a specification to the `col_types` argument to quiet this message</span>
+<span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specifications.</span>
+<span class="co">#&gt; ℹ Pass a specification to `col_types` argument to quiet this message.</span>
 <span class="co">#&gt; # A tibble: 32 x 3</span>
 <span class="co">#&gt;   model           cyl  gear</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;</span>
@@ -361,13 +379,15 @@
 </ul>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, col_select <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">starts_with</a></span><span class="op">(</span><span class="st">"d"</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span>
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 2</span>
 <span class="co">#&gt; Delimiter: ","</span>
 <span class="co">#&gt; dbl [2]: disp, drat</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Use `spec()` to retrieve the guessed column specification</span>
-<span class="co">#&gt; Pass a specification to the `col_types` argument to quiet this message</span>
+<span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specifications.</span>
+<span class="co">#&gt; ℹ Pass a specification to `col_types` argument to quiet this message.</span>
 <span class="co">#&gt; # A tibble: 32 x 2</span>
 <span class="co">#&gt;    disp  drat</span>
 <span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt;</span>
@@ -380,14 +400,16 @@
 </ul>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, col_select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>car <span class="op">=</span> <span class="va">model</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span>
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 12</span>
 <span class="co">#&gt; Delimiter: ","</span>
 <span class="co">#&gt; chr [ 1]: model</span>
 <span class="co">#&gt; dbl [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Use `spec()` to retrieve the guessed column specification</span>
-<span class="co">#&gt; Pass a specification to the `col_types` argument to quiet this message</span>
+<span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specifications.</span>
+<span class="co">#&gt; ℹ Pass a specification to `col_types` argument to quiet this message.</span>
 <span class="co">#&gt; # A tibble: 32 x 12</span>
 <span class="co">#&gt;   car            mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>

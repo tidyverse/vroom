@@ -344,14 +344,16 @@ name repair functions.</p></td>
 <span class='co'># Input sources -------------------------------------------------------------</span>
 <span class='co'># Read from a path</span>
 <span class='fu'>vroom</span><span class='op'>(</span><span class='va'>input_file</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows:</span><span> 32</span>
+</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'><span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Column specification</span><span> </span><span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span><span></span>
+#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 12</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
 #&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [ 1]: model</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 12</span><span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Use </span><span style='color: #262626;background-color: #DADADA;'>`spec()`</span><span> to retrieve the full column specifications.</span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Pass a specification to </span><span style='color: #262626;background-color: #DADADA;'>`col_types`</span><span> argument to quiet this message.</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 12</span><span>
 #&gt;    model         mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'> 1</span><span> Mazda RX4    21       6  160    110  3.9   2.62  16.5     0     1     4     4
@@ -374,13 +376,15 @@ name repair functions.</p></td>
 
 <span class='co'># Or directly from a string with `I()`</span>
 <span class='fu'>vroom</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='st'>"x,y\n1,2\n3,4\n"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 2</span>
+</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Column specification</span><span> </span><span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span><span></span>
+#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [2]: x, y</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 2 x 2</span><span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Use </span><span style='color: #262626;background-color: #DADADA;'>`spec()`</span><span> to retrieve the full column specifications.</span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Pass a specification to </span><span style='color: #262626;background-color: #DADADA;'>`col_types`</span><span> argument to quiet this message.</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 2 x 2</span><span>
 #&gt;       x     y
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span>     1     2
@@ -388,14 +392,16 @@ name repair functions.</p></td>
 <span class='co'># Column selection ----------------------------------------------------------</span>
 <span class='co'># Pass column names or indexes directly to select them</span>
 <span class='fu'>vroom</span><span class='op'>(</span><span class='va'>input_file</span>, col_select <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>model</span>, <span class='va'>cyl</span>, <span class='va'>gear</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
+</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Column specification</span><span> </span><span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span><span></span>
+#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 3</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
 #&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [1]: model</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [2]: cyl, gear</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 3</span><span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Use </span><span style='color: #262626;background-color: #DADADA;'>`spec()`</span><span> to retrieve the full column specifications.</span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Pass a specification to </span><span style='color: #262626;background-color: #DADADA;'>`col_types`</span><span> argument to quiet this message.</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 3</span><span>
 #&gt;    model               cyl  gear
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'> 1</span><span> Mazda RX4             6     4
@@ -409,14 +415,16 @@ name repair functions.</p></td>
 #&gt; </span><span style='color: #555555;'> 9</span><span> Merc 230              4     4
 #&gt; </span><span style='color: #555555;'>10</span><span> Merc 280              6     4
 #&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'><span class='fu'>vroom</span><span class='op'>(</span><span class='va'>input_file</span>, col_select <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>11</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
+</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Column specification</span><span> </span><span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span><span></span>
+#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 3</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
 #&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [1]: model</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [2]: cyl, gear</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 3</span><span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Use </span><span style='color: #262626;background-color: #DADADA;'>`spec()`</span><span> to retrieve the full column specifications.</span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Pass a specification to </span><span style='color: #262626;background-color: #DADADA;'>`col_types`</span><span> argument to quiet this message.</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 3</span><span>
 #&gt;    model               cyl  gear
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'> 1</span><span> Mazda RX4             6     4
@@ -432,13 +440,15 @@ name repair functions.</p></td>
 #&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'>
 <span class='co'># Or use the selection helpers</span>
 <span class='fu'>vroom</span><span class='op'>(</span><span class='va'>input_file</span>, col_select <span class='op'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/starts_with.html'>starts_with</a></span><span class='op'>(</span><span class='st'>"d"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
+</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Column specification</span><span> </span><span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span><span></span>
+#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [2]: disp, drat</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 2</span><span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Use </span><span style='color: #262626;background-color: #DADADA;'>`spec()`</span><span> to retrieve the full column specifications.</span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Pass a specification to </span><span style='color: #262626;background-color: #DADADA;'>`col_types`</span><span> argument to quiet this message.</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 2</span><span>
 #&gt;     disp  drat
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'> 1</span><span>  160   3.9 
@@ -454,14 +464,16 @@ name repair functions.</p></td>
 #&gt; </span><span style='color: #555555;'># … with 22 more rows</span><span></div><div class='input'>
 <span class='co'># You can also rename specific columns</span>
 <span class='fu'>vroom</span><span class='op'>(</span><span class='va'>input_file</span>, col_select <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>car <span class='op'>=</span> <span class='va'>model</span>, <span class='fu'><a href='https://tidyselect.r-lib.org/reference/everything.html'>everything</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
+</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Column specification</span><span> </span><span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span><span></span>
+#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 12</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
 #&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [ 1]: model</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 12</span><span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Use </span><span style='color: #262626;background-color: #DADADA;'>`spec()`</span><span> to retrieve the full column specifications.</span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Pass a specification to </span><span style='color: #262626;background-color: #DADADA;'>`col_types`</span><span> argument to quiet this message.</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 12</span><span>
 #&gt;    car           mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'> 1</span><span> Mazda RX4    21       6  160    110  3.9   2.62  16.5     0     1     4     4
@@ -495,35 +507,41 @@ name repair functions.</p></td>
 <span class='co'># File types ----------------------------------------------------------------</span>
 <span class='co'># csv</span>
 <span class='fu'>vroom</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='st'>"a,b\n1.0,2.0\n"</span><span class='op'>)</span>, delim <span class='op'>=</span> <span class='st'>","</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 1</span>
+</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Column specification</span><span> </span><span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span><span></span>
+#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 1</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [2]: a, b</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1 x 2</span><span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Use </span><span style='color: #262626;background-color: #DADADA;'>`spec()`</span><span> to retrieve the full column specifications.</span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Pass a specification to </span><span style='color: #262626;background-color: #DADADA;'>`col_types`</span><span> argument to quiet this message.</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1 x 2</span><span>
 #&gt;       a     b
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span>     1     2</div><div class='input'><span class='co'># tsv</span>
 <span class='fu'>vroom</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='st'>"a\tb\n1.0\t2.0\n"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 1</span>
+</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Column specification</span><span> </span><span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span><span></span>
+#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 1</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> "\t"</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [2]: a, b</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1 x 2</span><span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Use </span><span style='color: #262626;background-color: #DADADA;'>`spec()`</span><span> to retrieve the full column specifications.</span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Pass a specification to </span><span style='color: #262626;background-color: #DADADA;'>`col_types`</span><span> argument to quiet this message.</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1 x 2</span><span>
 #&gt;       a     b
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span>     1     2</div><div class='input'><span class='co'># Other delimiters</span>
 <span class='fu'>vroom</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='st'>"a|b\n1.0|2.0\n"</span><span class='op'>)</span>, delim <span class='op'>=</span> <span class='st'>"|"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 1</span>
+</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Column specification</span><span> </span><span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span><span></span>
+#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 1</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 2</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> "|"</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [2]: a, b</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1 x 2</span><span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Use </span><span style='color: #262626;background-color: #DADADA;'>`spec()`</span><span> to retrieve the full column specifications.</span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Pass a specification to </span><span style='color: #262626;background-color: #DADADA;'>`col_types`</span><span> argument to quiet this message.</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1 x 2</span><span>
 #&gt;       a     b
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span>     1     2</div><div class='input'>
@@ -535,14 +553,16 @@ name repair functions.</p></td>
 #&gt; [3] "/Users/runner/work/_temp/Library/vroom/extdata/mtcars-8.csv"</div><div class='input'>
 <span class='co'># Pass the filenames directly to vroom, they are efficiently combined</span>
 <span class='fu'>vroom</span><span class='op'>(</span><span class='va'>mtcars_by_cyl</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
+</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Column specification</span><span> </span><span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span><span></span>
+#&gt; <span class='message'></span><span style='font-weight: bold;'>Rows:</span><span> 32</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Columns:</span><span> 12</span>
 #&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
 #&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span> [ 1]: model</span>
 #&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> [11]: mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Use `spec()` to retrieve the guessed column specification</span><span></span>
-#&gt; <span class='message'></span><span style='color: #555555;'>Pass a specification to the `col_types` argument to quiet this message</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 12</span><span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Use </span><span style='color: #262626;background-color: #DADADA;'>`spec()`</span><span> to retrieve the full column specifications.</span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Pass a specification to </span><span style='color: #262626;background-color: #DADADA;'>`col_types`</span><span> argument to quiet this message.</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 32 x 12</span><span>
 #&gt;    model         mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'> 1</span><span> Datsun 710   22.8     4 108      93  3.85  2.32  18.6     1     1     4     1
