@@ -457,7 +457,7 @@ show_spec_summary <- function(x, width = getOption("width"), locale = default_lo
 
   types <- format(vapply(names(type_counts), color_type, character(1)))
   counts <- format(type_counts)
-  col_width <- min(width - crayon::col_nchar(types) + nchar(counts) + 4)
+  col_width <- min(width - (crayon::col_nchar(types) + nchar(counts) + 4))
   columns <- vapply(split(names(spec$cols), col_types), function(x) glue::glue_collapse(x, ", ", width = col_width), character(1))
 
   fmt_num <- function(x) {
@@ -466,24 +466,37 @@ show_spec_summary <- function(x, width = getOption("width"), locale = default_lo
 
   delim <- spec$delim %||% ""
 
-  message(
-    glue::glue(
-      .transformer = collapse_transformer(sep = "\n"),
-      entries = glue::glue("{format(types)} [{format(type_counts)}]: {columns}"),
+  txt <- glue::glue(
+    .transformer = collapse_transformer(sep = "\n"),
+    entries = glue::glue("{format(types)} [{format(type_counts)}]: {columns}"),
 
-      '
-      {bold("Rows:")} {fmt_num(NROW(x))}
-      {bold("Columns:")} {fmt_num(NCOL(x))}
-      {if (nzchar(delim)) paste(bold("Delimiter:"), double_quote(delim)) else ""}
-      {entries*}
+    '{bold("Rows:")} {fmt_num(NROW(x))}
+    {bold("Columns:")} {fmt_num(NCOL(x))}
+    {if (nzchar(delim)) paste(bold("Delimiter:"), double_quote(delim)) else ""}
+    {entries*}
 
-      {silver("Use `spec()` to retrieve the guessed column specification")}
-      {silver("Pass a specification to the `col_types` argument to quiet this message")}
-      '
-    )
-  )
+
+    ')
+  cli_block(class = "vroom_spec_message", {
+    cli::cli_h1("Column specification")
+    cli::cli_verbatim(txt)
+    cli::cli_alert_info("Use {.fn spec} to retrieve the full column specifications.")
+    cli::cli_alert_info("Pass a specification to {.arg col_types} argument to quiet this message.")
+  })
 
   invisible(x)
+}
+
+cli_block <- function(expr, class = NULL, type = rlang::inform) {
+  msg <- ""
+  withCallingHandlers(
+    expr,
+    message = function(x) {
+      msg <<- paste0(msg, x$message)
+      invokeRestart("muffleMessage")
+    }
+  )
+  type(msg, class = class)
 }
 
 color_type <- function(type) {

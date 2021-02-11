@@ -589,3 +589,12 @@ test_that("comments are ignored regardless of where they appear", {
   expect_true(all.equal(chk, out6, check.attributes = FALSE))
   expect_true(all.equal(chk, out7, check.attributes = FALSE))
 })
+
+test_that("escaped/quoted comments are ignored", {
+  out1 <- vroom(I('x\n\\#'), comment = "#", delim = ",",
+    escape_backslash = TRUE, escape_double = FALSE, progress = FALSE, col_types = "c")
+  out2 <- vroom(I('x\n"#"'), comment = "#", progress = FALSE, delim = ",", col_types = "c")
+
+  expect_equal(out1$x, "#")
+  expect_equal(out2$x, "#")
+})

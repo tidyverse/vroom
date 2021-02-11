@@ -41,6 +41,7 @@ Depends:
 Imports: 
     bit64,
     crayon,
+    cli,
     glue,
     hms,
     lifecycle,

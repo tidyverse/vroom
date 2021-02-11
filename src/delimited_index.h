@@ -347,7 +347,8 @@ public:
       }
 
       else if (
-          comment_len > 0 && strncmp(comment, buf + pos, comment_len) == 0) {
+          state != QUOTED_FIELD && comment_len > 0 &&
+          strncmp(comment, buf + pos, comment_len) == 0) {
         if (state != RECORD_START) {
           destination.push_back(pos + file_offset);
           resolve_columns(
