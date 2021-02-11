@@ -36,8 +36,8 @@ inline bool is_explicit_na(SEXP na, const char* begin, const char* end) {
 
 template <typename V, typename F, typename I, typename C>
 static auto parse_value(
-    I itr,
-    C col,
+    const I& itr,
+    const C& col,
     F f,
     std::shared_ptr<vroom_errors>& errors,
     const char* expected,

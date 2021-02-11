@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Fix an inadvertent performance regression when reading values (#309)
+
 * `problems()` now throws a more informative error if called on a readr object (#308).
 
 * `vroom()` now supports comments within data, not just at the start of the file (#294, #302)
