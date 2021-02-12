@@ -3,37 +3,37 @@ test_that("trailing spaces omitted", {
   expect_equal(spec$begin, c(0, 4))
   expect_equal(spec$end, c(3, NA))
 
-  df <- vroom_fwf(test_path("fwf-trailing.txt"), spec)
+  df <- vroom_fwf(test_path("fwf-trailing.txt"), spec, col_types = list())
   expect_equal(df$X1, df$X2)
 })
 
 test_that("dos newlines handles", {
   spec <- fwf_empty(test_path("fwf-trailing.txt"))
-  x <- vroom_fwf(test_path("fwf-trailing.txt"), spec)
-  y <- vroom_fwf(test_path("fwf-trailing-crlf.txt"), spec)
+  x <- vroom_fwf(test_path("fwf-trailing.txt"), spec, col_types = list())
+  y <- vroom_fwf(test_path("fwf-trailing-crlf.txt"), spec, col_types = list())
   expect_equal(x, y)
 
-  z <- vroom_fwf(file(test_path("fwf-trailing-crlf.txt")), spec)
+  z <- vroom_fwf(file(test_path("fwf-trailing-crlf.txt")), spec, col_types = list())
   expect_equal(x, z)
 })
 
 test_that("connections and normal files produce identical output", {
   spec <- fwf_empty(test_path("fwf-trailing.txt"))
 
-  y <- vroom_fwf(test_path("fwf-trailing-crlf.txt"), spec)
-  x <- vroom_fwf(file(test_path("fwf-trailing-crlf.txt")), spec)
+  y <- vroom_fwf(test_path("fwf-trailing-crlf.txt"), spec, col_types = list())
+  x <- vroom_fwf(file(test_path("fwf-trailing-crlf.txt")), spec, col_types = list())
 
   expect_equal(x, y)
 })
 
 test_that("respects the trim_ws argument", {
   x <- I("a11 b22 c33\nd   e   f  ")
-  out1 <- vroom_fwf(x, fwf_empty(x), trim_ws = FALSE)
+  out1 <- vroom_fwf(x, fwf_empty(x), trim_ws = FALSE, col_types = list())
   expect_equal(out1$X1, c("a11", "d  "))
   expect_equal(out1$X2, c("b22", "e  "))
   expect_equal(out1$X3, c("c33", "f  "))
 
-  out2 <- vroom_fwf(x, fwf_empty(x), trim_ws = TRUE)
+  out2 <- vroom_fwf(x, fwf_empty(x), trim_ws = TRUE, col_types = list())
   expect_equal(out2$X1, c("a11", "d"))
   expect_equal(out2$X2, c("b22", "e"))
   expect_equal(out2$X3, c("c33", "f"))
@@ -41,12 +41,12 @@ test_that("respects the trim_ws argument", {
 
 test_that("respects the trim_ws argument with empty fields", {
   x <- I("a11 b22 c33\nd       f  ")
-  out1 <- vroom_fwf(x, fwf_empty(x), trim_ws = FALSE)
+  out1 <- vroom_fwf(x, fwf_empty(x), trim_ws = FALSE, col_types = list())
   expect_equal(out1$X1, c("a11", "d  "))
   expect_equal(out1$X2, c("b22", "   "))
   expect_equal(out1$X3, c("c33", "f  "))
 
-  out1 <- vroom_fwf(x, fwf_empty(x), trim_ws = TRUE, na = "NA")
+  out1 <- vroom_fwf(x, fwf_empty(x), trim_ws = TRUE, na = "NA", col_types = list())
 })
 
 test_that("skipping column doesn't pad col_names", {
@@ -63,7 +63,7 @@ test_that("skipping column doesn't pad col_names", {
 test_that("fwf_empty can skip comments", {
   x <- I("COMMENT\n1 2 3\n4 5 6")
 
-  out1 <- vroom_fwf(x, fwf_empty(x, comment = "COMMENT"), comment = "COMMENT")
+  out1 <- vroom_fwf(x, fwf_empty(x, comment = "COMMENT"), comment = "COMMENT", col_types = list())
   expect_equal(dim(out1), c(2, 3))
 })
 
@@ -78,12 +78,12 @@ test_that("fwf_empty can skip lines", {
 })
 
 test_that("passing \"\" to vroom_fwf's 'na' option", {
-  expect_equal(vroom_fwf(I("foobar\nfoo   "), fwf_widths(c(3, 3)), na = "")[[2]],
+  expect_equal(vroom_fwf(I("foobar\nfoo   "), fwf_widths(c(3, 3)), na = "", col_types = list())[[2]],
                c("bar", NA))
 })
 
 test_that("ragged last column expanded with NA", {
-  x <- vroom_fwf(I("1a\n2ab\n3abc"), fwf_widths(c(1, NA)))
+  x <- vroom_fwf(I("1a\n2ab\n3abc"), fwf_widths(c(1, NA)), col_types = list())
   expect_equal(x$X2, c("a", "ab", "abc"))
 })
 
@@ -94,20 +94,20 @@ test_that("ragged last column expanded with NA", {
 
 test_that("read all columns with positions, non ragged", {
   col_pos <- fwf_positions(c(1,3,6),c(2,5,6))
-  x <- vroom_fwf(I("12345A\n67890BBBBBBBBB\n54321C"), col_positions = col_pos)
+  x <- vroom_fwf(I("12345A\n67890BBBBBBBBB\n54321C"), col_positions = col_pos, col_types = list())
   expect_equal(x$X3, c("A", "B", "C"))
 })
 
 test_that("read subset columns with positions", {
   col_pos <- fwf_positions(c(1,3),c(2,5))
-  x <- vroom_fwf(I("12345A\n67890BBBBBBBBB\n54321C"), col_positions = col_pos)
+  x <- vroom_fwf(I("12345A\n67890BBBBBBBBB\n54321C"), col_positions = col_pos, col_types = list())
   expect_equal(x$X1, c(12, 67, 54))
   expect_equal(x$X2, c(345, 890, 321))
 })
 
 test_that("read columns with positions, ragged", {
   col_pos <- fwf_positions(c(1,3,6),c(2,5,NA))
-  x <- vroom_fwf(I("12345A\n67890BBBBBBBBB\n54321C"), col_positions = col_pos)
+  x <- vroom_fwf(I("12345A\n67890BBBBBBBBB\n54321C"), col_positions = col_pos, col_types = list())
   expect_equal(x$X1, c(12, 67, 54))
   expect_equal(x$X2, c(345, 890, 321))
   expect_equal(x$X3, c('A', 'BBBBBBBBB', 'C'))
@@ -115,7 +115,7 @@ test_that("read columns with positions, ragged", {
 
 test_that("read columns with width, ragged", {
   col_pos <- fwf_widths(c(2,3,NA))
-  x <- vroom_fwf(I("12345A\n67890BBBBBBBBB\n54321C"), col_positions = col_pos)
+  x <- vroom_fwf(I("12345A\n67890BBBBBBBBB\n54321C"), col_positions = col_pos, col_types = list())
   expect_equal(x$X1, c(12, 67, 54))
   expect_equal(x$X2, c(345, 890, 321))
   expect_equal(x$X3, c('A', 'BBBBBBBBB', 'C'))
@@ -163,7 +163,7 @@ test_that("read columns with width, ragged", {
 #})
 
 test_that("fwf spec can overlap", {
-    x <- vroom_fwf(I("2015a\n2016b"), fwf_positions(c(1, 3, 5), c(4, 4, 5)))
+    x <- vroom_fwf(I("2015a\n2016b"), fwf_positions(c(1, 3, 5), c(4, 4, 5)), col_types = list())
     expect_equal(x$X1, c(2015, 2016))
     expect_equal(x$X2, c(15, 16))
     expect_equal(x$X3, c("a", "b"))
@@ -217,59 +217,59 @@ test_that("fwf_positions always returns col_names as character (#797)", {
 
 test_that("vroom_fwf() is robust to improper inputs", {
   expect_error_free(
-    vroom_fwf(I("foo bar baz\n1   2\n"))
+    vroom_fwf(I("foo bar baz\n1   2\n"), col_types = list())
   )
 
   expect_error_free(
-    vroom_fwf(I("foo bar baz\n1   2 \n"))
+    vroom_fwf(I("foo bar baz\n1   2 \n"), col_types = list())
   )
 
   expect_error_free(
-    vroom_fwf(I("foo bar baz\n1   2  \n"))
+    vroom_fwf(I("foo bar baz\n1   2  \n"), col_types = list())
   )
 
   expect_error_free(
-    vroom_fwf(I("foo bar baz\n1   2   \n"))
+    vroom_fwf(I("foo bar baz\n1   2   \n"), col_types = list())
   )
 
   expect_error_free(
-    vroom_fwf(I("foo bar baz\n1   2   \n4\n"))
+    vroom_fwf(I("foo bar baz\n1   2   \n4\n"), col_types = list())
   )
 
   expect_error_free(
-    vroom_fwf(I("foo bar baz\n1   2   \n4 \n"))
+    vroom_fwf(I("foo bar baz\n1   2   \n4 \n"), col_types = list())
   )
 
   expect_error_free(
-    vroom_fwf(I("foo bar baz\n1   2   \n4  \n"))
+    vroom_fwf(I("foo bar baz\n1   2   \n4  \n"), col_types = list())
   )
 
   expect_error_free(
-    vroom_fwf(I("foo bar baz\n1   2   \n4   \n"))
+    vroom_fwf(I("foo bar baz\n1   2   \n4   \n"), col_types = list())
   )
 
   expect_error_free(
-    vroom_fwf(I("foo bar baz\n1   2   \n4   5\n"))
+    vroom_fwf(I("foo bar baz\n1   2   \n4   5\n"), col_types = list())
   )
 
   expect_error_free(
-    vroom_fwf(I("foo bar baz\n1   2   \n4   5 \n"))
+    vroom_fwf(I("foo bar baz\n1   2   \n4   5 \n"), col_types = list())
   )
 
   expect_error_free(
-    vroom_fwf(I("foo bar baz\n1   2   \n4   5  \n"))
+    vroom_fwf(I("foo bar baz\n1   2   \n4   5  \n"), col_types = list())
   )
 
   expect_error_free(
-    vroom_fwf(I("foo bar baz\n1   2   \n4   5   \n"))
+    vroom_fwf(I("foo bar baz\n1   2   \n4   5   \n"), col_types = list())
   )
 
   expect_error_free(
-    vroom_fwf(I("foo bar baz\n1   2   \n4   5   6\n"))
+    vroom_fwf(I("foo bar baz\n1   2   \n4   5   6\n"), col_types = list())
   )
 
   expect_error_free(
-    vroom_fwf(I("A\n  a\n"))
+    vroom_fwf(I("A\n  a\n"), col_types = list())
   )
 })
 
@@ -281,7 +281,7 @@ test_that("Errors if begin is greater than end", {
   )
 
   expect_error(
-    vroom_fwf(I("1  2  3\n"), positions),
+    vroom_fwf(I("1  2  3\n"), positions, col_types = list()),
     "`col_positions` must have begin less than end"
   )
 })
