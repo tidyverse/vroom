@@ -603,6 +603,6 @@ test_that("name repair with custom functions works", {
   add_y <- function(x) {
     paste(x, "y", sep = "_")
   }
-  out <- vroom(I("x,y,z\n1,2,3"), .name_repair = add_y)
+  out <- vroom(I("x,y,z\n1,2,3"), col_types = "iii", .name_repair = add_y)
   expect_equal(colnames(out), c("x_y", "y_y", "z_y"))
 })

@@ -227,7 +227,6 @@ format.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_co
     return(paste0(fun_type, "()\n"))
   }
 
-
   out <- paste0(fun_type, "(\n  ", paste(collapse = ",\n  ", cols_args))
 
   if (length(x$cols) > n) {
@@ -436,12 +435,21 @@ guess_parser <- function(x, na = c("", "NA"), locale = default_locale(), guess_i
   guess_type_(x, na = na, locale = locale, guess_integer = guess_integer)
 }
 
+show_dims <- function(x) {
+  cli_block(class = "vroom_dim_message", {
+    cli::cli_text("
+      {.strong Rows: }{.val {NROW(x)}}
+      {.strong Columns: }{.val {NCOL(x)}}
+      ")
+  })
+}
+
 #' @importFrom crayon silver
 #' @importFrom glue double_quote
-show_spec_summary <- function(x, width = getOption("width"), locale = default_locale()) {
-  spec <- spec(x)
+#' @export
+summary.col_spec <- function(spec, width = getOption("width"), locale = default_locale()) {
   if (length(spec$cols) == 0) {
-    return(invisible(x))
+    return(invisible(spec))
   }
 
   type_map <- c("collector_character" = "chr", "collector_double" = "dbl",
@@ -456,7 +464,7 @@ show_spec_summary <- function(x, width = getOption("width"), locale = default_lo
   n <- length(type_counts)
 
   types <- format(vapply(names(type_counts), color_type, character(1)))
-  counts <- format(type_counts)
+  counts <- format(glue::glue("({type_counts})"), justify = "right")
   col_width <- min(width - (crayon::col_nchar(types) + nchar(counts) + 4))
   columns <- vapply(split(names(spec$cols), col_types), function(x) glue::glue_collapse(x, ", ", width = col_width), character(1))
 
@@ -468,10 +476,9 @@ show_spec_summary <- function(x, width = getOption("width"), locale = default_lo
 
   txt <- glue::glue(
     .transformer = collapse_transformer(sep = "\n"),
-    entries = glue::glue("{format(types)} [{format(type_counts)}]: {columns}"),
+    entries = glue::glue("{format(types)} {counts}: {columns}"),
 
-    '{bold("Rows:")} {fmt_num(NROW(x))}
-    {bold("Columns:")} {fmt_num(NCOL(x))}
+    '
     {if (nzchar(delim)) paste(bold("Delimiter:"), double_quote(delim)) else ""}
     {entries*}
 
@@ -480,11 +487,19 @@ show_spec_summary <- function(x, width = getOption("width"), locale = default_lo
   cli_block(class = "vroom_spec_message", {
     cli::cli_h1("Column specification")
     cli::cli_verbatim(txt)
-    cli::cli_alert_info("Use {.fn spec} to retrieve the full column specifications.")
-    cli::cli_alert_info("Pass a specification to {.arg col_types} argument to quiet this message.")
   })
 
-  invisible(x)
+  invisible(spec)
+}
+
+show_col_specs <- function(x, locale) {
+  show_dims(x)
+  summary(spec(x), locale = locale)
+  cli_block(class = "vroom_spec_message", {
+    cli::cli_verbatim("\n\n")
+    cli::cli_alert_info("Use {.fn spec} to retrieve the full column specification for this data.")
+    cli::cli_alert_info("Specify the column types or set {.arg show_col_types = FALSE} to quiet this message.")
+  })
 }
 
 cli_block <- function(expr, class = NULL, type = rlang::inform) {
@@ -496,6 +511,9 @@ cli_block <- function(expr, class = NULL, type = rlang::inform) {
       invokeRestart("muffleMessage")
     }
   )
+  msg <- sub("^\n", "", msg)
+  msg <- sub("\n+$", "", msg)
+
   type(msg, class = class)
 }
 

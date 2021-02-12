@@ -29,6 +29,10 @@ NULL
 #'   either a character vector of types, `TRUE` or `FALSE`. See
 #'   [vroom_altrep()] for for full details.
 #' @param altrep_opts \Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}
+#' @param show_col_specs Control showing the column specifications. If `TRUE`
+#'   column specifications are always show, if `FALSE` they are never shown. If
+#'   `NULL` (the default) they are shown only if an explicit specification is not
+#'   given to `col_types`.
 #' @export
 #' @examples
 #' # get path to example file
@@ -106,6 +110,7 @@ vroom <- function(
   altrep_opts = deprecated(),
   num_threads = vroom_threads(),
   progress = vroom_progress(),
+  show_col_specs = NULL,
   .name_repair = "unique"
   ) {
 
@@ -161,11 +166,18 @@ vroom <- function(
 
   out <- vroom_select(out, col_select, id)
 
-  if (!has_spec) {
-    show_spec_summary(out, locale = locale)
+  if (should_show_col_spec(has_spec, show_col_specs)) {
+    show_col_specs(out, locale)
   }
 
   out
+}
+
+should_show_col_spec <- function(has_spec, show_col_specs) {
+  if (is.null(show_col_specs)) {
+    return(isTRUE(!has_spec))
+  }
+  isTRUE(show_col_specs)
 }
 
 make_names <- function(x, len) {
