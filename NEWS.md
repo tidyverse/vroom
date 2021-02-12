@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` no longer inadvertently calls `.name_repair` functions twice (#310).
+
 * Fix an inadvertent performance regression when reading values (#309)
 
 * `problems()` now throws a more informative error if called on a readr object (#308).
