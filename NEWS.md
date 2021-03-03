@@ -2,6 +2,8 @@
 
 * New `vroom(show_col_specs=)` argument to more simply control showing of column specifications after parsing.
 
+* `vroom() correctly reads double values with comma as decimal separator (@kent37 #313)
+
 * `vroom()` no longer inadvertently calls `.name_repair` functions twice (#310).
 
 * Fix an inadvertent performance regression when reading values (#309)
