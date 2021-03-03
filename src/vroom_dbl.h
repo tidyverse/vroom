@@ -4,7 +4,7 @@
 #include "parallel.h"
 #include "vroom_vec.h"
 
-double bsd_strtod(const char* begin, const char* end);
+double bsd_strtod(const char* begin, const char* end, const char decimalMark);
 
 cpp11::doubles read_dbl(vroom_vec_info* info);
 
@@ -56,7 +56,9 @@ public:
     double out = parse_value<double>(
         info.column->begin() + i,
         info.column,
-        bsd_strtod,
+        [&](const char* begin, const char* end) -> double {
+          return bsd_strtod(begin, end, info.locale->decimalMark_);
+        },
         info.errors,
         "a double",
         *info.na);
