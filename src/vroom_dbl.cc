@@ -9,7 +9,7 @@
     https://retrobsd.googlecode.com/svn/stable/vroom_time.h|31 col 32| for
    (const autosrc str : info->column.slice(start, end)) {/libc/stdlib/strtod.c
    */
-double bsd_strtod(const char* begin, const char* end) {
+double bsd_strtod(const char* begin, const char* end, const char decimalMark) {
   if (begin == end) {
     return NA_REAL;
   }
@@ -90,7 +90,7 @@ double bsd_strtod(const char* begin, const char* end) {
 
   /* If we don't have a digit or decimal point something is wrong, so return an
    * NA */
-  if (!(isdigit(*p) || *p == '.')) {
+  if (!(isdigit(*p) || *p == decimalMark)) {
     return NA_REAL;
   }
 
@@ -102,7 +102,7 @@ double bsd_strtod(const char* begin, const char* end) {
   for (mantSize = 0; p != end; ++mantSize) {
     c = *p;
     if (!isdigit(c)) {
-      if (c != '.' || decPt >= 0)
+      if (c != decimalMark || decPt >= 0)
         break;
       decPt = mantSize;
     }
@@ -134,13 +134,13 @@ double bsd_strtod(const char* begin, const char* end) {
 
     for (frac1 = 0; mantSize > 9 && p != end; --mantSize) {
       c = *p++;
-      if (c == '.')
+      if (c == decimalMark)
         c = *p++;
       frac1 = frac1 * 10 + (c - '0');
     }
     for (frac2 = 0; mantSize > 0 && p != end; --mantSize) {
       c = *p++;
-      if (c == '.')
+      if (c == decimalMark)
         c = *p++;
       frac2 = frac2 * 10 + (c - '0');
     }
@@ -202,6 +202,7 @@ cpp11::doubles read_dbl(vroom_vec_info* info) {
   R_xlen_t n = info->column->size();
 
   cpp11::writable::doubles out(n);
+  const char decimalMark = info->locale->decimalMark_;
 
   parallel_for(
       n,
@@ -210,7 +211,11 @@ cpp11::doubles read_dbl(vroom_vec_info* info) {
         auto col = info->column->slice(start, end);
         for (auto b = col->begin(), e = col->end(); b != e; ++b) {
           out[i++] = parse_value<double>(
-              b, col, bsd_strtod, info->errors, "a double", *info->na);
+              b, col,
+              [&](const char* begin, const char* end) -> double {
+                return bsd_strtod(begin, end, decimalMark);
+              },
+              info->errors, "a double", *info->na);
         }
       },
       info->num_threads);
