@@ -220,3 +220,19 @@ test_that("vroom_write() works with an empty delimiter", {
   vroom::vroom_write(df, f, delim = "")
   expect_equal(vroom_lines(f), c("xy", "foobar"))
 })
+
+test_that("vroom_write_lines() works with empty", {
+  f <- tempfile(, fileext = ".txt")
+  on.exit(unlink(f))
+
+  vroom::vroom_write_lines(character(), f)
+  expect_equal(vroom_lines(f), character())
+})
+
+test_that("vroom_write_lines() works with normal input", {
+  f <- tempfile(, fileext = ".txt")
+  on.exit(unlink(f))
+
+  vroom::vroom_write_lines(c("foo", "bar"), f)
+  expect_equal(vroom_lines(f), c("foo", "bar"))
+})

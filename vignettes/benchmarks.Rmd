@@ -292,7 +292,7 @@ make_table(all_chr_wide)
 
 code: [bench/taxi_multiple](https://github.com/r-lib/vroom/tree/master/inst/bench/taxi_multiple)
 
-```{r, echo = FALSE, message = FALSE}
+```{r, echo = FALSE, message = FALSE, eval = TRUE}
 mult <- read_benchmark(path_package("vroom", "bench", "taxi_multiple.tsv"), desc)
 ```
 
@@ -309,7 +309,7 @@ make_table(mult)
 
 ## United States Census 5-Percent Public Use Microdata Sample files
 
-```{r, echo = FALSE, message = FALSE}
+```{r, echo = FALSE, message = FALSE, eval = TRUE}
 fwf <- read_benchmark(path_package("vroom", "bench", "fwf.tsv"), desc)
 ```
 

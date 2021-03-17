@@ -121,12 +121,11 @@ vroom_format <- function(x, delim = "\t", eol = "\n", na = "NA", col_names = TRU
 vroom_write_lines <- function(x, file, eol = "\n", na = "NA", append = FALSE) {
   stopifnot(is.character(x))
 
-  x <- list(x)
-  names(x) <- "X1"
+  x <- list(X1 = x)
   class(x) <- "data.frame"
-  attr(x, "row.names") <- c(-1L, length(x))
+  attr(x, "row.names") <- c(NA_integer_, -length(x[[1]]))
 
-  vroom_write(x, file = file, delim = "", eol = eol, na = na, append = append)
+  vroom_write(x, file = file, delim = "", col_names = FALSE, eol = eol, na = na, append = append)
 }
 
 #' Preprocess column for output
