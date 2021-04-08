@@ -1,6 +1,7 @@
 #ifndef READR_DATE_TIME_H_
 #define READR_DATE_TIME_H_
 
+#include "date/tz.h"
 #include "localtime.h"
 #include <cpp11/R.hpp>
 #include <ctime>
@@ -148,20 +149,12 @@ private:
     if (!validDateTime())
       return NA_REAL;
 
-    struct Rtm tm;
-    tm.tm_year = year_ - 1900;
-    tm.tm_mon = mon_;
-    tm.tm_mday = day_ + 1;
-    tm.tm_hour = hour_;
-    tm.tm_min = min_;
-    tm.tm_sec = sec_;
-    // The Daylight Saving Time flag (tm_isdst) is greater than zero if Daylight
-    // Saving Time is in effect, zero if Daylight Saving Time is not in effect,
-    // and less than zero if the information is not available.
-    tm.tm_isdst = -1;
-
-    time_t time = my_mktime(&tm, tz_.c_str());
-    return time + psec_ + offset_;
+    date::zoned_seconds t{
+        tz_,
+        date::local_days{date::year(year_) / (mon_ + 1) / (day_ + 1)} +
+            std::chrono::hours(hour_) + std::chrono::minutes(min_) +
+            std::chrono::seconds(sec_)};
+    return t.get_sys_time().time_since_epoch().count() + psec_ + offset_;
   }
 
   inline int days_in_month() const {
