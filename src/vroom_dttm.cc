@@ -87,8 +87,8 @@ void init_vroom_dttm(DllInfo* dll) {}
   for (int i = 0; i < n; ++i) {
     DateTime dt(
         year[i],
-        month[i] - 1,
-        day[i] - 1,
+        month[i],
+        day[i],
         hour[i],
         min[i],
         sec[i],

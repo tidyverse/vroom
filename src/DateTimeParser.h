@@ -98,11 +98,11 @@ public:
       return false;
     if (consumeThisChar('-'))
       compactDate_ = false;
-    if (!consumeInteger1(2, &mon_))
+    if (!consumeInteger(2, &mon_))
       return false;
     if (!compactDate_ && !consumeThisChar('-'))
       return false;
-    if (!consumeInteger1(2, &day_))
+    if (!consumeInteger(2, &day_))
       return false;
 
     if (isComplete())
@@ -163,11 +163,11 @@ public:
       return false;
     if (!consumeThisChar('-') && !consumeThisChar('/'))
       return false;
-    if (!consumeInteger1(2, &mon_))
+    if (!consumeInteger(2, &mon_))
       return false;
     if (!consumeThisChar('-') && !consumeThisChar('/'))
       return false;
-    if (!consumeInteger1(2, &day_))
+    if (!consumeInteger(2, &day_))
       return false;
 
     return isComplete();
@@ -214,7 +214,7 @@ public:
         year_ += (year_ < 69) ? 2000 : 1900;
         break;
       case 'm': // month
-        if (!consumeInteger1length1_or_2(2, &mon_, false))
+        if (!consumeIntegerLength1_or_2(2, &mon_, false))
           return false;
         break;
       case 'b': // abbreviated month name
@@ -226,7 +226,7 @@ public:
           return false;
         break;
       case 'd': // day
-        if (!consumeInteger1length1_or_2(2, &day_, false))
+        if (!consumeIntegerLength1_or_2(2, &day_, false))
           return false;
         break;
       case 'a': // abbreviated day of week
@@ -234,7 +234,7 @@ public:
           return false;
         break;
       case 'e': // day with optional leading space
-        if (!consumeInteger1WithSpace(2, &day_))
+        if (!consumeIntegerWithSpace(2, &day_))
           return false;
         break;
       case 'H': // hour
@@ -355,7 +355,7 @@ public:
     return dt;
   }
   DateTime makeTime() {
-    DateTime dt(0, 0, 0, hour(), min_, sec_, psec_, "UTC");
+    DateTime dt(0, 1, 1, hour(), min_, sec_, psec_, "UTC");
     return dt;
   }
 
@@ -368,7 +368,7 @@ private:
     if (hour_ == 12) {
 
       // 12 AM
-      if (amPm_ == 0) {
+      if (amPm_ == 1) {
         return hour_ - 12;
       }
 
@@ -377,7 +377,7 @@ private:
     }
 
     // Rest of PM
-    if (amPm_ == 1) {
+    if (amPm_ == 2) {
       return hour_ + 12;
     }
 
@@ -396,6 +396,7 @@ private:
     return true;
   }
 
+  // Assumes `pOut` is 1-indexed
   inline bool
   consumeString(const std::vector<std::string>& haystack, int* pOut) {
     // haystack is always in UTF-8
@@ -407,7 +408,7 @@ private:
       std::string hay = haystack[i];
       std::transform(hay.begin(), hay.end(), hay.begin(), ::tolower);
       if (needleUTF8.find(hay) != std::string::npos) {
-        *pOut = i;
+        *pOut = i + 1;
         dateItr_ += hay.size();
         return true;
       }
@@ -427,19 +428,9 @@ private:
     return ok && (!exact || (dateItr_ - start) == n);
   }
 
-  // Integer indexed from 1 (i.e. month and date)
-  inline bool consumeInteger1(int n, int* pOut, bool exact = true) {
-    if (!consumeInteger(n, pOut, exact))
-      return false;
-
-    (*pOut)--;
-    return true;
-  }
-
-  // Integer indexed from 1 (i.e. month and date) which can take 1 or 2
-  // positions
+  // Integer which can take 1 or 2 positions
   inline bool
-  consumeInteger1length1_or_2(int /* n */, int* pOut, bool /* exact */ = true) {
+  consumeIntegerLength1_or_2(int /* n */, int* pOut, bool /* exact */ = true) {
     int out1, out2;
     if (!consumeInteger(1, &out1, true))
       return false;
@@ -452,16 +443,15 @@ private:
       }
     }
 
-    (*pOut)--;
     return true;
   }
 
-  // Integer indexed from 1 with optional space
-  inline bool consumeInteger1WithSpace(int n, int* pOut) {
+  // Integer with optional space
+  inline bool consumeIntegerWithSpace(int n, int* pOut) {
     if (consumeThisChar(' '))
       n--;
 
-    return consumeInteger1(n, pOut);
+    return consumeInteger(n, pOut);
   }
 
   inline bool consumeDouble(double* pOut) {
@@ -570,8 +560,8 @@ private:
 
   void reset() {
     year_ = -1;
-    mon_ = 0;
-    day_ = 0;
+    mon_ = 1;
+    day_ = 1;
     hour_ = 0;
     min_ = 0;
     sec_ = 0;

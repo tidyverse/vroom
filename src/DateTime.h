@@ -43,7 +43,7 @@ public:
     if (year_ < 0)
       return false;
 
-    return (date::year{year_} / (mon_ + 1) / (day_ + 1)).ok();
+    return (date::year{year_} / mon_ / day_).ok();
   }
 
   bool validTime() const {
@@ -75,7 +75,7 @@ private:
     if (!validDate())
       return NA_REAL;
 
-    const date::year_month_day ymd{date::year(year_) / (mon_ + 1) / (day_ + 1)};
+    const date::year_month_day ymd{date::year(year_) / mon_ / day_};
     const date::sys_days st{ymd};
     return st.time_since_epoch().count();
   }
@@ -90,7 +90,7 @@ private:
       std::chrono::seconds{sec_} +
       std::chrono::minutes{min_} +
       std::chrono::hours{hour_} +
-      date::local_days{date::year{year_} / (mon_ + 1) / (day_ + 1)};
+      date::local_days{date::year{year_} / mon_ / day_};
 
     const rclock::sys_result result = rclock::local_to_sys(lt, p_time_zone);
 
