@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* vroom now uses the clock package when parsing date-times (#273).
+
 * `vroom_write_lines()` now works as intended (#291).
 
 * New `vroom(show_col_specs=)` argument to more simply control showing of column specifications after parsing.
