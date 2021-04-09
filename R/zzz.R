@@ -3,6 +3,9 @@
 }
 
 .onLoad <- function(...) {
+  # Ensure clock callables are loaded
+  requireNamespace("clock", quietly = TRUE)
+
   # only register conflicting S3 methods if readr is not already loaded.
   if (!"readr" %in% loadedNamespaces()) {
     s3_register("base::format", "col_spec")
