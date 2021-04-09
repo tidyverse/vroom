@@ -34,7 +34,6 @@ Authors:
 Other contributors:
 \itemize{
   \item https://github.com/mandreyel/ (mio library) [copyright holder]
-  \item R Core Team (localtime.c code adapted from R) [contributor]
   \item Jukka Jylänki (grisu3 implementation) [copyright holder]
   \item Mikkel Jørgensen (grisu3 implementation) [copyright holder]
   \item RStudio [copyright holder, funder]
