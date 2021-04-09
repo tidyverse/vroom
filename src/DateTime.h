@@ -145,26 +145,21 @@ private:
   }
 
   double localtime() const {
-    using namespace rclock;
-
     if (!validDateTime())
       return NA_REAL;
 
-    const time_zone zone = zone_name_load(tz_);
+    const rclock::time_zone zone = rclock::zone_name_load(tz_);
 
-    const std::chrono::seconds naive = build(
-      year_,
-      mon_ + 1,
-      day_ + 1,
-      hour_,
-      min_,
-      sec_
-    );
+    const date::local_seconds lt =
+      std::chrono::seconds{sec_} +
+      std::chrono::minutes{min_} +
+      std::chrono::hours{hour_} +
+      date::local_days{date::year{year_} / (mon_ + 1) / (day_ + 1)};
 
-    const sys_result result = naive_to_sys(naive, zone);
+    const rclock::sys_result result = rclock::local_to_sys(lt, zone);
 
     if (result.ok) {
-      return result.sys_time.count() + psec_ + offset_;
+      return result.st.time_since_epoch().count() + psec_ + offset_;
     } else {
       return NA_REAL;
     }
