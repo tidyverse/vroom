@@ -84,7 +84,7 @@ private:
     if (!validDateTime())
       return NA_REAL;
 
-    const date::time_zone* p_time_zone = rclock::zone_name_load(tz_);
+    const date::time_zone* p_time_zone = rclock::locate_zone(tz_);
 
     const date::local_seconds lt =
       std::chrono::seconds{sec_} +
