@@ -447,9 +447,9 @@ show_dims <- function(x) {
 #' @importFrom crayon silver
 #' @importFrom glue double_quote
 #' @export
-summary.col_spec <- function(spec, width = getOption("width"), locale = default_locale()) {
-  if (length(spec$cols) == 0) {
-    return(invisible(spec))
+summary.col_spec <- function(object, width = getOption("width"), locale = default_locale(), ...) {
+  if (length(object$cols) == 0) {
+    return(invisible(object))
   }
 
   type_map <- c("collector_character" = "chr", "collector_double" = "dbl",
@@ -457,7 +457,7 @@ summary.col_spec <- function(spec, width = getOption("width"), locale = default_
     "collector_factor" = "fct", "collector_datetime" = "dttm", "collector_date" = "date",
     "collector_time" = "time")
 
-  col_types <- vapply(spec$cols, function(x) class(x)[[1]], character(1))
+  col_types <- vapply(object$cols, function(x) class(x)[[1]], character(1))
   col_types <- droplevels(factor(type_map[col_types], levels = unname(type_map)))
   type_counts <- table(col_types)
 
@@ -466,13 +466,13 @@ summary.col_spec <- function(spec, width = getOption("width"), locale = default_
   types <- format(vapply(names(type_counts), color_type, character(1)))
   counts <- format(glue::glue("({type_counts})"), justify = "right")
   col_width <- min(width - (crayon::col_nchar(types) + nchar(counts) + 4))
-  columns <- vapply(split(names(spec$cols), col_types), function(x) glue::glue_collapse(x, ", ", width = col_width), character(1))
+  columns <- vapply(split(names(object$cols), col_types), function(x) glue::glue_collapse(x, ", ", width = col_width), character(1))
 
   fmt_num <- function(x) {
     prettyNum(x, big.mark = locale$grouping_mark, decimal.mark = locale$decimal_mark)
   }
 
-  delim <- spec$delim %||% ""
+  delim <- object$delim %||% ""
 
   txt <- glue::glue(
     .transformer = collapse_transformer(sep = "\n"),
@@ -489,7 +489,7 @@ summary.col_spec <- function(spec, width = getOption("width"), locale = default_
     cli::cli_verbatim(txt)
   })
 
-  invisible(spec)
+  invisible(object)
 }
 
 show_col_specs <- function(x, locale) {
