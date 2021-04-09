@@ -83,14 +83,11 @@ public:
   bool validDateTime() const { return validDate() && validTime(); }
 
   bool validDate() const {
+    // vroom does not allow negative years, date does
     if (year_ < 0)
       return false;
-    if (mon_ < 0 || mon_ > 11)
-      return false;
-    if (day_ < 0 || day_ >= days_in_month())
-      return false;
 
-    return true;
+    return (date::year{year_} / (mon_ + 1) / (day_ + 1)).ok();
   }
 
   bool validTime() const {
@@ -165,9 +162,6 @@ private:
     }
   }
 
-  inline int days_in_month() const {
-    return month_length[mon_] + (mon_ == 1 && is_leap(year_));
-  }
   inline int days_in_year() const { return 365 + is_leap(year_); }
 };
 
