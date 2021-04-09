@@ -148,7 +148,7 @@ private:
     if (!validDateTime())
       return NA_REAL;
 
-    const rclock::time_zone zone = rclock::zone_name_load(tz_);
+    const date::time_zone* p_time_zone = rclock::zone_name_load(tz_);
 
     const date::local_seconds lt =
       std::chrono::seconds{sec_} +
@@ -156,7 +156,7 @@ private:
       std::chrono::hours{hour_} +
       date::local_days{date::year{year_} / (mon_ + 1) / (day_ + 1)};
 
-    const rclock::sys_result result = rclock::local_to_sys(lt, zone);
+    const rclock::sys_result result = rclock::local_to_sys(lt, p_time_zone);
 
     if (result.ok) {
       return result.st.time_since_epoch().count() + psec_ + offset_;
