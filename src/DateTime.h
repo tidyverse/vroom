@@ -20,7 +20,7 @@ public:
       int min = 0,
       int sec = 0,
       double psec = 0,
-      const std::string& tz = "")
+      const std::string& tz = "UTC")
       : year_(year),
         mon_(mon),
         day_(day),
