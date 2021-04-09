@@ -161,8 +161,6 @@ private:
       return NA_REAL;
     }
   }
-
-  inline int days_in_year() const { return 365 + is_leap(year_); }
 };
 
 #endif
