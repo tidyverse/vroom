@@ -225,6 +225,19 @@ test_that("nonexistent times return NA", {
   test_parse_datetime("1970-04-26 02:30:00", locale = ny, expected = expected)
 })
 
+test_that("can use `tz = ''` for system time zone", {
+  withr::local_timezone("Europe/London")
+
+  system <- locale(tz = "")
+  expected <- as.POSIXct("1970-01-01 00:00:00", tz = "Europe/London")
+
+  test_parse_datetime("1970-01-01 00:00:00", locale = system, expected = expected)
+})
+
+test_that("can catch faulty system time zones", {
+  withr::local_timezone("foo")
+  expect_error(locale(tz = ""), "Unknown TZ foo")
+})
 
 ## Guessing ---------------------------------------------------------------------
 
