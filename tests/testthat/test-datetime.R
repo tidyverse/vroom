@@ -209,6 +209,22 @@ test_that("unambiguous times with and without daylight savings", {
   test_parse_datetime(c("2015-04-04 12:00:00", "2015-04-06 12:00:00"), locale = ja, expected = expected_ja)
 })
 
+test_that("ambiguous times always choose the earliest time", {
+  ny <- locale(tz = "America/New_York")
+
+  format <- "%Y-%m-%d %H:%M:%S%z"
+  expected <- as.POSIXct("1970-10-25 01:30:00-0400", tz = "America/New_York", format = format)
+
+  test_parse_datetime("1970-10-25 01:30:00", locale = ny, expected = expected)
+})
+
+test_that("nonexistent times return NA", {
+  ny <- locale(tz = "America/New_York")
+  expected <- .POSIXct(NA_real_, tz = "America/New_York")
+
+  test_parse_datetime("1970-04-26 02:30:00", locale = ny, expected = expected)
+})
+
 
 ## Guessing ---------------------------------------------------------------------
 
