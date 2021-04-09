@@ -39,7 +39,7 @@ Imports:
     bit64,
     crayon,
     cli,
-    clock,
+    clock (>= 0.1.0.9001),
     glue,
     hms,
     lifecycle,
@@ -71,7 +71,7 @@ Suggests:
     waldo,
     xml2
 LinkingTo: 
-    clock,
+    clock (>= 0.1.0.9001),
     progress (>= 1.2.1),
     cpp11 (>= 0.2.0)
 VignetteBuilder: 
