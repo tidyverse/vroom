@@ -92,13 +92,19 @@ private:
       std::chrono::hours{hour_} +
       date::local_days{date::year{year_} / mon_ / day_};
 
-    const rclock::sys_result result = rclock::local_to_sys(lt, p_time_zone);
+    const date::local_info info = rclock::get_local_info(lt, p_time_zone);
 
-    if (result.ok) {
-      return result.st.time_since_epoch().count() + psec_ + offset_;
-    } else {
+    switch (info.result) {
+    case date::local_info::unique:
+      return (lt.time_since_epoch() - info.first.offset).count() + psec_ + offset_;
+    case date::local_info::ambiguous:
+      // Choose `earliest` of the two ambiguous times
+      return (lt.time_since_epoch() - info.first.offset).count() + psec_ + offset_;
+    case date::local_info::nonexistent:
       return NA_REAL;
     }
+
+    throw std::runtime_error("should never happen");
   }
 };
 
