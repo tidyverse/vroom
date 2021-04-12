@@ -39,7 +39,7 @@ Imports:
     bit64,
     crayon,
     cli,
-    clock (>= 0.1.0.9001),
+    clock (>= 0.2.0),
     glue,
     hms,
     lifecycle,
@@ -71,7 +71,7 @@ Suggests:
     waldo,
     xml2
 LinkingTo: 
-    clock (>= 0.1.0.9001),
+    clock (>= 0.2.0),
     progress (>= 1.2.1),
     cpp11 (>= 0.2.0)
 VignetteBuilder: 
@@ -85,5 +85,3 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 SystemRequirements: C++11
-Remotes:
-    r-lib/clock
