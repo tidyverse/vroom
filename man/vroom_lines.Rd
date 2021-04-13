@@ -8,6 +8,7 @@ vroom_lines(
   file,
   n_max = Inf,
   skip = 0,
+  na = character(),
   locale = default_locale(),
   altrep = TRUE,
   altrep_opts = deprecated(),
@@ -21,6 +22,9 @@ vroom_lines(
 \item{n_max}{Maximum number of records to read.}
 
 \item{skip}{Number of lines to skip before reading data.}
+
+\item{na}{Character vector of strings to interpret as missing values. Set this
+option to \code{character()} to indicate no missing values.}
 
 \item{locale}{The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
