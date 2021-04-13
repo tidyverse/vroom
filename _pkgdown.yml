@@ -40,12 +40,14 @@ reference:
   contents:
   - vroom
   - vroom_fwf
+  - problems
 
 - title: Write rectangular files
   desc: >
     These functions write data frames to disk, or to convert them to in-memory strings.
   contents:
   - vroom_write
+  - vroom_write_lines
   - vroom_format
   - output_column
 
@@ -87,6 +89,7 @@ reference:
   contents:
     - vroom_lines
     - vroom_altrep_opts
+    - vroom_altrep
     - vroom_example
     - vroom_progress
     - vroom_str
