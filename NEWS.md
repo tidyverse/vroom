@@ -20,6 +20,8 @@
 
 * vroom parser is now more robust to quoting issues when tracking the CSV state (#301)
 
+* vroom is now uses the MIT license (#323)
+
 # vroom 1.4.0
 
 ## Major changes and new functions
