@@ -1,6 +1,6 @@
 # vroom (development version)
 
-* vroom now uses the clock package when parsing date-times (#273).
+* vroom now uses the clock package when parsing date-times (@DavisVaughan, #273)
 
 * `vroom_write_lines()` now works as intended (#291).
 
