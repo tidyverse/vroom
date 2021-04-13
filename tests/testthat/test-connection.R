@@ -1,4 +1,6 @@
 test_that("reading from connection is consistent with reading directly from a file", {
+  skip_if(is_windows() && on_github_actions())
+
   expected <- vroom(vroom_example("mtcars.csv"), col_types = list())
 
   # This needs to be small enough to have a few blocks in the file, but big

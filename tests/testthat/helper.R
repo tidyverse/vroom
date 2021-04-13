@@ -76,3 +76,7 @@ test_parse_time <- function(x, expected, format = "", ...) {
 expect_error_free <- function(object, ...) {
   expect_error(object, regexp = NA)
 }
+
+on_github_actions() <- function() {
+  identical(Sys.getenv("GITHUB_ACTIONS"), "true")
+}
