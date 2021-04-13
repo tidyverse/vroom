@@ -166,6 +166,7 @@ can be done much more efficiently without reading all the data into R.</p>
   <span class='va'>file</span>,
   n_max <span class='op'>=</span> <span class='cn'>Inf</span>,
   skip <span class='op'>=</span> <span class='fl'>0</span>,
+  na <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
   locale <span class='op'>=</span> <span class='fu'><a href='locale.html'>default_locale</a></span><span class='op'>(</span><span class='op'>)</span>,
   altrep <span class='op'>=</span> <span class='cn'>TRUE</span>,
   altrep_opts <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Deprecated.html'>deprecated</a></span><span class='op'>(</span><span class='op'>)</span>,
@@ -187,6 +188,11 @@ can be done much more efficiently without reading all the data into R.</p>
     <tr>
       <th>skip</th>
       <td><p>Number of lines to skip before reading data.</p></td>
+    </tr>
+    <tr>
+      <th>na</th>
+      <td><p>Character vector of strings to interpret as missing values. Set this
+option to <code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> to indicate no missing values.</p></td>
     </tr>
     <tr>
       <th>locale</th>
