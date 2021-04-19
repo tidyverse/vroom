@@ -2,7 +2,7 @@
 #define READR_DATE_TIME_H_
 
 #include <cpp11/R.hpp>
-#include <clock/clock.h>
+#include <zones/zones.h>
 #include <stdlib.h>
 #include <string>
 
@@ -84,7 +84,13 @@ private:
     if (!validDateTime())
       return NA_REAL;
 
-    const date::time_zone* p_time_zone = rclock::locate_zone(tz_);
+    std::string error;
+
+    const date::time_zone* p_time_zone = zones::locate_zone(tz_, error);
+
+    if (!error.empty()) {
+      throw std::runtime_error(error);
+    }
 
     const date::local_seconds lt =
       std::chrono::seconds{sec_} +
@@ -92,7 +98,11 @@ private:
       std::chrono::hours{hour_} +
       date::local_days{date::year{year_} / mon_ / day_};
 
-    const date::local_info info = rclock::get_local_info(lt, p_time_zone);
+    const date::local_info info = zones::get_local_info(lt, p_time_zone, error);
+
+    if (!error.empty()) {
+      throw std::runtime_error(error);
+    }
 
     switch (info.result) {
     case date::local_info::unique:

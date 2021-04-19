@@ -39,7 +39,6 @@ Imports:
     bit64,
     crayon,
     cli,
-    clock (>= 0.2.0),
     glue,
     hms,
     lifecycle,
@@ -49,7 +48,8 @@ Imports:
     tibble (>= 2.0.0),
     vctrs (>= 0.2.0),
     tidyselect,
-    withr
+    withr,
+    zones (>= 0.0.0.9000)
 Suggests: 
     bench (>= 1.1.0),
     covr,
@@ -71,9 +71,9 @@ Suggests:
     waldo,
     xml2
 LinkingTo: 
-    clock (>= 0.2.0),
     progress (>= 1.2.1),
-    cpp11 (>= 0.2.0)
+    cpp11 (>= 0.2.0),
+    zones (>= 0.0.0.9000)
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3
@@ -85,3 +85,5 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 SystemRequirements: C++11
+Remotes:
+    r-lib/zones

@@ -110,7 +110,7 @@ check_tz <- function(x) {
     }
   }
 
-  if (x %in% clock::zone_database_names()) {
+  if (x %in% zones::zone_database_names()) {
     x
   } else {
     stop("Unknown TZ ", x, call. = FALSE)

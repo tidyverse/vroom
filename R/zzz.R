@@ -3,8 +3,7 @@
 }
 
 .onLoad <- function(...) {
-  # Ensure clock callables are loaded
-  requireNamespace("clock", quietly = TRUE)
+  zones::zones_initialize()
 
   # only register conflicting S3 methods if readr is not already loaded.
   if (!"readr" %in% loadedNamespaces()) {
