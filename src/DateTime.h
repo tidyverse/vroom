@@ -84,13 +84,10 @@ private:
     if (!validDateTime())
       return NA_REAL;
 
-    std::error_condition cnd;
-
     const date::time_zone* p_time_zone;
-    cnd = zones::locate_zone(tz_, p_time_zone);
 
-    if (zones::is_error(cnd)) {
-      throw std::runtime_error(cnd.message());
+    if (!zones::locate_zone(tz_, p_time_zone)) {
+      throw std::runtime_error("'" + tz_ + "' not found in the time zone database.");
     }
 
     const date::local_seconds lt =
@@ -100,10 +97,9 @@ private:
       date::local_days{date::year{year_} / mon_ / day_};
 
     date::local_info info;
-    cnd = zones::get_local_info(lt, p_time_zone, info);
 
-    if (zones::is_error(cnd)) {
-      throw std::runtime_error(cnd.message());
+    if (!zones::get_local_info(lt, p_time_zone, info)) {
+      throw std::runtime_error("Can't lookup local time info for the supplied time zone.");
     }
 
     switch (info.result) {
