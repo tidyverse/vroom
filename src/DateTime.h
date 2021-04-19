@@ -84,12 +84,13 @@ private:
     if (!validDateTime())
       return NA_REAL;
 
-    std::string error;
+    std::error_condition cnd;
 
-    const date::time_zone* p_time_zone = zones::locate_zone(tz_, error);
+    const date::time_zone* p_time_zone;
+    cnd = zones::locate_zone(tz_, p_time_zone);
 
-    if (!error.empty()) {
-      throw std::runtime_error(error);
+    if (zones::is_error(cnd)) {
+      throw std::runtime_error(cnd.message());
     }
 
     const date::local_seconds lt =
@@ -98,10 +99,11 @@ private:
       std::chrono::hours{hour_} +
       date::local_days{date::year{year_} / mon_ / day_};
 
-    const date::local_info info = zones::get_local_info(lt, p_time_zone, error);
+    date::local_info info;
+    cnd = zones::get_local_info(lt, p_time_zone, info);
 
-    if (!error.empty()) {
-      throw std::runtime_error(error);
+    if (zones::is_error(cnd)) {
+      throw std::runtime_error(cnd.message());
     }
 
     switch (info.result) {
