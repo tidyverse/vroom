@@ -2,7 +2,7 @@
 #define READR_DATE_TIME_H_
 
 #include <cpp11/R.hpp>
-#include <zones/zones.h>
+#include <tzdb/tzdb.h>
 #include <stdlib.h>
 #include <string>
 
@@ -86,7 +86,7 @@ private:
 
     const date::time_zone* p_time_zone;
 
-    if (!zones::locate_zone(tz_, p_time_zone)) {
+    if (!tzdb::locate_zone(tz_, p_time_zone)) {
       throw std::runtime_error("'" + tz_ + "' not found in the time zone database.");
     }
 
@@ -98,7 +98,7 @@ private:
 
     date::local_info info;
 
-    if (!zones::get_local_info(lt, p_time_zone, info)) {
+    if (!tzdb::get_local_info(lt, p_time_zone, info)) {
       throw std::runtime_error("Can't lookup local time info for the supplied time zone.");
     }
 

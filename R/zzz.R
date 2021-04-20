@@ -3,7 +3,7 @@
 }
 
 .onLoad <- function(...) {
-  zones::zones_initialize()
+  tzdb::tzdb_initialize()
 
   # only register conflicting S3 methods if readr is not already loaded.
   if (!"readr" %in% loadedNamespaces()) {
