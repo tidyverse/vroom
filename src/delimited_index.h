@@ -323,7 +323,7 @@ public:
     auto comment_len = strlen(comment);
 
     if (comment_len > 0) {
-      query[query_i++] = comment[0];
+      query[query_i] = comment[0];
     }
 
     auto last_tick = start;

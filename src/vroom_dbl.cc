@@ -79,7 +79,6 @@ double bsd_strtod(const char* begin, const char* end, const char decimalMark) {
   /*
    * Strip off leading blanks and check for a sign.
    */
-  p = begin;
   while (p != end && (*p == ' ' || *p == '\t'))
     ++p;
   if (p != end && *p == '-') {
