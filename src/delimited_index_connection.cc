@@ -73,6 +73,7 @@ delimited_index_connection::delimited_index_connection(
   buf[i].resize(sz + 1);
 
   if (sz == 0) {
+    std::fclose(out);
     if (should_close) {
       cpp11::package("base")["close"](in);
     }
