@@ -2,7 +2,7 @@
 #define READR_DATE_TIME_H_
 
 #include <cpp11/R.hpp>
-#include <clock/clock.h>
+#include <tzdb/tzdb.h>
 #include <stdlib.h>
 #include <string>
 
@@ -84,7 +84,11 @@ private:
     if (!validDateTime())
       return NA_REAL;
 
-    const date::time_zone* p_time_zone = rclock::locate_zone(tz_);
+    const date::time_zone* p_time_zone;
+
+    if (!tzdb::locate_zone(tz_, p_time_zone)) {
+      throw std::runtime_error("'" + tz_ + "' not found in the time zone database.");
+    }
 
     const date::local_seconds lt =
       std::chrono::seconds{sec_} +
@@ -92,7 +96,11 @@ private:
       std::chrono::hours{hour_} +
       date::local_days{date::year{year_} / mon_ / day_};
 
-    const date::local_info info = rclock::get_local_info(lt, p_time_zone);
+    date::local_info info;
+
+    if (!tzdb::get_local_info(lt, p_time_zone, info)) {
+      throw std::runtime_error("Can't lookup local time info for the supplied time zone.");
+    }
 
     switch (info.result) {
     case date::local_info::unique:

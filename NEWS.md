@@ -2,7 +2,7 @@
 
 * `vroom_lines()` gains a `na` argument.
 
-* vroom now uses the clock package when parsing date-times (@DavisVaughan, #273)
+* vroom now uses the tzdb package when parsing date-times (@DavisVaughan, #273)
 
 * `vroom_write_lines()` now works as intended (#291).
 

@@ -39,7 +39,6 @@ Imports:
     bit64,
     crayon,
     cli,
-    clock (>= 0.2.0),
     glue,
     hms,
     lifecycle,
@@ -47,6 +46,7 @@ Imports:
     rlang (>= 0.4.2),
     stats,
     tibble (>= 2.0.0),
+    tzdb (>= 0.1.1),
     vctrs (>= 0.2.0),
     tidyselect,
     withr
@@ -71,9 +71,9 @@ Suggests:
     waldo,
     xml2
 LinkingTo: 
-    clock (>= 0.2.0),
     progress (>= 1.2.1),
-    cpp11 (>= 0.2.0)
+    cpp11 (>= 0.2.0),
+    tzdb (>= 0.1.1)
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3
