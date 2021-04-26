@@ -30,7 +30,7 @@ Description: The goal of 'vroom' is to read and write data (like
     indexing step, then reads the values lazily , so only the data you
     actually use needs to be read.  The writer formats the data in
     parallel and writes to disk asynchronously from formatting.
-License: GPL-3
+License: MIT + file LICENSE
 URL: https://vroom.r-lib.org, https://github.com/r-lib/vroom
 BugReports: https://github.com/r-lib/vroom/issues
 Depends: 
