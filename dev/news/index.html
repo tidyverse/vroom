@@ -160,7 +160,7 @@
 <li><p><code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> gains a <code>na</code> argument.</p></li>
 <li><p>vroom now uses the tzdb package when parsing date-times (<a href='https://github.com/DavisVaughan'>@DavisVaughan</a>, <a href='https://github.com/r-lib/vroom/issues/273'>#273</a>)</p></li>
 <li><p><code><a href="../reference/vroom_write_lines.html">vroom_write_lines()</a></code> now works as intended (<a href='https://github.com/r-lib/vroom/issues/291'>#291</a>).</p></li>
-<li><p>New <code><a href="../reference/vroom.html">vroom(show_col_specs=)</a></code> argument to more simply control showing of column specifications after parsing.</p></li>
+<li><p>New <code><a href="../reference/vroom.html">vroom(show_col_types=)</a></code> argument to more simply control when column types are shown.</p></li>
 <li><p>`vroom() correctly reads double values with comma as decimal separator (<a href='https://github.com/kent37'>@kent37</a> <a href='https://github.com/r-lib/vroom/issues/313'>#313</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer inadvertently calls <code>.name_repair</code> functions twice (<a href='https://github.com/r-lib/vroom/issues/310'>#310</a>).</p></li>
 <li><p>Fix an inadvertent performance regression when reading values (<a href='https://github.com/r-lib/vroom/issues/309'>#309</a>)</p></li>
@@ -170,6 +170,7 @@
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now preserves the spec attribute when vroom and readr are both loaded (<a href='https://github.com/r-lib/vroom/issues/303'>#303</a>)</p></li>
 <li><p>vroom now registers the S3 class with <code><a href="https://rdrr.io/r/methods/setOldClass.html">methods::setOldClass()</a></code> (r-dbi/DBI<a href='https://github.com/r-lib/vroom/issues/345'>#345</a>)</p></li>
 <li><p>vroom parser is now more robust to quoting issues when tracking the CSV state (<a href='https://github.com/r-lib/vroom/issues/301'>#301</a>)</p></li>
+<li><p>vroom is now uses the MIT license (<a href='https://github.com/r-lib/vroom/issues/323'>#323</a>)</p></li>
 </ul>
 </div>
     <div id="vroom-140" class="section level1">

@@ -179,7 +179,7 @@
   altrep_opts <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Deprecated.html'>deprecated</a></span><span class='op'>(</span><span class='op'>)</span>,
   num_threads <span class='op'>=</span> <span class='fu'>vroom_threads</span><span class='op'>(</span><span class='op'>)</span>,
   progress <span class='op'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span><span class='op'>(</span><span class='op'>)</span>,
-  show_col_specs <span class='op'>=</span> <span class='cn'>NULL</span>,
+  show_col_types <span class='op'>=</span> <span class='cn'>NULL</span>,
   .name_repair <span class='op'>=</span> <span class='st'>"unique"</span>
 <span class='op'>)</span></pre>
 
@@ -326,7 +326,7 @@ time is 5 seconds or more. The automatic progress bar can be disabled by
 setting option <code>readr.show_progress</code> to <code>FALSE</code>.</p></td>
     </tr>
     <tr>
-      <th>show_col_specs</th>
+      <th>show_col_types</th>
       <td><p>Control showing the column specifications. If <code>TRUE</code>
 column specifications are always show, if <code>FALSE</code> they are never shown. If
 <code>NULL</code> (the default) they are shown only if an explicit specification is not
