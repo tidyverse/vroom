@@ -33,3 +33,6 @@ inst/bench/fwf-times.tsv: inst/bench/fwf-benchmark.R
 
 bench-clean:
 	rm -f $(BENCH_OUT)
+
+install:
+	R CMD INSTALL .
