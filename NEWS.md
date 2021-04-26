@@ -6,7 +6,7 @@
 
 * `vroom_write_lines()` now works as intended (#291).
 
-* New `vroom(show_col_specs=)` argument to more simply control showing of column specifications after parsing.
+* New `vroom(show_col_types=)` argument to more simply control when column types are shown.
 
 * `vroom() correctly reads double values with comma as decimal separator (@kent37 #313)
 

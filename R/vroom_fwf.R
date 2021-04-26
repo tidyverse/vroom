@@ -29,7 +29,7 @@ vroom_fwf <- function(file,
                       altrep_opts = deprecated(),
                       num_threads = vroom_threads(),
                       progress = vroom_progress(),
-                      show_col_specs = NULL,
+                      show_col_types = NULL,
                       .name_repair = "unique") {
 
   verify_fwf_positions(col_positions)
@@ -57,7 +57,7 @@ vroom_fwf <- function(file,
 
   col_select <- vroom_enquo(rlang::enquo(col_select))
 
-  has_spec <- !is.null(col_types)
+  has_col_types <- !is.null(col_types)
 
   col_types <- as.col_spec(col_types)
 
@@ -75,8 +75,8 @@ vroom_fwf <- function(file,
   out <- vroom_select(out, col_select, id)
   class(out) <- c("spec_tbl_df", class(out))
 
-  if (should_show_col_spec(has_spec, show_col_specs)) {
-    show_col_specs(out, locale)
+  if (should_show_col_types(has_col_types, show_col_types)) {
+    show_col_types(out, locale)
   }
 
   out

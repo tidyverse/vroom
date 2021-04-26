@@ -492,7 +492,7 @@ summary.col_spec <- function(object, width = getOption("width"), locale = defaul
   invisible(object)
 }
 
-show_col_specs <- function(x, locale) {
+show_col_types <- function(x, locale) {
   show_dims(x)
   summary(spec(x), locale = locale)
   cli_block(class = "vroom_spec_message", {

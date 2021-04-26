@@ -25,7 +25,7 @@ vroom(
   altrep_opts = deprecated(),
   num_threads = vroom_threads(),
   progress = vroom_progress(),
-  show_col_specs = NULL,
+  show_col_types = NULL,
   .name_repair = "unique"
 )
 }
@@ -137,7 +137,7 @@ is updated every 50,000 values and will only display if estimated reading
 time is 5 seconds or more. The automatic progress bar can be disabled by
 setting option \code{readr.show_progress} to \code{FALSE}.}
 
-\item{show_col_specs}{Control showing the column specifications. If \code{TRUE}
+\item{show_col_types}{Control showing the column specifications. If \code{TRUE}
 column specifications are always show, if \code{FALSE} they are never shown. If
 \code{NULL} (the default) they are shown only if an explicit specification is not
 given to \code{col_types}.}
