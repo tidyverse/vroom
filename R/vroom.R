@@ -173,7 +173,7 @@ vroom <- function(
   out
 }
 
-should_show_col_spec <- function(has_col_types, show_col_types) {
+should_show_col_types <- function(has_col_types, show_col_types) {
   if (is.null(show_col_types)) {
     return(isTRUE(!has_col_types))
   }
