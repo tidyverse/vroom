@@ -28,6 +28,8 @@
 
 * vroom is now uses the MIT license (#323)
 
+* `problems()` now de-duplicates identical problems (#318)
+
 # vroom 1.4.0
 
 ## Major changes and new functions

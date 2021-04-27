@@ -17,6 +17,7 @@ problems <- function(x) {
     rlang::abort("`x` must have a problems attribute that is an external pointer.\n  Is this object from readr and not vroom?")
   }
   probs <- vroom_errors_(probs)
+  probs <- probs[!duplicated(probs), ]
   probs <- probs[order(probs$file, probs$row, probs$col), ]
 
   tibble::as_tibble(probs)

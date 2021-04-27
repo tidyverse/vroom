@@ -91,3 +91,23 @@ test_that("parsing problems are shown for all datatypes", {
 
     expect_warning(res <- vroom(I("x\nxyz\n"), delim = ",", col_types = list(col_logical())), "One or more parsing issues")
 })
+
+test_that("problems that are generated more than once are not duplicated", {
+  res <- vroom(I("x\n1\n2\n3\n4\n5\na"), col_types = "i", delim = ",")
+
+  # generate first problem
+  expect_warning(res[[1]][[6]], "One or more parsing issues")
+
+  probs <- problems(res)
+  expect_equal(probs$row, 7)
+  expect_equal(probs$col, 1)
+  expect_equal(probs$expected, "an integer")
+
+  # generate the same problem again, but we de-duplicate it
+  res[[1]][[6]]
+
+  probs <- problems(res)
+  expect_equal(probs$row, 7)
+  expect_equal(probs$col, 1)
+  expect_equal(probs$expected, "an integer")
+})
