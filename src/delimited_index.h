@@ -85,7 +85,11 @@ public:
     }
     std::string filename() const { return idx_->filename_; }
     size_t index() const { return i_ / idx_->columns_; }
-    size_t position() const { return i_; }
+    size_t position() const {
+      size_t begin, end;
+      std::tie(begin, end) = idx_->get_cell(i_, is_first_);
+      return begin;
+    }
     virtual ~column_iterator() = default;
   };
 
@@ -122,7 +126,11 @@ public:
     size_t index() const {
       return i_ - (row_ + idx_->has_header_) * idx_->columns_;
     }
-    size_t position() const { return i_; }
+    size_t position() const {
+      size_t begin, end;
+      std::tie(begin, end) = idx_->get_cell(i_, i_ == 0);
+      return begin;
+    }
     virtual ~row_iterator() = default;
   };
 
@@ -187,7 +195,7 @@ public:
 
   const string get_trimmed_val(size_t i, bool is_first, bool is_last) const;
 
-  std::pair<const char*, const char*> get_cell(size_t i, bool is_first) const;
+  std::pair<size_t, size_t> get_cell(size_t i, bool is_first) const;
 
   enum csv_state {
     RECORD_START,

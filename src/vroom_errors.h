@@ -11,6 +11,12 @@
 using namespace cpp11::literals;
 
 class vroom_errors {
+  struct parse_error {
+    size_t position;
+    size_t column;
+    parse_error(size_t pos, size_t col) : position(pos), column(col) {}
+  };
+
 public:
   vroom_errors() {}
 
@@ -28,33 +34,35 @@ public:
     filenames_.emplace_back(filename);
   }
 
-  void add_parse_error(size_t position, size_t columns) {
+  void add_parse_error(size_t position, size_t column) {
     std::lock_guard<std::mutex> guard(mutex_);
-    positions_.push_back(position);
-    actual_columns_.push_back(columns);
+    parse_errors_.emplace_back(position, column);
   }
 
   void resolve_parse_errors(const vroom::index& idx) {
-    if (positions_.size() == 0) {
+    if (parse_errors_.size() == 0) {
       return;
     }
+    // Sort the parse errors by their position
+    std::sort(
+        parse_errors_.begin(),
+        parse_errors_.end(),
+        [](const parse_error& lhs, const parse_error& rhs) {
+          return lhs.position < rhs.position;
+        });
     auto row = idx.get_column(0)->begin();
-    size_t row_num = 0;
+    auto row_end = idx.get_column(0)->end();
 
-    bool has_header = idx.get_header()->size() > 0;
-    std::sort(positions_.begin(), positions_.end());
-    for (size_t i = 0; i < positions_.size(); ++i) {
-      size_t p = positions_[i];
-      while (p < row.position()) {
+    for (const auto& e : parse_errors_) {
+      while (row != row_end && e.position > row.position()) {
         ++row;
-        ++row_num;
       }
       std::stringstream ss_expected, ss_actual;
       ss_expected << idx.num_columns() << " columns";
-      ss_actual << actual_columns_[i] + 1 << " columns";
+      ss_actual << e.column + 1 << " columns";
       add_error(
-          row_num + has_header,
-          actual_columns_[i],
+          row.index() - 1,
+          e.column,
           ss_expected.str(),
           ss_actual.str(),
           row.filename());
@@ -62,12 +70,11 @@ public:
   }
 
   cpp11::data_frame error_table() const {
-    return cpp11::writable::data_frame(
-        {"row"_nm = rows_,
-         "col"_nm = columns_,
-         "expected"_nm = expected_,
-         "actual"_nm = actual_,
-         "file"_nm = filenames_});
+    return cpp11::writable::data_frame({"row"_nm = rows_,
+                                        "col"_nm = columns_,
+                                        "expected"_nm = expected_,
+                                        "actual"_nm = actual_,
+                                        "file"_nm = filenames_});
   }
 
   bool has_errors() const { return rows_.size() > 0; }
@@ -85,8 +92,7 @@ private:
   mutable bool have_warned_ = false;
   std::mutex mutex_;
   std::vector<std::string> filenames_;
-  std::vector<size_t> positions_;
-  std::vector<size_t> actual_columns_;
+  std::vector<parse_error> parse_errors_;
   std::vector<size_t> rows_;
   std::vector<size_t> columns_;
   std::vector<std::string> expected_;

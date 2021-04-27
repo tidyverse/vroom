@@ -121,5 +121,5 @@ private:
 
   size_t rows_;
   size_t columns_;
-}; // namespace vroom
+};
 } // namespace vroom

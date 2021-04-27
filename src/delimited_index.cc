@@ -296,7 +296,7 @@ const string delimited_index::get_escaped_string(
   return out;
 }
 
-inline std::pair<const char*, const char*>
+inline std::pair<size_t, size_t>
 delimited_index::get_cell(size_t i, bool is_first) const {
 
   auto oi = i;
@@ -314,7 +314,7 @@ delimited_index::get_cell(size_t i, bool is_first) const {
       auto start = idx[i];
       auto end = idx[i + 1];
       if (start == end) {
-        return {mmap_.data() + start, mmap_.data() + end};
+        return {start, end};
       }
       // By relying on 0 and 1 being true and false we can remove a branch
       // here, which improves performance a bit, as this function is called a
@@ -325,7 +325,7 @@ delimited_index::get_cell(size_t i, bool is_first) const {
 
       // REprintf(
       //"oi: %i ni: %i i: %i start: %i end: %i\n", oi, ni, i, start, end);
-      return {mmap_.data() + start, mmap_.data() + end};
+      return {start, end};
     }
 
     i -= sz;
@@ -342,10 +342,12 @@ delimited_index::get_cell(size_t i, bool is_first) const {
 const string
 delimited_index::get_trimmed_val(size_t i, bool is_first, bool is_last) const {
 
-  const char* begin;
-  const char* end;
+  size_t begin_p;
+  size_t end_p;
 
-  std::tie(begin, end) = get_cell(i, is_first);
+  std::tie(begin_p, end_p) = get_cell(i, is_first);
+  const char* begin = mmap_.data() + begin_p;
+  const char* end = mmap_.data() + end_p;
 
   if (trim_ws_) {
     trim_whitespace(begin, end);

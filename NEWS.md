@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `problems()` now prints the correct row number of parse errors (#326)
+
 * `vroom_lines()` gains a `na` argument.
 
 * vroom now uses the tzdb package when parsing date-times (@DavisVaughan, #273)
