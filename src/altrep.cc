@@ -21,7 +21,7 @@
 
 bool vroom_altrep(SEXP x) {
 #ifdef HAS_ALTREP
-  return R_altrep_inherits(x, vroom_date::class_t) ||
+  return R_altrep_inherits(x, vroom_chr::class_t) ||
          R_altrep_inherits(x, vroom_date::class_t) ||
          R_altrep_inherits(x, vroom_dbl::class_t) ||
          R_altrep_inherits(x, vroom_dttm::class_t) ||
