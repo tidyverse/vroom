@@ -4,10 +4,14 @@
 \alias{problems}
 \title{Retrieve parsing problems}
 \usage{
-problems(x)
+problems(x, lazy = FALSE)
 }
 \arguments{
 \item{x}{A data frame from \code{vroom::vroom()}.}
+
+\item{lazy}{If \code{TRUE}, just the problems found so far are returned. If
+\code{FALSE} (the default) the lazy data is first read completely and all
+problems are returned.}
 }
 \value{
 A data frame with one row for each problem and four columns:

@@ -98,12 +98,7 @@ test_that("problems that are generated more than once are not duplicated", {
   # generate first problem
   expect_warning(res[[1]][[6]], "One or more parsing issues")
 
-  probs <- problems(res)
-  expect_equal(probs$row, 7)
-  expect_equal(probs$col, 1)
-  expect_equal(probs$expected, "an integer")
-
-  # generate the same problem again, but we de-duplicate it
+  # generate the same problem again
   res[[1]][[6]]
 
   probs <- problems(res)
