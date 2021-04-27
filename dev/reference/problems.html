@@ -164,7 +164,7 @@ might want to know about. You can retrieve a data frame of these problems
 with this function.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>problems</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>problems</span><span class='op'>(</span><span class='va'>x</span>, lazy <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -172,6 +172,12 @@ with this function.</p>
     <tr>
       <th>x</th>
       <td><p>A data frame from <code><a href='vroom.html'>vroom::vroom()</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>lazy</th>
+      <td><p>If <code>TRUE</code>, just the problems found so far are returned. If
+<code>FALSE</code> (the default) the lazy data is first read completely and all
+problems are returned.</p></td>
     </tr>
     </table>
 
