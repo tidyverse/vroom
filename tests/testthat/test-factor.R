@@ -150,3 +150,10 @@ test_that("subsetting works with both double and integer indexes", {
   expect_equal(x$X1[NA_integer_], factor(NA_character_, levels = "foo"))
   expect_equal(x$X1[NA_real_], factor(NA_character_, levels = "foo"))
 })
+
+test_that("results are correct even with quoted values", {
+  expect_equal(
+    vroom(I('day\n"Sun"\n"Sat"\n"Sat"'), altrep = FALSE, col_types = "f", delim = ",")$day,
+    factor(c("Sun", "Sat", "Sat"), levels = c("Sun", "Sat"))
+  )
+})

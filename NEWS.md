@@ -32,6 +32,8 @@
 
 * `problems()` now de-duplicates identical problems (#318)
 
+* factors with implicit levels now work when fields are quoted, as intended (#330)
+
 # vroom 1.4.0
 
 ## Major changes and new functions
