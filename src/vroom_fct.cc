@@ -72,7 +72,7 @@ cpp11::integers read_fct_implicit(vroom_vec_info* info, bool include_na) {
 
   cpp11::writable::integers out(n);
   cpp11::writable::strings levels;
-  std::unordered_map<vroom::string, size_t> level_map;
+  std::unordered_map<std::string, size_t> level_map;
 
   auto nas = cpp11::as_cpp<std::vector<std::string>>(*info->na);
 
@@ -84,7 +84,7 @@ cpp11::integers read_fct_implicit(vroom_vec_info* info, bool include_na) {
   auto col = info->column->slice(start, end);
   int na_level = NA_INTEGER;
   for (const auto& str : *col) {
-    auto val = level_map.find(str);
+    auto val = level_map.find(str.str());
     if (val != level_map.end()) {
       out[i++] = val->second;
     } else {
@@ -93,11 +93,11 @@ cpp11::integers read_fct_implicit(vroom_vec_info* info, bool include_na) {
           na_level = max_level++;
           levels.push_back(NA_STRING);
           out[i++] = na_level;
-          level_map[str] = na_level;
+          level_map[str.str()] = na_level;
         }
       } else {
         out[i++] = max_level;
-        level_map[str] = max_level++;
+        level_map[str.str()] = max_level++;
         levels.push_back(
             info->locale->encoder_.makeSEXP(str.begin(), str.end(), false));
       }
