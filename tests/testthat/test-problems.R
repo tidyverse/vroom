@@ -93,6 +93,10 @@ test_that("parsing problems are shown for all datatypes", {
 })
 
 test_that("problems that are generated more than once are not duplicated", {
+  # On versions of R without ALTREP the warnings will happen at different times,
+  # so we skip this test in those cases
+  skip_if(getRVersion() < "3.5")
+
   res <- vroom(I("x\n1\n2\n3\n4\n5\na"), col_types = "i", delim = ",")
 
   # generate first problem
@@ -119,7 +123,7 @@ test_that("problems return the proper row number", {
   expect_equal(problems(y)$row, 3)
 
   expect_warning(
-    z <- vroom(I("a,b,c\nx,y,z,\nx,y,z,,"), altrep = FALSE)
+    z <- vroom(I("a,b,c\nx,y,z,,\nx,y,z,,\n"), altrep = FALSE)
   )
   expect_equal(problems(z)$row, c(2, 3))
 })
