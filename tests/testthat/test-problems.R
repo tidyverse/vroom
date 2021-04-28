@@ -113,17 +113,17 @@ test_that("problems that are generated more than once are not duplicated", {
 
 test_that("problems return the proper row number", {
   expect_warning(
-    x <- vroom(I("a,b,c\nx,y,z,,"), altrep = FALSE)
+    x <- vroom(I("a,b,c\nx,y,z,,"), altrep = FALSE, col_types = "ccc")
   )
   expect_equal(problems(x)$row, 2)
 
   expect_warning(
-    y <- vroom(I("a,b,c\nx,y,z\nx,y,z,,"), altrep = FALSE)
+    y <- vroom(I("a,b,c\nx,y,z\nx,y,z,,"), altrep = FALSE, col_types = "ccc")
   )
   expect_equal(problems(y)$row, 3)
 
   expect_warning(
-    z <- vroom(I("a,b,c\nx,y,z,,\nx,y,z,,\n"), altrep = FALSE)
+    z <- vroom(I("a,b,c\nx,y,z,,\nx,y,z,,\n"), altrep = FALSE, col_types = "ccc")
   )
   expect_equal(problems(z)$row, c(2, 3))
 })
