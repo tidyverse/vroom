@@ -606,3 +606,8 @@ test_that("name repair with custom functions works", {
   out <- vroom(I("x,y,z\n1,2,3"), col_types = "iii", .name_repair = add_y)
   expect_equal(colnames(out), c("x_y", "y_y", "z_y"))
 })
+
+test_that("col_types are based on the final (possibly repaired) column names (#311)", {
+  out <- vroom(I("x,\n1,2\n3,4"), delim = ",", col_types = list(x = col_double(), "...2" = col_double()))
+  expect_equal(out[["...2"]], c(2, 4))
+})

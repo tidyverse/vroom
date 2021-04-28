@@ -34,6 +34,8 @@
 
 * factors with implicit levels now work when fields are quoted, as intended (#330)
 
+* `vroom()` now allows specifying column names in `col_types` that have been repaired (#311)
+
 # vroom 1.4.0
 
 ## Major changes and new functions

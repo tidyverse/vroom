@@ -355,6 +355,8 @@ col_types_standardise <- function(spec, col_names, col_select, name_repair) {
   if (length(col_names) == 0) {
     return(spec)
   }
+  col_names <- vctrs::vec_as_names(col_names, repair = name_repair)
+
   type_names <- names(spec$cols)
 
   if (length(spec$cols) == 0) {
@@ -390,8 +392,6 @@ col_types_standardise <- function(spec, col_names, col_select, name_repair) {
 
     spec$cols <- spec$cols[col_names]
   }
-
-  names(spec$cols) <- vctrs::vec_as_names(names(spec$cols), repair = name_repair)
 
   if (inherits(col_select, "quosures") || !rlang::quo_is_null(col_select)) {
     if (inherits(col_select, "quosures")) {
