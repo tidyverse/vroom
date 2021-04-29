@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` now emits a warning of class `vroom_mismatched_column_name` if the user supplies a column type that does not match the name of a read column (#317).
+
 * `vroom()` no longer crashes if `n_max = 0` and `col_names` is a character (#316)
 
 * `problems()` now prints the correct row number of parse errors (#326)

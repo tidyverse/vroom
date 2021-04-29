@@ -608,6 +608,22 @@ test_that("name repair with custom functions works", {
 })
 
 test_that("col_types are based on the final (possibly repaired) column names (#311)", {
-  out <- vroom(I("x,\n1,2\n3,4"), delim = ",", col_types = list(x = col_double(), "...2" = col_double()))
+  suppressMessages(
+    out <- vroom(I("x,\n1,2\n3,4"), delim = ",", col_types = list(x = col_double(), "...2" = col_double()))
+  )
   expect_equal(out[["...2"]], c(2, 4))
+})
+
+test_that("mismatched column names throw a classed warning", {
+  expect_warning(
+    vroom(
+      I("x,y\n1,2\n3,4\n"),
+      col_types = list(
+        x = col_double(),
+        y = col_double(),
+        z = col_double()
+      )
+    ),
+    class = "vroom_mismatched_column_name"
+  )
 })

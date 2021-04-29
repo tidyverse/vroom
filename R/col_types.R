@@ -377,8 +377,8 @@ col_types_standardise <- function(spec, col_names, col_select, name_repair) {
 
     bad_types <- !(type_names %in% col_names)
     if (any(bad_types)) {
-      warning("The following named parsers don't match the column names: ",
-        paste0(type_names[bad_types], collapse = ", "), call. = FALSE)
+      rlang::warn(paste0("The following named parsers don't match the column names: ",
+        paste0(type_names[bad_types], collapse = ", ")), class = "vroom_mismatched_column_name")
       spec$cols <- spec$cols[!bad_types]
       type_names <- type_names[!bad_types]
     }
