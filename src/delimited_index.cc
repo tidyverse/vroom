@@ -158,7 +158,9 @@ start_indexing:
         pb,
         num_threads,
         -1);
-    columns_ = idx_[0].size() - 1;
+    if (idx_[0].size() > 0) {
+      columns_ = idx_[0].size() - 1;
+    }
 
     std::vector<std::future<void>> threads;
 

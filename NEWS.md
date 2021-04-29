@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` no longer crashes if `n_max = 0` and `col_names` is a character (#316)
+
 * `problems()` now prints the correct row number of parse errors (#326)
 
 * `vroom_lines()` gains a `na` argument.
