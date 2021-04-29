@@ -82,9 +82,15 @@ public:
   void warn_for_errors() const {
     if (!have_warned_ && rows_.size() > 0) {
       have_warned_ = true;
-      Rf_warningcall(
-          R_NilValue,
-          "One or more parsing issues, see `problems()` for details");
+      static auto warn = Rf_findFun(
+          Rf_install("warn"),
+          Rf_findVarInFrame(R_NamespaceRegistry, Rf_install("rlang")));
+      cpp11::sexp warn_call = Rf_lang3(
+          warn,
+          Rf_mkString(
+              "One or more parsing issues, see `problems()` for details"),
+          Rf_mkString("vroom_parse_issue"));
+      Rf_eval(warn_call, R_EmptyEnv);
     }
   }
 
