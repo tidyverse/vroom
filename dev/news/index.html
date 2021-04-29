@@ -157,6 +157,7 @@
 <a href="#vroom-development-version" class="anchor"></a>vroom (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer mis-indexes files read from connections with windows line endings when the two line endings falls on separate sides of the read buffer (<a href='https://github.com/r-lib/vroom/issues/331'>#331</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now emits a warning of class <code>vroom_parse_issue</code> if there are non-fatal parsing issues.</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now emits a warning of class <code>vroom_mismatched_column_name</code> if the user supplies a column type that does not match the name of a read column (<a href='https://github.com/r-lib/vroom/issues/317'>#317</a>).</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer crashes if <code>n_max = 0</code> and <code>col_names</code> is a character (<a href='https://github.com/r-lib/vroom/issues/316'>#316</a>)</p></li>
