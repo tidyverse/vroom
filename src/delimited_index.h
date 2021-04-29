@@ -341,6 +341,14 @@ public:
     // The actual parsing is here
     size_t pos = start;
     size_t lines_read = 0;
+
+    // When reading from connections it is possible that a buffer ends on '\r',
+    // but has not yet skipped over the next '\n', so we check for this and do
+    // so here.
+    if (windows_newlines_ && state == RECORD_START && buf[pos] == '\n') {
+      ++pos;
+    }
+
     while (pos < end && lines_read < n_max) {
       auto c = buf[pos];
 
@@ -380,7 +388,10 @@ public:
         ++cols;
       }
 
-      else if ((windows_newlines_ && c == '\r') || c == '\n') {
+      else if (
+          (windows_newlines_ && c == '\r') ||
+          (!windows_newlines_ && c == '\n')) {
+        // c == '\n') {
         if (state ==
             QUOTED_FIELD) { // This will work as long as num_threads = 1
           if (num_threads != 1) {

@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` no longer mis-indexes files read from connections with windows line endings when the two line endings falls on separate sides of the read buffer (#331)
+
 * `vroom()` now emits a warning of class `vroom_parse_issue` if there are non-fatal parsing issues.
 
 * `vroom()` now emits a warning of class `vroom_mismatched_column_name` if the user supplies a column type that does not match the name of a read column (#317).
