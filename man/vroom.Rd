@@ -78,7 +78,8 @@ character represents one column:
 
 By default, reading a file without a column specification will print a
 message showing what \code{readr} guessed they were. To remove this message,
-use \code{col_types = cols()}.
+use \code{col_types = list()}, set \code{show_col_types = FALSE} or set
+`options(readr.show_col_types = FALSE)
 }}
 
 \item{col_select}{One or more selection expressions, like in
