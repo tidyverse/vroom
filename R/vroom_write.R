@@ -118,14 +118,14 @@ vroom_format <- function(x, delim = "\t", eol = "\n", na = "NA", col_names = TRU
 #'
 #' @inheritParams vroom_write
 #' @export
-vroom_write_lines <- function(x, file, eol = "\n", na = "NA", append = FALSE) {
+vroom_write_lines <- function(x, file, eol = "\n", na = "NA", append = FALSE, num_threads = vroom_threads()) {
   stopifnot(is.character(x))
 
   x <- list(X1 = x)
   class(x) <- "data.frame"
   attr(x, "row.names") <- c(NA_integer_, -length(x[[1]]))
 
-  vroom_write(x, file = file, delim = "", col_names = FALSE, eol = eol, na = na, append = append)
+  vroom_write(x, file = file, delim = "", col_names = FALSE, eol = eol, na = na, append = append, num_threads = num_threads)
 }
 
 #' Preprocess column for output
