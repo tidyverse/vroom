@@ -236,7 +236,8 @@ character represents one column:</p><ul>
 <li><p>_ or - = skip</p>
 <p>By default, reading a file without a column specification will print a
 message showing what <code>readr</code> guessed they were. To remove this message,
-use <code>col_types = cols()</code>.</p></li>
+use <code>col_types = list()</code>, set <code>show_col_types = FALSE</code> or set
+`options(readr.show_col_types = FALSE)</p></li>
 </ul></td>
     </tr>
     <tr>
@@ -312,10 +313,10 @@ setting option <code>readr.show_progress</code> to <code>FALSE</code>.</p></td>
     </tr>
     <tr>
       <th>show_col_types</th>
-      <td><p>Control showing the column specifications. If <code>TRUE</code>
-column specifications are always show, if <code>FALSE</code> they are never shown. If
-<code>NULL</code> (the default) they are shown only if an explicit specification is not
-given to <code>col_types</code>.</p></td>
+      <td><p>If <code>FALSE</code>, do not show the guessed column types. If
+<code>TRUE</code> always show the column types, even if they are supplied. If <code>NULL</code>
+(the default) only show the column types if they are not explicitly supplied
+by the <code>col_types</code> argument.</p></td>
     </tr>
     <tr>
       <th>.name_repair</th>
