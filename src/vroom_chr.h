@@ -53,7 +53,8 @@ public:
     auto&& itr = col->begin() + i;
     auto str = *itr;
 
-    auto val = info.locale->encoder_.makeSEXP(str.begin(), str.end(), true);
+    auto val =
+        PROTECT(info.locale->encoder_.makeSEXP(str.begin(), str.end(), true));
 
     if (Rf_xlength(val) < str.end() - str.begin()) {
       info.errors->add_error(
@@ -63,6 +64,8 @@ public:
     val = check_na(*info.na, val);
 
     info.errors->warn_for_errors();
+
+    UNPROTECT(1);
 
     return val;
   }
