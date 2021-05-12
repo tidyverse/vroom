@@ -9,7 +9,7 @@ test:
 	@echo "make: Leaving directory '/Users/jhester/p/vroom/tests/testthat'"
 
 clean:
-	@Rscript -e 'devtools::clean_dll()'
+	@Rscript -e 'pkgbuild::clean_dll()'
 
 BENCH_TAXI := $(wildcard ~/data/taxi_trip_fare*csv)
 BENCH_FWF := ~/data/PUMS5_06.TXT
