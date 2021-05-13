@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom_write(path=)` has been deprecated, in favor of `file`, to match readr.
+
 * `vroom_write_lines()` now exposes the `num_threads` argument.
 
 * `vroom()` no longer mis-indexes files read from connections with windows line endings when the two line endings falls on separate sides of the read buffer (#331)

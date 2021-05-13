@@ -16,6 +16,8 @@
 #' @param delim Delimiter used to separate values. Defaults to `\t` to write
 #'   tab separated value (TSV) files.
 #' @param na String used for missing values. Defaults to 'NA'.
+#' @param path `r lifecycle::badge("deprecated")` is no longer supported, use
+#'   `file` instead.
 #' @export
 #' @examples
 #' # If you only specify a file name, vroom_write() will write
@@ -34,7 +36,15 @@
 vroom_write <- function(x, file, delim = '\t', eol = "\n", na = "NA", col_names = !append,
   append = FALSE, quote = c("needed", "all", "none"), escape =
     c("double", "backslash", "none"), bom = FALSE, num_threads =
-    vroom_threads(), progress = vroom_progress()) {
+    vroom_threads(), progress = vroom_progress(), path = deprecated()) {
+
+  if (lifecycle::is_present(path)) {
+    file <- path
+    lifecycle::deprecate_soft(
+      when = "1.5.0",
+      what = "vroom_write(file)"
+    )
+  }
 
   # If there are no columns in the data frame, just return
   if (NCOL(x) == 0) {

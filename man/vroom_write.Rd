@@ -16,7 +16,8 @@ vroom_write(
   escape = c("double", "backslash", "none"),
   bom = FALSE,
   num_threads = vroom_threads(),
-  progress = vroom_progress()
+  progress = vroom_progress(),
+  path = deprecated()
 )
 }
 \arguments{
@@ -66,6 +67,9 @@ in an interactive session and not while knitting a document. The display
 is updated every 50,000 values and will only display if estimated reading
 time is 5 seconds or more. The automatic progress bar can be disabled by
 setting option \code{readr.show_progress} to \code{FALSE}.}
+
+\item{path}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} is no longer supported, use
+\code{file} instead.}
 }
 \description{
 Write a data frame to a delimited file
