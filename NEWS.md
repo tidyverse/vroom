@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` now outputs a tibble with the expected number of columns and types based on `col_types` and `col_names` even if the file is empty (#297).
+
 * `vroom_write(path=)` has been deprecated, in favor of `file`, to match readr.
 
 * `vroom_write_lines()` now exposes the `num_threads` argument.

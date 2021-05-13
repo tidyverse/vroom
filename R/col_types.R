@@ -444,6 +444,40 @@ show_dims <- function(x) {
   })
 }
 
+collector_value <- function(x, ...) {
+  UseMethod("collector_value")
+}
+
+#' @export
+collector_value.collector_character <- function(x, ...) { character() }
+
+#' @export
+collector_value.collector_double <- function(x, ...) { numeric() }
+
+#' @export
+collector_value.collector_integer <- function(x, ...) { integer() }
+
+#' @export
+collector_value.collector_numeric <- function(x, ...) { numeric() }
+
+#' @export
+collector_value.collector_logical <- function(x, ...) { logical() }
+
+#' @export
+collector_value.collector_factor <- function(x, ...) { factor() }
+
+#' @export
+collector_value.collector_datetime <- function(x, ...) { as.POSIXct(double()) }
+
+#' @export
+collector_value.collector_date <- function(x, ...) { as.Date(double()) }
+
+#' @export
+collector_value.collector_time <- function(x, ...) { hms::hms() }
+
+#' @export
+collector_value.collector_guess <- function(x, ...) { character() }
+
 #' @importFrom crayon silver
 #' @importFrom glue double_quote
 #' @export
@@ -455,7 +489,8 @@ summary.col_spec <- function(object, width = getOption("width"), locale = defaul
   type_map <- c("collector_character" = "chr", "collector_double" = "dbl",
     "collector_integer" = "int", "collector_num" = "num", "collector_logical" = "lgl",
     "collector_factor" = "fct", "collector_datetime" = "dttm", "collector_date" = "date",
-    "collector_time" = "time")
+    "collector_time" = "time",
+    "collector_guess" = "???")
 
   col_types <- vapply(object$cols, function(x) class(x)[[1]], character(1))
   col_types <- droplevels(factor(type_map[col_types], levels = unname(type_map)))
@@ -527,7 +562,8 @@ color_type <- function(type) {
     num = crayon::green(type),
     date = ,
     dttm = ,
-    time = crayon::blue(type)
+    time = crayon::blue(type),
+    "???" = type
   )
 }
 

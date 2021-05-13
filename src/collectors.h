@@ -139,12 +139,23 @@ inline collectors resolve_collectors(
 
   auto make_names = vroom["make_names"];
 
-  if (TYPEOF(col_names) == STRSXP) {
-    col_nms = static_cast<SEXP>(make_names(col_names, num_cols));
-  } else if (TYPEOF(col_names) == LGLSXP && cpp11::logicals(col_names)[0]) {
-    col_nms = read_column_names(idx, locale_info);
+  if (num_rows == 0 && num_cols == 0) {
+    if (TYPEOF(col_names) == STRSXP) {
+      col_nms = static_cast<SEXP>(col_names);
+    } else {
+      if (TYPEOF(col_types) == VECSXP) {
+        col_nms = static_cast<SEXP>(
+            make_names(R_NilValue, Rf_xlength(VECTOR_ELT(col_types, 0))));
+      }
+    }
   } else {
-    col_nms = static_cast<SEXP>(make_names(R_NilValue, num_cols));
+    if (TYPEOF(col_names) == STRSXP) {
+      col_nms = static_cast<SEXP>(make_names(col_names, num_cols));
+    } else if (TYPEOF(col_names) == LGLSXP && cpp11::logicals(col_names)[0]) {
+      col_nms = read_column_names(idx, locale_info);
+    } else {
+      col_nms = static_cast<SEXP>(make_names(R_NilValue, num_cols));
+    }
   }
 
   auto col_types_standardise = vroom["col_types_standardise"];

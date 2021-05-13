@@ -161,6 +161,15 @@ vroom <- function(
   is_null <- vapply(out, is.null, logical(1))
   out[is_null] <- NULL
 
+  # If no rows expand columns to be the same length and names as the spec
+  if (NROW(out) == 0) {
+    cols <- attr(out, "spec")[["cols"]]
+    for (i in seq_along(cols)) {
+      out[[i]] <- collector_value(cols[[i]])
+    }
+    names(out) <- names(cols)
+  }
+
   out <- tibble::as_tibble(out, .name_repair = identity)
   class(out) <- c("spec_tbl_df", class(out))
 
