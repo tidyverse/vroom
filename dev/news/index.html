@@ -157,6 +157,8 @@
 <a href="#vroom-development-version" class="anchor"></a>vroom (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now outputs a tibble with the expected number of columns and types based on <code>col_types</code> and <code>col_names</code> even if the file is empty (<a href='https://github.com/r-lib/vroom/issues/297'>#297</a>).</p></li>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write(path=)</a></code> has been deprecated, in favor of <code>file</code>, to match readr.</p></li>
 <li><p><code><a href="../reference/vroom_write_lines.html">vroom_write_lines()</a></code> now exposes the <code>num_threads</code> argument.</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer mis-indexes files read from connections with windows line endings when the two line endings falls on separate sides of the read buffer (<a href='https://github.com/r-lib/vroom/issues/331'>#331</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now emits a warning of class <code>vroom_parse_issue</code> if there are non-fatal parsing issues.</p></li>
