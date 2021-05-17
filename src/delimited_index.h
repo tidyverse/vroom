@@ -177,7 +177,6 @@ public:
   bool trim_ws_;
   bool escape_double_;
   bool escape_backslash_;
-  bool windows_newlines_;
   size_t skip_;
   const char* comment_;
   size_t rows_;
@@ -264,7 +263,7 @@ public:
     case QUOTED_FIELD:
       return QUOTED_FIELD;
     case QUOTED_END:
-      throw std::runtime_error("invalid 5");
+      return QUOTED_END;
     }
     throw std::runtime_error("should never happen");
   }
@@ -285,7 +284,7 @@ public:
       errors->add_parse_error(pos, cols);
       // Add additional columns if there are too few
       while (cols < num_cols - 1) {
-        destination.push_back(pos - windows_newlines_);
+        destination.push_back(pos);
         ++cols;
       }
     }
@@ -323,8 +322,8 @@ public:
       const size_t update_size) {
 
     // If there are no quotes quote will be '\0', so will just work
-    std::array<char, 7> query = {delim[0], '\n', '\r', '\\', '\0', '\0', '\0'};
-    auto query_i = 4;
+    std::array<char, 7> query = {delim[0], '\n', '\\', '\0', '\0', '\0'};
+    auto query_i = 3;
     if (quote != '\0') {
       query[query_i++] = quote;
     }
@@ -341,13 +340,6 @@ public:
     // The actual parsing is here
     size_t pos = start;
     size_t lines_read = 0;
-
-    // When reading from connections it is possible that a buffer ends on '\r',
-    // but has not yet skipped over the next '\n', so we check for this and do
-    // so here.
-    if (windows_newlines_ && state == RECORD_START && buf[pos] == '\n') {
-      ++pos;
-    }
 
     while (pos < end && lines_read < n_max) {
       auto c = buf[pos];
@@ -379,6 +371,7 @@ public:
       }
 
       if (state == RECORD_START) {
+        // REprintf("RS: %i\n", pos);
         destination.push_back(pos + file_offset);
       }
 
@@ -388,10 +381,7 @@ public:
         ++cols;
       }
 
-      else if (
-          (windows_newlines_ && c == '\r') ||
-          (!windows_newlines_ && c == '\n')) {
-        // c == '\n') {
+      else if (c == '\n') {
         if (state ==
             QUOTED_FIELD) { // This will work as long as num_threads = 1
           if (num_threads != 1) {
@@ -425,16 +415,13 @@ public:
             last_tick = pos;
           }
         }
-        if ((windows_newlines_ && c == '\r')) {
-          ++pos;
-        }
       }
 
       else if (c == quote) {
         state = quoted_state(state);
       }
 
-      else if (c != '\r') {
+      else {
         state = other_state(state);
         ++pos;
         size_t buf_offset = strcspn(buf + pos, query.data());

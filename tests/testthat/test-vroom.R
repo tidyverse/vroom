@@ -629,7 +629,7 @@ test_that("mismatched column names throw a classed warning", {
 })
 
 test_that("empty files still generate the correct column width and types", {
-  out <- vroom(I(""), col_names = c("foo", "bar"))
+  out <- vroom(I(""), col_names = c("foo", "bar"), col_types = list())
   expect_equal(nrow(out), 0)
   expect_equal(ncol(out), 2)
   expect_equal(names(out), c("foo", "bar"))

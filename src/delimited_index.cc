@@ -101,9 +101,6 @@ delimited_index::delimited_index(
   size_t guessed_rows =
       one_row_size > 0 ? (file_size - first_nl) / one_row_size * 1.1 : 0;
 
-  // Check for windows newlines
-  windows_newlines_ = first_nl > 0 && mmap_[first_nl - 1] == '\r';
-
   std::unique_ptr<multi_progress> pb = nullptr;
 
   if (progress_) {
@@ -350,6 +347,15 @@ delimited_index::get_trimmed_val(size_t i, bool is_first, bool is_last) const {
   std::tie(begin_p, end_p) = get_cell(i, is_first);
   const char* begin = mmap_.data() + begin_p;
   const char* end = mmap_.data() + end_p;
+
+  // Check for windows newlines if the last column */
+  if (is_last) {
+    if (begin < end) {
+      if (*(end - 1) == '\r') {
+        --end;
+      }
+    }
+  }
 
   if (trim_ws_) {
     trim_whitespace(begin, end);

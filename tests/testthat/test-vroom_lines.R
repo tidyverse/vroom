@@ -66,3 +66,7 @@ test_that("vroom_lines uses na argument", {
   expect_equal(vroom_lines(I("abc\n123"), na = "123", progress = FALSE), c("abc", NA_character_))
   expect_equal(vroom_lines(I("abc\n123"), na = c("abc", "123"), progress = FALSE), c(NA_character_, NA_character_))
 })
+
+test_that("vroom_lines works with files with mixed line endings", {
+  expect_equal(vroom_lines(I("foo\r\n\nbar\n\r\nbaz\r\n")), c("foo", "", "bar", "", "baz"))
+})
