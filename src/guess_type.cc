@@ -6,6 +6,7 @@
 #include "LocaleInfo.h"
 #include "r_utils.h"
 
+#include "vroom_dbl.h"
 #include "vroom_lgl.h"
 #include "vroom_num.h"
 
@@ -67,12 +68,9 @@ bool isDouble(const std::string& x, LocaleInfo* pLocale) {
   if (x[0] == '0' && x.size() > 1 && x[1] != pLocale->decimalMark_)
     return false;
 
-  double res = 0;
-  std::string::const_iterator begin = x.begin(), end = x.end();
+  double res = bsd_strtod(x.data(), x.data() + x.size(), pLocale->decimalMark_);
 
-  bool ok = parseDouble(pLocale->decimalMark_, begin, end, res);
-
-  return ok && begin == end;
+  return !ISNA(res);
 }
 
 bool isTime(const std::string& x, LocaleInfo* pLocale) {

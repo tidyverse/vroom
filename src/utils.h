@@ -91,7 +91,7 @@ inline void trim_whitespace(const char*& begin, const char*& end) {
     ++begin;
   }
 
-  while (end != begin && is_space((end - 1))) {
+  while (end != begin && is_space(end - 1)) {
     --end;
   }
 }

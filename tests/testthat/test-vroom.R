@@ -643,3 +643,11 @@ test_that("empty files still generate the correct column width and types", {
   expect_type(out[[1]], "integer")
   expect_type(out[[2]], "integer")
 })
+
+test_that("leading whitespace effects guessing", {
+  out <- vroom(I('a,b,c\n 1,2,3\n'), delim = ",", trim_ws = FALSE, progress = FALSE, col_types = list())
+  expect_type(out[[1]], "character")
+
+  out <- vroom(I('a,b,c\n 1,2,3\n'), delim = ",", trim_ws = TRUE, progress = FALSE, col_types = list())
+  expect_type(out[[1]], "double")
+})

@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Guessing double types no longer unconditionally ignores leading whitespace. Now whitespace is only ignored when `trim_ws` is set.
+
 * `vroom()` and `vroom_lines()` now handle files with mixed windows and POSIX line endings (https://github.com/tidyverse/readr/issues/1210)
 
 * `vroom()` now outputs a tibble with the expected number of columns and types based on `col_types` and `col_names` even if the file is empty (#297).

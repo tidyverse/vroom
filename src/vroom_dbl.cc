@@ -77,10 +77,8 @@ double bsd_strtod(const char* begin, const char* end, const char decimalMark) {
 #endif
 
   /*
-   * Strip off leading blanks and check for a sign.
+   * check for a sign.
    */
-  while (p != end && (*p == ' ' || *p == '\t'))
-    ++p;
   if (p != end && *p == '-') {
     sign = 1;
     ++p;
@@ -210,11 +208,14 @@ cpp11::doubles read_dbl(vroom_vec_info* info) {
         auto col = info->column->slice(start, end);
         for (auto b = col->begin(), e = col->end(); b != e; ++b) {
           out[i++] = parse_value<double>(
-              b, col,
+              b,
+              col,
               [&](const char* begin, const char* end) -> double {
                 return bsd_strtod(begin, end, decimalMark);
               },
-              info->errors, "a double", *info->na);
+              info->errors,
+              "a double",
+              *info->na);
         }
       },
       info->num_threads);
