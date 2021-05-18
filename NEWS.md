@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom_write_lines()` no longer escapes or quotes lines.
+
 * Guessing double types no longer unconditionally ignores leading whitespace. Now whitespace is only ignored when `trim_ws` is set.
 
 * `vroom()` and `vroom_lines()` now handle files with mixed windows and POSIX line endings (https://github.com/tidyverse/readr/issues/1210)

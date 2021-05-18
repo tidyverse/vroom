@@ -236,3 +236,11 @@ test_that("vroom_write_lines() works with normal input", {
   vroom::vroom_write_lines(c("foo", "bar"), f)
   expect_equal(vroom_lines(f), c("foo", "bar"))
 })
+
+test_that("vroom_write_lines() does not escape or quote lines", {
+  f <- tempfile(, fileext = ".txt")
+  on.exit(unlink(f))
+
+  vroom::vroom_write_lines(c('"foo"', "bar"), f)
+  expect_equal(vroom_lines(f), c('"foo"', "bar"))
+})

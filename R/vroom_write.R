@@ -135,7 +135,10 @@ vroom_write_lines <- function(x, file, eol = "\n", na = "NA", append = FALSE, nu
   class(x) <- "data.frame"
   attr(x, "row.names") <- c(NA_integer_, -length(x[[1]]))
 
-  vroom_write(x, file = file, delim = "", col_names = FALSE, eol = eol, na = na, append = append, num_threads = num_threads)
+  vroom_write(x, file = file, delim = "", col_names = FALSE, eol = eol, na =
+    na, append = append, quote = "none", escape = "none", num_threads =
+    num_threads
+  )
 }
 
 #' Preprocess column for output
