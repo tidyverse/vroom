@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom_fwf()` now respects `n_max`, as intended (#334)
+
 * `vroom_write_lines()` no longer escapes or quotes lines.
 
 * Guessing double types no longer unconditionally ignores leading whitespace. Now whitespace is only ignored when `trim_ws` is set.

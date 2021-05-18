@@ -94,6 +94,8 @@ public:
 #endif
     }
 
+    bool n_max_set = n_max != static_cast<size_t>(-1);
+
     if (n_max > 0) {
       newlines_.push_back(start - 1);
     }
@@ -101,7 +103,9 @@ public:
     index_region(
         mmap_, newlines_, start, file_size - 1, 0, n_max, pb, file_size / 1000);
 
-    newlines_.push_back(file_size - 1);
+    if (!n_max_set) {
+      newlines_.push_back(file_size - 1);
+    }
 
     if (progress) {
 #ifndef VROOM_STANDALONE
@@ -205,11 +209,11 @@ public:
 
     while (pos < end) {
       ++lines_read;
+      destination.push_back(offset + pos);
+
       if (lines_read >= n_max) {
         return lines_read;
       }
-
-      destination.push_back(offset + pos);
 
       if (pb) {
         auto tick_size = pos - last_tick;

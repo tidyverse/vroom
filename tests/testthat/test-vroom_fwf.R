@@ -285,3 +285,20 @@ test_that("Errors if begin is greater than end", {
     "`col_positions` must have begin less than end"
   )
 })
+
+test_that("vroom_fwf respects n_max (#334)", {
+  out <- vroom_fwf(I("foo 1\nbar 2\nbaz 3\nqux 4"), n_max = 0, col_types = list())
+  expect_named(out, c("X1", "X2"))
+  expect_equal(out[[1]], character())
+  expect_equal(out[[2]], character())
+
+  out <- vroom_fwf(I("foo 1\nbar 2\nbaz 3\nqux 4"), n_max = 1, col_types = list())
+  expect_named(out, c("X1", "X2"))
+  expect_equal(out[[1]], c("foo"))
+  expect_equal(out[[2]], c(1))
+
+  out <- vroom_fwf(I("foo 1\nbar 2\nbaz 3\nqux 4"), n_max = 2, col_types = list())
+  expect_named(out, c("X1", "X2"))
+  expect_equal(out[[1]], c("foo", "bar"))
+  expect_equal(out[[2]], c(1, 2))
+})
