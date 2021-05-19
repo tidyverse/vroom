@@ -302,3 +302,14 @@ test_that("vroom_fwf respects n_max (#334)", {
   expect_equal(out[[1]], c("foo", "bar"))
   expect_equal(out[[2]], c(1, 2))
 })
+
+test_that("vroom_fwf works when skip_empty_lines is false (https://github.com/tidyverse/readr/issues/1211)", {
+  f <- tempfile()
+  on.exit(unlink(f))
+
+  writeLines(rep(" ", 10), f)
+
+  out <- vroom_fwf(f, fwf_cols(A = c(1, NA)), col_types = "c", na = " ", trim_ws = FALSE, skip_empty_lines = FALSE)
+
+  expect_equal(out[[1]], rep(NA_character_, 10))
+})
