@@ -52,6 +52,7 @@ public:
       bool trim_ws,
       const size_t skip,
       const char* comment,
+      const bool skip_empty_lines,
       const size_t n_max,
       const bool progress)
       : col_starts_(col_starts),
@@ -77,10 +78,11 @@ public:
 
     size_t file_size = mmap_.size();
 
-    size_t start = find_first_line(mmap_, skip, comment);
+    size_t start = find_first_line(mmap_, skip, comment, skip_empty_lines);
 
     // Check for windows newlines
-    size_t first_nl = find_next_newline(mmap_, start, false);
+    size_t first_nl = find_next_newline(
+        mmap_, start, comment, skip_empty_lines, /* embedded_nl */ false);
     windows_newlines_ = first_nl > 0 && mmap_[first_nl - 1] == '\r';
 
     std::unique_ptr<RProgress::RProgress> pb = nullptr;
@@ -101,7 +103,16 @@ public:
     }
 
     index_region(
-        mmap_, newlines_, start, file_size - 1, 0, n_max, pb, file_size / 1000);
+        mmap_,
+        newlines_,
+        start,
+        file_size - 1,
+        0,
+        comment,
+        skip_empty_lines,
+        n_max,
+        pb,
+        file_size / 1000);
 
     if (!n_max_set) {
       newlines_.push_back(file_size - 1);
@@ -114,15 +125,14 @@ public:
     }
 
 #ifdef VROOM_LOG
-#if SPDLOG_ACTIVE_LEVEL <= SPD_LOG_LEVEL_DEBUG
     auto log = spdlog::basic_logger_mt(
         "basic_logger", "logs/fixed_width_index.idx", true);
+    log->set_level(spdlog::level::debug);
     for (auto& v : newlines_) {
       SPDLOG_LOGGER_DEBUG(log, "{}", v);
     }
     SPDLOG_LOGGER_DEBUG(log, "end of idx {0:x}", (size_t)&newlines_);
     spdlog::drop("basic_logger");
-#endif
 #endif
   }
 
@@ -198,11 +208,14 @@ public:
       size_t start,
       size_t end,
       size_t offset,
+      const char* comment,
+      const bool skip_empty_lines,
       size_t n_max,
       std::unique_ptr<RProgress::RProgress>& pb,
       size_t update_size = -1) {
 
-    size_t pos = find_next_newline(source, start, false);
+    size_t pos = find_next_newline(
+        source, start, comment, skip_empty_lines, /* embededd_nl */ false);
 
     size_t lines_read = 0;
     auto last_tick = start;
@@ -223,7 +236,8 @@ public:
         }
       }
 
-      pos = find_next_newline(source, pos + 1, false);
+      pos = find_next_newline(
+          source, pos + 1, comment, skip_empty_lines, /* embedded_nl */ false);
     }
 
     if (pb) {

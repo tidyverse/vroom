@@ -29,6 +29,7 @@ public:
       const size_t skip,
       const size_t n_max,
       const char* comment,
+      const bool skip_empty_lines,
       std::shared_ptr<vroom_errors> errors,
       const size_t num_threads,
       const bool progress);
@@ -41,6 +42,7 @@ public:
       const bool trim_ws,
       const size_t skip,
       const char* comment,
+      const bool skip_empty_lines,
       const size_t n_max,
       const bool progress);
 

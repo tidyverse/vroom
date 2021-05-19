@@ -15,6 +15,7 @@ public:
       bool trim_ws,
       const size_t skip,
       const char* comment,
+      const bool skip_empty_lines,
       const size_t n_max,
       const bool progress,
       const size_t chunk_size);

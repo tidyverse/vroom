@@ -101,6 +101,7 @@ vroom <- function(
   na = c("", "NA"),
   quote = '"',
   comment = "",
+  skip_empty_lines = TRUE,
   trim_ws = TRUE,
   escape_double = TRUE,
   escape_backslash = FALSE,
@@ -153,7 +154,8 @@ vroom <- function(
     col_types = col_types, id = id, skip = skip, col_select = col_select,
     name_repair = .name_repair,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
-    escape_backslash = escape_backslash, comment = comment, locale = locale,
+    escape_backslash = escape_backslash, comment = comment,
+    skip_empty_lines = skip_empty_lines, locale = locale,
     guess_max = guess_max, n_max = n_max, altrep = vroom_altrep(altrep),
     num_threads = num_threads, progress = progress)
 

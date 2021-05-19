@@ -1,10 +1,37 @@
 #pragma once
 
 #include <array>
+#include <cstring>
 #include <sstream>
-#include <string.h>
+#include <string>
 
 namespace vroom {
+
+inline bool is_blank_or_comment_line(
+    const char* begin,
+    const char* end,
+    const std::string& comment,
+    const bool skip_empty_lines) {
+  if (!skip_empty_lines && comment.empty()) {
+    return false;
+  }
+
+  if (skip_empty_lines && *begin == '\n') {
+    return true;
+  }
+
+  while (begin < end && (*begin == ' ' || *begin == '\t')) {
+    ++begin;
+  }
+
+  if ((skip_empty_lines && *begin == '\n') ||
+      (!comment.empty() &&
+       strncmp(begin, comment.data(), comment.size()) == 0)) {
+    return true;
+  }
+
+  return false;
+}
 
 template <typename T>
 static size_t find_next_non_quoted_newline(
@@ -47,24 +74,40 @@ static size_t find_next_non_quoted_newline(
 }
 
 template <typename T>
-static size_t
-find_next_newline(const T& source, size_t start, bool embedded_nl = true) {
+static size_t find_next_newline(
+    const T& source,
+    size_t start,
+    const char* comment,
+    const bool skip_empty_lines,
+    bool embedded_nl) {
+
+  if (start >= source.size()) {
+    return source.size() - 1;
+  }
+
   if (embedded_nl) {
     return find_next_non_quoted_newline(source, start);
   }
 
   auto begin = source.data() + start;
 
-  if (start >= source.size()) {
+  auto end = source.data() + source.size();
+
+  while (begin && begin < end) {
+    begin = static_cast<const char*>(memchr(begin, '\n', end - begin));
+    break;
+    // if (!(begin && begin + 1 < end &&
+    // is_blank_or_comment_line(
+    // begin + 1, end, comment, skip_empty_lines))) {
+    // break;
+    //}
+  }
+
+  if (!begin) {
     return source.size() - 1;
   }
 
-  auto res =
-      static_cast<const char*>(memchr(begin, '\n', source.size() - start));
-  if (!res) {
-    return source.size() - 1;
-  }
-  return res - source.data();
+  return begin - source.data();
 }
 
 template <typename T> T get_env(const char* name, T default_value) {
@@ -94,24 +137,6 @@ inline void trim_whitespace(const char*& begin, const char*& end) {
   while (end != begin && is_space(end - 1)) {
     --end;
   }
-}
-
-inline bool is_blank_or_comment_line(const char* begin, const char* comment) {
-  if (*begin == '\n') {
-    return true;
-  }
-
-  while (*begin == ' ' || *begin == '\t') {
-    ++begin;
-  }
-
-  size_t comment_len = strlen(comment);
-  if (*begin == '\n' ||
-      (comment_len > 0 && strncmp(begin, comment, strlen(comment)) == 0)) {
-    return true;
-  }
-
-  return false;
 }
 
 template <typename T> size_t skip_bom(const T& source) {
@@ -169,16 +194,29 @@ EF BB BF:    UTF-8
 
 // This skips leading blank lines and comments (if needed)
 template <typename T>
-size_t find_first_line(const T& source, size_t skip, const char* comment) {
+size_t find_first_line(
+    const T& source,
+    size_t skip,
+    const char* comment,
+    const bool skip_empty_lines) {
 
   auto begin = skip_bom(source);
   /* Skip skip parameters, comments and blank lines */
 
   while (bool should_skip =
-             (begin < source.size() - 1 &&
-              is_blank_or_comment_line(source.data() + begin, comment)) ||
+             (begin < source.size() - 1 && is_blank_or_comment_line(
+                                               source.data() + begin,
+                                               source.data() + source.size(),
+                                               comment,
+                                               skip_empty_lines)) ||
              skip > 0) {
-    begin = find_next_newline(source, begin) + 1;
+    begin = find_next_newline(
+                source,
+                begin,
+                "",
+                /* skip_empty_lines */ false,
+                /* embedded_nl */ true) +
+            1;
     skip = skip > 0 ? skip - 1 : skip;
   }
 

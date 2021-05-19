@@ -26,6 +26,7 @@
     bool escape_double,
     bool escape_backslash,
     const char* comment,
+    const bool skip_empty_lines,
     size_t skip,
     ptrdiff_t n_max,
     bool progress,
@@ -66,6 +67,7 @@
       skip,
       n_max,
       comment,
+      skip_empty_lines,
       *errors,
       num_threads,
       progress);

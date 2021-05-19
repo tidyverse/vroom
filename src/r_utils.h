@@ -32,12 +32,22 @@ static char guess_delim(
     end = source.size();
   }
 
-  auto nl = find_next_newline(source, start);
+  auto nl = find_next_newline(
+      source,
+      start,
+      /* comment */ "",
+      /* skip_empty_lines */ false,
+      /* embedded_nl */ true);
   while (nl > start && nl <= end && guess_max > 0) {
     auto str = std::string(source.data() + start, nl - start);
     lines.push_back(str);
     start = nl + 1;
-    nl = find_next_newline(source, start);
+    nl = find_next_newline(
+        source,
+        start,
+        /* comment */ "",
+        /* skip_empty_lines */ false,
+        /* embededd_nl */ true);
     --guess_max;
   }
 

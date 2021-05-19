@@ -134,6 +134,7 @@ std::shared_ptr<vroom::index> make_delimited_index(
     const size_t skip,
     const size_t n_max,
     const char* comment,
+    const bool skip_empty_lines,
     std::shared_ptr<vroom_errors> errors,
     const size_t num_threads,
     const bool progress) {
@@ -156,6 +157,7 @@ std::shared_ptr<vroom::index> make_delimited_index(
         skip,
         n_max,
         comment,
+        skip_empty_lines,
         errors,
         get_env("VROOM_CONNECTION_SIZE", 1 << 17),
         progress);
@@ -173,6 +175,7 @@ std::shared_ptr<vroom::index> make_delimited_index(
       skip,
       n_max,
       comment,
+      skip_empty_lines,
       errors,
       num_threads,
       progress);
@@ -233,6 +236,7 @@ index_collection::index_collection(
     const size_t skip,
     const size_t n_max,
     const char* comment,
+    const bool skip_empty_lines,
     std::shared_ptr<vroom_errors> errors,
     const size_t num_threads,
     const bool progress)
@@ -249,6 +253,7 @@ index_collection::index_collection(
       skip,
       n_max,
       comment,
+      skip_empty_lines,
       errors,
       num_threads,
       progress);
@@ -270,6 +275,7 @@ index_collection::index_collection(
         skip,
         n_max,
         comment,
+        skip_empty_lines,
         errors,
         num_threads,
         progress);
@@ -289,6 +295,7 @@ std::shared_ptr<vroom::index> make_fixed_width_index(
     const bool trim_ws,
     const size_t skip,
     const char* comment,
+    const bool skip_empty_lines,
     const size_t n_max,
     const bool progress) {
 
@@ -306,6 +313,7 @@ std::shared_ptr<vroom::index> make_fixed_width_index(
         trim_ws,
         skip,
         comment,
+        skip_empty_lines,
         n_max,
         progress,
         get_env("VROOM_CONNECTION_SIZE", 1 << 17));
@@ -318,6 +326,7 @@ std::shared_ptr<vroom::index> make_fixed_width_index(
         trim_ws,
         skip,
         comment,
+        skip_empty_lines,
         n_max,
         progress);
   }
@@ -330,12 +339,21 @@ index_collection::index_collection(
     const bool trim_ws,
     const size_t skip,
     const char* comment,
+    const bool skip_empty_lines,
     const size_t n_max,
     const bool progress)
     : rows_(0), columns_(0) {
 
   auto first = make_fixed_width_index(
-      in[0], col_starts, col_ends, trim_ws, skip, comment, n_max, progress);
+      in[0],
+      col_starts,
+      col_ends,
+      trim_ws,
+      skip,
+      comment,
+      skip_empty_lines,
+      n_max,
+      progress);
 
   columns_ = first->num_columns();
   rows_ = first->num_rows();
@@ -344,7 +362,15 @@ index_collection::index_collection(
 
   for (int i = 1; i < in.size(); ++i) {
     auto idx = make_fixed_width_index(
-        in[i], col_starts, col_ends, trim_ws, skip, comment, n_max, progress);
+        in[i],
+        col_starts,
+        col_ends,
+        trim_ws,
+        skip,
+        comment,
+        skip_empty_lines,
+        n_max,
+        progress);
 
     check_column_consistency(first, idx, false, i);
 

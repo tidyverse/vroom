@@ -32,6 +32,7 @@ delimited_index::delimited_index(
     const size_t skip,
     size_t n_max,
     const char* comment,
+    const bool skip_empty_lines,
     std::shared_ptr<vroom_errors> errors,
     size_t num_threads,
     bool progress,
@@ -76,7 +77,7 @@ delimited_index::delimited_index(
     return;
   }
 
-  size_t start = find_first_line(mmap_, skip_, comment_);
+  size_t start = find_first_line(mmap_, skip_, comment_, skip_empty_lines);
 
   // If an empty file, or a file with only a newline.
   if (start >= file_size - 1) {
@@ -95,8 +96,10 @@ delimited_index::delimited_index(
 
   delim_len_ = delim_.length();
 
-  size_t first_nl = find_next_newline(mmap_, start, true);
-  size_t second_nl = find_next_newline(mmap_, first_nl + 1, true);
+  size_t first_nl = find_next_newline(
+      mmap_, start, comment_, skip_empty_lines, /* embedded_nl */ true);
+  size_t second_nl = find_next_newline(
+      mmap_, first_nl + 1, comment, skip_empty_lines, /* embedded_nl */ true);
   size_t one_row_size = second_nl - first_nl;
   size_t guessed_rows =
       one_row_size > 0 ? (file_size - first_nl) / one_row_size * 1.1 : 0;
@@ -144,6 +147,7 @@ start_indexing:
         delim_.c_str(),
         quote,
         comment_,
+        skip_empty_lines,
         state,
         start,
         first_nl + 1,
@@ -170,6 +174,7 @@ start_indexing:
             delim_.c_str(),
             quote,
             comment_,
+            skip_empty_lines,
             state,
             first_nl + 1,
             file_size,
@@ -187,8 +192,13 @@ start_indexing:
           file_size - first_nl,
           [&](size_t start, size_t end, size_t id) {
             idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
-            start = find_next_newline(mmap_, first_nl + start, false) + 1;
-            end = find_next_newline(mmap_, first_nl + end, false) + 1;
+            start =
+                find_next_newline(
+                    mmap_, first_nl + start, comment, skip_empty_lines, false) +
+                1;
+            end = find_next_newline(
+                      mmap_, first_nl + end, comment, skip_empty_lines, false) +
+                  1;
             size_t cols = 0;
             csv_state state = RECORD_START;
             index_region(
@@ -197,6 +207,7 @@ start_indexing:
                 delim_.c_str(),
                 quote,
                 comment_,
+                skip_empty_lines,
                 state,
                 start,
                 end,

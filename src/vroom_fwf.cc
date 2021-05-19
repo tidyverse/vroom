@@ -18,6 +18,7 @@
     cpp11::sexp name_repair,
     size_t skip,
     const char* comment,
+    bool skip_empty_lines,
     ptrdiff_t n_max,
     SEXP id,
     cpp11::strings na,
@@ -38,7 +39,15 @@
   }
 
   auto idx = std::make_shared<vroom::index_collection>(
-      inputs, col_starts, col_ends, trim_ws, skip, comment, n_max, progress);
+      inputs,
+      col_starts,
+      col_ends,
+      trim_ws,
+      skip,
+      comment,
+      skip_empty_lines,
+      n_max,
+      progress);
 
   auto errors = new std::shared_ptr<vroom_errors>(new vroom_errors());
 
@@ -103,7 +112,8 @@ std::vector<bool> find_empty_cols(Iterator begin, Iterator end, ptrdiff_t n) {
     return cpp11::list();
   }
 
-  size_t s = find_first_line(mmap, skip, comment.data());
+  size_t s =
+      find_first_line(mmap, skip, comment.data(), /* skip_empty_lines */ true);
 
   std::vector<bool> empty = find_empty_cols(mmap.begin() + s, mmap.end(), n);
   std::vector<int> begin, end;
