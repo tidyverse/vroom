@@ -132,12 +132,12 @@ test_that("parse_date returns a double like as.Date()", {
 
 test_that("parses NA/empty correctly", {
   expect_equal(
-    vroom(I("x\n\n"), delim = ",", col_types = list(x = "T")),
+    vroom(I("x\n\n"), delim = ",", col_types = list(x = "T"), skip_empty_lines = FALSE),
     tibble::tibble(x = .POSIXct(NA_real_, tz = "UTC"))
   )
 
   expect_equal(
-    vroom(I("x\n\n"), delim = ",", col_types = list(x = "D")),
+    vroom(I("x\n\n"), delim = ",", col_types = list(x = "D"), skip_empty_lines = FALSE),
     tibble::tibble(x = as.Date(NA))
   )
 

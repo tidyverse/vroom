@@ -309,7 +309,7 @@ public:
       idx_t& destination,
       const char* delim,
       const char quote,
-      const char* comment,
+      const std::string& comment,
       const bool skip_empty_lines,
       csv_state& state,
       const size_t start,
@@ -324,14 +324,12 @@ public:
       const size_t update_size) {
 
     // If there are no quotes quote will be '\0', so will just work
-    std::array<char, 7> query = {delim[0], '\n', '\\', '\0', '\0', '\0'};
+    std::array<char, 6> query = {delim[0], '\n', '\\', '\0', '\0', '\0'};
     auto query_i = 3;
     if (quote != '\0') {
       query[query_i++] = quote;
     }
-    auto comment_len = strlen(comment);
-
-    if (comment_len > 0) {
+    if (!comment.empty()) {
       query[query_i] = comment[0];
     }
 
@@ -357,22 +355,25 @@ public:
       }
 
       else if (
-          state != QUOTED_FIELD && comment_len > 0 &&
-          strncmp(comment, buf + pos, comment_len) == 0) {
+          state != QUOTED_FIELD && is_comment(buf + pos, buf + end, comment)) {
         if (state != RECORD_START) {
           destination.push_back(pos + file_offset);
           resolve_columns(
               pos + file_offset, cols, num_cols, destination, errors);
         }
         cols = 0;
-        pos =
-            static_cast<const char*>(memchr(buf + pos, '\n', end - pos)) - buf;
+        pos = skip_rest_of_line(source, pos);
         ++pos;
         state = newline_state(state);
         continue;
       }
 
       if (state == RECORD_START) {
+        if (is_empty_line(buf + pos, buf + end, skip_empty_lines)) {
+          pos = skip_rest_of_line(source, pos);
+          ++pos;
+          continue;
+        }
         // REprintf("RS: %i\n", pos);
         destination.push_back(pos + file_offset);
       }

@@ -7,6 +7,41 @@
 
 namespace vroom {
 
+inline bool
+is_comment(const char* begin, const char* end, const std::string& comment) {
+  if (comment.empty() || comment.size() >= static_cast<size_t>(end - begin)) {
+    return false;
+  }
+
+  return strncmp(comment.data(), begin, comment.size()) == 0;
+}
+
+template <typename T>
+inline size_t skip_rest_of_line(const T& source, size_t start) {
+  auto out = memchr(source.data() + start, '\n', source.size() - start);
+  if (!out) {
+    return (source.size());
+  }
+  return static_cast<const char*>(out) - source.data();
+}
+
+inline bool
+is_empty_line(const char* begin, const char* end, const bool skip_empty_lines) {
+  if (!skip_empty_lines) {
+    return false;
+  }
+
+  if (skip_empty_lines && *begin == '\n') {
+    return true;
+  }
+
+  while (begin < end && (*begin == ' ' || *begin == '\t' || *begin == '\r')) {
+    ++begin;
+  }
+
+  return *begin == '\n';
+}
+
 inline bool is_blank_or_comment_line(
     const char* begin,
     const char* end,
@@ -20,7 +55,7 @@ inline bool is_blank_or_comment_line(
     return true;
   }
 
-  while (begin < end && (*begin == ' ' || *begin == '\t')) {
+  while (begin < end && (*begin == ' ' || *begin == '\t' || *begin == '\r')) {
     ++begin;
   }
 
@@ -77,7 +112,7 @@ template <typename T>
 static size_t find_next_newline(
     const T& source,
     size_t start,
-    const char* comment,
+    const std::string& comment,
     const bool skip_empty_lines,
     bool embedded_nl) {
 
@@ -96,11 +131,11 @@ static size_t find_next_newline(
   while (begin && begin < end) {
     begin = static_cast<const char*>(memchr(begin, '\n', end - begin));
     break;
-    // if (!(begin && begin + 1 < end &&
-    // is_blank_or_comment_line(
-    // begin + 1, end, comment, skip_empty_lines))) {
-    // break;
-    //}
+    if (!(begin && begin + 1 < end &&
+          is_blank_or_comment_line(
+              begin + 1, end, comment, skip_empty_lines))) {
+      break;
+    }
   }
 
   if (!begin) {
