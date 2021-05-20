@@ -50,8 +50,7 @@
     if (nread == 0) {
       /* When we come here the file is completely read.
          This still could mean there are some unused
-         characters in the inbuf.  Put them back.  */
-      // if (lseek(fd, -insize, SEEK_CUR) == -1)
+         characters in the inbuf. */
       result = -1;
 
       /* Now write out the byte sequence to get into the
@@ -76,9 +75,7 @@
       } else {
         /* It is a real problem.  Maybe we ran out of
            space in the output buffer or we have invalid
-           input.  In any case back the file pointer to
-           the position of the last processed byte.  */
-        // lseek(fd, -insize, SEEK_CUR);
+           input.  */
         result = -1;
         close(in_con);
         close(out_con);
