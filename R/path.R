@@ -1,5 +1,5 @@
-encoding_needs_conversion <- function(encoding) {
-  !encoding %in% c("UTF-8", "latin1", "")
+is_ascii_compatible <- function(encoding) {
+  identical(iconv(list(charToRaw("\n")), from = "ASCII", to = encoding, toRaw = TRUE)[[1]], charToRaw("\n"))
 }
 
 reencode_path <- function(path, encoding) {
