@@ -9,6 +9,7 @@ vroom_lines(
   n_max = Inf,
   skip = 0,
   na = character(),
+  skip_empty_rows = FALSE,
   locale = default_locale(),
   altrep = TRUE,
   altrep_opts = deprecated(),
@@ -26,6 +27,10 @@ supplied any commented lines are ignored \emph{after} skipping.}
 
 \item{na}{Character vector of strings to interpret as missing values. Set this
 option to \code{character()} to indicate no missing values.}
+
+\item{skip_empty_rows}{Should blank rows be ignored altogether? i.e. If this
+option is \code{TRUE} then blank rows will not be represented at all.  If it is
+\code{FALSE} then they will be represented by \code{NA} values in all the columns.}
 
 \item{locale}{The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
