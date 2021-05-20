@@ -1,3 +1,4 @@
+#include <cerrno>
 #include <cpp11/R.hpp>
 
 #include "R_ext/Riconv.h"
