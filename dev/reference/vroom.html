@@ -170,6 +170,7 @@
   na <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>""</span>, <span class='st'>"NA"</span><span class='op'>)</span>,
   quote <span class='op'>=</span> <span class='st'>"\""</span>,
   comment <span class='op'>=</span> <span class='st'>""</span>,
+  skip_empty_rows <span class='op'>=</span> <span class='cn'>TRUE</span>,
   trim_ws <span class='op'>=</span> <span class='cn'>TRUE</span>,
   escape_double <span class='op'>=</span> <span class='cn'>TRUE</span>,
   escape_backslash <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -273,6 +274,12 @@ option to <code><a href='https://rdrr.io/r/base/character.html'>character()</a><
       <th>comment</th>
       <td><p>A string used to identify comments. Any text after the
 comment characters will be silently ignored.</p></td>
+    </tr>
+    <tr>
+      <th>skip_empty_rows</th>
+      <td><p>Should blank rows be ignored altogether? i.e. If this
+option is <code>TRUE</code> then blank rows will not be represented at all.  If it is
+<code>FALSE</code> then they will be represented by <code>NA</code> values in all the columns.</p></td>
     </tr>
     <tr>
       <th>trim_ws</th>
