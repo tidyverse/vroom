@@ -44,7 +44,7 @@ public:
       const size_t skip,
       size_t n_max,
       const char* comment,
-      const bool skip_empty_lines,
+      const bool skip_empty_rows,
       std::shared_ptr<vroom_errors> errors,
       const size_t num_threads,
       const bool progress,
@@ -310,7 +310,7 @@ public:
       const char* delim,
       const char quote,
       const std::string& comment,
-      const bool skip_empty_lines,
+      const bool skip_empty_rows,
       csv_state& state,
       const size_t start,
       const size_t end,
@@ -369,7 +369,7 @@ public:
       }
 
       if (state == RECORD_START) {
-        if (is_empty_line(buf + pos, buf + end, skip_empty_lines)) {
+        if (is_empty_line(buf + pos, buf + end, skip_empty_rows)) {
           pos = skip_rest_of_line(source, pos);
           ++pos;
           continue;

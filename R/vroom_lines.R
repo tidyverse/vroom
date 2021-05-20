@@ -41,7 +41,7 @@ vroom_lines <- function(file, n_max = Inf, skip = 0,
   out <- vroom_(file, delim = "\1", col_names = "V1", col_types = cols(col_character()),
     id = NULL, skip = skip, col_select = col_select, name_repair = "minimal",
     na = na, quote = "", trim_ws = FALSE, escape_double = FALSE,
-    escape_backslash = FALSE, comment = "", skip_empty_lines = FALSE,
+    escape_backslash = FALSE, comment = "", skip_empty_rows = FALSE,
     locale = locale, guess_max = 0, n_max = n_max,
     altrep = vroom_altrep(altrep), num_threads = num_threads,
     progress = progress

@@ -17,6 +17,7 @@ vroom_fwf(
   locale = default_locale(),
   na = c("", "NA"),
   comment = "",
+  skip_empty_rows = TRUE,
   trim_ws = TRUE,
   skip = 0,
   n_max = Inf,
@@ -111,6 +112,10 @@ option to \code{character()} to indicate no missing values.}
 
 \item{comment}{A string used to identify comments. Any text after the
 comment characters will be silently ignored.}
+
+\item{skip_empty_rows}{Should blank rows be ignored altogether? i.e. If this
+option is \code{TRUE} then blank rows will not be represented at all.  If it is
+\code{FALSE} then they will be represented by \code{NA} values in all the columns.}
 
 \item{trim_ws}{Should leading and trailing whitespace be trimmed from
 each field before parsing it?}

@@ -134,7 +134,7 @@ std::shared_ptr<vroom::index> make_delimited_index(
     const size_t skip,
     const size_t n_max,
     const char* comment,
-    const bool skip_empty_lines,
+    const bool skip_empty_rows,
     std::shared_ptr<vroom_errors> errors,
     const size_t num_threads,
     const bool progress) {
@@ -157,7 +157,7 @@ std::shared_ptr<vroom::index> make_delimited_index(
         skip,
         n_max,
         comment,
-        skip_empty_lines,
+        skip_empty_rows,
         errors,
         get_env("VROOM_CONNECTION_SIZE", 1 << 17),
         progress);
@@ -175,7 +175,7 @@ std::shared_ptr<vroom::index> make_delimited_index(
       skip,
       n_max,
       comment,
-      skip_empty_lines,
+      skip_empty_rows,
       errors,
       num_threads,
       progress);
@@ -236,7 +236,7 @@ index_collection::index_collection(
     const size_t skip,
     const size_t n_max,
     const char* comment,
-    const bool skip_empty_lines,
+    const bool skip_empty_rows,
     std::shared_ptr<vroom_errors> errors,
     const size_t num_threads,
     const bool progress)
@@ -253,7 +253,7 @@ index_collection::index_collection(
       skip,
       n_max,
       comment,
-      skip_empty_lines,
+      skip_empty_rows,
       errors,
       num_threads,
       progress);
@@ -275,7 +275,7 @@ index_collection::index_collection(
         skip,
         n_max,
         comment,
-        skip_empty_lines,
+        skip_empty_rows,
         errors,
         num_threads,
         progress);
@@ -295,7 +295,7 @@ std::shared_ptr<vroom::index> make_fixed_width_index(
     const bool trim_ws,
     const size_t skip,
     const char* comment,
-    const bool skip_empty_lines,
+    const bool skip_empty_rows,
     const size_t n_max,
     const bool progress) {
 
@@ -313,7 +313,7 @@ std::shared_ptr<vroom::index> make_fixed_width_index(
         trim_ws,
         skip,
         comment,
-        skip_empty_lines,
+        skip_empty_rows,
         n_max,
         progress,
         get_env("VROOM_CONNECTION_SIZE", 1 << 17));
@@ -326,7 +326,7 @@ std::shared_ptr<vroom::index> make_fixed_width_index(
         trim_ws,
         skip,
         comment,
-        skip_empty_lines,
+        skip_empty_rows,
         n_max,
         progress);
   }
@@ -339,7 +339,7 @@ index_collection::index_collection(
     const bool trim_ws,
     const size_t skip,
     const char* comment,
-    const bool skip_empty_lines,
+    const bool skip_empty_rows,
     const size_t n_max,
     const bool progress)
     : rows_(0), columns_(0) {
@@ -351,7 +351,7 @@ index_collection::index_collection(
       trim_ws,
       skip,
       comment,
-      skip_empty_lines,
+      skip_empty_rows,
       n_max,
       progress);
 
@@ -368,7 +368,7 @@ index_collection::index_collection(
         trim_ws,
         skip,
         comment,
-        skip_empty_lines,
+        skip_empty_rows,
         n_max,
         progress);
 

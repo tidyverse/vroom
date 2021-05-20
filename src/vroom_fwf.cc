@@ -18,7 +18,7 @@
     cpp11::sexp name_repair,
     size_t skip,
     const char* comment,
-    bool skip_empty_lines,
+    bool skip_empty_rows,
     ptrdiff_t n_max,
     SEXP id,
     cpp11::strings na,
@@ -45,7 +45,7 @@
       trim_ws,
       skip,
       comment,
-      skip_empty_lines,
+      skip_empty_rows,
       n_max,
       progress);
 
@@ -113,7 +113,7 @@ std::vector<bool> find_empty_cols(Iterator begin, Iterator end, ptrdiff_t n) {
   }
 
   size_t s =
-      find_first_line(mmap, skip, comment.data(), /* skip_empty_lines */ true);
+      find_first_line(mmap, skip, comment.data(), /* skip_empty_rows */ true);
 
   std::vector<bool> empty = find_empty_cols(mmap.begin() + s, mmap.end(), n);
   std::vector<int> begin, end;

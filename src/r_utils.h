@@ -36,7 +36,7 @@ static char guess_delim(
       source,
       start,
       /* comment */ "",
-      /* skip_empty_lines */ false,
+      /* skip_empty_rows */ false,
       /* embedded_nl */ true);
   while (nl > start && nl <= end && guess_max > 0) {
     auto str = std::string(source.data() + start, nl - start);
@@ -46,7 +46,7 @@ static char guess_delim(
         source,
         start,
         /* comment */ "",
-        /* skip_empty_lines */ false,
+        /* skip_empty_rows */ false,
         /* embededd_nl */ true);
     --guess_max;
   }

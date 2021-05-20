@@ -111,7 +111,7 @@ test_that("Can parse a factor with levels of NA and empty string", {
   test_vroom(x_in, col_names = FALSE,
     col_types = list(X1 = col_factor(levels = c("NA", "NB", "NC", ""))),
     na = character(),
-    skip_empty_lines = FALSE,
+    skip_empty_rows = FALSE,
     equals = tibble::tibble(X1 = factor(x, levels = c("NA", "NB", "NC", "")))
   )
 })

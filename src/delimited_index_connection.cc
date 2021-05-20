@@ -30,7 +30,7 @@ delimited_index_connection::delimited_index_connection(
     const size_t skip,
     size_t n_max,
     const char* comment,
-    const bool skip_empty_lines,
+    const bool skip_empty_rows,
     const std::shared_ptr<vroom_errors> errors,
     const size_t chunk_size,
     const bool progress) {
@@ -82,7 +82,7 @@ delimited_index_connection::delimited_index_connection(
   }
 
   // Parse header
-  size_t start = find_first_line(buf[i], skip_, comment_, skip_empty_lines);
+  size_t start = find_first_line(buf[i], skip_, comment_, skip_empty_rows);
 
   if (delim == nullptr) {
     delim_ = std::string(1, guess_delim(buf[i], start, 5, sz));
@@ -93,7 +93,7 @@ delimited_index_connection::delimited_index_connection(
   delim_len_ = delim_.length();
 
   size_t first_nl = find_next_newline(
-      buf[i], start, comment, skip_empty_lines, /* embededd_nl */ true);
+      buf[i], start, comment, skip_empty_rows, /* embededd_nl */ true);
 
   bool single_line = first_nl == buf[i].size() - 1;
 
@@ -141,7 +141,7 @@ delimited_index_connection::delimited_index_connection(
       delim_.c_str(),
       quote,
       comment_,
-      skip_empty_lines,
+      skip_empty_rows,
       state,
       start,
       first_nl + 1,
@@ -181,7 +181,7 @@ delimited_index_connection::delimited_index_connection(
             delim_.c_str(),
             quote,
             comment_,
-            skip_empty_lines,
+            skip_empty_rows,
             state,
             first_nl + 1,
             sz,

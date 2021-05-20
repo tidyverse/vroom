@@ -26,12 +26,12 @@ inline size_t skip_rest_of_line(const T& source, size_t start) {
 }
 
 inline bool
-is_empty_line(const char* begin, const char* end, const bool skip_empty_lines) {
-  if (!skip_empty_lines) {
+is_empty_line(const char* begin, const char* end, const bool skip_empty_rows) {
+  if (!skip_empty_rows) {
     return false;
   }
 
-  if (skip_empty_lines && *begin == '\n') {
+  if (skip_empty_rows && *begin == '\n') {
     return true;
   }
 
@@ -46,12 +46,12 @@ inline bool is_blank_or_comment_line(
     const char* begin,
     const char* end,
     const std::string& comment,
-    const bool skip_empty_lines) {
-  if (!skip_empty_lines && comment.empty()) {
+    const bool skip_empty_rows) {
+  if (!skip_empty_rows && comment.empty()) {
     return false;
   }
 
-  if (skip_empty_lines && *begin == '\n') {
+  if (skip_empty_rows && *begin == '\n') {
     return true;
   }
 
@@ -59,7 +59,7 @@ inline bool is_blank_or_comment_line(
     ++begin;
   }
 
-  if ((skip_empty_lines && *begin == '\n') ||
+  if ((skip_empty_rows && *begin == '\n') ||
       (!comment.empty() &&
        strncmp(begin, comment.data(), comment.size()) == 0)) {
     return true;
@@ -113,7 +113,7 @@ static size_t find_next_newline(
     const T& source,
     size_t start,
     const std::string& comment,
-    const bool skip_empty_lines,
+    const bool skip_empty_rows,
     bool embedded_nl) {
 
   if (start >= source.size()) {
@@ -133,7 +133,7 @@ static size_t find_next_newline(
     break;
     if (!(begin && begin + 1 < end &&
           is_blank_or_comment_line(
-              begin + 1, end, comment, skip_empty_lines))) {
+              begin + 1, end, comment, skip_empty_rows))) {
       break;
     }
   }
@@ -233,7 +233,7 @@ size_t find_first_line(
     const T& source,
     size_t skip,
     const char* comment,
-    const bool skip_empty_lines) {
+    const bool skip_empty_rows) {
 
   auto begin = skip_bom(source);
   /* Skip skip parameters, comments and blank lines */
@@ -243,13 +243,13 @@ size_t find_first_line(
                                                source.data() + begin,
                                                source.data() + source.size(),
                                                comment,
-                                               skip_empty_lines)) ||
+                                               skip_empty_rows)) ||
              skip > 0) {
     begin = find_next_newline(
                 source,
                 begin,
                 "",
-                /* skip_empty_lines */ false,
+                /* skip_empty_rows */ false,
                 /* embedded_nl */ true) +
             1;
     skip = skip > 0 ? skip - 1 : skip;
