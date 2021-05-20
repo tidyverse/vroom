@@ -651,3 +651,24 @@ test_that("leading whitespace effects guessing", {
   out <- vroom(I('a,b,c\n 1,2,3\n'), delim = ",", trim_ws = TRUE, progress = FALSE, col_types = list())
   expect_type(out[[1]], "double")
 })
+
+test_that("UTF-16LE encodings can be read", {
+  bom <- as.raw(c(255, 254))
+  # This is the text.
+  text <- "x,y\n\U104371,2\n" # This is a 4 byte UTF-16 character from https://en.wikipedia.org/wiki/UTF-16
+
+  # Converted to UTF-16LE
+  text_utf16 <- iconv(text,from="UTF-8", to="UTF-16LE", toRaw = TRUE)[[1]]
+
+  # Write the BOM and the text to a file
+  tmp_file_name <- tempfile()
+  fd <- file(tmp_file_name, "wb")
+  writeBin(bom, fd)
+  writeBin(text_utf16, fd)
+  close(fd)
+
+  # Whether LE or BE is determined automatically by the BOM
+  out <- vroom(tmp_file_name, locale = locale(encoding = "UTF-16"), col_types = "ci")
+  expect_equal(out$x, "\U104371")
+  expect_equal(out$y, 2)
+})

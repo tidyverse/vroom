@@ -122,6 +122,11 @@ vroom <- function(
 
   file <- standardise_path(file)
 
+  if (encoding_needs_conversion(locale$encoding)) {
+    file <- reencode_path(file, locale$encoding)
+    locale$encoding <- "UTF-8"
+  }
+
   if (length(file) == 0 || (n_max == 0 & identical(col_names, FALSE))) {
     return(tibble::tibble())
   }

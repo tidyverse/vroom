@@ -43,6 +43,11 @@ vroom_fwf <- function(file,
 
   file <- standardise_path(file)
 
+  if (encoding_needs_conversion(locale$encoding)) {
+    file <- reencode_path(file, locale$encoding)
+    locale$encoding <- "UTF-8"
+  }
+
   if (length(file) == 0 || (n_max == 0 & identical(col_positions$col_names, FALSE))) {
     out <- tibble::tibble()
     class(out) <- c("spec_tbl_df", class(out))

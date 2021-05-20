@@ -47,6 +47,13 @@ extern "C" SEXP _vroom_guess_type_(SEXP input, SEXP na, SEXP locale, SEXP guess_
     return cpp11::as_sexp(guess_type_(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(input), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(na), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(locale), cpp11::as_cpp<cpp11::decay_t<bool>>(guess_integer)));
   END_CPP11
 }
+// iconv_file.cc
+size_t convert_connection(SEXP in_con, SEXP out_con, std::string from, std::string to);
+extern "C" SEXP _vroom_convert_connection(SEXP in_con, SEXP out_con, SEXP from, SEXP to) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(convert_connection(cpp11::as_cpp<cpp11::decay_t<SEXP>>(in_con), cpp11::as_cpp<cpp11::decay_t<SEXP>>(out_con), cpp11::as_cpp<cpp11::decay_t<std::string>>(from), cpp11::as_cpp<cpp11::decay_t<std::string>>(to)));
+  END_CPP11
+}
 // vroom_dttm.cc
 cpp11::writable::doubles utctime_(cpp11::integers year, cpp11::integers month, cpp11::integers day, cpp11::integers hour, cpp11::integers min, cpp11::integers sec, cpp11::doubles psec);
 extern "C" SEXP _vroom_utctime_(SEXP year, SEXP month, SEXP day, SEXP hour, SEXP min, SEXP sec, SEXP psec) {
@@ -122,6 +129,7 @@ extern "C" SEXP _vroom_vroom_rle(SEXP input) {
 
 extern "C" {
 /* .Call calls */
+extern SEXP _vroom_convert_connection(SEXP, SEXP, SEXP, SEXP);
 extern SEXP _vroom_force_materialization(SEXP);
 extern SEXP _vroom_gen_character_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _vroom_guess_type_(SEXP, SEXP, SEXP, SEXP);
@@ -140,6 +148,7 @@ extern SEXP _vroom_vroom_write_connection_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, S
 extern SEXP _vroom_whitespace_columns_(SEXP, SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_vroom_convert_connection",      (DL_FUNC) &_vroom_convert_connection,       4},
     {"_vroom_force_materialization",   (DL_FUNC) &_vroom_force_materialization,    1},
     {"_vroom_gen_character_",          (DL_FUNC) &_vroom_gen_character_,           6},
     {"_vroom_guess_type_",             (DL_FUNC) &_vroom_guess_type_,              4},

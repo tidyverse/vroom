@@ -1,3 +1,24 @@
+encoding_needs_conversion <- function(encoding) {
+  !encoding %in% c("UTF-8", "latin1", "")
+}
+
+reencode_path <- function(path, encoding) {
+  if (length(path) > 1) {
+    stop(sprintf("Reading files of encoding '%s' can only be done for single files at a time", encoding), call. = FALSE)
+  }
+
+  if (inherits(path[[1]], "connection")) {
+    in_con <- path[[1]]
+  } else {
+    in_con <- file(path[[1]], open = "rb")
+  }
+  out_file <- tempfile()
+  out_con <- file(out_file, open = "wb")
+  convert_connection(in_con, out_con, encoding, "UTF-8")
+  withr::defer(unlink(out_file), envir = parent.frame())
+  return(list(out_file))
+}
+
 # These functions adapted from https://github.com/tidyverse/readr/blob/192cb1ca5c445e359f153d2259391e6d324fd0a2/R/source.R
 standardise_path <- function(path) {
   if (is.raw(path)) {

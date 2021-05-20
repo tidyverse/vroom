@@ -24,6 +24,10 @@ guess_type_ <- function(input, na, locale, guess_integer) {
   .Call(`_vroom_guess_type_`, input, na, locale, guess_integer)
 }
 
+convert_connection <- function(in_con, out_con, from, to) {
+  .Call(`_vroom_convert_connection`, in_con, out_con, from, to)
+}
+
 utctime_ <- function(year, month, day, hour, min, sec, psec) {
   .Call(`_vroom_utctime_`, year, month, day, hour, min, sec, psec)
 }

@@ -25,6 +25,11 @@ vroom_lines <- function(file, n_max = Inf, skip = 0,
 
   file <- standardise_path(file)
 
+  if (encoding_needs_conversion(locale$encoding)) {
+    file <- reencode_path(file, locale$encoding)
+    locale$encoding <- "UTF-8"
+  }
+
   if (n_max < 0 || is.infinite(n_max)) {
     n_max <- -1
   }

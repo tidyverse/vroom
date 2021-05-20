@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()`, `vroom_fwf()` and `vroom_lines()` now support multi-byte encodings such as UTF-16 and UTF-32 by converting these files to UTF-8 under the hood (#138)
+
 * `vroom_fwf()` gains a `skip_empty_rows` argument to skip empty lines (https://github.com/tidyverse/readr/issues/1211)
 
 * `vroom_fwf()` now respects `n_max`, as intended (#334)
