@@ -186,12 +186,12 @@
 #&gt; $gear:	altrep:false	type: double	length:32
 #&gt; $carb:	altrep:false	type: double	length:32</div><div class='input'>
 <span class='va'>mt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vroom.html'>vroom</a></span><span class='op'>(</span><span class='fu'><a href='vroom_example.html'>vroom_example</a></span><span class='op'>(</span><span class='st'>"mtcars.csv"</span><span class='op'>)</span>, <span class='st'>","</span>, altrep <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"chr"</span>, <span class='st'>"dbl"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows: </span><span style='color: #0000BB;'>32</span><span> </span><span style='font-weight: bold;'>Columns: </span><span style='color: #0000BB;'>12</span><span></span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Column specification</span><span> </span><span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span><span></span>
-#&gt; <span class='message'></span><span style='font-weight: bold;'>Delimiter:</span><span> ","</span>
-#&gt; <span class='message'></span><span style='color: #BB0000;'>chr</span><span>  (1): model</span>
-#&gt; <span class='message'></span><span style='color: #00BB00;'>dbl</span><span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Use </span><span style='color: #262626;background-color: #DADADA;'>`spec()`</span><span> to retrieve the full column specification for this data.</span>
-#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Specify the column types or set </span><span style='color: #262626;background-color: #DADADA;'>`show_col_types = FALSE`</span><span> to quiet this message.</span></div><div class='input'><span class='fu'>vroom_str</span><span class='op'>(</span><span class='va'>mt</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows: </span><span style='color: #0000BB;'>32</span> <span style='font-weight: bold;'>Columns: </span><span style='color: #0000BB;'>12</span></span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>──</span> <span style='font-weight: bold;'>Column specification</span> <span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span></span>
+#&gt; <span class='message'><span style='font-weight: bold;'>Delimiter:</span> ","</span>
+#&gt; <span class='message'><span style='color: #BB0000;'>chr</span>  (1): model</span>
+#&gt; <span class='message'><span style='color: #00BB00;'>dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> Use <span style='color: #262626; background-color: #DADADA;'>`spec()`</span> to retrieve the full column specification for this data.</span>
+#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> Specify the column types or set <span style='color: #262626; background-color: #DADADA;'>`show_col_types = FALSE`</span> to quiet this message.</span></div><div class='input'><span class='fu'>vroom_str</span><span class='op'>(</span><span class='va'>mt</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 'spec_tbl_df', 'tbl_df', 'tbl', and 'data.frame': 32 obs., 12 vars.:
 #&gt; $model:	altrep:true	type:vroom::vroom_chr	length:32	materialized:false
 #&gt; $mpg:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
@@ -204,7 +204,7 @@
 #&gt; $vs:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
 #&gt; $am:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
 #&gt; $gear:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $carb:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false</div></span></pre>
+#&gt; $carb:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
