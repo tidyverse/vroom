@@ -23,8 +23,8 @@ test_vroom <- function(content, delim = ",", col_types = list(), ..., equals) {
   if (!file.exists(content)) {
     tf <- tempfile()
     on.exit(unlink(tf))
-    out_con <- file(tf, "wb")
-    writeLines(content, out_con, sep = "")
+    out_con <- file(tf, "wb", encoding = "UTF-8")
+    writeBin(charToRaw(content), out_con)
     close(out_con)
 
     con <- file(tf, "rb")
