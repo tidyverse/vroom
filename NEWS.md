@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` now correctly skips lines with only one quote if the format doesn't use quoting (https://github.com/tidyverse/readr/issues/991#issuecomment-616378446)
+
 * `col_numeric()` now supports `grouping_mark` and `decimal_mark` that are unicode characters, such as U+00A0 which is commonly used as the grouping mark for numbers in France (https://github.com/tidyverse/readr/issues/796).
 
 * `vroom()`, `vroom_fwf()` and `vroom_lines()` now support multi-byte encodings such as UTF-16 and UTF-32 by converting these files to UTF-8 under the hood (#138)

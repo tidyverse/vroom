@@ -77,7 +77,10 @@ delimited_index::delimited_index(
     return;
   }
 
-  size_t start = find_first_line(mmap_, skip_, comment_, skip_empty_rows);
+  bool has_quoted_newlines = quote != '\0';
+
+  size_t start = find_first_line(
+      mmap_, skip_, comment_, skip_empty_rows, has_quoted_newlines);
 
   // If an empty file, or a file with only a newline.
   if (start >= file_size - 1) {
@@ -97,9 +100,9 @@ delimited_index::delimited_index(
   delim_len_ = delim_.length();
 
   size_t first_nl = find_next_newline(
-      mmap_, start, comment_, skip_empty_rows, /* embedded_nl */ true);
+      mmap_, start, comment_, skip_empty_rows, has_quoted_newlines);
   size_t second_nl = find_next_newline(
-      mmap_, first_nl + 1, comment, skip_empty_rows, /* embedded_nl */ true);
+      mmap_, first_nl + 1, comment, skip_empty_rows, has_quoted_newlines);
   size_t one_row_size = second_nl - first_nl;
   size_t guessed_rows =
       one_row_size > 0 ? (file_size - first_nl) / one_row_size * 1.1 : 0;

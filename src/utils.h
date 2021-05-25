@@ -232,7 +232,8 @@ size_t find_first_line(
     const T& source,
     size_t skip,
     const char* comment,
-    const bool skip_empty_rows) {
+    const bool skip_empty_rows,
+    const bool embedded_nl) {
 
   auto begin = skip_bom(source);
   /* Skip skip parameters, comments and blank lines */
@@ -249,7 +250,7 @@ size_t find_first_line(
                 begin,
                 "",
                 /* skip_empty_rows */ false,
-                /* embedded_nl */ true) +
+                embedded_nl) +
             1;
     skip = skip > 0 ? skip - 1 : skip;
   }

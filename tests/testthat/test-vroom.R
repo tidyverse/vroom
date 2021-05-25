@@ -674,10 +674,44 @@ test_that("UTF-16LE encodings can be read", {
 })
 
 test_that("supports unicode grouping and decimal marks (https://github.com/tidyverse/readr/issues/796)", {
-
   test_vroom(I("1\u00A0234\u02D95"),
     locale = locale(grouping_mark = "\u00A0", decimal_mark = "\u02D9"),
     col_types = "n", col_names = FALSE, delim = ",",
     equals = tibble::tibble(X1 = 1234.5)
+  )
+})
+
+test_that("handles quotes within skips", {
+
+  data <- I(paste0(collapse = "\n",
+    c("a\tb\tc",
+      "1a\t1b\t1c",
+      "2a\t2b\t2c\"",
+      "3a\t3b\t3c\"",
+      "4a\t4b\t4c"
+  )))
+
+  test_vroom(data, col_names = c("a", "b", "c"), skip = 2, quote = "", delim = "\t",
+    equals = tibble::tibble(
+      a = c("2a", "3a", "4a"),
+      b = c("2b", "3b", "4b"),
+      c = c("2c\"", "3c\"", "4c")
+    )
+  )
+
+  test_vroom(data, col_names = c("a", "b", "c"), skip = 3, quote = "", delim = "\t",
+    equals = tibble::tibble(
+      a = c("3a", "4a"),
+      b = c("3b", "4b"),
+      c = c("3c\"", "4c")
+    )
+  )
+
+  test_vroom(data, col_names = c("a", "b", "c"), skip = 4, quote = "", delim = "\t",
+    equals = tibble::tibble(
+      a = c("4a"),
+      b = c("4b"),
+      c = c("4c")
+    )
   )
 })

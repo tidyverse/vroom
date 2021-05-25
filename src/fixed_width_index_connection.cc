@@ -56,7 +56,8 @@ fixed_width_index_connection::fixed_width_index_connection(
   buf[i][sz] = '\0';
 
   // Parse header
-  size_t start = find_first_line(buf[i], skip, comment, skip_empty_rows);
+  size_t start = find_first_line(
+      buf[i], skip, comment, skip_empty_rows, /* embedded_nl */ false);
 
   // Check for windows newlines
   size_t first_nl =

@@ -112,8 +112,12 @@ std::vector<bool> find_empty_cols(Iterator begin, Iterator end, ptrdiff_t n) {
     return cpp11::list();
   }
 
-  size_t s =
-      find_first_line(mmap, skip, comment.data(), /* skip_empty_rows */ true);
+  size_t s = find_first_line(
+      mmap,
+      skip,
+      comment.data(),
+      /* skip_empty_rows */ true,
+      /* embedded_nl */ false);
 
   std::vector<bool> empty = find_empty_cols(mmap.begin() + s, mmap.end(), n);
   std::vector<int> begin, end;
