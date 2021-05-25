@@ -157,6 +157,7 @@
 <a href="#vroom-development-version" class="anchor"></a>vroom (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now correctly skips lines with only one quote if the format doesn’t use quoting (<a href="https://github.com/tidyverse/readr/issues/991#issuecomment-616378446" class="uri">https://github.com/tidyverse/readr/issues/991#issuecomment-616378446</a>)</p></li>
 <li><p><code>col_numeric()</code> now supports <code>grouping_mark</code> and <code>decimal_mark</code> that are unicode characters, such as U+00A0 which is commonly used as the grouping mark for numbers in France (<a href="https://github.com/tidyverse/readr/issues/796" class="uri">https://github.com/tidyverse/readr/issues/796</a>).</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code>, <code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> and <code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> now support multi-byte encodings such as UTF-16 and UTF-32 by converting these files to UTF-8 under the hood (<a href='https://github.com/r-lib/vroom/issues/138'>#138</a>)</p></li>
 <li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> gains a <code>skip_empty_rows</code> argument to skip empty lines (<a href="https://github.com/tidyverse/readr/issues/1211" class="uri">https://github.com/tidyverse/readr/issues/1211</a>)</p></li>
