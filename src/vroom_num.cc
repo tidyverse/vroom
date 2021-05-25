@@ -1,4 +1,5 @@
 #include "vroom_num.h"
+#include "utils.h"
 
 enum NumberState { STATE_INIT, STATE_LHS, STATE_RHS, STATE_EXP, STATE_FIN };
 
@@ -6,8 +7,8 @@ enum NumberState { STATE_INIT, STATE_LHS, STATE_RHS, STATE_EXP, STATE_FIN };
 // character
 template <typename Iterator, typename Attr>
 bool parseNumber(
-    char decimalMark,
-    char groupingMark,
+    const std::string& decimalMark,
+    const std::string& groupingMark,
     Iterator& first,
     Iterator& last,
     Attr& res) {
@@ -16,7 +17,8 @@ bool parseNumber(
 
   // Advance to first non-character
   for (; cur != last; ++cur) {
-    if (*cur == '-' || *cur == decimalMark || (*cur >= '0' && *cur <= '9'))
+    if (*cur == '-' || matches(cur, last, decimalMark) ||
+        (*cur >= '0' && *cur <= '9'))
       break;
   }
 
@@ -31,7 +33,7 @@ bool parseNumber(
   bool seenNumber = false, exp_init = true;
   double sign = 1.0, exp_sign = 1.0;
 
-  for (; cur != last; ++cur) {
+  for (; cur < last; ++cur) {
     if (state == STATE_FIN)
       break;
 
@@ -40,7 +42,8 @@ bool parseNumber(
       if (*cur == '-') {
         state = STATE_LHS;
         sign = -1.0;
-      } else if (*cur == decimalMark) {
+      } else if (matches(cur, last, decimalMark)) {
+        cur += decimalMark.size() - 1;
         state = STATE_RHS;
       } else if (*cur >= '0' && *cur <= '9') {
         seenNumber = true;
@@ -51,9 +54,10 @@ bool parseNumber(
       }
       break;
     case STATE_LHS:
-      if (*cur == groupingMark) {
-        // do nothing
-      } else if (*cur == decimalMark) {
+      if (matches(cur, last, groupingMark)) {
+        cur += groupingMark.size() - 1;
+      } else if (matches(cur, last, decimalMark)) {
+        cur += decimalMark.size() - 1;
         state = STATE_RHS;
       } else if (seenNumber && (*cur == 'e' || *cur == 'E')) {
         state = STATE_EXP;
@@ -66,8 +70,8 @@ bool parseNumber(
       }
       break;
     case STATE_RHS:
-      if (*cur == groupingMark) {
-        // do nothing
+      if (matches(cur, last, groupingMark)) {
+        cur += groupingMark.size() - 1;
       } else if (seenNumber && (*cur == 'e' || *cur == 'E')) {
         state = STATE_EXP;
       } else if (*cur >= '0' && *cur <= '9') {

@@ -132,8 +132,7 @@ static size_t find_next_newline(
     begin = static_cast<const char*>(memchr(begin, '\n', end - begin));
     break;
     if (!(begin && begin + 1 < end &&
-          is_blank_or_comment_line(
-              begin + 1, end, comment, skip_empty_rows))) {
+          is_blank_or_comment_line(begin + 1, end, comment, skip_empty_rows))) {
       break;
     }
   }
@@ -256,6 +255,15 @@ size_t find_first_line(
   }
 
   return begin;
+}
+
+inline bool
+matches(const char* start, const char* end, const std::string& needle) {
+  if (end <= start || end - start < needle.size()) {
+    return false;
+  }
+  bool res = strncmp(start, needle.data(), needle.size()) == 0;
+  return res;
 }
 
 } // namespace vroom

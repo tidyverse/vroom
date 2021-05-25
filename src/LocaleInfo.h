@@ -15,7 +15,7 @@ public:
   std::string dateFormat_, timeFormat_;
 
   // LC_NUMERIC
-  char decimalMark_, groupingMark_;
+  std::string decimalMark_, groupingMark_;
 
   // LC_MISC
   std::string tz_;

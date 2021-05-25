@@ -57,7 +57,7 @@ public:
         info.column->begin() + i,
         info.column,
         [&](const char* begin, const char* end) -> double {
-          return bsd_strtod(begin, end, info.locale->decimalMark_);
+          return bsd_strtod(begin, end, info.locale->decimalMark_[0]);
         },
         info.errors,
         "a double",

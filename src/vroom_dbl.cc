@@ -199,7 +199,7 @@ cpp11::doubles read_dbl(vroom_vec_info* info) {
   R_xlen_t n = info->column->size();
 
   cpp11::writable::doubles out(n);
-  const char decimalMark = info->locale->decimalMark_;
+  const char decimalMark = info->locale->decimalMark_[0];
 
   parallel_for(
       n,

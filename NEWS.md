@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `col_numeric()` now supports `grouping_mark` and `decimal_mark` that are unicode characters, such as U+00A0 which is commonly used as the grouping mark for numbers in France (https://github.com/tidyverse/readr/issues/796).
+
 * `vroom()`, `vroom_fwf()` and `vroom_lines()` now support multi-byte encodings such as UTF-16 and UTF-32 by converting these files to UTF-8 under the hood (#138)
 
 * `vroom_fwf()` gains a `skip_empty_rows` argument to skip empty lines (https://github.com/tidyverse/readr/issues/1211)

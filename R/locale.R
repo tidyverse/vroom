@@ -50,7 +50,7 @@ locale <- function(date_names = "en",
     decimal_mark <- if (grouping_mark == ".") "," else "."
   }
 
-  stopifnot(decimal_mark %in% c(".", ","))
+  stopifnot(is.character(decimal_mark), length(decimal_mark) == 1)
   stopifnot(is.character(grouping_mark), length(grouping_mark) == 1)
   if (decimal_mark == grouping_mark) {
     stop("`decimal_mark` and `grouping_mark` must be different", call. = FALSE)

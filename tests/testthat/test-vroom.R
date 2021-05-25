@@ -672,3 +672,12 @@ test_that("UTF-16LE encodings can be read", {
   expect_equal(out$x, "\U104371")
   expect_equal(out$y, 2)
 })
+
+test_that("supports unicode grouping and decimal marks (https://github.com/tidyverse/readr/issues/796)", {
+
+  test_vroom(I("1\u00A0234\u02D95"),
+    locale = locale(grouping_mark = "\u00A0", decimal_mark = "\u02D9"),
+    col_types = "n", col_names = FALSE, delim = ",",
+    equals = tibble::tibble(X1 = 1234.5)
+  )
+})

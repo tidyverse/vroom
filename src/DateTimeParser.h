@@ -457,7 +457,7 @@ private:
   inline bool consumeDouble(double* pOut) {
     if (dateItr_ == dateEnd_ || *dateItr_ == '-' || *dateItr_ == '+')
       return false;
-    return parseDouble(pLocale_->decimalMark_, dateItr_, dateEnd_, *pOut);
+    return parseDouble(pLocale_->decimalMark_[0], dateItr_, dateEnd_, *pOut);
   }
 
   inline bool consumeWhiteSpace() {

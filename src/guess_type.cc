@@ -43,7 +43,8 @@ bool isLogical(const std::string& x, LocaleInfo* /* pLocale */) {
 
 bool isNumber(const std::string& x, LocaleInfo* pLocale) {
   // Leading zero not followed by decimal mark
-  if (x[0] == '0' && x.size() > 1 && x[1] != pLocale->decimalMark_)
+  if (x[0] == '0' && x.size() > 1 &&
+      !matches(x.data() + 1, x.data() + x.size(), pLocale->decimalMark_))
     return false;
 
   auto str = vroom::string(x);
@@ -65,10 +66,11 @@ bool isInteger(const std::string& x, LocaleInfo* /* pLocale */) {
 
 bool isDouble(const std::string& x, LocaleInfo* pLocale) {
   // Leading zero not followed by decimal mark
-  if (x[0] == '0' && x.size() > 1 && x[1] != pLocale->decimalMark_)
+  if (x[0] == '0' && x.size() > 1 && x[1] != pLocale->decimalMark_[0])
     return false;
 
-  double res = bsd_strtod(x.data(), x.data() + x.size(), pLocale->decimalMark_);
+  double res =
+      bsd_strtod(x.data(), x.data() + x.size(), pLocale->decimalMark_[0]);
 
   return !ISNA(res);
 }
