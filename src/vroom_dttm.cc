@@ -5,6 +5,14 @@ double parse_dttm(
     const char* end,
     DateTimeParser& parser,
     const std::string& format) {
+  if (format == "%s") {
+    double out;
+    bool ok = parseDouble('.', begin, end, out);
+    if (!ok) {
+      return NA_REAL;
+    }
+    return out;
+  }
   parser.setDate(begin, end);
   bool res = (format == "") ? parser.parseISO8601() : parser.parse(format);
 
@@ -86,14 +94,7 @@ void init_vroom_dttm(DllInfo* dll) {}
 
   for (int i = 0; i < n; ++i) {
     DateTime dt(
-        year[i],
-        month[i],
-        day[i],
-        hour[i],
-        min[i],
-        sec[i],
-        psec[i],
-        "UTC");
+        year[i], month[i], day[i], hour[i], min[i], sec[i], psec[i], "UTC");
     out[i] = dt.datetime();
   }
 

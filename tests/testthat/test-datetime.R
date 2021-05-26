@@ -123,6 +123,12 @@ test_that("%Z detects named time zones", {
   test_parse_datetime("2010-10-01 01:00 America/Chicago", "%Y-%m-%d %H:%M %Z", locale = ct, expected = ref)
 })
 
+test_that("%Z detects named time zones", {
+  ref <- .POSIXct(1285912800, "UTC")
+
+  test_parse_datetime("1285912800", "%s", expected = ref)
+})
+
 test_that("parse_date returns a double like as.Date()", {
   ref <- as.Date("2001-01-01")
 
