@@ -1,6 +1,6 @@
 ## Test environments
-* local OS X install, R 4.0.0
-* ubuntu 16.04, macOS, win-builder (on GitHub Actions), R 4.0, 3.6, 3.5, 3.4, 3.3
+* local OS X install
+* ubuntu 18.04, macOS, win-builder (on GitHub Actions), R 4.1, 4.0, 3.6, 3.5, 3.4
 
 ## R CMD check results
 
@@ -8,7 +8,8 @@
 
 ## revdepcheck results
 
-We checked 12 reverse dependencies (11 from CRAN + 1 from BioConductor), comparing R CMD check results across CRAN and dev versions of this package.
+We checked 20 reverse dependencies (20 from CRAN), comparing R CMD check
+results across CRAN and dev versions of this package.
 
  * We saw 0 new problems
  * We failed to check 0 packages
