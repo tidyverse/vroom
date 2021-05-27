@@ -78,7 +78,7 @@ VignetteBuilder:
     knitr
 Config/testthat/edition: 3
 Config/testthat/parallel: false
-Consig/Needs/website: nycflights13
+Config/Needs/website: nycflights13
 Copyright: file COPYRIGHTS
 Encoding: UTF-8
 Language: en-US
