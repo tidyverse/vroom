@@ -236,15 +236,15 @@
 <span class="co">#&gt; flights_OO.tsv flights_UA.tsv flights_US.tsv flights_VX.tsv flights_WN.tsv </span>
 <span class="co">#&gt; flights_YV.tsv</span>
 <span class="fu">vroom</span><span class="fu">::</span><span class="fu"><a href="reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">files</span><span class="op">)</span>
-<span class="co">#&gt; Rows: 336,776</span>
-<span class="co">#&gt; Columns: 19</span>
+<span class="co">#&gt; Rows: 336776 Columns: 19</span>
+<span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span>
 <span class="co">#&gt; Delimiter: "\t"</span>
-<span class="co">#&gt; chr  [ 4]: carrier, tailnum, origin, dest</span>
-<span class="co">#&gt; dbl  [14]: year, month, day, dep_time, sched_dep_time, dep_delay, arr_time, sched_arr_time...</span>
-<span class="co">#&gt; dttm [ 1]: time_hour</span>
+<span class="co">#&gt; chr   (4): carrier, tailnum, origin, dest</span>
+<span class="co">#&gt; dbl  (14): year, month, day, dep_time, sched_dep_time, dep_delay, arr_time, ...</span>
+<span class="co">#&gt; dttm  (1): time_hour</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Use `spec()` to retrieve the guessed column specification</span>
-<span class="co">#&gt; Pass a specification to the `col_types` argument to quiet this message</span>
+<span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
+<span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
 <span class="co">#&gt; # A tibble: 336,776 x 19</span>
 <span class="co">#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time</span>
 <span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;</span>
@@ -360,7 +360,7 @@
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/r-lib/vroom/actions"><img src="https://github.com/r-lib/vroom/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://github.com/r-lib/vroom/actions"><img src="https://github.com/r-lib/vroom/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://codecov.io/gh/r-lib/vroom?branch=master"><img src="https://codecov.io/gh/r-lib/vroom/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://cran.r-project.org/package=vroom"><img src="https://www.r-pkg.org/badges/version/vroom" alt="CRAN status"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
