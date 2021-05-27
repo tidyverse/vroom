@@ -295,18 +295,30 @@ const string delimited_index::get_escaped_string(
   }
 
   std::string out;
-  out.reserve(end - begin);
+  bool needs_escaping = false;
+  auto cur = begin;
+  auto prev = begin;
 
-  while (begin < end) {
-    if ((escape_double_ && has_quote && *begin == quote_) ||
-        (escape_backslash_ && *begin == '\\')) {
-      ++begin;
+  while (cur < end) {
+    if ((escape_double_ && has_quote && *cur == quote_) ||
+        (escape_backslash_ && *cur == '\\')) {
+      if (!needs_escaping) {
+        out.reserve(end - begin);
+        needs_escaping = true;
+      }
+      std::copy(prev, cur, std::back_inserter(out));
+      ++cur;
+      prev = cur;
     }
-
-    out.push_back(*begin++);
+    ++cur;
   }
 
-  return out;
+  if (needs_escaping) {
+    std::copy(prev, cur, std::back_inserter(out));
+    return out;
+  }
+
+  return {begin, end};
 }
 
 inline std::pair<size_t, size_t>
