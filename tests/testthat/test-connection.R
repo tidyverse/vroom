@@ -67,10 +67,10 @@ test_that("vroom works with windows newlines and a connection size that lies dir
   tf <- tempfile()
   on.exit(unlink(tf))
 
-  writeChar("1,2\r\na,bbb\r\ne,f\r\n", "out", eos = NULL)
+  writeChar("1,2\r\na,bbb\r\ne,f\r\n", tf, eos = NULL)
 
   withr::with_envvar(c("VROOM_CONNECTION_SIZE" = 12), {
-    x <- vroom(file("out"), col_types = "cc")
+    x <- vroom(file(tf), col_types = "cc")
   })
   expect_equal(x[[1]], c("a", "e"))
 })
