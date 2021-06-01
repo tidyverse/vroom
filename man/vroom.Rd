@@ -109,7 +109,7 @@ comment characters will be silently ignored.}
 option is \code{TRUE} then blank rows will not be represented at all.  If it is
 \code{FALSE} then they will be represented by \code{NA} values in all the columns.}
 
-\item{trim_ws}{Should leading and trailing whitespace be trimmed from
+\item{trim_ws}{Should leading and trailing whitespace (spaces and tabs) be trimmed from
 each field before parsing it?}
 
 \item{escape_double}{Does the file escape quotes by doubling them?
