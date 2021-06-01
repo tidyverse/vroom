@@ -6,6 +6,8 @@
 #include "index.h"
 #include "index_collection.h"
 #include <memory>
+#include <utility>
+
 
 #include "r_utils.h"
 
@@ -16,7 +18,7 @@ using namespace vroom;
 index_collection::full_iterator::full_iterator(
     std::shared_ptr<const index_collection> idx, size_t column)
     : i_(0),
-      idx_(idx),
+      idx_(std::move(idx)),
       column_(column),
       start_(0),
       end_(idx_->indexes_.size() - 1) {

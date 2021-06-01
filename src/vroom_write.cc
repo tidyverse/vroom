@@ -268,24 +268,24 @@ void write_buf_con(const std::vector<char>& buf, SEXP con, bool is_stdout) {
 
 std::vector<SEXPTYPE> get_types(const cpp11::list& input) {
   std::vector<SEXPTYPE> out;
-  for (int col = 0; col < input.size(); ++col) {
-    out.push_back(TYPEOF(input[col]));
+  for (auto col : input) {
+    out.push_back(TYPEOF(col));
   }
   return out;
 }
 
 std::vector<void*> get_ptrs(const cpp11::list& input) {
   std::vector<void*> out;
-  for (int col = 0; col < input.size(); ++col) {
-    switch (TYPEOF(input[col])) {
+  for (auto col : input) {
+    switch (TYPEOF(col)) {
     case REALSXP:
-      out.push_back(REAL(input[col]));
+      out.push_back(REAL(col));
       break;
     case INTSXP:
-      out.push_back(INTEGER(input[col]));
+      out.push_back(INTEGER(col));
       break;
     case LGLSXP:
-      out.push_back(LOGICAL(input[col]));
+      out.push_back(LOGICAL(col));
       break;
     default:
       out.push_back(nullptr);

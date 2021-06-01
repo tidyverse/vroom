@@ -14,22 +14,22 @@ typedef bool (*canParseFun)(const std::string&, LocaleInfo* pLocale);
 
 bool canParse(
     cpp11::strings x, const canParseFun& canParse, LocaleInfo* pLocale) {
-  for (int i = 0; i < x.size(); ++i) {
-    if (x[i] == NA_STRING)
+  for (auto && i : x) {
+    if (i == NA_STRING)
       continue;
 
-    if (x[i].size() == 0)
+    if (i.size() == 0)
       continue;
 
-    if (!canParse(std::string(x[i]), pLocale))
+    if (!canParse(std::string(i), pLocale))
       return false;
   }
   return true;
 }
 
 bool allMissing(cpp11::strings x) {
-  for (int i = 0; i < x.size(); ++i) {
-    if (x[i] != NA_STRING && x[i].size() > 0)
+  for (auto && i : x) {
+    if (i != NA_STRING && i.size() > 0)
       return false;
   }
   return true;
@@ -116,10 +116,10 @@ std::string guess_type__(
     return "logical";
   }
 
-  for (R_xlen_t i = 0; i < input.size(); ++i) {
-    for (R_xlen_t j = 0; j < na.size(); ++j) {
-      if (input[i] == na[j]) {
-        input[i] = NA_STRING;
+  for (auto && i : input) {
+    for (auto && j : na) {
+      if (i == j) {
+        i = NA_STRING;
         break;
       }
     }

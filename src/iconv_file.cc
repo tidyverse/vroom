@@ -74,7 +74,7 @@
 
       /* Now write out the byte sequence to get into the
          initial state if this is necessary.  */
-      Riconv(cd, NULL, NULL, &wrptr, &avail);
+      Riconv(cd, nullptr, nullptr, &wrptr, &avail);
 
       break;
     }

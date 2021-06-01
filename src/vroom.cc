@@ -97,7 +97,7 @@
     return true;
   }
 
-  std::setvbuf(f, NULL, _IONBF, 0);
+  std::setvbuf(f, nullptr, _IONBF, 0);
 
   fseek(f, -1, SEEK_END);
   char c = fgetc(f);

@@ -1,10 +1,10 @@
 #include "Iconv.h"
 #include <cpp11/protect.hpp>
-#include <string.h>
+#include <cstring>
 
 Iconv::Iconv(const std::string& from, const std::string& to) {
   if (from == "UTF-8") {
-    cd_ = NULL;
+    cd_ = nullptr;
   } else {
     cd_ = Riconv_open(to.c_str(), from.c_str());
     if (cd_ == (void*)-1) {
@@ -21,9 +21,9 @@ Iconv::Iconv(const std::string& from, const std::string& to) {
 }
 
 Iconv::~Iconv() {
-  if (cd_ != NULL) {
+  if (cd_ != nullptr) {
     Riconv_close(cd_);
-    cd_ = NULL;
+    cd_ = nullptr;
   }
 }
 
@@ -81,7 +81,7 @@ SEXP safeMakeChar(const char* start, size_t n, bool hasNull) {
 }
 
 SEXP Iconv::makeSEXP(const char* start, const char* end, bool hasNull) {
-  if (cd_ == NULL)
+  if (cd_ == nullptr)
     return safeMakeChar(start, end - start, hasNull);
 
   int n = convert(start, end);
@@ -89,7 +89,7 @@ SEXP Iconv::makeSEXP(const char* start, const char* end, bool hasNull) {
 }
 
 std::string Iconv::makeString(const char* start, const char* end) {
-  if (cd_ == NULL)
+  if (cd_ == nullptr)
     return std::string(start, end);
 
   int n = convert(start, end);
