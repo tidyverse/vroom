@@ -66,7 +66,17 @@ compare_proxy.spec_tbl_df <- function(x) {
   x
 }
 
-#' @export
+# Conditionally exported in zzz.R
+# @export
+as_tibble.spec_tbl_df <- function(x, ...) {
+  attr(x, "spec") <- NULL
+  attr(x, "problems") <- NULL
+  class(x) <- setdiff(class(x), "spec_tbl_df")
+  NextMethod("as_tibble")
+}
+
+# Conditionally exported in zzz.R
+# @export
 all.equal.spec_tbl_df <- function(target, current, ...) {
   attr(target, "spec") <- NULL
   attr(target, "problems") <- NULL
@@ -75,6 +85,15 @@ all.equal.spec_tbl_df <- function(target, current, ...) {
   class(target) <- setdiff(class(target), "spec_tbl_df")
   class(current) <- setdiff(class(current), "spec_tbl_df")
   NextMethod("all.equal")
+}
+
+# Conditionally exported in zzz.R
+# @export
+as.data.frame.spec_tbl_df <- function(x, ...) {
+  attr(x, "spec") <- NULL
+  attr(x, "problems") <- NULL
+  class(x) <- setdiff(class(x), "spec_tbl_df")
+  NextMethod("as.data.frame")
 }
 
 is_rstudio_console <- function() {
