@@ -13,6 +13,8 @@
 [[cpp11::register]] size_t convert_connection(
     SEXP in_con, SEXP out_con, std::string from, std::string to) {
 
+  static auto isOpen = cpp11::package("base")["isOpen"];
+  static auto open = cpp11::package("base")["open"];
   static auto close = cpp11::package("base")["close"];
 
   char inbuf[BUFSIZ];
@@ -21,6 +23,12 @@
   size_t insize = 0;
   int result = 0;
   void* cd;
+
+  bool should_close = !isOpen(in_con);
+
+  if (should_close) {
+    open(in_con, "rb");
+  }
 
   cd = Riconv_open(to.c_str(), from.c_str());
   if (cd == (void*)-1) {
@@ -77,8 +85,10 @@
            space in the output buffer or we have invalid
            input.  */
         result = -1;
-        close(in_con);
-        close(out_con);
+        if (should_close) {
+          close(in_con);
+          close(out_con);
+        }
         cpp11::stop("iconv failed");
         break;
       }
@@ -91,13 +101,17 @@
   }
 
   if (Riconv_close(cd) != 0) {
-    close(in_con);
-    close(out_con);
+    if (should_close) {
+      close(in_con);
+      close(out_con);
+    }
     cpp11::stop("Iconv closed failed");
   }
 
-  close(in_con);
-  close(out_con);
+  if (should_close) {
+    close(in_con);
+    close(out_con);
+  }
 
   return bytes_wrote;
 }
