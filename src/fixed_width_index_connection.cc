@@ -8,6 +8,8 @@
 #include <array>
 #include <fstream>
 #include <future> // std::async, std::future
+#include <utility>
+
 
 #ifdef VROOM_LOG
 #include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
@@ -28,8 +30,8 @@ fixed_width_index_connection::fixed_width_index_connection(
     const bool progress,
     const size_t chunk_size) {
 
-  col_starts_ = col_starts;
-  col_ends_ = col_ends;
+  col_starts_ = std::move(col_starts);
+  col_ends_ = std::move(col_ends);
   trim_ws_ = trim_ws;
 
   filename_ =

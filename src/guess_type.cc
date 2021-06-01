@@ -13,7 +13,7 @@
 typedef bool (*canParseFun)(const std::string&, LocaleInfo* pLocale);
 
 bool canParse(
-    cpp11::strings x, const canParseFun& canParse, LocaleInfo* pLocale) {
+    const cpp11::strings& x, const canParseFun& canParse, LocaleInfo* pLocale) {
   for (auto && i : x) {
     if (i == NA_STRING)
       continue;
@@ -27,7 +27,7 @@ bool canParse(
   return true;
 }
 
-bool allMissing(cpp11::strings x) {
+bool allMissing(const cpp11::strings& x) {
   for (auto && i : x) {
     if (i != NA_STRING && i.size() > 0)
       return false;
@@ -104,7 +104,7 @@ static bool isDateTime(const std::string& x, LocaleInfo* pLocale) {
 
 std::string guess_type__(
     cpp11::writable::strings input,
-    cpp11::strings na,
+    const cpp11::strings& na,
     LocaleInfo* pLocale,
     bool guess_integer = false) {
 
@@ -146,9 +146,9 @@ std::string guess_type__(
 }
 
 [[cpp11::register]] std::string guess_type_(
-    cpp11::strings input,
-    cpp11::strings na,
-    cpp11::list locale,
+    const cpp11::strings& input,
+    const cpp11::strings& na,
+    const cpp11::list& locale,
     bool guess_integer = false) {
   LocaleInfo locale_(locale);
   return guess_type__(input, na, &locale_, guess_integer);

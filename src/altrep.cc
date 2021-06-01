@@ -120,7 +120,7 @@ bool vroom_altrep(SEXP x) {
 #endif
 }
 
-[[cpp11::register]] std::string vroom_str_(cpp11::sexp x) {
+[[cpp11::register]] std::string vroom_str_(const cpp11::sexp& x) {
   std::stringstream ss;
 
 #ifdef HAS_ALTREP

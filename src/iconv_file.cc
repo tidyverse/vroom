@@ -11,7 +11,7 @@
 // https://www.gnu.org/software/libc/manual/html_node/iconv-Examples.html
 
 [[cpp11::register]] size_t convert_connection(
-    SEXP in_con, SEXP out_con, std::string from, std::string to) {
+    SEXP in_con, SEXP out_con, const std::string& from, const std::string& to) {
 
   static auto isOpen = cpp11::package("base")["isOpen"];
   static auto open = cpp11::package("base")["open"];

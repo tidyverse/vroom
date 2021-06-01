@@ -27,10 +27,10 @@ extern "C" SEXP _vroom_vroom_convert(SEXP x) {
   END_CPP11
 }
 // altrep.cc
-std::string vroom_str_(cpp11::sexp x);
+std::string vroom_str_(const cpp11::sexp& x);
 extern "C" SEXP _vroom_vroom_str_(SEXP x) {
   BEGIN_CPP11
-    return cpp11::as_sexp(vroom_str_(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(x)));
+    return cpp11::as_sexp(vroom_str_(cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp&>>(x)));
   END_CPP11
 }
 // gen.cc
@@ -41,24 +41,24 @@ extern "C" SEXP _vroom_gen_character_(SEXP n, SEXP min, SEXP max, SEXP values, S
   END_CPP11
 }
 // guess_type.cc
-std::string guess_type_(cpp11::strings input, cpp11::strings na, cpp11::list locale, bool guess_integer);
+std::string guess_type_(const cpp11::strings& input, const cpp11::strings& na, const cpp11::list& locale, bool guess_integer);
 extern "C" SEXP _vroom_guess_type_(SEXP input, SEXP na, SEXP locale, SEXP guess_integer) {
   BEGIN_CPP11
-    return cpp11::as_sexp(guess_type_(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(input), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(na), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(locale), cpp11::as_cpp<cpp11::decay_t<bool>>(guess_integer)));
+    return cpp11::as_sexp(guess_type_(cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(input), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(na), cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(locale), cpp11::as_cpp<cpp11::decay_t<bool>>(guess_integer)));
   END_CPP11
 }
 // iconv_file.cc
-size_t convert_connection(SEXP in_con, SEXP out_con, std::string from, std::string to);
+size_t convert_connection(SEXP in_con, SEXP out_con, const std::string& from, const std::string& to);
 extern "C" SEXP _vroom_convert_connection(SEXP in_con, SEXP out_con, SEXP from, SEXP to) {
   BEGIN_CPP11
-    return cpp11::as_sexp(convert_connection(cpp11::as_cpp<cpp11::decay_t<SEXP>>(in_con), cpp11::as_cpp<cpp11::decay_t<SEXP>>(out_con), cpp11::as_cpp<cpp11::decay_t<std::string>>(from), cpp11::as_cpp<cpp11::decay_t<std::string>>(to)));
+    return cpp11::as_sexp(convert_connection(cpp11::as_cpp<cpp11::decay_t<SEXP>>(in_con), cpp11::as_cpp<cpp11::decay_t<SEXP>>(out_con), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(from), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(to)));
   END_CPP11
 }
 // vroom_dttm.cc
-cpp11::writable::doubles utctime_(cpp11::integers year, cpp11::integers month, cpp11::integers day, cpp11::integers hour, cpp11::integers min, cpp11::integers sec, cpp11::doubles psec);
+cpp11::writable::doubles utctime_(const cpp11::integers& year, const cpp11::integers& month, const cpp11::integers& day, const cpp11::integers& hour, const cpp11::integers& min, const cpp11::integers& sec, const cpp11::doubles& psec);
 extern "C" SEXP _vroom_utctime_(SEXP year, SEXP month, SEXP day, SEXP hour, SEXP min, SEXP sec, SEXP psec) {
   BEGIN_CPP11
-    return cpp11::as_sexp(utctime_(cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(year), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(month), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(day), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(hour), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(min), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(sec), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(psec)));
+    return cpp11::as_sexp(utctime_(cpp11::as_cpp<cpp11::decay_t<const cpp11::integers&>>(year), cpp11::as_cpp<cpp11::decay_t<const cpp11::integers&>>(month), cpp11::as_cpp<cpp11::decay_t<const cpp11::integers&>>(day), cpp11::as_cpp<cpp11::decay_t<const cpp11::integers&>>(hour), cpp11::as_cpp<cpp11::decay_t<const cpp11::integers&>>(min), cpp11::as_cpp<cpp11::decay_t<const cpp11::integers&>>(sec), cpp11::as_cpp<cpp11::decay_t<const cpp11::doubles&>>(psec)));
   END_CPP11
 }
 // vroom_errors.cpp
@@ -69,61 +69,61 @@ extern "C" SEXP _vroom_vroom_errors_(SEXP errors) {
   END_CPP11
 }
 // vroom_fwf.cc
-cpp11::list vroom_fwf_(cpp11::list inputs, std::vector<int> col_starts, std::vector<int> col_ends, bool trim_ws, cpp11::sexp col_names, cpp11::sexp col_types, cpp11::sexp col_select, cpp11::sexp name_repair, size_t skip, const char* comment, bool skip_empty_rows, ptrdiff_t n_max, SEXP id, cpp11::strings na, cpp11::list locale, ptrdiff_t guess_max, size_t num_threads, size_t altrep, bool progress);
+cpp11::list vroom_fwf_(const cpp11::list& inputs, const std::vector<int>& col_starts, const std::vector<int>& col_ends, bool trim_ws, cpp11::sexp col_names, cpp11::sexp col_types, cpp11::sexp col_select, cpp11::sexp name_repair, size_t skip, const char* comment, bool skip_empty_rows, ptrdiff_t n_max, SEXP id, const cpp11::strings& na, const cpp11::list& locale, ptrdiff_t guess_max, size_t num_threads, size_t altrep, bool progress);
 extern "C" SEXP _vroom_vroom_fwf_(SEXP inputs, SEXP col_starts, SEXP col_ends, SEXP trim_ws, SEXP col_names, SEXP col_types, SEXP col_select, SEXP name_repair, SEXP skip, SEXP comment, SEXP skip_empty_rows, SEXP n_max, SEXP id, SEXP na, SEXP locale, SEXP guess_max, SEXP num_threads, SEXP altrep, SEXP progress) {
   BEGIN_CPP11
-    return cpp11::as_sexp(vroom_fwf_(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(inputs), cpp11::as_cpp<cpp11::decay_t<std::vector<int>>>(col_starts), cpp11::as_cpp<cpp11::decay_t<std::vector<int>>>(col_ends), cpp11::as_cpp<cpp11::decay_t<bool>>(trim_ws), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(col_names), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(col_types), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(col_select), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(name_repair), cpp11::as_cpp<cpp11::decay_t<size_t>>(skip), cpp11::as_cpp<cpp11::decay_t<const char*>>(comment), cpp11::as_cpp<cpp11::decay_t<bool>>(skip_empty_rows), cpp11::as_cpp<cpp11::decay_t<ptrdiff_t>>(n_max), cpp11::as_cpp<cpp11::decay_t<SEXP>>(id), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(na), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(locale), cpp11::as_cpp<cpp11::decay_t<ptrdiff_t>>(guess_max), cpp11::as_cpp<cpp11::decay_t<size_t>>(num_threads), cpp11::as_cpp<cpp11::decay_t<size_t>>(altrep), cpp11::as_cpp<cpp11::decay_t<bool>>(progress)));
+    return cpp11::as_sexp(vroom_fwf_(cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(inputs), cpp11::as_cpp<cpp11::decay_t<const std::vector<int>&>>(col_starts), cpp11::as_cpp<cpp11::decay_t<const std::vector<int>&>>(col_ends), cpp11::as_cpp<cpp11::decay_t<bool>>(trim_ws), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(col_names), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(col_types), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(col_select), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(name_repair), cpp11::as_cpp<cpp11::decay_t<size_t>>(skip), cpp11::as_cpp<cpp11::decay_t<const char*>>(comment), cpp11::as_cpp<cpp11::decay_t<bool>>(skip_empty_rows), cpp11::as_cpp<cpp11::decay_t<ptrdiff_t>>(n_max), cpp11::as_cpp<cpp11::decay_t<SEXP>>(id), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(na), cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(locale), cpp11::as_cpp<cpp11::decay_t<ptrdiff_t>>(guess_max), cpp11::as_cpp<cpp11::decay_t<size_t>>(num_threads), cpp11::as_cpp<cpp11::decay_t<size_t>>(altrep), cpp11::as_cpp<cpp11::decay_t<bool>>(progress)));
   END_CPP11
 }
 // vroom_fwf.cc
-cpp11::list whitespace_columns_(std::string filename, size_t skip, ptrdiff_t n, std::string comment);
+cpp11::list whitespace_columns_(const std::string& filename, size_t skip, ptrdiff_t n, const std::string& comment);
 extern "C" SEXP _vroom_whitespace_columns_(SEXP filename, SEXP skip, SEXP n, SEXP comment) {
   BEGIN_CPP11
-    return cpp11::as_sexp(whitespace_columns_(cpp11::as_cpp<cpp11::decay_t<std::string>>(filename), cpp11::as_cpp<cpp11::decay_t<size_t>>(skip), cpp11::as_cpp<cpp11::decay_t<ptrdiff_t>>(n), cpp11::as_cpp<cpp11::decay_t<std::string>>(comment)));
+    return cpp11::as_sexp(whitespace_columns_(cpp11::as_cpp<cpp11::decay_t<const std::string&>>(filename), cpp11::as_cpp<cpp11::decay_t<size_t>>(skip), cpp11::as_cpp<cpp11::decay_t<ptrdiff_t>>(n), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(comment)));
   END_CPP11
 }
 // vroom_write.cc
-void vroom_write_(cpp11::list input, std::string filename, const char delim, std::string eol, const char* na_str, bool col_names, bool append, size_t options, size_t num_threads, bool progress, size_t buf_lines);
+void vroom_write_(const cpp11::list& input, const std::string& filename, const char delim, const std::string& eol, const char* na_str, bool col_names, bool append, size_t options, size_t num_threads, bool progress, size_t buf_lines);
 extern "C" SEXP _vroom_vroom_write_(SEXP input, SEXP filename, SEXP delim, SEXP eol, SEXP na_str, SEXP col_names, SEXP append, SEXP options, SEXP num_threads, SEXP progress, SEXP buf_lines) {
   BEGIN_CPP11
-    vroom_write_(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(input), cpp11::as_cpp<cpp11::decay_t<std::string>>(filename), cpp11::as_cpp<cpp11::decay_t<const char>>(delim), cpp11::as_cpp<cpp11::decay_t<std::string>>(eol), cpp11::as_cpp<cpp11::decay_t<const char*>>(na_str), cpp11::as_cpp<cpp11::decay_t<bool>>(col_names), cpp11::as_cpp<cpp11::decay_t<bool>>(append), cpp11::as_cpp<cpp11::decay_t<size_t>>(options), cpp11::as_cpp<cpp11::decay_t<size_t>>(num_threads), cpp11::as_cpp<cpp11::decay_t<bool>>(progress), cpp11::as_cpp<cpp11::decay_t<size_t>>(buf_lines));
+    vroom_write_(cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(input), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(filename), cpp11::as_cpp<cpp11::decay_t<const char>>(delim), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(eol), cpp11::as_cpp<cpp11::decay_t<const char*>>(na_str), cpp11::as_cpp<cpp11::decay_t<bool>>(col_names), cpp11::as_cpp<cpp11::decay_t<bool>>(append), cpp11::as_cpp<cpp11::decay_t<size_t>>(options), cpp11::as_cpp<cpp11::decay_t<size_t>>(num_threads), cpp11::as_cpp<cpp11::decay_t<bool>>(progress), cpp11::as_cpp<cpp11::decay_t<size_t>>(buf_lines));
     return R_NilValue;
   END_CPP11
 }
 // vroom_write.cc
-void vroom_write_connection_(cpp11::list input, cpp11::sexp con, const char delim, std::string eol, const char* na_str, bool col_names, size_t options, size_t num_threads, bool progress, size_t buf_lines, bool is_stdout, bool append);
+void vroom_write_connection_(const cpp11::list& input, const cpp11::sexp& con, const char delim, const std::string& eol, const char* na_str, bool col_names, size_t options, size_t num_threads, bool progress, size_t buf_lines, bool is_stdout, bool append);
 extern "C" SEXP _vroom_vroom_write_connection_(SEXP input, SEXP con, SEXP delim, SEXP eol, SEXP na_str, SEXP col_names, SEXP options, SEXP num_threads, SEXP progress, SEXP buf_lines, SEXP is_stdout, SEXP append) {
   BEGIN_CPP11
-    vroom_write_connection_(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(input), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(con), cpp11::as_cpp<cpp11::decay_t<const char>>(delim), cpp11::as_cpp<cpp11::decay_t<std::string>>(eol), cpp11::as_cpp<cpp11::decay_t<const char*>>(na_str), cpp11::as_cpp<cpp11::decay_t<bool>>(col_names), cpp11::as_cpp<cpp11::decay_t<size_t>>(options), cpp11::as_cpp<cpp11::decay_t<size_t>>(num_threads), cpp11::as_cpp<cpp11::decay_t<bool>>(progress), cpp11::as_cpp<cpp11::decay_t<size_t>>(buf_lines), cpp11::as_cpp<cpp11::decay_t<bool>>(is_stdout), cpp11::as_cpp<cpp11::decay_t<bool>>(append));
+    vroom_write_connection_(cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(input), cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp&>>(con), cpp11::as_cpp<cpp11::decay_t<const char>>(delim), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(eol), cpp11::as_cpp<cpp11::decay_t<const char*>>(na_str), cpp11::as_cpp<cpp11::decay_t<bool>>(col_names), cpp11::as_cpp<cpp11::decay_t<size_t>>(options), cpp11::as_cpp<cpp11::decay_t<size_t>>(num_threads), cpp11::as_cpp<cpp11::decay_t<bool>>(progress), cpp11::as_cpp<cpp11::decay_t<size_t>>(buf_lines), cpp11::as_cpp<cpp11::decay_t<bool>>(is_stdout), cpp11::as_cpp<cpp11::decay_t<bool>>(append));
     return R_NilValue;
   END_CPP11
 }
 // vroom_write.cc
-cpp11::strings vroom_format_(cpp11::list input, const char delim, std::string eol, const char* na_str, bool col_names, size_t options);
+cpp11::strings vroom_format_(const cpp11::list& input, const char delim, const std::string& eol, const char* na_str, bool col_names, size_t options);
 extern "C" SEXP _vroom_vroom_format_(SEXP input, SEXP delim, SEXP eol, SEXP na_str, SEXP col_names, SEXP options) {
   BEGIN_CPP11
-    return cpp11::as_sexp(vroom_format_(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(input), cpp11::as_cpp<cpp11::decay_t<const char>>(delim), cpp11::as_cpp<cpp11::decay_t<std::string>>(eol), cpp11::as_cpp<cpp11::decay_t<const char*>>(na_str), cpp11::as_cpp<cpp11::decay_t<bool>>(col_names), cpp11::as_cpp<cpp11::decay_t<size_t>>(options)));
+    return cpp11::as_sexp(vroom_format_(cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(input), cpp11::as_cpp<cpp11::decay_t<const char>>(delim), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(eol), cpp11::as_cpp<cpp11::decay_t<const char*>>(na_str), cpp11::as_cpp<cpp11::decay_t<bool>>(col_names), cpp11::as_cpp<cpp11::decay_t<size_t>>(options)));
   END_CPP11
 }
 // vroom.cc
-SEXP vroom_(cpp11::list inputs, SEXP delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char* comment, const bool skip_empty_rows, size_t skip, ptrdiff_t n_max, bool progress, cpp11::sexp col_names, cpp11::sexp col_types, cpp11::sexp col_select, cpp11::sexp name_repair, SEXP id, cpp11::strings na, cpp11::list locale, ptrdiff_t guess_max, size_t num_threads, size_t altrep);
+SEXP vroom_(const cpp11::list& inputs, SEXP delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char* comment, const bool skip_empty_rows, size_t skip, ptrdiff_t n_max, bool progress, const cpp11::sexp& col_names, cpp11::sexp col_types, cpp11::sexp col_select, cpp11::sexp name_repair, SEXP id, const cpp11::strings& na, const cpp11::list& locale, ptrdiff_t guess_max, size_t num_threads, size_t altrep);
 extern "C" SEXP _vroom_vroom_(SEXP inputs, SEXP delim, SEXP quote, SEXP trim_ws, SEXP escape_double, SEXP escape_backslash, SEXP comment, SEXP skip_empty_rows, SEXP skip, SEXP n_max, SEXP progress, SEXP col_names, SEXP col_types, SEXP col_select, SEXP name_repair, SEXP id, SEXP na, SEXP locale, SEXP guess_max, SEXP num_threads, SEXP altrep) {
   BEGIN_CPP11
-    return cpp11::as_sexp(vroom_(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(inputs), cpp11::as_cpp<cpp11::decay_t<SEXP>>(delim), cpp11::as_cpp<cpp11::decay_t<const char>>(quote), cpp11::as_cpp<cpp11::decay_t<bool>>(trim_ws), cpp11::as_cpp<cpp11::decay_t<bool>>(escape_double), cpp11::as_cpp<cpp11::decay_t<bool>>(escape_backslash), cpp11::as_cpp<cpp11::decay_t<const char*>>(comment), cpp11::as_cpp<cpp11::decay_t<const bool>>(skip_empty_rows), cpp11::as_cpp<cpp11::decay_t<size_t>>(skip), cpp11::as_cpp<cpp11::decay_t<ptrdiff_t>>(n_max), cpp11::as_cpp<cpp11::decay_t<bool>>(progress), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(col_names), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(col_types), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(col_select), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(name_repair), cpp11::as_cpp<cpp11::decay_t<SEXP>>(id), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(na), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(locale), cpp11::as_cpp<cpp11::decay_t<ptrdiff_t>>(guess_max), cpp11::as_cpp<cpp11::decay_t<size_t>>(num_threads), cpp11::as_cpp<cpp11::decay_t<size_t>>(altrep)));
+    return cpp11::as_sexp(vroom_(cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(inputs), cpp11::as_cpp<cpp11::decay_t<SEXP>>(delim), cpp11::as_cpp<cpp11::decay_t<const char>>(quote), cpp11::as_cpp<cpp11::decay_t<bool>>(trim_ws), cpp11::as_cpp<cpp11::decay_t<bool>>(escape_double), cpp11::as_cpp<cpp11::decay_t<bool>>(escape_backslash), cpp11::as_cpp<cpp11::decay_t<const char*>>(comment), cpp11::as_cpp<cpp11::decay_t<const bool>>(skip_empty_rows), cpp11::as_cpp<cpp11::decay_t<size_t>>(skip), cpp11::as_cpp<cpp11::decay_t<ptrdiff_t>>(n_max), cpp11::as_cpp<cpp11::decay_t<bool>>(progress), cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp&>>(col_names), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(col_types), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(col_select), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(name_repair), cpp11::as_cpp<cpp11::decay_t<SEXP>>(id), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(na), cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(locale), cpp11::as_cpp<cpp11::decay_t<ptrdiff_t>>(guess_max), cpp11::as_cpp<cpp11::decay_t<size_t>>(num_threads), cpp11::as_cpp<cpp11::decay_t<size_t>>(altrep)));
   END_CPP11
 }
 // vroom.cc
-bool has_trailing_newline(cpp11::strings filename);
+bool has_trailing_newline(const cpp11::strings& filename);
 extern "C" SEXP _vroom_has_trailing_newline(SEXP filename) {
   BEGIN_CPP11
-    return cpp11::as_sexp(has_trailing_newline(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(filename)));
+    return cpp11::as_sexp(has_trailing_newline(cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(filename)));
   END_CPP11
 }
 // vroom.cc
-SEXP vroom_rle(cpp11::integers input);
+SEXP vroom_rle(const cpp11::integers& input);
 extern "C" SEXP _vroom_vroom_rle(SEXP input) {
   BEGIN_CPP11
-    return cpp11::as_sexp(vroom_rle(cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(input)));
+    return cpp11::as_sexp(vroom_rle(cpp11::as_cpp<cpp11::decay_t<const cpp11::integers&>>(input)));
   END_CPP11
 }
 

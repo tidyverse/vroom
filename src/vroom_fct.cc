@@ -25,7 +25,7 @@ int parse_factor(
 }
 
 cpp11::integers
-read_fct_explicit(vroom_vec_info* info, cpp11::strings levels, bool ordered) {
+read_fct_explicit(vroom_vec_info* info, const cpp11::strings& levels, bool ordered) {
   R_xlen_t n = info->column->size();
 
   cpp11::writable::integers out(n);

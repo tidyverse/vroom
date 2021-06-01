@@ -126,7 +126,7 @@ string index_collection::full_iterator::at(ptrdiff_t n) const {
 }
 
 std::shared_ptr<vroom::index> make_delimited_index(
-    cpp11::sexp in,
+    const cpp11::sexp& in,
     const char* delim,
     const char quote,
     const bool trim_ws,
@@ -137,7 +137,7 @@ std::shared_ptr<vroom::index> make_delimited_index(
     const size_t n_max,
     const char* comment,
     const bool skip_empty_rows,
-    std::shared_ptr<vroom_errors> errors,
+    const std::shared_ptr<vroom_errors>& errors,
     const size_t num_threads,
     const bool progress) {
 
@@ -184,8 +184,8 @@ std::shared_ptr<vroom::index> make_delimited_index(
 }
 
 void check_column_consistency(
-    std::shared_ptr<vroom::index> first,
-    std::shared_ptr<vroom::index> check,
+    const std::shared_ptr<vroom::index>& first,
+    const std::shared_ptr<vroom::index>& check,
     bool has_header,
     size_t i) {
 
@@ -228,7 +228,7 @@ void check_column_consistency(
 
 // Index_collection
 index_collection::index_collection(
-    cpp11::list in,
+    const cpp11::list& in,
     const char* delim,
     const char quote,
     const bool trim_ws,
@@ -239,7 +239,7 @@ index_collection::index_collection(
     const size_t n_max,
     const char* comment,
     const bool skip_empty_rows,
-    std::shared_ptr<vroom_errors> errors,
+    const std::shared_ptr<vroom_errors>& errors,
     const size_t num_threads,
     const bool progress)
     : rows_(0), columns_(0) {
@@ -291,7 +291,7 @@ index_collection::index_collection(
 }
 
 std::shared_ptr<vroom::index> make_fixed_width_index(
-    cpp11::sexp in,
+    const cpp11::sexp& in,
     const std::vector<int>& col_starts,
     const std::vector<int>& col_ends,
     const bool trim_ws,
@@ -335,7 +335,7 @@ std::shared_ptr<vroom::index> make_fixed_width_index(
 }
 
 index_collection::index_collection(
-    cpp11::list in,
+    const cpp11::list& in,
     const std::vector<int>& col_starts,
     const std::vector<int>& col_ends,
     const bool trim_ws,

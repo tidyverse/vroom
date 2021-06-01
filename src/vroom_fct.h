@@ -10,7 +10,7 @@
 using namespace vroom;
 
 cpp11::integers
-read_fct_explicit(vroom_vec_info* info, cpp11::strings levels, bool ordered);
+read_fct_explicit(vroom_vec_info* info, const cpp11::strings& levels, bool ordered);
 
 cpp11::integers read_fct_implicit(vroom_vec_info* info, bool include_na);
 

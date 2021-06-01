@@ -22,7 +22,7 @@ public:
   std::string encoding_;
   Iconv encoder_;
 
-  LocaleInfo(cpp11::list);
+  LocaleInfo(const cpp11::list&);
 };
 
 #endif

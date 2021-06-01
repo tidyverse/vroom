@@ -19,7 +19,7 @@ class index_collection : public index,
 public:
   // For delimited files
   index_collection(
-      cpp11::list in,
+      const cpp11::list& in,
       const char* delim,
       const char quote,
       const bool trim_ws,
@@ -30,13 +30,13 @@ public:
       const size_t n_max,
       const char* comment,
       const bool skip_empty_rows,
-      std::shared_ptr<vroom_errors> errors,
+      const std::shared_ptr<vroom_errors>& errors,
       const size_t num_threads,
       const bool progress);
 
   // For fixed width files
   index_collection(
-      cpp11::list in,
+      const cpp11::list& in,
       const std::vector<int>& col_starts,
       const std::vector<int>& col_ends,
       const bool trim_ws,

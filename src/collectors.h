@@ -115,7 +115,7 @@ inline cpp11::strings read_column_names(
 
 std::string guess_type__(
     cpp11::writable::strings input,
-    cpp11::strings na,
+    const cpp11::strings& na,
     LocaleInfo* locale,
     bool guess_integer);
 
