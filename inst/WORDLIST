@@ -12,9 +12,11 @@ bzip
 centric
 chriswhong
 cpp
+CMD
 Codecov
 csv
 datetime
+de
 dbi
 delim
 Dowle
@@ -52,6 +54,7 @@ pigz
 pixz
 POSIXct
 Preprocess
+purrr
 Rcpp
 Rdatatable
 readr
@@ -67,6 +70,8 @@ Tierney
 tokenizer
 tsv
 tz
+tzdb
+unicode
 UNK
 xz
 rchk
