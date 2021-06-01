@@ -19,28 +19,30 @@ public:
     subset_iterator(
         const iterator& it, const std::shared_ptr<std::vector<size_t>>& indexes)
         : i_(0), it_(it), indexes_(indexes) {}
-    void next() { ++i_; }
-    void prev() { --i_; }
-    void advance(ptrdiff_t n) { i_ += n; }
-    bool equal_to(const base_iterator& other) const {
+    void next() override { ++i_; }
+    void prev() override { --i_; }
+    void advance(ptrdiff_t n) override { i_ += n; }
+    bool equal_to(const base_iterator& other) const override {
       auto other_ = static_cast<const subset_iterator*>(&other);
       return i_ == other_->i_;
     };
-    ptrdiff_t distance_to(const base_iterator& that) const {
+    ptrdiff_t distance_to(const base_iterator& that) const override {
       auto that_ = static_cast<const subset_iterator*>(&that);
       return that_->i_ - i_;
     };
-    string value() const { return *(it_ + (*indexes_)[i_]); };
-    subset_iterator* clone() const {
+    string value() const override { return *(it_ + (*indexes_)[i_]); };
+    subset_iterator* clone() const override {
       auto copy = new subset_iterator(*this);
       return copy;
     };
 
-    string at(ptrdiff_t n) const { return it_[(*indexes_)[n]]; }
+    string at(ptrdiff_t n) const override { return it_[(*indexes_)[n]]; }
 
-    std::string filename() const { return it_.filename(); }
-    size_t index() const { return it_.index(); }
-    size_t position() const { return (it_ + (*indexes_)[i_]).position(); }
+    std::string filename() const override { return it_.filename(); }
+    size_t index() const override { return it_.index(); }
+    size_t position() const override {
+      return (it_ + (*indexes_)[i_]).position();
+    }
 
     virtual ~subset_iterator() {}
   };

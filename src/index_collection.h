@@ -46,11 +46,11 @@ public:
       const size_t n_max,
       const bool progress);
 
-  string get(size_t row, size_t col) const;
+  string get(size_t row, size_t col) const override;
 
-  size_t num_columns() const { return columns_; }
+  size_t num_columns() const override { return columns_; }
 
-  size_t num_rows() const { return rows_; }
+  size_t num_rows() const override { return rows_; }
 
   std::vector<size_t> row_sizes() const {
     std::vector<size_t> out;
@@ -60,7 +60,7 @@ public:
     return out;
   }
 
-  std::string get_delim() const { return indexes_[0]->get_delim(); }
+  std::string get_delim() const override { return indexes_[0]->get_delim(); }
 
 public:
   class full_iterator : public base_iterator {
@@ -75,24 +75,25 @@ public:
 
   public:
     full_iterator(std::shared_ptr<const index_collection> idx, size_t column);
-    void next();
-    void prev();
-    void advance(ptrdiff_t n);
-    inline bool equal_to(const base_iterator& other) const {
+    void next() override;
+    void prev() override;
+    void advance(ptrdiff_t n) override;
+    inline bool equal_to(const base_iterator& other) const override {
       auto other_ = static_cast<const full_iterator*>(&other);
       return i_ == other_->i_ && it_ == other_->it_;
     }
-    ptrdiff_t distance_to(const base_iterator& it) const;
-    string value() const;
-    full_iterator* clone() const;
-    string at(ptrdiff_t n) const;
-    std::string filename() const { return it_.filename(); }
-    size_t index() const { return it_.index(); }
-    size_t position() const { return it_.position(); }
+    ptrdiff_t distance_to(const base_iterator& it) const override;
+    string value() const override;
+    full_iterator* clone() const override;
+    string at(ptrdiff_t n) const override;
+    std::string filename() const override { return it_.filename(); }
+    size_t index() const override { return it_.index(); }
+    size_t position() const override { return it_.position(); }
     virtual ~full_iterator() {}
   };
 
-  std::shared_ptr<vroom::index::column> get_column(size_t column) const {
+  std::shared_ptr<vroom::index::column>
+  get_column(size_t column) const override {
     auto begin = new full_iterator(shared_from_this(), column);
     auto end = new full_iterator(shared_from_this(), column);
     end->advance(rows_);
@@ -100,7 +101,7 @@ public:
     return std::make_shared<vroom::index::column>(begin, end, column);
   }
 
-  std::shared_ptr<index::row> get_row(size_t row) const {
+  std::shared_ptr<index::row> get_row(size_t row) const override {
 
     for (const auto& idx : indexes_) {
 
@@ -114,7 +115,7 @@ public:
     return indexes_[0]->get_header();
   }
 
-  std::shared_ptr<index::row> get_header() const {
+  std::shared_ptr<index::row> get_header() const override {
     return indexes_[0]->get_header();
   }
 

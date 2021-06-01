@@ -64,29 +64,31 @@ public:
           is_first_(column == 0),
           is_last_(column == (idx_->columns_ - 1)),
           i_((idx_->has_header_ * idx_->columns_) + column_) {}
-    void next() { i_ += idx_->columns_; }
-    void prev() { i_ -= idx_->columns_; }
-    void advance(ptrdiff_t n) { i_ += idx_->columns_ * n; }
-    bool equal_to(const base_iterator& it) const {
+    void next() override { i_ += idx_->columns_; }
+    void prev() override { i_ -= idx_->columns_; }
+    void advance(ptrdiff_t n) override { i_ += idx_->columns_ * n; }
+    bool equal_to(const base_iterator& it) const override {
       return i_ == static_cast<const column_iterator*>(&it)->i_;
     }
-    ptrdiff_t distance_to(const base_iterator& it) const {
+    ptrdiff_t distance_to(const base_iterator& it) const override {
       return (static_cast<ptrdiff_t>(
                   static_cast<const column_iterator*>(&it)->i_) -
               static_cast<ptrdiff_t>(i_)) /
              ptrdiff_t(idx_->columns_);
     }
-    string value() const {
+    string value() const override {
       return idx_->get_trimmed_val(i_, is_first_, is_last_);
     }
-    column_iterator* clone() const { return new column_iterator(*this); }
-    string at(ptrdiff_t n) const {
+    column_iterator* clone() const override {
+      return new column_iterator(*this);
+    }
+    string at(ptrdiff_t n) const override {
       size_t i = ((n + idx_->has_header_) * idx_->columns_) + column_;
       return idx_->get_trimmed_val(i, is_first_, is_last_);
     }
-    std::string filename() const { return idx_->filename_; }
-    size_t index() const { return i_ / idx_->columns_; }
-    size_t position() const {
+    std::string filename() const override { return idx_->filename_; }
+    size_t index() const override { return i_ / idx_->columns_; }
+    size_t position() const override {
       size_t begin, end;
       std::tie(begin, end) = idx_->get_cell(i_, is_first_);
       return begin;
@@ -104,30 +106,30 @@ public:
         : idx_(idx),
           row_(row),
           i_((row_ + idx_->has_header_) * idx_->columns_) {}
-    void next() { ++i_; }
-    void prev() { --i_; }
-    void advance(ptrdiff_t n) { i_ += n; }
-    bool equal_to(const base_iterator& it) const {
+    void next() override { ++i_; }
+    void prev() override { --i_; }
+    void advance(ptrdiff_t n) override { i_ += n; }
+    bool equal_to(const base_iterator& it) const override {
       return i_ == static_cast<const row_iterator*>(&it)->i_;
     }
-    ptrdiff_t distance_to(const base_iterator& it) const {
+    ptrdiff_t distance_to(const base_iterator& it) const override {
       return (
           static_cast<ptrdiff_t>(static_cast<const row_iterator*>(&it)->i_) -
           static_cast<ptrdiff_t>(i_));
     }
-    string value() const {
+    string value() const override {
       return idx_->get_trimmed_val(i_, i_ == 0, i_ == (idx_->columns_ - 1));
     }
-    row_iterator* clone() const { return new row_iterator(*this); }
-    string at(ptrdiff_t n) const {
+    row_iterator* clone() const override { return new row_iterator(*this); }
+    string at(ptrdiff_t n) const override {
       size_t i = (row_ + idx_->has_header_) * idx_->columns_ + n;
       return idx_->get_trimmed_val(i, i == 0, i == (idx_->columns_ - 1));
     }
-    std::string filename() const { return idx_->filename_; }
-    size_t index() const {
+    std::string filename() const override { return idx_->filename_; }
+    size_t index() const override {
       return i_ - (row_ + idx_->has_header_) * idx_->columns_;
     }
-    size_t position() const {
+    size_t position() const override {
       size_t begin, end;
       std::tie(begin, end) = idx_->get_cell(i_, i_ == 0);
       return begin;
@@ -137,31 +139,32 @@ public:
 
   delimited_index() : rows_(0), columns_(0){};
 
-  string get(size_t row, size_t col) const;
+  string get(size_t row, size_t col) const override;
 
-  size_t num_columns() const { return columns_; }
+  size_t num_columns() const override { return columns_; }
 
-  size_t num_rows() const { return rows_; }
+  size_t num_rows() const override { return rows_; }
 
   std::string filename() const { return filename_; }
 
-  std::string get_delim() const { return delim_; }
+  std::string get_delim() const override { return delim_; }
 
-  std::shared_ptr<vroom::index::column> get_column(size_t column) const {
+  std::shared_ptr<vroom::index::column>
+  get_column(size_t column) const override {
     auto begin = new column_iterator(shared_from_this(), column);
     auto end = new column_iterator(shared_from_this(), column);
     end->advance(num_rows());
     return std::make_shared<vroom::delimited_index::column>(begin, end, column);
   }
 
-  std::shared_ptr<vroom::index::row> get_row(size_t row) const {
+  std::shared_ptr<vroom::index::row> get_row(size_t row) const override {
     auto begin = new row_iterator(shared_from_this(), row);
     auto end = new row_iterator(shared_from_this(), row);
     end->advance(num_columns());
     return std::make_shared<vroom::delimited_index::row>(begin, end, row);
   }
 
-  std::shared_ptr<vroom::index::row> get_header() const {
+  std::shared_ptr<vroom::index::row> get_header() const override {
     auto begin = new row_iterator(shared_from_this(), -1);
     auto end = new row_iterator(shared_from_this(), -1);
     end->advance(num_columns());
