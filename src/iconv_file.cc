@@ -24,22 +24,35 @@
   int result = 0;
   void* cd;
 
-  bool should_close = !isOpen(in_con);
+  bool should_close_in = !isOpen(in_con);
+  bool should_close_out = !isOpen(out_con);
 
-  if (should_close) {
+  if (should_close_in) {
     open(in_con, "rb");
+  }
+
+  if (should_close_out) {
+    open(out_con, "wb");
   }
 
   cd = Riconv_open(to.c_str(), from.c_str());
   if (cd == (void*)-1) {
     /* Something went wrong.  */
     if (errno == EINVAL) {
-      close(in_con);
-      close(out_con);
+      if (should_close_in) {
+        close(in_con);
+      }
+      if (should_close_out) {
+        close(out_con);
+      }
       cpp11::stop("Can't convert from %s to %s", from.c_str(), to.c_str());
     } else {
-      close(in_con);
-      close(out_con);
+      if (should_close_in) {
+        close(in_con);
+      }
+      if (should_close_out) {
+        close(out_con);
+      }
       cpp11::stop("Iconv initialisation failed");
     }
   }
@@ -85,8 +98,10 @@
            space in the output buffer or we have invalid
            input.  */
         result = -1;
-        if (should_close) {
+        if (should_close_in) {
           close(in_con);
+        }
+        if (should_close_out) {
           close(out_con);
         }
         cpp11::stop("iconv failed");
@@ -101,15 +116,19 @@
   }
 
   if (Riconv_close(cd) != 0) {
-    if (should_close) {
+    if (should_close_in) {
       close(in_con);
+    }
+    if (should_close_out) {
       close(out_con);
     }
     cpp11::stop("Iconv closed failed");
   }
 
-  if (should_close) {
+  if (should_close_in) {
     close(in_con);
+  }
+  if (should_close_out) {
     close(out_con);
   }
 

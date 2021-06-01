@@ -10,10 +10,10 @@ reencode_path <- function(path, encoding) {
   if (inherits(path[[1]], "connection")) {
     in_con <- path[[1]]
   } else {
-    in_con <- file(path[[1]], open = "rb")
+    in_con <- file(path[[1]])
   }
   out_file <- tempfile()
-  out_con <- file(out_file, open = "wb")
+  out_con <- file(out_file)
   convert_connection(in_con, out_con, encoding, "UTF-8")
   withr::defer(unlink(out_file), envir = parent.frame())
   return(list(out_file))
