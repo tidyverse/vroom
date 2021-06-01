@@ -21,7 +21,6 @@
   char wrbuf[BUFSIZ * 4];
   char* wrptr = wrbuf;
   size_t insize = 0;
-  int result = 0;
   void* cd;
 
   bool should_close_in = !isOpen(in_con);
@@ -72,7 +71,6 @@
       /* When we come here the file is completely read.
          This still could mean there are some unused
          characters in the inbuf. */
-      result = -1;
 
       /* Now write out the byte sequence to get into the
          initial state if this is necessary.  */
@@ -97,7 +95,6 @@
         /* It is a real problem.  Maybe we ran out of
            space in the output buffer or we have invalid
            input.  */
-        result = -1;
         if (should_close_in) {
           close(in_con);
         }
