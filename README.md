@@ -229,16 +229,17 @@ issue, so it is recommended you use at least that version.
 
 ## Thanks
 
--   Gabe Becker, [Luke Tierney](https://homepage.divms.uiowa.edu/~luke/)
-    and [Tomas Kalibera](https://github.com/kalibera) for conceiving,
-    Implementing and maintaining the [Altrep
+-   [Gabe Becker](https://twitter.com/groundwalkergmb), [Luke
+    Tierney](https://homepage.divms.uiowa.edu/~luke/) and [Tomas
+    Kalibera](https://github.com/kalibera) for conceiving, Implementing
+    and maintaining the [Altrep
     framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html)
--   Romain François, whose
+-   [Romain François](https://twitter.com/romain_francois), whose
     [Altrepisode](https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
     package and [related
     blog-posts](https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
     were a great guide for creating new Altrep objects in C++.
--   Matt Dowle and the rest of the
+-   [Matt Dowle](https://twitter.com/mattdowle) and the rest of the
     [Rdatatable](https://github.com/Rdatatable) team,
     `data.table::fread()` is blazing fast and great motivation to see
     how fast we could go faster!
