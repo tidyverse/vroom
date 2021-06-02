@@ -82,7 +82,6 @@ Config/Needs/website: nycflights13
 Copyright: file COPYRIGHTS
 Encoding: UTF-8
 Language: en-US
-LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 SystemRequirements: C++11
