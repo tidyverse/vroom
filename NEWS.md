@@ -1,4 +1,4 @@
-# vroom (development version)
+# vroom 1.5.0
 
 ## Major improvements
 
