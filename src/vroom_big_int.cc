@@ -2,6 +2,8 @@
 #include "parallel.h"
 #include <climits>
 
+const long long na<long long>::value = NA_INTEGER64;
+
 // A version of strtoll that doesn't need null terminated strings, to avoid
 // needing to copy the data
 long long vroom_strtoll(const char* begin, const char* end) {

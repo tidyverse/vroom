@@ -14,3 +14,8 @@ test_that("Doubles parse correctly with comma as decimal separator", {
                col_types='d', col_names=FALSE)
   expect_equal(res2[[1]], 23.4)
 })
+
+test_that("NA can be a double value", {
+  test_vroom(I("x\n1\n2\n"), delim = ",", col_types = "d", na = "1",
+    equals = tibble::tibble(x = c(NA_real_, 2)))
+})

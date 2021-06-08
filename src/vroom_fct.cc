@@ -10,22 +10,8 @@ bool matches(const string& needle, const std::vector<std::string>& haystack) {
   return false;
 }
 
-int parse_factor(
-    const char* begin,
-    const char* end,
-    const std::unordered_map<SEXP, size_t>& level_map,
-    LocaleInfo& locale) {
-  SEXP str = locale.encoder_.makeSEXP(begin, end, false);
-  auto search = level_map.find(str);
-  if (search != level_map.end()) {
-    return search->second;
-  } else {
-    return NA_INTEGER;
-  }
-}
-
-cpp11::integers
-read_fct_explicit(vroom_vec_info* info, const cpp11::strings& levels, bool ordered) {
+cpp11::integers read_fct_explicit(
+    vroom_vec_info* info, const cpp11::strings& levels, bool ordered) {
   R_xlen_t n = info->column->size();
 
   cpp11::writable::integers out(n);
@@ -44,15 +30,9 @@ read_fct_explicit(vroom_vec_info* info, const cpp11::strings& levels, bool order
   auto col = info->column;
   R_xlen_t i = 0;
   for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-    out[i++] = parse_value<int>(
-        b,
-        col,
-        [&](const char* begin, const char* end) -> double {
-          return parse_factor(begin, end, level_map, *info->locale);
-        },
-        info->errors,
-        "value in level set",
-        *info->na);
+    auto str = *b;
+    out[i++] =
+        parse_factor(b, col, level_map, *info->locale, info->errors, *info->na);
   }
 
   info->errors->warn_for_errors();

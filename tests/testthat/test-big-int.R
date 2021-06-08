@@ -36,3 +36,8 @@ test_that("integers are returned correctly", {
     equals = tibble::tibble(foo = as.integer64(1), bar = as.integer64(NA), baz = as.integer64(3))
   )
 })
+
+test_that("NA can be a big int value", {
+  test_vroom(I("x\n1\n2\n"), delim = ",", col_types = "I", na = "1",
+    equals = tibble::tibble(x = as.integer64(c(NA_integer_, 2L))))
+})

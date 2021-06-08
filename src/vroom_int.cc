@@ -1,6 +1,8 @@
 #include "vroom_int.h"
 #include "parallel.h"
 
+const int na<int>::value = NA_INTEGER;
+
 // A version of strtoi that doesn't need null terminated strings, to avoid
 // needing to copy the data
 int strtoi(const char* begin, const char* end) {

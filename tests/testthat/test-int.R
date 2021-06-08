@@ -23,3 +23,8 @@ test_that("integers are returned correctly", {
     equals = tibble::tibble(foo = 1L, bar = NA_integer_, baz = 3L)
   )
 })
+
+test_that("NA can be a int value", {
+  test_vroom(I("x\n1\n2\n"), delim = ",", col_types = "i", na = "1",
+    equals = tibble::tibble(x = c(NA_integer_, 2L)))
+})

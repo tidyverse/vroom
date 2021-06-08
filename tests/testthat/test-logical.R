@@ -23,3 +23,7 @@ test_that("1 and 0 parsed", {
   # explicitly set the column type.
   test_vroom("1\n0\n", col_types = "l", col_names = FALSE, equals = tibble::tibble(X1 = c(TRUE, FALSE)))
 })
+
+test_that("NA can be a logical value", {
+  test_vroom("1\n0\n", col_types = "l", col_names = FALSE, na = "1", equals = tibble::tibble(X1 = c(NA, FALSE)))
+})

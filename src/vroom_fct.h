@@ -9,16 +9,36 @@
 
 using namespace vroom;
 
-cpp11::integers
-read_fct_explicit(vroom_vec_info* info, const cpp11::strings& levels, bool ordered);
+cpp11::integers read_fct_explicit(
+    vroom_vec_info* info, const cpp11::strings& levels, bool ordered);
 
 cpp11::integers read_fct_implicit(vroom_vec_info* info, bool include_na);
 
+template <typename I, typename C>
 int parse_factor(
-    const char* begin,
-    const char* end,
+    const I& itr,
+    const C& col,
     const std::unordered_map<SEXP, size_t>& level_map,
-    LocaleInfo& locale);
+    LocaleInfo& locale,
+    std::shared_ptr<vroom_errors>& errors,
+    SEXP na) {
+  auto str = *itr;
+  SEXP str_sexp = locale.encoder_.makeSEXP(str.begin(), str.end(), false);
+  auto search = level_map.find(str_sexp);
+  if (search != level_map.end()) {
+    return search->second;
+  } else {
+    if (!is_explicit_na(na, str.begin(), str.end())) {
+      errors->add_error(
+          itr.index(),
+          col->get_index(),
+          "value in level set",
+          std::string(str.begin(), str.end() - str.begin()),
+          itr.filename());
+    }
+    return NA_INTEGER;
+  }
+}
 
 #ifdef HAS_ALTREP
 
@@ -116,14 +136,12 @@ public:
   static int Val(SEXP vec, R_xlen_t i) {
     auto info = Info(vec);
 
-    double out = parse_value<double>(
+    double out = parse_factor(
         info.info->column->begin() + i,
         info.info->column,
-        [&](const char* begin, const char* end) -> double {
-          return parse_factor(begin, end, info.levels, *info.info->locale);
-        },
+        info.levels,
+        *info.info->locale,
         info.info->errors,
-        "value in level set",
         *info.info->na);
 
     info.info->errors->warn_for_errors();

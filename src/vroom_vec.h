@@ -34,6 +34,18 @@ inline bool is_explicit_na(SEXP na, const char* begin, const char* end) {
   return false;
 }
 
+template <typename T> struct na {};
+
+template <> struct na<double> { const static double value; };
+
+template <> struct na<int> { const static int value; };
+
+template <> struct na<long long> { const static long long value; };
+
+template <typename T> struct StringAnnotationTypeMap {
+  static const std::string annotation;
+};
+
 template <typename V, typename F, typename I, typename C>
 static auto parse_value(
     const I& itr,
@@ -43,8 +55,13 @@ static auto parse_value(
     const char* expected,
     SEXP na) -> V {
   auto str = *itr;
+  if (is_explicit_na(na, str.begin(), str.end())) {
+    return ::na<V>::value;
+  }
+
   V out = f(str.begin(), str.end());
-  if (cpp11::is_na(out) && !is_explicit_na(na, str.begin(), str.end())) {
+
+  if (cpp11::is_na(out)) {
     errors->add_error(
         itr.index(),
         col->get_index(),
@@ -52,6 +69,7 @@ static auto parse_value(
         std::string(str.begin(), str.end() - str.begin()),
         itr.filename());
   }
+
   return out;
 }
 } // namespace vroom
