@@ -430,8 +430,11 @@ public:
       else {
         state = other_state(state);
         ++pos;
-        size_t buf_offset = strcspn(buf + pos, query.data());
-        pos = pos + buf_offset;
+        size_t buf_offset;
+        if (pos < end) {
+          buf_offset = strcspn(buf + pos, query.data());
+          pos = pos + buf_offset;
+        }
         continue;
       }
 
