@@ -177,6 +177,7 @@ test_that("vroom handles UTF byte order marks", {
 })
 
 test_that("vroom handles vectors shorter than the UTF byte order marks", {
+  skip_on_os("solaris")
 
   expect_equal(
     charToRaw(vroom(as.raw(c(0xef, 0xbb, 0x0A)), delim = "\n", col_names = FALSE, col_types = list())[[1]]),
