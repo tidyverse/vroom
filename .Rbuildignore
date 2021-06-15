@@ -36,3 +36,4 @@
 ^src/mio/single_include/
 ^src/mio/test/
 ^src/mio/.*CMakeLists\.txt$
+^\.cache$

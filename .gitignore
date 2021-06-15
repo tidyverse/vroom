@@ -11,3 +11,4 @@ script.R
 presentation/
 compile_commands.json
 .clangd/
+.cache/
