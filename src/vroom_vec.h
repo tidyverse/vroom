@@ -38,6 +38,10 @@ template <typename T> struct StringAnnotationTypeMap {
   static const std::string annotation;
 };
 
+template <> inline double na() { return NA_REAL; }
+
+template <> inline int na() { return NA_INTEGER; }
+
 template <typename V, typename F, typename I, typename C>
 static auto parse_value(
     const I& itr,
@@ -48,7 +52,7 @@ static auto parse_value(
     SEXP na) -> V {
   auto str = *itr;
   if (is_explicit_na(na, str.begin(), str.end())) {
-    return cpp11::na<V>();
+    return vroom::na<V>();
   }
 
   V out = f(str.begin(), str.end());
@@ -75,7 +79,7 @@ static auto parse_value(
     SEXP na) -> V {
   auto&& str = col->at(i);
   if (is_explicit_na(na, str.begin(), str.end())) {
-    return cpp11::na<V>();
+    return vroom::na<V>();
   }
 
   V out = f(str.begin(), str.end());

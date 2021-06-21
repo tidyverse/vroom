@@ -6,9 +6,15 @@
 
 #define NA_INTEGER64 (0x8000000000000000)
 
+#include "vroom.h"
+
 namespace cpp11 {
-template <> inline long long na<long long>() { return NA_INTEGER64; }
+inline bool is_na(long long x) { return x == NA_INTEGER64; }
 } // namespace cpp11
+
+namespace vroom {
+template <> inline long long na<long long>() { return NA_INTEGER64; }
+} // namespace vroom
 
 #include "vroom_vec.h"
 

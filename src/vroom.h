@@ -73,6 +73,8 @@ private:
   const std::string str_;
 };
 
+template <typename T> inline T na();
+
 } // namespace vroom
 
 // Specialization for our custom strings, needed so we can use them in
