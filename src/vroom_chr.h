@@ -50,13 +50,13 @@ public:
     auto& info = Info(vec);
 
     auto&& col = info.column;
-    auto&& itr = col->begin() + i;
-    auto str = *itr;
+    auto str = col->at(i);
 
     auto val =
         PROTECT(info.locale->encoder_.makeSEXP(str.begin(), str.end(), true));
 
     if (Rf_xlength(val) < str.end() - str.begin()) {
+      auto&& itr = info.column->begin();
       info.errors->add_error(
           itr.index(), col->get_index(), "", "embedded null", itr.filename());
     }

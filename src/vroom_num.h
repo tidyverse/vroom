@@ -65,7 +65,7 @@ public:
     auto& info = vroom_vec::Info(vec);
 
     double out = parse_value<double>(
-        info.column->begin() + i,
+        i,
         info.column,
         [&](const char* begin, const char* end) -> double {
           return parse_num(begin, end, *info.locale);

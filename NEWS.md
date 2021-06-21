@@ -2,6 +2,8 @@
 
 * Parsers now treat NA values as NA even if they are valid values for the types (#342)
 
+* Element-wise indexing into lazy (ALTREP) vectors now has much less overhead (#344)
+
 # vroom 1.5.0
 
 ## Major improvements

@@ -67,12 +67,7 @@ public:
 
     auto& info = vroom_vec::Info(vec);
     int out = parse_value<int>(
-        info.column->begin() + i,
-        info.column,
-        strtoi,
-        info.errors,
-        "an integer",
-        *info.na);
+        i, info.column, strtoi, info.errors, "an integer", *info.na);
 
     info.errors->warn_for_errors();
 

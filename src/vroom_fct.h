@@ -40,6 +40,33 @@ int parse_factor(
   }
 }
 
+template <typename C>
+int parse_factor(
+    R_xlen_t i,
+    const C& col,
+    const std::unordered_map<SEXP, size_t>& level_map,
+    LocaleInfo& locale,
+    std::shared_ptr<vroom_errors>& errors,
+    SEXP na) {
+  auto str = col->at(i);
+  SEXP str_sexp = locale.encoder_.makeSEXP(str.begin(), str.end(), false);
+  auto search = level_map.find(str_sexp);
+  if (search != level_map.end()) {
+    return search->second;
+  } else {
+    if (!is_explicit_na(na, str.begin(), str.end())) {
+      auto&& itr = col->begin() + i;
+      errors->add_error(
+          itr.index(),
+          col->get_index(),
+          "value in level set",
+          std::string(str.begin(), str.end() - str.begin()),
+          itr.filename());
+    }
+    return NA_INTEGER;
+  }
+}
+
 #ifdef HAS_ALTREP
 
 struct vroom_factor_info {
@@ -137,7 +164,7 @@ public:
     auto info = Info(vec);
 
     double out = parse_factor(
-        info.info->column->begin() + i,
+        i,
         info.info->column,
         info.levels,
         *info.info->locale,

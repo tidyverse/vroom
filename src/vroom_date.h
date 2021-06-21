@@ -67,7 +67,7 @@ public:
                        : std::string("date like ") + info->info->format;
 
     double out = parse_value<double>(
-        info->info->column->begin() + i,
+        i,
         info->info->column,
         [&](const char* begin, const char* end) -> double {
           return parse_date(begin, end, *info->parser, info->info->format);

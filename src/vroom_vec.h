@@ -72,6 +72,34 @@ static auto parse_value(
 
   return out;
 }
+
+template <typename V, typename F, typename C>
+static auto parse_value(
+    R_xlen_t i,
+    const C& col,
+    F f,
+    std::shared_ptr<vroom_errors>& errors,
+    const char* expected,
+    SEXP na) -> V {
+  auto&& str = col->at(i);
+  if (is_explicit_na(na, str.begin(), str.end())) {
+    return ::na<V>::value;
+  }
+
+  V out = f(str.begin(), str.end());
+
+  if (cpp11::is_na(out)) {
+    auto itr = col->begin() + i;
+    errors->add_error(
+        itr.index(),
+        col->get_index(),
+        expected,
+        std::string(str.begin(), str.end() - str.begin()),
+        itr.filename());
+  }
+
+  return out;
+}
 } // namespace vroom
 
 #ifdef HAS_ALTREP

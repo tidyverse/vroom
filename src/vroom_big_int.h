@@ -86,12 +86,7 @@ public:
 
     vroom_big_int_t res;
     res.ll = parse_value<long long>(
-        info.column->begin() + i,
-        info.column,
-        vroom_strtoll,
-        info.errors,
-        "a big integer",
-        *info.na);
+        i, info.column, vroom_strtoll, info.errors, "a big integer", *info.na);
 
     info.errors->warn_for_errors();
 
