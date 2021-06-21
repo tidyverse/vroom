@@ -79,31 +79,35 @@ bool vroom_altrep(SEXP x) {
       switch (TYPEOF(elt)) {
       case LGLSXP: {
         SET_VECTOR_ELT(out, col, Rf_allocVector(LGLSXP, nrow));
-        int* p = LOGICAL(VECTOR_ELT(out, col));
+        int* out_p = LOGICAL(VECTOR_ELT(out, col));
+        int* in_p = LOGICAL(elt);
         for (R_xlen_t row = 0; row < nrow; ++row) {
-          p[row] = LOGICAL_ELT(elt, row);
+          out_p[row] = in_p[row];
         }
         break;
       }
       case INTSXP: {
         SET_VECTOR_ELT(out, col, Rf_allocVector(INTSXP, nrow));
-        int* p = INTEGER(VECTOR_ELT(out, col));
+        int* out_p = INTEGER(VECTOR_ELT(out, col));
+        int* in_p = INTEGER(elt);
         for (R_xlen_t row = 0; row < nrow; ++row) {
-          p[row] = INTEGER_ELT(elt, row);
+          out_p[row] = in_p[row];
         }
         break;
       }
       case REALSXP: {
         SET_VECTOR_ELT(out, col, Rf_allocVector(REALSXP, nrow));
-        double* p = REAL(VECTOR_ELT(out, col));
+        double* out_p = REAL(VECTOR_ELT(out, col));
+        double* in_p = REAL(elt);
         for (R_xlen_t row = 0; row < nrow; ++row) {
-          p[row] = REAL_ELT(elt, row);
+          out_p[row] = in_p[row];
         }
         break;
       }
       case STRSXP: {
         SET_VECTOR_ELT(out, col, Rf_allocVector(STRSXP, nrow));
         SEXP out_elt = VECTOR_ELT(out, col);
+        DATAPTR(elt);
         for (R_xlen_t row = 0; row < nrow; ++row) {
           SET_STRING_ELT(out_elt, row, STRING_ELT(elt, row));
         }
