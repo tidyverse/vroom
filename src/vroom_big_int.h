@@ -7,9 +7,7 @@
 #define NA_INTEGER64 (0x8000000000000000)
 
 namespace cpp11 {
-inline bool is_na(long long x) {
-  return x == static_cast<long long>(NA_INTEGER64);
-}
+template <> inline long long na<long long>() { return NA_INTEGER64; }
 } // namespace cpp11
 
 #include "vroom_vec.h"

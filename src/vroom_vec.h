@@ -34,14 +34,6 @@ inline bool is_explicit_na(SEXP na, const char* begin, const char* end) {
   return false;
 }
 
-template <typename T> struct na {};
-
-template <> struct na<double> { const static double value; };
-
-template <> struct na<int> { const static int value; };
-
-template <> struct na<long long> { const static long long value; };
-
 template <typename T> struct StringAnnotationTypeMap {
   static const std::string annotation;
 };
@@ -56,7 +48,7 @@ static auto parse_value(
     SEXP na) -> V {
   auto str = *itr;
   if (is_explicit_na(na, str.begin(), str.end())) {
-    return ::na<V>::value;
+    return cpp11::na<V>();
   }
 
   V out = f(str.begin(), str.end());
@@ -83,7 +75,7 @@ static auto parse_value(
     SEXP na) -> V {
   auto&& str = col->at(i);
   if (is_explicit_na(na, str.begin(), str.end())) {
-    return ::na<V>::value;
+    return cpp11::na<V>();
   }
 
   V out = f(str.begin(), str.end());

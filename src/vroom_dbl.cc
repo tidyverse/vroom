@@ -1,7 +1,5 @@
 #include "vroom_dbl.h"
 
-const double na<double>::value = NA_REAL;
-
 /*
     An STL iterator-based string to floating point number conversion.
     This function was adapted from the C standard library of RetroBSD,
