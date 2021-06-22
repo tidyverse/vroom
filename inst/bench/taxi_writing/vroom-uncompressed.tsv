@@ -1,3 +1,3 @@
 exprs	process	real	size	rows	cols	max_memory
-"{ library(vroom) data <- vroom(file, col_types = c(pickup_datetime = ""c"")) vr..."	44.163591952000004	15.606170892715454	1641999923	14388451	11	7515521024
-"vroom_write(data, tempfile(fileext = "".tsv""), delim = ""\t"")"	21.161098368999994	1.606541395187378	1641999923	14388451	11	7515521024
+"{ library(vroom) data <- vroom(file, col_types = c(pickup_datetime = ""c"")) vr..."	52.838888093	18.450870513916016	1641999923	14388451	11	7582793728
+"vroom_write(data, tempfile(fileext = "".tsv""), delim = ""\t"")"	22.587353183000005	1.6948139667510986	1641999923	14388451	11	7582793728
