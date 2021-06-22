@@ -1,5 +1,3 @@
-This release fixes the clang-UBSAN and M1mac additional checks shown on the check results page.
-
 ## Test environments
 * local OS X install
 * ubuntu 18.04, macOS, win-builder (on GitHub Actions), R 4.1, 4.0, 3.6, 3.5, 3.4

@@ -24,7 +24,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Jim Hester \email{james.f.hester@gmail.com} (\href{https://orcid.org/0000-0002-2739-7082}{ORCID})
+\strong{Maintainer}: Jim Hester \email{jim.hester@rstudio.com} (\href{https://orcid.org/0000-0002-2739-7082}{ORCID})
 
 Authors:
 \itemize{
