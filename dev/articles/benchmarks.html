@@ -208,82 +208,6 @@ total
 <tbody>
 <tr>
 <td style="text-align:right;">
-vroom
-</td>
-<td style="text-align:right;">
-base
-</td>
-<td style="text-align:right;">
-TRUE
-</td>
-<td style="text-align:right;">
-6.35GB
-</td>
-<td style="text-align:right;">
-1.4s
-</td>
-<td style="text-align:right;">
-155ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-13.8s
-</td>
-<td style="text-align:right;">
-1m 27.8s
-</td>
-<td style="text-align:right;">
-1m 43.1s
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom
-</td>
-<td style="text-align:right;">
-dplyr
-</td>
-<td style="text-align:right;">
-TRUE
-</td>
-<td style="text-align:right;">
-6.41GB
-</td>
-<td style="text-align:right;">
-1.3s
-</td>
-<td style="text-align:right;">
-83ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-13ms
-</td>
-<td style="text-align:right;">
-14.3s
-</td>
-<td style="text-align:right;">
-51.2s
-</td>
-<td style="text-align:right;">
-1m 6.9s
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
 read.delim
 </td>
 <td style="text-align:right;">
@@ -292,16 +216,13 @@ base
 <td style="text-align:right;">
 </td>
 <td style="text-align:right;">
-6.2GB
+6.18GB
 </td>
 <td style="text-align:right;">
-1m 4.7s
+1m 12.3s
 </td>
 <td style="text-align:right;">
-5ms
-</td>
-<td style="text-align:right;">
-1ms
+6ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -310,13 +231,16 @@ base
 1ms
 </td>
 <td style="text-align:right;">
-307ms
+1ms
 </td>
 <td style="text-align:right;">
-732ms
+1.3s
 </td>
 <td style="text-align:right;">
-1m 5.8s
+895ms
+</td>
+<td style="text-align:right;">
+1m 14.5s
 </td>
 </tr>
 <tr>
@@ -329,31 +253,31 @@ dplyr
 <td style="text-align:right;">
 </td>
 <td style="text-align:right;">
-5.18GB
+6.91GB
 </td>
 <td style="text-align:right;">
-26s
+37.3s
 </td>
 <td style="text-align:right;">
-96ms
+147ms
 </td>
 <td style="text-align:right;">
-3ms
+2ms
 </td>
 <td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-16ms
+17ms
 </td>
 <td style="text-align:right;">
-195ms
+249ms
 </td>
 <td style="text-align:right;">
-394ms
+538ms
 </td>
 <td style="text-align:right;">
-26.7s
+38.3s
 </td>
 </tr>
 <tr>
@@ -367,13 +291,13 @@ dplyr
 FALSE
 </td>
 <td style="text-align:right;">
-4.92GB
+6.55GB
 </td>
 <td style="text-align:right;">
-15.2s
+18.4s
 </td>
 <td style="text-align:right;">
-93ms
+117ms
 </td>
 <td style="text-align:right;">
 2ms
@@ -385,13 +309,89 @@ FALSE
 14ms
 </td>
 <td style="text-align:right;">
-829ms
+961ms
 </td>
 <td style="text-align:right;">
-1s
+1.2s
 </td>
 <td style="text-align:right;">
-17.2s
+20.7s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+base
+</td>
+<td style="text-align:right;">
+TRUE
+</td>
+<td style="text-align:right;">
+8.12GB
+</td>
+<td style="text-align:right;">
+1.7s
+</td>
+<td style="text-align:right;">
+254ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1.5s
+</td>
+<td style="text-align:right;">
+10.6s
+</td>
+<td style="text-align:right;">
+14s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+TRUE
+</td>
+<td style="text-align:right;">
+8.15GB
+</td>
+<td style="text-align:right;">
+1.7s
+</td>
+<td style="text-align:right;">
+242ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+13ms
+</td>
+<td style="text-align:right;">
+1.7s
+</td>
+<td style="text-align:right;">
+5.1s
+</td>
+<td style="text-align:right;">
+8.7s
 </td>
 </tr>
 <tr>
@@ -404,16 +404,13 @@ data.table
 <td style="text-align:right;">
 </td>
 <td style="text-align:right;">
-4.69GB
+6.38GB
 </td>
 <td style="text-align:right;">
-8.6s
+5.8s
 </td>
 <td style="text-align:right;">
-24ms
-</td>
-<td style="text-align:right;">
-1ms
+12ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -422,13 +419,16 @@ data.table
 1ms
 </td>
 <td style="text-align:right;">
-219ms
+1ms
 </td>
 <td style="text-align:right;">
-1s
+104ms
 </td>
 <td style="text-align:right;">
-9.9s
+764ms
+</td>
+<td style="text-align:right;">
+6.7s
 </td>
 </tr>
 </tbody>
@@ -499,10 +499,10 @@ base
 4.79GB
 </td>
 <td style="text-align:right;">
-2m 1.3s
+1m 51.4s
 </td>
 <td style="text-align:right;">
-1.5s
+1.4s
 </td>
 <td style="text-align:right;">
 1ms
@@ -514,13 +514,13 @@ base
 2ms
 </td>
 <td style="text-align:right;">
-4.7s
+4.5s
 </td>
 <td style="text-align:right;">
 37ms
 </td>
 <td style="text-align:right;">
-2m 7.5s
+1m 57.3s
 </td>
 </tr>
 <tr>
@@ -536,7 +536,7 @@ dplyr
 2.82GB
 </td>
 <td style="text-align:right;">
-13.2s
+13.1s
 </td>
 <td style="text-align:right;">
 64ms
@@ -554,7 +554,7 @@ dplyr
 18ms
 </td>
 <td style="text-align:right;">
-58ms
+55ms
 </td>
 <td style="text-align:right;">
 13.3s
@@ -577,7 +577,7 @@ FALSE
 1.3s
 </td>
 <td style="text-align:right;">
-49ms
+48ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -586,13 +586,13 @@ FALSE
 1ms
 </td>
 <td style="text-align:right;">
-15ms
+14ms
 </td>
 <td style="text-align:right;">
-19ms
+18ms
 </td>
 <td style="text-align:right;">
-49ms
+46ms
 </td>
 <td style="text-align:right;">
 1.5s
@@ -615,7 +615,7 @@ FALSE
 1.3s
 </td>
 <td style="text-align:right;">
-50ms
+48ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -630,7 +630,7 @@ FALSE
 6ms
 </td>
 <td style="text-align:right;">
-57ms
+55ms
 </td>
 <td style="text-align:right;">
 1.4s
@@ -650,28 +650,28 @@ TRUE
 3.29GB
 </td>
 <td style="text-align:right;">
-563ms
+604ms
 </td>
 <td style="text-align:right;">
-65ms
-</td>
-<td style="text-align:right;">
-2ms
+64ms
 </td>
 <td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-15ms
+1ms
 </td>
 <td style="text-align:right;">
-36ms
+14ms
 </td>
 <td style="text-align:right;">
-448ms
+42ms
 </td>
 <td style="text-align:right;">
-1.1s
+235ms
+</td>
+<td style="text-align:right;">
+959ms
 </td>
 </tr>
 <tr>
@@ -688,10 +688,10 @@ TRUE
 3.28GB
 </td>
 <td style="text-align:right;">
-557ms
+581ms
 </td>
 <td style="text-align:right;">
-57ms
+55ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -706,10 +706,10 @@ TRUE
 29ms
 </td>
 <td style="text-align:right;">
-466ms
+251ms
 </td>
 <td style="text-align:right;">
-1.1s
+920ms
 </td>
 </tr>
 <tr>
@@ -725,10 +725,10 @@ data.table
 2.72GB
 </td>
 <td style="text-align:right;">
-269ms
+256ms
 </td>
 <td style="text-align:right;">
-14ms
+13ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -743,10 +743,10 @@ data.table
 6ms
 </td>
 <td style="text-align:right;">
-26ms
+25ms
 </td>
 <td style="text-align:right;">
-316ms
+302ms
 </td>
 </tr>
 </tbody>
@@ -806,31 +806,31 @@ base
 <td style="text-align:right;">
 </td>
 <td style="text-align:right;">
-14.42GB
+14.41GB
 </td>
 <td style="text-align:right;">
-9m 54s
+8m 41s
 </td>
 <td style="text-align:right;">
-141ms
-</td>
-<td style="text-align:right;">
-7ms
+131ms
 </td>
 <td style="text-align:right;">
 7ms
 </td>
 <td style="text-align:right;">
-10ms
+7ms
 </td>
 <td style="text-align:right;">
-77ms
+9ms
+</td>
+<td style="text-align:right;">
+75ms
 </td>
 <td style="text-align:right;">
 5ms
 </td>
 <td style="text-align:right;">
-9m 54.3s
+8m 41.2s
 </td>
 </tr>
 <tr>
@@ -846,28 +846,66 @@ dplyr
 5.46GB
 </td>
 <td style="text-align:right;">
-57.9s
+56.1s
 </td>
 <td style="text-align:right;">
-99ms
-</td>
-<td style="text-align:right;">
-3ms
+96ms
 </td>
 <td style="text-align:right;">
 3ms
 </td>
 <td style="text-align:right;">
-27ms
+3ms
+</td>
+<td style="text-align:right;">
+26ms
 </td>
 <td style="text-align:right;">
 18ms
 </td>
 <td style="text-align:right;">
-41ms
+39ms
 </td>
 <td style="text-align:right;">
-58s
+56.3s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+FALSE
+</td>
+<td style="text-align:right;">
+5.35GB
+</td>
+<td style="text-align:right;">
+6.9s
+</td>
+<td style="text-align:right;">
+63ms
+</td>
+<td style="text-align:right;">
+3ms
+</td>
+<td style="text-align:right;">
+3ms
+</td>
+<td style="text-align:right;">
+95ms
+</td>
+<td style="text-align:right;">
+14ms
+</td>
+<td style="text-align:right;">
+31ms
+</td>
+<td style="text-align:right;">
+7.1s
 </td>
 </tr>
 <tr>
@@ -884,19 +922,19 @@ FALSE
 5.34GB
 </td>
 <td style="text-align:right;">
-6.1s
+6.9s
 </td>
 <td style="text-align:right;">
-66ms
-</td>
-<td style="text-align:right;">
-3ms
+61ms
 </td>
 <td style="text-align:right;">
 3ms
 </td>
 <td style="text-align:right;">
-6ms
+3ms
+</td>
+<td style="text-align:right;">
+5ms
 </td>
 <td style="text-align:right;">
 6ms
@@ -905,45 +943,7 @@ FALSE
 7ms
 </td>
 <td style="text-align:right;">
-6.2s
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom
-</td>
-<td style="text-align:right;">
-dplyr
-</td>
-<td style="text-align:right;">
-FALSE
-</td>
-<td style="text-align:right;">
-5.34GB
-</td>
-<td style="text-align:right;">
-5.8s
-</td>
-<td style="text-align:right;">
-64ms
-</td>
-<td style="text-align:right;">
-3ms
-</td>
-<td style="text-align:right;">
-3ms
-</td>
-<td style="text-align:right;">
-107ms
-</td>
-<td style="text-align:right;">
-15ms
-</td>
-<td style="text-align:right;">
-40ms
-</td>
-<td style="text-align:right;">
-6s
+7s
 </td>
 </tr>
 <tr>
@@ -957,31 +957,31 @@ dplyr
 TRUE
 </td>
 <td style="text-align:right;">
-7.25GB
+7.26GB
 </td>
 <td style="text-align:right;">
-1.5s
+3s
 </td>
 <td style="text-align:right;">
-83ms
-</td>
-<td style="text-align:right;">
-4ms
+68ms
 </td>
 <td style="text-align:right;">
 4ms
+</td>
+<td style="text-align:right;">
+14ms
 </td>
 <td style="text-align:right;">
 23ms
 </td>
 <td style="text-align:right;">
-21ms
+20ms
 </td>
 <td style="text-align:right;">
-99ms
+77ms
 </td>
 <td style="text-align:right;">
-1.7s
+3.2s
 </td>
 </tr>
 <tr>
@@ -995,31 +995,31 @@ base
 TRUE
 </td>
 <td style="text-align:right;">
-7.25GB
+7.26GB
 </td>
 <td style="text-align:right;">
-1.5s
+3s
 </td>
 <td style="text-align:right;">
-71ms
+68ms
+</td>
+<td style="text-align:right;">
+4ms
+</td>
+<td style="text-align:right;">
+4ms
 </td>
 <td style="text-align:right;">
 5ms
 </td>
 <td style="text-align:right;">
-17ms
+11ms
 </td>
 <td style="text-align:right;">
-5ms
+42ms
 </td>
 <td style="text-align:right;">
-9ms
-</td>
-<td style="text-align:right;">
-65ms
-</td>
-<td style="text-align:right;">
-1.7s
+3.1s
 </td>
 </tr>
 <tr>
@@ -1038,7 +1038,7 @@ data.table
 1.3s
 </td>
 <td style="text-align:right;">
-128ms
+100ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -1047,7 +1047,7 @@ data.table
 1ms
 </td>
 <td style="text-align:right;">
-4ms
+3ms
 </td>
 <td style="text-align:right;">
 4ms
@@ -1121,10 +1121,10 @@ base
 <td style="text-align:right;">
 </td>
 <td style="text-align:right;">
-4.47GB
+4.53GB
 </td>
 <td style="text-align:right;">
-1m 49.6s
+1m 43.1s
 </td>
 <td style="text-align:right;">
 8ms
@@ -1142,10 +1142,10 @@ base
 28ms
 </td>
 <td style="text-align:right;">
-307ms
+293ms
 </td>
 <td style="text-align:right;">
-1m 50s
+1m 43.4s
 </td>
 </tr>
 <tr>
@@ -1161,10 +1161,10 @@ dplyr
 4.35GB
 </td>
 <td style="text-align:right;">
-1m 6.3s
+1m 2.6s
 </td>
 <td style="text-align:right;">
-95ms
+102ms
 </td>
 <td style="text-align:right;">
 2ms
@@ -1176,13 +1176,13 @@ dplyr
 17ms
 </td>
 <td style="text-align:right;">
-21ms
+20ms
 </td>
 <td style="text-align:right;">
-228ms
+215ms
 </td>
 <td style="text-align:right;">
-1m 6.7s
+1m 2.9s
 </td>
 </tr>
 <tr>
@@ -1199,7 +1199,7 @@ FALSE
 4.3GB
 </td>
 <td style="text-align:right;">
-51.8s
+50.5s
 </td>
 <td style="text-align:right;">
 50ms
@@ -1217,10 +1217,10 @@ FALSE
 21ms
 </td>
 <td style="text-align:right;">
-152ms
+150ms
 </td>
 <td style="text-align:right;">
-52s
+50.7s
 </td>
 </tr>
 <tr>
@@ -1236,10 +1236,10 @@ data.table
 4.73GB
 </td>
 <td style="text-align:right;">
-39s
+42.8s
 </td>
 <td style="text-align:right;">
-15ms
+16ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -1251,13 +1251,13 @@ data.table
 4ms
 </td>
 <td style="text-align:right;">
-18ms
+16ms
 </td>
 <td style="text-align:right;">
-150ms
+149ms
 </td>
 <td style="text-align:right;">
-39.2s
+43s
 </td>
 </tr>
 <tr>
@@ -1274,13 +1274,13 @@ TRUE
 3.22GB
 </td>
 <td style="text-align:right;">
-566ms
+595ms
 </td>
 <td style="text-align:right;">
-47ms
+46ms
 </td>
 <td style="text-align:right;">
-2ms
+1ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -1289,13 +1289,13 @@ TRUE
 3ms
 </td>
 <td style="text-align:right;">
-421ms
+163ms
 </td>
 <td style="text-align:right;">
-3.7s
+2.1s
 </td>
 <td style="text-align:right;">
-4.8s
+2.9s
 </td>
 </tr>
 <tr>
@@ -1312,28 +1312,28 @@ TRUE
 3.21GB
 </td>
 <td style="text-align:right;">
-599ms
+640ms
 </td>
 <td style="text-align:right;">
-56ms
+58ms
+</td>
+<td style="text-align:right;">
+2ms
 </td>
 <td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-1ms
+16ms
 </td>
 <td style="text-align:right;">
-15ms
+185ms
 </td>
 <td style="text-align:right;">
-399ms
+1.2s
 </td>
 <td style="text-align:right;">
-1.5s
-</td>
-<td style="text-align:right;">
-2.6s
+2.1s
 </td>
 </tr>
 </tbody>
@@ -1393,31 +1393,31 @@ base
 <td style="text-align:right;">
 </td>
 <td style="text-align:right;">
-13.06GB
+13.09GB
 </td>
 <td style="text-align:right;">
-9m 19.1s
+8m 30.4s
 </td>
 <td style="text-align:right;">
-169ms
-</td>
-<td style="text-align:right;">
-7ms
+149ms
 </td>
 <td style="text-align:right;">
 7ms
 </td>
 <td style="text-align:right;">
-25ms
+8ms
 </td>
 <td style="text-align:right;">
-210ms
+26ms
 </td>
 <td style="text-align:right;">
-55ms
+224ms
 </td>
 <td style="text-align:right;">
-9m 19.6s
+59ms
+</td>
+<td style="text-align:right;">
+8m 30.9s
 </td>
 </tr>
 <tr>
@@ -1433,10 +1433,10 @@ dplyr
 12.21GB
 </td>
 <td style="text-align:right;">
-5m 52.6s
+7m 39.4s
 </td>
 <td style="text-align:right;">
-207ms
+217ms
 </td>
 <td style="text-align:right;">
 4ms
@@ -1448,13 +1448,13 @@ dplyr
 29ms
 </td>
 <td style="text-align:right;">
-36ms
+38ms
 </td>
 <td style="text-align:right;">
-54ms
+57ms
 </td>
 <td style="text-align:right;">
-5m 52.9s
+7m 39.8s
 </td>
 </tr>
 <tr>
@@ -1471,10 +1471,10 @@ FALSE
 12.14GB
 </td>
 <td style="text-align:right;">
-4m 17.1s
+4m 7.3s
 </td>
 <td style="text-align:right;">
-66ms
+67ms
 </td>
 <td style="text-align:right;">
 3ms
@@ -1486,13 +1486,13 @@ FALSE
 28ms
 </td>
 <td style="text-align:right;">
-36ms
+35ms
 </td>
 <td style="text-align:right;">
-38ms
+37ms
 </td>
 <td style="text-align:right;">
-4m 17.2s
+4m 7.5s
 </td>
 </tr>
 <tr>
@@ -1505,31 +1505,31 @@ data.table
 <td style="text-align:right;">
 </td>
 <td style="text-align:right;">
-12.64GB
+12.66GB
 </td>
 <td style="text-align:right;">
-2m 54.3s
+3m 21.8s
 </td>
 <td style="text-align:right;">
-139ms
-</td>
-<td style="text-align:right;">
-2ms
+135ms
 </td>
 <td style="text-align:right;">
 2ms
 </td>
 <td style="text-align:right;">
-28ms
+2ms
 </td>
 <td style="text-align:right;">
-162ms
+33ms
 </td>
 <td style="text-align:right;">
-14ms
+168ms
 </td>
 <td style="text-align:right;">
-2m 54.7s
+15ms
+</td>
+<td style="text-align:right;">
+3m 22.1s
 </td>
 </tr>
 <tr>
@@ -1546,10 +1546,10 @@ TRUE
 6.57GB
 </td>
 <td style="text-align:right;">
-1.4s
+3.1s
 </td>
 <td style="text-align:right;">
-60ms
+62ms
 </td>
 <td style="text-align:right;">
 5ms
@@ -1561,13 +1561,13 @@ TRUE
 5ms
 </td>
 <td style="text-align:right;">
-74ms
+55ms
 </td>
 <td style="text-align:right;">
-383ms
+252ms
 </td>
 <td style="text-align:right;">
-1.9s
+3.5s
 </td>
 </tr>
 <tr>
@@ -1584,10 +1584,10 @@ TRUE
 6.57GB
 </td>
 <td style="text-align:right;">
-1.4s
+3.1s
 </td>
 <td style="text-align:right;">
-61ms
+64ms
 </td>
 <td style="text-align:right;">
 5ms
@@ -1596,16 +1596,16 @@ TRUE
 4ms
 </td>
 <td style="text-align:right;">
-39ms
+27ms
 </td>
 <td style="text-align:right;">
 82ms
 </td>
 <td style="text-align:right;">
-175ms
+160ms
 </td>
 <td style="text-align:right;">
-1.7s
+3.4s
 </td>
 </tr>
 </tbody>
@@ -1660,82 +1660,6 @@ total
 <tbody>
 <tr>
 <td style="text-align:right;">
-vroom
-</td>
-<td style="text-align:right;">
-base
-</td>
-<td style="text-align:right;">
-TRUE
-</td>
-<td style="text-align:right;">
-88.3GB
-</td>
-<td style="text-align:right;">
-19.8s
-</td>
-<td style="text-align:right;">
-3s
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-6m 50.2s
-</td>
-<td style="text-align:right;">
-35m 30.2s
-</td>
-<td style="text-align:right;">
-42m 43.2s
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom
-</td>
-<td style="text-align:right;">
-dplyr
-</td>
-<td style="text-align:right;">
-TRUE
-</td>
-<td style="text-align:right;">
-88GB
-</td>
-<td style="text-align:right;">
-35.3s
-</td>
-<td style="text-align:right;">
-2.6s
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-1ms
-</td>
-<td style="text-align:right;">
-13ms
-</td>
-<td style="text-align:right;">
-6m 43s
-</td>
-<td style="text-align:right;">
-15m 17.2s
-</td>
-<td style="text-align:right;">
-22m 38.1s
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
 readr
 </td>
 <td style="text-align:right;">
@@ -1747,10 +1671,10 @@ dplyr
 63.5GB
 </td>
 <td style="text-align:right;">
-8m 33s
+7m 55s
 </td>
 <td style="text-align:right;">
-817ms
+837ms
 </td>
 <td style="text-align:right;">
 1ms
@@ -1765,10 +1689,10 @@ dplyr
 4.2s
 </td>
 <td style="text-align:right;">
-13.4s
+13.5s
 </td>
 <td style="text-align:right;">
-8m 51.5s
+8m 13.6s
 </td>
 </tr>
 <tr>
@@ -1785,7 +1709,7 @@ FALSE
 63.1GB
 </td>
 <td style="text-align:right;">
-3m 51.5s
+3m 52.3s
 </td>
 <td style="text-align:right;">
 2.2s
@@ -1800,13 +1724,89 @@ FALSE
 14ms
 </td>
 <td style="text-align:right;">
-11s
+10.5s
 </td>
 <td style="text-align:right;">
-7.3s
+7.2s
 </td>
 <td style="text-align:right;">
-4m 12s
+4m 12.2s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+base
+</td>
+<td style="text-align:right;">
+TRUE
+</td>
+<td style="text-align:right;">
+88.3GB
+</td>
+<td style="text-align:right;">
+20.3s
+</td>
+<td style="text-align:right;">
+3s
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+21.5s
+</td>
+<td style="text-align:right;">
+2m 22.6s
+</td>
+<td style="text-align:right;">
+3m 7.5s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+TRUE
+</td>
+<td style="text-align:right;">
+88GB
+</td>
+<td style="text-align:right;">
+20.4s
+</td>
+<td style="text-align:right;">
+2.8s
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+13ms
+</td>
+<td style="text-align:right;">
+23.9s
+</td>
+<td style="text-align:right;">
+1m 5.6s
+</td>
+<td style="text-align:right;">
+1m 52.7s
 </td>
 </tr>
 <tr>
@@ -1819,10 +1819,10 @@ data.table
 <td style="text-align:right;">
 </td>
 <td style="text-align:right;">
-59.5GB
+59.6GB
 </td>
 <td style="text-align:right;">
-1m 41.3s
+1m 35.3s
 </td>
 <td style="text-align:right;">
 7ms
@@ -1840,10 +1840,10 @@ data.table
 1.1s
 </td>
 <td style="text-align:right;">
-4.6s
+4.7s
 </td>
 <td style="text-align:right;">
-1m 46.9s
+1m 41.1s
 </td>
 </tr>
 </tbody>
@@ -1915,7 +1915,7 @@ base
 6.17GB
 </td>
 <td style="text-align:right;">
-18m 0.6s
+18m 9.6s
 </td>
 <td style="text-align:right;">
 16ms
@@ -1930,13 +1930,13 @@ base
 3ms
 </td>
 <td style="text-align:right;">
-497ms
+492ms
 </td>
 <td style="text-align:right;">
 90ms
 </td>
 <td style="text-align:right;">
-18m 1.2s
+18m 10.2s
 </td>
 </tr>
 <tr>
@@ -1952,10 +1952,10 @@ dplyr
 6.19GB
 </td>
 <td style="text-align:right;">
-29.4s
+32.6s
 </td>
 <td style="text-align:right;">
-47ms
+48ms
 </td>
 <td style="text-align:right;">
 2ms
@@ -1967,13 +1967,13 @@ dplyr
 17ms
 </td>
 <td style="text-align:right;">
-97ms
+95ms
 </td>
 <td style="text-align:right;">
-96ms
+94ms
 </td>
 <td style="text-align:right;">
-29.7s
+32.8s
 </td>
 </tr>
 <tr>
@@ -1990,66 +1990,28 @@ FALSE
 5.96GB
 </td>
 <td style="text-align:right;">
-15.1s
+14.7s
 </td>
 <td style="text-align:right;">
-45ms
-</td>
-<td style="text-align:right;">
-1ms
+44ms
 </td>
 <td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-16ms
-</td>
-<td style="text-align:right;">
-516ms
-</td>
-<td style="text-align:right;">
-94ms
-</td>
-<td style="text-align:right;">
-15.8s
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-vroom
-</td>
-<td style="text-align:right;">
-dplyr
-</td>
-<td style="text-align:right;">
-TRUE
-</td>
-<td style="text-align:right;">
-4.62GB
-</td>
-<td style="text-align:right;">
-4.1s
-</td>
-<td style="text-align:right;">
-48ms
-</td>
-<td style="text-align:right;">
-2ms
-</td>
-<td style="text-align:right;">
 1ms
 </td>
 <td style="text-align:right;">
-16ms
+15ms
 </td>
 <td style="text-align:right;">
-779ms
+468ms
 </td>
 <td style="text-align:right;">
-3.2s
+91ms
 </td>
 <td style="text-align:right;">
-8.2s
+15.3s
 </td>
 </tr>
 <tr>
@@ -2066,7 +2028,7 @@ TRUE
 4.65GB
 </td>
 <td style="text-align:right;">
-166ms
+164ms
 </td>
 <td style="text-align:right;">
 56ms
@@ -2081,13 +2043,51 @@ TRUE
 7ms
 </td>
 <td style="text-align:right;">
-776ms
+285ms
 </td>
 <td style="text-align:right;">
-4.6s
+1.8s
 </td>
 <td style="text-align:right;">
-5.6s
+2.3s
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+vroom
+</td>
+<td style="text-align:right;">
+dplyr
+</td>
+<td style="text-align:right;">
+TRUE
+</td>
+<td style="text-align:right;">
+4.62GB
+</td>
+<td style="text-align:right;">
+163ms
+</td>
+<td style="text-align:right;">
+48ms
+</td>
+<td style="text-align:right;">
+2ms
+</td>
+<td style="text-align:right;">
+1ms
+</td>
+<td style="text-align:right;">
+16ms
+</td>
+<td style="text-align:right;">
+306ms
+</td>
+<td style="text-align:right;">
+1.3s
+</td>
+<td style="text-align:right;">
+1.8s
 </td>
 </tr>
 </tbody>
@@ -2130,16 +2130,16 @@ vroom
 gzip
 </td>
 <td style="text-align:right;">
-3m 18.1s
+3m 17.1s
 </td>
 <td style="text-align:right;">
-1m 6.8s
+1m 7.8s
 </td>
 <td style="text-align:right;">
-2m 1.1s
+2m 0.2s
 </td>
 <td style="text-align:right;">
-1m 12.4s
+1m 14.4s
 </td>
 </tr>
 <tr>
@@ -2147,16 +2147,16 @@ gzip
 multithreaded_gzip
 </td>
 <td style="text-align:right;">
-1m 39.7s
+1m 37.8s
 </td>
 <td style="text-align:right;">
-8.7s
+8.9s
 </td>
 <td style="text-align:right;">
-54s
+53.4s
 </td>
 <td style="text-align:right;">
-8s
+8.1s
 </td>
 </tr>
 <tr>
@@ -2164,16 +2164,16 @@ multithreaded_gzip
 zstandard
 </td>
 <td style="text-align:right;">
-1m 37.9s
+1m 39.9s
 </td>
 <td style="text-align:right;">
 NA
 </td>
 <td style="text-align:right;">
-52.9s
+54.2s
 </td>
 <td style="text-align:right;">
-12.5s
+12.4s
 </td>
 </tr>
 <tr>
@@ -2181,16 +2181,16 @@ NA
 uncompressed
 </td>
 <td style="text-align:right;">
-1m 36.1s
+1m 37.4s
 </td>
 <td style="text-align:right;">
 1.5s
 </td>
 <td style="text-align:right;">
-51.5s
+52.2s
 </td>
 <td style="text-align:right;">
-1.6s
+1.7s
 </td>
 </tr>
 </tbody>
@@ -2220,8 +2220,8 @@ uncompressed
 </tr>
 <tr class="odd">
 <td align="left">dplyr</td>
-<td align="left">1.0.6</td>
-<td align="left">2021-05-05</td>
+<td align="left">1.0.7</td>
+<td align="left">2021-06-18</td>
 <td align="left">RSPM (R 4.1.0)</td>
 </tr>
 <tr class="even">
@@ -2232,8 +2232,8 @@ uncompressed
 </tr>
 <tr class="odd">
 <td align="left">vroom</td>
-<td align="left">1.5.0</td>
-<td align="left">2021-05-28</td>
+<td align="left">1.5.0.9000</td>
+<td align="left">2021-06-22</td>
 <td align="left">local</td>
 </tr>
 </tbody>
