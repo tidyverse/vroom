@@ -1,4 +1,4 @@
-# vroom (development version)
+# vroom 1.5.1
 
 * Parsers now treat NA values as NA even if they are valid values for the types (#342)
 
