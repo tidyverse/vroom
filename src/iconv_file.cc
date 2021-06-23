@@ -5,7 +5,7 @@
 
 #include "connection.h"
 
-#define BUFSIZ 1024
+#define VROOM_BUFSIZ 1024
 
 // Adapted from
 // https://www.gnu.org/software/libc/manual/html_node/iconv-Examples.html
@@ -17,8 +17,8 @@
   static auto open = cpp11::package("base")["open"];
   static auto close = cpp11::package("base")["close"];
 
-  char inbuf[BUFSIZ];
-  char wrbuf[BUFSIZ * 4];
+  char inbuf[VROOM_BUFSIZ];
+  char wrbuf[VROOM_BUFSIZ * 4];
   char* wrptr = wrbuf;
   size_t insize = 0;
   void* cd;
@@ -56,7 +56,7 @@
     }
   }
 
-  size_t avail = BUFSIZ * 4;
+  size_t avail = VROOM_BUFSIZ * 4;
 
   size_t bytes_wrote = 0;
 
