@@ -35,14 +35,6 @@ test_that("vroom errors via https on non-gz file", {
   expect_error(vroom(url, col_types = list()), "Reading from remote `bz2` compressed files is not supported")
 })
 
-test_that("can write to a zip file if the archive package is available", {
-  tempfile <- file.path(tempdir(), "mtcars.zip")
-  on.exit(unlink(tempfile))
-  vroom_write(mtcars, tempfile)
-
-  # PK is the zip magic number
-  expect_equal(
-    readBin(tempfile, raw(), n = 2),
-    as.raw(c(0x50, 0x4b))
-  )
+test_that("informative error message when writing to zip file", {
+  expect_error(vroom_write(mtcars, "mtcars.zip"), ".zip")
 })
