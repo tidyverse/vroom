@@ -1,5 +1,11 @@
 # vroom (development version)
 
+* `vroom(num_threads = 1)` will now not spawn any threads.
+  This can be used on as a workaround on systems without full thread support.
+
+* Threads are now automatically disabled on non-macOS systems compiling against clang's libc++.
+  Most systems non-macOS systems use the more common gcc libstdc++, so this should not effect most users.
+
 # vroom 1.5.1
 
 * Parsers now treat NA values as NA even if they are valid values for the types (#342)
