@@ -51,6 +51,7 @@ Imports:
     tidyselect,
     withr
 Suggests: 
+    archive,
     bench (>= 1.1.0),
     covr,
     curl,
@@ -85,3 +86,4 @@ Language: en-US
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 SystemRequirements: C++11
+Remotes: r-lib/archive

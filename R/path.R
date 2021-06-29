@@ -99,18 +99,22 @@ standardise_one_path <- function (path, write = FALSE) {
 
   if (write) {
     path <- normalizePath(path, mustWork = FALSE)
-    if (ext == "zip") {
-      stop("Can only read from, not write to, .zip", call. = FALSE)
-    }
   } else {
     path <- check_path(path)
+  }
+
+  if (ext == "zip") {
+    if (write) {
+      rlang::is_installed("archive")
+      return(archive::archive_write(path, tools::file_path_sans_ext(basename(path))))
+    }
+    return(zipfile(path, ""))
   }
 
   switch(ext,
     gz = gzfile(path, ""),
     bz2 = bzfile(path, ""),
     xz = xzfile(path, ""),
-    zip = zipfile(path, ""),
     if (!has_trailing_newline(path)) {
       file(path)
     } else {
