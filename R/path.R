@@ -95,7 +95,7 @@ standardise_one_path <- function (path, write = FALSE) {
     )
   }
 
-  ext <- tolower(tools::file_ext(path))
+  p <- split_path_ext(basename(path))
 
   if (write) {
     path <- normalizePath(path, mustWork = FALSE)
@@ -103,15 +103,29 @@ standardise_one_path <- function (path, write = FALSE) {
     path <- check_path(path)
   }
 
-  if (ext == "zip") {
-    if (write) {
-      rlang::is_installed("archive")
-      return(archive::archive_write(path, tools::file_path_sans_ext(basename(path))))
+  if (rlang::is_installed("archive")) {
+    formats <- archive_formats(p$extension)
+    extension <- p$extension
+    while(is.null(formats) && nzchar(extension)) {
+      extension <- split_path_ext(extension)$extension
+      formats <- archive_formats(extension)
     }
-    return(zipfile(path, ""))
+    if (!is.null(formats)) {
+      p$extension <- extension
+      if (write) {
+        if (is.null(formats[[1]])) {
+          return(archive::file_write(path, mode = "", filter = formats[[2]]))
+        }
+        return(archive::archive_write(path, p$path, mode = "", format = formats[[1]], filter = formats[[2]]))
+      }
+      if (is.null(formats[[1]])) {
+        return(archive::file_read(path, mode = "", filter = formats[[2]]))
+      }
+      return(archive::archive_read(path, mode = "", format = formats[[1]], filter = formats[[2]]))
+    }
   }
 
-  switch(ext,
+  switch(tools::file_ext(path),
     gz = gzfile(path, ""),
     bz2 = bzfile(path, ""),
     xz = xzfile(path, ""),
@@ -121,6 +135,68 @@ standardise_one_path <- function (path, write = FALSE) {
       path
     }
   )
+}
+
+split_path_ext <- function(path) {
+  regex <- "^([^.]*)[.](.*)"
+  res <- regexpr(regex, path, perl = TRUE)
+  if (length(res) == 0 || res == -1) {
+    return(list(path = path, extension = ""))
+  }
+  starts <- attr(res, "capture.start")[1, ]
+  lengths <- attr(res, "capture.length")[, ]
+  list(
+    path = substr(path, starts[[1]], starts[[1]] + lengths[[1]] - 1),
+    extension = substr(path, starts[[2]], starts[[2]] + lengths[[2]] - 1)
+  )
+}
+
+# Adapted from archive:::format_and_filter_by_extension
+# https://github.com/r-lib/archive/blob/125f9930798dc20fa12cda30319ca3e9a134a409/R/archive.R#L73
+archive_formats <- function(ext) {
+  switch(ext,
+    "7z" = list("7zip", "none"),
+
+    "cpio" = list("cpio", "none"),
+
+    "iso" = list("iso9660", "none"),
+
+    "mtree" = list("mtree", "none"),
+
+    "tar" = list("tar", "none"),
+
+    "tgz" = list("tar", "gzip"),
+    "taz" = list("tar", "gzip"),
+    "tar.gz" = list("tar", "gzip"),
+
+    "tbz" = list("tar", "bzip2"),
+    "tbz2" = list("tar", "bzip2"),
+    "tz2" = list("tar", "bzip2"),
+    "tar.bz2" = list("tar", "bzip2"),
+
+    "tlz" = list("tar", "lzma"),
+    "tar.lzma" = list("tar", "lzma"),
+
+    "txz" = list("tar", "xz"),
+    "tar.xz" = list("tar", "xz"),
+
+    "tzo" = list("tar", "lzop"),
+
+    "taZ" = list("tar", "compress"),
+    "tZ" = list("tar", "compress"),
+
+    "tar.zst"= list("tar", "zstd"),
+
+    "warc" = list("warc", "none"),
+
+    "jar" = list("zip", "none"),
+    "zip" = list("zip", "none"),
+
+    "Z" = list(NULL, "compress"),
+
+    "zst" = list(NULL, "zst"),
+
+    NULL)
 }
 
 is_url <- function(path) {
