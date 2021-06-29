@@ -1,5 +1,8 @@
 # vroom (development version)
 
+* `vroom()` and `vroom_write()` now automatically support many more archive formats thanks to the archive package.
+  These include new support for writing zip files, reading and writing 7zip, tar and ISO files.
+
 * `vroom(num_threads = 1)` will now not spawn any threads.
   This can be used on as a workaround on systems without full thread support.
 
