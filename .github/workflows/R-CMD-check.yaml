@@ -84,6 +84,16 @@ jobs:
           pak::pkg_system_requirements("rcmdcheck", execute = TRUE)
         shell: Rscript {0}
 
+      - name: Install system dependencies-2
+        if: runner.os == 'Linux'
+        run: |
+          apt install -y libarchive-dev
+
+      - name: Install system dependencies-3
+        if: runner.os == 'macOS'
+        run: |
+          brew install libarchive
+
       - name: Install dependencies
         run: |
           pak::local_install_dev_deps(upgrade = TRUE)
