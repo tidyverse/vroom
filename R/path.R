@@ -125,10 +125,16 @@ standardise_one_path <- function (path, write = FALSE) {
     }
   }
 
-  switch(tools::file_ext(path),
+  compression <- detect_compression(path)
+  if (is.na(compression)) {
+    compression <- tools::file_ext(path)
+  }
+
+  switch(compression,
     gz = gzfile(path, ""),
     bz2 = bzfile(path, ""),
     xz = xzfile(path, ""),
+    zip = zipfile(path, ""),
     if (!has_trailing_newline(path)) {
       file(path)
     } else {
@@ -242,4 +248,56 @@ chr_to_file <- function(x, envir = parent.frame()) {
   withr::defer(unlink(out), envir = envir)
 
   normalizePath(out)
+}
+
+detect_compression <- function(path) {
+  bytes <- readBin(path, "raw", n = 6)
+  if (length(bytes) >= 2 && bytes[[1]] == 0x1f && bytes[[2]] == 0x8b) {
+    return("gz")
+  }
+  if (length(bytes) >= 6 &&
+    bytes[[1]] == 0xFD &&
+    bytes[[2]] == 0x37 &&
+    bytes[[3]] == 0x7A &&
+    bytes[[4]] == 0x58 &&
+    bytes[[5]] == 0x5A &&
+    bytes[[6]] == 0x00) {
+    return("xz")
+  }
+
+  if (length(bytes) >= 3 &&
+    bytes[[1]] == 0x42 &&
+    bytes[[2]] == 0x5a &&
+    bytes[[3]] == 0x68) {
+    return("bz2")
+  }
+
+  # normal zip
+  if (length(bytes) >= 4 &&
+    bytes[[1]] == 0x50 &&
+    bytes[[2]] == 0x4B &&
+    bytes[[3]] == 0x03 &&
+    bytes[[4]] == 0x04) {
+    return("zip")
+  }
+
+  # empty zip
+  if (length(bytes) >= 4 &&
+    bytes[[1]] == 0x50 &&
+    bytes[[2]] == 0x4B &&
+    bytes[[3]] == 0x05 &&
+    bytes[[4]] == 0x06) {
+    return("zip")
+  }
+
+  # spanned zip
+  if (length(bytes) >= 4 &&
+    bytes[[1]] == 0x50 &&
+    bytes[[2]] == 0x4B &&
+    bytes[[3]] == 0x07 &&
+    bytes[[4]] == 0x08) {
+    return("zip")
+  }
+
+  NA_character_
 }
