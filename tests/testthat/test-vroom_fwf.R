@@ -303,6 +303,32 @@ test_that("vroom_fwf respects n_max (#334)", {
   expect_equal(out[[2]], c(1, 2))
 })
 
+test_that("vroom_fwf respects n_max when reading from a connection", {
+  f <- tempfile()
+  on.exit(unlink(f))
+  writeLines(rep("00010002", 1000), f)
+
+  out1 <- vroom_fwf(file(f), col_positions = fwf_widths(c(4, 4)), col_types = "ii")
+
+  expect_equal(dim(out1), c(1000, 2))
+
+  out2 <- vroom_fwf(file(f), n_max = 900, col_positions = fwf_widths(c(4, 4)), col_types = "ii")
+
+  expect_equal(dim(out2), c(900, 2))
+
+  out3 <- vroom_fwf(file(f), n_max = 100, col_positions = fwf_widths(c(4, 4)), col_types = "ii")
+
+  expect_equal(dim(out3), c(100, 2))
+
+  out4 <- vroom_fwf(file(f), n_max = 10, col_positions = fwf_widths(c(4, 4)), col_types = "ii")
+
+  expect_equal(dim(out4), c(10, 2))
+
+  out5 <- vroom_fwf(file(f), n_max = 1, col_positions = fwf_widths(c(4, 4)), col_types = "ii")
+
+  expect_equal(dim(out5), c(1, 2))
+})
+
 test_that("vroom_fwf works when skip_empty_rows is false (https://github.com/tidyverse/readr/issues/1211)", {
   f <- tempfile()
   on.exit(unlink(f))

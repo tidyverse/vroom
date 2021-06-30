@@ -10,7 +10,6 @@
 #include <future> // std::async, std::future
 #include <utility>
 
-
 #ifdef VROOM_LOG
 #include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
 #include "spdlog/spdlog.h"
@@ -77,14 +76,22 @@ fixed_width_index_connection::fixed_width_index_connection(
   std::future<void> parse_fut;
   std::future<void> write_fut;
   size_t lines_read = 0;
+  size_t lines_remaining = n_max;
   std::unique_ptr<RProgress::RProgress> empty_pb = nullptr;
 
-  newlines_.push_back(start - 1);
+  if (n_max > 0) {
+    newlines_.push_back(start - 1);
+  }
 
   while (sz > 0) {
     if (parse_fut.valid()) {
       parse_fut.wait();
     }
+    if (lines_read >= lines_remaining) {
+      break;
+    }
+    lines_remaining -= lines_read;
+
     parse_fut = std::async([&, i, start, total_read, sz] {
       lines_read = index_region(
           buf[i],
@@ -94,7 +101,7 @@ fixed_width_index_connection::fixed_width_index_connection(
           total_read,
           comment,
           skip_empty_rows,
-          n_max,
+          lines_remaining,
           empty_pb);
     });
 
@@ -120,12 +127,14 @@ fixed_width_index_connection::fixed_width_index_connection(
 
     SPDLOG_DEBUG("first_nl_loc: {0} size: {1}", start, sz);
   }
+
   if (parse_fut.valid()) {
     parse_fut.wait();
   }
   if (write_fut.valid()) {
     write_fut.wait();
   }
+
   std::fclose(out);
 
   if (progress) {
@@ -139,9 +148,11 @@ fixed_width_index_connection::fixed_width_index_connection(
   }
 
   std::error_code error;
-  mmap_ = make_mmap_source(filename_.c_str(), error);
-  if (error) {
-    cpp11::stop("%s", error.message().c_str());
+  if (n_max != 0) {
+    mmap_ = make_mmap_source(filename_.c_str(), error);
+    if (error) {
+      cpp11::stop("%s", error.message().c_str());
+    }
   }
 
 #ifdef VROOM_LOG

@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom_fwf(n_max=)` now works as intended when the input is a connection.
+
 * `vroom()` and `vroom_write()` now automatically detect the compression format regardless of the file extension for bzip2, xzip, gzip and zip files (#348)
 
 * `vroom()` and `vroom_write()` now automatically support many more archive formats thanks to the archive package.
