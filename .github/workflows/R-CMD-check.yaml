@@ -87,7 +87,7 @@ jobs:
       - name: Install system dependencies-2
         if: runner.os == 'Linux'
         run: |
-          apt install -y libarchive-dev
+          sudo apt-get install -y libarchive-dev
 
       - name: Install system dependencies-3
         if: runner.os == 'macOS'
