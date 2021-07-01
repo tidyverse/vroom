@@ -114,20 +114,29 @@ standardise_one_path <- function (path, write = FALSE) {
       p$extension <- extension
       if (write) {
         if (is.null(formats[[1]])) {
-          return(archive::file_write(path, mode = "", filter = formats[[2]]))
+          return(archive::file_write(path, filter = formats[[2]]))
         }
-        return(archive::archive_write(path, p$path, mode = "", format = formats[[1]], filter = formats[[2]]))
+        return(archive::archive_write(path, p$path, format = formats[[1]], filter = formats[[2]]))
       }
       if (is.null(formats[[1]])) {
-        return(archive::file_read(path, mode = "", filter = formats[[2]]))
+        return(archive::file_read(path, filter = formats[[2]]))
       }
-      return(archive::archive_read(path, mode = "", format = formats[[1]], filter = formats[[2]]))
+      return(archive::archive_read(path, format = formats[[1]], filter = formats[[2]]))
     }
   }
 
-  compression <- detect_compression(path)
+  if (!write) {
+    compression <- detect_compression(path)
+  } else {
+    compression <- NA
+  }
+
   if (is.na(compression)) {
     compression <- tools::file_ext(path)
+  }
+
+  if (write && compression == "zip") {
+    stop("Can only read from, not write to, .zip", call. = FALSE)
   }
 
   switch(compression,
