@@ -156,6 +156,15 @@
 <h1 class="page-header" data-toc-text="development version">
 <a href="#vroom-development-version" class="anchor"></a>vroom (development version)<small> Unreleased </small>
 </h1>
+<ul>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports inputs with unnamed column types that are less than the number of columns (<a href='https://github.com/r-lib/vroom/issues/296'>#296</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now outputs the correct column names even in the presence of skipped columns (<a href='https://github.com/r-lib/vroom/issues/293'>#293</a>, <a href="https://github.com/tidyverse/readr/issues/1215">tidyverse/readr<a href='https://github.com/r-lib/vroom/issues/1215'>#1215</a></a>)</p></li>
+<li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf(n_max=)</a></code> now works as intended when the input is a connection.</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> and <code><a href="../reference/vroom_write.html">vroom_write()</a></code> now automatically detect the compression format regardless of the file extension for bzip2, xzip, gzip and zip files (<a href='https://github.com/r-lib/vroom/issues/348'>#348</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> and <code><a href="../reference/vroom_write.html">vroom_write()</a></code> now automatically support many more archive formats thanks to the archive package. These include new support for writing zip files, reading and writing 7zip, tar and ISO files.</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom(num_threads = 1)</a></code> will now not spawn any threads. This can be used on as a workaround on systems without full thread support.</p></li>
+<li><p>Threads are now automatically disabled on non-macOS systems compiling against clang’s libc++. Most systems non-macOS systems use the more common gcc libstdc++, so this should not effect most users.</p></li>
+</ul>
 </div>
     <div id="vroom-151" class="section level1">
 <h1 class="page-header" data-toc-text="1.5.1">
