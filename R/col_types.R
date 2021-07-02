@@ -351,10 +351,19 @@ vroom_select <- function(x, col_select, id) {
   x
 }
 
-col_types_standardise <- function(spec, col_names, col_select, name_repair) {
-  if (length(col_names) == 0) {
-    return(spec)
+col_types_standardise <- function(spec, num_cols, col_names, col_select, name_repair) {
+  if (num_cols == 0) {
+    if (length(spec$cols) > 0) {
+      num_cols <- length(spec$cols)
+    } else if (length(col_names) > 0) {
+      num_cols <- length(col_names)
+    }
   }
+
+  if (is.null(col_names)) {
+    col_names <- make_names(NULL, num_cols)
+  }
+
   col_names <- vctrs::vec_as_names(col_names, repair = name_repair)
 
   type_names <- names(spec$cols)
@@ -362,18 +371,14 @@ col_types_standardise <- function(spec, col_names, col_select, name_repair) {
   if (length(spec$cols) == 0) {
     # no types specified so use defaults
 
-    spec$cols <- rep(list(spec$default), length(col_names))
-    names(spec$cols) <- col_names
+    spec$cols <- rep(list(spec$default), num_cols)
+    names(spec$cols) <- col_names[seq_along(spec$cols)]
   } else if (is.null(type_names)) {
     # unnamed types & names guessed from header: match exactly
-
-    if (length(spec$cols) != length(col_names)) {
-      stop("Unnamed `col_types` must have the same length as `col_names`.", call. = FALSE)
-    }
-
-    names(spec$cols) <- col_names
+    spec$cols <- c(spec$cols, rep(list(spec$default), num_cols - length(spec$cols)))
+    names(spec$cols) <- col_names[seq_along(spec$cols)]
   } else {
-    # names types
+    # named types
 
     bad_types <- !(type_names %in% col_names)
     if (any(bad_types)) {
@@ -401,6 +406,19 @@ col_types_standardise <- function(spec, col_names, col_select, name_repair) {
     }
 
     spec$cols[!to_keep] <- rep(list(col_skip()), sum(!to_keep))
+  }
+
+  # Set the names, ignoring skipped columns
+  kept <- !vapply(spec$cols, inherits, logical(1), "collector_skip")
+
+  # Fill the column names if they are shorter than what is kept.
+  if (length(col_names) == length(spec$cols)) {
+    names(spec$cols)[kept] <- col_names[kept]
+  } else if (length(col_names) == sum(kept)) {
+    names(spec$cols)[kept] <- col_names
+  } else {
+    col_names <- make_names(col_names, sum(kept))
+    names(spec$cols)[kept] <- col_names
   }
 
   spec

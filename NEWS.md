@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` now outputs the correct column names even in the presence of skipped columns (#293, [tidyverse/readr#1215](https://github.com/tidyverse/readr/issues/1215))
+
 * `vroom_fwf(n_max=)` now works as intended when the input is a connection.
 
 * `vroom()` and `vroom_write()` now automatically detect the compression format regardless of the file extension for bzip2, xzip, gzip and zip files (#348)

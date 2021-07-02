@@ -162,7 +162,7 @@ gen_tbl <- function(rows, cols = NULL, col_types = NULL, locale = default_locale
 
   nms <- make_names(names(spec$cols), cols)
 
-  specs <- col_types_standardise(spec, nms, vroom_enquo(rlang::quo(NULL)), "unique")
+  specs <- col_types_standardise(spec, length(nms), nms, vroom_enquo(rlang::quo(NULL)), "unique")
   res <- vector("list", cols)
   for (i in seq_len(cols)) {
     type <- sub("collector_", "", class(specs$cols[[i]])[[1]])

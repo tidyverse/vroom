@@ -374,8 +374,9 @@ test_that("guess_type works with long strings (#74)", {
   )
 })
 
-test_that("vroom errors if unnamed column types do not match the number of columns", {
-  expect_error(vroom(I("a,b\n1,2\n"), col_types = "i"), "must have the same length")
+test_that("vroom guesses types if unnamed column types do not match the number of columns", {
+  test_vroom(I("a,b\n1,2\n"), delim = ",", col_types = "i",
+    equals = tibble::tibble(a = 1L, b = 2L))
 })
 
 test_that("column names are properly encoded", {
@@ -715,4 +716,27 @@ test_that("handles quotes within skips", {
       c = c("4c")
     )
   )
+})
+
+test_that("skipped columns retain their name", {
+  test_vroom(I("1,2,3\n4,5,6"), col_names = "x", col_types = "i__",
+    equals = tibble::tibble(
+      x = c(1L, 4L)
+    ))
+
+  test_vroom(I("1,2,3\n4,5,6"), col_names = "y", col_types = "_i_",
+    equals = tibble::tibble(
+      y = c(2L, 5L)
+    ))
+
+  test_vroom(I("1,2,3\n4,5,6"), col_names = "z", col_types = "__i",
+    equals = tibble::tibble(
+      z = c(3L, 6L)
+    ))
+
+  test_vroom(I("1,2,3\n4,5,6"), col_names = c("x", "z"), col_types = "i_i",
+    equals = tibble::tibble(
+      x = c(1L, 4L),
+      z = c(3L, 6L)
+    ))
 })

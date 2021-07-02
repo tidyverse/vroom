@@ -148,19 +148,16 @@ inline collectors resolve_collectors(
             make_names(R_NilValue, Rf_xlength(VECTOR_ELT(col_types, 0))));
       }
     }
-  } else {
-    if (TYPEOF(col_names) == STRSXP) {
-      col_nms = static_cast<SEXP>(make_names(col_names, num_cols));
-    } else if (TYPEOF(col_names) == LGLSXP && cpp11::logicals(col_names)[0]) {
-      col_nms = read_column_names(idx, locale_info);
-    } else {
-      col_nms = static_cast<SEXP>(make_names(R_NilValue, num_cols));
-    }
+  }
+  if (TYPEOF(col_names) == STRSXP) {
+    col_nms = static_cast<SEXP>(col_names);
+  } else if (TYPEOF(col_names) == LGLSXP && cpp11::logicals(col_names)[0]) {
+    col_nms = read_column_names(idx, locale_info);
   }
 
   auto col_types_standardise = vroom["col_types_standardise"];
-  cpp11::list col_types_std(
-      col_types_standardise(col_types, col_nms, col_select, name_repair));
+  cpp11::list col_types_std(col_types_standardise(
+      col_types, num_cols, col_nms, col_select, name_repair));
 
   R_xlen_t guess_num = std::min(num_rows, guess_max);
 
