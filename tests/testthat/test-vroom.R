@@ -740,3 +740,34 @@ test_that("skipped columns retain their name", {
       z = c(3L, 6L)
     ))
 })
+
+test_that("skipped columns retain their name", {
+  test_vroom(I("1,2,3\n4,5,6"), col_names = "x", col_types = "i__",
+    equals = tibble::tibble(
+      x = c(1L, 4L)
+    ))
+
+  test_vroom(I("1,2,3\n4,5,6"), col_names = "y", col_types = "_i_",
+    equals = tibble::tibble(
+      y = c(2L, 5L)
+    ))
+
+  test_vroom(I("1,2,3\n4,5,6"), col_names = "z", col_types = "__i",
+    equals = tibble::tibble(
+      z = c(3L, 6L)
+    ))
+
+  test_vroom(I("1,2,3\n4,5,6"), col_names = c("x", "z"), col_types = "i_i",
+    equals = tibble::tibble(
+      x = c(1L, 4L),
+      z = c(3L, 6L)
+    ))
+})
+
+test_that("unnamed column types can be less than the number of columns", {
+  test_vroom("x,y\n1,2\n", col_types = "i",
+    equals = tibble::tibble(
+      x = 1L,
+      y = 2L
+    ))
+})
