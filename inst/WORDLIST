@@ -28,6 +28,7 @@ fread
 funder
 fwf
 Gabe
+gcc
 github
 grisu
 gz
@@ -39,7 +40,10 @@ Kalibera
 KiB
 knitr
 lbzip
+libc
+libstdc
 Lifecycle
+macOS
 mandreyel
 mio
 mis
@@ -89,4 +93,5 @@ www
 deterministically
 UseR
 xlarge
+xzip
 Zstandard
