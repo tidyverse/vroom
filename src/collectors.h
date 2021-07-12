@@ -171,12 +171,20 @@ inline collectors resolve_collectors(
 
     if (my_col_type == "collector_guess") {
       cpp11::writable::strings col_vals(guess_num);
-      for (R_xlen_t j = 0; j < guess_num; ++j) {
-        auto row = j * guess_step;
+      for (R_xlen_t j = 0; j < guess_num - 1; ++j) {
+        size_t row = j * guess_step;
         auto str = idx->get(row, col);
         col_vals[j] =
             locale_info->encoder_.makeSEXP(str.begin(), str.end(), true);
       }
+      // Always include the last row in the guess
+      if (num_rows > 0 && guess_num - 1 >= 0) {
+        size_t row = num_rows - 1;
+        auto str = idx->get(row, col);
+        col_vals[guess_num - 1] =
+            locale_info->encoder_.makeSEXP(str.begin(), str.end(), true);
+      }
+
       auto type =
           guess_type__(std::move(col_vals), na, locale_info.get(), false);
       auto fun_name = std::string("col_") + type;

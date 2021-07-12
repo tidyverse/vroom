@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` now always includes the last row when guessing (#352)
+
 # vroom 1.5.2
 
 * `vroom()` now supports inputs with unnamed column types that are less than the number of columns (#296)

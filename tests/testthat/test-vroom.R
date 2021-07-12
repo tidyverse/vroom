@@ -334,18 +334,18 @@ test_that("vroom reads headers with embedded newlines 2", {
 
 test_that("vroom uses the number of rows when guess_max = Inf", {
   tf <- tempfile()
-  df <- tibble::tibble(x = c(1:1000, "foo"))
+  df <- tibble::tibble(x = c(1:1000, "foo", 1001))
   vroom_write(df, tf, delim = "\t")
 
   # The type should be guessed wrong, because the character comes at the end
   expect_warning(res <- vroom(tf, delim = "\t", col_types = list(), altrep = FALSE))
   expect_type(res[["x"]], "double")
-  expect_true(is.na(res[["x"]][[NROW(res)]]))
+  expect_true(is.na(res[["x"]][[NROW(res) - 1]]))
 
   # The value should exist with guess_max = Inf
   res <- vroom(tf, delim = "\t", guess_max = Inf, col_types = list())
   expect_type(res[["x"]], "character")
-  expect_equal(res[["x"]][[NROW(res)]], "foo")
+  expect_equal(res[["x"]][[NROW(res) - 1]], "foo")
 })
 
 test_that("vroom adds columns if a row is too short", {
@@ -770,4 +770,16 @@ test_that("unnamed column types can be less than the number of columns", {
       x = 1L,
       y = 2L
     ))
+})
+
+test_that("always include the last row when guessing (#352)", {
+
+  f <- tempfile()
+  on.exit(unlink(f))
+
+  vroom_write(data.frame("x" = c(rep(NA, 10), 5)), delim = ",", file = f)
+
+  x <- vroom(f, col_types = "?", guess_max = 5, delim = ",")
+
+  expect_type(x[[1]], "double")
 })
