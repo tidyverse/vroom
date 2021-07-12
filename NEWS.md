@@ -1,3 +1,5 @@
+# vroom (development version)
+
 # vroom 1.5.2
 
 * `vroom()` now supports inputs with unnamed column types that are less than the number of columns (#296)
