@@ -90,7 +90,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.2</span>
       </span>
     </div>
 
@@ -167,6 +167,7 @@
   locale <span class='op'>=</span> <span class='fu'><a href='locale.html'>default_locale</a></span><span class='op'>(</span><span class='op'>)</span>,
   na <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>""</span>, <span class='st'>"NA"</span><span class='op'>)</span>,
   comment <span class='op'>=</span> <span class='st'>""</span>,
+  skip_empty_rows <span class='op'>=</span> <span class='cn'>TRUE</span>,
   trim_ws <span class='op'>=</span> <span class='cn'>TRUE</span>,
   skip <span class='op'>=</span> <span class='fl'>0</span>,
   n_max <span class='op'>=</span> <span class='cn'>Inf</span>,
@@ -175,6 +176,7 @@
   altrep_opts <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Deprecated.html'>deprecated</a></span><span class='op'>(</span><span class='op'>)</span>,
   num_threads <span class='op'>=</span> <span class='fu'>vroom_threads</span><span class='op'>(</span><span class='op'>)</span>,
   progress <span class='op'>=</span> <span class='fu'><a href='vroom_progress.html'>vroom_progress</a></span><span class='op'>(</span><span class='op'>)</span>,
+  show_col_types <span class='op'>=</span> <span class='cn'>NULL</span>,
   .name_repair <span class='op'>=</span> <span class='st'>"unique"</span>
 <span class='op'>)</span>
 
@@ -201,25 +203,26 @@ decompressed.</p>
 <p>Literal data is most useful for examples and tests. It must contain at
 least one new line to be recognised as data (instead of a path) or be a
 vector of greater than length 1.</p>
-<p>Using a value of <code><a href='https://readr.tidyverse.org/reference/clipboard.html'>clipboard()</a></code> will read from the system clipboard.</p></td>
+<p>Using a value of <code><a href='https://rdrr.io/r/utils/clipboard.html'>clipboard()</a></code> will read from the system clipboard.</p></td>
     </tr>
     <tr>
       <th>col_positions</th>
-      <td><p>Column positions, as created by <code><a href='https://readr.tidyverse.org/reference/read_fwf.html'>fwf_empty()</a></code>,
-<code><a href='https://readr.tidyverse.org/reference/read_fwf.html'>fwf_widths()</a></code> or <code><a href='https://readr.tidyverse.org/reference/read_fwf.html'>fwf_positions()</a></code>. To read in only selected fields,
-use <code><a href='https://readr.tidyverse.org/reference/read_fwf.html'>fwf_positions()</a></code>. If the width of the last column is variable (a
+      <td><p>Column positions, as created by <code>fwf_empty()</code>,
+<code>fwf_widths()</code> or <code>fwf_positions()</code>. To read in only selected fields,
+use <code>fwf_positions()</code>. If the width of the last column is variable (a
 ragged fwf file), supply the last end position as NA.</p></td>
     </tr>
     <tr>
       <th>col_types</th>
-      <td><p>One of <code>NULL</code>, a <code><a href='https://readr.tidyverse.org/reference/cols.html'>cols()</a></code> specification, or
+      <td><p>One of <code>NULL</code>, a <code><a href='cols.html'>cols()</a></code> specification, or
 a string. See <code>vignette("readr")</code> for more details.</p>
 <p>If <code>NULL</code>, all column types will be imputed from the first 1000 rows
 on the input. This is convenient (and fast), but not robust. If the
-imputation fails, you'll need to supply the correct types yourself.</p>
-<p>If a column specification created by <code><a href='https://readr.tidyverse.org/reference/cols.html'>cols()</a></code>, it must contain
+imputation fails, you'll need to increase the <code>guess_max</code> or supply the
+correct types yourself.</p>
+<p>Column specifications created by <code><a href='https://rdrr.io/r/base/list.html'>list()</a></code> or <code><a href='cols.html'>cols()</a></code> must contain
 one column specification for each column. If you only want to read a
-subset of the columns, use <code><a href='https://readr.tidyverse.org/reference/cols.html'>cols_only()</a></code>.</p>
+subset of the columns, use <code><a href='cols.html'>cols_only()</a></code>.</p>
 <p>Alternatively, you can use a compact string representation where each
 character represents one column:</p><ul>
 <li><p>c = character</p></li>
@@ -235,26 +238,28 @@ character represents one column:</p><ul>
 <li><p>_ or - = skip</p>
 <p>By default, reading a file without a column specification will print a
 message showing what <code>readr</code> guessed they were. To remove this message,
-use <code>col_types = cols()</code>.</p></li>
+set <code>show_col_types = FALSE</code> or set `options(readr.show_col_types = FALSE).</p></li>
 </ul></td>
     </tr>
     <tr>
       <th>col_select</th>
-      <td><p>One or more selection expressions, like in
-<code><a href='https://dplyr.tidyverse.org/reference/select.html'>dplyr::select()</a></code>. Use <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code> or <code><a href='https://rdrr.io/r/base/list.html'>list()</a></code> to use more than one expression.
-See <code><a href='https://dplyr.tidyverse.org/reference/select.html'>?dplyr::select</a></code> for details on available selection options.</p></td>
+      <td><p>&lt;<code><a href='https://tidyselect.r-lib.org/reference/language.html'>tidy-select</a></code>&gt; Columns to include
+in the results, either by name or by numeric index. Use <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code> or <code><a href='https://rdrr.io/r/base/list.html'>list()</a></code>
+to select with more than one expression and <code><a href='https://tidyselect.r-lib.org/reference/language.html'>?tidyselect::language</a></code> for full
+details on the selection language.</p></td>
     </tr>
     <tr>
       <th>id</th>
-      <td><p>Either a string or 'NULL'. If a string, the output will contain a
-variable with that name with the filename(s) as the value. If 'NULL', the
-default, no variable will be created.</p></td>
+      <td><p>The name of a column in which to store the file path. This is
+useful when reading multiple input files and there is data in the file
+paths, such as the data collection date. If <code>NULL</code> (the default) no extra
+column is created.</p></td>
     </tr>
     <tr>
       <th>locale</th>
       <td><p>The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
-<code><a href='https://readr.tidyverse.org/reference/locale.html'>locale()</a></code> to create your own locale that controls things like
+<code><a href='locale.html'>locale()</a></code> to create your own locale that controls things like
 the default time zone, encoding, decimal mark, big mark, and day/month
 names.</p></td>
     </tr>
@@ -269,8 +274,14 @@ option to <code><a href='https://rdrr.io/r/base/character.html'>character()</a><
 comment characters will be silently ignored.</p></td>
     </tr>
     <tr>
+      <th>skip_empty_rows</th>
+      <td><p>Should blank rows be ignored altogether? i.e. If this
+option is <code>TRUE</code> then blank rows will not be represented at all.  If it is
+<code>FALSE</code> then they will be represented by <code>NA</code> values in all the columns.</p></td>
+    </tr>
+    <tr>
       <th>trim_ws</th>
-      <td><p>Should leading and trailing whitespace be trimmed from
+      <td><p>Should leading and trailing whitespace (ASCII spaces and tabs) be trimmed from
 each field before parsing it?</p></td>
     </tr>
     <tr>
@@ -279,11 +290,11 @@ each field before parsing it?</p></td>
     </tr>
     <tr>
       <th>n_max</th>
-      <td><p>Maximum number of records to read.</p></td>
+      <td><p>Maximum number of lines to read.</p></td>
     </tr>
     <tr>
       <th>guess_max</th>
-      <td><p>Maximum number of records to use for guessing column types.</p></td>
+      <td><p>Maximum number of lines to use for guessing column types.</p></td>
     </tr>
     <tr>
       <th>altrep</th>
@@ -293,28 +304,43 @@ either a character vector of types, <code>TRUE</code> or <code>FALSE</code>. See
     </tr>
     <tr>
       <th>altrep_opts</th>
-      <td><p><img src='figures/lifecycle-deprecated.svg' alt='Deprecated lifecycle' /></p></td>
+      <td><p><a href='https://lifecycle.r-lib.org/articles/stages.html#deprecated'><img src='figures/lifecycle-deprecated.svg' alt='[Deprecated]' /></a></p></td>
     </tr>
     <tr>
       <th>num_threads</th>
-      <td><p>Number of threads to use when reading and materializing
-vectors. If your data contains newlines within fields the parser will
-automatically be forced to use a single thread only.</p></td>
+      <td><p>The number of processing threads to use for initial
+parsing and lazy reading of data.</p></td>
     </tr>
     <tr>
       <th>progress</th>
       <td><p>Display a progress bar? By default it will only display
-in an interactive session and not while knitting a document. The display
-is updated every 50,000 values and will only display if estimated reading
-time is 5 seconds or more. The automatic progress bar can be disabled by
-setting option <code>readr.show_progress</code> to <code>FALSE</code>.</p></td>
+in an interactive session and not while knitting a document. The automatic
+progress bar can be disabled by setting option <code>readr.show_progress</code> to
+<code>FALSE</code>.</p></td>
+    </tr>
+    <tr>
+      <th>show_col_types</th>
+      <td><p>If <code>FALSE</code>, do not show the guessed column types. If
+<code>TRUE</code> always show the column types, even if they are supplied. If <code>NULL</code>
+(the default) only show the column types if they are not explicitly supplied
+by the <code>col_types</code> argument.</p></td>
     </tr>
     <tr>
       <th>.name_repair</th>
-      <td><p>Handling of column names. By default, vroom ensures
-column names are not empty and unique. See <code>.name_repair</code> as documented in
-<code><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble::tibble()</a></code> for additional options including supplying user defined
-name repair functions.</p></td>
+      <td><p>Treatment of problematic column names:</p><ul>
+<li><p><code>"minimal"</code>: No name repair or checks, beyond basic existence of names</p></li>
+<li><p><code>"unique"</code>: Make sure names are unique and not empty</p></li>
+<li><p><code>"check_unique"</code>: (default value), no name repair, but check they are
+<code>unique</code></p></li>
+<li><p><code>"universal"</code>: Make the names <code>unique</code> and syntactic</p></li>
+<li><p>a function: apply custom name repair (e.g., <code>.name_repair = make.names</code>
+for names in the style of base R)</p></li>
+<li><p>A purrr-style anonymous function, see <code><a href='https://rlang.r-lib.org/reference/as_function.html'>rlang::as_function()</a></code></p></li>
+</ul>
+
+<p>This argument is passed on as <code>repair</code> to <code><a href='https://vctrs.r-lib.org/reference/vec_as_names.html'>vctrs::vec_as_names()</a></code>.
+See there for more details on these terms and the strategies used
+to enforce them.</p></td>
     </tr>
     <tr>
       <th>col_names</th>
@@ -354,40 +380,60 @@ with or or two rows as above.</p></td>
 <span class='co'># You can specify column positions in several ways:</span>
 <span class='co'># 1. Guess based on position of empty columns</span>
 <span class='fu'>vroom_fwf</span><span class='op'>(</span><span class='va'>fwf_sample</span>, <span class='fu'>fwf_empty</span><span class='op'>(</span><span class='va'>fwf_sample</span>, col_names <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"first"</span>, <span class='st'>"last"</span>, <span class='st'>"state"</span>, <span class='st'>"ssn"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 3 x 4</span><span>
+</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows: </span><span style='color: #0000BB;'>3</span> <span style='font-weight: bold;'>Columns: </span><span style='color: #0000BB;'>4</span></span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>──</span> <span style='font-weight: bold;'>Column specification</span> <span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span></span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'><span style='color: #BB0000;'>chr</span> (4): first, last, state, ssn</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> Use <span style='color: #262626; background-color: #DADADA;'>`spec()`</span> to retrieve the full column specification for this data.</span>
+#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> Specify the column types or set <span style='color: #262626; background-color: #DADADA;'>`show_col_types = FALSE`</span> to quiet this message.</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 3 x 4</span>
 #&gt;   first last     state ssn         
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       
-#&gt; </span><span style='color: #555555;'>1</span><span> John  Smith    WA    418-Y11-4111
-#&gt; </span><span style='color: #555555;'>2</span><span> Mary  Hartford CA    319-Z19-4341
-#&gt; </span><span style='color: #555555;'>3</span><span> Evan  Nolan    IL    219-532-c301</div><div class='input'><span class='co'># 2. A vector of field widths</span>
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       
+#&gt; <span style='color: #BCBCBC;'>1</span> John  Smith    WA    418-Y11-4111
+#&gt; <span style='color: #BCBCBC;'>2</span> Mary  Hartford CA    319-Z19-4341
+#&gt; <span style='color: #BCBCBC;'>3</span> Evan  Nolan    IL    219-532-c301</div><div class='input'><span class='co'># 2. A vector of field widths</span>
 <span class='fu'>vroom_fwf</span><span class='op'>(</span><span class='va'>fwf_sample</span>, <span class='fu'>fwf_widths</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>10</span>, <span class='fl'>12</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"name"</span>, <span class='st'>"state"</span>, <span class='st'>"ssn"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 3 x 3</span><span>
+</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows: </span><span style='color: #0000BB;'>3</span> <span style='font-weight: bold;'>Columns: </span><span style='color: #0000BB;'>3</span></span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>──</span> <span style='font-weight: bold;'>Column specification</span> <span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span></span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'><span style='color: #BB0000;'>chr</span> (3): name, state, ssn</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> Use <span style='color: #262626; background-color: #DADADA;'>`spec()`</span> to retrieve the full column specification for this data.</span>
+#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> Specify the column types or set <span style='color: #262626; background-color: #DADADA;'>`show_col_types = FALSE`</span> to quiet this message.</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 3 x 3</span>
 #&gt;   name          state ssn         
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       
-#&gt; </span><span style='color: #555555;'>1</span><span> John Smith    WA    418-Y11-4111
-#&gt; </span><span style='color: #555555;'>2</span><span> Mary Hartford CA    319-Z19-4341
-#&gt; </span><span style='color: #555555;'>3</span><span> Evan Nolan    IL    219-532-c301</div><div class='input'><span class='co'># 3. Paired vectors of start and end positions</span>
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       
+#&gt; <span style='color: #BCBCBC;'>1</span> John Smith    WA    418-Y11-4111
+#&gt; <span style='color: #BCBCBC;'>2</span> Mary Hartford CA    319-Z19-4341
+#&gt; <span style='color: #BCBCBC;'>3</span> Evan Nolan    IL    219-532-c301</div><div class='input'><span class='co'># 3. Paired vectors of start and end positions</span>
 <span class='fu'>vroom_fwf</span><span class='op'>(</span><span class='va'>fwf_sample</span>, <span class='fu'>fwf_positions</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>30</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>42</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"name"</span>, <span class='st'>"ssn"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 3 x 2</span><span>
+</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows: </span><span style='color: #0000BB;'>3</span> <span style='font-weight: bold;'>Columns: </span><span style='color: #0000BB;'>2</span></span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>──</span> <span style='font-weight: bold;'>Column specification</span> <span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span></span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'><span style='color: #BB0000;'>chr</span> (2): name, ssn</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> Use <span style='color: #262626; background-color: #DADADA;'>`spec()`</span> to retrieve the full column specification for this data.</span>
+#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> Specify the column types or set <span style='color: #262626; background-color: #DADADA;'>`show_col_types = FALSE`</span> to quiet this message.</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 3 x 2</span>
 #&gt;   name          ssn         
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       
-#&gt; </span><span style='color: #555555;'>1</span><span> John Smith    418-Y11-4111
-#&gt; </span><span style='color: #555555;'>2</span><span> Mary Hartford 319-Z19-4341
-#&gt; </span><span style='color: #555555;'>3</span><span> Evan Nolan    219-532-c301</div><div class='input'><span class='co'># 4. Named arguments with start and end positions</span>
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       
+#&gt; <span style='color: #BCBCBC;'>1</span> John Smith    418-Y11-4111
+#&gt; <span style='color: #BCBCBC;'>2</span> Mary Hartford 319-Z19-4341
+#&gt; <span style='color: #BCBCBC;'>3</span> Evan Nolan    219-532-c301</div><div class='input'><span class='co'># 4. Named arguments with start and end positions</span>
 <span class='fu'>vroom_fwf</span><span class='op'>(</span><span class='va'>fwf_sample</span>, <span class='fu'>fwf_cols</span><span class='op'>(</span>name <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>20</span><span class='op'>)</span>, ssn <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>30</span>, <span class='fl'>42</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 3 x 2</span><span>
+</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows: </span><span style='color: #0000BB;'>3</span> <span style='font-weight: bold;'>Columns: </span><span style='color: #0000BB;'>2</span></span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>──</span> <span style='font-weight: bold;'>Column specification</span> <span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span></span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'><span style='color: #BB0000;'>chr</span> (2): name, ssn</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> Use <span style='color: #262626; background-color: #DADADA;'>`spec()`</span> to retrieve the full column specification for this data.</span>
+#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> Specify the column types or set <span style='color: #262626; background-color: #DADADA;'>`show_col_types = FALSE`</span> to quiet this message.</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 3 x 2</span>
 #&gt;   name          ssn         
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       
-#&gt; </span><span style='color: #555555;'>1</span><span> John Smith    418-Y11-4111
-#&gt; </span><span style='color: #555555;'>2</span><span> Mary Hartford 319-Z19-4341
-#&gt; </span><span style='color: #555555;'>3</span><span> Evan Nolan    219-532-c301</div><div class='input'><span class='co'># 5. Named arguments with column widths</span>
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       
+#&gt; <span style='color: #BCBCBC;'>1</span> John Smith    418-Y11-4111
+#&gt; <span style='color: #BCBCBC;'>2</span> Mary Hartford 319-Z19-4341
+#&gt; <span style='color: #BCBCBC;'>3</span> Evan Nolan    219-532-c301</div><div class='input'><span class='co'># 5. Named arguments with column widths</span>
 <span class='fu'>vroom_fwf</span><span class='op'>(</span><span class='va'>fwf_sample</span>, <span class='fu'>fwf_cols</span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>20</span>, state <span class='op'>=</span> <span class='fl'>10</span>, ssn <span class='op'>=</span> <span class='fl'>12</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 3 x 3</span><span>
+</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows: </span><span style='color: #0000BB;'>3</span> <span style='font-weight: bold;'>Columns: </span><span style='color: #0000BB;'>3</span></span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>──</span> <span style='font-weight: bold;'>Column specification</span> <span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span></span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'><span style='color: #BB0000;'>chr</span> (3): name, state, ssn</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> Use <span style='color: #262626; background-color: #DADADA;'>`spec()`</span> to retrieve the full column specification for this data.</span>
+#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> Specify the column types or set <span style='color: #262626; background-color: #DADADA;'>`show_col_types = FALSE`</span> to quiet this message.</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 3 x 3</span>
 #&gt;   name          state ssn         
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       
-#&gt; </span><span style='color: #555555;'>1</span><span> John Smith    WA    418-Y11-4111
-#&gt; </span><span style='color: #555555;'>2</span><span> Mary Hartford CA    319-Z19-4341
-#&gt; </span><span style='color: #555555;'>3</span><span> Evan Nolan    IL    219-532-c301</div></span></pre>
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       
+#&gt; <span style='color: #BCBCBC;'>1</span> John Smith    WA    418-Y11-4111
+#&gt; <span style='color: #BCBCBC;'>2</span> Mary Hartford CA    319-Z19-4341
+#&gt; <span style='color: #BCBCBC;'>3</span> Evan Nolan    IL    219-532-c301</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
