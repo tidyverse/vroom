@@ -42,9 +42,9 @@ test_that("vroom can trim whitespace", {
     equals = tibble::tibble(a = "foo", b = "bar", c = "baz")
   )
 
-  # whitespace kept inside quotes
-  test_vroom('a,b,c\n "foo" ,  " bar"  ,"\tbaz"\n', delim = ",",
-    equals = tibble::tibble(a = "foo", b = " bar", c = "\tbaz")
+  # whitespace trimmed inside quotes
+  test_vroom('a,b,c\n"foo  ","  bar","\t\tbaz"\n', delim = ",",
+    equals = tibble::tibble(a = "foo", b = "bar", c = "baz")
   )
 })
 

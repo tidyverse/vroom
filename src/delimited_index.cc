@@ -393,6 +393,9 @@ delimited_index::get_trimmed_val(size_t i, bool is_first, bool is_last) const {
     if (has_quote) {
       trim_quotes(begin, end);
     }
+    if (trim_ws_) {
+      trim_whitespace(begin, end);
+    }
   }
 
   return get_escaped_string(begin, end, has_quote);
