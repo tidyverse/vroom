@@ -375,7 +375,11 @@ col_types_standardise <- function(spec, num_cols, col_names, col_select, name_re
     names(spec$cols) <- col_names[seq_along(spec$cols)]
   } else if (is.null(type_names)) {
     # unnamed types & names guessed from header: match exactly
-    spec$cols <- c(spec$cols, rep(list(spec$default), num_cols - length(spec$cols)))
+    if (num_cols < length(spec$cols)) {
+      spec$cols <- spec$cols[seq_len(num_cols)]
+    } else {
+      spec$cols <- c(spec$cols, rep(list(spec$default), num_cols - length(spec$cols)))
+    }
     names(spec$cols) <- col_names[seq_along(spec$cols)]
   } else {
     # named types

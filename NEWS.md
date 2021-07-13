@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom(col_types=)` now truncates the column types if the user passes too many types. (#355)
+
 * `vroom()` now always includes the last row when guessing (#352)
 
 * `vroom(trim_ws = TRUE)` now trims field content within quotes as well as without (#354).
