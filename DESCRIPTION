@@ -1,6 +1,6 @@
 Package: vroom
 Title: Read and Write Rectangular Text Data Quickly
-Version: 1.5.2.9000
+Version: 1.5.3
 Authors@R: 
     c(person(given = "Jim",
              family = "Hester",

@@ -1,4 +1,4 @@
-# vroom (development version)
+# vroom 1.5.3
 
 * `vroom(col_types=)` now truncates the column types if the user passes too many types. (#355)
 
