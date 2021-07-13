@@ -1,5 +1,3 @@
-This should fix the test failures on fedora linux using clang and libc++
-
 ## Test environments
 * local OS X install
 * ubuntu 18.04, macOS, win-builder (on GitHub Actions), R 4.1, 4.0, 3.6, 3.5, 3.4
