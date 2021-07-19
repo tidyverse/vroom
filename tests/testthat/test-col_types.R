@@ -19,6 +19,6 @@ test_that("format(col_spec) contains the delimiter if specified", {
 })
 
 test_that("col_types are truncated if you pass too many (#355)", {
-  res <- vroom::vroom("a,b,c,d\n1,2,3,4", col_types = "cccccccc")
+  res <- vroom(I("a,b,c,d\n1,2,3,4"), col_types = "cccccccc")
   expect_equal(res, tibble::tibble(a = "1", b = "2", c = "3", d = "4"))
 })
