@@ -113,7 +113,7 @@ std::string guess_type__(
   }
 
   if (allMissing(input)) {
-    return "logical";
+    return "character";
   }
 
   for (auto && i : input) {
