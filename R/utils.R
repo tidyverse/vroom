@@ -59,11 +59,16 @@ compare.spec_tbl_df <- function (x, y, ...) {
 
 # Conditionally exported in zzz.R
 # @export
-compare_proxy.spec_tbl_df <- function(x) {
+compare_proxy.spec_tbl_df <- function(x, path) {
   attr(x, "spec") <- NULL
   attr(x, "problems") <- NULL
   class(x) <- setdiff(class(x), "spec_tbl_df")
-  x
+
+  if ("path" %in% names(formals(waldo::compare_proxy))) {
+    list(object = x, path = path)
+  } else {
+    x
+  }
 }
 
 # Conditionally exported in zzz.R
