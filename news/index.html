@@ -89,7 +89,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.3</span>
       </span>
     </div>
 
@@ -152,6 +152,18 @@
       <small>Source: <a href='https://github.com/r-lib/vroom/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="vroom-153" class="section level1">
+<h1 class="page-header" data-toc-text="1.5.3">
+<a href="#vroom-153" class="anchor"></a>vroom 1.5.3<small> 2021-07-14 </small>
+</h1>
+<ul>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now creates an empty file when given a input without any columns (<a href="https://github.com/tidyverse/readr/issues/1234" class="uri">https://github.com/tidyverse/readr/issues/1234</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom(col_types=)</a></code> now accepts column type names like those accepted by utils::read.table.</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom(col_types=)</a></code> now truncates the column types if the user passes too many types. (<a href='https://github.com/r-lib/vroom/issues/355'>#355</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now always includes the last row when guessing (<a href='https://github.com/r-lib/vroom/issues/352'>#352</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom(trim_ws = TRUE)</a></code> now trims field content within quotes as well as without (<a href='https://github.com/r-lib/vroom/issues/354'>#354</a>). Previously vroom explicitly retained field content inside quotes regardless of the value of <code>trim_ws</code>.</p></li>
+</ul>
+</div>
     <div id="vroom-152" class="section level1">
 <h1 class="page-header" data-toc-text="1.5.2">
 <a href="#vroom-152" class="anchor"></a>vroom 1.5.2<small> 2021-07-08 </small>
