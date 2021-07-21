@@ -1,13 +1,15 @@
-test_that("empty columns just return themselves without writing anything", {
+test_that("empty columns create an empty file", {
   out <- tempfile()
 
   no_cols <- mtcars[, FALSE]
   no_rows_or_cols <- mtcars[FALSE, FALSE]
 
   expect_equal(vroom_write(no_cols, out), no_cols)
-  expect_equal(vroom_write(no_rows_or_cols, out), no_rows_or_cols)
+  expect_true(file.exists(out))
+  unlink(out)
 
-  expect_false(file.exists(out))
+  expect_equal(vroom_write(no_rows_or_cols, out), no_rows_or_cols)
+  expect_true(file.exists(out))
 })
 
 test_that("empty rows print the headers", {

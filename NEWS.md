@@ -1,5 +1,7 @@
 # vroom 1.5.3
 
+* `vroom_write()` now creates an empty file when given a input without any columns (https://github.com/tidyverse/readr/issues/1234)
+
 * `vroom(col_types=)` now accepts column type names like those accepted by utils::read.table.
 
 * `vroom(col_types=)` now truncates the column types if the user passes too many types. (#355)
