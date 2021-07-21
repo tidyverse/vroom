@@ -1,5 +1,7 @@
 # vroom 1.5.3
 
+* `vroom(col_types=)` now accepts column type names like those accepted by utils::read.table.
+
 * `vroom(col_types=)` now truncates the column types if the user passes too many types. (#355)
 
 * `vroom()` now always includes the last row when guessing (#352)
