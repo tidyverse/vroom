@@ -120,13 +120,15 @@ void str_to_buf(
   }
 
   const char* str_p;
+  size_t len;
   if (is_utf8(Rf_getCharCE(str))) {
     str_p = CHAR(str);
+    len = Rf_xlength(str);
   } else {
     str_p = Rf_translateCharUTF8(str);
+    len = strlen(str_p);
   }
 
-  auto len = Rf_xlength(str);
   bool should_quote =
       options & quote_all ||
       (options & quote_needed && needs_quote(str_p, delim, na_str));

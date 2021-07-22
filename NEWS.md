@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom_write()` now always correctly writes its output including column names in UTF-8 (https://github.com/tidyverse/readr/issues/1242)
+
 * `vroom_write()` now creates an empty file when given a input without any columns (https://github.com/tidyverse/readr/issues/1234)
 
 * `vroom(col_types=)` now accepts column type names like those accepted by utils::read.table.
