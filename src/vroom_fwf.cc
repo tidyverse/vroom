@@ -3,7 +3,6 @@
 #include <cpp11/strings.hpp>
 #include <utility>
 
-
 #include "LocaleInfo.h"
 #include "columns.h"
 #include "fixed_width_index.h"
@@ -102,7 +101,10 @@ std::vector<bool> find_empty_cols(Iterator begin, Iterator end, ptrdiff_t n) {
 }
 
 [[cpp11::register]] cpp11::list whitespace_columns_(
-    const std::string& filename, size_t skip, ptrdiff_t n, const std::string& comment) {
+    const std::string& filename,
+    size_t skip,
+    ptrdiff_t n,
+    const std::string& comment) {
 
   std::error_code error;
   auto mmap = make_mmap_source(filename.c_str(), error);
@@ -119,7 +121,8 @@ std::vector<bool> find_empty_cols(Iterator begin, Iterator end, ptrdiff_t n) {
       skip,
       comment.data(),
       /* skip_empty_rows */ true,
-      /* embedded_nl */ false);
+      /* embedded_nl */ false,
+      /* quote */ '\0');
 
   std::vector<bool> empty = find_empty_cols(mmap.begin() + s, mmap.end(), n);
   std::vector<int> begin, end;

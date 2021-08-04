@@ -69,8 +69,8 @@ inline bool is_blank_or_comment_line(
 }
 
 template <typename T>
-static size_t find_next_non_quoted_newline(
-    const T& source, size_t start, const char quote = '"') {
+static size_t
+find_next_non_quoted_newline(const T& source, size_t start, const char quote) {
   if (start > source.size() - 1) {
     return source.size() - 1;
   }
@@ -114,14 +114,15 @@ static size_t find_next_newline(
     size_t start,
     const std::string& comment,
     const bool skip_empty_rows,
-    bool embedded_nl) {
+    bool embedded_nl,
+    const char quote) {
 
   if (start >= source.size()) {
     return source.size() - 1;
   }
 
   if (embedded_nl) {
-    return find_next_non_quoted_newline(source, start);
+    return find_next_non_quoted_newline(source, start, quote);
   }
 
   auto begin = source.data() + start;
@@ -233,7 +234,8 @@ size_t find_first_line(
     size_t skip,
     const char* comment,
     const bool skip_empty_rows,
-    const bool embedded_nl) {
+    const bool embedded_nl,
+    const char quote) {
 
   auto begin = skip_bom(source);
   /* Skip skip parameters, comments and blank lines */
@@ -250,7 +252,8 @@ size_t find_first_line(
                 begin,
                 "",
                 /* skip_empty_rows */ false,
-                embedded_nl) +
+                embedded_nl,
+                quote) +
             1;
     skip = skip > 0 ? skip - 1 : skip;
   }

@@ -783,3 +783,17 @@ test_that("always include the last row when guessing (#352)", {
 
   expect_type(x[[1]], "double")
 })
+
+test_that("vroom works with quote even in the first two lines (#1262)", {
+
+  text <-
+c("1,'I
+am
+sam'
+2,'sam
+I
+am'")
+
+  test_vroom(text, col_names = FALSE, quote = "'", delim = ",",
+    equals = tibble::tibble(X1 = c(1, 2), X2 = c("I\nam\nsam", "sam\nI\nam")))
+})

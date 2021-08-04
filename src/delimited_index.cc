@@ -80,7 +80,7 @@ delimited_index::delimited_index(
   bool has_quoted_newlines = quote != '\0';
 
   size_t start = find_first_line(
-      mmap_, skip_, comment_, skip_empty_rows, has_quoted_newlines);
+      mmap_, skip_, comment_, skip_empty_rows, has_quoted_newlines, quote);
 
   // If an empty file, or a file with only a newline.
   if (start >= file_size - 1) {
@@ -89,7 +89,8 @@ delimited_index::delimited_index(
 
   if (delim == nullptr) {
 #ifndef VROOM_STANDALONE
-    delim_ = std::string(1, guess_delim(mmap_, start));
+    delim_ =
+        std::string(1, guess_delim(mmap_, start, /* guess_max */ 20, 0, quote));
 #else
     throw std::runtime_error("Must specify a delimiter");
 #endif
@@ -100,9 +101,14 @@ delimited_index::delimited_index(
   delim_len_ = delim_.length();
 
   size_t first_nl = find_next_newline(
-      mmap_, start, comment_, skip_empty_rows, has_quoted_newlines);
+      mmap_, start, comment_, skip_empty_rows, has_quoted_newlines, quote);
   size_t second_nl = find_next_newline(
-      mmap_, first_nl + 1, comment, skip_empty_rows, has_quoted_newlines);
+      mmap_,
+      first_nl + 1,
+      comment,
+      skip_empty_rows,
+      has_quoted_newlines,
+      quote);
   size_t one_row_size = second_nl - first_nl;
   size_t guessed_rows =
       one_row_size > 0 ? (file_size - first_nl) / one_row_size * 1.1 : 0;
@@ -195,12 +201,21 @@ start_indexing:
           file_size - first_nl,
           [&](size_t start, size_t end, size_t id) {
             idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
-            start =
-                find_next_newline(
-                    mmap_, first_nl + start, comment, skip_empty_rows, false) +
-                1;
+            start = find_next_newline(
+                        mmap_,
+                        first_nl + start,
+                        comment,
+                        skip_empty_rows,
+                        /* has_quote */ false,
+                        quote) +
+                    1;
             end = find_next_newline(
-                      mmap_, first_nl + end, comment, skip_empty_rows, false) +
+                      mmap_,
+                      first_nl + end,
+                      comment,
+                      skip_empty_rows,
+                      /* has_quote */ false,
+                      quote) +
                   1;
             size_t cols = 0;
             csv_state state = RECORD_START;

@@ -10,7 +10,6 @@
 #include <future> // std::async, std::future
 #include <utility>
 
-
 #ifdef VROOM_LOG
 #include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
 #include "spdlog/spdlog.h"
@@ -59,11 +58,16 @@ fixed_width_index_connection::fixed_width_index_connection(
 
   // Parse header
   size_t start = find_first_line(
-      buf[i], skip, comment, skip_empty_rows, /* embedded_nl */ false);
+      buf[i],
+      skip,
+      comment,
+      skip_empty_rows,
+      /* embedded_nl */ false,
+      /* quote */ '\0');
 
   // Check for windows newlines
-  size_t first_nl =
-      find_next_newline(buf[i], start, comment, skip_empty_rows, false);
+  size_t first_nl = find_next_newline(
+      buf[i], start, comment, skip_empty_rows, false, /* quote */ '\0');
   windows_newlines_ = first_nl > 0 && buf[i][first_nl - 1] == '\r';
 
   std::unique_ptr<RProgress::RProgress> pb = nullptr;

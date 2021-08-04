@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` now respects the `quote` parameter properly in the first two lines of the file (https://github.com/tidyverse/readr/issues/1262)
+
 * `vroom_write()` now always correctly writes its output including column names in UTF-8 (https://github.com/tidyverse/readr/issues/1242)
 
 * `vroom_write()` now creates an empty file when given a input without any columns (https://github.com/tidyverse/readr/issues/1234)

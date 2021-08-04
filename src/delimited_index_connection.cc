@@ -85,10 +85,10 @@ delimited_index_connection::delimited_index_connection(
 
   // Parse header
   size_t start = find_first_line(
-      buf[i], skip_, comment_, skip_empty_rows, has_quoted_newlines);
+      buf[i], skip_, comment_, skip_empty_rows, has_quoted_newlines, quote);
 
   if (delim == nullptr) {
-    delim_ = std::string(1, guess_delim(buf[i], start, 5, sz));
+    delim_ = std::string(1, guess_delim(buf[i], start, 20, sz, quote));
   } else {
     delim_ = delim;
   }
@@ -96,7 +96,7 @@ delimited_index_connection::delimited_index_connection(
   delim_len_ = delim_.length();
 
   size_t first_nl = find_next_newline(
-      buf[i], start, comment, skip_empty_rows, has_quoted_newlines);
+      buf[i], start, comment, skip_empty_rows, has_quoted_newlines, quote);
 
   bool single_line = first_nl == buf[i].size() - 1;
 

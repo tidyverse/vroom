@@ -79,11 +79,21 @@ public:
     size_t file_size = mmap_.size();
 
     size_t start = find_first_line(
-        mmap_, skip, comment, skip_empty_rows, /* embedded_nl */ false);
+        mmap_,
+        skip,
+        comment,
+        skip_empty_rows,
+        /* embedded_nl */ false,
+        /* quote */ '\0');
 
     // Check for windows newlines
     size_t first_nl = find_next_newline(
-        mmap_, start, comment, skip_empty_rows, /* embedded_nl */ false);
+        mmap_,
+        start,
+        comment,
+        skip_empty_rows,
+        /* embedded_nl */ false,
+        /* quote */ '\0');
     windows_newlines_ = first_nl > 0 && mmap_[first_nl - 1] == '\r';
 
     std::unique_ptr<RProgress::RProgress> pb = nullptr;
@@ -219,7 +229,12 @@ public:
       size_t update_size = -1) {
 
     size_t pos = find_next_newline(
-        source, start, comment, skip_empty_rows, /* embededd_nl */ false);
+        source,
+        start,
+        comment,
+        skip_empty_rows,
+        /* embededd_nl */ false,
+        /* quote */ '\0');
 
     size_t lines_read = 0;
     auto last_tick = start;
@@ -241,7 +256,12 @@ public:
       }
 
       pos = find_next_newline(
-          source, pos + 1, comment, skip_empty_rows, /* embedded_nl */ false);
+          source,
+          pos + 1,
+          comment,
+          skip_empty_rows,
+          /* embedded_nl */ false,
+          /* quote */ '\0');
     }
 
     if (pb) {

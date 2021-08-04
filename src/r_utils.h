@@ -25,7 +25,11 @@ inline int get_pb_width(const std::string& format) {
 
 template <typename T>
 static char guess_delim(
-    const T& source, size_t start, size_t guess_max = 5, size_t end = 0) {
+    const T& source,
+    size_t start,
+    size_t guess_max,
+    size_t end,
+    const char quote) {
   std::vector<std::string> lines;
 
   if (end == 0) {
@@ -37,7 +41,8 @@ static char guess_delim(
       start,
       /* comment */ "",
       /* skip_empty_rows */ false,
-      /* embedded_nl */ true);
+      /* embedded_nl */ true,
+      /* quote */ quote);
   while (nl > start && nl <= end && guess_max > 0) {
     auto str = std::string(source.data() + start, nl - start);
     lines.push_back(str);
@@ -47,7 +52,8 @@ static char guess_delim(
         start,
         /* comment */ "",
         /* skip_empty_rows */ false,
-        /* embededd_nl */ true);
+        /* embededd_nl */ true,
+        quote);
     --guess_max;
   }
 
