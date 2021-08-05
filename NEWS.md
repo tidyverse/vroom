@@ -1,4 +1,4 @@
-# vroom (development version)
+# vroom 1.5.4
 
 * `vroom(col_types=)` now accepts column type names like those accepted by utils::read.table. e.g.
     vroom::vroom(col_types = list(a = "integer", b = "double", c = "skip"))
