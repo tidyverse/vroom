@@ -4,20 +4,22 @@
 #' as the default. `cols_only()` includes only the columns you explicitly
 #' specify, skipping the rest.
 #'
-#' The available specifications are: (with string abbreviations in brackets)
+#' The available specifications are: (long names in quotes and string abbreviations in brackets)
 #'
-#' * `col_logical()` \[l\], containing only `T`, `F`, `TRUE` or `FALSE`.
-#' * `col_integer()` \[i\], integers.
-#' * `col_big_integer()` \[I\], Big Integers (64bit), requires the `bit64` package.
-#' * `col_double()` \[d\], doubles.
-#' * `col_character()` \[c\], everything else.
-#' * `col_factor(levels, ordered)` \[f\], a fixed set of values.
-#' * `col_date(format = "")` \[D\]: with the locale's `date_format`.
-#' * `col_time(format = "")` \[t\]: with the locale's `time_format`.
-#' * `col_datetime(format = "")` \[T\]: ISO8601 date times
-#' * `col_number()` \[n\], numbers containing the `grouping_mark`
-#' * `col_skip()` \[_, -\], don't import this column.
-#' * `col_guess()` \[?\], parse using the "best" type based on the input.
+#' | function                      | long name             | short name | description                                               |
+#' | ----------                    | -----------           | ---------- | -------------                                             |
+#' | `col_logical()`               | "logical"             | "l"        | Logical values containing only `T`, `F`, `TRUE` or `FALSE`.              |
+#' | `col_integer()`               | "integer"             | "i"        | Integer numbers.                                          |
+#' | `col_big_integer()`           | "big_integer"         | "I"        | Big Integers (64bit), requires the `bit64` package.       |
+#' | `col_double()`                | "double", "numeric"   | "d"        | 64-bit double floating point numbers.
+#' | `col_character()`             | "character"           | "c"        | Character string data.                                              |
+#' | `col_factor(levels, ordered)` | "factor"              | "f"        | A fixed set of values.                                    |
+#' | `col_date(format = "")`       | "date"                | "D"        | Calendar dates formatted with the locale's `date_format`. |
+#' | `col_time(format = "")`       | "time"                | "t"        | Times formatted with the locale's `time_format`.          |
+#' | `col_datetime(format = "")`   | "datetime", "POSIXct" | "T"        | ISO8601 date times.                                       |
+#' | `col_number()`                | "number"              | "n"        | Human readable numbers containing the `grouping_mark`     |
+#' | `col_skip()`                  | "skip", "NULL"        | "_", "-"   | Skip and don't import this column.                        |
+#' | `col_guess()`                 | "guess", "NA"         | "?"        | Parse using the "best" guessed type based on the input.   |
 #'
 #' @param ... Either column objects created by `col_*()`, or their abbreviated
 #'   character names (as described in the `col_types` argument of
@@ -31,6 +33,7 @@
 #'   used in the call to `vroom()` it takes precedence over the one specified in
 #'   `col_types`.
 #' @export
+#' @aliases col_types
 #' @examples
 #' cols(a = col_integer())
 #' cols_only(a = col_integer())
@@ -38,6 +41,9 @@
 #' # You can also use the standard abbreviations
 #' cols(a = "i")
 #' cols(a = "i", b = "d", c = "_")
+#'
+#' # Or long names (like utils::read.csv)
+#' cols(a = "integer", b = "double", c = "skip")
 #'
 #' # You can also use multiple sets of column definitions by combining
 #' # them like so:
@@ -306,6 +312,7 @@ spec <- function(x) {
 col_concise <- function(x) {
   switch(x,
     "_" = ,
+    "skip" =,
     "NULL" =,
     "-" = col_skip(),
     "NA" = ,
@@ -315,6 +322,7 @@ col_concise <- function(x) {
     factor =,
     f = col_factor(),
     double =,
+    numeric =,
     d = col_double(),
     integer =,
     i = col_integer(),

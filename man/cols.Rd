@@ -2,6 +2,7 @@
 % Please edit documentation in R/col_types.R
 \name{cols}
 \alias{cols}
+\alias{col_types}
 \alias{cols_only}
 \alias{col_logical}
 \alias{col_integer}
@@ -81,20 +82,20 @@ as the default. \code{cols_only()} includes only the columns you explicitly
 specify, skipping the rest.
 }
 \details{
-The available specifications are: (with string abbreviations in brackets)
-\itemize{
-\item \code{col_logical()} [l], containing only \code{T}, \code{F}, \code{TRUE} or \code{FALSE}.
-\item \code{col_integer()} [i], integers.
-\item \code{col_big_integer()} [I], Big Integers (64bit), requires the \code{bit64} package.
-\item \code{col_double()} [d], doubles.
-\item \code{col_character()} [c], everything else.
-\item \code{col_factor(levels, ordered)} [f], a fixed set of values.
-\item \code{col_date(format = "")} [D]: with the locale's \code{date_format}.
-\item \code{col_time(format = "")} [t]: with the locale's \code{time_format}.
-\item \code{col_datetime(format = "")} [T]: ISO8601 date times
-\item \code{col_number()} [n], numbers containing the \code{grouping_mark}
-\item \code{col_skip()} [_, -], don't import this column.
-\item \code{col_guess()} [?], parse using the "best" type based on the input.
+The available specifications are: (long names in quotes and string abbreviations in brackets)\tabular{llll}{
+   function \tab long name \tab short name \tab description \cr
+   \code{col_logical()} \tab "logical" \tab "l" \tab Logical values containing only \code{T}, \code{F}, \code{TRUE} or \code{FALSE}. \cr
+   \code{col_integer()} \tab "integer" \tab "i" \tab Integer numbers. \cr
+   \code{col_big_integer()} \tab "big_integer" \tab "I" \tab Big Integers (64bit), requires the \code{bit64} package. \cr
+   \code{col_double()} \tab "double", "numeric" \tab "d" \tab 64-bit double floating point numbers. \cr
+   \code{col_character()} \tab "character" \tab "c" \tab Character string data. \cr
+   \code{col_factor(levels, ordered)} \tab "factor" \tab "f" \tab A fixed set of values. \cr
+   \code{col_date(format = "")} \tab "date" \tab "D" \tab Calendar dates formatted with the locale's \code{date_format}. \cr
+   \code{col_time(format = "")} \tab "time" \tab "t" \tab Times formatted with the locale's \code{time_format}. \cr
+   \code{col_datetime(format = "")} \tab "datetime", "POSIXct" \tab "T" \tab ISO8601 date times. \cr
+   \code{col_number()} \tab "number" \tab "n" \tab Human readable numbers containing the \code{grouping_mark} \cr
+   \code{col_skip()} \tab "skip", "NULL" \tab "_", "-" \tab Skip and don't import this column. \cr
+   \code{col_guess()} \tab "guess", "NA" \tab "?" \tab Parse using the "best" guessed type based on the input. \cr
 }
 }
 \examples{
@@ -104,6 +105,9 @@ cols_only(a = col_integer())
 # You can also use the standard abbreviations
 cols(a = "i")
 cols(a = "i", b = "d", c = "_")
+
+# Or long names (like utils::read.csv)
+cols(a = "integer", b = "double", c = "skip")
 
 # You can also use multiple sets of column definitions by combining
 # them like so:
