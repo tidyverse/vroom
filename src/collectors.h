@@ -114,7 +114,7 @@ inline cpp11::strings read_column_names(
 }
 
 std::string guess_type__(
-    cpp11::writable::strings input,
+    const cpp11::strings& input,
     const cpp11::strings& na,
     LocaleInfo* locale,
     bool guess_integer);
@@ -174,8 +174,10 @@ inline collectors resolve_collectors(
       for (R_xlen_t j = 0; j < guess_num - 1; ++j) {
         size_t row = j * guess_step;
         auto str = idx->get(row, col);
-        col_vals[j] =
-            locale_info->encoder_.makeSEXP(str.begin(), str.end(), true);
+        SET_STRING_ELT(
+            col_vals,
+            j,
+            locale_info->encoder_.makeSEXP(str.begin(), str.end(), true));
       }
       // Always include the last row in the guess
       if (num_rows > 0 && guess_num - 1 >= 0) {

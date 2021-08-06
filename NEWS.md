@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Fix performance regression when guessing with large numbers of rows (https://github.com/tidyverse/readr/issues/1267)
+
 # vroom 1.5.4
 
 * `vroom(col_types=)` now accepts column type names like those accepted by utils::read.table. e.g.
