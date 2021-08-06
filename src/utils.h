@@ -263,7 +263,8 @@ size_t find_first_line(
 
 inline bool
 matches(const char* start, const char* end, const std::string& needle) {
-  if (end <= start || static_cast<unsigned long>(end - start) < needle.size()) {
+  if (end <= start || needle.empty() ||
+      static_cast<unsigned long>(end - start) < needle.size()) {
     return false;
   }
   bool res = strncmp(start, needle.data(), needle.size()) == 0;

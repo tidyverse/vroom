@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` no longer hangs if given an empty value for `locale(grouping_mark=)` (https://github.com/tidyverse/readr/issues/1241)
+
 * Fix performance regression when guessing with large numbers of rows (https://github.com/tidyverse/readr/issues/1267)
 
 # vroom 1.5.4

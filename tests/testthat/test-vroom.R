@@ -797,3 +797,8 @@ am'")
   test_vroom(text, col_names = FALSE, quote = "'", delim = ",",
     equals = tibble::tibble(X1 = c(1, 2), X2 = c("I\nam\nsam", "sam\nI\nam")))
 })
+
+test_that("vroom works when grouping_mark is empty (#1241)", {
+  x <- vroom(I("foo\nbar"), locale = locale(grouping_mark = ""), delim = ",")
+  expect_equal(x, c("foo", "bar"))
+})
