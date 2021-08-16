@@ -115,6 +115,13 @@ vroom <- function(
   .name_repair = "unique"
   ) {
 
+  # vroom does not support newlines as the delimiter, just as the EOL, so just
+  # assign a value that should never appear in CSV text as the delimiter,
+  # 001, start of heading.
+  if (delim == "\n") {
+    delim <- "\x01"
+  }
+
   if (!rlang::is_missing(altrep_opts)) {
     deprecate_warn("1.1.0", "vroom(altrep_opts = )", "vroom(altrep = )")
     altrep <- altrep_opts
