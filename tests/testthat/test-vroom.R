@@ -802,3 +802,15 @@ test_that("vroom works when grouping_mark is empty (#1241)", {
   x <- vroom(I("foo\nbar"), locale = locale(grouping_mark = ""), delim = ",", col_names = FALSE)
   expect_equal(x[[1]], c("foo", "bar"))
 })
+
+test_that("vroom works if given col_names and col_types less than the number of columns (https://github.com/tidyverse/readr/issues/1271)", {
+  x <- vroom(
+    I("x\ty\na\tb\n"),
+    delim = "\t",
+    col_names = c("x"),
+    col_types = list("x" = "c")
+  )
+
+  expect_equal(x[["x"]], "a")
+  expect_equal(x[["X2"]], "b")
+})

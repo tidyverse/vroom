@@ -406,6 +406,10 @@ col_types_standardise <- function(spec, num_cols, col_names, col_select, name_re
   } else {
     # named types
 
+    if (num_cols > length(col_names)) {
+      col_names <- make_names(col_names, num_cols)
+    }
+
     bad_types <- !(type_names %in% col_names)
     if (any(bad_types)) {
       rlang::warn(paste0("The following named parsers don't match the column names: ",
