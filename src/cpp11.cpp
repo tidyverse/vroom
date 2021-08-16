@@ -3,6 +3,7 @@
 
 #include "vroom_types.h"
 #include "cpp11/declarations.hpp"
+#include <R_ext/Visibility.h>
 
 // altrep.cc
 void force_materialization(SEXP x);
@@ -41,10 +42,10 @@ extern "C" SEXP _vroom_gen_character_(SEXP n, SEXP min, SEXP max, SEXP values, S
   END_CPP11
 }
 // guess_type.cc
-std::string guess_type_(const cpp11::strings& input, const cpp11::strings& na, const cpp11::list& locale, bool guess_integer);
+std::string guess_type_(cpp11::writable::strings input, const cpp11::strings& na, const cpp11::list& locale, bool guess_integer);
 extern "C" SEXP _vroom_guess_type_(SEXP input, SEXP na, SEXP locale, SEXP guess_integer) {
   BEGIN_CPP11
-    return cpp11::as_sexp(guess_type_(cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(input), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(na), cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(locale), cpp11::as_cpp<cpp11::decay_t<bool>>(guess_integer)));
+    return cpp11::as_sexp(guess_type_(cpp11::as_cpp<cpp11::decay_t<cpp11::writable::strings>>(input), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(na), cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(locale), cpp11::as_cpp<cpp11::decay_t<bool>>(guess_integer)));
   END_CPP11
 }
 // iconv_file.cc
@@ -128,25 +129,6 @@ extern "C" SEXP _vroom_vroom_rle(SEXP input) {
 }
 
 extern "C" {
-/* .Call calls */
-extern SEXP _vroom_convert_connection(SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_force_materialization(SEXP);
-extern SEXP _vroom_gen_character_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_guess_type_(SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_has_trailing_newline(SEXP);
-extern SEXP _vroom_utctime_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_vroom_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_vroom_convert(SEXP);
-extern SEXP _vroom_vroom_errors_(SEXP);
-extern SEXP _vroom_vroom_format_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_vroom_fwf_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_vroom_materialize(SEXP, SEXP);
-extern SEXP _vroom_vroom_rle(SEXP);
-extern SEXP _vroom_vroom_str_(SEXP);
-extern SEXP _vroom_vroom_write_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_vroom_write_connection_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_whitespace_columns_(SEXP, SEXP, SEXP, SEXP);
-
 static const R_CallMethodDef CallEntries[] = {
     {"_vroom_convert_connection",      (DL_FUNC) &_vroom_convert_connection,       4},
     {"_vroom_force_materialization",   (DL_FUNC) &_vroom_force_materialization,    1},
@@ -180,7 +162,7 @@ void init_vroom_num(DllInfo* dll);
 void init_vroom_rle(DllInfo* dll);
 void init_vroom_time(DllInfo* dll);
 
-extern "C" void R_init_vroom(DllInfo* dll){
+extern "C" attribute_visible void R_init_vroom(DllInfo* dll){
   R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
   init_vroom_big_int(dll);

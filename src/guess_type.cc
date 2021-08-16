@@ -103,7 +103,7 @@ static bool isDateTime(const std::string& x, LocaleInfo* pLocale) {
 }
 
 std::string guess_type__(
-    const cpp11::strings& input,
+    cpp11::writable::strings& input,
     const cpp11::strings& na,
     LocaleInfo* pLocale,
     bool guess_integer = false) {
@@ -146,7 +146,7 @@ std::string guess_type__(
 }
 
 [[cpp11::register]] std::string guess_type_(
-    const cpp11::strings& input,
+    cpp11::writable::strings input,
     const cpp11::strings& na,
     const cpp11::list& locale,
     bool guess_integer = false) {
