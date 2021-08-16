@@ -799,6 +799,6 @@ am'")
 })
 
 test_that("vroom works when grouping_mark is empty (#1241)", {
-  x <- vroom(I("foo\nbar"), locale = locale(grouping_mark = ""), delim = ",")
-  expect_equal(x, c("foo", "bar"))
+  x <- vroom(I("foo\nbar"), locale = locale(grouping_mark = ""), delim = ",", col_names = FALSE)
+  expect_equal(x[[1]], c("foo", "bar"))
 })
