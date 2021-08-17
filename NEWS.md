@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `VROOM_CONNECTION_SIZE` is now parsed as a double, which supports scientific notation (#364)
+
 * `vroom()` now works around specifying a `\n` as the delimiter (#365, https://github.com/tidyverse/dplyr/issues/5977)
 
 * `vroom()` no longer crashes if given a `col_name` and `col_type` both less than the number of columns (https://github.com/tidyverse/readr/issues/1271)

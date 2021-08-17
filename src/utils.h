@@ -155,7 +155,7 @@ template <typename T> T get_env(const char* name, T default_value) {
   }
 
   std::stringstream ss(p);
-  T out;
+  double out;
   ss >> out;
   return out;
 }
