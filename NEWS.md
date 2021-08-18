@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` now parses `NaN` values as doubles (https://github.com/tidyverse/readr/issues/1277)
+
 * `VROOM_CONNECTION_SIZE` is now parsed as a double, which supports scientific notation (#364)
 
 * `vroom()` now works around specifying a `\n` as the delimiter (#365, https://github.com/tidyverse/dplyr/issues/5977)

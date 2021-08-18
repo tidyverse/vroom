@@ -19,3 +19,8 @@ test_that("NA can be a double value", {
   test_vroom(I("x\n1\n2\n"), delim = ",", col_types = "d", na = "1",
     equals = tibble::tibble(x = c(NA_real_, 2)))
 })
+
+test_that("NaN values are guessed and parsed as doubles (https://github.com/tidyverse/readr/issues/1277)", {
+  test_vroom(I("x\nNaN\n"), delim = ",", col_types = "?",
+    equals = tibble::tibble(x = c(NaN)))
+})

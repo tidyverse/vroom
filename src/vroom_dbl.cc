@@ -13,8 +13,10 @@ double bsd_strtod(const char* begin, const char* end, const char decimalMark) {
   if (begin == end) {
     return NA_REAL;
   }
-  if (*begin == 'n' || *begin == '?') {
-    return NA_REAL;
+  if (end - begin >= 3 && (begin[0] == 'n' || begin[0] == 'N') &&
+      (begin[1] == 'a' || begin[1] == 'A') &&
+      (begin[2] == 'n' || begin[2] == 'N')) {
+    return NAN;
   }
   int sign = 0, expSign = 0, i;
   double fraction, dblExp;
