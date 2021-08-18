@@ -157,6 +157,9 @@
 <a href="#vroom-development-version" class="anchor"></a>vroom (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now parses <code>NaN</code> values as doubles (<a href="https://github.com/tidyverse/readr/issues/1277" class="uri">https://github.com/tidyverse/readr/issues/1277</a>)</p></li>
+<li><p><code>VROOM_CONNECTION_SIZE</code> is now parsed as a double, which supports scientific notation (<a href='https://github.com/r-lib/vroom/issues/364'>#364</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now works around specifying a <code>\n</code> as the delimiter (<a href='https://github.com/r-lib/vroom/issues/365'>#365</a>, <a href="https://github.com/tidyverse/dplyr/issues/5977" class="uri">https://github.com/tidyverse/dplyr/issues/5977</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer crashes if given a <code>col_name</code> and <code>col_type</code> both less than the number of columns (<a href="https://github.com/tidyverse/readr/issues/1271" class="uri">https://github.com/tidyverse/readr/issues/1271</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer hangs if given an empty value for <code><a href="../reference/locale.html">locale(grouping_mark=)</a></code> (<a href="https://github.com/tidyverse/readr/issues/1241" class="uri">https://github.com/tidyverse/readr/issues/1241</a>)</p></li>
 <li><p>Fix performance regression when guessing with large numbers of rows (<a href="https://github.com/tidyverse/readr/issues/1267" class="uri">https://github.com/tidyverse/readr/issues/1267</a>)</p></li>
