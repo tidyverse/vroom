@@ -118,7 +118,7 @@ vroom <- function(
   # vroom does not support newlines as the delimiter, just as the EOL, so just
   # assign a value that should never appear in CSV text as the delimiter,
   # 001, start of heading.
-  if (delim == "\n") {
+  if (identical(delim, "\n")) {
     delim <- "\x01"
   }
 
