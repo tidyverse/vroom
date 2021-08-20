@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` now parses `Inf` values as doubles (https://github.com/tidyverse/readr/issues/1283)
+
 * `vroom()` now parses `NaN` values as doubles (https://github.com/tidyverse/readr/issues/1277)
 
 * `VROOM_CONNECTION_SIZE` is now parsed as a double, which supports scientific notation (#364)

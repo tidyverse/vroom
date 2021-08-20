@@ -24,3 +24,8 @@ test_that("NaN values are guessed and parsed as doubles (https://github.com/tidy
   test_vroom(I("x\nNaN\n"), delim = ",", col_types = "?",
     equals = tibble::tibble(x = c(NaN)))
 })
+
+test_that("Inf and -Inf values are guessed and parsed as doubles (https://github.com/tidyverse/readr/issues/1283)", {
+  test_vroom(I("x\nInf\n-Inf\n+Inf"), delim = ",", col_types = "?",
+    equals = tibble::tibble(x = c(Inf, -Inf, Inf)))
+})

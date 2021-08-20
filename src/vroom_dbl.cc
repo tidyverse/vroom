@@ -1,4 +1,5 @@
 #include "vroom_dbl.h"
+#include <ctype.h> /* for tolower */
 
 /*
     An STL iterator-based string to floating point number conversion.
@@ -12,11 +13,6 @@
 double bsd_strtod(const char* begin, const char* end, const char decimalMark) {
   if (begin == end) {
     return NA_REAL;
-  }
-  if (end - begin >= 3 && (begin[0] == 'n' || begin[0] == 'N') &&
-      (begin[1] == 'a' || begin[1] == 'A') &&
-      (begin[2] == 'n' || begin[2] == 'N')) {
-    return NAN;
   }
   int sign = 0, expSign = 0, i;
   double fraction, dblExp;
@@ -87,8 +83,19 @@ double bsd_strtod(const char* begin, const char* end, const char decimalMark) {
   } else if (p != end && *p == '+')
     ++p;
 
-  /* If we don't have a digit or decimal point something is wrong, so return an
-   * NA */
+  /* NaN */
+  if (end - p >= 3 && tolower(p[0]) == 'n' && tolower(p[1]) == 'a' &&
+      tolower(p[2]) == 'n') {
+    return NAN;
+  }
+  /* Inf */
+  if (end - p >= 3 && tolower(p[0]) == 'i' && tolower(p[1]) == 'n' &&
+      tolower(p[2]) == 'f') {
+    return sign == 1 ? -HUGE_VAL : HUGE_VAL;
+  }
+
+  /* If we don't have a digit or decimal point something is wrong, so return
+   * an NA */
   if (!(isdigit(*p) || *p == decimalMark)) {
     return NA_REAL;
   }
