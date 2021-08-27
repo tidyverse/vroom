@@ -279,10 +279,6 @@ test_that("subsetting works with both double and integer indexes", {
   expect_equal(x$X1[NA_real_], na_dt)
 })
 
-test_that("guessing datetime uses the same logic as parsing", {
-  expect_type(vroom(I("date\n2015-06-14T09Z\n2015-06-14T09Z"), delim=",", col_types = list())[[1]], "character")
-})
-
 test_that("malformed date / datetime formats cause R errors", {
   expect_error(
     vroom(I("x\n6/28/2016"), delim = ",", col_types = list(x = col_date("%m/%/%Y")), altrep = FALSE),
@@ -292,5 +288,11 @@ test_that("malformed date / datetime formats cause R errors", {
   expect_error(
     vroom(I("x\n6/28/2016"), delim = ",", col_types = list(x = col_datetime("%m/%/%Y")), altrep = FALSE),
     "Unsupported format"
+  )
+})
+
+test_that("single digit dates and hours are parsed correctly (https://github.com/tidyverse/readr/issues/1276)", {
+  test_vroom(I("4/9/2021 2:18:25 PM"), col_types = list(col_datetime("%m/%d/%Y %H:%M:%S %p")), col_names = "X", delim = ",",
+    equals = tibble::tibble(X = as.POSIXct("2021-04-09 14:18:25", tz = "UTC"))
   )
 })

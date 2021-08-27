@@ -11,19 +11,19 @@
 
 template <typename Iterator, typename Attr>
 inline bool parseInt(Iterator& first, Iterator& last, Attr& res) {
-
   char buf[64];
 
+  size_t expected_size = last - first;
+
   std::copy(first, last, buf);
-  buf[last - first] = '\0';
+  buf[expected_size] = '\0';
 
   long lres;
   char* endp;
 
   errno = 0;
   lres = strtol(buf, &endp, 10);
-  if (*endp != '\0')
-    lres = NA_INTEGER;
+  size_t parsed_size = endp - buf;
   /* next can happen on a 64-bit platform */
   if (res > INT_MAX || res < INT_MIN)
     lres = NA_INTEGER;
@@ -32,7 +32,8 @@ inline bool parseInt(Iterator& first, Iterator& last, Attr& res) {
 
   res = static_cast<int>(lres);
 
-  first += last - first;
+  first += parsed_size;
+
   return res != NA_INTEGER;
 }
 
@@ -214,7 +215,7 @@ public:
         year_ += (year_ < 69) ? 2000 : 1900;
         break;
       case 'm': // month
-        if (!consumeIntegerLength1_or_2(2, &mon_, false))
+        if (!consumeInteger(2, &mon_, false))
           return false;
         break;
       case 'b': // abbreviated month name
@@ -226,7 +227,7 @@ public:
           return false;
         break;
       case 'd': // day
-        if (!consumeIntegerLength1_or_2(2, &day_, false))
+        if (!consumeInteger(2, &day_, false))
           return false;
         break;
       case 'a': // abbreviated day of week
@@ -426,24 +427,6 @@ private:
     bool ok = parseInt(dateItr_, end, *pOut);
 
     return ok && (!exact || (dateItr_ - start) == n);
-  }
-
-  // Integer which can take 1 or 2 positions
-  inline bool
-  consumeIntegerLength1_or_2(int /* n */, int* pOut, bool /* exact */ = true) {
-    int out1, out2;
-    if (!consumeInteger(1, &out1, true))
-      return false;
-    else {
-      if (consumeInteger(1, &out2, true))
-        *pOut = 10 * out1 + out2;
-      else {
-        *pOut = out1;
-        dateItr_--; // unconsume the last read non-integer char
-      }
-    }
-
-    return true;
   }
 
   // Integer with optional space

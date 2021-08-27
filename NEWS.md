@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` now parses single digit datetimes more consistently as readr has done (https://github.com/tidyverse/readr/issues/1276)
+
 * `vroom()` now parses `Inf` values as doubles (https://github.com/tidyverse/readr/issues/1283)
 
 * `vroom()` now parses `NaN` values as doubles (https://github.com/tidyverse/readr/issues/1277)
