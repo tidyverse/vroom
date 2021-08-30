@@ -327,8 +327,8 @@ public:
       const size_t update_size) {
 
     // If there are no quotes quote will be '\0', so will just work
-    std::array<char, 6> query = {delim[0], '\n', '\\', '\0', '\0', '\0'};
-    auto query_i = 3;
+    std::array<char, 7> query = {delim[0], '\r', '\n', '\\', '\0', '\0', '\0'};
+    auto query_i = 4;
     if (quote != '\0') {
       query[query_i++] = quote;
     }
@@ -387,7 +387,7 @@ public:
         ++cols;
       }
 
-      else if (c == '\n') {
+      else if (c == '\r' || c == '\n') {
         if (state ==
             QUOTED_FIELD) { // This will work as long as num_threads = 1
           if (num_threads != 1) {
@@ -420,6 +420,11 @@ public:
             pb->tick(pos - last_tick);
             last_tick = pos;
           }
+        }
+
+        // check for CRLF
+        if (c == '\r' && pos < end && buf[pos + 1] == '\n') {
+          ++pos;
         }
       }
 

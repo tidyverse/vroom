@@ -95,12 +95,14 @@ delimited_index_connection::delimited_index_connection(
 
   delim_len_ = delim_.length();
 
-  size_t first_nl = find_next_newline(
+  size_t first_nl;
+  newline_type nl;
+  std::tie(first_nl, nl) = find_next_newline(
       buf[i], start, comment, skip_empty_rows, has_quoted_newlines, quote);
 
   bool single_line = first_nl == buf[i].size() - 1;
 
-  if (sz > 1 && buf[i][first_nl] != '\n') {
+  if (sz > 1 && !has_expected_line_ending(nl, buf[i][first_nl])) {
     // This first newline must not have fit in the buffer, throw error
     // suggesting a larger buffer size.
 
@@ -250,7 +252,7 @@ delimited_index_connection::delimited_index_connection(
 
   size_t file_size = mmap_.size();
 
-  if (!n_max_set && mmap_[file_size - 1] != '\n') {
+  if (!n_max_set && !has_expected_line_ending(nl, mmap_[file_size - 1])) {
     if (columns_ == 0 || single_line) {
       idx_[0].push_back(file_size);
       ++columns_;

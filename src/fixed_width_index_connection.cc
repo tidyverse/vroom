@@ -66,9 +66,10 @@ fixed_width_index_connection::fixed_width_index_connection(
       /* quote */ '\0');
 
   // Check for windows newlines
-  size_t first_nl = find_next_newline(
+  size_t first_nl;
+  newline_type nl_type;
+  std::tie(first_nl, nl_type) = find_next_newline(
       buf[i], start, comment, skip_empty_rows, false, /* quote */ '\0');
-  windows_newlines_ = first_nl > 0 && buf[i][first_nl - 1] == '\r';
 
   std::unique_ptr<RProgress::RProgress> pb = nullptr;
   if (progress) {

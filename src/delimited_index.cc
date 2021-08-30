@@ -68,7 +68,7 @@ delimited_index::delimited_index(
 
   size_t file_size = mmap_.cend() - mmap_.cbegin();
 
-  if (mmap_[file_size - 1] != '\n') {
+  if (!(mmap_[file_size - 1] == '\n' || mmap_[file_size - 1] == '\r')) {
 #ifndef VROOM_STANDALONE
     REprintf("Files must end with a newline\n");
 #else
@@ -100,11 +100,13 @@ delimited_index::delimited_index(
 
   delim_len_ = delim_.length();
 
-  size_t first_nl = find_next_newline(
+  size_t first_nl, second_nl;
+  newline_type nl;
+  std::tie(first_nl, nl) = find_next_newline(
       mmap_, start, comment_, skip_empty_rows, has_quoted_newlines, quote);
-  size_t second_nl = find_next_newline(
+  std::tie(second_nl, std::ignore) = find_next_newline(
       mmap_,
-      first_nl + 1,
+      nl == CRLF ? first_nl + 2 : first_nl + 1,
       comment,
       skip_empty_rows,
       has_quoted_newlines,
@@ -200,23 +202,24 @@ start_indexing:
       threads = parallel_for(
           file_size - first_nl,
           [&](size_t start, size_t end, size_t id) {
+            newline_type nl;
             idx_[id + 1].reserve((guessed_rows / num_threads) * columns_);
-            start = find_next_newline(
-                        mmap_,
-                        first_nl + start,
-                        comment,
-                        skip_empty_rows,
-                        /* has_quote */ false,
-                        quote) +
-                    1;
-            end = find_next_newline(
-                      mmap_,
-                      first_nl + end,
-                      comment,
-                      skip_empty_rows,
-                      /* has_quote */ false,
-                      quote) +
-                  1;
+            std::tie(start, nl) = find_next_newline(
+                mmap_,
+                first_nl + start,
+                comment,
+                skip_empty_rows,
+                /* has_quote */ false,
+                quote);
+            nl == CRLF ? start += 2 : ++start;
+            std::tie(end, std::ignore) = find_next_newline(
+                mmap_,
+                first_nl + end,
+                comment,
+                skip_empty_rows,
+                /* has_quote */ false,
+                quote);
+            nl == CRLF ? end += 2 : ++end;
             size_t cols = 0;
             csv_state state = RECORD_START;
             index_region(

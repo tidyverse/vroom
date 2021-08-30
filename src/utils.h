@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <cpp11/R.hpp>
 #include <cstring>
 #include <sstream>
 #include <string>
@@ -51,15 +52,15 @@ inline bool is_blank_or_comment_line(
     return false;
   }
 
-  if (skip_empty_rows && *begin == '\n') {
+  if (skip_empty_rows && (*begin == '\n' || *begin == '\r')) {
     return true;
   }
 
-  while (begin < end && (*begin == ' ' || *begin == '\t' || *begin == '\r')) {
+  while (begin < end && (*begin == ' ' || *begin == '\t')) {
     ++begin;
   }
 
-  if ((skip_empty_rows && *begin == '\n') ||
+  if ((skip_empty_rows && (*begin == '\n' || *begin == '\r')) ||
       (!comment.empty() &&
        strncmp(begin, comment.data(), comment.size()) == 0)) {
     return true;
@@ -68,14 +69,25 @@ inline bool is_blank_or_comment_line(
   return false;
 }
 
+inline bool is_crlf(const char* buf, size_t pos, size_t end) {
+  return buf[pos] == '\r' && pos + 1 < end && buf[pos + 1] == '\n';
+}
+
+enum newline_type {
+  CR /* linux */,
+  CRLF /* windows */,
+  LF /* old macOS */,
+  NA /* unknown */
+};
+
 template <typename T>
-static size_t
+static std::pair<size_t, newline_type>
 find_next_non_quoted_newline(const T& source, size_t start, const char quote) {
   if (start > source.size() - 1) {
-    return source.size() - 1;
+    return {source.size() - 1, NA};
   }
 
-  std::array<char, 3> query = {'\n', quote, '\0'};
+  std::array<char, 4> query = {'\r', '\n', quote, '\0'};
 
   auto buf = source.data();
   size_t pos = start;
@@ -87,12 +99,19 @@ find_next_non_quoted_newline(const T& source, size_t start, const char quote) {
     size_t buf_offset = strcspn(buf + pos, query.data());
     pos = pos + buf_offset;
     auto c = buf[pos];
-    if (c == '\n') {
+    if (c == '\n' || c == '\r') {
       if (in_quote) {
         ++pos;
         continue;
       }
-      return pos;
+      if (c == '\n') {
+        return {pos, LF};
+      }
+
+      if (is_crlf(buf, pos, end)) {
+        return {pos + 1, CRLF};
+      }
+      return {pos, CR};
     }
 
     else if (c == quote) {
@@ -102,14 +121,14 @@ find_next_non_quoted_newline(const T& source, size_t start, const char quote) {
   }
 
   if (pos > end) {
-    return end;
+    return {end, NA};
   }
 
-  return pos;
+  return {pos, NA};
 }
 
 template <typename T>
-static size_t find_next_newline(
+static std::pair<size_t, newline_type> find_next_newline(
     const T& source,
     size_t start,
     const std::string& comment,
@@ -118,19 +137,26 @@ static size_t find_next_newline(
     const char quote) {
 
   if (start >= source.size()) {
-    return source.size() - 1;
+    return {source.size() - 1, NA};
   }
 
   if (embedded_nl) {
-    return find_next_non_quoted_newline(source, start, quote);
+    size_t value;
+    newline_type nl;
+    std::tie(value, nl) = find_next_non_quoted_newline(source, start, quote);
+    // REprintf("%i\n", value);
+    return {value, nl};
   }
 
-  auto begin = source.data() + start;
+  const char* begin = source.data() + start;
 
-  auto end = source.data() + source.size();
+  const char* end = source.data() + source.size();
 
+  std::array<char, 3> query = {'\r', '\n', '\0'};
   while (begin && begin < end) {
-    begin = static_cast<const char*>(memchr(begin, '\n', end - begin));
+    size_t offset = strcspn(begin, query.data());
+    // REprintf("%i\n", offset);
+    begin += offset;
     break;
     if (!(begin && begin + 1 < end &&
           is_blank_or_comment_line(begin + 1, end, comment, skip_empty_rows))) {
@@ -139,10 +165,22 @@ static size_t find_next_newline(
   }
 
   if (!begin) {
-    return source.size() - 1;
+    return {source.size() - 1, NA};
   }
 
-  return begin - source.data();
+  size_t pos = begin - source.data();
+  if (begin[0] == '\n') {
+    return {pos, LF};
+  }
+
+  if (begin[0] == '\r') {
+    if (is_crlf(source.data(), pos, end - source.data())) {
+      return {pos, CRLF};
+    }
+    return {pos, CR};
+  }
+
+  return {pos, NA};
 }
 
 template <typename T> T get_env(const char* name, T default_value) {
@@ -247,14 +285,14 @@ size_t find_first_line(
                                                comment,
                                                skip_empty_rows)) ||
              skip > 0) {
-    begin = find_next_newline(
-                source,
-                begin,
-                "",
-                /* skip_empty_rows */ false,
-                embedded_nl,
-                quote) +
-            1;
+    std::tie(begin, std::ignore) = find_next_newline(
+        source,
+        begin,
+        "",
+        /* skip_empty_rows */ false,
+        embedded_nl,
+        quote);
+    ++begin;
     skip = skip > 0 ? skip - 1 : skip;
   }
 
@@ -269,6 +307,13 @@ matches(const char* start, const char* end, const std::string& needle) {
   }
   bool res = strncmp(start, needle.data(), needle.size()) == 0;
   return res;
+}
+
+inline bool has_expected_line_ending(newline_type nl, char value) {
+  if (nl == CR && value == '\r') {
+    return true;
+  }
+  return value == '\n';
 }
 
 } // namespace vroom

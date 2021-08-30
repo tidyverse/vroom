@@ -41,7 +41,6 @@ protected:
   std::vector<int> col_ends_;
   mio::mmap_source mmap_;
   bool trim_ws_;
-  bool windows_newlines_;
   std::string filename_;
 
 public:
@@ -87,14 +86,15 @@ public:
         /* quote */ '\0');
 
     // Check for windows newlines
-    size_t first_nl = find_next_newline(
+    size_t first_nl;
+    std::tie(first_nl, std::ignore) = find_next_newline(
         mmap_,
         start,
         comment,
         skip_empty_rows,
-        /* embedded_nl */ false,
+        /* embedded_nl */
+        false,
         /* quote */ '\0');
-    windows_newlines_ = first_nl > 0 && mmap_[first_nl - 1] == '\r';
 
     std::unique_ptr<RProgress::RProgress> pb = nullptr;
     if (progress) {
@@ -157,10 +157,10 @@ public:
 
   string get(size_t row, size_t col) const override {
     auto begin = mmap_.data() + (newlines_[row] + 1 + col_starts_[col]);
-    auto line_end = mmap_.data() + (newlines_[row + 1]) - windows_newlines_;
+    auto line_end = mmap_.data() + (newlines_[row + 1]);
     const char* end;
     if (col_ends_[col] == NA_INTEGER) {
-      end = mmap_.data() + newlines_[row + 1] - windows_newlines_;
+      end = mmap_.data() + newlines_[row + 1];
     } else {
       end = mmap_.data() + (newlines_[row] + 1 + col_ends_[col]);
     }
@@ -228,14 +228,19 @@ public:
       std::unique_ptr<RProgress::RProgress>& pb,
       size_t update_size = -1) {
 
-    size_t pos = find_next_newline(
+    size_t pos;
+    newline_type nl;
+    std::tie(pos, nl) = find_next_newline(
         source,
         start,
         comment,
         skip_empty_rows,
-        /* embededd_nl */ false,
+        /* embededd_nl */
+        false,
         /* quote */ '\0');
-
+    if (nl == CRLF) {
+      ++pos;
+    }
     size_t lines_read = 0;
     auto last_tick = start;
 
@@ -255,13 +260,16 @@ public:
         }
       }
 
-      pos = find_next_newline(
+      std::tie(pos, nl) = find_next_newline(
           source,
           pos + 1,
           comment,
           skip_empty_rows,
           /* embedded_nl */ false,
           /* quote */ '\0');
+      if (nl == CRLF) {
+        ++pos;
+      }
     }
 
     if (pb) {
