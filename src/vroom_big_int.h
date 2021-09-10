@@ -4,7 +4,7 @@
 
 #include "altrep.h"
 
-const long long NA_INTEGER64 = 0x8000000000000000LL;
+constexpr long long NA_INTEGER64 = 0x8000000000000000LL;
 
 #include "vroom.h"
 
