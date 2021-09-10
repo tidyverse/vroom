@@ -104,6 +104,7 @@ delimited_index::delimited_index(
   newline_type nl;
   std::tie(first_nl, nl) = find_next_newline(
       mmap_, start, comment_, skip_empty_rows, has_quoted_newlines, quote);
+
   std::tie(second_nl, std::ignore) = find_next_newline(
       mmap_,
       nl == CRLF ? first_nl + 2 : first_nl + 1,
@@ -113,7 +114,7 @@ delimited_index::delimited_index(
       quote);
   size_t one_row_size = second_nl - first_nl;
   size_t guessed_rows =
-      one_row_size > 0 ? (file_size - first_nl) / one_row_size * 1.1 : 0;
+      one_row_size > 0 ? (file_size - first_nl) / (one_row_size * 1.1) : 0;
 
   std::unique_ptr<multi_progress> pb = nullptr;
 
