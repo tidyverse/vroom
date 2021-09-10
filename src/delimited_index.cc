@@ -211,15 +211,17 @@ start_indexing:
                 skip_empty_rows,
                 /* has_quote */ false,
                 quote);
-            nl == CRLF ? start += 2 : ++start;
-            std::tie(end, std::ignore) = find_next_newline(
+            advance_crlf(start, nl);
+            ++start;
+            std::tie(end, nl) = find_next_newline(
                 mmap_,
                 first_nl + end,
                 comment,
                 skip_empty_rows,
                 /* has_quote */ false,
                 quote);
-            nl == CRLF ? end += 2 : ++end;
+            advance_crlf(end, nl);
+            ++end;
             size_t cols = 0;
             csv_state state = RECORD_START;
             index_region(
