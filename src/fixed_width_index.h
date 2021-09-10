@@ -97,8 +97,6 @@ public:
         false,
         /* quote */ '\0');
 
-     advance_crlf(first_nl, nl);
-
     std::unique_ptr<RProgress::RProgress> pb = nullptr;
     if (progress) {
 #ifndef VROOM_STANDALONE
@@ -245,7 +243,6 @@ public:
         false,
         /* quote */ '\0');
 
-    advance_crlf(pos, nl);
     size_t lines_read = 0;
     auto last_tick = start;
 
@@ -272,7 +269,6 @@ public:
           skip_empty_rows,
           /* embedded_nl */ false,
           /* quote */ '\0');
-      advance_crlf(pos, nl);
     }
 
     if (pb) {

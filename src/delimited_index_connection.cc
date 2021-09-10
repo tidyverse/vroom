@@ -144,6 +144,7 @@ delimited_index_connection::delimited_index_connection(
       buf[i],
       idx_[0],
       delim_.c_str(),
+      nl,
       quote,
       comment_,
       skip_empty_rows,
@@ -184,6 +185,7 @@ delimited_index_connection::delimited_index_connection(
             buf[i],
             idx_[1],
             delim_.c_str(),
+            nl,
             quote,
             comment_,
             skip_empty_rows,
@@ -274,7 +276,6 @@ delimited_index_connection::delimited_index_connection(
   }
 
 #ifdef VROOM_LOG
-#if SPDLOG_ACTIVE_LEVEL <= SPD_LOG_LEVEL_DEBUG
   auto log = spdlog::basic_logger_mt(
       "basic_logger", "logs/index_connection.idx", true);
   for (auto& i : idx_) {
@@ -284,7 +285,6 @@ delimited_index_connection::delimited_index_connection(
     SPDLOG_LOGGER_DEBUG(log, "end of idx {0:x}", (size_t)&i);
   }
   spdlog::drop("basic_logger");
-#endif
 #endif
 
   SPDLOG_DEBUG("columns: {0} rows: {1}", columns_, rows_);

@@ -175,7 +175,7 @@ static std::pair<size_t, newline_type> find_next_newline(
 
   if (begin[0] == '\r') {
     if (is_crlf(source.data(), pos, end - source.data())) {
-      return {pos, CRLF};
+      return {pos + 1, CRLF};
     }
     return {pos, CR};
   }
@@ -309,17 +309,11 @@ matches(const char* start, const char* end, const std::string& needle) {
   return res;
 }
 
-inline bool has_expected_line_ending(newline_type nl, char value) {
+inline bool has_expected_line_ending(newline_type nl, const char value) {
   if (nl == CR && value == '\r') {
     return true;
   }
   return value == '\n';
-}
-
-inline void advance_crlf(size_t& ptr, newline_type nl) {
-  if (nl == CRLF) {
-    ++ptr;
-  }
 }
 
 } // namespace vroom

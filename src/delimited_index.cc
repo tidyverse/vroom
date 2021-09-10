@@ -107,11 +107,12 @@ delimited_index::delimited_index(
 
   std::tie(second_nl, std::ignore) = find_next_newline(
       mmap_,
-      nl == CRLF ? first_nl + 2 : first_nl + 1,
+      first_nl + 1,
       comment,
       skip_empty_rows,
       has_quoted_newlines,
       quote);
+
   size_t one_row_size = second_nl - first_nl;
   size_t guessed_rows =
       one_row_size > 0 ? (file_size - first_nl) / (one_row_size * 1.1) : 0;
@@ -157,6 +158,7 @@ start_indexing:
         mmap_,
         idx_[0],
         delim_.c_str(),
+        nl,
         quote,
         comment_,
         skip_empty_rows,
@@ -184,6 +186,7 @@ start_indexing:
             mmap_,
             idx_[1],
             delim_.c_str(),
+            nl,
             quote,
             comment_,
             skip_empty_rows,
@@ -212,16 +215,14 @@ start_indexing:
                 skip_empty_rows,
                 /* has_quote */ false,
                 quote);
-            advance_crlf(start, nl);
             ++start;
-            std::tie(end, nl) = find_next_newline(
+            std::tie(end, std::ignore) = find_next_newline(
                 mmap_,
                 first_nl + end,
                 comment,
                 skip_empty_rows,
                 /* has_quote */ false,
                 quote);
-            advance_crlf(end, nl);
             ++end;
             size_t cols = 0;
             csv_state state = RECORD_START;
@@ -229,6 +230,7 @@ start_indexing:
                 mmap_,
                 idx_[id + 1],
                 delim_.c_str(),
+                nl,
                 quote,
                 comment_,
                 skip_empty_rows,
