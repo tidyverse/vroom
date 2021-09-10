@@ -4,14 +4,12 @@
 
 #include "altrep.h"
 
-#define NA_INTEGER64 (0x8000000000000000)
+const long long NA_INTEGER64 = 0x8000000000000000LL;
 
 #include "vroom.h"
 
 namespace cpp11 {
-inline bool is_na(long long x) {
-  return static_cast<unsigned long>(x) == NA_INTEGER64;
-}
+inline bool is_na(long long x) { return x == NA_INTEGER64; }
 } // namespace cpp11
 
 namespace vroom {
