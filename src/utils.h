@@ -316,4 +316,10 @@ inline bool has_expected_line_ending(newline_type nl, char value) {
   return value == '\n';
 }
 
+inline void advance_crlf(size_t& ptr, newline_type nl) {
+  if (nl == CRLF) {
+    ++ptr;
+  }
+}
+
 } // namespace vroom

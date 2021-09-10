@@ -87,7 +87,8 @@ public:
 
     // Check for windows newlines
     size_t first_nl;
-    std::tie(first_nl, std::ignore) = find_next_newline(
+    newline_type nl;
+    std::tie(first_nl, nl) = find_next_newline(
         mmap_,
         start,
         comment,
@@ -95,6 +96,8 @@ public:
         /* embedded_nl */
         false,
         /* quote */ '\0');
+
+     advance_crlf(first_nl, nl);
 
     std::unique_ptr<RProgress::RProgress> pb = nullptr;
     if (progress) {
@@ -158,6 +161,9 @@ public:
   string get(size_t row, size_t col) const override {
     auto begin = mmap_.data() + (newlines_[row] + 1 + col_starts_[col]);
     auto line_end = mmap_.data() + (newlines_[row + 1]);
+    if (line_end > begin && *(line_end - 1) == '\r') {
+      --line_end;
+    }
     const char* end;
     if (col_ends_[col] == NA_INTEGER) {
       end = mmap_.data() + newlines_[row + 1];
@@ -238,9 +244,8 @@ public:
         /* embededd_nl */
         false,
         /* quote */ '\0');
-    if (nl == CRLF) {
-      ++pos;
-    }
+
+    advance_crlf(pos, nl);
     size_t lines_read = 0;
     auto last_tick = start;
 
@@ -267,9 +272,7 @@ public:
           skip_empty_rows,
           /* embedded_nl */ false,
           /* quote */ '\0');
-      if (nl == CRLF) {
-        ++pos;
-      }
+      advance_crlf(pos, nl);
     }
 
     if (pb) {
