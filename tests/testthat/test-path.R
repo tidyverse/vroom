@@ -63,6 +63,7 @@ test_that("split_path_ext works", {
 })
 
 test_that("can write to a zip file if the archive package is available", {
+  skip_on_cran()
   skip_if(!rlang::is_installed("archive"))
 
   tempfile <- file.path(tempdir(), "mtcars.zip")
@@ -77,6 +78,7 @@ test_that("can write to a zip file if the archive package is available", {
 })
 
 test_that("can write to a tar.gz file if the archive package is available", {
+  skip_on_cran()
   skip_if(!rlang::is_installed("archive"))
 
   tempfile <- file.path(tempdir(), "mtcars.tar.gz")
