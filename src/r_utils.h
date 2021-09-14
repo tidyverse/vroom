@@ -48,7 +48,7 @@ static char guess_delim(
   while (nl > start && nl <= end && guess_max > 0) {
     auto str = std::string(source.data() + start, nl - start);
     lines.push_back(str);
-    start = nl + nlt == CRLF ? 2 : 1;
+    start = nl + 1;
     std::tie(nl, nlt) = find_next_newline(
         source,
         start,
