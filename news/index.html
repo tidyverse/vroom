@@ -89,7 +89,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.5</span>
       </span>
     </div>
 
@@ -152,13 +152,38 @@
       <small>Source: <a href='https://github.com/r-lib/vroom/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="vroom-155" class="section level1">
+<h1 class="page-header" data-toc-text="1.5.5">
+<a href="#vroom-155" class="anchor"></a>vroom 1.5.5<small> Unreleased </small>
+</h1>
+<ul>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports files with only carriage return newlines (<code>\r</code>). (<a href='https://github.com/r-lib/vroom/issues/360'>#360</a>, <a href="https://github.com/tidyverse/readr/issues/1236" class="uri">https://github.com/tidyverse/readr/issues/1236</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now parses single digit datetimes more consistently as readr has done (<a href="https://github.com/tidyverse/readr/issues/1276" class="uri">https://github.com/tidyverse/readr/issues/1276</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now parses <code>Inf</code> values as doubles (<a href="https://github.com/tidyverse/readr/issues/1283" class="uri">https://github.com/tidyverse/readr/issues/1283</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now parses <code>NaN</code> values as doubles (<a href="https://github.com/tidyverse/readr/issues/1277" class="uri">https://github.com/tidyverse/readr/issues/1277</a>)</p></li>
+<li><p><code>VROOM_CONNECTION_SIZE</code> is now parsed as a double, which supports scientific notation (<a href='https://github.com/r-lib/vroom/issues/364'>#364</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now works around specifying a <code>\n</code> as the delimiter (<a href='https://github.com/r-lib/vroom/issues/365'>#365</a>, <a href="https://github.com/tidyverse/dplyr/issues/5977" class="uri">https://github.com/tidyverse/dplyr/issues/5977</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer crashes if given a <code>col_name</code> and <code>col_type</code> both less than the number of columns (<a href="https://github.com/tidyverse/readr/issues/1271" class="uri">https://github.com/tidyverse/readr/issues/1271</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer hangs if given an empty value for <code><a href="../reference/locale.html">locale(grouping_mark=)</a></code> (<a href="https://github.com/tidyverse/readr/issues/1241" class="uri">https://github.com/tidyverse/readr/issues/1241</a>)</p></li>
+<li><p>Fix performance regression when guessing with large numbers of rows (<a href="https://github.com/tidyverse/readr/issues/1267" class="uri">https://github.com/tidyverse/readr/issues/1267</a>)</p></li>
+</ul>
+</div>
+    <div id="vroom-154" class="section level1">
+<h1 class="page-header" data-toc-text="1.5.4">
+<a href="#vroom-154" class="anchor"></a>vroom 1.5.4<small> 2021-08-05 </small>
+</h1>
+<ul>
+<li><p><code><a href="../reference/vroom.html">vroom(col_types=)</a></code> now accepts column type names like those accepted by utils::read.table. e.g. vroom::vroom(col_types = list(a = “integer”, b = “double”, c = “skip”))</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now respects the <code>quote</code> parameter properly in the first two lines of the file (<a href="https://github.com/tidyverse/readr/issues/1262" class="uri">https://github.com/tidyverse/readr/issues/1262</a>)</p></li>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now always correctly writes its output including column names in UTF-8 (<a href="https://github.com/tidyverse/readr/issues/1242" class="uri">https://github.com/tidyverse/readr/issues/1242</a>)</p></li>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now creates an empty file when given a input without any columns (<a href="https://github.com/tidyverse/readr/issues/1234" class="uri">https://github.com/tidyverse/readr/issues/1234</a>)</p></li>
+</ul>
+</div>
     <div id="vroom-153" class="section level1">
 <h1 class="page-header" data-toc-text="1.5.3">
 <a href="#vroom-153" class="anchor"></a>vroom 1.5.3<small> 2021-07-14 </small>
 </h1>
 <ul>
-<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now creates an empty file when given a input without any columns (<a href="https://github.com/tidyverse/readr/issues/1234" class="uri">https://github.com/tidyverse/readr/issues/1234</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom(col_types=)</a></code> now accepts column type names like those accepted by utils::read.table.</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom(col_types=)</a></code> now truncates the column types if the user passes too many types. (<a href='https://github.com/r-lib/vroom/issues/355'>#355</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now always includes the last row when guessing (<a href='https://github.com/r-lib/vroom/issues/352'>#352</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom(trim_ws = TRUE)</a></code> now trims field content within quotes as well as without (<a href='https://github.com/r-lib/vroom/issues/354'>#354</a>). Previously vroom explicitly retained field content inside quotes regardless of the value of <code>trim_ws</code>.</p></li>

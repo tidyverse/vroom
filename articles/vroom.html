@@ -44,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.5</span>
       </span>
     </div>
 
@@ -141,7 +141,6 @@
 <span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>
 <span class="va">file</span>
 <span class="co">#&gt; [1] "/home/runner/work/_temp/Library/vroom/extdata/mtcars.csv"</span>
-
 <span class="co"># Read the file, by default vroom will guess the delimiter automatically.</span>
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span>
 <span class="co">#&gt; Rows: 32 Columns: 12</span>
@@ -152,14 +151,13 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; # A tibble: 32 x 12</span>
+<span class="co">#&gt; # A tibble: 32 × 12</span>
 <span class="co">#&gt;   model          mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
 <span class="co">#&gt; 2 Mazda RX4 W…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span>
 <span class="co">#&gt; 3 Datsun 710    22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span>
 <span class="co">#&gt; # … with 29 more rows</span>
-
 <span class="co"># You can also specify it explicitly, which is (slightly) faster, and safer if</span>
 <span class="co"># you know how the file is delimited.</span>
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, delim <span class="op">=</span> <span class="st">","</span><span class="op">)</span>
@@ -171,7 +169,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; # A tibble: 32 x 12</span>
+<span class="co">#&gt; # A tibble: 32 × 12</span>
 <span class="co">#&gt;   model          mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
@@ -204,7 +202,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; # A tibble: 32 x 12</span>
+<span class="co">#&gt; # A tibble: 32 × 12</span>
 <span class="co">#&gt;   model        mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Datsun 710  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span>
@@ -222,7 +220,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; # A tibble: 32 x 13</span>
+<span class="co">#&gt; # A tibble: 32 × 13</span>
 <span class="co">#&gt;   path   model   mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 mtcar… Dats…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span>
@@ -246,7 +244,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; # A tibble: 32 x 12</span>
+<span class="co">#&gt; # A tibble: 32 × 12</span>
 <span class="co">#&gt;   model          mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
@@ -280,7 +278,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; # A tibble: 32 x 12</span>
+<span class="co">#&gt; # A tibble: 32 × 12</span>
 <span class="co">#&gt;   model          mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
@@ -299,7 +297,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; # A tibble: 32 x 12</span>
+<span class="co">#&gt; # A tibble: 32 × 12</span>
 <span class="co">#&gt;   model          mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
@@ -326,7 +324,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; # A tibble: 32 x 3</span>
+<span class="co">#&gt; # A tibble: 32 × 3</span>
 <span class="co">#&gt;   model           cyl  gear</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Mazda RX4         6     4</span>
@@ -347,7 +345,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; # A tibble: 32 x 3</span>
+<span class="co">#&gt; # A tibble: 32 × 3</span>
 <span class="co">#&gt;   model           cyl  gear</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Mazda RX4         6     4</span>
@@ -367,7 +365,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; # A tibble: 32 x 2</span>
+<span class="co">#&gt; # A tibble: 32 × 2</span>
 <span class="co">#&gt;    disp  drat</span>
 <span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1   160  3.9 </span>
@@ -387,7 +385,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; # A tibble: 32 x 12</span>
+<span class="co">#&gt; # A tibble: 32 × 12</span>
 <span class="co">#&gt;   car            mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
@@ -416,7 +414,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; # A tibble: 3 x 4</span>
+<span class="co">#&gt; # A tibble: 3 × 4</span>
 <span class="co">#&gt;   first last     state ssn         </span>
 <span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;       </span>
 <span class="co">#&gt; 1 John  Smith    WA    418-Y11-4111</span>
@@ -435,7 +433,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; # A tibble: 3 x 3</span>
+<span class="co">#&gt; # A tibble: 3 × 3</span>
 <span class="co">#&gt;   name          state ssn         </span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt;       </span>
 <span class="co">#&gt; 1 John Smith    WA    418-Y11-4111</span>
@@ -454,7 +452,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; # A tibble: 3 x 2</span>
+<span class="co">#&gt; # A tibble: 3 × 2</span>
 <span class="co">#&gt;   name          ssn         </span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;chr&gt;       </span>
 <span class="co">#&gt; 1 John Smith    418-Y11-4111</span>
@@ -473,7 +471,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; # A tibble: 3 x 3</span>
+<span class="co">#&gt; # A tibble: 3 × 3</span>
 <span class="co">#&gt;   name          state ssn         </span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt;       </span>
 <span class="co">#&gt; 1 John Smith    WA    418-Y11-4111</span>
@@ -492,7 +490,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; # A tibble: 3 x 2</span>
+<span class="co">#&gt; # A tibble: 3 × 2</span>
 <span class="co">#&gt;   name          ssn         </span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;chr&gt;       </span>
 <span class="co">#&gt; 1 John Smith    418-Y11-4111</span>
@@ -531,32 +529,30 @@
 <li>
 <code><a href="../reference/cols.html">col_guess()</a></code> ‘?’, parse using the “best” type based on the input.</li>
 </ul>
-<p>You can tell vroom what columns to use with the <code>col_types()</code> argument in a number of ways.</p>
+<p>You can tell vroom what columns to use with the <code><a href="../reference/cols.html">col_types()</a></code> argument in a number of ways.</p>
 <p>If you only need to override a single column the most concise way is to use a named vector.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># read the 'hp' columns as an integer</span>
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>hp <span class="op">=</span> <span class="st">"i"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 32 x 12</span>
+<span class="co">#&gt; # A tibble: 32 × 12</span>
 <span class="co">#&gt;   model          mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
 <span class="co">#&gt; 2 Mazda RX4 W…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span>
 <span class="co">#&gt; 3 Datsun 710    22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span>
 <span class="co">#&gt; # … with 29 more rows</span>
-
 <span class="co"># also skip reading the 'cyl' column</span>
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>hp <span class="op">=</span> <span class="st">"i"</span>, cyl <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 32 x 11</span>
+<span class="co">#&gt; # A tibble: 32 × 11</span>
 <span class="co">#&gt;   model           mpg  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Mazda RX4      21     160   110  3.9   2.62  16.5     0     1     4     4</span>
 <span class="co">#&gt; 2 Mazda RX4 Wag  21     160   110  3.9   2.88  17.0     0     1     4     4</span>
 <span class="co">#&gt; 3 Datsun 710     22.8   108    93  3.85  2.32  18.6     1     1     4     1</span>
 <span class="co">#&gt; # … with 29 more rows</span>
-
 <span class="co"># also read the gears as a factor</span>
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>hp <span class="op">=</span> <span class="st">"i"</span>, cyl <span class="op">=</span> <span class="st">"_"</span>, gear <span class="op">=</span> <span class="st">"f"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 32 x 11</span>
+<span class="co">#&gt; # A tibble: 32 × 11</span>
 <span class="co">#&gt;   model           mpg  disp    hp  drat    wt  qsec    vs    am gear   carb</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Mazda RX4      21     160   110  3.9   2.62  16.5     0     1 4         4</span>
@@ -566,7 +562,7 @@
 <p>You can read all the columns with the same type, by using the <code>.default</code> argument. For example reading everything as a character.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>.default <span class="op">=</span> <span class="st">"c"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 32 x 12</span>
+<span class="co">#&gt; # A tibble: 32 × 12</span>
 <span class="co">#&gt;   model        mpg   cyl   disp  hp    drat  wt    qsec  vs    am    gear  carb </span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;</span>
 <span class="co">#&gt; 1 Mazda RX4    21    6     160   110   3.9   2.62  16.46 0     1     4     4    </span>
@@ -579,7 +575,7 @@
   <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>,
   col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>hp <span class="op">=</span> <span class="fu"><a href="../reference/cols.html">col_integer</a></span><span class="op">(</span><span class="op">)</span>, cyl <span class="op">=</span> <span class="fu"><a href="../reference/cols.html">col_skip</a></span><span class="op">(</span><span class="op">)</span>, gear <span class="op">=</span> <span class="fu"><a href="../reference/cols.html">col_factor</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="op">)</span>
-<span class="co">#&gt; # A tibble: 32 x 11</span>
+<span class="co">#&gt; # A tibble: 32 × 11</span>
 <span class="co">#&gt;   model           mpg  disp    hp  drat    wt  qsec    vs    am gear   carb</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Mazda RX4      21     160   110  3.9   2.62  16.5     0     1 4         4</span>
@@ -592,7 +588,7 @@
   <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>,
   col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>gear <span class="op">=</span> <span class="fu"><a href="../reference/cols.html">col_factor</a></span><span class="op">(</span>levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>gear <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="op">)</span>
-<span class="co">#&gt; # A tibble: 32 x 12</span>
+<span class="co">#&gt; # A tibble: 32 × 12</span>
 <span class="co">#&gt;   model          mpg   cyl  disp    hp  drat    wt  qsec    vs    am gear   carb</span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Mazda RX4     21       6   160   110  3.9   2.62  16.5     0     1 4         4</span>

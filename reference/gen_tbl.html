@@ -91,7 +91,7 @@ share the real dataset." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.5</span>
       </span>
     </div>
 
@@ -234,7 +234,7 @@ type.</p>
     <pre class="examples"><div class='input'><span class='co'># random 10 x 5 table with random column types</span>
 <span class='va'>rand_tbl</span> <span class='op'>&lt;-</span> <span class='fu'>gen_tbl</span><span class='op'>(</span><span class='fl'>10</span>, <span class='fl'>5</span><span class='op'>)</span>
 <span class='va'>rand_tbl</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 10 x 5</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 10 × 5</span>
 #&gt;         X1      X2 X3         X4                  X5      
 #&gt;      <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;date&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dttm&gt;</span>              <span style='color: #949494; font-style: italic;'>&lt;time&gt;</span>  
 #&gt; <span style='color: #BCBCBC;'> 1</span>  0.971   0.629  2007-05-02 2016-08-02 <span style='color: #949494;'>20:23:17</span> 22<span style='color: #949494;'>:</span>44<span style='color: #949494;'>:</span>46
@@ -250,7 +250,7 @@ type.</p>
 <span class='co'># all double 25 x 4 table</span>
 <span class='va'>dbl_tbl</span> <span class='op'>&lt;-</span> <span class='fu'>gen_tbl</span><span class='op'>(</span><span class='fl'>25</span>, <span class='fl'>4</span>, col_types <span class='op'>=</span> <span class='st'>"dddd"</span><span class='op'>)</span>
 <span class='va'>dbl_tbl</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 25 x 4</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 25 × 4</span>
 #&gt;         X1     X2      X3     X4
 #&gt;      <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
 #&gt; <span style='color: #BCBCBC;'> 1</span> -<span style='color: #BB0000;'>0.313</span>  -<span style='color: #BB0000;'>0.246</span>  0.434  -<span style='color: #BB0000;'>0.442</span>
@@ -280,7 +280,7 @@ type.</p>
 #&gt; &lt;collector_double&gt;
 #&gt; </div><div class='input'><span class='va'>dbl_tbl2</span> <span class='op'>&lt;-</span> <span class='fu'>gen_tbl</span><span class='op'>(</span><span class='fl'>25</span>, <span class='fl'>4</span>, col_types <span class='op'>=</span> <span class='va'>types</span><span class='op'>)</span>
 <span class='va'>dbl_tbl2</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 25 x 4</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 25 × 4</span>
 #&gt;       X1      X2    X3    X4
 #&gt;    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
 #&gt; <span style='color: #BCBCBC;'> 1</span> 18.5  -<span style='color: #BB0000;'>2.86</span>   11.1  16.0 
