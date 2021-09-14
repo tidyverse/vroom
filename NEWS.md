@@ -1,3 +1,5 @@
+# vroom (development version)
+
 # vroom 1.5.5
 
 * `vroom()` now supports files with only carriage return newlines (`\r`). (#360, https://github.com/tidyverse/readr/issues/1236)
