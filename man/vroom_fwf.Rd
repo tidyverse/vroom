@@ -185,6 +185,11 @@ with or or two rows as above.}
 \description{
 Read a fixed width file into a tibble
 }
+\details{
+\emph{Note}: \code{fwf_empty()} cannot take a R connection such as a URL as input, as
+this would result in reading from the connection twice. In these cases it is
+better to download the file first before reading.
+}
 \examples{
 fwf_sample <- vroom_example("fwf-sample.txt")
 cat(readLines(fwf_sample))

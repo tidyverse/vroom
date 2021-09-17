@@ -1,5 +1,9 @@
 #' Read a fixed width file into a tibble
 #'
+#' @details
+#' *Note*: `fwf_empty()` cannot take a R connection such as a URL as input, as
+#' this would result in reading from the connection twice. In these cases it is
+#' better to download the file first before reading.
 #' @inheritParams readr::read_fwf
 #' @inheritParams vroom
 #' @export
