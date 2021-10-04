@@ -241,8 +241,19 @@ std::vector<char> fill_buf(
   return buf;
 }
 
-void write_buf(const std::vector<char>& buf, std::FILE* out) {
+template <typename T> void write_buf(const std::vector<char>& buf, T& out) {}
+
+template <> void write_buf(const std::vector<char>& buf, std::FILE*& out) {
   std::fwrite(buf.data(), sizeof buf[0], buf.size(), out);
+}
+
+template <>
+void write_buf(const std::vector<char>& buf, std::vector<char>& data) {
+  std::copy(buf.begin(), buf.end(), std::back_inserter(data));
+}
+
+template <> void write_buf(const std::vector<char>& buf, SEXP& con) {
+  R_WriteConnection(con, (void*)buf.data(), sizeof buf[0] * buf.size());
 }
 
 #ifdef VROOM_USE_CONNECTIONS_API
@@ -263,7 +274,7 @@ void write_buf_con(const std::vector<char>& buf, SEXP con, bool is_stdout) {
     std::copy(buf.begin(), buf.end(), std::back_inserter(out));
     Rprintf("%.*s", buf.size(), out.c_str());
   } else {
-    R_WriteConnection(con, (void*)buf.data(), sizeof buf[0] * buf.size());
+    write_buf(buf, con);
   }
 }
 #endif
@@ -320,9 +331,10 @@ std::vector<char> get_header(
   return out;
 }
 
-[[cpp11::register]] void vroom_write_(
+template <typename T>
+void vroom_write_out(
     const cpp11::list& input,
-    const std::string& filename,
+    T& out,
     const char delim,
     const std::string& eol,
     const char* na_str,
@@ -335,18 +347,6 @@ std::vector<char> get_header(
 
   size_t begin = 0;
   size_t num_rows = Rf_xlength(input[0]);
-
-  char mode[3] = "wb";
-  if (append) {
-    strcpy(mode, "ab");
-  }
-
-  std::FILE* out = unicode_fopen(filename.c_str(), mode);
-  if (!out) {
-    std::string msg("Cannot open file for writing:\n* ");
-    msg += '\'' + filename + '\'';
-    cpp11::stop(msg.c_str());
-  }
 
   std::array<std::vector<std::future<std::vector<char>>>, 2> futures;
   futures[0].resize(num_threads);
@@ -421,6 +421,45 @@ std::vector<char> get_header(
       pb->update(1);
     }
   }
+}
+
+[[cpp11::register]] void vroom_write_(
+    const cpp11::list& input,
+    const std::string& filename,
+    const char delim,
+    const std::string& eol,
+    const char* na_str,
+    bool col_names,
+    bool append,
+    size_t options,
+    size_t num_threads,
+    bool progress,
+    size_t buf_lines) {
+
+  char mode[3] = "wb";
+  if (append) {
+    strcpy(mode, "ab");
+  }
+
+  std::FILE* out = unicode_fopen(filename.c_str(), mode);
+  if (!out) {
+    std::string msg("Cannot open file for writing:\n* ");
+    msg += '\'' + filename + '\'';
+    cpp11::stop(msg.c_str());
+  }
+
+  vroom_write_out(
+      input,
+      out,
+      delim,
+      eol,
+      na_str,
+      col_names,
+      append,
+      options,
+      num_threads,
+      progress,
+      buf_lines);
 
   // Close the file
   std::fclose(out);
@@ -528,28 +567,28 @@ std::vector<char> get_header(
     const std::string& eol,
     const char* na_str,
     bool col_names,
-    size_t options) {
-
-  size_t num_rows = Rf_xlength(input[0]);
-  cpp11::writable::strings out(1);
-
-  auto types = get_types(input);
-  auto ptrs = get_ptrs(input);
+    bool append,
+    size_t options,
+    size_t num_threads,
+    bool progress,
+    size_t buf_lines) {
 
   std::vector<char> data;
 
-  if (options & bom) {
-    std::vector<char> bom{'\xEF', '\xBB', '\xBF'};
-    std::copy(bom.begin(), bom.end(), std::back_inserter(data));
-  }
+  vroom_write_out(
+      input,
+      data,
+      delim,
+      eol,
+      na_str,
+      col_names,
+      append,
+      options,
+      num_threads,
+      progress,
+      buf_lines);
 
-  if (col_names) {
-    data = get_header(input, delim, eol, options);
-  }
-
-  auto buf =
-      fill_buf(input, delim, eol, na_str, options, types, ptrs, 0, num_rows);
-  std::copy(buf.begin(), buf.end(), std::back_inserter(data));
+  cpp11::writable::strings out(1);
 
   out[0] = Rf_mkCharLenCE(data.data(), data.size(), CE_UTF8);
 

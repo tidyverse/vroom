@@ -116,16 +116,20 @@ vroom_write_opts <- function() c(
 vroom_format <- function(x, delim = "\t", eol = "\n", na = "NA", col_names = TRUE,
                          escape = c("double", "backslash", "none"),
                          quote = c("needed", "all", "none"),
-                         bom = FALSE) {
+                         bom = FALSE,
+                         num_threads = vroom_threads()) {
 
   quote <- match.arg(quote)
   escape <- match.arg(escape)
 
   opts <- get_vroom_write_opts(quote, escape, bom)
 
+  # This seems to work ok in practice
+  buf_lines <- max(as.integer(Sys.getenv("VROOM_WRITE_BUFFER_LINES", nrow(x) / 100 / num_threads)), 1)
+
   x[] <- lapply(x, output_column)
   vroom_format_(x, delim = delim, eol = eol, na_str = na, col_names = col_names,
-                options = opts)
+                append = FALSE, options = opts, num_threads = vroom_threads(), progress = vroom_progress(), buf_lines = buf_lines)
 }
 
 #' Write lines to a file

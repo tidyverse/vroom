@@ -3,6 +3,7 @@
 
 #include "vroom_types.h"
 #include "cpp11/declarations.hpp"
+#include <R_ext/Visibility.h>
 
 // altrep.cc
 void force_materialization(SEXP x);
@@ -99,10 +100,10 @@ extern "C" SEXP _vroom_vroom_write_connection_(SEXP input, SEXP con, SEXP delim,
   END_CPP11
 }
 // vroom_write.cc
-cpp11::strings vroom_format_(const cpp11::list& input, const char delim, const std::string& eol, const char* na_str, bool col_names, size_t options);
-extern "C" SEXP _vroom_vroom_format_(SEXP input, SEXP delim, SEXP eol, SEXP na_str, SEXP col_names, SEXP options) {
+cpp11::strings vroom_format_(const cpp11::list& input, const char delim, const std::string& eol, const char* na_str, bool col_names, bool append, size_t options, size_t num_threads, bool progress, size_t buf_lines);
+extern "C" SEXP _vroom_vroom_format_(SEXP input, SEXP delim, SEXP eol, SEXP na_str, SEXP col_names, SEXP append, SEXP options, SEXP num_threads, SEXP progress, SEXP buf_lines) {
   BEGIN_CPP11
-    return cpp11::as_sexp(vroom_format_(cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(input), cpp11::as_cpp<cpp11::decay_t<const char>>(delim), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(eol), cpp11::as_cpp<cpp11::decay_t<const char*>>(na_str), cpp11::as_cpp<cpp11::decay_t<bool>>(col_names), cpp11::as_cpp<cpp11::decay_t<size_t>>(options)));
+    return cpp11::as_sexp(vroom_format_(cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(input), cpp11::as_cpp<cpp11::decay_t<const char>>(delim), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(eol), cpp11::as_cpp<cpp11::decay_t<const char*>>(na_str), cpp11::as_cpp<cpp11::decay_t<bool>>(col_names), cpp11::as_cpp<cpp11::decay_t<bool>>(append), cpp11::as_cpp<cpp11::decay_t<size_t>>(options), cpp11::as_cpp<cpp11::decay_t<size_t>>(num_threads), cpp11::as_cpp<cpp11::decay_t<bool>>(progress), cpp11::as_cpp<cpp11::decay_t<size_t>>(buf_lines)));
   END_CPP11
 }
 // vroom.cc
@@ -128,25 +129,6 @@ extern "C" SEXP _vroom_vroom_rle(SEXP input) {
 }
 
 extern "C" {
-/* .Call calls */
-extern SEXP _vroom_convert_connection(SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_force_materialization(SEXP);
-extern SEXP _vroom_gen_character_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_guess_type_(SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_has_trailing_newline(SEXP);
-extern SEXP _vroom_utctime_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_vroom_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_vroom_convert(SEXP);
-extern SEXP _vroom_vroom_errors_(SEXP);
-extern SEXP _vroom_vroom_format_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_vroom_fwf_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_vroom_materialize(SEXP, SEXP);
-extern SEXP _vroom_vroom_rle(SEXP);
-extern SEXP _vroom_vroom_str_(SEXP);
-extern SEXP _vroom_vroom_write_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_vroom_write_connection_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _vroom_whitespace_columns_(SEXP, SEXP, SEXP, SEXP);
-
 static const R_CallMethodDef CallEntries[] = {
     {"_vroom_convert_connection",      (DL_FUNC) &_vroom_convert_connection,       4},
     {"_vroom_force_materialization",   (DL_FUNC) &_vroom_force_materialization,    1},
@@ -157,7 +139,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_vroom_",                  (DL_FUNC) &_vroom_vroom_,                  21},
     {"_vroom_vroom_convert",           (DL_FUNC) &_vroom_vroom_convert,            1},
     {"_vroom_vroom_errors_",           (DL_FUNC) &_vroom_vroom_errors_,            1},
-    {"_vroom_vroom_format_",           (DL_FUNC) &_vroom_vroom_format_,            6},
+    {"_vroom_vroom_format_",           (DL_FUNC) &_vroom_vroom_format_,           10},
     {"_vroom_vroom_fwf_",              (DL_FUNC) &_vroom_vroom_fwf_,              19},
     {"_vroom_vroom_materialize",       (DL_FUNC) &_vroom_vroom_materialize,        2},
     {"_vroom_vroom_rle",               (DL_FUNC) &_vroom_vroom_rle,                1},
@@ -180,7 +162,7 @@ void init_vroom_num(DllInfo* dll);
 void init_vroom_rle(DllInfo* dll);
 void init_vroom_time(DllInfo* dll);
 
-extern "C" void R_init_vroom(DllInfo* dll){
+extern "C" attribute_visible void R_init_vroom(DllInfo* dll){
   R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
   init_vroom_big_int(dll);

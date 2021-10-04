@@ -12,7 +12,8 @@ vroom_format(
   col_names = TRUE,
   escape = c("double", "backslash", "none"),
   quote = c("needed", "all", "none"),
-  bom = FALSE
+  bom = FALSE,
+  num_threads = vroom_threads()
 )
 }
 \arguments{
@@ -46,6 +47,10 @@ column names will be included. If not specified, \code{col_names} will take the 
 \item{bom}{If \code{TRUE} add a UTF-8 BOM at the beginning of the file. This is
 recommended when saving data for consumption by excel, as it will force
 excel to read the data with the correct encoding (UTF-8)}
+
+\item{num_threads}{Number of threads to use when reading and materializing
+vectors. If your data contains newlines within fields the parser will
+automatically be forced to use a single thread only.}
 }
 \description{
 This is equivalent to \code{\link[=vroom_write]{vroom_write()}}, but instead of writing to

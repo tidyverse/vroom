@@ -48,17 +48,17 @@ names of the columns, and the first row of the input will be read into
 the first row of the output data frame.
 
 Missing (\code{NA}) column names will generate a warning, and be filled
-in with dummy names \code{X1}, \code{X2} etc. Duplicate column names
+in with dummy names \code{...1}, \code{...2} etc. Duplicate column names
 will generate a warning and be made unique, see \code{name_repair} to control
 how this is done.}
 
 \item{col_types}{One of \code{NULL}, a \code{\link[readr:cols]{cols()}} specification, or
 a string. See \code{vignette("readr")} for more details.
 
-If \code{NULL}, all column types will be imputed from the first 1000 rows
-on the input. This is convenient (and fast), but not robust. If the
-imputation fails, you'll need to increase the \code{guess_max} or supply the
-correct types yourself.
+If \code{NULL}, all column types will be imputed from \code{guess_max} rows
+on the input interspersed throughout the file. This is convenient (and
+fast), but not robust. If the imputation fails, you'll need to increase
+the \code{guess_max} or supply the correct types yourself.
 
 Column specifications created by \code{\link[=list]{list()}} or \code{\link[readr:cols]{cols()}} must contain
 one column specification for each column. If you only want to read a

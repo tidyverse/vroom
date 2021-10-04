@@ -52,8 +52,8 @@ vroom_write_connection_ <- function(input, con, delim, eol, na_str, col_names, o
   invisible(.Call(`_vroom_vroom_write_connection_`, input, con, delim, eol, na_str, col_names, options, num_threads, progress, buf_lines, is_stdout, append))
 }
 
-vroom_format_ <- function(input, delim, eol, na_str, col_names, options) {
-  .Call(`_vroom_vroom_format_`, input, delim, eol, na_str, col_names, options)
+vroom_format_ <- function(input, delim, eol, na_str, col_names, append, options, num_threads, progress, buf_lines) {
+  .Call(`_vroom_vroom_format_`, input, delim, eol, na_str, col_names, append, options, num_threads, progress, buf_lines)
 }
 
 vroom_ <- function(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip_empty_rows, skip, n_max, progress, col_names, col_types, col_select, name_repair, id, na, locale, guess_max, num_threads, altrep) {
