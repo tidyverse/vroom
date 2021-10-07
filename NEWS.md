@@ -5,6 +5,7 @@
 * `vroom(n_max=)` now correctly handles cases when reading from a connection and the file does _not_ end with a newline (https://github.com/tidyverse/readr/issues/1321)
 
 * `vroom()` no longer issues a spurious warning when the parsing needs to be restarted due to the presence of embedded newlines (https://github.com/tidyverse/readr/issues/1313)
+* Fix performance issue when materializing subsetted vectors (#378)
 
 * `vroom_format()` now uses the same internal multi-threaded code as `vroom_write()`, improving its performance in most cases (#377)
 
