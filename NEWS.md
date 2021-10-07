@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Fix performance issue when materializing subsetted vectors (#378)
+
 * `vroom_format()` now uses the same internal multi-threaded code as `vroom_write()`, improving its performance in most cases (#377)
 
 # vroom 1.5.5
