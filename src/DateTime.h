@@ -2,9 +2,9 @@
 #define READR_DATE_TIME_H_
 
 #include <cpp11/R.hpp>
-#include <tzdb/tzdb.h>
 #include <stdlib.h>
 #include <string>
+#include <tzdb/tzdb.h>
 
 class DateTime {
   int year_, mon_, day_, hour_, min_, sec_, offset_;
@@ -57,11 +57,20 @@ public:
     return true;
   }
 
+  bool validDuration() const {
+    if (sec_ < -59 || sec_ > 59)
+      return false;
+    if (min_ < -59 || min_ > 59)
+      return false;
+
+    return true;
+  }
+
   double datetime() const { return (tz_ == "UTC") ? utctime() : localtime(); }
 
   int date() const { return utcdate(); }
 
-  double time() const { return psec_ + sec_ + (min_ * 60) + (hour_ * 3600); }
+  double time() const { return psec_ + sec_ + (min_ * 60.) + (hour_ * 3600.); }
 
 private:
   // Number of number of seconds since 1970-01-01T00:00:00Z.
@@ -87,27 +96,30 @@ private:
     const date::time_zone* p_time_zone;
 
     if (!tzdb::locate_zone(tz_, p_time_zone)) {
-      throw std::runtime_error("'" + tz_ + "' not found in the time zone database.");
+      throw std::runtime_error(
+          "'" + tz_ + "' not found in the time zone database.");
     }
 
     const date::local_seconds lt =
-      std::chrono::seconds{sec_} +
-      std::chrono::minutes{min_} +
-      std::chrono::hours{hour_} +
-      date::local_days{date::year{year_} / mon_ / day_};
+        std::chrono::seconds{sec_} + std::chrono::minutes{min_} +
+        std::chrono::hours{hour_} +
+        date::local_days{date::year{year_} / mon_ / day_};
 
     date::local_info info;
 
     if (!tzdb::get_local_info(lt, p_time_zone, info)) {
-      throw std::runtime_error("Can't lookup local time info for the supplied time zone.");
+      throw std::runtime_error(
+          "Can't lookup local time info for the supplied time zone.");
     }
 
     switch (info.result) {
     case date::local_info::unique:
-      return (lt.time_since_epoch() - info.first.offset).count() + psec_ + offset_;
+      return (lt.time_since_epoch() - info.first.offset).count() + psec_ +
+             offset_;
     case date::local_info::ambiguous:
       // Choose `earliest` of the two ambiguous times
-      return (lt.time_since_epoch() - info.first.offset).count() + psec_ + offset_;
+      return (lt.time_since_epoch() - info.first.offset).count() + psec_ +
+             offset_;
     case date::local_info::nonexistent:
       return NA_REAL;
     }

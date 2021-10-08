@@ -10,7 +10,7 @@ double parse_time(
 
   if (res) {
     DateTime dt = parser.makeTime();
-    if (dt.validTime()) {
+    if (dt.validDuration()) {
       return dt.time();
     }
   }
@@ -26,26 +26,30 @@ cpp11::doubles read_time(vroom_vec_info* info) {
                      ? std::string("time in ISO8601")
                      : std::string("time like ") + info->format;
 
-  parallel_for(
-      n,
-      [&](size_t start, size_t end, size_t) {
-        R_xlen_t i = start;
-        DateTimeParser parser(info->locale.get());
-        auto col = info->column->slice(start, end);
-        for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-          out[i++] = parse_value<double>(
-              b,
-              col,
-              [&](const char* begin, const char* end) -> double {
-                return parse_time(begin, end, parser, info->format);
-              },
-              info->errors,
-              err_msg.c_str(),
-              *info->na);
-        }
-      },
-      info->num_threads,
-      true);
+  try {
+    parallel_for(
+        n,
+        [&](size_t start, size_t end, size_t) {
+          R_xlen_t i = start;
+          DateTimeParser parser(info->locale.get());
+          auto col = info->column->slice(start, end);
+          for (auto b = col->begin(), e = col->end(); b != e; ++b) {
+            out[i++] = parse_value<double>(
+                b,
+                col,
+                [&](const char* begin, const char* end) -> double {
+                  return parse_time(begin, end, parser, info->format);
+                },
+                info->errors,
+                err_msg.c_str(),
+                *info->na);
+          }
+        },
+        info->num_threads,
+        true);
+  } catch (const std::runtime_error& e) {
+    Rf_errorcall(R_NilValue, "%s", e.what());
+  }
 
   info->errors->warn_for_errors();
 

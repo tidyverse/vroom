@@ -296,3 +296,14 @@ test_that("single digit dates and hours are parsed correctly (https://github.com
     equals = tibble::tibble(X = as.POSIXct("2021-04-09 14:18:25", tz = "UTC"))
   )
 })
+
+test_that("durations", {
+  parse_time <- function(x, format, ...) {
+    vroom(I(x), delim = ",", col_names = FALSE, col_types = list(col_time(format = format)), altrep = FALSE)[[1]]
+  }
+  expect_warning(parse_time("25:00:00", format = "%H:%M:%S"))
+  expect_equal(parse_time("25:00:00", format = "%h:%M:%S"), hms::hms(hours = 25))
+  expect_equal(parse_time("1000000000:00:00", format = "%h:%M:%S"), hms::hms(hours = 1e9))
+  expect_equal(parse_time("-1:23:45", format = "%h:%M:%S"), hms::as_hms(-hms::hms(45, 23, 1)))
+  expect_equal(parse_time("-1:23:45.67", format = "%h:%M:%OS"), hms::as_hms(-hms::hms(45.67, 23, 1)))
+})
