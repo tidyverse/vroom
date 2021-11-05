@@ -157,6 +157,7 @@
 <a href="#vroom-development-version" class="anchor"></a>vroom (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p>Comment lines containing unpaired quotes are no longer treated as unterminated quotations (<a href="https://github.com/tidyverse/readr/issues/1307" class="uri">https://github.com/tidyverse/readr/issues/1307</a>)</p></li>
 <li><p>Values with only a <code>Inf</code> or <code>NaN</code> prefix but additional data afterwards, like <code>Inform</code> or no longer inappropriately guessed as doubles (<a href="https://github.com/tidyverse/readr/issues/1319" class="uri">https://github.com/tidyverse/readr/issues/1319</a>)</p></li>
 <li><p>Time types now support <code>%h</code> format to denote hour durations greater than 24, like readr (<a href="https://github.com/tidyverse/readr/issues/1312" class="uri">https://github.com/tidyverse/readr/issues/1312</a>)</p></li>
 <li><p>Fix performance issue when materializing subsetted vectors (<a href='https://github.com/r-lib/vroom/issues/378'>#378</a>)</p></li>
