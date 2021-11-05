@@ -280,7 +280,7 @@ public:
     // Remove extra columns if there are too many
     if (cols >= num_cols) {
       errors->add_parse_error(pos, cols);
-      while (cols >= num_cols) {
+      while (cols > 0 && cols >= num_cols) {
         destination.pop_back();
         --cols;
       }
@@ -362,10 +362,14 @@ public:
 
       else if (
           state != QUOTED_FIELD && is_comment(buf + pos, buf + end, comment)) {
+
         if (state != RECORD_START) {
+
+          if (num_cols > 0 && pos > start) {
+            resolve_columns(
+                pos + file_offset, cols, num_cols, destination, errors);
+          }
           destination.push_back(pos + file_offset);
-          resolve_columns(
-              pos + file_offset, cols, num_cols, destination, errors);
         }
         cols = 0;
         pos = skip_rest_of_line(source, pos);

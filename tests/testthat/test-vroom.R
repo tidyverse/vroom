@@ -830,3 +830,9 @@ test_that("vroom works with quotes in comments", {
     equals = tibble::tibble(a = 1, b = 2)
   )
 })
+
+test_that("vroom works with comments at end of lines (https://github.com/tidyverse/readr/issues/1309)", {
+  test_vroom(I("foo,bar#\n1,#\n2#\n#\n3\n"), delim = ",", comment = "#",
+    equals = tibble::tibble(foo = c(1,2,3), bar = c(NA, NA, NA))
+  )
+})

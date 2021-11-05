@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Commented lines with comments at the end of lines no longer hang R (https://github.com/tidyverse/readr/issues/1309)
+
 * Comment lines containing unpaired quotes are no longer treated as unterminated quotations (https://github.com/tidyverse/readr/issues/1307)
 
 * Values with only a `Inf` or `NaN` prefix but additional data afterwards, like
