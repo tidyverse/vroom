@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Files with a header but no contents, or a empty file if `col_names = FALSE` no longer cause a hang when `progress = TRUE` (https://github.com/tidyverse/readr/issues/1297)
+
 * Commented lines with comments at the end of lines no longer hang R (https://github.com/tidyverse/readr/issues/1309)
 
 * Comment lines containing unpaired quotes are no longer treated as unterminated quotations (https://github.com/tidyverse/readr/issues/1307)

@@ -78,7 +78,7 @@ public:
   void display_progress() {
     while (true) {
       std::unique_lock<std::mutex> lk(mutex_);
-      if (progress_ < total_) {
+      if (progress_ < total_ - 1) {
         cv_.wait(lk);
         auto now = std::chrono::system_clock::now();
         std::chrono::duration<float, std::milli> diff = now - last_time_;
