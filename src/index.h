@@ -12,14 +12,13 @@ class index {
 public:
   class subset_iterator : public base_iterator {
     size_t i_;
-    mutable size_t prev_;
-    mutable iterator it_;
+    iterator it_;
     std::shared_ptr<std::vector<size_t>> indexes_;
 
   public:
     subset_iterator(
         const iterator& it, const std::shared_ptr<std::vector<size_t>>& indexes)
-        : i_(0), prev_(0), it_(it), indexes_(indexes) {}
+        : i_(0), it_(it), indexes_(indexes) {}
     void next() override { ++i_; }
     void prev() override { --i_; }
     void advance(ptrdiff_t n) override { i_ += n; }
@@ -31,13 +30,7 @@ public:
       auto that_ = static_cast<const subset_iterator*>(&that);
       return that_->i_ - i_;
     };
-    string value() const override {
-      size_t cur = (*indexes_)[i_];
-      ptrdiff_t diff = cur - prev_;
-      it_ += diff;
-      prev_ = cur;
-      return *it_;
-    };
+    string value() const override { return *(it_ + (*indexes_)[i_]); };
     subset_iterator* clone() const override {
       auto copy = new subset_iterator(*this);
       return copy;
