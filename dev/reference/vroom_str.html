@@ -171,40 +171,45 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># when used on non-altrep objects altrep will always be false</span>
-<span class='fu'>vroom_str</span><span class='op'>(</span><span class='va'>mtcars</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 'data.frame': 32 obs., 11 vars.:
-#&gt; $mpg:	altrep:false	type: double	length:32
-#&gt; $cyl:	altrep:false	type: double	length:32
-#&gt; $disp:	altrep:false	type: double	length:32
-#&gt; $hp:	altrep:false	type: double	length:32
-#&gt; $drat:	altrep:false	type: double	length:32
-#&gt; $wt:	altrep:false	type: double	length:32
-#&gt; $qsec:	altrep:false	type: double	length:32
-#&gt; $vs:	altrep:false	type: double	length:32
-#&gt; $am:	altrep:false	type: double	length:32
-#&gt; $gear:	altrep:false	type: double	length:32
-#&gt; $carb:	altrep:false	type: double	length:32</div><div class='input'>
-<span class='va'>mt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vroom.html'>vroom</a></span><span class='op'>(</span><span class='fu'><a href='vroom_example.html'>vroom_example</a></span><span class='op'>(</span><span class='st'>"mtcars.csv"</span><span class='op'>)</span>, <span class='st'>","</span>, altrep <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"chr"</span>, <span class='st'>"dbl"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='font-weight: bold;'>Rows: </span><span style='color: #0000BB;'>32</span> <span style='font-weight: bold;'>Columns: </span><span style='color: #0000BB;'>12</span></span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>──</span> <span style='font-weight: bold;'>Column specification</span> <span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span></span>
-#&gt; <span class='message'><span style='font-weight: bold;'>Delimiter:</span> ","</span>
-#&gt; <span class='message'><span style='color: #BB0000;'>chr</span>  (1): model</span>
-#&gt; <span class='message'><span style='color: #00BB00;'>dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> Use <span style='color: #262626; background-color: #DADADA;'>`spec()`</span> to retrieve the full column specification for this data.</span>
-#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> Specify the column types or set <span style='color: #262626; background-color: #DADADA;'>`show_col_types = FALSE`</span> to quiet this message.</span></div><div class='input'><span class='fu'>vroom_str</span><span class='op'>(</span><span class='va'>mt</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 'spec_tbl_df', 'tbl_df', 'tbl', and 'data.frame': 32 obs., 12 vars.:
-#&gt; $model:	altrep:true	type:vroom::vroom_chr	length:32	materialized:false
-#&gt; $mpg:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $cyl:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $disp:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $hp:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $drat:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $wt:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $qsec:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $vs:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $am:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $gear:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false
-#&gt; $carb:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># when used on non-altrep objects altrep will always be false</span></span>
+<span class='r-in'><span class='fu'>vroom_str</span><span class='op'>(</span><span class='va'>mtcars</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 'data.frame': 32 obs., 11 vars.:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $mpg:	altrep:false	type: double	length:32</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $cyl:	altrep:false	type: double	length:32</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $disp:	altrep:false	type: double	length:32</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $hp:	altrep:false	type: double	length:32</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $drat:	altrep:false	type: double	length:32</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $wt:	altrep:false	type: double	length:32</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $qsec:	altrep:false	type: double	length:32</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $vs:	altrep:false	type: double	length:32</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $am:	altrep:false	type: double	length:32</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $gear:	altrep:false	type: double	length:32</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $carb:	altrep:false	type: double	length:32</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>mt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vroom.html'>vroom</a></span><span class='op'>(</span><span class='fu'><a href='vroom_example.html'>vroom_example</a></span><span class='op'>(</span><span class='st'>"mtcars.csv"</span><span class='op'>)</span>, <span class='st'>","</span>, altrep <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"chr"</span>, <span class='st'>"dbl"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='font-weight: bold;'>Rows: </span><span style='color: #0000BB;'>32</span> <span style='font-weight: bold;'>Columns: </span><span style='color: #0000BB;'>12</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>──</span> <span style='font-weight: bold;'>Column specification</span> <span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='font-weight: bold;'>Delimiter:</span> ","</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #BB0000;'>chr</span>  (1): model</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Use <span style='color: #262626; background-color: #DADADA;'>`spec()`</span> to retrieve the full column specification for this data.</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Specify the column types or set <span style='color: #262626; background-color: #DADADA;'>`show_col_types = FALSE`</span> to quiet this message.</span>
+<span class='r-in'><span class='fu'>vroom_str</span><span class='op'>(</span><span class='va'>mt</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 'spec_tbl_df', 'tbl_df', 'tbl', and 'data.frame': 32 obs., 12 vars.:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $model:	altrep:true	type:vroom::vroom_chr	length:32	materialized:false</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $mpg:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $cyl:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $disp:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $hp:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $drat:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $wt:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $qsec:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $vs:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $am:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $gear:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $carb:	altrep:true	type:vroom::vroom_dbl	length:32	materialized:false</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

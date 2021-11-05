@@ -153,12 +153,12 @@
 <a href="#taxi-benchmarks" class="anchor"></a>Taxi Benchmarks</h3>
 <p>code: <a href="https://github.com/r-lib/vroom/tree/master/inst/bench/taxi">bench/taxi</a></p>
 <p>All benchmarks were run on a Amazon EC2 <a href="https://aws.amazon.com/ec2/instance-types/m5/">m5.4xlarge</a> instance with 16 vCPUs and an <a href="https://aws.amazon.com/ebs/">EBS</a> volume type.</p>
-<p>The benchmarks labeled <code>vroom_base</code> uses <code>vroom</code> with base functions for manipulation. <code>vroom_dplyr</code> uses <code>vroom</code> to read the file and dplyr functions to manipulate. <code>data.table</code> uses <code>fread()</code> to read the file and <code>data.table</code> functions to manipulate and <code>readr</code> uses <code>readr</code> to read the file and <code>dplyr</code> to manipulate. By default vroom only uses Altrep for character vectors, these are labeled <code><a href="../reference/vroom.html">vroom(altrep: normal)</a></code>. The benchmarks labeled <code><a href="../reference/vroom.html">vroom(altrep: full)</a></code> instead use Altrep vectors for all supported types and <code><a href="../reference/vroom.html">vroom(altrep: none)</a></code> disable Altrep entirely.</p>
+<p>The benchmarks labeled <code>vroom_base</code> uses <code>vroom</code> with base functions for manipulation. <code>vroom_dplyr</code> uses <code>vroom</code> to read the file and dplyr functions to manipulate. <code>data.table</code> uses <code>fread()</code> to read the file and <code>data.table</code> functions to manipulate and <code>readr</code> uses <code>readr</code> to read the file and <code>dplyr</code> to manipulate. By default vroom only uses Altrep for character vectors, these are labeled <code>vroom(altrep: normal)</code>. The benchmarks labeled <code>vroom(altrep: full)</code> instead use Altrep vectors for all supported types and <code>vroom(altrep: none)</code> disable Altrep entirely.</p>
 <p>The following operations are performed.</p>
 <ul>
 <li>The data is read</li>
 <li>
-<code><a href="https://rdrr.io/r/base/print.html">print()</a></code> - <em>N.B. read.delim uses <code><a href="https://rdrr.io/r/base/print.html">print(head(x, 10))</a></code> because printing the whole dataset takes &gt; 10 minutes</em>
+<code><a href="https://rdrr.io/r/base/print.html">print()</a></code> - <em>N.B. read.delim uses <code>print(head(x, 10))</code> because printing the whole dataset takes &gt; 10 minutes</em>
 </li>
 <li><code><a href="https://rdrr.io/r/utils/head.html">head()</a></code></li>
 <li><code><a href="https://rdrr.io/r/utils/head.html">tail()</a></code></li>
