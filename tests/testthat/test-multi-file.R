@@ -103,3 +103,10 @@ test_that("vroom errors if column names are inconsistent", {
   files <- test_path("multi-file", c("foo", "bar"))
   expect_error(vroom::vroom(files, col_types = list()), "consistent column names")
 })
+
+test_that("vroom works if a file contains no data", {
+
+  files <- test_path("multi-file", c("foo", "qux"))
+  res <- vroom(files, col_types = list())
+  expect_equal(res, tibble::tibble(A = 1, B = 2))
+})

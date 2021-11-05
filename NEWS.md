@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Empty files or files with only a header line and no data no longer cause a crash if read with multiple files (https://github.com/tidyverse/readr/issues/1297)
+
 * Files with a header but no contents, or a empty file if `col_names = FALSE` no longer cause a hang when `progress = TRUE` (https://github.com/tidyverse/readr/issues/1297)
 
 * Commented lines with comments at the end of lines no longer hang R (https://github.com/tidyverse/readr/issues/1309)

@@ -8,7 +8,6 @@
 #include <memory>
 #include <utility>
 
-
 #include "r_utils.h"
 
 using namespace vroom;
@@ -30,7 +29,7 @@ index_collection::full_iterator::full_iterator(
 
 void index_collection::full_iterator::next() {
   ++it_;
-  if (it_ == it_end_ && i_ < end_) {
+  while (it_ == it_end_ && i_ < end_) {
     ++i_;
     it_ = idx_->indexes_[i_]->get_column(column_)->begin();
     it_end_ = idx_->indexes_[i_]->get_column(column_)->end();
@@ -39,7 +38,7 @@ void index_collection::full_iterator::next() {
 
 void index_collection::full_iterator::prev() {
   --it_;
-  if (it_ == it_start_ && i_ > start_) {
+  while (it_ == it_start_ && i_ > start_) {
     --i_;
     it_ = idx_->indexes_[i_]->get_column(column_)->end();
     it_start_ = idx_->indexes_[i_]->get_column(column_)->begin();
