@@ -25,7 +25,17 @@ test_that("NaN values are guessed and parsed as doubles (https://github.com/tidy
     equals = tibble::tibble(x = c(NaN)))
 })
 
+test_that("Test that values with only a NaN prefix are _not_ parsed as doubles", {
+  test_vroom(I("x\nNaNa\n"), delim = ",", col_types = "?",
+    equals = tibble::tibble(x = c("NaNa")))
+})
+
 test_that("Inf and -Inf values are guessed and parsed as doubles (https://github.com/tidyverse/readr/issues/1283)", {
   test_vroom(I("x\nInf\n-Inf\n+Inf"), delim = ",", col_types = "?",
     equals = tibble::tibble(x = c(Inf, -Inf, Inf)))
+})
+
+test_that("Test that values with only a Inf prefix are _not_ parsed as doubles", {
+  test_vroom(I("x\nInfa\n-Infb\n+Infc"), delim = ",", col_types = "?",
+    equals = tibble::tibble(x = c("Infa", "-Infb", "+Infc")))
 })

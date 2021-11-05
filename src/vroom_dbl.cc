@@ -84,12 +84,12 @@ double bsd_strtod(const char* begin, const char* end, const char decimalMark) {
     ++p;
 
   /* NaN */
-  if (end - p >= 3 && tolower(p[0]) == 'n' && tolower(p[1]) == 'a' &&
+  if (end - p == 3 && tolower(p[0]) == 'n' && tolower(p[1]) == 'a' &&
       tolower(p[2]) == 'n') {
     return NAN;
   }
   /* Inf */
-  if (end - p >= 3 && tolower(p[0]) == 'i' && tolower(p[1]) == 'n' &&
+  if (end - p == 3 && tolower(p[0]) == 'i' && tolower(p[1]) == 'n' &&
       tolower(p[2]) == 'f') {
     return sign == 1 ? -HUGE_VAL : HUGE_VAL;
   }

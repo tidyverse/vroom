@@ -1,5 +1,8 @@
 # vroom (development version)
 
+* Values with only a `Inf` or `NaN` prefix but additional data afterwards, like
+  `Inform` or no longer inappropriately guessed as doubles (https://github.com/tidyverse/readr/issues/1319)
+
 * Time types now support `%h` format to denote hour durations greater than 24, like readr (https://github.com/tidyverse/readr/issues/1312)
 
 * Fix performance issue when materializing subsetted vectors (#378)
