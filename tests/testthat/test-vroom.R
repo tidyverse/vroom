@@ -820,3 +820,13 @@ test_that("vroom works with CR line endings only", {
     equals = tibble::tibble(a = c(1, 3), b = c(2, 4))
   )
 })
+
+test_that("vroom works with quotes in comments", {
+  test_vroom(I("a,b\n#bar \" xyz\n1,2"), delim = ",", comment = "#",
+    equals = tibble::tibble(a = 1, b = 2)
+  )
+
+  test_vroom(I("#foo \" \na,b\n#bar \" xyz\n1,2"), delim = ",", comment = "#",
+    equals = tibble::tibble(a = 1, b = 2)
+  )
+})

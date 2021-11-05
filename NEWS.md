@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Comment lines containing unpaired quotes are no longer treated as unterminated quotations (https://github.com/tidyverse/readr/issues/1307)
+
 * Values with only a `Inf` or `NaN` prefix but additional data afterwards, like
   `Inform` or no longer inappropriately guessed as doubles (https://github.com/tidyverse/readr/issues/1319)
 
