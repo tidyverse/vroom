@@ -69,7 +69,14 @@ fixed_width_index_connection::fixed_width_index_connection(
   size_t first_nl;
   newline_type nl_type;
   std::tie(first_nl, nl_type) = find_next_newline(
-      buf[i], start, comment, skip_empty_rows, false, /* quote */ '\0');
+      buf[i],
+      start,
+      comment,
+      skip_empty_rows,
+      false,
+      /* quote */ '\0');
+
+  bool n_max_set = n_max != static_cast<size_t>(-1);
 
   std::unique_ptr<RProgress::RProgress> pb = nullptr;
   if (progress) {
@@ -161,15 +168,20 @@ fixed_width_index_connection::fixed_width_index_connection(
     }
   }
 
+  char last_char = mmap_[mmap_.size() - 1];
+  bool ends_with_newline = last_char == '\n' || last_char == '\r';
+  if (!n_max_set && !ends_with_newline) {
+    newlines_.push_back(mmap_.size());
+  }
+
 #ifdef VROOM_LOG
-#if SPDLOG_ACTIVE_LEVEL <= SPD_LOG_LEVEL_DEBUG
   auto log = spdlog::basic_logger_mt(
       "basic_logger", "logs/fixed_width_index_connection.idx", true);
-  for (auto& v : newlines_) {
+  log->set_level(spdlog::level::debug);
+  for (auto&& v : newlines_) {
     SPDLOG_LOGGER_DEBUG(log, "{}", v);
   }
   SPDLOG_LOGGER_DEBUG(log, "end of idx {0:x}", (size_t)&newlines_);
   spdlog::drop("basic_logger");
-#endif
 #endif
 }

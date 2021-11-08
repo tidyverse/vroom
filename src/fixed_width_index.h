@@ -127,7 +127,11 @@ public:
         file_size / 1000);
 
     if (!n_max_set) {
-      newlines_.push_back(file_size - 1);
+      if (nl == CRLF) {
+        newlines_.push_back(file_size - 2);
+      } else {
+        newlines_.push_back(file_size - 1);
+      }
     }
 
     if (progress) {
@@ -233,8 +237,8 @@ public:
       size_t update_size = -1) {
 
     size_t pos;
-    newline_type nl;
-    std::tie(pos, nl) = find_next_newline(
+    newline_type first_nl, nl;
+    std::tie(pos, first_nl) = find_next_newline(
         source,
         start,
         comment,
@@ -262,13 +266,18 @@ public:
         }
       }
 
+      /* For this search we need to look only for either a CR or a LF, since a
+       * CRLF could potentially be split between two buffers, and has been in
+       * practice.
+       */
       std::tie(pos, nl) = find_next_newline(
           source,
           pos + 1,
           comment,
           skip_empty_rows,
           /* embedded_nl */ false,
-          /* quote */ '\0');
+          /* quote */ '\0',
+          /* type */ first_nl);
     }
 
     if (pb) {

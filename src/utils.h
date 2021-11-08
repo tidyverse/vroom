@@ -136,7 +136,8 @@ static std::pair<size_t, newline_type> find_next_newline(
     const std::string& comment,
     const bool skip_empty_rows,
     bool embedded_nl,
-    const char quote) {
+    const char quote,
+    newline_type type = NA) {
 
   if (start >= source.size()) {
     return {source.size() - 1, NA};
@@ -154,7 +155,19 @@ static std::pair<size_t, newline_type> find_next_newline(
 
   const char* end = source.data() + source.size();
 
-  std::array<char, 3> query = {'\r', '\n', '\0'};
+  std::array<char, 3> query;
+  switch (type) {
+  case NA:
+    query = {'\n', '\r', '\0'};
+    break;
+  case CR:
+    query = {'\r', '\0'};
+    break;
+  case CRLF:
+  case LF:
+    query = {'\n', '\0'};
+    break;
+  }
   bool should_skip;
   while (begin && begin < end) {
     size_t offset = strcspn(begin, query.data());

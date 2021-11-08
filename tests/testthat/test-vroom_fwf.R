@@ -14,7 +14,7 @@ test_that("dos newlines handles", {
   expect_equal(x, y)
 
   z <- vroom_fwf(file(test_path("fwf-trailing-crlf.txt")), spec, col_types = list())
-  expect_equal(x, z)
+  expect_equal(z, x)
 })
 
 test_that("connections and normal files produce identical output", {
@@ -338,4 +338,34 @@ test_that("vroom_fwf works when skip_empty_rows is false (https://github.com/tid
   out <- vroom_fwf(f, fwf_cols(A = c(1, NA)), col_types = "c", na = " ", trim_ws = FALSE, skip_empty_rows = FALSE)
 
   expect_equal(out[[1]], rep(NA_character_, 10))
+})
+
+test_that("vroom_fwf correctly reads files with no trailing newline (https://github.com/tidyverse/readr/issues/1293)", {
+  f <- tempfile()
+  on.exit(unlink(f))
+
+  writeBin(charToRaw("111222\n333444"), f)
+
+  out <- vroom_fwf(f, fwf_widths(c(3, 3)), col_types = "ii")
+
+  expect_equal(out, tibble::tibble(X1 = c(111, 333), X2 = c(222, 444)))
+
+  out2 <- vroom_fwf(file(f), fwf_widths(c(3, 3)), col_types = "ii")
+
+  expect_equal(out, out2)
+})
+
+test_that("vroom_fwf correctly reads DOS files with no trailing newline (https://github.com/tidyverse/readr/issues/1293)", {
+  f <- tempfile()
+  on.exit(unlink(f))
+
+  writeBin(charToRaw("111222\r\n333444"), f)
+
+  out <- vroom_fwf(f, fwf_widths(c(3, 3)), col_types = "ii")
+
+  expect_equal(out, tibble::tibble(X1 = c(111, 333), X2 = c(222, 444)))
+
+  out2 <- vroom_fwf(file(f), fwf_widths(c(3, 3)), col_types = "ii")
+
+  expect_equal(out, out2)
 })
