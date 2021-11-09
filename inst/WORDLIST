@@ -19,6 +19,7 @@ datetime
 de
 dbi
 delim
+durations
 Dowle
 dplyr
 envvar
@@ -79,6 +80,7 @@ tsv
 tz
 tzdb
 unicode
+unterminated
 UNK
 xz
 rchk
