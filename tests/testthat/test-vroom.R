@@ -857,10 +857,10 @@ test_that("vroom does not erronously warn for problems when there are embedded n
   path <- tempfile(pattern = "quoted_newlines_", fileext = ".csv")
   withr::defer(unlink(path))
 
-  write.csv(old_df, path, row.names = FALSE)
+  vroom_write(df, path, delim = ",")
 
   x <- vroom(path, delim = ",", col_types = list())
-  y <- read.csv(path)
+  y <- utils::read.csv(path)
 
-  expect_warning(all.equal(as.data.frame(x), y), NA)
+  expect_warning(expect_equal(as.data.frame(x), y), NA)
 })
