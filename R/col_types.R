@@ -382,7 +382,7 @@ col_types_standardise <- function(spec, num_cols, col_names, col_select, name_re
     }
   }
 
-  if (is.null(col_names)) {
+  if (length(col_names) == 0) {
     col_names <- make_names(NULL, num_cols)
   }
 

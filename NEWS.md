@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom(col_select=)` now works if `col_names = FALSE` as intended (#381)
+
 * `vroom(n_max=)` now correctly handles cases when reading from a connection and the file does _not_ end with a newline (https://github.com/tidyverse/readr/issues/1321)
 
 * `vroom()` no longer issues a spurious warning when the parsing needs to be restarted due to the presence of embedded newlines (https://github.com/tidyverse/readr/issues/1313)

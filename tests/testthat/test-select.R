@@ -63,3 +63,11 @@ test_that("col_select can select the id column", {
     c("path", "model", "mpg")
   )
 })
+
+test_that("col_select works with col_names = FALSE", {
+  res <- vroom(I("foo\tbar\n1\t2\n"), col_names = FALSE, col_select = 1, col_types = list())
+  expect_equal(res[[1]], c("foo", "1"))
+
+  res2 <- vroom(I("foo\tbar\n1\t2\n"), col_names = FALSE, col_select = c(X2), col_types = list())
+  expect_equal(res2[[1]], c("bar", "2"))
+})
