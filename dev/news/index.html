@@ -160,7 +160,9 @@
 <li><p><code>vroom(col_select=)</code> now works if <code>col_names = FALSE</code> as intended (<a href='https://github.com/r-lib/vroom/issues/381'>#381</a>)</p></li>
 <li><p><code>vroom(n_max=)</code> now correctly handles cases when reading from a connection and the file does <em>not</em> end with a newline (<a href="https://github.com/tidyverse/readr/issues/1321" class="uri">https://github.com/tidyverse/readr/issues/1321</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer issues a spurious warning when the parsing needs to be restarted due to the presence of embedded newlines (<a href="https://github.com/tidyverse/readr/issues/1313" class="uri">https://github.com/tidyverse/readr/issues/1313</a>)</p></li>
-<li><p>Fix <code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> omitting the last line if it does <em>not</em> end with a newline (<a href="https://github.com/tidyverse/readr/issues/1293" class="uri">https://github.com/tidyverse/readr/issues/1293</a>)</p></li>
+<li><p>Fix performance issue when materializing subsetted vectors (<a href='https://github.com/r-lib/vroom/issues/378'>#378</a>)</p></li>
+<li><p><code><a href="../reference/vroom_format.html">vroom_format()</a></code> now uses the same internal multi-threaded code as <code><a href="../reference/vroom_write.html">vroom_write()</a></code>, improving its performance in most cases (<a href='https://github.com/r-lib/vroom/issues/377'>#377</a>)</p></li>
+<li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> no longer omits the last line if it does <em>not</em> end with a newline (<a href="https://github.com/tidyverse/readr/issues/1293" class="uri">https://github.com/tidyverse/readr/issues/1293</a>)</p></li>
 <li><p>Empty files or files with only a header line and no data no longer cause a crash if read with multiple files (<a href="https://github.com/tidyverse/readr/issues/1297" class="uri">https://github.com/tidyverse/readr/issues/1297</a>)</p></li>
 <li><p>Files with a header but no contents, or a empty file if <code>col_names = FALSE</code> no longer cause a hang when <code>progress = TRUE</code> (<a href="https://github.com/tidyverse/readr/issues/1297" class="uri">https://github.com/tidyverse/readr/issues/1297</a>)</p></li>
 <li><p>Commented lines with comments at the end of lines no longer hang R (<a href="https://github.com/tidyverse/readr/issues/1309" class="uri">https://github.com/tidyverse/readr/issues/1309</a>)</p></li>
@@ -168,7 +170,6 @@
 <li><p>Values with only a <code>Inf</code> or <code>NaN</code> prefix but additional data afterwards, like <code>Inform</code> or no longer inappropriately guessed as doubles (<a href="https://github.com/tidyverse/readr/issues/1319" class="uri">https://github.com/tidyverse/readr/issues/1319</a>)</p></li>
 <li><p>Time types now support <code>%h</code> format to denote hour durations greater than 24, like readr (<a href="https://github.com/tidyverse/readr/issues/1312" class="uri">https://github.com/tidyverse/readr/issues/1312</a>)</p></li>
 <li><p>Fix performance issue when materializing subsetted vectors (<a href='https://github.com/r-lib/vroom/issues/378'>#378</a>)</p></li>
-<li><p><code><a href="../reference/vroom_format.html">vroom_format()</a></code> now uses the same internal multi-threaded code as <code><a href="../reference/vroom_write.html">vroom_write()</a></code>, improving its performance in most cases (<a href='https://github.com/r-lib/vroom/issues/377'>#377</a>)</p></li>
 </ul>
 </div>
     <div id="vroom-155" class="section level1">
