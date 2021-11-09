@@ -1,6 +1,8 @@
 # vroom (development version)
 
-* `vroom()` no longer issues a spurious warning when the parsing needs to be restarted due to the presence of embedded newlines (#https://github.com/tidyverse/readr/issues/1313)
+* `vroom(n_max=)` now correctly handles cases when reading from a connection and the file does _not_ end with a newline (https://github.com/tidyverse/readr/issues/1321)
+
+* `vroom()` no longer issues a spurious warning when the parsing needs to be restarted due to the presence of embedded newlines (https://github.com/tidyverse/readr/issues/1313)
 
 * Fix `vroom_fwf()` omitting the last line if it does _not_ end with a newline (https://github.com/tidyverse/readr/issues/1293)
 

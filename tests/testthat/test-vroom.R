@@ -864,3 +864,21 @@ test_that("vroom does not erronously warn for problems when there are embedded n
 
   expect_warning(expect_equal(as.data.frame(x), y), NA)
 })
+
+test_that("n_max works with files without a trailing newline for file connections (https://github.com/tidyverse/readr/issues/1321)", {
+
+  f <- tempfile()
+  on.exit(unlink(f))
+
+writeBin(charToRaw("foo,bar
+1,2
+3,4
+5,6"), f)
+
+  x <- vroom(f, n_max = Inf, delim = ",", col_types = list())
+  y <- vroom(f, n_max = 4, delim = ",", col_types = list())
+  z <- vroom(f, n_max = 5, delim = ",", col_types = list())
+  expect_equal(y, x)
+  expect_equal(z, x)
+})
+

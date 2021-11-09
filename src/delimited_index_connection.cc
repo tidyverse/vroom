@@ -254,7 +254,7 @@ delimited_index_connection::delimited_index_connection(
 
   size_t file_size = mmap_.size();
 
-  if (!n_max_set && !has_expected_line_ending(nl, mmap_[file_size - 1])) {
+  if (!has_expected_line_ending(nl, mmap_[file_size - 1])) {
     if (columns_ == 0 || single_line) {
       idx_[0].push_back(file_size);
       ++columns_;
