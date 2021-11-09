@@ -263,6 +263,7 @@ start_indexing:
 
   } catch (newline_error& e) {
     num_threads = 1;
+    errors->clear();
     goto start_indexing;
   }
   size_t total_size = std::accumulate(

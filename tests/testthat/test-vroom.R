@@ -836,3 +836,31 @@ test_that("vroom works with comments at end of lines (https://github.com/tidyver
     equals = tibble::tibble(foo = c(1,2,3), bar = c(NA, NA, NA))
   )
 })
+
+test_that("vroom does not erronously warn for problems when there are embedded newlines and parsing needs to be restarted (https://github.com/tidyverse/readr/issues/1313))", {
+
+  withr::local_seed(1)
+
+  sample_values <- function(n, p_safe) {
+    sample(c("safe", "UNSAFE\n"), n, replace = TRUE, prob = c(p_safe, 1 - p_safe))
+  }
+
+  n <- 300
+
+  df <- tibble::tibble(
+    a = sample_values(n, p_safe = .99),
+    b = sample_values(n, p_safe = .01),
+    c = sample_values(n, p_safe = .01)
+  )
+
+  # write to temp file
+  path <- tempfile(pattern = "quoted_newlines_", fileext = ".csv")
+  withr::defer(unlink(path))
+
+  write.csv(old_df, path, row.names = FALSE)
+
+  x <- vroom(path, delim = ",", col_types = list())
+  y <- read.csv(path)
+
+  expect_warning(all.equal(as.data.frame(x), y), NA)
+})

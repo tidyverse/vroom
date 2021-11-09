@@ -69,6 +69,7 @@ Suggests:
     spelling,
     testthat (>= 2.1.0),
     tidyr,
+    utils,
     waldo,
     xml2
 LinkingTo: 

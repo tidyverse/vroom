@@ -70,11 +70,12 @@ public:
   }
 
   cpp11::data_frame error_table() const {
-    return cpp11::writable::data_frame({"row"_nm = rows_,
-                                        "col"_nm = columns_,
-                                        "expected"_nm = expected_,
-                                        "actual"_nm = actual_,
-                                        "file"_nm = filenames_});
+    return cpp11::writable::data_frame(
+        {"row"_nm = rows_,
+         "col"_nm = columns_,
+         "expected"_nm = expected_,
+         "actual"_nm = actual_,
+         "file"_nm = filenames_});
   }
 
   bool has_errors() const { return rows_.size() > 0; }
@@ -92,6 +93,16 @@ public:
           Rf_mkString("vroom_parse_issue"));
       Rf_eval(warn_call, R_EmptyEnv);
     }
+  }
+
+  void clear() {
+    std::lock_guard<std::mutex> guard(mutex_);
+    rows_.clear();
+    columns_.clear();
+    expected_.clear();
+    actual_.clear();
+    filenames_.clear();
+    parse_errors_.clear();
   }
 
 private:

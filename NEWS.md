@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` no longer issues a spurious warning when the parsing needs to be restarted due to the presence of embedded newlines (#https://github.com/tidyverse/readr/issues/1313)
+
 * Fix `vroom_fwf()` omitting the last line if it does _not_ end with a newline (https://github.com/tidyverse/readr/issues/1293)
 
 * Empty files or files with only a header line and no data no longer cause a crash if read with multiple files (https://github.com/tidyverse/readr/issues/1297)
