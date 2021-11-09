@@ -860,7 +860,7 @@ test_that("vroom does not erronously warn for problems when there are embedded n
   vroom_write(df, path, delim = ",")
 
   x <- vroom(path, delim = ",", col_types = list())
-  y <- utils::read.csv(path)
+  y <- utils::read.csv(path, stringsAsFactors = FALSE)
 
   expect_warning(expect_equal(as.data.frame(x), y), NA)
 })
