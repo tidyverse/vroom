@@ -157,7 +157,8 @@
 <a href="#vroom-development-version" class="anchor"></a>vroom (development version)<small> Unreleased </small>
 </h1>
 <ul>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer issues a spurious warning when the parsing needs to be restarted due to the presence of embedded newlines (#<a href="https://github.com/tidyverse/readr/issues/1313" class="uri">https://github.com/tidyverse/readr/issues/1313</a>)</p></li>
+<li><p><code>vroom(n_max=)</code> now correctly handles cases when reading from a connection and the file does <em>not</em> end with a newline (<a href="https://github.com/tidyverse/readr/issues/1321" class="uri">https://github.com/tidyverse/readr/issues/1321</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer issues a spurious warning when the parsing needs to be restarted due to the presence of embedded newlines (<a href="https://github.com/tidyverse/readr/issues/1313" class="uri">https://github.com/tidyverse/readr/issues/1313</a>)</p></li>
 <li><p>Fix <code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> omitting the last line if it does <em>not</em> end with a newline (<a href="https://github.com/tidyverse/readr/issues/1293" class="uri">https://github.com/tidyverse/readr/issues/1293</a>)</p></li>
 <li><p>Empty files or files with only a header line and no data no longer cause a crash if read with multiple files (<a href="https://github.com/tidyverse/readr/issues/1297" class="uri">https://github.com/tidyverse/readr/issues/1297</a>)</p></li>
 <li><p>Files with a header but no contents, or a empty file if <code>col_names = FALSE</code> no longer cause a hang when <code>progress = TRUE</code> (<a href="https://github.com/tidyverse/readr/issues/1297" class="uri">https://github.com/tidyverse/readr/issues/1297</a>)</p></li>
