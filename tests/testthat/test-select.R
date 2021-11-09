@@ -23,14 +23,6 @@ test_that("col_select with negations works", {
     c("mpg", "cyl", "disp", "drat", "qsec", "vs", "am", "gear", "carb")
   )
 
-  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_select = -c("model", "hp", "wt"), col_types = list())),
-    c("mpg", "cyl", "disp", "drat", "qsec", "vs", "am", "gear", "carb")
-  )
-
-  expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_select = -c("model", "hp", "wt"), col_types = list())),
-    c("mpg", "cyl", "disp", "drat", "qsec", "vs", "am", "gear", "carb")
-  )
-
   expect_equal(colnames(vroom(vroom_example("mtcars.csv"), col_select = -c(model, hp, wt), col_types = list())),
     c("mpg", "cyl", "disp", "drat", "qsec", "vs", "am", "gear", "carb")
   )
