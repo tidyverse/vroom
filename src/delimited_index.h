@@ -71,11 +71,12 @@ public:
       return i_ == static_cast<const column_iterator*>(&it)->i_;
     }
     ptrdiff_t distance_to(const base_iterator& it) const override {
-      return (static_cast<ptrdiff_t>(
-                  static_cast<const column_iterator*>(&it)->i_) -
-              static_cast<ptrdiff_t>(i_)) /
-             ptrdiff_t(idx_->columns_);
+      ptrdiff_t i = i_;
+      ptrdiff_t j = static_cast<const column_iterator*>(&it)->i_;
+      ptrdiff_t columns = idx_->columns_;
+      return (j - i) / columns;
     }
+
     string value() const override {
       return idx_->get_trimmed_val(i_, is_first_, is_last_);
     }

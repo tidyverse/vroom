@@ -64,13 +64,13 @@ void index_collection::full_iterator::advance(ptrdiff_t n) {
   }
   if (n < 0) {
     while (n < 0) {
-      auto diff = it_start_ - it_;
+      auto diff = -(it_ - it_start_);
       if (n > diff) {
-        it_ -= n;
+        it_ += n;
         return;
       }
-      it_ -= (diff + 1);
-      n += diff;
+      it_ += (diff + 1);
+      n -= diff;
       prev();
     }
     return;
