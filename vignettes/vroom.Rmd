@@ -122,14 +122,14 @@ read_all_zip <- function(file, ...) {
 vroom can read files directly from the internet as well by passing the URL of the file to vroom.
 
 ```{r, eval = as.logical(Sys.getenv("NOT_CRAN", "false"))}
-file <- "https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv"
+file <- "https://raw.githubusercontent.com/r-lib/vroom/main/inst/extdata/mtcars.csv"
 vroom(file)
 ```
 
 It can even read gzipped files from the internet (although not the other compressed formats).
 
 ```{r, eval = as.logical(Sys.getenv("NOT_CRAN", "false"))}
-file <- "https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv.gz"
+file <- "https://raw.githubusercontent.com/r-lib/vroom/main/inst/extdata/mtcars.csv.gz"
 vroom(file)
 ```
 

@@ -7,7 +7,7 @@
 
 [![R-CMD-check](https://github.com/r-lib/vroom/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/vroom/actions)
 [![Codecov test
-coverage](https://codecov.io/gh/r-lib/vroom/branch/master/graph/badge.svg)](https://codecov.io/gh/r-lib/vroom?branch=master)
+coverage](https://codecov.io/gh/r-lib/vroom/branch/main/graph/badge.svg)](https://codecov.io/gh/r-lib/vroom?branch=main)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/package=vroom)
 [![Lifecycle:
@@ -97,7 +97,7 @@ vroom::vroom("mtcars.tsv",
   col_types = list(cyl = "i", gear = "f",hp = "i", disp = "_",
                    drat = "_", vs = "l", am = "l", carb = "i")
 )
-#> # A tibble: 32 x 10
+#> # A tibble: 32 × 10
 #>   model           mpg   cyl    hp    wt  qsec vs    am    gear   carb
 #>   <chr>         <dbl> <int> <int> <dbl> <dbl> <lgl> <lgl> <fct> <int>
 #> 1 Mazda RX4      21       6   110  2.62  16.5 FALSE TRUE  4         4
@@ -142,7 +142,7 @@ vroom::vroom(files)
 #> 
 #> ℹ Use `spec()` to retrieve the full column specification for this data.
 #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-#> # A tibble: 336,776 x 19
+#> # A tibble: 336,776 × 19
 #>    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
 #>   <dbl> <dbl> <dbl>    <dbl>          <dbl>     <dbl>    <dbl>          <dbl>
 #> 1  2013     1     1      810            810         0     1048           1037
@@ -171,7 +171,7 @@ The speed quoted above is from a real 1.53G dataset with 14,388,451 rows
 and 11 columns, see the [benchmark
 article](https://vroom.r-lib.org/articles/benchmarks.html) for full
 details of the dataset and
-[bench/](https://github.com/r-lib/vroom/tree/master/inst/bench) for the
+[bench/](https://github.com/r-lib/vroom/tree/main/inst/bench) for the
 code used to retrieve the data and perform the benchmarks.
 
 # Environment variables
