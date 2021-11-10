@@ -1,4 +1,4 @@
-# vroom (development version)
+# vroom 1.5.6
 
 * `vroom(col_select=)` now works if `col_names = FALSE` as intended (#381)
 
