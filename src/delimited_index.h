@@ -65,7 +65,6 @@ public:
           is_last_(column == (idx_->columns_ - 1)),
           i_((idx_->has_header_ * idx_->columns_) + column_) {}
     void next() override { i_ += idx_->columns_; }
-    void prev() override { i_ -= idx_->columns_; }
     void advance(ptrdiff_t n) override { i_ += idx_->columns_ * n; }
     bool equal_to(const base_iterator& it) const override {
       return i_ == static_cast<const column_iterator*>(&it)->i_;
@@ -108,7 +107,6 @@ public:
           row_(row),
           i_((row_ + idx_->has_header_) * idx_->columns_) {}
     void next() override { ++i_; }
-    void prev() override { --i_; }
     void advance(ptrdiff_t n) override { i_ += n; }
     bool equal_to(const base_iterator& it) const override {
       return i_ == static_cast<const row_iterator*>(&it)->i_;

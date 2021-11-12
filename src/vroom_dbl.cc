@@ -210,24 +210,28 @@ cpp11::doubles read_dbl(vroom_vec_info* info) {
   cpp11::writable::doubles out(n);
   const char decimalMark = info->locale->decimalMark_[0];
 
-  parallel_for(
-      n,
-      [&](size_t start, size_t end, size_t) {
-        R_xlen_t i = start;
-        auto col = info->column->slice(start, end);
-        for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-          out[i++] = parse_value<double>(
-              b,
-              col,
-              [&](const char* begin, const char* end) -> double {
-                return bsd_strtod(begin, end, decimalMark);
-              },
-              info->errors,
-              "a double",
-              *info->na);
-        }
-      },
-      info->num_threads);
+  try {
+    parallel_for(
+        n,
+        [&](size_t start, size_t end, size_t) {
+          R_xlen_t i = start;
+          auto col = info->column->slice(start, end);
+          for (auto b = col->begin(), e = col->end(); b != e; ++b) {
+            out[i++] = parse_value<double>(
+                b,
+                col,
+                [&](const char* begin, const char* end) -> double {
+                  return bsd_strtod(begin, end, decimalMark);
+                },
+                info->errors,
+                "a double",
+                *info->na);
+          }
+        },
+        info->num_threads);
+  } catch (const std::runtime_error& e) {
+    Rf_errorcall(R_NilValue, "%s", e.what());
+  }
 
   info->errors->warn_for_errors();
 

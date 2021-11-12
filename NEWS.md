@@ -1,3 +1,7 @@
+# vroom (development version)
+
+* Fix subset indexing when indexes span a file boundary multiple times (#383)
+
 # vroom 1.5.6
 
 * `vroom(col_select=)` now works if `col_names = FALSE` as intended (#381)

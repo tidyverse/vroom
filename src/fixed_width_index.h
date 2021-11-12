@@ -193,7 +193,6 @@ public:
     column_iterator(std::shared_ptr<const fixed_width_index> idx, size_t column)
         : idx_(idx), column_(column), i_(0) {}
     void next() override { ++i_; }
-    void prev() override { --i_; }
     void advance(ptrdiff_t n) override { i_ += n; }
     bool equal_to(const base_iterator& it) const override {
       return i_ == static_cast<const column_iterator*>(&it)->i_;

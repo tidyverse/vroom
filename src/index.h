@@ -14,14 +14,14 @@ public:
     size_t i_;
     mutable size_t prev_;
     mutable iterator it_;
+    iterator start_;
     std::shared_ptr<std::vector<size_t>> indexes_;
 
   public:
     subset_iterator(
         const iterator& it, const std::shared_ptr<std::vector<size_t>>& indexes)
-        : i_(0), prev_(0), it_(it), indexes_(indexes) {}
+        : i_(0), prev_(0), it_(it), start_(it), indexes_(indexes) {}
     void next() override { ++i_; }
-    void prev() override { --i_; }
     void advance(ptrdiff_t n) override { i_ += n; }
     bool equal_to(const base_iterator& other) const override {
       auto other_ = static_cast<const subset_iterator*>(&other);
@@ -34,7 +34,11 @@ public:
     string value() const override {
       size_t cur = (*indexes_)[i_];
       ptrdiff_t diff = cur - prev_;
-      it_ += diff;
+      if (diff < 0) {
+        it_ = start_ + cur;
+      } else {
+        it_ += diff;
+      }
       prev_ = cur;
       return *it_;
     };

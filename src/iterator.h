@@ -9,7 +9,6 @@ namespace vroom {
 class base_iterator {
 public:
   virtual void next() = 0;
-  virtual void prev() = 0;
   virtual void advance(ptrdiff_t n) = 0;
   virtual bool equal_to(const base_iterator& it) const = 0;
   virtual ptrdiff_t distance_to(const base_iterator& it) const = 0;
@@ -54,17 +53,6 @@ public:
 
   iterator& operator++() /* prefix */ {
     it_->next();
-    return *this;
-  }
-
-  iterator operator--(int) { /* postfix */
-    iterator copy(*this);
-    it_->prev();
-    return copy;
-  }
-
-  iterator& operator--() /* prefix */ {
-    it_->prev();
     return *this;
   }
 

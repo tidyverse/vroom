@@ -19,7 +19,6 @@ index_collection::full_iterator::full_iterator(
     : i_(0),
       idx_(std::move(idx)),
       column_(column),
-      start_(0),
       end_(idx_->indexes_.size() - 1) {
   auto col = idx_->indexes_[i_]->get_column(column_);
   it_ = col->begin();
@@ -33,15 +32,6 @@ void index_collection::full_iterator::next() {
     ++i_;
     it_ = idx_->indexes_[i_]->get_column(column_)->begin();
     it_end_ = idx_->indexes_[i_]->get_column(column_)->end();
-  }
-}
-
-void index_collection::full_iterator::prev() {
-  --it_;
-  while (it_ == it_start_ && i_ > start_) {
-    --i_;
-    it_ = idx_->indexes_[i_]->get_column(column_)->end();
-    it_start_ = idx_->indexes_[i_]->get_column(column_)->begin();
   }
 }
 
@@ -63,17 +53,7 @@ void index_collection::full_iterator::advance(ptrdiff_t n) {
     return;
   }
   if (n < 0) {
-    while (n < 0) {
-      auto diff = -(it_ - it_start_);
-      if (n > diff) {
-        it_ += n;
-        return;
-      }
-      it_ += (diff + 1);
-      n -= diff;
-      prev();
-    }
-    return;
+    throw std::runtime_error("negative advance not supported");
   }
 }
 

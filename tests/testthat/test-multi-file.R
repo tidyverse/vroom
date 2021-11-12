@@ -110,3 +110,10 @@ test_that("vroom works if a file contains no data", {
   res <- vroom(files, col_types = list())
   expect_equal(res, tibble::tibble(A = 1, B = 2))
 })
+
+test_that("vroom works for indxes that span file boundries (#383)", {
+  x <- vroom(c(vroom_example("mtcars.csv"), vroom_example("mtcars.csv")), col_types = list())
+  y <- rbind(mtcars, mtcars)
+  idx <- c(c(34, 33), sample(NROW(x), size = 25, replace = T))
+  expect_equal(x[idx, 5, drop = TRUE], y[idx, 4])
+})

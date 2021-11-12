@@ -67,7 +67,6 @@ public:
     size_t i_;
     std::shared_ptr<const index_collection> idx_;
     size_t column_;
-    size_t start_;
     size_t end_;
     iterator it_;
     iterator it_end_;
@@ -76,7 +75,6 @@ public:
   public:
     full_iterator(std::shared_ptr<const index_collection> idx, size_t column);
     void next() override;
-    void prev() override;
     void advance(ptrdiff_t n) override;
     inline bool equal_to(const base_iterator& other) const override {
       auto other_ = static_cast<const full_iterator*>(&other);
