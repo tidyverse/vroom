@@ -44,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.6</span>
       </span>
     </div>
 
@@ -150,14 +150,14 @@
 <div id="taxi-benchmarks" class="section level3">
 <h3 class="hasAnchor">
 <a href="#taxi-benchmarks" class="anchor"></a>Taxi Benchmarks</h3>
-<p>code: <a href="https://github.com/r-lib/vroom/tree/master/inst/bench/taxi">bench/taxi</a></p>
+<p>code: <a href="https://github.com/r-lib/vroom/tree/main/inst/bench/taxi">bench/taxi</a></p>
 <p>All benchmarks were run on a Amazon EC2 <a href="https://aws.amazon.com/ec2/instance-types/m5/">m5.4xlarge</a> instance with 16 vCPUs and an <a href="https://aws.amazon.com/ebs/">EBS</a> volume type.</p>
-<p>The benchmarks labeled <code>vroom_base</code> uses <code>vroom</code> with base functions for manipulation. <code>vroom_dplyr</code> uses <code>vroom</code> to read the file and dplyr functions to manipulate. <code>data.table</code> uses <code>fread()</code> to read the file and <code>data.table</code> functions to manipulate and <code>readr</code> uses <code>readr</code> to read the file and <code>dplyr</code> to manipulate. By default vroom only uses Altrep for character vectors, these are labeled <code><a href="../reference/vroom.html">vroom(altrep: normal)</a></code>. The benchmarks labeled <code><a href="../reference/vroom.html">vroom(altrep: full)</a></code> instead use Altrep vectors for all supported types and <code><a href="../reference/vroom.html">vroom(altrep: none)</a></code> disable Altrep entirely.</p>
+<p>The benchmarks labeled <code>vroom_base</code> uses <code>vroom</code> with base functions for manipulation. <code>vroom_dplyr</code> uses <code>vroom</code> to read the file and dplyr functions to manipulate. <code>data.table</code> uses <code>fread()</code> to read the file and <code>data.table</code> functions to manipulate and <code>readr</code> uses <code>readr</code> to read the file and <code>dplyr</code> to manipulate. By default vroom only uses Altrep for character vectors, these are labeled <code>vroom(altrep: normal)</code>. The benchmarks labeled <code>vroom(altrep: full)</code> instead use Altrep vectors for all supported types and <code>vroom(altrep: none)</code> disable Altrep entirely.</p>
 <p>The following operations are performed.</p>
 <ul>
 <li>The data is read</li>
 <li>
-<code><a href="https://rdrr.io/r/base/print.html">print()</a></code> - <em>N.B. read.delim uses <code><a href="https://rdrr.io/r/base/print.html">print(head(x, 10))</a></code> because printing the whole dataset takes &gt; 10 minutes</em>
+<code><a href="https://rdrr.io/r/base/print.html">print()</a></code> - <em>N.B. read.delim uses <code>print(head(x, 10))</code> because printing the whole dataset takes &gt; 10 minutes</em>
 </li>
 <li><code><a href="https://rdrr.io/r/utils/head.html">head()</a></code></li>
 <li><code><a href="https://rdrr.io/r/utils/head.html">tail()</a></code></li>
@@ -444,7 +444,7 @@ TRUE
 <div id="long" class="section level3">
 <h3 class="hasAnchor">
 <a href="#long" class="anchor"></a>Long</h3>
-<p>code: <a href="https://github.com/r-lib/vroom/tree/master/inst/bench/all_numeric-long">bench/all_numeric-long</a></p>
+<p>code: <a href="https://github.com/r-lib/vroom/tree/main/inst/bench/all_numeric-long">bench/all_numeric-long</a></p>
 <img src="benchmarks_files/figure-html/unnamed-chunk-3-1.png" width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -754,7 +754,7 @@ data.table
 <div id="wide" class="section level3">
 <h3 class="hasAnchor">
 <a href="#wide" class="anchor"></a>Wide</h3>
-<p>code: <a href="https://github.com/r-lib/vroom/tree/master/inst/bench/all_numeric-wide">bench/all_numeric-wide</a></p>
+<p>code: <a href="https://github.com/r-lib/vroom/tree/main/inst/bench/all_numeric-wide">bench/all_numeric-wide</a></p>
 <img src="benchmarks_files/figure-html/unnamed-chunk-4-1.png" width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -1065,7 +1065,7 @@ data.table
 <div id="all-character-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#all-character-data" class="anchor"></a>All character data</h2>
-<p>code: <a href="https://github.com/r-lib/vroom/tree/master/inst/bench/all_character-long">bench/all_character-long</a></p>
+<p>code: <a href="https://github.com/r-lib/vroom/tree/main/inst/bench/all_character-long">bench/all_character-long</a></p>
 <p>All character data is a best case scenario for vroom when using Altrep, as it takes full advantage of the lazy reading.</p>
 <div id="long-1" class="section level3">
 <h3 class="hasAnchor">
@@ -1341,7 +1341,7 @@ TRUE
 <div id="wide-1" class="section level3">
 <h3 class="hasAnchor">
 <a href="#wide-1" class="anchor"></a>Wide</h3>
-<p>code: <a href="https://github.com/r-lib/vroom/tree/master/inst/bench/all_character-wide">bench/all_character-wide</a></p>
+<p>code: <a href="https://github.com/r-lib/vroom/tree/main/inst/bench/all_character-wide">bench/all_character-wide</a></p>
 <img src="benchmarks_files/figure-html/unnamed-chunk-6-1.png" width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -1615,7 +1615,7 @@ TRUE
 <div id="reading-multiple-delimited-files" class="section level1">
 <h1 class="hasAnchor">
 <a href="#reading-multiple-delimited-files" class="anchor"></a>Reading multiple delimited files</h1>
-<p>code: <a href="https://github.com/r-lib/vroom/tree/master/inst/bench/taxi_multiple">bench/taxi_multiple</a></p>
+<p>code: <a href="https://github.com/r-lib/vroom/tree/main/inst/bench/taxi_multiple">bench/taxi_multiple</a></p>
 <p>The benchmark reads all 12 files in the taxi trip fare data, totaling 173,179,759 rows and 11 columns for a total file size of 18.4G.</p>
 <img src="benchmarks_files/figure-html/unnamed-chunk-8-1.png" width="960"><table class="table">
 <thead><tr>
@@ -1860,7 +1860,7 @@ data.table
 <div id="census-data-benchmarks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#census-data-benchmarks" class="anchor"></a>Census data benchmarks</h2>
-<p>code: <a href="https://github.com/r-lib/vroom/tree/master/inst/bench/fwf">bench/fwf</a></p>
+<p>code: <a href="https://github.com/r-lib/vroom/tree/main/inst/bench/fwf">bench/fwf</a></p>
 <img src="benchmarks_files/figure-html/unnamed-chunk-10-1.png" width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -2096,7 +2096,7 @@ TRUE
 <div id="writing-delimited-files" class="section level1">
 <h1 class="hasAnchor">
 <a href="#writing-delimited-files" class="anchor"></a>Writing delimited files</h1>
-<p>code: <a href="https://github.com/r-lib/vroom/tree/master/inst/bench/taxi_writing">bench/taxi_writing</a></p>
+<p>code: <a href="https://github.com/r-lib/vroom/tree/main/inst/bench/taxi_writing">bench/taxi_writing</a></p>
 <p>The benchmarks write out the taxi trip dataset in a few different ways.</p>
 <ul>
 <li>An uncompressed file</li>

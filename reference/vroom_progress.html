@@ -97,7 +97,7 @@ The code is run by testthat (the TESTTHAT envvar is true).
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.6</span>
       </span>
     </div>
 
@@ -163,7 +163,7 @@ The code is run by testthat (the TESTTHAT envvar is true).
 
     <div class="ref-description">
     <p>Progress bars are shown <em>unless</em> one of the following is <code>TRUE</code></p><ul>
-<li><p>The bar is explicitly disabled by setting <code><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv("VROOM_SHOW_PROGRESS"="false")</a></code></p></li>
+<li><p>The bar is explicitly disabled by setting <code>Sys.getenv("VROOM_SHOW_PROGRESS"="false")</code></p></li>
 <li><p>The code is run in a non-interactive session (<code><a href='https://rdrr.io/r/base/interactive.html'>interactive()</a></code> is <code>FALSE</code>).</p></li>
 <li><p>The code is run in an RStudio notebook chunk.</p></li>
 <li><p>The code is run by knitr / rmarkdown.</p></li>
@@ -177,8 +177,9 @@ The code is run by testthat (the TESTTHAT envvar is true).
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>vroom_progress</span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] FALSE</div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'>vroom_progress</span><span class='op'>(</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] FALSE</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

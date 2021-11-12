@@ -44,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vroom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.6</span>
       </span>
     </div>
 
@@ -135,12 +135,13 @@
 <h2 class="hasAnchor">
 <a href="#reading-files" class="anchor"></a>Reading files</h2>
 <p>To read a CSV, or other type of delimited file with vroom pass the file to <code><a href="../reference/vroom.html">vroom()</a></code>. The delimiter will be automatically guessed if it is a common delimiter; e.g. (“,” “” " “|” “:” “;”). If the guessing fails or you are using a less common delimiter specify it with the <code>delim</code> parameter. (e.g. <code>delim = ","</code>).</p>
-<p>We have included an example CSV file in the vroom package for use in examples and tests. Access it with <code><a href="../reference/vroom_example.html">vroom_example("mtcars.csv")</a></code></p>
+<p>We have included an example CSV file in the vroom package for use in examples and tests. Access it with <code>vroom_example("mtcars.csv")</code></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># See where the example file is stored on your machine</span>
 <span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>
 <span class="va">file</span>
 <span class="co">#&gt; [1] "/home/runner/work/_temp/Library/vroom/extdata/mtcars.csv"</span>
+
 <span class="co"># Read the file, by default vroom will guess the delimiter automatically.</span>
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span>
 <span class="co">#&gt; Rows: 32 Columns: 12</span>
@@ -158,6 +159,7 @@
 <span class="co">#&gt; 2 Mazda RX4 W…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span>
 <span class="co">#&gt; 3 Datsun 710    22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span>
 <span class="co">#&gt; # … with 29 more rows</span>
+
 <span class="co"># You can also specify it explicitly, which is (slightly) faster, and safer if</span>
 <span class="co"># you know how the file is delimited.</span>
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, delim <span class="op">=</span> <span class="st">","</span><span class="op">)</span>
@@ -268,7 +270,7 @@
 <a href="#reading-remote-files" class="anchor"></a>Reading remote files</h2>
 <p>vroom can read files directly from the internet as well by passing the URL of the file to vroom.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">file</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv"</span>
+<code class="sourceCode R"><span class="va">file</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/r-lib/vroom/main/inst/extdata/mtcars.csv"</span>
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span>
 <span class="co">#&gt; Rows: 32 Columns: 12</span>
 <span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span>
@@ -287,7 +289,7 @@
 <span class="co">#&gt; # … with 29 more rows</span></code></pre></div>
 <p>It can even read gzipped files from the internet (although not the other compressed formats).</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">file</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/r-lib/vroom/master/inst/extdata/mtcars.csv.gz"</span>
+<code class="sourceCode R"><span class="va">file</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/r-lib/vroom/main/inst/extdata/mtcars.csv.gz"</span>
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span>
 <span class="co">#&gt; Rows: 32 Columns: 12</span>
 <span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span>
@@ -332,7 +334,7 @@
 <span class="co">#&gt; 3 Datsun 710        4     4</span>
 <span class="co">#&gt; # … with 29 more rows</span></code></pre></div>
 <ul>
-<li>A numeric vector of column indexes, e.g. <code><a href="https://rdrr.io/r/base/c.html">c(1, 2, 5)</a></code>
+<li>A numeric vector of column indexes, e.g. <code>c(1, 2, 5)</code>
 </li>
 </ul>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -515,13 +517,13 @@
 <code><a href="../reference/cols.html">col_number()</a></code> ‘n’, numbers containing the <code>grouping_mark</code>
 </li>
 <li>
-<code><a href="../reference/cols.html">col_date(format = "")</a></code> ‘D’: with the locale’s <code>date_format</code>.</li>
+<code>col_date(format = "")</code> ‘D’: with the locale’s <code>date_format</code>.</li>
 <li>
-<code><a href="../reference/cols.html">col_time(format = "")</a></code> ‘t’: with the locale’s <code>time_format</code>.</li>
+<code>col_time(format = "")</code> ‘t’: with the locale’s <code>time_format</code>.</li>
 <li>
-<code><a href="../reference/cols.html">col_datetime(format = "")</a></code> ‘T’: ISO8601 date times.</li>
+<code>col_datetime(format = "")</code> ‘T’: ISO8601 date times.</li>
 <li>
-<code><a href="../reference/cols.html">col_factor(levels, ordered)</a></code> ‘f’, a fixed set of values.</li>
+<code>col_factor(levels, ordered)</code> ‘f’, a fixed set of values.</li>
 <li>
 <code><a href="../reference/cols.html">col_character()</a></code> ‘c’, everything else.</li>
 <li>
@@ -541,6 +543,7 @@
 <span class="co">#&gt; 2 Mazda RX4 W…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span>
 <span class="co">#&gt; 3 Datsun 710    22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span>
 <span class="co">#&gt; # … with 29 more rows</span>
+
 <span class="co"># also skip reading the 'cyl' column</span>
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>hp <span class="op">=</span> <span class="st">"i"</span>, cyl <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 32 × 11</span>
@@ -550,6 +553,7 @@
 <span class="co">#&gt; 2 Mazda RX4 Wag  21     160   110  3.9   2.88  17.0     0     1     4     4</span>
 <span class="co">#&gt; 3 Datsun 710     22.8   108    93  3.85  2.32  18.6     1     1     4     1</span>
 <span class="co">#&gt; # … with 29 more rows</span>
+
 <span class="co"># also read the gears as a factor</span>
 <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>hp <span class="op">=</span> <span class="st">"i"</span>, cyl <span class="op">=</span> <span class="st">"_"</span>, gear <span class="op">=</span> <span class="st">"f"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 32 × 11</span>
