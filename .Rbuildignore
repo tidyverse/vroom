@@ -37,3 +37,4 @@
 ^src/mio/test/
 ^src/mio/.*CMakeLists\.txt$
 ^\.cache$
+^MAINTENANCE\.md$
