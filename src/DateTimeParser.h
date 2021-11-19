@@ -11,9 +11,14 @@
 
 template <typename Iterator, typename Attr>
 inline bool parseInt(Iterator& first, Iterator& last, Attr& res) {
-  char buf[64];
+  char buf[65];
 
   size_t expected_size = last - first;
+
+  if (expected_size > sizeof(buf) - 1) {
+    res = NA_INTEGER;
+    return false;
+  }
 
   std::copy(first, last, buf);
   buf[expected_size] = '\0';

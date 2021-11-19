@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Fix buffer overflow when trying to parse an integer field that is over 64 characters long (https://github.com/tidyverse/readr/issues/1326)
+
 * Fix subset indexing when indexes span a file boundary multiple times (#383)
 
 # vroom 1.5.6
