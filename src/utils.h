@@ -60,12 +60,12 @@ inline std::pair<bool, bool> is_blank_or_comment_line(
     ++begin;
   }
 
-  bool has_comment;
-  if ((skip_empty_rows && (*begin == '\n' || *begin == '\r')) ||
-      (has_comment =
-           (!comment.empty() &&
-            strncmp(begin, comment.data(), comment.size()) == 0))) {
-    return std::pair<bool, bool>(true, has_comment);
+  if (skip_empty_rows && (*begin == '\n' || *begin == '\r')) {
+    return std::pair<bool, bool>(true, false);
+  }
+
+  if (!comment.empty() && strncmp(begin, comment.data(), comment.size()) == 0) {
+    return std::pair<bool, bool>(true, true);
   }
 
   return std::pair<bool, bool>(false, false);
