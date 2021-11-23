@@ -48,27 +48,34 @@ inline std::pair<bool, bool> is_blank_or_comment_line(
     const char* end,
     const std::string& comment,
     const bool skip_empty_rows) {
+  bool should_skip = false;
+  bool is_comment = false;
+
   if (!skip_empty_rows && comment.empty()) {
-    return std::pair<bool, bool>(false, false);
+    return std::pair<bool, bool>(should_skip, is_comment);
   }
 
   if (skip_empty_rows && (*begin == '\n' || *begin == '\r')) {
-    return std::pair<bool, bool>(true, false);
+    should_skip = true;
+    return std::pair<bool, bool>(should_skip, is_comment);
   }
 
   while (begin < end && (*begin == ' ' || *begin == '\t')) {
     ++begin;
   }
 
-  bool has_comment;
-  if ((skip_empty_rows && (*begin == '\n' || *begin == '\r')) ||
-      (has_comment =
-           (!comment.empty() &&
-            strncmp(begin, comment.data(), comment.size()) == 0))) {
-    return std::pair<bool, bool>(true, has_comment);
+  if (skip_empty_rows && (*begin == '\n' || *begin == '\r')) {
+    should_skip = true;
+    return std::pair<bool, bool>(should_skip, is_comment);
   }
 
-  return std::pair<bool, bool>(false, false);
+  if (!comment.empty() && strncmp(begin, comment.data(), comment.size()) == 0) {
+    should_skip = true;
+    is_comment = true;
+    return std::pair<bool, bool>(should_skip, is_comment);
+  }
+
+  return std::pair<bool, bool>(should_skip, is_comment);
 }
 
 inline bool is_crlf(const char* buf, size_t pos, size_t end) {
