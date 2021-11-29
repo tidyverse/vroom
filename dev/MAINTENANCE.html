@@ -169,6 +169,11 @@
 <p>The test helper <code>test_vroom()</code> automatically tests the content with normal files and connections and with ALTREP on or off, but does not do any tests for line endings or trailing newlines.</p>
 <p>Files without a trailing newline are automatically detected and always sent down the code that reads from a connection.</p>
 <p>The only code path that is multi-threaded is normal files, connections are read asynchronously and written to a temporary file, which is then read as normal.</p>
+<div id="debugging" class="section level3">
+<h3 class="hasAnchor">
+<a href="#debugging" class="anchor"></a>Debugging</h3>
+<p>To compile with logging enabled you need to set <code>-DVROOM_LOG</code> in your <code>~/R/Makevars</code> and if you want to control the logging level you can set <code>-DSPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG</code>. You also need to create the <code>logs</code> directory for the logs to be written to. They will write a <code>logs/index.idx</code> and a <code>logs/index_connection.idx</code> file respectively. The file is appended to, not rewritten, so you would need to delete it if you want a new file after a run. There is also <code>-DVROOM_USE_CONNECTIONS_API</code> to use the CRAN forbidden connections API directly, but the performance difference is generally the same, so it isn’t really needed.</p>
+</div>
 </div>
 <div id="known-outstanding-issues" class="section level2">
 <h2 class="hasAnchor">
@@ -199,7 +204,7 @@
 <div id="alternative-handling-of-files-without-trailing-newlines" class="section level2">
 <h2 class="hasAnchor">
 <a href="#alternative-handling-of-files-without-trailing-newlines" class="anchor"></a>Alternative handling of files without trailing newlines</h2>
-<p>There is a Stack overflow thread which suggests that if you mmap a file beyond the size the mmap is guarenteed to pad the remainder with 0’s. If this is true we could always do this and in that way handle the case when a file doens’t end with a newline, which would simplify the implementation for these files, and allow us to use multi-threads to read them.</p>
+<p>There is a Stack overflow thread which suggests that if you mmap a file beyond the size the mmap is guaranteed to pad the remainder with 0’s. If this is true we could always do this and in that way handle the case when a file doesn’t end with a newline, which would simplify the implementation for these files, and allow us to use multi-threads to read them.</p>
 <p>However we would have to investigate if this behavior is actually true across platforms or not.</p>
 <p>strcspn requires the data must end with a NUL, so if we cannot guarantee that this approach won’t work.</p>
 <p><a href="https://github.com/r-lib/vroom/issues/357" class="uri">https://github.com/r-lib/vroom/issues/357</a> tracks this issue</p>
