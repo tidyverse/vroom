@@ -23,6 +23,13 @@ Files without a trailing newline are automatically detected and always sent down
 
 The only code path that is multi-threaded is normal files, connections are read asynchronously and written to a temporary file, which is then read as normal.
 
+### Debugging
+
+To compile with logging enabled you need to set `-DVROOM_LOG` in your `~/R/Makevars` and if you want to control the logging level you can set `-DSPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG`.
+You also need to create the `logs` directory for the logs to be written to. They will write a `logs/index.idx` and a `logs/index_connection.idx` file respectively.
+The file is appended to, not rewritten, so you would need to delete it if you want a new file after a run.
+There is also `-DVROOM_USE_CONNECTIONS_API` to use the CRAN forbidden connections API directly, but the performance difference is generally the same, so it isn't really needed.
+
 ## Known outstanding issues
 
 Currently the line numbers in `problems()` don't take into account skipped or commented lines, as we don't keep track of how many of those we have seen.
@@ -71,9 +78,9 @@ well.
 
 ## Alternative handling of files without trailing newlines
 
-There is a Stack overflow thread which suggests that if you mmap a file beyond the size the mmap is guarenteed to pad the remainder with 0's.
+There is a Stack overflow thread which suggests that if you mmap a file beyond the size the mmap is guaranteed to pad the remainder with 0's.
 If this is true we could always do this and in that way handle the case when a
-file doens't end with a newline, which would simplify the implementation for
+file doesn't end with a newline, which would simplify the implementation for
 these files, and allow us to use multi-threads to read them.
 
 However we would have to investigate if this behavior is actually true across platforms or not.
