@@ -5,6 +5,7 @@ AppVeyor
 backslashed
 BCP
 benchmarking
+bool
 BOM
 Bugfixes
 bz
@@ -13,6 +14,7 @@ centric
 chriswhong
 cpp
 CMD
+CRAN's
 Codecov
 csv
 datetime
