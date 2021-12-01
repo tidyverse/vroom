@@ -1,7 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://vroom.r-lib.org/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>https://vroom.r-lib.org/LICENSE.html</loc>
+  </url>
+  <url>
+    <loc>https://vroom.r-lib.org/MAINTENANCE.html</loc>
+  </url>
+  <url>
+    <loc>https://vroom.r-lib.org/articles/benchmarks.html</loc>
+  </url>
+  <url>
+    <loc>https://vroom.r-lib.org/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://vroom.r-lib.org/articles/vroom.html</loc>
+  </url>
+  <url>
+    <loc>https://vroom.r-lib.org/authors.html</loc>
+  </url>
+  <url>
     <loc>https://vroom.r-lib.org/index.html</loc>
+  </url>
+  <url>
+    <loc>https://vroom.r-lib.org/news/index.html</loc>
   </url>
   <url>
     <loc>https://vroom.r-lib.org/reference/as.col_spec.html</loc>
@@ -20,6 +44,9 @@
   </url>
   <url>
     <loc>https://vroom.r-lib.org/reference/guess_type.html</loc>
+  </url>
+  <url>
+    <loc>https://vroom.r-lib.org/reference/index.html</loc>
   </url>
   <url>
     <loc>https://vroom.r-lib.org/reference/locale.html</loc>
@@ -71,11 +98,5 @@
   </url>
   <url>
     <loc>https://vroom.r-lib.org/reference/vroom_write_lines.html</loc>
-  </url>
-  <url>
-    <loc>https://vroom.r-lib.org/articles/benchmarks.html</loc>
-  </url>
-  <url>
-    <loc>https://vroom.r-lib.org/articles/vroom.html</loc>
   </url>
 </urlset>
