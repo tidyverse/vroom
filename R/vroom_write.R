@@ -64,16 +64,17 @@ vroom_write <- function(x, file, delim = '\t', eol = "\n", na = "NA", col_names 
     return(invisible(input))
   }
 
+  # This seems to work ok in practice
+  buf_lines <- max(as.integer(Sys.getenv("VROOM_WRITE_BUFFER_LINES", nrow(x) / 100 / num_threads)), 1)
+
   # Run `output_column()` before `vroom_convert()` to ensure that any ALTREP
   # vectors created by `output_column()` will be fully materialized (#389)
   x[] <- lapply(x, output_column)
 
   # We need to convert any altrep vectors to normal vectors otherwise we can't fill the
-  # write buffers from other threads.
+  # write buffers from other threads. This should be the last manipulation done
+  # to `x` before writing to ensure that no new altrep vectors are created.
   x <- vroom_convert(x)
-
-  # This seems to work ok in practice
-  buf_lines <- max(as.integer(Sys.getenv("VROOM_WRITE_BUFFER_LINES", nrow(x) / 100 / num_threads)), 1)
 
   if (inherits(file, "connection")) {
     vroom_write_connection_(x, file, delim, eol, na_str = na, col_names = col_names,
