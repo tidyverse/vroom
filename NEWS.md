@@ -1,6 +1,6 @@
 # vroom (development version)
 
-* Fix recursive gc error that could occur when writing POSIXct columns (https://github.com/r-lib/vroom/issues/389)
+* Fix recursive gc error that could occur during `vroom_write()` when `output_column()` generates an ALTREP vector (https://github.com/r-lib/vroom/issues/389)
 
 # vroom 1.5.7
 
