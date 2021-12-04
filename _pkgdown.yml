@@ -1,35 +1,23 @@
 url: https://vroom.r-lib.org
 
-authors:
-  "Jim Hester":
-    href: https://jimhester.com
-
-destination: docs
+template:
+  package: tidytemplate
+  bootstrap: 5
+  includes:
+    in_header: |
+      <script defer data-domain="vroom.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
+  params:
+    ganalytics: UA-115082821-1
 
 development:
   mode: auto
 
-navbar:
-  type: default
-  left:
-  - text: Home
-    href: index.html
-  - text: Get started
-    href: articles/vroom.html
-  - text: Benchmarks
-    href: articles/benchmarks.html
-  - text: Reference
-    href: reference/index.html
-  - text: News
-    menu:
-    - text: "Release notes"
-    - text: "Version 1.1.0"
-      href: https://www.tidyverse.org/blog/2020/01/vroom-1-1-0/
-    - text: "Version 1.0.0"
-      href: https://www.tidyverse.org/articles/2019/05/vroom-1-0-0/
-    - text: "------------------"
-    - text: "Change log"
-      href: news/index.html
+news:
+  releases:
+  - text: "vroom 1.1.0"
+    href: https://www.tidyverse.org/blog/2020/01/vroom-1-1-0/
+  - text: "vroom 1.0.0"
+    href: https://www.tidyverse.org/articles/2019/05/vroom-1-0-0/
 
 reference:
 - title: Read rectangular files
@@ -93,7 +81,3 @@ reference:
     - vroom_example
     - vroom_progress
     - vroom_str
-
-template:
-  params:
-    ganalytics: UA-115082821-1
