@@ -38,4 +38,4 @@
 ^src/mio/.*CMakeLists\.txt$
 ^\.cache$
 ^MAINTENANCE\.md$
-^vignettes/taylor\.gif$
+^img$
