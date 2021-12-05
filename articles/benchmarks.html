@@ -90,8 +90,7 @@
     
   </div>
 </nav><div class="container template-article" id="container">
-
-<div class="row">
+<script src="benchmarks_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <main id="main"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Vroom Benchmarks</h1>
             
@@ -109,7 +108,7 @@
 <h2 id="how-it-works">How it works<a class="anchor" aria-label="anchor" href="#how-it-works"></a>
 </h2>
 <p>The initial reading of the file simply records the locations of each individual record, the actual values are not read into R. Altrep vectors are created for each column in the data which hold a pointer to the index and the memory mapped file. When these vectors are indexed the value is read from the memory mapping.</p>
-<p>This means initial reading is extremely fast, in the real world dataset below it is ~ 1/4 the time of the multi-threaded <code><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">data.table::fread()</a></code>. Sampling operations are likewise extremely fast, as only the data actually included in the sample is read. This means things like the tibble print method, calling <code><a href="https://rdrr.io/r/utils/head.html" class="external-link">head()</a></code>, <code><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail()</a></code> <code>x[sample(), ]</code> etc. have very low overhead. Filtering also can be fast, only the columns included in the filter selection have to be fully read and only the data in the filtered rows needs to be read from the remaining columns. Grouped aggregations likewise only need to read the grouping variables and the variables aggregated.</p>
+<p>This means initial reading is extremely fast, in the real world dataset below it is ~ 1/4 the time of the multi-threaded <code>data.table::fread()</code>. Sampling operations are likewise extremely fast, as only the data actually included in the sample is read. This means things like the tibble print method, calling <code><a href="https://rdrr.io/r/utils/head.html" class="external-link">head()</a></code>, <code><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail()</a></code> <code>x[sample(), ]</code> etc. have very low overhead. Filtering also can be fast, only the columns included in the filter selection have to be fully read and only the data in the filtered rows needs to be read from the remaining columns. Grouped aggregations likewise only need to read the grouping variables and the variables aggregated.</p>
 <p>Once a particular vector is fully materialized the speed for all subsequent operations should be identical to a normal R vector.</p>
 <p>This approach potentially also allows you to work with data that is larger than memory. As long as you are careful to avoid materializing the entire dataset at once it can be efficiently queried and subset.</p>
 </div>
