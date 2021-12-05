@@ -38,3 +38,4 @@
 ^src/mio/.*CMakeLists\.txt$
 ^\.cache$
 ^MAINTENANCE\.md$
+^img$

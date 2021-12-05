@@ -16,7 +16,7 @@ stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://
 
 The fastest delimited reader for R, **1.23 GB/sec**.
 
-<img src="https://github.com/r-lib/vroom/raw/gh-pages/taylor.gif" align="right" width = "30%"/>
+<img src="https://raw.githubusercontent.com/r-lib/vroom/main/img/taylor.gif" align="right" width = "30%"/>
 
 But that’s impossible! How can it be [so
 fast](https://vroom.r-lib.org/articles/benchmarks.html)?
@@ -197,9 +197,9 @@ will not need to be set by most users.
 
 There are also a family of variables to control use of the Altrep
 framework. For versions of R where the Altrep framework is unavailable
-(R &lt; 3.5.0) they are automatically turned off and the variables have
-no effect. The variables can take one of `true`, `false`, `TRUE`,
-`FALSE`, `1`, or `0`.
+(R \< 3.5.0) they are automatically turned off and the variables have no
+effect. The variables can take one of `true`, `false`, `TRUE`, `FALSE`,
+`1`, or `0`.
 
 -   `VROOM_USE_ALTREP_NUMERICS` - If set use Altrep for *all* numeric
     types (default `false`).
@@ -223,8 +223,8 @@ There are also individual variables for each type. Currently only
 RStudio’s environment pane calls `object.size()` when it refreshes the
 pane, which for Altrep objects can be extremely slow. RStudio 1.2.1335+
 includes the fixes
-([RStudio\#4210](https://github.com/rstudio/rstudio/pull/4210),
-[RStudio\#4292](https://github.com/rstudio/rstudio/pull/4292)) for this
+([RStudio#4210](https://github.com/rstudio/rstudio/pull/4210),
+[RStudio#4292](https://github.com/rstudio/rstudio/pull/4292)) for this
 issue, so it is recommended you use at least that version.
 
 ## Thanks
