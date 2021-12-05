@@ -142,35 +142,35 @@ type.</p>
 <span class="r-in"><span class="va">rand_tbl</span> <span class="op">&lt;-</span> <span class="fu">gen_tbl</span><span class="op">(</span><span class="fl">10</span>, <span class="fl">5</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">rand_tbl</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    X1       X2         X3         X4               X5                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;time&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 17<span style="color: #949494;">:</span>27<span style="color: #949494;">:</span>12 2013-10-05 2015-01-26 filthy_hare      creepy_hippopotamus</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 09<span style="color: #949494;">:</span>29<span style="color: #949494;">:</span>06 2018-09-25 2014-07-01 filthy_hare      short_turtle       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 01<span style="color: #949494;">:</span>21<span style="color: #949494;">:</span>31 2015-09-09 2011-06-19 filthy_hare      helpful_panther    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 19<span style="color: #949494;">:</span>08<span style="color: #949494;">:</span>04 2013-04-27 2017-12-09 filthy_hare      fierce_lion        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 22<span style="color: #949494;">:</span>52<span style="color: #949494;">:</span>54 2018-02-28 2020-01-25 filthy_hare      worried_wildcat    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 15<span style="color: #949494;">:</span>55<span style="color: #949494;">:</span>01 2007-05-15 2013-04-18 prickly_starfish creepy_hippopotamus</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 12<span style="color: #949494;">:</span>37<span style="color: #949494;">:</span>13 2003-01-01 2013-10-11 prickly_starfish creepy_hippopotamus</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 00<span style="color: #949494;">:</span>01<span style="color: #949494;">:</span>09 2013-01-01 2001-01-30 prickly_starfish great_hyena        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 10<span style="color: #949494;">:</span>25<span style="color: #949494;">:</span>30 2019-09-08 2019-09-19 filthy_hare      fierce_lion        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 21<span style="color: #949494;">:</span>26<span style="color: #949494;">:</span>16 2010-11-06 2019-03-12 filthy_hare      helpful_panther    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    X1                  X2               X3         X4           X5        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 2018-02-22 <span style="color: #949494;">22:25:25</span> dusty_otter      2017-10-07 embarrassed… odd_starf…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 2015-12-12 <span style="color: #949494;">03:14:40</span> other_puppy      2012-05-10 lively_mole  big_colt  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 2002-05-08 <span style="color: #949494;">04:11:01</span> dusty_otter      2015-12-23 embarrassed… zealous_o…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 2011-01-04 <span style="color: #949494;">17:21:37</span> creepy_reindeer  2007-02-07 plain_guana… scary_rhi…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 2017-10-14 <span style="color: #949494;">21:47:45</span> glamorous_lizard 2008-04-17 huge_sheep   first_chi…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 2005-10-02 <span style="color: #949494;">06:45:52</span> other_puppy      2017-01-15 faint_bird   odd_starf…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 2019-12-03 <span style="color: #949494;">00:07:53</span> creepy_reindeer  2012-07-29 melted_ibex  worried_c…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 2018-03-28 <span style="color: #949494;">01:14:59</span> other_puppy      2017-08-25 embarrassed… important…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 2012-06-13 <span style="color: #949494;">16:43:28</span> dusty_otter      2014-06-02 handsome_hi… thankful_…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 2008-06-29 <span style="color: #949494;">13:29:08</span> dusty_otter      2006-02-08 melted_ibex  quick_crab</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># all double 25 x 4 table</span></span>
 <span class="r-in"><span class="va">dbl_tbl</span> <span class="op">&lt;-</span> <span class="fu">gen_tbl</span><span class="op">(</span><span class="fl">25</span>, <span class="fl">4</span>, col_types <span class="op">=</span> <span class="st">"dddd"</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">dbl_tbl</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 25 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         X1     X2     X3     X4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> -<span style="color: #BB0000;">0.259</span>   1.96  -<span style="color: #BB0000;">0.720</span>  1.87 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>  2.67    1.32  -<span style="color: #BB0000;">1.25</span>  -<span style="color: #BB0000;">1.18</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>  0.577  -<span style="color: #BB0000;">0.946</span>  0.794 -<span style="color: #BB0000;">0.805</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>  0.290   0.539 -<span style="color: #BB0000;">0.564</span> -<span style="color: #BB0000;">0.804</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> -<span style="color: #BB0000;">0.044</span><span style="color: #BB0000; text-decoration: underline;">9</span>  0.621  1.21   0.245</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>  0.899   0.505 -<span style="color: #BB0000;">1.24</span>   1.45 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> -<span style="color: #BB0000;">0.418</span>   0.479  0.368  0.883</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>  1.41   -<span style="color: #BB0000;">1.43</span>  -<span style="color: #BB0000;">0.235</span> -<span style="color: #BB0000;">0.929</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> -<span style="color: #BB0000;">0.157</span>  -<span style="color: #BB0000;">1.02</span>  -<span style="color: #BB0000;">0.130</span>  0.558</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>  1.34    1.10   0.347 -<span style="color: #BB0000;">1.04</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        X1     X2     X3     X4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> -<span style="color: #BB0000;">0.710</span> -<span style="color: #BB0000;">2.25</span>  -<span style="color: #BB0000;">0.117</span> -<span style="color: #BB0000;">0.324</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> -<span style="color: #BB0000;">1.10</span>   0.669  2.37   1.63 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>  0.662  1.24  -<span style="color: #BB0000;">2.23</span>   0.603</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>  1.25  -<span style="color: #BB0000;">0.429</span>  0.249 -<span style="color: #BB0000;">0.530</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> -<span style="color: #BB0000;">0.781</span>  0.348 -<span style="color: #BB0000;">1.33</span>   1.78 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> -<span style="color: #BB0000;">1.02</span>  -<span style="color: #BB0000;">0.166</span>  0.297 -<span style="color: #BB0000;">0.594</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> -<span style="color: #BB0000;">1.88</span>  -<span style="color: #BB0000;">0.183</span>  1.10   1.96 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> -<span style="color: #BB0000;">0.831</span>  1.37  -<span style="color: #BB0000;">0.891</span> -<span style="color: #BB0000;">0.958</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> -<span style="color: #BB0000;">0.694</span>  0.464  1.08   0.398</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>  1.27   1.07   1.20  -<span style="color: #BB0000;">0.881</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 15 more rows</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Use the dots in long form column types to change the random function and options</span></span>
@@ -191,18 +191,18 @@ type.</p>
 <span class="r-in"><span class="va">dbl_tbl2</span> <span class="op">&lt;-</span> <span class="fu">gen_tbl</span><span class="op">(</span><span class="fl">25</span>, <span class="fl">4</span>, col_types <span class="op">=</span> <span class="va">types</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">dbl_tbl2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 25 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       X1    X2    X3     X4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> -<span style="color: #BB0000;">8.92</span>  6.13 18.7  11.5  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 24.3  -<span style="color: #BB0000;">2.15</span> -<span style="color: #BB0000;">6.62</span> -<span style="color: #BB0000;">1.51</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 15.0  -<span style="color: #BB0000;">7.66</span> -<span style="color: #BB0000;">2.02</span> -<span style="color: #BB0000;">3.62</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>  2.42 24.6  17.6  -<span style="color: #BB0000;">2.99</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>  6.08  7.66 24.2   0.975</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 21.9  15.6  17.9   5.25 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 17.5  23.8  15.5  14.9  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>  5.21  9.69 18.5  21.2  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 19.4  -<span style="color: #BB0000;">5.92</span> -<span style="color: #BB0000;">2.78</span> 21.2  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 24.6  -<span style="color: #BB0000;">2.86</span> 10.6   0.932</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       X1     X2    X3    X4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 22.8   3.99  -<span style="color: #BB0000;">7.66</span> -<span style="color: #BB0000;">9.69</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>  2.42 -<span style="color: #BB0000;">0.779</span>  9.69 -<span style="color: #BB0000;">9.95</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>  8.31  9.85  21.6  -<span style="color: #BB0000;">3.22</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>  9.32 22.5   -<span style="color: #BB0000;">2.91</span>  6.36</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> -<span style="color: #BB0000;">7.48</span> 15.5    4.31 -<span style="color: #BB0000;">9.35</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>  4.52 -<span style="color: #BB0000;">0.220</span> 15.4  -<span style="color: #BB0000;">3.16</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 15.2   6.51   7.24 16.8 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 10.9  -<span style="color: #BB0000;">8.82</span>  24.2  11.2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 22.2   9.45  12.7  18.3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> -<span style="color: #BB0000;">7.83</span> 11.3   13.6  -<span style="color: #BB0000;">1.35</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 15 more rows</span></span>
 </code></pre></div>
     </div>
