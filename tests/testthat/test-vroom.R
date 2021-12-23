@@ -348,6 +348,15 @@ test_that("vroom uses the number of rows when guess_max = Inf", {
   expect_equal(res[["x"]][[NROW(res) - 1]], "foo")
 })
 
+test_that("vroom() forbids guess_max > n_max (#392)", {
+  tf <- withr::local_tempfile()
+  df <- tibble::tibble(x = c(NA, NA, 1), y = 1:3)
+  vroom_write(df, tf, delim = "\t")
+
+  expect_error(vroom(tf, n_max = 2, guess_max = 3))
+  expect_error(vroom(tf, n_max = 2, guess_max = Inf))
+})
+
 test_that("vroom adds columns if a row is too short", {
   test_vroom("a,b,c,d\n1,2\n3,4,5,6\n", delim = ",",
     equals = tibble::tibble("a" = c(1,3), "b" = c(2,4), "c" = c(NA, 5), "d" = c(NA, 6))

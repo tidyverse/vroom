@@ -138,6 +138,10 @@ vroom <- function(
     return(tibble::tibble())
   }
 
+  if (!missing(guess_max) && guess_max > n_max) {
+    stop("`guess_max` must be smaller than `n_max`. ", call. = FALSE)
+  }
+
   if (n_max < 0 || is.infinite(n_max)) {
     n_max <- -1
   }
