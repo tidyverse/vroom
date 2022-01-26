@@ -2,18 +2,20 @@
 % Please edit documentation in R/vroom.R
 \name{vroom_progress}
 \alias{vroom_progress}
-\title{Determine if progress bars should be shown}
+\title{Determine whether progress bars should be shown}
 \usage{
 vroom_progress()
 }
 \description{
-Progress bars are shown \emph{unless} one of the following is \code{TRUE}
+By default, vroom shows progress bars. However, progress reporting is
+suppressed if any of the following conditions hold:
 \itemize{
-\item The bar is explicitly disabled by setting \code{Sys.getenv("VROOM_SHOW_PROGRESS"="false")}
-\item The code is run in a non-interactive session (\code{interactive()} is \code{FALSE}).
-\item The code is run in an RStudio notebook chunk.
-\item The code is run by knitr / rmarkdown.
-\item The code is run by testthat (the \code{TESTTHAT} envvar is \code{true}).
+\item The bar is explicitly disabled by setting the environment variable
+\code{VROOM_SHOW_PROGRESS} to \code{"false"}.
+\item The code is run in a non-interactive session, as determined by
+\code{\link[rlang:is_interactive]{rlang::is_interactive()}}.
+\item The code is run in an RStudio notebook chunk, as determined by
+\code{getOption("rstudio.notebook.executing")}.
 }
 }
 \examples{

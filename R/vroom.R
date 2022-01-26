@@ -221,23 +221,27 @@ make_names <- function(x, len) {
   nms
 }
 
-#' Determine if progress bars should be shown
+#' Determine whether progress bars should be shown
 #'
-#' Progress bars are shown _unless_ one of the following is `TRUE`
-#' - The bar is explicitly disabled by setting `Sys.getenv("VROOM_SHOW_PROGRESS"="false")`
-#' - The code is run in a non-interactive session (`interactive()` is `FALSE`).
-#' - The code is run in an RStudio notebook chunk.
-#' - The code is run by knitr / rmarkdown.
-#' - The code is run by testthat (the `TESTTHAT` envvar is `true`).
+#' By default, vroom shows progress bars. However, progress reporting is
+#' suppressed if any of the following conditions hold:
+#' - The bar is explicitly disabled by setting the environment variable
+#'   `VROOM_SHOW_PROGRESS` to `"false"`.
+#' - The code is run in a non-interactive session, as determined by
+#'   [rlang::is_interactive()].
+#' - The code is run in an RStudio notebook chunk, as determined by
+#'   `getOption("rstudio.notebook.executing")`.
 #' @export
 #' @examples
 #' vroom_progress()
 vroom_progress <- function() {
   env_to_logical("VROOM_SHOW_PROGRESS", TRUE) &&
-    interactive() &&
-    !isTRUE(getOption("knitr.in.progress")) &&
-    !isTRUE(getOption("rstudio.notebook.executing")) &&
-    !(is_loaded("testthat") && testthat::is_testing())
+    rlang::is_interactive() &&
+    # some analysis re: rstudio.notebook.executing can be found in:
+    # https://github.com/r-lib/rlang/issues/1031
+    # TL;DR it's not consulted by is_interactive(), but probably should be
+    # consulted for progress reporting specifically
+    !isTRUE(getOption("rstudio.notebook.executing"))
 }
 
 #' @importFrom crayon blue cyan green bold reset col_nchar

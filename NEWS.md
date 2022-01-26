@@ -2,6 +2,8 @@
 
 * Fix recursive gc error that could occur during `vroom_write()` when `output_column()` generates an ALTREP vector (#389).
 
+* `vroom_progress()` uses `rlang::is_interactive()` instead of `base::interactive()`.
+
 # vroom 1.5.7
 
 * Jenny Bryan is now the official maintainer.
