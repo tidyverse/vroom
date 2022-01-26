@@ -48,9 +48,10 @@ be automatically uncompressed. Files starting with \verb{http://},
 downloaded. Remote gz files can also be automatically downloaded and
 decompressed.
 
-Literal data is most useful for examples and tests. To be recognised as a
-path, it must be wrapped with \code{I()}, be a string containing at least one
-new line, or be a vector containing at least one string with a new line.
+Literal data is most useful for examples and tests. To be recognised as
+literal data, the input must be either wrapped with \code{I()}, be a string
+containing at least one new line, or be a vector containing at least one
+string with a new line.
 
 Using a value of \code{\link[readr:clipboard]{clipboard()}} will read from the system clipboard.}
 
@@ -93,8 +94,9 @@ set \code{show_col_types = FALSE} or set `options(readr.show_col_types = FALSE).
 
 \item{col_select}{<\code{\link[tidyselect:language]{tidy-select}}> Columns to include
 in the results, either by name or by numeric index. Use \code{\link[=c]{c()}} or \code{\link[=list]{list()}}
-to select with more than one expression and \code{\link[tidyselect:language]{?tidyselect::language}} for full
-details on the selection language.}
+to select with more than one expression and
+\code{\link[tidyselect:language]{?tidyselect::language}} for full details on the
+selection language.}
 
 \item{id}{The name of a column in which to store the file path. This is
 useful when reading multiple input files and there is data in the file
@@ -124,7 +126,8 @@ each field before parsing it?}
 
 \item{n_max}{Maximum number of lines to read.}
 
-\item{guess_max}{Maximum number of lines to use for guessing column types.}
+\item{guess_max}{Maximum number of lines to use for guessing column types.
+See \code{vignette("column-types", package = "readr")} for more details.}
 
 \item{altrep}{Control which column types use Altrep representations,
 either a character vector of types, \code{TRUE} or \code{FALSE}. See
