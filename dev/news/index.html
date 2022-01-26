@@ -68,7 +68,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vroom-development-version">vroom (development version)<a class="anchor" aria-label="anchor" href="#vroom-development-version"></a></h2>
-<ul><li>Fix recursive gc error that could occur during <code><a href="../reference/vroom_write.html">vroom_write()</a></code> when <code><a href="../reference/output_column.html">output_column()</a></code> generates an ALTREP vector (<a href="https://github.com/r-lib/vroom/issues/389" class="external-link">#389</a>).</li>
+<ul><li><p>Fix recursive gc error that could occur during <code><a href="../reference/vroom_write.html">vroom_write()</a></code> when <code><a href="../reference/output_column.html">output_column()</a></code> generates an ALTREP vector (<a href="https://github.com/r-lib/vroom/issues/389" class="external-link">#389</a>).</p></li>
+<li><p><code><a href="../reference/vroom_progress.html">vroom_progress()</a></code> uses <code><a href="https://rlang.r-lib.org/reference/is_interactive.html" class="external-link">rlang::is_interactive()</a></code> instead of <code><a href="https://rdrr.io/r/base/interactive.html" class="external-link">base::interactive()</a></code>.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.7" id="vroom-157">vroom 1.5.7<a class="anchor" aria-label="anchor" href="#vroom-157"></a></h2><p class="text-muted">CRAN release: 2021-11-30</p>

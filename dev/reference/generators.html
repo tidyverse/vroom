@@ -139,36 +139,35 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># characters</span></span>
 <span class="r-in"><span class="fu">gen_character</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "PJEUYLxSqkCDiVL"        "UNKVIoe7mx56UB62xQQ"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "AjEElRBwNveydBWdbCkr4e" "TZQAGXFEKHbVIb"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "IHaRPMYdBEGUk"            "cwmkabCPwRs2eWf7TPlvUGkx"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "0OAuuOjsEj0YRxjgsYh7Z"    "6g885i877m2dguBzin30jy"  </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># factors</span></span>
 <span class="r-in"><span class="fu">gen_factor</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] obedient_elephant odd_puppy         panicky_turtle   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4] huge_toad        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Levels: curved_coyote obedient_elephant freezing_gazelle ... huge_toad</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] breeze_wolverine prickly_impala   steep_opossum    breeze_wolverine</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 Levels: large_owl rainy_kitten steep_opossum ... tasteless_bunny</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># logical</span></span>
 <span class="r-in"><span class="fu">gen_logical</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  TRUE  TRUE FALSE FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE FALSE  TRUE FALSE</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># numbers</span></span>
 <span class="r-in"><span class="fu">gen_double</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.8713157 -2.0289227 -0.2834930  1.9232254</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  0.25062371  0.97308529 -1.57756744 -0.01737533</span>
 <span class="r-in"><span class="fu">gen_integer</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1703055885 1390024402 1000162083   48002088</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1596832422  586590990 1152937608  713501481</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># temporal data</span></span>
 <span class="r-in"><span class="fu">gen_time</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23:53:15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:07:40</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23:49:03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:17:18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:50:44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 06:02:38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 07:47:56</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:49:22</span>
 <span class="r-in"><span class="fu">gen_date</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2009-04-02" "2003-02-20" "2005-08-21" "2016-08-15"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2001-01-23" "2002-10-21" "2016-03-05" "2006-08-29"</span>
 <span class="r-in"><span class="fu">gen_datetime</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2012-01-20 22:58:10 UTC" "2014-03-23 23:36:44 UTC"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "2007-12-10 01:14:53 UTC" "2018-05-03 08:29:07 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2005-09-24 01:20:38 UTC" "2015-02-06 20:39:53 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "2017-03-19 07:01:58 UTC" "2003-10-11 22:59:46 UTC"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
