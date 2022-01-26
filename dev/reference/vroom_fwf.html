@@ -114,9 +114,10 @@ be automatically uncompressed. Files starting with <code>http://</code>,
 <code>https://</code>, <code>ftp://</code>, or <code>ftps://</code> will be automatically
 downloaded. Remote gz files can also be automatically downloaded and
 decompressed.</p>
-<p>Literal data is most useful for examples and tests. To be recognised as a
-path, it must be wrapped with <code><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I()</a></code>, be a string containing at least one
-new line, or be a vector containing at least one string with a new line.</p>
+<p>Literal data is most useful for examples and tests. To be recognised as
+literal data, the input must be either wrapped with <code><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I()</a></code>, be a string
+containing at least one new line, or be a vector containing at least one
+string with a new line.</p>
 <p>Using a value of <code><a href="https://rdrr.io/r/utils/clipboard.html" class="external-link">clipboard()</a></code> will read from the system clipboard.</p></dd>
 <dt>col_positions</dt>
 <dd><p>Column positions, as created by <code>fwf_empty()</code>,
@@ -152,8 +153,9 @@ set <code>show_col_types = FALSE</code> or set `options(readr.show_col_types = F
 <dt>col_select</dt>
 <dd><p>&lt;<code><a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">tidy-select</a></code>&gt; Columns to include
 in the results, either by name or by numeric index. Use <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> or <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code>
-to select with more than one expression and <code><a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">?tidyselect::language</a></code> for full
-details on the selection language.</p></dd>
+to select with more than one expression and
+<code><a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">?tidyselect::language</a></code> for full details on the
+selection language.</p></dd>
 <dt>id</dt>
 <dd><p>The name of a column in which to store the file path. This is
 useful when reading multiple input files and there is data in the file
@@ -183,7 +185,8 @@ each field before parsing it?</p></dd>
 <dt>n_max</dt>
 <dd><p>Maximum number of lines to read.</p></dd>
 <dt>guess_max</dt>
-<dd><p>Maximum number of lines to use for guessing column types.</p></dd>
+<dd><p>Maximum number of lines to use for guessing column types.
+See <code><a href="https://readr.tidyverse.org/articles/column-types.html" class="external-link">vignette("column-types", package = "readr")</a></code> for more details.</p></dd>
 <dt>altrep</dt>
 <dd><p>Control which column types use Altrep representations,
 either a character vector of types, <code>TRUE</code> or <code>FALSE</code>. See
