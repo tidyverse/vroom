@@ -21,10 +21,20 @@ NULL
 #' @param col_select One or more selection expressions, like in
 #'   `dplyr::select()`. Use `c()` or `list()` to use more than one expression.
 #'   See `?dplyr::select` for details on available selection options.
-#' @param .name_repair Handling of column names. By default, vroom ensures
-#'   column names are not empty and unique. See `.name_repair` as documented in
-#'   [tibble::tibble()] for additional options including supplying user defined
-#'   name repair functions.
+#' @param .name_repair Handling of column names. The default behaviour is to
+#'   ensure column names are `"unique"`. Various repair strategies are
+#'   supported:
+#'   * `"minimal"`: No name repair or checks, beyond basic existence of names.
+#'   * `"unique"` (default value): Make sure names are unique and not empty.
+#'   * `"check_unique"`: no name repair, but check they are `unique`.
+#'   * `"universal"`: Make the names `unique` and syntactic.
+#'   * A function: apply custom name repair (e.g., `name_repair = make.names`
+#'     for names in the style of base R).
+#'   * A purrr-style anonymous function, see [rlang::as_function()].
+#'
+#'   This argument is passed on as `repair` to [vctrs::vec_as_names()].
+#'   See there for more details on these terms and the strategies used
+#'   to enforce them.
 #' @param altrep Control which column types use Altrep representations,
 #'   either a character vector of types, `TRUE` or `FALSE`. See
 #'   [vroom_altrep()] for for full details.

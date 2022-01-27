@@ -150,10 +150,22 @@ column specifications are always show, if \code{FALSE} they are never shown. If
 \code{NULL} (the default) they are shown only if an explicit specification is not
 given to \code{col_types}.}
 
-\item{.name_repair}{Handling of column names. By default, vroom ensures
-column names are not empty and unique. See \code{.name_repair} as documented in
-\code{\link[tibble:tibble]{tibble::tibble()}} for additional options including supplying user defined
-name repair functions.}
+\item{.name_repair}{Handling of column names. The default behaviour is to
+ensure column names are \code{"unique"}. Various repair strategies are
+supported:
+\itemize{
+\item \code{"minimal"}: No name repair or checks, beyond basic existence of names.
+\item \code{"unique"} (default value): Make sure names are unique and not empty.
+\item \code{"check_unique"}: no name repair, but check they are \code{unique}.
+\item \code{"universal"}: Make the names \code{unique} and syntactic.
+\item A function: apply custom name repair (e.g., \code{name_repair = make.names}
+for names in the style of base R).
+\item A purrr-style anonymous function, see \code{\link[rlang:as_function]{rlang::as_function()}}.
+}
+
+This argument is passed on as \code{repair} to \code{\link[vctrs:vec_as_names]{vctrs::vec_as_names()}}.
+See there for more details on these terms and the strategies used
+to enforce them.}
 }
 \description{
 Read a delimited file into a tibble
