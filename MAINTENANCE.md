@@ -88,3 +88,7 @@ However we would have to investigate if this behavior is actually true across pl
 strcspn requires the data must end with a NUL, so if we cannot guarantee that this approach won't work.
 
 https://github.com/r-lib/vroom/issues/357 tracks this issue
+
+## External "standards"
+
+https://datatracker.ietf.org/doc/html/rfc4180
