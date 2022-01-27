@@ -18,9 +18,12 @@ NULL
 #' @param id Either a string or 'NULL'. If a string, the output will contain a
 #'   variable with that name with the filename(s) as the value. If 'NULL', the
 #'   default, no variable will be created.
-#' @param col_select One or more selection expressions, like in
-#'   `dplyr::select()`. Use `c()` or `list()` to use more than one expression.
-#'   See `?dplyr::select` for details on available selection options.
+#' @param col_select Columns to include in the results. You can use the same
+#'   mini-language as `dplyr::select()` to refer to the columns by name. Use
+#'   `c()` or `list()` to use more than one selection expression. Although this
+#'   usage is less common, `col_select` also accepts a numeric column index. See
+#'   [`?tidyselect::language`][tidyselect::language] for full details on the
+#'   selection language.
 #' @param .name_repair Handling of column names. The default behaviour is to
 #'   ensure column names are `"unique"`. Various repair strategies are
 #'   supported:
