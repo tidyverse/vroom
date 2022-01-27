@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/r-lib/vroom/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/vroom/actions)
+[![R-CMD-check](https://github.com/r-lib/vroom/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/vroom/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/r-lib/vroom/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r-lib/vroom?branch=main)
 [![CRAN
