@@ -147,9 +147,12 @@ message showing what <code>readr</code> guessed they were. To remove this messag
 set <code>show_col_types = FALSE</code> or set `options(readr.show_col_types = FALSE).</p></li>
 </ul></dd>
 <dt>col_select</dt>
-<dd><p>One or more selection expressions, like in
-<code><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">dplyr::select()</a></code>. Use <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> or <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code> to use more than one expression.
-See <code><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">?dplyr::select</a></code> for details on available selection options.</p></dd>
+<dd><p>Columns to include in the results. You can use the same
+mini-language as <code><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">dplyr::select()</a></code> to refer to the columns by name. Use
+<code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> or <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code> to use more than one selection expression. Although this
+usage is less common, <code>col_select</code> also accepts a numeric column index. See
+<code><a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">?tidyselect::language</a></code> for full details on the
+selection language.</p></dd>
 <dt>id</dt>
 <dd><p>Either a string or 'NULL'. If a string, the output will contain a
 variable with that name with the filename(s) as the value. If 'NULL', the
