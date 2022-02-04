@@ -95,3 +95,16 @@ test_that("can write to a tar.gz file if the archive package is available", {
   expect_equal(res$path, "mtcars")
   expect_equal(res$size, 1281)
 })
+
+test_that("can read filepaths with non-ASCII characters", {
+  skip_on_cran()
+  ## chosen to be non-ASCII but
+  ## [1] representable in Windows-1252 and
+  ## [2] not any of the few differences between Windows-1252 and ISO-8859-1
+  ## a-grave + e-diaeresis  + Eth + '.csv'
+  tricky_filename <- "\u00C0\u00CB\u00D0\u002E\u0063\u0073\u0076"
+  file.copy(vroom_example("mtcars.csv"), tricky_filename)
+  expect_true(file.exists(tricky_filename))
+  on.exit(file.remove(tricky_filename))
+  expect_snapshot(vroom(tricky_filename))
+})
