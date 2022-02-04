@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Fixed an issue where unicode filenames could not be opened on Windows (#401)
+
 * Fix recursive gc error that could occur during `vroom_write()` when `output_column()` generates an ALTREP vector (#389).
 
 * `vroom_progress()` uses `rlang::is_interactive()` instead of `base::interactive()`.
