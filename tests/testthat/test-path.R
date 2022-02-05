@@ -108,4 +108,12 @@ test_that("can read filepaths with non-ASCII characters", {
   expect_true(file.exists(tricky_filename))
   expect_equal(vroom(tricky_filename, show_col_types = FALSE),
                tibble::tibble(a = 1, b = 2, c = 3))
+
+  ## a-grave + e-diaeresis  + '.csv'
+  tricky_filename2 <- withr::local_tempfile(
+    fileext = "-\u00E0\u00EB\u002E\u0063\u0073\u0076")
+  writeLines("a, b, c\n 4, 5, 6\n", tricky_filename2)
+  expect_true(file.exists(tricky_filename2))
+  expect_equal(vroom(c(tricky_filename, tricky_filename2), show_col_types = FALSE),
+               tibble::tibble(a = c(1, 4), b = c(2,5), c = c(3,6)))
 })
