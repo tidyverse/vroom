@@ -102,9 +102,10 @@ test_that("can read filepaths with non-ASCII characters", {
   ## [1] representable in Windows-1252 and
   ## [2] not any of the few differences between Windows-1252 and ISO-8859-1
   ## a-grave + e-diaeresis  + Eth + '.csv'
-  tricky_filename <- "\u00C0\u00CB\u00D0\u002E\u0063\u0073\u0076"
-  file.copy(vroom_example("mtcars.csv"), tricky_filename)
+  tricky_filename <- withr::local_tempfile(
+    fileext = "-\u00C0\u00CB\u00D0\u002E\u0063\u0073\u0076")
+  writeLines("a, b, c\n 1, 2, 3\n", tricky_filename)
   expect_true(file.exists(tricky_filename))
-  on.exit(file.remove(tricky_filename))
-  expect_snapshot(vroom(tricky_filename))
+  expect_equal(vroom(tricky_filename, show_col_types = FALSE),
+               tibble::tibble(a = 1, b = 2, c = 3))
 })
