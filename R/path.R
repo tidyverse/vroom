@@ -59,7 +59,7 @@ standardise_path <- function(path) {
     }
   }
 
-  as.list(path)
+  as.list(enc2utf8(path))
 }
 
 standardise_one_path <- function (path, write = FALSE) {
