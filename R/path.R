@@ -147,7 +147,7 @@ standardise_one_path <- function (path, write = FALSE) {
     if (!has_trailing_newline(path)) {
       file(path)
     } else {
-      enc2utf8(path)
+      path
     }
   )
 }
