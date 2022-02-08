@@ -95,3 +95,28 @@ test_that("can write to a tar.gz file if the archive package is available", {
   expect_equal(res$path, "mtcars")
   expect_equal(res$size, 1281)
 })
+
+# https://github.com/r-lib/vroom/issues/394
+# https://github.com/r-lib/vroom/pull/402
+test_that("we can read multi-byte file names", {
+
+  expected <- tibble::tibble(
+    id = 1:3,
+    name = c("ed", "leigh", "nathan"),
+    age = c(36, NA, 14)
+  )
+
+  # use the filename 'creme-brulee', but with various accents
+  source <- test_path("multi-byte-unicode.txt")
+  target <- paste(tempdir(), "cr\u00e8me-br\u00fbl\u00e9e.txt", sep = "/")
+  file.copy(source, target)
+
+  # test with the filename as UTF-8
+  test_vroom(enc2utf8(target), delim = "\U2764", equals = expected)
+
+  # only run the test if we can represent the filename in the native encoding
+  if (target == enc2native(target)) {
+    test_vroom(enc2native(target), delim = "\U2764", equals = expected)
+  }
+
+})
