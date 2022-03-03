@@ -69,7 +69,9 @@ LinkingTo:
     tzdb (>= 0.1.1)
 VignetteBuilder: 
     knitr
-Config/Needs/website:nycflights13, tidyverse/tidytemplate
+Config/Needs/website:
+    nycflights13, 
+    tidyverse/tidytemplate
 Config/testthat/edition: 3
 Config/testthat/parallel: false
 Copyright: file COPYRIGHTS
