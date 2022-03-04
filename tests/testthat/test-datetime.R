@@ -1,6 +1,6 @@
 test_that("datetime parsing works", {
   test_vroom(
-"date,time,datetime
+    "date,time,datetime
 2018-01-01,10:01:01 AM,2018-01-01 10:01:01
 2019-01-01,05:04:03 AM,2019-01-01 05:04:03
 ",
@@ -61,7 +61,8 @@ test_that("invalid dates return NA", {
 
 test_that("failed parsing returns NA", {
   test_parse_datetime(c("2010-02-ab", "2010-02", "2010/02/01"), "%Y-%m-%d",
-    expected = .POSIXct(rep(NA_real_, 3), tz = "UTC"))
+    expected = .POSIXct(rep(NA_real_, 3), tz = "UTC")
+  )
 })
 
 test_that("invalid specs returns NA", {
@@ -89,16 +90,21 @@ test_that("%p detects AM/PM", {
   )
 
   test_parse_datetime("12/31/1991 12:01 AM", "%m/%d/%Y %I:%M %p",
-    expected = .POSIXct(694137660, "UTC"))
+    expected = .POSIXct(694137660, "UTC")
+  )
 
   test_parse_datetime("12/31/1991 12:01 PM", "%m/%d/%Y %I:%M %p",
-    expected = .POSIXct(694180860, "UTC"))
+    expected = .POSIXct(694180860, "UTC")
+  )
 
   test_parse_datetime("12/31/1991 01:01 AM", "%m/%d/%Y %I:%M %p",
-    expected = .POSIXct(694141260, "UTC"))
+    expected = .POSIXct(694141260, "UTC")
+  )
 
   test_parse_datetime(c("12/31/1991 00:01 PM", "12/31/1991 13:01 PM"),
-      "%m/%d/%Y %I:%M %p", expected = .POSIXct(rep(NA_real_, 2), tz = "UTC"))
+    "%m/%d/%Y %I:%M %p",
+    expected = .POSIXct(rep(NA_real_, 2), tz = "UTC")
+  )
 })
 
 test_that("%b and %B are case insensitive", {
@@ -166,8 +172,8 @@ test_that("locale affects day of week", {
   b <- .POSIXct(unclass(as.Date("2010-01-01")) * 86400, tz = "UTC")
   fr <- locale("fr")
 
-  test_parse_datetime("Ven. 1 janv. 2010", "%a %d %b %Y", locale=fr, expected = a)
-  test_parse_datetime("Ven. 1 janv. 2010", "%a %d %b %Y", locale=fr, expected = b)
+  test_parse_datetime("Ven. 1 janv. 2010", "%a %d %b %Y", locale = fr, expected = a)
+  test_parse_datetime("Ven. 1 janv. 2010", "%a %d %b %Y", locale = fr, expected = b)
 })
 
 test_that("locale affects am/pm", {
@@ -292,7 +298,8 @@ test_that("malformed date / datetime formats cause R errors", {
 })
 
 test_that("single digit dates and hours are parsed correctly (https://github.com/tidyverse/readr/issues/1276)", {
-  test_vroom(I("4/9/2021 2:18:25 PM"), col_types = list(col_datetime("%m/%d/%Y %H:%M:%S %p")), col_names = "X", delim = ",",
+  test_vroom(I("4/9/2021 2:18:25 PM"),
+    col_types = list(col_datetime("%m/%d/%Y %H:%M:%S %p")), col_names = "X", delim = ",",
     equals = tibble::tibble(X = as.POSIXct("2021-04-09 14:18:25", tz = "UTC"))
   )
 })

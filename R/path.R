@@ -62,8 +62,7 @@ standardise_path <- function(path) {
   as.list(path)
 }
 
-standardise_one_path <- function (path, write = FALSE) {
-
+standardise_one_path <- function(path, write = FALSE) {
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))
   }
@@ -87,7 +86,9 @@ standardise_one_path <- function (path, write = FALSE) {
         xz = {
           close(con)
           stop("Reading from remote `", ext, "` compressed files is not supported,\n",
-            "  download the files locally first.", call. = FALSE)
+            "  download the files locally first.",
+            call. = FALSE
+          )
         },
         gz = gzcon(con),
         con
@@ -106,7 +107,7 @@ standardise_one_path <- function (path, write = FALSE) {
   if (rlang::is_installed("archive")) {
     formats <- archive_formats(p$extension)
     extension <- p$extension
-    while(is.null(formats) && nzchar(extension)) {
+    while (is.null(formats) && nzchar(extension)) {
       extension <- split_path_ext(extension)$extension
       formats <- archive_formats(extension)
     }
@@ -211,7 +212,8 @@ archive_formats <- function(ext) {
 
     "zst" = list(NULL, "zst"),
 
-    NULL)
+    NULL
+  )
 }
 
 is_url <- function(path) {
@@ -219,8 +221,9 @@ is_url <- function(path) {
 }
 
 check_path <- function(path) {
-  if (file.exists(path))
+  if (file.exists(path)) {
     return(normalizePath(path, "/", mustWork = FALSE))
+  }
 
   stop("'", path, "' does not exist",
     if (!is_absolute_path(path)) {

@@ -102,31 +102,29 @@ NULL
 #'
 #' # Pass the filenames directly to vroom, they are efficiently combined
 #' vroom(mtcars_by_cyl)
-vroom <- function(
-  file,
-  delim = NULL,
-  col_names = TRUE,
-  col_types = NULL,
-  col_select = NULL,
-  id = NULL,
-  skip = 0,
-  n_max = Inf,
-  na = c("", "NA"),
-  quote = '"',
-  comment = "",
-  skip_empty_rows = TRUE,
-  trim_ws = TRUE,
-  escape_double = TRUE,
-  escape_backslash = FALSE,
-  locale = default_locale(),
-  guess_max = 100,
-  altrep = TRUE,
-  altrep_opts = deprecated(),
-  num_threads = vroom_threads(),
-  progress = vroom_progress(),
-  show_col_types = NULL,
-  .name_repair = "unique"
-  ) {
+vroom <- function(file,
+                  delim = NULL,
+                  col_names = TRUE,
+                  col_types = NULL,
+                  col_select = NULL,
+                  id = NULL,
+                  skip = 0,
+                  n_max = Inf,
+                  na = c("", "NA"),
+                  quote = '"',
+                  comment = "",
+                  skip_empty_rows = TRUE,
+                  trim_ws = TRUE,
+                  escape_double = TRUE,
+                  escape_backslash = FALSE,
+                  locale = default_locale(),
+                  guess_max = 100,
+                  altrep = TRUE,
+                  altrep_opts = deprecated(),
+                  num_threads = vroom_threads(),
+                  progress = vroom_progress(),
+                  show_col_types = NULL,
+                  .name_repair = "unique") {
 
   # vroom does not support newlines as the delimiter, just as the EOL, so just
   # assign a value that should never appear in CSV text as the delimiter,
@@ -162,8 +160,8 @@ vroom <- function(
   # Workaround weird RStudio / Progress bug: https://github.com/r-lib/progress/issues/56#issuecomment-384232184
   if (
     isTRUE(progress) &&
-    is_windows() &&
-    identical(Sys.getenv("RSTUDIO"), "1")) {
+      is_windows() &&
+      identical(Sys.getenv("RSTUDIO"), "1")) {
     Sys.setenv("RSTUDIO" = "1")
   }
 
@@ -175,14 +173,16 @@ vroom <- function(
 
   na <- enc2utf8(na)
 
-  out <- vroom_(file, delim = delim %||% col_types$delim, col_names = col_names,
+  out <- vroom_(file,
+    delim = delim %||% col_types$delim, col_names = col_names,
     col_types = col_types, id = id, skip = skip, col_select = col_select,
     name_repair = .name_repair,
     na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
     escape_backslash = escape_backslash, comment = comment,
     skip_empty_rows = skip_empty_rows, locale = locale,
     guess_max = guess_max, n_max = n_max, altrep = vroom_altrep(altrep),
-    num_threads = num_threads, progress = progress)
+    num_threads = num_threads, progress = progress
+  )
 
   # Drop any NULL columns
   is_null <- vapply(out, is.null, logical(1))
@@ -261,7 +261,8 @@ vroom_progress <- function() {
 pb_file_format <- function(filename) {
 
   # Workaround RStudio bug https://github.com/rstudio/rstudio/issues/4777
-  withr::with_options(list(crayon.enabled = (!is_rstudio_console() || is_rstudio_version("1.2.1578")) && getOption("crayon.enabled", TRUE)),
+  withr::with_options(
+    list(crayon.enabled = (!is_rstudio_console() || is_rstudio_version("1.2.1578")) && getOption("crayon.enabled", TRUE)),
     glue::glue_col("{bold}indexing{reset} {blue}{basename(filename)}{reset} [:bar] {green}:rate{reset}, eta: {cyan}:eta{reset}")
   )
 }
@@ -272,13 +273,15 @@ pb_width <- function(format) {
 }
 
 pb_connection_format <- function(unused) {
-  withr::with_options(list(crayon.enabled = (!is_rstudio_console() || is_rstudio_version("1.2.1578")) && getOption("crayon.enabled", TRUE)),
+  withr::with_options(
+    list(crayon.enabled = (!is_rstudio_console() || is_rstudio_version("1.2.1578")) && getOption("crayon.enabled", TRUE)),
     glue::glue_col("{bold}indexed{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}")
   )
 }
 
 pb_write_format <- function(unused) {
-  withr::with_options(list(crayon.enabled = (!is_rstudio_console() || is_rstudio_version("1.2.1578")) && getOption("crayon.enabled", TRUE)),
+  withr::with_options(
+    list(crayon.enabled = (!is_rstudio_console() || is_rstudio_version("1.2.1578")) && getOption("crayon.enabled", TRUE)),
     glue::glue_col("{bold}wrote{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}")
   )
 }
@@ -324,7 +327,8 @@ cached <- new.env(parent = emptyenv())
 
 vroom_threads <- function() {
   res <- as.integer(
-    Sys.getenv("VROOM_THREADS",
+    Sys.getenv(
+      "VROOM_THREADS",
       cached$num_threads <- cached$num_threads %||% parallel::detectCores()
     )
   )
@@ -409,7 +413,7 @@ vroom_altrep <- function(which = NULL) {
     getRversion() >= "3.5.0" && which$big_int %||% vroom_use_altrep_big_int()
   )
 
-  out <-  0L
+  out <- 0L
   for (i in seq_along(args)) {
     out <- bitwOr(out, bitwShiftL(as.integer(args[[i]]), i - 1L))
   }
@@ -429,20 +433,22 @@ vroom_altrep_opts <- function(which = NULL) {
   vroom_altrep(which)
 }
 
-altrep_vals <- function() c(
-  "none" = 0L,
-  "chr" = 1L,
-  "fct" = 2L,
-  "int" = 4L,
-  "dbl" = 8L,
-  "num" = 16L,
-  "lgl" = 32L,
-  "dttm" = 64L,
-  "date" = 128L,
-  "time" = 256L,
-  "big_int" = 512L,
-  "skip" = 1024L
-)
+altrep_vals <- function() {
+  c(
+    "none" = 0L,
+    "chr" = 1L,
+    "fct" = 2L,
+    "int" = 4L,
+    "dbl" = 8L,
+    "num" = 16L,
+    "lgl" = 32L,
+    "dttm" = 64L,
+    "date" = 128L,
+    "time" = 256L,
+    "big_int" = 512L,
+    "skip" = 1024L
+  )
+}
 
 #' @export
 print.vroom_altrep <- function(x, ...) {
@@ -452,7 +458,9 @@ print.vroom_altrep <- function(x, ...) {
   cat("Using Altrep representations for:\n",
     glue::glue("
         * {reps}
-       ", reps = glue::glue_collapse(reps, "\n * ")), "\n", sep = "")
+       ", reps = glue::glue_collapse(reps, "\n * ")), "\n",
+    sep = ""
+  )
 }
 
 vroom_use_altrep_chr <- function() {

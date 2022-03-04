@@ -24,12 +24,12 @@ test_that("empty rows print the headers", {
 })
 
 test_that("strings are only quoted if needed", {
-  x <- c("a", ',')
+  x <- c("a", ",")
 
-  csv <- vroom_format(data.frame(x), delim = ",",col_names = FALSE)
+  csv <- vroom_format(data.frame(x), delim = ",", col_names = FALSE)
   expect_equal(csv, 'a\n\",\"\n')
-  ssv <- vroom_format(data.frame(x), delim = " ",col_names = FALSE)
-  expect_equal(ssv, 'a\n,\n')
+  ssv <- vroom_format(data.frame(x), delim = " ", col_names = FALSE)
+  expect_equal(ssv, "a\n,\n")
 })
 
 test_that("a literal NA is quoted", {
@@ -42,7 +42,7 @@ test_that("na argument modifies how missing values are written", {
 })
 
 test_that("read_delim/csv/tsv and write_delim round trip special chars", {
-  x <- stats::setNames(list("a", '"', ",", "\n","at\t"), paste0("V", seq_len(5)))
+  x <- stats::setNames(list("a", '"', ",", "\n", "at\t"), paste0("V", seq_len(5)))
 
   output <- tibble::as_tibble(x)
   output_space <- vroom(I(vroom_format(output, delim = " ")), trim_ws = FALSE, progress = FALSE, col_types = list())
@@ -88,8 +88,10 @@ test_that("roundtrip preserves dates and datetimes", {
 })
 
 test_that("fails to create file in non-existent directory", {
-  expect_error(vroom_write(mtcars, file.path(tempdir(), "/x/y"), "\t"),
-    "Cannot open file for writing")
+  expect_error(
+    vroom_write(mtcars, file.path(tempdir(), "/x/y"), "\t"),
+    "Cannot open file for writing"
+  )
 })
 
 test_that("includes a byte order mark if desired", {
@@ -195,7 +197,8 @@ test_that("vroom_write equals the same thing as vroom_format", {
   on.exit(unlink(tf))
 
   # Temporarily run with 2 lines per buffer, to test the multithreading
-  withr::with_envvar(c("VROOM_WRITE_BUFFER_LINES" = "2"),
+  withr::with_envvar(
+    c("VROOM_WRITE_BUFFER_LINES" = "2"),
     vroom_write(df, tf, "\t")
   )
 
@@ -257,11 +260,13 @@ test_that("vroom_write() always outputs in UTF-8", {
   vroom_write(data, f, delim = ",")
 
   expected_data <- charToRaw(
-    paste0(collapse = "\n",
+    paste0(
+      collapse = "\n",
       c(
         enc2utf8(names(data)),
         enc2utf8(data[[1]]),
-        "")
+        ""
+      )
     )
   )
 

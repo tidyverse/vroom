@@ -11,7 +11,6 @@ test_that("problems with data parsing works for single files", {
 })
 
 test_that("problems works for multiple files", {
-
   out1 <- file.path(tempdir(), "out1.txt")
   out2 <- file.path(tempdir(), "out2.txt")
   on.exit(unlink(c(out1, out2)))
@@ -20,7 +19,7 @@ test_that("problems works for multiple files", {
   writeLines("x,y\n3.x,4\n1,2\n2,2", out2)
 
   expect_warning(
-    x <- vroom(c(out1, out2), delim = ",", col_types = "dd", altrep=F)
+    x <- vroom(c(out1, out2), delim = ",", col_types = "dd", altrep = F)
   )
   probs <- problems(x)
 
@@ -89,7 +88,7 @@ test_that("parsing problems are shown for all datatypes", {
   }
 
 
-    expect_warning(res <- vroom(I("x\nxyz\n"), delim = ",", col_types = list(col_logical())), "One or more parsing issues")
+  expect_warning(res <- vroom(I("x\nxyz\n"), delim = ",", col_types = list(col_logical())), "One or more parsing issues")
 })
 
 test_that("problems that are generated more than once are not duplicated", {

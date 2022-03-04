@@ -2,10 +2,10 @@
 
 test_that("locale encoding affects parsing", {
   x <- c("ao\u00FBt", "\u00E9l\u00E8ve", "\u00E7a va")
-  #expect_equal(Encoding(x), rep("UTF-8", 3))
+  # expect_equal(Encoding(x), rep("UTF-8", 3))
 
   y <- iconv(paste0(x, collapse = "\n"), "UTF-8", "latin1")
-  #expect_equal(Encoding(y), "latin1")
+  # expect_equal(Encoding(y), "latin1")
 
   fr <- locale("fr", encoding = "latin1")
   z <- vroom(I(y), delim = ",", locale = fr, col_names = FALSE, col_types = list())

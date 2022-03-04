@@ -12,7 +12,8 @@ test_that("You can use !! in cols and cols_only", {
 })
 
 test_that("format(col_spec) contains the delimiter if specified", {
-  expect_match(fixed = TRUE,
+  expect_match(
+    fixed = TRUE,
     format(cols(.delim = "\t")),
     '.delim = "\\t"'
   )

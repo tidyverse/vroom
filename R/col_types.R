@@ -50,10 +50,12 @@
 #'
 #' t1 <- cols(
 #'   column_one = col_integer(),
-#'   column_two = col_number())
+#'   column_two = col_number()
+#' )
 #'
 #' t2 <- cols(
-#'  column_three = col_character())
+#'   column_three = col_character()
+#' )
 #'
 #' t3 <- t1
 #' t3$cols <- c(t1$cols, t2$cols)
@@ -86,7 +88,9 @@ col_spec <- function(col_types, default = col_guess(), delim) {
   is_collector <- vapply(col_types, is.collector, logical(1))
   if (any(!is_collector)) {
     stop("Some `col_types` are not S3 collector objects: ",
-      paste(which(!is_collector), collapse = ", "), call. = FALSE)
+      paste(which(!is_collector), collapse = ", "),
+      call. = FALSE
+    )
   }
 
   structure(
@@ -171,7 +175,6 @@ cols_condense <- function(x) {
 # Conditionally exported in zzz.R
 # @export
 format.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_color(), ...) {
-
   if (n == 0) {
     return("")
   }
@@ -199,12 +202,13 @@ format.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_co
   delim <- x$delim
 
   if (!is.null(delim) && nzchar(delim)) {
-    delim <- paste0('.delim = ', double_quote(delim), '')
+    delim <- paste0(".delim = ", double_quote(delim), "")
   }
 
   cols_args <- c(
     default,
-    vapply(seq_along(cols),
+    vapply(
+      seq_along(cols),
       function(i) {
         col_funs <- sub("^collector_", "col_", class(cols[[i]])[[1]])
         args <- vapply(cols[[i]], deparse2, character(1), sep = "\n    ")
@@ -244,7 +248,6 @@ format.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_co
 }
 
 colourise_cols <- function(cols, colourise = crayon::has_color()) {
-
   if (!isTRUE(colourise)) {
     return(cols)
   }
@@ -267,7 +270,7 @@ colourise_cols <- function(cols, colourise = crayon::has_color()) {
       col_date = ,
       col_datetime = ,
       col_time = crayon::blue(cols[[i]])
-      )
+    )
   }
   cols
 }
@@ -279,13 +282,14 @@ str.col_spec <- function(object, ..., indent.str = "") {
 
   # Split the formatted column spec into strings
   specs <- strsplit(format(object), "\n")[[1]]
-  cat(sep = "",
+  cat(
+    sep = "",
     "\n",
 
     # Append the current indentation string to the specs
     paste(indent.str, specs, collapse = "\n"),
-
-    "\n")
+    "\n"
+  )
 }
 
 
@@ -312,21 +316,21 @@ spec <- function(x) {
 col_concise <- function(x) {
   switch(x,
     "_" = ,
-    "skip" =,
-    "NULL" =,
+    "skip" = ,
+    "NULL" = ,
     "-" = col_skip(),
     "NA" = ,
     "?" = col_guess(),
-    character =,
+    character = ,
     c = col_character(),
-    factor =,
+    factor = ,
     f = col_factor(),
-    double =,
-    numeric =,
+    double = ,
+    numeric = ,
     d = col_double(),
-    integer =,
+    integer = ,
     i = col_integer(),
-    big_integer =,
+    big_integer = ,
     I = col_big_integer(),
     logical = ,
     l = col_logical(),
@@ -338,7 +342,7 @@ col_concise <- function(x) {
     datetime = ,
     POSIXct = ,
     T = col_datetime(),
-    time =,
+    time = ,
     t = col_time(),
     stop("Unknown shortcut: ", x, call. = FALSE)
   )
@@ -412,8 +416,10 @@ col_types_standardise <- function(spec, num_cols, col_names, col_select, name_re
 
     bad_types <- !(type_names %in% col_names)
     if (any(bad_types)) {
-      rlang::warn(paste0("The following named parsers don't match the column names: ",
-        paste0(type_names[bad_types], collapse = ", ")), class = "vroom_mismatched_column_name")
+      rlang::warn(paste0(
+        "The following named parsers don't match the column names: ",
+        paste0(type_names[bad_types], collapse = ", ")
+      ), class = "vroom_mismatched_column_name")
       spec$cols <- spec$cols[!bad_types]
       type_names <- type_names[!bad_types]
     }
@@ -459,20 +465,20 @@ col_types_standardise <- function(spec, num_cols, col_names, col_select, name_re
 #'
 #' @inheritParams readr::guess_parser
 #' @examples
-#'  # Logical vectors
-#'  guess_type(c("FALSE", "TRUE", "F", "T"))
-
-#'  # Integers and doubles
-#'  guess_type(c("1","2","3"))
-#'  guess_type(c("1.6","2.6","3.4"))
-
-#'  # Numbers containing grouping mark
-#'  guess_type("1,234,566")
-
-#'  # ISO 8601 date times
-#'  guess_type(c("2010-10-10"))
-#'  guess_type(c("2010-10-10 01:02:03"))
-#'  guess_type(c("01:02:03 AM"))
+#' # Logical vectors
+#' guess_type(c("FALSE", "TRUE", "F", "T"))
+#'
+#' # Integers and doubles
+#' guess_type(c("1", "2", "3"))
+#' guess_type(c("1.6", "2.6", "3.4"))
+#'
+#' # Numbers containing grouping mark
+#' guess_type("1,234,566")
+#'
+#' # ISO 8601 date times
+#' guess_type(c("2010-10-10"))
+#' guess_type(c("2010-10-10 01:02:03"))
+#' guess_type(c("01:02:03 AM"))
 #' @export
 guess_type <- function(x, na = c("", "NA"), locale = default_locale(), guess_integer = FALSE) {
   type <- guess_type_(x, na = na, locale = locale, guess_integer = guess_integer)
@@ -497,34 +503,54 @@ collector_value <- function(x, ...) {
 }
 
 #' @export
-collector_value.collector_character <- function(x, ...) { character() }
+collector_value.collector_character <- function(x, ...) {
+  character()
+}
 
 #' @export
-collector_value.collector_double <- function(x, ...) { numeric() }
+collector_value.collector_double <- function(x, ...) {
+  numeric()
+}
 
 #' @export
-collector_value.collector_integer <- function(x, ...) { integer() }
+collector_value.collector_integer <- function(x, ...) {
+  integer()
+}
 
 #' @export
-collector_value.collector_numeric <- function(x, ...) { numeric() }
+collector_value.collector_numeric <- function(x, ...) {
+  numeric()
+}
 
 #' @export
-collector_value.collector_logical <- function(x, ...) { logical() }
+collector_value.collector_logical <- function(x, ...) {
+  logical()
+}
 
 #' @export
-collector_value.collector_factor <- function(x, ...) { factor() }
+collector_value.collector_factor <- function(x, ...) {
+  factor()
+}
 
 #' @export
-collector_value.collector_datetime <- function(x, ...) { as.POSIXct(double()) }
+collector_value.collector_datetime <- function(x, ...) {
+  as.POSIXct(double())
+}
 
 #' @export
-collector_value.collector_date <- function(x, ...) { as.Date(double()) }
+collector_value.collector_date <- function(x, ...) {
+  as.Date(double())
+}
 
 #' @export
-collector_value.collector_time <- function(x, ...) { hms::hms() }
+collector_value.collector_time <- function(x, ...) {
+  hms::hms()
+}
 
 #' @export
-collector_value.collector_guess <- function(x, ...) { character() }
+collector_value.collector_guess <- function(x, ...) {
+  character()
+}
 
 #' @importFrom crayon silver
 #' @importFrom glue double_quote
@@ -534,11 +560,13 @@ summary.col_spec <- function(object, width = getOption("width"), locale = defaul
     return(invisible(object))
   }
 
-  type_map <- c("collector_character" = "chr", "collector_double" = "dbl",
+  type_map <- c(
+    "collector_character" = "chr", "collector_double" = "dbl",
     "collector_integer" = "int", "collector_num" = "num", "collector_logical" = "lgl",
     "collector_factor" = "fct", "collector_datetime" = "dttm", "collector_date" = "date",
     "collector_time" = "time",
-    "collector_guess" = "???")
+    "collector_guess" = "???"
+  )
 
   col_types <- vapply(object$cols, function(x) class(x)[[1]], character(1))
   col_types <- droplevels(factor(type_map[col_types], levels = unname(type_map)))
@@ -560,13 +588,13 @@ summary.col_spec <- function(object, width = getOption("width"), locale = defaul
   txt <- glue::glue(
     .transformer = collapse_transformer(sep = "\n"),
     entries = glue::glue("{format(types)} {counts}: {columns}"),
-
     '
     {if (nzchar(delim)) paste(bold("Delimiter:"), double_quote(delim)) else ""}
     {entries*}
 
 
-    ')
+    '
+  )
   cli_block(class = "vroom_spec_message", {
     cli::cli_h1("Column specification")
     cli::cli_verbatim(txt)

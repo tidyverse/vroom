@@ -33,11 +33,10 @@
 #' # vroom_write(mtcars, "mtcars.tsv.gz")
 #' # vroom_write(mtcars, "mtcars.tsv.bz2")
 #' # vroom_write(mtcars, "mtcars.tsv.xz")
-vroom_write <- function(x, file, delim = '\t', eol = "\n", na = "NA", col_names = !append,
-  append = FALSE, quote = c("needed", "all", "none"), escape =
-    c("double", "backslash", "none"), bom = FALSE, num_threads =
-    vroom_threads(), progress = vroom_progress(), path = deprecated()) {
-
+vroom_write <- function(x, file, delim = "\t", eol = "\n", na = "NA", col_names = !append,
+                        append = FALSE, quote = c("needed", "all", "none"), escape =
+                          c("double", "backslash", "none"), bom = FALSE, num_threads =
+                          vroom_threads(), progress = vroom_progress(), path = deprecated()) {
   if (lifecycle::is_present(path)) {
     file <- path
     lifecycle::deprecate_soft(
@@ -77,13 +76,17 @@ vroom_write <- function(x, file, delim = '\t', eol = "\n", na = "NA", col_names 
   x <- vroom_convert(x)
 
   if (inherits(file, "connection")) {
-    vroom_write_connection_(x, file, delim, eol, na_str = na, col_names = col_names,
+    vroom_write_connection_(x, file, delim, eol,
+      na_str = na, col_names = col_names,
       options = opts, num_threads = num_threads, progress = progress, buf_lines = buf_lines,
-      is_stdout = file == stdout(), append = append)
+      is_stdout = file == stdout(), append = append
+    )
   } else {
-    vroom_write_(x, file, delim, eol, na_str = na, col_names = col_names,
+    vroom_write_(x, file, delim, eol,
+      na_str = na, col_names = col_names,
       append = append, options = opts,
-      num_threads = num_threads, progress = progress, buf_lines = buf_lines)
+      num_threads = num_threads, progress = progress, buf_lines = buf_lines
+    )
   }
 
   invisible(input)
@@ -96,19 +99,22 @@ get_vroom_write_opts <- function(quote, escape, bom) {
     v_opts[paste0("quote_", quote)],
     bitwOr(
       v_opts[paste0("escape_", escape)],
-      if (bom) v_opts["bom"] else 0)
+      if (bom) v_opts["bom"] else 0
+    )
   )
 }
 
-vroom_write_opts <- function() c(
-  "quote_none" = 0L,
-  "escape_none" = 0L,
-  "quote_needed" = 1L,
-  "quote_all" = 2L,
-  "escape_double" = 4L,
-  "escape_backslash" = 8L,
-  "bom" = 16L
-)
+vroom_write_opts <- function() {
+  c(
+    "quote_none" = 0L,
+    "escape_none" = 0L,
+    "quote_needed" = 1L,
+    "quote_all" = 2L,
+    "escape_double" = 4L,
+    "escape_backslash" = 8L,
+    "bom" = 16L
+  )
+}
 
 #' Convert a data frame to a delimited string
 #'
@@ -123,7 +129,6 @@ vroom_format <- function(x, delim = "\t", eol = "\n", na = "NA", col_names = TRU
                          quote = c("needed", "all", "none"),
                          bom = FALSE,
                          num_threads = vroom_threads()) {
-
   quote <- match.arg(quote)
   escape <- match.arg(escape)
 
@@ -133,8 +138,10 @@ vroom_format <- function(x, delim = "\t", eol = "\n", na = "NA", col_names = TRU
   buf_lines <- max(as.integer(Sys.getenv("VROOM_WRITE_BUFFER_LINES", nrow(x) / 100 / num_threads)), 1)
 
   x[] <- lapply(x, output_column)
-  vroom_format_(x, delim = delim, eol = eol, na_str = na, col_names = col_names,
-                append = FALSE, options = opts, num_threads = vroom_threads(), progress = vroom_progress(), buf_lines = buf_lines)
+  vroom_format_(x,
+    delim = delim, eol = eol, na_str = na, col_names = col_names,
+    append = FALSE, options = opts, num_threads = vroom_threads(), progress = vroom_progress(), buf_lines = buf_lines
+  )
 }
 
 #' Write lines to a file
@@ -148,9 +155,10 @@ vroom_write_lines <- function(x, file, eol = "\n", na = "NA", append = FALSE, nu
   class(x) <- "data.frame"
   attr(x, "row.names") <- c(NA_integer_, -length(x[[1]]))
 
-  vroom_write(x, file = file, delim = "", col_names = FALSE, eol = eol, na =
-    na, append = append, quote = "none", escape = "none", num_threads =
-    num_threads
+  vroom_write(x,
+    file = file, delim = "", col_names = FALSE, eol = eol, na =
+      na, append = append, quote = "none", escape = "none", num_threads =
+      num_threads
   )
 }
 
@@ -176,7 +184,9 @@ output_column <- function(x) {
 
 #' @export
 output_column.default <- function(x) {
-  if (!is.object(x)) return(x)
+  if (!is.object(x)) {
+    return(x)
+  }
   as.character(x)
 }
 

@@ -52,11 +52,11 @@ test_that("respects the trim_ws argument with empty fields", {
 test_that("skipping column doesn't pad col_names", {
   x <- I("1 2 3\n4 5 6")
 
-  out1 <- vroom_fwf(x, fwf_empty(x), col_types = 'd-d')
+  out1 <- vroom_fwf(x, fwf_empty(x), col_types = "d-d")
   expect_named(out1, c("X1", "X3"))
 
   names <- c("a", "b", "c")
-  out2 <- vroom_fwf(x, fwf_empty(x, col_names = names), col_types = 'd-d')
+  out2 <- vroom_fwf(x, fwf_empty(x, col_names = names), col_types = "d-d")
   expect_named(out2, c("a", "c"))
 })
 
@@ -78,8 +78,10 @@ test_that("fwf_empty can skip lines", {
 })
 
 test_that("passing \"\" to vroom_fwf's 'na' option", {
-  expect_equal(vroom_fwf(I("foobar\nfoo   "), fwf_widths(c(3, 3)), na = "", col_types = list())[[2]],
-               c("bar", NA))
+  expect_equal(
+    vroom_fwf(I("foobar\nfoo   "), fwf_widths(c(3, 3)), na = "", col_types = list())[[2]],
+    c("bar", NA)
+  )
 })
 
 test_that("ragged last column expanded with NA", {
@@ -93,32 +95,32 @@ test_that("ragged last column expanded with NA", {
 #})
 
 test_that("read all columns with positions, non ragged", {
-  col_pos <- fwf_positions(c(1,3,6),c(2,5,6))
+  col_pos <- fwf_positions(c(1, 3, 6), c(2, 5, 6))
   x <- vroom_fwf(I("12345A\n67890BBBBBBBBB\n54321C"), col_positions = col_pos, col_types = list())
   expect_equal(x$X3, c("A", "B", "C"))
 })
 
 test_that("read subset columns with positions", {
-  col_pos <- fwf_positions(c(1,3),c(2,5))
+  col_pos <- fwf_positions(c(1, 3), c(2, 5))
   x <- vroom_fwf(I("12345A\n67890BBBBBBBBB\n54321C"), col_positions = col_pos, col_types = list())
   expect_equal(x$X1, c(12, 67, 54))
   expect_equal(x$X2, c(345, 890, 321))
 })
 
 test_that("read columns with positions, ragged", {
-  col_pos <- fwf_positions(c(1,3,6),c(2,5,NA))
+  col_pos <- fwf_positions(c(1, 3, 6), c(2, 5, NA))
   x <- vroom_fwf(I("12345A\n67890BBBBBBBBB\n54321C"), col_positions = col_pos, col_types = list())
   expect_equal(x$X1, c(12, 67, 54))
   expect_equal(x$X2, c(345, 890, 321))
-  expect_equal(x$X3, c('A', 'BBBBBBBBB', 'C'))
+  expect_equal(x$X3, c("A", "BBBBBBBBB", "C"))
 })
 
 test_that("read columns with width, ragged", {
-  col_pos <- fwf_widths(c(2,3,NA))
+  col_pos <- fwf_widths(c(2, 3, NA))
   x <- vroom_fwf(I("12345A\n67890BBBBBBBBB\n54321C"), col_positions = col_pos, col_types = list())
   expect_equal(x$X1, c(12, 67, 54))
   expect_equal(x$X2, c(345, 890, 321))
-  expect_equal(x$X3, c('A', 'BBBBBBBBB', 'C'))
+  expect_equal(x$X3, c("A", "BBBBBBBBB", "C"))
 })
 
 #test_that("vroom_fwf returns an empty data.frame on an empty file", {
@@ -163,10 +165,10 @@ test_that("read columns with width, ragged", {
 #})
 
 test_that("fwf spec can overlap", {
-    x <- vroom_fwf(I("2015a\n2016b"), fwf_positions(c(1, 3, 5), c(4, 4, 5)), col_types = list())
-    expect_equal(x$X1, c(2015, 2016))
-    expect_equal(x$X2, c(15, 16))
-    expect_equal(x$X3, c("a", "b"))
+  x <- vroom_fwf(I("2015a\n2016b"), fwf_positions(c(1, 3, 5), c(4, 4, 5)), col_types = list())
+  expect_equal(x$X1, c(2015, 2016))
+  expect_equal(x$X2, c(15, 16))
+  expect_equal(x$X3, c("a", "b"))
 })
 
 # fwf_cols
@@ -187,11 +189,13 @@ test_that("fwf_cols throws error when arguments are not length 1 or 2", {
 })
 
 test_that("fwf_cols works with unnamed columns", {
-  expect_equal(ignore_attr = TRUE,
+  expect_equal(
+    ignore_attr = TRUE,
     fwf_cols(c(1, 2), c(9, 12), c(4, 6)),
     fwf_positions(c(1L, 9L, 4L), c(2L, 12L, 6L), c("X1", "X2", "X3"))
   )
-  expect_equal(ignore_attr = TRUE,
+  expect_equal(
+    ignore_attr = TRUE,
     fwf_cols(a = c(1, 2), c(9, 12), c(4, 6)),
     fwf_positions(c(1L, 9L, 4L), c(2L, 12L, 6L), c("a", "X2", "X3"))
   )

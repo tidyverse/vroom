@@ -56,7 +56,8 @@ test_that("vroom works with many files", {
         y = rnorm(10),
       ),
       file.path(dir, paste0(i, ".csv")),
-    delim = ",")
+      delim = ","
+    )
   }
 
   files <- list.files(dir, pattern = ".*[.]csv", full.names = TRUE)
@@ -81,7 +82,8 @@ test_that("vroom works with many connections", {
         y = rnorm(10),
       ),
       file.path(dir, paste0(i, ".csv.gz")),
-    delim = ",")
+      delim = ","
+    )
   }
 
   files <- list.files(dir, pattern = ".*[.]csv[.]gz", full.names = TRUE)
@@ -93,19 +95,16 @@ test_that("vroom works with many connections", {
 })
 
 test_that("vroom errors if numbers of columns are inconsistent", {
-
   files <- test_path("multi-file", c("foo", "baz"))
   expect_error(vroom::vroom(files, col_types = list()), "must all have")
 })
 
 test_that("vroom errors if column names are inconsistent", {
-
   files <- test_path("multi-file", c("foo", "bar"))
   expect_error(vroom::vroom(files, col_types = list()), "consistent column names")
 })
 
 test_that("vroom works if a file contains no data", {
-
   files <- test_path("multi-file", c("foo", "qux"))
   res <- vroom(files, col_types = list())
   expect_equal(res, tibble::tibble(A = 1, B = 2))

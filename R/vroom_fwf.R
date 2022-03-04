@@ -37,7 +37,6 @@ vroom_fwf <- function(file,
                       progress = vroom_progress(),
                       show_col_types = NULL,
                       .name_repair = "unique") {
-
   verify_fwf_positions(col_positions)
 
   if (!rlang::is_missing(altrep_opts)) {
@@ -80,7 +79,8 @@ vroom_fwf <- function(file,
     skip_empty_rows = skip_empty_rows,
     n_max = n_max, num_threads = num_threads,
     altrep = vroom_altrep(altrep), locale = locale,
-    progress = progress)
+    progress = progress
+  )
 
   out <- tibble::as_tibble(out, .name_repair = .name_repair)
 
@@ -101,7 +101,6 @@ vroom_fwf <- function(file,
 #' @param n Number of lines the tokenizer will read to determine file structure. By default
 #'      it is set to 100.
 fwf_empty <- function(file, skip = 0, col_names = NULL, comment = "", n = 100L) {
-
   file <- standardise_one_path(standardise_path(file)[[1]])
 
   if (inherits(file, "connection")) {
@@ -135,7 +134,6 @@ fwf_widths <- function(widths, col_names = NULL) {
 #' @param start,end Starting and ending (inclusive) positions of each field.
 #'    Use NA as last end field when reading a ragged fwf file.
 fwf_positions <- function(start, end = NULL, col_names = NULL) {
-
   stopifnot(length(start) == length(end))
   col_names <- fwf_col_names(col_names, length(start))
 
@@ -165,7 +163,8 @@ fwf_cols <- function(...) {
     fwf_widths(as.integer(x[1, ]), names(x))
   } else {
     stop("All variables must have either one (width) two (start, end) values.",
-         call. = FALSE)
+      call. = FALSE
+    )
   }
 }
 

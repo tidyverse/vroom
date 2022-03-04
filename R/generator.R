@@ -28,7 +28,6 @@
 #' gen_datetime(4)
 #' @export
 gen_character <- function(n, min = 5, max = 25, values = c(letters, LETTERS, 0:9), ...) {
-
   if (min > max) {
     max <- min
   }
@@ -109,7 +108,7 @@ gen_logical <- function(n, ...) {
 }
 
 all_col_types <- tibble::tribble(
-  ~ type, ~ class,
+  ~type, ~class,
   "character", "character",
   "factor", "character",
   "double", "numeric",
@@ -149,7 +148,6 @@ all_col_types <- tibble::tribble(
 #' dbl_tbl2
 #' @export
 gen_tbl <- function(rows, cols = NULL, col_types = NULL, locale = default_locale(), missing = 0) {
-
   if (is.null(cols) && is.null(col_types)) {
     stop("One of `cols` or `col_types` must be set", call. = FALSE)
   }

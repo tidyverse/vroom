@@ -1,7 +1,6 @@
 mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
 
 test_that("vroom errors if the file does not exist", {
-
   tf <- tempfile()
 
   expect_error(vroom(tf, col_types = list()), "does not exist")
