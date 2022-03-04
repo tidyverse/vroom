@@ -70,7 +70,7 @@ LinkingTo:
 VignetteBuilder: 
     knitr
 Config/Needs/website:
-    nycflights13, 
+    nycflights13,
     tidyverse/tidytemplate
 Config/testthat/edition: 3
 Config/testthat/parallel: false
