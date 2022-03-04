@@ -185,6 +185,7 @@ input_file
 vroom(input_file)
 # You can also use paths directly
 # vroom("mtcars.csv")
+
 \dontrun{
 # Including remote paths
 vroom("https://github.com/r-lib/vroom/raw/main/inst/extdata/mtcars.csv")
