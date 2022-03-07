@@ -2,8 +2,8 @@
 % Please edit documentation in R/vroom-package.R
 \docType{package}
 \name{vroom-package}
-\alias{vroom}
 \alias{vroom-package}
+\alias{_PACKAGE}
 \title{vroom: Read and Write Rectangular Text Data Quickly}
 \description{
 \if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}

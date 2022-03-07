@@ -1,4 +1,5 @@
 #' @keywords internal
+#' @aliases vroom-package
 "_PACKAGE"
 
 ## usethis namespace: start
