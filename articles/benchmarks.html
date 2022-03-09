@@ -48,7 +48,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div id="navbar" class="collapse navbar-collapse ms-2">
+    <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item">
   <a class="nav-link" href="../articles/vroom.html">Get started</a>
@@ -90,7 +90,11 @@
     
   </div>
 </nav><div class="container template-article" id="container">
-<script src="benchmarks_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+
+
+
+
+<div class="row">
   <main id="main"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Vroom Benchmarks</h1>
             
@@ -104,22 +108,22 @@
 <p>vroom is a new approach to reading delimited and fixed width data into R.</p>
 <p>It stems from the observation that when parsing files reading data from disk and finding the delimiters is generally not the main bottle neck. Instead (re)-allocating memory and parsing the values into R data types (particularly for characters) takes the bulk of the time.</p>
 <p>Therefore you can obtain very rapid input by first performing a fast indexing step and then using the Altrep framework available in R versions 3.5+ to access the values in a lazy / delayed fashion.</p>
-<div class="section level2">
-<h2 id="how-it-works">How it works<a class="anchor" aria-label="anchor" href="#how-it-works"></a>
-</h2>
+<div class="section level3">
+<h3 id="how-it-works">How it works<a class="anchor" aria-label="anchor" href="#how-it-works"></a>
+</h3>
 <p>The initial reading of the file simply records the locations of each individual record, the actual values are not read into R. Altrep vectors are created for each column in the data which hold a pointer to the index and the memory mapped file. When these vectors are indexed the value is read from the memory mapping.</p>
 <p>This means initial reading is extremely fast, in the real world dataset below it is ~ 1/4 the time of the multi-threaded <code>data.table::fread()</code>. Sampling operations are likewise extremely fast, as only the data actually included in the sample is read. This means things like the tibble print method, calling <code><a href="https://rdrr.io/r/utils/head.html" class="external-link">head()</a></code>, <code><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail()</a></code> <code>x[sample(), ]</code> etc. have very low overhead. Filtering also can be fast, only the columns included in the filter selection have to be fully read and only the data in the filtered rows needs to be read from the remaining columns. Grouped aggregations likewise only need to read the grouping variables and the variables aggregated.</p>
 <p>Once a particular vector is fully materialized the speed for all subsequent operations should be identical to a normal R vector.</p>
 <p>This approach potentially also allows you to work with data that is larger than memory. As long as you are careful to avoid materializing the entire dataset at once it can be efficiently queried and subset.</p>
 </div>
-<div class="section level1">
-<h1 id="reading-delimited-files">Reading delimited files<a class="anchor" aria-label="anchor" href="#reading-delimited-files"></a>
-</h1>
+<div class="section level2">
+<h2 id="reading-delimited-files">Reading delimited files<a class="anchor" aria-label="anchor" href="#reading-delimited-files"></a>
+</h2>
 <p>The following benchmarks all measure reading delimited files of various sizes and data types. Because vroom delays reading the benchmarks also do some manipulation of the data afterwards to try and provide a more realistic performance comparison.</p>
 <p>Because the <code>read.delim</code> results are so much slower than the others they are excluded from the plots, but are retained in the tables.</p>
-<div class="section level2">
-<h2 id="taxi-trip-dataset">Taxi Trip Dataset<a class="anchor" aria-label="anchor" href="#taxi-trip-dataset"></a>
-</h2>
+<div class="section level3">
+<h3 id="taxi-trip-dataset">Taxi Trip Dataset<a class="anchor" aria-label="anchor" href="#taxi-trip-dataset"></a>
+</h3>
 <p>This real world dataset is from Freedom of Information Law (FOIL) Taxi Trip Data from the NYC Taxi and Limousine Commission 2013, originally posted at <a href="https://chriswhong.com/open-data/foil_nyc_taxi/" class="external-link uri">https://chriswhong.com/open-data/foil_nyc_taxi/</a>. It is also hosted on <a href="https://archive.org/details/nycTaxiTripData2013" class="external-link">archive.org</a>.</p>
 <p>The first table trip_fare_1.csv is 1.55G in size.</p>
 <pre><code><span class="co">#&gt; Observations: 14,776,615</span>
@@ -135,9 +139,9 @@
 <span class="co">#&gt; $ tip_amount      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...</span>
 <span class="co">#&gt; $ tolls_amount    &lt;dbl&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.8, 0.0, 0...</span>
 <span class="co">#&gt; $ total_amount    &lt;dbl&gt; 7.0, 7.0, 7.0, 6.0, 10.5, 10.0, 6.5, 39.3, 7.0...</span></code></pre>
-<div class="section level3">
-<h3 id="taxi-benchmarks">Taxi Benchmarks<a class="anchor" aria-label="anchor" href="#taxi-benchmarks"></a>
-</h3>
+<div class="section level4">
+<h4 id="taxi-benchmarks">Taxi Benchmarks<a class="anchor" aria-label="anchor" href="#taxi-benchmarks"></a>
+</h4>
 <p>code: <a href="https://github.com/r-lib/vroom/tree/main/inst/bench/taxi" class="external-link">bench/taxi</a></p>
 <p>All benchmarks were run on a Amazon EC2 <a href="https://aws.amazon.com/ec2/instance-types/m5/" class="external-link">m5.4xlarge</a> instance with 16 vCPUs and an <a href="https://aws.amazon.com/ebs/" class="external-link">EBS</a> volume type.</p>
 <p>The benchmarks labeled <code>vroom_base</code> uses <code>vroom</code> with base functions for manipulation. <code>vroom_dplyr</code> uses <code>vroom</code> to read the file and dplyr functions to manipulate. <code>data.table</code> uses <code>fread()</code> to read the file and <code>data.table</code> functions to manipulate and <code>readr</code> uses <code>readr</code> to read the file and <code>dplyr</code> to manipulate. By default vroom only uses Altrep for character vectors, these are labeled <code>vroom(altrep: normal)</code>. The benchmarks labeled <code>vroom(altrep: full)</code> instead use Altrep vectors for all supported types and <code>vroom(altrep: none)</code> disable Altrep entirely.</p>
@@ -423,15 +427,15 @@ TRUE
 <p>(<em>N.B. Rcpp used in the dplyr implementation fully materializes all the Altrep numeric vectors when using <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter()</a></code> or <code>sample_n()</code>, which is why the first of these cases have additional overhead when using full Altrep.</em>).</p>
 </div>
 </div>
-<div class="section level2">
-<h2 id="all-numeric-data">All numeric data<a class="anchor" aria-label="anchor" href="#all-numeric-data"></a>
-</h2>
+<div class="section level3">
+<h3 id="all-numeric-data">All numeric data<a class="anchor" aria-label="anchor" href="#all-numeric-data"></a>
+</h3>
 <p>All numeric data is really a worst case scenario for vroom. The index takes about as much memory as the parsed data. Also because parsing doubles can be done quickly in parallel and text representations of doubles are only ~25 characters at most there isn’t a great deal of savings for delayed parsing.</p>
 <p>For these reasons (and because the data.table implementation is very fast) vroom is a bit slower than fread for pure numeric data.</p>
 <p>However because vroom is multi-threaded it is a bit quicker than readr and read.delim for this type of data.</p>
-<div class="section level3">
-<h3 id="long">Long<a class="anchor" aria-label="anchor" href="#long"></a>
-</h3>
+<div class="section level4">
+<h4 id="long">Long<a class="anchor" aria-label="anchor" href="#long"></a>
+</h4>
 <p>code: <a href="https://github.com/r-lib/vroom/tree/main/inst/bench/all_numeric-long" class="external-link">bench/all_numeric-long</a></p>
 <img src="benchmarks_files/figure-html/unnamed-chunk-3-1.png" width="960"><table class="table">
 <thead><tr>
@@ -739,9 +743,9 @@ data.table
 </tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="wide">Wide<a class="anchor" aria-label="anchor" href="#wide"></a>
-</h3>
+<div class="section level4">
+<h4 id="wide">Wide<a class="anchor" aria-label="anchor" href="#wide"></a>
+</h4>
 <p>code: <a href="https://github.com/r-lib/vroom/tree/main/inst/bench/all_numeric-wide" class="external-link">bench/all_numeric-wide</a></p>
 <img src="benchmarks_files/figure-html/unnamed-chunk-4-1.png" width="960"><table class="table">
 <thead><tr>
@@ -1050,14 +1054,14 @@ data.table
 </table>
 </div>
 </div>
-<div class="section level2">
-<h2 id="all-character-data">All character data<a class="anchor" aria-label="anchor" href="#all-character-data"></a>
-</h2>
+<div class="section level3">
+<h3 id="all-character-data">All character data<a class="anchor" aria-label="anchor" href="#all-character-data"></a>
+</h3>
 <p>code: <a href="https://github.com/r-lib/vroom/tree/main/inst/bench/all_character-long" class="external-link">bench/all_character-long</a></p>
 <p>All character data is a best case scenario for vroom when using Altrep, as it takes full advantage of the lazy reading.</p>
-<div class="section level3">
-<h3 id="long-1">Long<a class="anchor" aria-label="anchor" href="#long-1"></a>
-</h3>
+<div class="section level4">
+<h4 id="long-1">Long<a class="anchor" aria-label="anchor" href="#long-1"></a>
+</h4>
 <img src="benchmarks_files/figure-html/unnamed-chunk-5-1.png" width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -1326,9 +1330,9 @@ TRUE
 </tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="wide-1">Wide<a class="anchor" aria-label="anchor" href="#wide-1"></a>
-</h3>
+<div class="section level4">
+<h4 id="wide-1">Wide<a class="anchor" aria-label="anchor" href="#wide-1"></a>
+</h4>
 <p>code: <a href="https://github.com/r-lib/vroom/tree/main/inst/bench/all_character-wide" class="external-link">bench/all_character-wide</a></p>
 <img src="benchmarks_files/figure-html/unnamed-chunk-6-1.png" width="960"><table class="table">
 <thead><tr>
@@ -1600,9 +1604,9 @@ TRUE
 </div>
 </div>
 </div>
-<div class="section level1">
-<h1 id="reading-multiple-delimited-files">Reading multiple delimited files<a class="anchor" aria-label="anchor" href="#reading-multiple-delimited-files"></a>
-</h1>
+<div class="section level2">
+<h2 id="reading-multiple-delimited-files">Reading multiple delimited files<a class="anchor" aria-label="anchor" href="#reading-multiple-delimited-files"></a>
+</h2>
 <p>code: <a href="https://github.com/r-lib/vroom/tree/main/inst/bench/taxi_multiple" class="external-link">bench/taxi_multiple</a></p>
 <p>The benchmark reads all 12 files in the taxi trip fare data, totaling 173,179,759 rows and 11 columns for a total file size of 18.4G.</p>
 <img src="benchmarks_files/figure-html/unnamed-chunk-8-1.png" width="960"><table class="table">
@@ -1836,18 +1840,18 @@ data.table
 </tbody>
 </table>
 </div>
-<div class="section level1">
-<h1 id="reading-fixed-width-files">Reading fixed width files<a class="anchor" aria-label="anchor" href="#reading-fixed-width-files"></a>
-</h1>
 <div class="section level2">
-<h2 id="united-states-census-5-percent-public-use-microdata-sample-files">United States Census 5-Percent Public Use Microdata Sample files<a class="anchor" aria-label="anchor" href="#united-states-census-5-percent-public-use-microdata-sample-files"></a>
+<h2 id="reading-fixed-width-files">Reading fixed width files<a class="anchor" aria-label="anchor" href="#reading-fixed-width-files"></a>
 </h2>
+<div class="section level3">
+<h3 id="united-states-census-5-percent-public-use-microdata-sample-files">United States Census 5-Percent Public Use Microdata Sample files<a class="anchor" aria-label="anchor" href="#united-states-census-5-percent-public-use-microdata-sample-files"></a>
+</h3>
 <p>This fixed width dataset contains individual records of the characteristics of a 5 percent sample of people and housing units from the year 2000 and is freely available at <a href="https://web.archive.org/web/20150908055439/https://www2.census.gov/census_2000/datasets/PUMS/FivePercent/California/all_California.zip" class="external-link uri">https://web.archive.org/web/20150908055439/https://www2.census.gov/census_2000/datasets/PUMS/FivePercent/California/all_California.zip</a>. The data is split into files by state, and the state of California was used in this benchmark.</p>
 <p>The data totals 2,342,339 rows and 37 columns with a total file size of 677M.</p>
 </div>
-<div class="section level2">
-<h2 id="census-data-benchmarks">Census data benchmarks<a class="anchor" aria-label="anchor" href="#census-data-benchmarks"></a>
-</h2>
+<div class="section level3">
+<h3 id="census-data-benchmarks">Census data benchmarks<a class="anchor" aria-label="anchor" href="#census-data-benchmarks"></a>
+</h3>
 <p>code: <a href="https://github.com/r-lib/vroom/tree/main/inst/bench/fwf" class="external-link">bench/fwf</a></p>
 <img src="benchmarks_files/figure-html/unnamed-chunk-10-1.png" width="960"><table class="table">
 <thead><tr>
@@ -2081,9 +2085,9 @@ TRUE
 </table>
 </div>
 </div>
-<div class="section level1">
-<h1 id="writing-delimited-files">Writing delimited files<a class="anchor" aria-label="anchor" href="#writing-delimited-files"></a>
-</h1>
+<div class="section level2">
+<h2 id="writing-delimited-files">Writing delimited files<a class="anchor" aria-label="anchor" href="#writing-delimited-files"></a>
+</h2>
 <p>code: <a href="https://github.com/r-lib/vroom/tree/main/inst/bench/taxi_writing" class="external-link">bench/taxi_writing</a></p>
 <p>The benchmarks write out the taxi trip dataset in a few different ways.</p>
 <ul>
@@ -2182,9 +2186,9 @@ uncompressed
 </tr>
 </tbody>
 </table>
-<div class="section level2">
-<h2 id="session-and-package-information">Session and package information<a class="anchor" aria-label="anchor" href="#session-and-package-information"></a>
-</h2>
+<div class="section level3">
+<h3 id="session-and-package-information">Session and package information<a class="anchor" aria-label="anchor" href="#session-and-package-information"></a>
+</h3>
 <table class="table">
 <thead><tr class="header">
 <th align="left">package</th>
@@ -2242,7 +2246,7 @@ uncompressed
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
   </div></footer>
