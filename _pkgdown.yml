@@ -6,8 +6,6 @@ template:
   includes:
     in_header: |
       <script defer data-domain="vroom.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
-  params:
-    ganalytics: UA-115082821-1
 
 development:
   mode: auto

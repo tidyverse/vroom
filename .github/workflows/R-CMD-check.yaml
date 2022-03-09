@@ -50,10 +50,6 @@ jobs:
           sudo locale-gen en_US
           echo "LC_ALL=en_US" >> $GITHUB_ENV
 
-      - name: Install XQuartz on macOS
-        if: runner.os == 'macOS'
-        run: brew install --cask xquartz
-
       - uses: r-lib/actions/setup-pandoc@v2
 
       - uses: r-lib/actions/setup-r@v2
@@ -62,19 +58,11 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: Install system dependencies-2
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get install -y libarchive-dev
-
-      - name: Install system dependencies-3
-        if: runner.os == 'macOS'
-        run: |
-          brew install libarchive
-
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
