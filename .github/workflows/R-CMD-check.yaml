@@ -16,7 +16,7 @@ jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }}) ${{ matrix.config.locale }}
 
     strategy:
       fail-fast: false
@@ -35,6 +35,7 @@ jobs:
           - {os: ubuntu-18.04,   r: 'oldrel-2'}
           - {os: ubuntu-18.04,   r: 'oldrel-3'}
           - {os: ubuntu-18.04,   r: 'oldrel-4'}
+          - {os: ubuntu-18.04,   r: 'release', cran: "https://demo.rstudiopm.com/all/__linux__/bionic/latest", locale: 'en_US'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -42,6 +43,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Set locale
+        if: matrix.config.locale == 'en_US'
+        run: |
+          sudo locale-gen en_US
+          echo "LC_ALL=en_US" >> $GITHUB_ENV
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -57,5 +64,3 @@ jobs:
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
-        with:
-          upload-snapshots: true
