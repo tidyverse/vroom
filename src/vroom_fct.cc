@@ -75,6 +75,8 @@ cpp11::integers read_fct_implicit(vroom_vec_info* info, bool include_na) {
           out[i++] = na_level;
           level_map[str.str()] = na_level;
         }
+      } else if (!include_na && matches(str, nas)) {
+        out[i++] = NA_INTEGER;
       } else {
         out[i++] = max_level;
         level_map[str.str()] = max_level++;
