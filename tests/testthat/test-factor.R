@@ -62,7 +62,7 @@ test_that("NAs included in levels if desired", {
 
   test_vroom("NA\nb\na\n", col_names = FALSE,
     col_types = list(X1 = col_factor(levels = NULL, include_na = FALSE)),
-    equals = tibble::tibble(X1 = factor(c("NA", "b", "a"), levels = c("NA", "b", "a")))
+    equals = tibble::tibble(X1 = factor(c(NA, "b", "a"), levels = c("b", "a")))
   )
 
   test_vroom("NA\nb\na\n", col_names = FALSE,
