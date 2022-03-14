@@ -159,3 +159,26 @@ test_that("results are correct even with quoted values", {
     factor(c("Sun", "Sat", "Sat"), levels = c("Sun", "Sat"))
   )
 })
+
+test_that("NAs are correctly encoded and not included in levels unless desired", {
+  test_vroom("unknown\nb\na\n", col_names = FALSE,
+    col_types = list(X1 = col_factor(levels = NULL, include_na = FALSE)),
+    na = "unknown",
+    equals = tibble::tibble(X1 = factor(c(NA, "b", "a"), levels = c("b", "a"), exclude = NULL))
+  )
+  test_vroom("unknown\nb\na\nmissing\n", col_names = FALSE,
+    col_types = list(X1 = col_factor(levels = NULL, include_na = FALSE)),
+    na = c("unknown", "missing"),
+    equals = tibble::tibble(X1 = factor(c(NA, "b", "a", NA), levels = c("b", "a"), exclude = NULL))
+  )
+  test_vroom("unknown\nb\na\n", col_names = FALSE,
+    col_types = list(X1 = col_factor(levels = NULL, include_na = TRUE)),
+    na = "unknown",
+    equals = tibble::tibble(X1 = factor(c(NA, "b", "a"), levels = c(NA, "b", "a"), exclude = NULL))
+  )
+  test_vroom("unknown\nb\na\nmissing\n", col_names = FALSE,
+    col_types = list(X1 = col_factor(levels = NULL, include_na = TRUE)),
+    na = c("unknown", "missing"),
+    equals = tibble::tibble(X1 = factor(c(NA, "b", "a", NA), levels = c(NA, "b", "a"), exclude = NULL))
+  )
+})
