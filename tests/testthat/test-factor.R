@@ -62,7 +62,7 @@ test_that("NAs included in levels if desired", {
 
   test_vroom("NA\nb\na\n", col_names = FALSE,
     col_types = list(X1 = col_factor(levels = NULL, include_na = FALSE)),
-    equals = tibble::tibble(X1 = factor(c("NA", "b", "a"), levels = c("NA", "b", "a")))
+    equals = tibble::tibble(X1 = factor(c(NA, "b", "a"), levels = c("b", "a")))
   )
 
   test_vroom("NA\nb\na\n", col_names = FALSE,
@@ -157,5 +157,28 @@ test_that("results are correct even with quoted values", {
   expect_equal(
     vroom(I('day\n"Sun"\n"Sat"\n"Sat"'), altrep = FALSE, col_types = "f", delim = ",")$day,
     factor(c("Sun", "Sat", "Sat"), levels = c("Sun", "Sat"))
+  )
+})
+
+test_that("NAs are correctly encoded and not included in levels unless desired", {
+  test_vroom("X\nunknown\nb\na\n",
+    col_types = list(X = col_factor(levels = NULL, include_na = FALSE)),
+    na = "unknown",
+    equals = tibble::tibble(X = factor(c(NA, "b", "a"), levels = c("b", "a"), exclude = NULL))
+  )
+  test_vroom("X\nunknown\nb\na\nmissing\n",
+    col_types = list(X = col_factor(levels = NULL, include_na = FALSE)),
+    na = c("unknown", "missing"),
+    equals = tibble::tibble(X = factor(c(NA, "b", "a", NA), levels = c("b", "a"), exclude = NULL))
+  )
+  test_vroom("X\nunknown\nb\na\n",
+    col_types = list(X = col_factor(levels = NULL, include_na = TRUE)),
+    na = "unknown",
+    equals = tibble::tibble(X = factor(c(NA, "b", "a"), levels = c(NA, "b", "a"), exclude = NULL))
+  )
+  test_vroom("X\nunknown\nb\na\nmissing\n",
+    col_types = list(X = col_factor(levels = NULL, include_na = TRUE)),
+    na = c("unknown", "missing"),
+    equals = tibble::tibble(X = factor(c(NA, "b", "a", NA), levels = c(NA, "b", "a"), exclude = NULL))
   )
 })
