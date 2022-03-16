@@ -4,6 +4,8 @@
 
 * `vroom_progress()` uses `rlang::is_interactive()` instead of `base::interactive()`.
 
+* Fix `NA` encoding in factor columns with no explicit levels (#396).
+
 # vroom 1.5.7
 
 * Jenny Bryan is now the official maintainer.
