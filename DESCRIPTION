@@ -28,7 +28,7 @@ Depends:
     R (>= 3.4)
 Imports: 
     bit64,
-    cli,
+    cli (>= 3.2.0),
     crayon,
     glue,
     hms,
