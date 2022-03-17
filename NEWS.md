@@ -4,6 +4,8 @@
 
 * `vroom_progress()` uses `rlang::is_interactive()` instead of `base::interactive()`.
 
+* `col_factor(levels = NULL)` honors the `na` strings of `vroom()` and its own `include_na` argument, as described in the docs, and now reproduces the behaviour of readr's first edition parser (#396).
+
 # vroom 1.5.7
 
 * Jenny Bryan is now the official maintainer.
