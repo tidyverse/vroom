@@ -94,9 +94,8 @@ https://github.com/r-lib/vroom/issues/357 tracks this issue
 The following projects have merit, but would require more maintainer bandwidth than is currently available.
 It is helpful to us to (a) record them explicitly for some possible future and (b) get them out of our open issues.
 
-### Replicating functions from readr
-
-If there is a good, working solution from readr, we are not currently planning to replicate that behavior in vroom.
+* We are not currently planning to replicate readr behavior in vroom
+  * https://github.com/r-lib/vroom/issues/186
 
 ## External "standards"
 
