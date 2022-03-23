@@ -89,10 +89,6 @@ strcspn requires the data must end with a NUL, so if we cannot guarantee that th
 
 https://github.com/r-lib/vroom/issues/357 tracks this issue
 
-### External "standards"
-
-https://datatracker.ietf.org/doc/html/rfc4180
-
 ## Ideas we are not pursuing
 
 The following projects have merit, but would require more maintainer bandwidth than is currently available.
@@ -101,3 +97,7 @@ It is helpful to us to (a) record them explicitly for some possible future and (
 ### Replicating functions from readr
 
 If there is a good, working solution from readr, we are not currently planning to replicate that behavior in vroom.
+
+## External "standards"
+
+https://datatracker.ietf.org/doc/html/rfc4180
