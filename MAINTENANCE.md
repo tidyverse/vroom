@@ -93,8 +93,10 @@ https://github.com/r-lib/vroom/issues/357 tracks this issue
 
 https://datatracker.ietf.org/doc/html/rfc4180
 
-## Projects we are not currently pursuing
+## Ideas we are not pursuing
+
+While these ideas are not bad, the following projects are not currently being pursued until we have more maintainer bandwidth.
 
 ### Replicating functions from readr
 
-Partially because readr uses vroom under the hood, but also because we don't see a need to replicate behavior from another package. If there is a good, working solution from readr, we are not currently planning to replicate that behavior in vroom.
+If there is a good, working solution from readr, we are not currently planning to replicate that behavior in vroom.
