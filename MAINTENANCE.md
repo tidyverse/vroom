@@ -95,7 +95,8 @@ https://datatracker.ietf.org/doc/html/rfc4180
 
 ## Ideas we are not pursuing
 
-While these ideas are not bad, the following projects are not currently being pursued until we have more maintainer bandwidth.
+The following projects have merit, but would require more maintainer bandwidth than is currently available.
+It is helpful to us to (a) record them explicitly for some possible future and (b) get them out of our open issues.
 
 ### Replicating functions from readr
 
