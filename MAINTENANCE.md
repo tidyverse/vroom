@@ -94,7 +94,7 @@ https://github.com/r-lib/vroom/issues/357 tracks this issue
 The following projects have merit, but would require more maintainer bandwidth than is currently available.
 It is helpful to us to (a) record them explicitly for some possible future and (b) get them out of our open issues.
 
-* https://github.com/r-lib/vroom/issues/186
+* https://github.com/tidyverse/vroom/issues/186
 
 ## External "standards"
 
