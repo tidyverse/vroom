@@ -95,6 +95,8 @@ The following projects have merit, but would require more maintainer bandwidth t
 It is helpful to us to (a) record them explicitly for some possible future and (b) get them out of our open issues.
 
 * https://github.com/tidyverse/vroom/issues/186
+* https://github.com/tidyverse/vroom/issues/151
+* https://github.com/tidyverse/vroom/issues/250
 
 ## External "standards"
 
