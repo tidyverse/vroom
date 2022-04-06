@@ -97,6 +97,7 @@ It is helpful to us to (a) record them explicitly for some possible future and (
 * https://github.com/tidyverse/vroom/issues/186
 * https://github.com/tidyverse/vroom/issues/151
 * https://github.com/tidyverse/vroom/issues/250
+* https://github.com/tidyverse/readr/issues/1316
 
 ## External "standards"
 
