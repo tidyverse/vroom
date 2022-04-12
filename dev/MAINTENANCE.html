@@ -97,14 +97,22 @@
 <p>Benchmarks indicate this approach can be ~2x as fast as the current parser or so.</p>
 <p>You would still then have to parse the data afterwards, it is possible there are approaches that could make this faster than the current implementations as well.</p>
 </div>
-</div>
-<div class="section level2">
-<h2 id="alternative-handling-of-files-without-trailing-newlines">Alternative handling of files without trailing newlines<a class="anchor" aria-label="anchor" href="#alternative-handling-of-files-without-trailing-newlines"></a></h2>
+<div class="section level3">
+<h3 id="alternative-handling-of-files-without-trailing-newlines">Alternative handling of files without trailing newlines<a class="anchor" aria-label="anchor" href="#alternative-handling-of-files-without-trailing-newlines"></a></h3>
 <p>There is a Stack overflow thread which suggests that if you mmap a file beyond the size the mmap is guaranteed to pad the remainder with 0’s. If this is true we could always do this and in that way handle the case when a file doesn’t end with a newline, which would simplify the implementation for these files, and allow us to use multi-threads to read them.</p>
 <p>However we would have to investigate if this behavior is actually true across platforms or not.</p>
 <p>strcspn requires the data must end with a NUL, so if we cannot guarantee that this approach won’t work.</p>
 <p><a href="https://github.com/r-lib/vroom/issues/357" class="external-link uri">https://github.com/r-lib/vroom/issues/357</a> tracks this issue</p>
 </div>
+</div>
+<div class="section level2">
+<h2 id="ideas-we-are-not-pursuing">Ideas we are not pursuing<a class="anchor" aria-label="anchor" href="#ideas-we-are-not-pursuing"></a></h2>
+<p>The following projects have merit, but would require more maintainer bandwidth than is currently available. It is helpful to us to (a) record them explicitly for some possible future and (b) get them out of our open issues.</p>
+<ul><li><a href="https://github.com/tidyverse/vroom/issues/186" class="external-link uri">https://github.com/tidyverse/vroom/issues/186</a></li>
+<li><a href="https://github.com/tidyverse/vroom/issues/151" class="external-link uri">https://github.com/tidyverse/vroom/issues/151</a></li>
+<li><a href="https://github.com/tidyverse/vroom/issues/250" class="external-link uri">https://github.com/tidyverse/vroom/issues/250</a></li>
+<li><a href="https://github.com/tidyverse/readr/issues/1316" class="external-link uri">https://github.com/tidyverse/readr/issues/1316</a></li>
+</ul></div>
 <div class="section level2">
 <h2 id="external-standards">External “standards”<a class="anchor" aria-label="anchor" href="#external-standards"></a></h2>
 <p><a href="https://datatracker.ietf.org/doc/html/rfc4180" class="external-link uri">https://datatracker.ietf.org/doc/html/rfc4180</a></p>
