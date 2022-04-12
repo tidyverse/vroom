@@ -535,7 +535,7 @@ summary.col_spec <- function(object, width = getOption("width"), locale = defaul
   }
 
   type_map <- c("collector_character" = "chr", "collector_double" = "dbl",
-    "collector_integer" = "int", "collector_num" = "num", "collector_logical" = "lgl",
+    "collector_integer" = "int", "collector_number" = "num", "collector_logical" = "lgl",
     "collector_factor" = "fct", "collector_datetime" = "dttm", "collector_date" = "date",
     "collector_time" = "time",
     "collector_guess" = "???")
