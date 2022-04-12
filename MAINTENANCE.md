@@ -76,7 +76,7 @@ You would still then have to parse the data afterwards, it is possible there
 are approaches that could make this faster than the current implementations as
 well.
 
-## Alternative handling of files without trailing newlines
+### Alternative handling of files without trailing newlines
 
 There is a Stack overflow thread which suggests that if you mmap a file beyond the size the mmap is guaranteed to pad the remainder with 0's.
 If this is true we could always do this and in that way handle the case when a
@@ -88,6 +88,16 @@ However we would have to investigate if this behavior is actually true across pl
 strcspn requires the data must end with a NUL, so if we cannot guarantee that this approach won't work.
 
 https://github.com/r-lib/vroom/issues/357 tracks this issue
+
+## Ideas we are not pursuing
+
+The following projects have merit, but would require more maintainer bandwidth than is currently available.
+It is helpful to us to (a) record them explicitly for some possible future and (b) get them out of our open issues.
+
+* https://github.com/tidyverse/vroom/issues/186
+* https://github.com/tidyverse/vroom/issues/151
+* https://github.com/tidyverse/vroom/issues/250
+* https://github.com/tidyverse/readr/issues/1316
 
 ## External "standards"
 
