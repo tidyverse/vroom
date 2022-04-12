@@ -124,6 +124,12 @@ vroom_format <- function(x, delim = "\t", eol = "\n", na = "NA", col_names = TRU
                          bom = FALSE,
                          num_threads = vroom_threads()) {
 
+  stopifnot(is.data.frame(x))
+
+  if (length(x) == 0) {
+    return("")
+  }
+
   quote <- match.arg(quote)
   escape <- match.arg(escape)
 
