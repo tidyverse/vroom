@@ -322,11 +322,13 @@ std::vector<char> get_header(
       out.push_back(delim);
     }
   }
-  if (delim != '\0') {
-    out.pop_back();
-  }
-  for (auto c : eol) {
-    out.push_back(c);
+  if(out.size() != 0) {
+    if (delim != '\0') {
+      out.pop_back();
+    }
+    for (auto c : eol) {
+      out.push_back(c);
+    }
   }
   return out;
 }
