@@ -205,6 +205,10 @@ test_that("vroom_write equals the same thing as vroom_format", {
 test_that("vroom_format handles empty data frames", {
   df <- data.frame()
   expect_equal(vroom_format(df), "")
+
+  df <- data.frame(a = 1:2, b = 2:3)
+  df <- df[0, ]
+  expect_equal(vroom_format(df), "a\tb\n")
 })
 
 test_that("vroom_write(append = TRUE) works with R connections", {
