@@ -202,6 +202,11 @@ test_that("vroom_write equals the same thing as vroom_format", {
   expect_equal(readChar(tf, file.info(tf)$size), vroom_format(df))
 })
 
+test_that("vroom_format handles empty data frames", {
+  df <- data.frame()
+  expect_equal(vroom_format(df), "")
+})
+
 test_that("vroom_write(append = TRUE) works with R connections", {
   df <- data.frame(x = 1, y = 2)
   f <- tempfile(fileext = ".tsv.gz")
