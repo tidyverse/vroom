@@ -12,3 +12,4 @@ presentation/
 compile_commands.json
 .clangd/
 .cache/
+investigations
