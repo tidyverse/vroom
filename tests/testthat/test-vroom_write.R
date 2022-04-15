@@ -204,7 +204,7 @@ test_that("vroom_write equals the same thing as vroom_format", {
 
 test_that("vroom_write(append = TRUE) works with R connections", {
   df <- data.frame(x = 1, y = 2)
-  f <- tempfile(, fileext = ".tsv.gz")
+  f <- tempfile(fileext = ".tsv.gz")
   on.exit(unlink(f))
 
   vroom::vroom_write(df, f)
@@ -216,7 +216,7 @@ test_that("vroom_write(append = TRUE) works with R connections", {
 test_that("vroom_write() works with an empty delimiter", {
   df <- data.frame(x = "foo", y = "bar")
 
-  f <- tempfile(, fileext = ".tsv.gz")
+  f <- tempfile(fileext = ".tsv.gz")
   on.exit(unlink(f))
 
   vroom::vroom_write(df, f, delim = "")
@@ -224,7 +224,7 @@ test_that("vroom_write() works with an empty delimiter", {
 })
 
 test_that("vroom_write_lines() works with empty", {
-  f <- tempfile(, fileext = ".txt")
+  f <- tempfile(fileext = ".txt")
   on.exit(unlink(f))
 
   vroom::vroom_write_lines(character(), f)
@@ -232,7 +232,7 @@ test_that("vroom_write_lines() works with empty", {
 })
 
 test_that("vroom_write_lines() works with normal input", {
-  f <- tempfile(, fileext = ".txt")
+  f <- tempfile(fileext = ".txt")
   on.exit(unlink(f))
 
   vroom::vroom_write_lines(c("foo", "bar"), f)
@@ -240,7 +240,7 @@ test_that("vroom_write_lines() works with normal input", {
 })
 
 test_that("vroom_write_lines() does not escape or quote lines", {
-  f <- tempfile(, fileext = ".txt")
+  f <- tempfile(fileext = ".txt")
   on.exit(unlink(f))
 
   vroom::vroom_write_lines(c('"foo"', "bar"), f)
