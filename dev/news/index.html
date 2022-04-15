@@ -62,7 +62,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vroom-development-version">vroom (development version)<a class="anchor" aria-label="anchor" href="#vroom-development-version"></a></h2>
-<ul><li><p>Fix recursive gc error that could occur during <code><a href="../reference/vroom_write.html">vroom_write()</a></code> when <code><a href="../reference/output_column.html">output_column()</a></code> generates an ALTREP vector (<a href="https://github.com/r-lib/vroom/issues/389" class="external-link">#389</a>).</p></li>
+<ul><li><p>Fixed a segfault that could occur when the final field of the final line is missing and the file also does not end in a newline (<a href="https://github.com/r-lib/vroom/issues/429" class="external-link">#429</a>).</p></li>
+<li><p>Fix recursive gc error that could occur during <code><a href="../reference/vroom_write.html">vroom_write()</a></code> when <code><a href="../reference/output_column.html">output_column()</a></code> generates an ALTREP vector (<a href="https://github.com/r-lib/vroom/issues/389" class="external-link">#389</a>).</p></li>
 <li><p><code><a href="../reference/vroom_progress.html">vroom_progress()</a></code> uses <code><a href="https://rlang.r-lib.org/reference/is_interactive.html" class="external-link">rlang::is_interactive()</a></code> instead of <code><a href="https://rdrr.io/r/base/interactive.html" class="external-link">base::interactive()</a></code>.</p></li>
 <li><p><code>col_factor(levels = NULL)</code> honors the <code>na</code> strings of <code><a href="../reference/vroom.html">vroom()</a></code> and its own <code>include_na</code> argument, as described in the docs, and now reproduces the behaviour of readr’s first edition parser (<a href="https://github.com/r-lib/vroom/issues/396" class="external-link">#396</a>).</p></li>
 </ul></div>
