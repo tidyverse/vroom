@@ -119,13 +119,14 @@ will be read with this column type.</p></dd>
 used in the call to <code><a href="vroom.html">vroom()</a></code> it takes precedence over the one specified in
 <code>col_types</code>.</p></dd>
 <dt>levels</dt>
-<dd><p>Character vector providing set of allowed levels. if <code>NULL</code>,
-will generate levels based on the unique values of <code>x</code>, ordered by order
-of appearance in <code>x</code>.</p></dd>
+<dd><p>Character vector of the allowed levels. When <code>levels = NULL</code>
+(the default), <code>levels</code> are discovered from the unique values of <code>x</code>, in
+the order in which they appear in <code>x</code>.</p></dd>
 <dt>ordered</dt>
 <dd><p>Is it an ordered factor?</p></dd>
 <dt>include_na</dt>
-<dd><p>If <code>NA</code> are present, include as an explicit factor to level?</p></dd>
+<dd><p>If <code>TRUE</code> and <code>x</code> contains at least one <code>NA</code>, then <code>NA</code>
+is included in the levels of the constructed factor.</p></dd>
 <dt>format</dt>
 <dd><p>A format specification, as described below. If set to "",
 date times are parsed as ISO8601, dates and times used the date and
