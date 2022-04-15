@@ -412,7 +412,7 @@ delimited_index::get_trimmed_val(size_t i, bool is_first, bool is_last) const {
   }
 
   bool has_quote = false;
-  if (quote_ != '\0') {
+  if (quote_ != '\0' && begin < end) {
     has_quote = *begin == quote_;
     if (has_quote) {
       trim_quotes(begin, end);
