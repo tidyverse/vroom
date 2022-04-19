@@ -202,6 +202,24 @@ test_that("vroom_write equals the same thing as vroom_format", {
   expect_equal(readChar(tf, file.info(tf)$size), vroom_format(df))
 })
 
+test_that("vroom_format handles empty data frames", {
+  df <- data.frame()
+  expect_equal(vroom_format(df), "")
+
+  df <- data.frame(a = 1:2, b = 2:3)
+  df <- df[0, ]
+  expect_equal(vroom_format(df), "a\tb\n")
+})
+
+test_that("vroom_write() / vroom_read() roundtrips an empty data frame", {
+  df <- tibble::tibble()
+  t <- tempfile(fileext = ".csv")
+  on.exit(unlink(t))
+
+  vroom_write(df, t)
+  expect_equal(vroom(t, show_col_types = FALSE), df)
+})
+
 test_that("vroom_write(append = TRUE) works with R connections", {
   df <- data.frame(x = 1, y = 2)
   f <- tempfile(fileext = ".tsv.gz")
