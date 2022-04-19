@@ -209,13 +209,15 @@ test_that("vroom_format handles empty data frames", {
   df <- data.frame(a = 1:2, b = 2:3)
   df <- df[0, ]
   expect_equal(vroom_format(df), "a\tb\n")
+})
 
+test_that("vroom_write() / vroom_read() roundtrips an empty data frame", {
   df <- tibble::tibble()
   t <- tempfile(fileext = ".csv")
   on.exit(unlink(t))
 
-  vroom::vroom_write(df, t)
-  expect_equal(vroom::vroom(t, col_types = list()), df)
+  vroom_write(df, t)
+  expect_equal(vroom(t, show_col_types = FALSE), df)
 })
 
 test_that("vroom_write(append = TRUE) works with R connections", {
