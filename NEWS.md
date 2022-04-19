@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Fixed segfault when `vroom_format()` is given an empty data frame (#425)
+
 * Fixed a segfault that could occur when the final field of the final line is missing and the file also does not end in a newline (#429).
 
 * Fix recursive gc error that could occur during `vroom_write()` when `output_column()` generates an ALTREP vector (#389).
