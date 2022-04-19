@@ -126,7 +126,7 @@ vroom_format <- function(x, delim = "\t", eol = "\n", na = "NA", col_names = TRU
 
   stopifnot(is.data.frame(x))
 
-  if (length(x) == 0) {
+  if (NCOL(x) == 0) {
     return("")
   }
 
