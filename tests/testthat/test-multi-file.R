@@ -111,6 +111,24 @@ test_that("vroom works if a file contains no data", {
   expect_equal(res, tibble::tibble(A = 1, B = 2))
 })
 
+test_that("vroom works if some files contain no data, regardless of order (#430)", {
+  files <- test_path("multi-file", c("qux", "foo"))
+  res <- vroom(files, show_col_types = FALSE)
+  expect_equal(res, tibble::tibble(A = 1, B = 2))
+
+  files <- test_path("multi-file", c("qux", "quux", "foo"))
+  res <- vroom(files, show_col_types = FALSE)
+  expect_equal(res, tibble::tibble(A = 1, B = 2))
+
+  files <- test_path("multi-file", c("qux", "foo", "quux"))
+  res <- vroom(files, show_col_types = FALSE)
+  expect_equal(res, tibble::tibble(A = 1, B = 2))
+
+  files <- test_path("multi-file", c("foo", "quux", "qux"))
+  res <- vroom(files, show_col_types = FALSE)
+  expect_equal(res, tibble::tibble(A = 1, B = 2))
+})
+
 test_that("vroom works for indxes that span file boundries (#383)", {
   x <- vroom(c(vroom_example("mtcars.csv"), vroom_example("mtcars.csv")), col_types = list())
   y <- rbind(mtcars, mtcars)
