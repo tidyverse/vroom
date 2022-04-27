@@ -21,13 +21,14 @@ index_collection::full_iterator::full_iterator(
       column_(column),
       end_(idx_->indexes_.size() - 1) {
 
-  auto rows = idx_->indexes_[i_]->num_rows();
+  auto idx_rows = idx_->indexes_[i_]->num_rows();
+  auto total_rows = idx_->rows_;
   auto index_size = idx_->indexes_.size();
 
-  if (rows == 0 && index_size > 1) {
-    while(rows == 0){
+  if (idx_rows == 0 && index_size > 1 && total_rows > 0) {
+    while(idx_rows == 0) {
       i_++;
-      rows = idx_->indexes_[i_]->num_rows();
+      idx_rows = idx_->indexes_[i_]->num_rows();
     }
   }
   
