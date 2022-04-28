@@ -112,26 +112,44 @@ test_that("vroom works if a file contains no data", {
 })
 
 test_that("vroom works if some files contain no data, regardless of order (#430)", {
-  files <- test_path("multi-file", c("qux", "foo"))
+
+  destdir <- withr::local_tempdir("testing-multiple-files")
+
+  vroom_write_lines(c("A,B"), file.path(destdir, "header_only.csv"))
+  vroom_write_lines(c("A,B"), file.path(destdir, "another_header_only.csv"))
+  vroom_write_lines(c("A,B","1,2"), file.path(destdir, "header_and_one_row.csv"))
+
+  files <- file.path(destdir, c("header_only.csv", "header_and_one_row.csv"))
   res <- vroom(files, show_col_types = FALSE)
   expect_equal(res, tibble::tibble(A = 1, B = 2))
 
-  files <- test_path("multi-file", c("qux", "quux", "foo"))
+  files <- file.path(destdir, c("header_only.csv",
+                                "another_header_only.csv",
+                                "header_and_one_row.csv"
+                                ))
   res <- vroom(files, show_col_types = FALSE)
   expect_equal(res, tibble::tibble(A = 1, B = 2))
 
-  files <- test_path("multi-file", c("qux", "foo", "quux"))
+  files <- file.path(destdir, c("header_only.csv",
+                                "header_and_one_row.csv",
+                                "another_header_only.csv"
+                                ))
   res <- vroom(files, show_col_types = FALSE)
   expect_equal(res, tibble::tibble(A = 1, B = 2))
 
-  files <- test_path("multi-file", c("foo", "quux", "qux"))
+  files <- file.path(destdir, c("header_and_one_row.csv",
+                                "header_only.csv",
+                                "another_header_only.csv"
+                                ))
   res <- vroom(files, show_col_types = FALSE)
   expect_equal(res, tibble::tibble(A = 1, B = 2))
 
-  files <- test_path("multi-file", c("quux", "qux"))
+  files <- file.path(destdir, c("header_only.csv",
+                                "another_header_only.csv"
+                                ))
   res <- vroom(files, show_col_types = FALSE)
-  x <- tibble::tibble(A = "", B = "")
-  expect_equal(res, x[0, ])
+  x <- tibble::tibble(A = "", B = "", .rows = 0)
+  expect_equal(res, x)
 })
 
 test_that("vroom works for indxes that span file boundries (#383)", {
