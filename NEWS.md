@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Fixed segfault when reading in multiple files and the first file is header-only but subsequent files have at least one row (#430).
+
 * Fixed segfault when `vroom_format()` is given an empty data frame (#425)
 
 * Fixed a segfault that could occur when the final field of the final line is missing and the file also does not end in a newline (#429).
