@@ -20,6 +20,18 @@ index_collection::full_iterator::full_iterator(
       idx_(std::move(idx)),
       column_(column),
       end_(idx_->indexes_.size() - 1) {
+
+  auto n_inputs = idx_->indexes_.size();
+  auto n_rows_total = idx_->rows_;
+  auto n_rows_current_input = idx_->indexes_[i_]->num_rows();
+
+  if (n_rows_current_input == 0 && n_inputs > 1 && n_rows_total > 0) {
+    while(n_rows_current_input == 0) {
+      ++i_;
+      n_rows_current_input = idx_->indexes_[i_]->num_rows();
+    }
+  }
+
   auto col = idx_->indexes_[i_]->get_column(column_);
   it_ = col->begin();
   it_end_ = col->end();
