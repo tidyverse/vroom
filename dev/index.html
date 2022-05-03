@@ -101,7 +101,6 @@
 </h1>
 </div>
 <!-- badges: start -->
-
 <p>The fastest delimited reader for R, <strong>1.23 GB/sec</strong>.</p>
 <p><img src="https://raw.githubusercontent.com/r-lib/vroom/main/img/taylor.gif" align="right" width="30%"></p>
 <p>But that’s impossible! How can it be <a href="https://vroom.r-lib.org/articles/benchmarks.html">so fast</a>?</p>
@@ -153,8 +152,7 @@
 <ul>
 <li>delimiter guessing*</li>
 <li>custom delimiters (including multi-byte* and Unicode* delimiters)</li>
-<li>specification of column types (including type guessing)
-<ul>
+<li>specification of column types (including type guessing)<ul>
 <li>numeric types (double, integer, big integer*, number)</li>
 <li>logical types</li>
 <li>datetime types (datetime, date, time)</li>
@@ -277,10 +275,8 @@
 <code>VROOM_WRITE_BUFFER_LINES</code> - The number of lines to use for each buffer when writing files (default: 1000).</li>
 </ul>
 <p>There are also a family of variables to control use of the Altrep framework. For versions of R where the Altrep framework is unavailable (R &lt; 3.5.0) they are automatically turned off and the variables have no effect. The variables can take one of <code>true</code>, <code>false</code>, <code>TRUE</code>, <code>FALSE</code>, <code>1</code>, or <code>0</code>.</p>
-<ul>
-<li>
-<code>VROOM_USE_ALTREP_NUMERICS</code> - If set use Altrep for <em>all</em> numeric types (default <code>false</code>).</li>
-</ul>
+<ul><li>
+<code>VROOM_USE_ALTREP_NUMERICS</code> - If set use Altrep for <em>all</em> numeric types (default <code>false</code>).</li></ul>
 <p>There are also individual variables for each type. Currently only <code>VROOM_USE_ALTREP_CHR</code> defaults to <code>true</code>.</p>
 <ul>
 <li><code>VROOM_USE_ALTREP_CHR</code></li>
@@ -383,7 +379,7 @@
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
   </div></footer>

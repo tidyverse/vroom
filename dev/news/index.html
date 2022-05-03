@@ -62,7 +62,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vroom-development-version">vroom (development version)<a class="anchor" aria-label="anchor" href="#vroom-development-version"></a></h2>
-<ul><li><p>Fixed segfault when <code><a href="../reference/vroom_format.html">vroom_format()</a></code> is given an empty data frame (<a href="https://github.com/r-lib/vroom/issues/425" class="external-link">#425</a>)</p></li>
+<ul><li><p>Fixed segfault when reading in multiple files and the first file is header-only but subsequent files have at least one row (<a href="https://github.com/r-lib/vroom/issues/430" class="external-link">#430</a>).</p></li>
+<li><p>Fixed segfault when <code><a href="../reference/vroom_format.html">vroom_format()</a></code> is given an empty data frame (<a href="https://github.com/r-lib/vroom/issues/425" class="external-link">#425</a>)</p></li>
 <li><p>Fixed a segfault that could occur when the final field of the final line is missing and the file also does not end in a newline (<a href="https://github.com/r-lib/vroom/issues/429" class="external-link">#429</a>).</p></li>
 <li><p>Fix recursive gc error that could occur during <code><a href="../reference/vroom_write.html">vroom_write()</a></code> when <code><a href="../reference/output_column.html">output_column()</a></code> generates an ALTREP vector (<a href="https://github.com/r-lib/vroom/issues/389" class="external-link">#389</a>).</p></li>
 <li><p><code><a href="../reference/vroom_progress.html">vroom_progress()</a></code> uses <code><a href="https://rlang.r-lib.org/reference/is_interactive.html" class="external-link">rlang::is_interactive()</a></code> instead of <code><a href="https://rdrr.io/r/base/interactive.html" class="external-link">base::interactive()</a></code>.</p></li>
@@ -232,8 +233,7 @@
 <div class="section level3">
 <h3 id="breaking-changes-1-2-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-2-0"></a></h3>
 <ul><li>
-<code><a href="../reference/vroom_altrep_opts.html">vroom_altrep_opts()</a></code> and the argument <code>vroom(altrep_opts =)</code> have been renamed to <code><a href="../reference/vroom_altrep.html">vroom_altrep()</a></code> and <code>altrep</code> respectively. The prior names have been deprecated.</li>
-</ul></div>
+<code><a href="../reference/vroom_altrep_opts.html">vroom_altrep_opts()</a></code> and the argument <code>vroom(altrep_opts =)</code> have been renamed to <code><a href="../reference/vroom_altrep.html">vroom_altrep()</a></code> and <code>altrep</code> respectively. The prior names have been deprecated.</li></ul></div>
 <div class="section level3">
 <h3 id="new-features-1-2-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-2-0"></a></h3>
 <ul><li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports reading Big Integer values with the <code>bit64</code> package. Use <code><a href="../reference/cols.html">col_big_integer()</a></code> or the “I” shortcut to read a column as big integers. (<a href="https://github.com/r-lib/vroom/issues/198" class="external-link">#198</a>)</p></li>
@@ -269,8 +269,7 @@
 <h2 class="pkg-version" data-toc-text="1.0.2" id="vroom-102">vroom 1.0.2<a class="anchor" aria-label="anchor" href="#vroom-102"></a></h2><p class="text-muted">CRAN release: 2019-06-28</p>
 <div class="section level3">
 <h3 id="new-features-1-0-2">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-0-2"></a></h3>
-<ul><li>The column created by <code>id</code> is now stored as an run length encoded Altrep vector, which uses less memory and is much faster for large inputs. (<a href="https://github.com/r-lib/vroom/issues/111" class="external-link">#111</a>)</li>
-</ul></div>
+<ul><li>The column created by <code>id</code> is now stored as an run length encoded Altrep vector, which uses less memory and is much faster for large inputs. (<a href="https://github.com/r-lib/vroom/issues/111" class="external-link">#111</a>)</li></ul></div>
 <div class="section level3">
 <h3 id="minor-improvements-and-fixes-1-0-2">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-1-0-2"></a></h3>
 <ul><li><p><code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> now properly respects the <code>n_max</code> parameter (<a href="https://github.com/r-lib/vroom/issues/142" class="external-link">#142</a>)</p></li>
@@ -293,8 +292,7 @@
 <div class="section level3">
 <h3 id="new-features-1-0-1">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-0-1"></a></h3>
 <ul><li>
-<code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> function added, to (lazily) read lines from a file into a character vector (<a href="https://github.com/r-lib/vroom/issues/90" class="external-link">#90</a>).</li>
-</ul></div>
+<code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> function added, to (lazily) read lines from a file into a character vector (<a href="https://github.com/r-lib/vroom/issues/90" class="external-link">#90</a>).</li></ul></div>
 <div class="section level3">
 <h3 id="minor-improvements-and-fixes-1-0-1">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-1-0-1"></a></h3>
 <ul><li><p>Fix for a hang on Windows caused by a race condition in the progress bar (<a href="https://github.com/r-lib/vroom/issues/98" class="external-link">#98</a>)</p></li>
@@ -323,7 +321,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
   </div></footer></body></html>
