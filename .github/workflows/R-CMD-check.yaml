@@ -25,6 +25,8 @@ jobs:
           - {os: macOS-latest,   r: 'release'}
 
           - {os: windows-latest, r: 'release'}
+          # Use 4.1 to trigger usage of RTools40
+          - {os: windows-latest, r: '4.1'}
           # Use 3.6 to trigger usage of RTools35
           - {os: windows-latest, r: '3.6'}
 
@@ -35,7 +37,8 @@ jobs:
           - {os: ubuntu-18.04,   r: 'oldrel-2'}
           - {os: ubuntu-18.04,   r: 'oldrel-3'}
           - {os: ubuntu-18.04,   r: 'oldrel-4'}
-          - {os: ubuntu-18.04,   r: 'release', cran: "https://demo.rstudiopm.com/all/__linux__/bionic/latest", locale: 'en_US'}
+          # Check with a non-UTF-8 encoding
+          - {os: ubuntu-18.04,   r: 'release', cran: "https://demo.rstudiopm.com/all/__linux__/bionic/latest", locale: 'en_US.ISO-8859-1'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -45,7 +48,8 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Set locale
-        if: matrix.config.locale == 'en_US'
+        if: matrix.config.locale == 'en_US.ISO-8859-1'
+        # en_US is an alias for what we want
         run: |
           sudo locale-gen en_US
           echo "LC_ALL=en_US" >> $GITHUB_ENV
