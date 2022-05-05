@@ -2,7 +2,8 @@ is_ascii_compatible <- function(encoding) {
   identical(iconv(list(charToRaw("\n")), from = "ASCII", to = encoding, toRaw = TRUE)[[1]], charToRaw("\n"))
 }
 
-reencode_path <- function(path, encoding) {
+# this is about the encoding of the file (contents), not the filepath
+reencode_file <- function(path, encoding) {
   if (length(path) > 1) {
     stop(sprintf("Reading files of encoding '%s' can only be done for single files at a time", encoding), call. = FALSE)
   }

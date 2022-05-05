@@ -48,7 +48,7 @@ vroom_fwf <- function(file,
   file <- standardise_path(file)
 
   if (!is_ascii_compatible(locale$encoding)) {
-    file <- reencode_path(file, locale$encoding)
+    file <- reencode_file(file, locale$encoding)
     locale$encoding <- "UTF-8"
   }
 
