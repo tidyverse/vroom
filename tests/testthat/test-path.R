@@ -126,6 +126,10 @@ test_that("can read file w/ final newline, w/ multi-byte characters in path", {
   tfile <- withr::local_tempfile(pattern = pattern, fileext = ".csv")
   vroom_write_lines(c("a,b", "A,B"), tfile)
 
+  expect_true(file.exists(tfile))
+
+  expect_equal(tfile, "nopenopenope")
+
   expect_equal(
     vroom(tfile, show_col_types = FALSE),
     tibble::tibble(a = "A", b = "B")
