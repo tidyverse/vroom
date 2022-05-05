@@ -20,6 +20,14 @@ reencode_file <- function(path, encoding) {
   return(list(out_file))
 }
 
+reencode_filepath <- function(path) {
+  if (is_windows()) {
+    enc2utf8(path)
+  } else {
+    enc2native(path)
+  }
+}
+
 # These functions adapted from https://github.com/tidyverse/readr/blob/192cb1ca5c445e359f153d2259391e6d324fd0a2/R/source.R
 standardise_path <- function(path) {
   if (is.raw(path)) {
@@ -60,7 +68,7 @@ standardise_path <- function(path) {
     }
   }
 
-  as.list(path)
+  as.list(reencode_filepath(path))
 }
 
 standardise_one_path <- function (path, write = FALSE) {
