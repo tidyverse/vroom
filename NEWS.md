@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom()` reads more reliably from filepaths containing non-ascii characters, on Windows and/or in a non-UTF-8 encoding (#394).
+
 * Fixed segfault when reading in multiple files and the first file is header-only but subsequent files have at least one row (#430).
 
 * Fixed segfault when `vroom_format()` is given an empty data frame (#425)
