@@ -124,7 +124,7 @@ test_that("can read file w/ final newline, w/ multi-byte characters in path", {
   }
 
   tfile <- withr::local_tempfile(pattern = pattern, fileext = ".csv")
-  vroom_write_lines(c("a,b", "A,B"), tfile)
+  writeLines(c("a,b", "A,B"), tfile)
 
   expect_true(file.exists(tfile))
 
