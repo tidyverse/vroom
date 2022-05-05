@@ -95,3 +95,31 @@ test_that("can write to a tar.gz file if the archive package is available", {
   expect_equal(res$path, "mtcars")
   expect_equal(res$size, 1281)
 })
+
+# https://github.com/r-lib/vroom/issues/394
+test_that("can read file w/o final newline, w/ multi-byte characters in path", {
+  tfile <- withr::local_tempfile(
+    pattern = "no-trailing-n\u00e8wline-m\u00fblti-byt\u00e9-path-",
+    fileext = ".csv"
+  )
+  writeChar("a,b\nA,B", con = tfile, eos = NULL)
+
+  expect_equal(
+    vroom(tfile, show_col_types = FALSE),
+    tibble::tibble(a = "A", b = "B")
+  )
+})
+
+# for completeness, w.r.t. test above
+test_that("can read file w/ final newline, w/ multi-byte characters in path", {
+  tfile <- withr::local_tempfile(
+    pattern = "yes-trailing-n\u00e8wline-m\u00fblti-byt\u00e9-path-",
+    fileext = ".csv"
+  )
+  vroom_write_lines(c("a,b", "A,B"), tfile)
+
+  expect_equal(
+    vroom(tfile, show_col_types = FALSE),
+    tibble::tibble(a = "A", b = "B")
+  )
+})
