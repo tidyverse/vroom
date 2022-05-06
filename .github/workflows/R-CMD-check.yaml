@@ -78,7 +78,7 @@ jobs:
         timeout-minutes: 10
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
         with:
-           limit-access-to-actor: true
+          limit-access-to-actor: true
 
       - uses: r-lib/actions/check-r-package@v2
         with:
