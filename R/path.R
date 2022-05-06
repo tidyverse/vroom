@@ -2,7 +2,8 @@ is_ascii_compatible <- function(encoding) {
   identical(iconv(list(charToRaw("\n")), from = "ASCII", to = encoding, toRaw = TRUE)[[1]], charToRaw("\n"))
 }
 
-reencode_path <- function(path, encoding) {
+# this is about the encoding of the file (contents), not the filepath
+reencode_file <- function(path, encoding) {
   if (length(path) > 1) {
     stop(sprintf("Reading files of encoding '%s' can only be done for single files at a time", encoding), call. = FALSE)
   }
@@ -17,6 +18,14 @@ reencode_path <- function(path, encoding) {
   convert_connection(in_con, out_con, encoding, "UTF-8")
   withr::defer(unlink(out_file), envir = parent.frame())
   return(list(out_file))
+}
+
+reencode_filepath <- function(path) {
+  if (is_windows()) {
+    enc2utf8(path)
+  } else {
+    enc2native(path)
+  }
 }
 
 # These functions adapted from https://github.com/tidyverse/readr/blob/192cb1ca5c445e359f153d2259391e6d324fd0a2/R/source.R
@@ -59,7 +68,7 @@ standardise_path <- function(path) {
     }
   }
 
-  as.list(path)
+  as.list(reencode_filepath(path))
 }
 
 standardise_one_path <- function (path, write = FALSE) {
