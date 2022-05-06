@@ -98,12 +98,7 @@ test_that("can write to a tar.gz file if the archive package is available", {
 
 # https://github.com/r-lib/vroom/issues/394
 test_that("can read file w/o final newline, w/ multi-byte characters in path", {
-  if (!is_windows() && isTRUE(l10n_info()$`Latin-1`)) {
-    pattern <- "no-trailing-n\xe8wline-m\xfblti-byt\xfe9-path-"
-  } else {
-    pattern <- "no-trailing-n\u00e8wline-m\u00fblti-byt\u00e9-path-"
-  }
-
+  pattern <- "no-trailing-n\u00e8wline-m\u00fblti-byt\u00e9-path-"
   tfile <- withr::local_tempfile(pattern = pattern, fileext = ".csv")
   writeChar("a,b\nA,B", con = tfile, eos = NULL)
 
