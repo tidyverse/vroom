@@ -32,13 +32,9 @@ test_that("strings are only quoted if needed", {
   expect_equal(ssv, 'a\n,\n')
 })
 
-test_that("a literal NA is quoted", {
-  expect_equal(vroom_format(data.frame(x = "NA")), "x\n\"NA\"\n")
-})
-
 test_that("na argument modifies how missing values are written", {
   df <- data.frame(x = c(NA, "x", "."), y = c(1, 2, NA))
-  expect_equal(vroom_format(df, ",", na = "."), "x,y\n.,1\nx,2\n\".\",.\n")
+  expect_equal(vroom_format(df, ",", na = "."), "x,y\n.,1\nx,2\n.,.\n")
 })
 
 test_that("read_delim/csv/tsv and write_delim round trip special chars", {
