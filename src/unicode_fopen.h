@@ -50,8 +50,11 @@ inline void print_hex(const char* string) {
   unsigned char* p = (unsigned char*) string;
   for (int i = 0; i < 300 ; i++) {
     if (p[i] == '\0') break;
-    Rprintf("%c 0x%02x\n", p[i], p[i]);
+    Rprintf("%c 0x%02x ", p[i], p[i]);
+    if ((i%16 == 0) && i)
+      Rprintf("\n");
   }
+  Rprintf("\n");
 }
 
 inline mio::mmap_source
