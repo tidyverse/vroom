@@ -15,7 +15,12 @@ inline std::string
 get_pb_format(const std::string& which, const std::string& filename = "") {
   auto fun_name = std::string("pb_") + which + "_format";
   auto fun = cpp11::package("vroom")[fun_name.c_str()];
-  return cpp11::as_cpp<std::string>(fun(filename));
+  // in the past:
+  // return cpp11::as_cpp<std::string>(fun(filename));
+  // but changed because cpp11 is too determined to re-encode
+  // everything as UTF-8
+  // trust the encoding of what fun(filename) returns
+  return CHAR(STRING_ELT(fun(filename), 0));
 }
 
 inline int get_pb_width(const std::string& format) {

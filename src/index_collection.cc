@@ -160,7 +160,11 @@ std::shared_ptr<vroom::index> make_delimited_index(
   Rprintf("just before conversion to std::string: %s\n", x_holder);
   print_hex(x_holder);
 
-  //auto filename = cpp11::as_cpp<std::string>(x);
+  // in the past:
+  // auto filename = cpp11::as_cpp<std::string>(x);
+  // but changed because cpp11 is too determined to re-encode
+  // everything as UTF-8
+  // trust the encoding of the incoming object
   std::string filename(CHAR(STRING_ELT(x, 0)));
 
   Rprintf("just after conversion to std::string: %s\n", filename.c_str());
