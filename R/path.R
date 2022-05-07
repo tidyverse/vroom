@@ -78,7 +78,7 @@ standardise_path <- function(path) {
 }
 
 standardise_one_path <- function (path, write = FALSE) {
-  cat("calling standardise_one_path()\n")
+  cat("entering standardise_one_path()\n")
   cat("Encoding(path)", Encoding(path), "\n")
   cat("charToRaw(path)", charToRaw(path), "\n")
 
@@ -156,6 +156,16 @@ standardise_one_path <- function (path, write = FALSE) {
   if (write && compression == "zip") {
     stop("Can only read from, not write to, .zip", call. = FALSE)
   }
+
+  cat("prior to reencoding path in standardise_one_path()\n")
+  cat("Encoding(path)", Encoding(path), "\n")
+  cat("charToRaw(path)", charToRaw(path), "\n")
+
+  path <- reencode_filepath(path)
+
+  cat("about to leave standardise_one_path()\n")
+  cat("Encoding(path)", Encoding(path), "\n")
+  cat("charToRaw(path)", charToRaw(path), "\n")
 
   switch(compression,
     gz = gzfile(path, ""),

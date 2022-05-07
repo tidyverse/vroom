@@ -157,6 +157,10 @@ std::shared_ptr<vroom::index> make_delimited_index(
   }
 
   auto filename = cpp11::as_cpp<std::string>(x);
+
+  Rprintf("just after conversion to std::string: %s\n", filename.c_str());
+  print_hex(filename.c_str());
+
   return std::make_shared<vroom::delimited_index>(
       filename.c_str(),
       delim,
