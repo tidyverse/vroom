@@ -25,7 +25,7 @@ on:
       timeout_minutes:
         description: 'How many minutes before debug job times out?'
         required: true
-        default: 20
+        default: '20'
       special:
         description: 'Do the current special thing (if it exists)?'
         type: boolean
