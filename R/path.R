@@ -33,6 +33,9 @@ reencode_filepath <- function(path) {
 # These functions adapted from https://github.com/tidyverse/readr/blob/192cb1ca5c445e359f153d2259391e6d324fd0a2/R/source.R
 standardise_path <- function(path) {
   cat("calling standardise_path()\n")
+  cat("Encoding(path)", Encoding(path), "\n")
+  cat("charToRaw(path)", charToRaw(path), "\n")
+
   if (is.raw(path)) {
     return(list(rawConnection(path, "rb")))
   }
@@ -76,6 +79,8 @@ standardise_path <- function(path) {
 
 standardise_one_path <- function (path, write = FALSE) {
   cat("calling standardise_one_path()\n")
+  cat("Encoding(path)", Encoding(path), "\n")
+  cat("charToRaw(path)", charToRaw(path), "\n")
 
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))
