@@ -21,15 +21,18 @@ reencode_file <- function(path, encoding) {
 }
 
 reencode_filepath <- function(path) {
+  cat("calling reencode_filepath()\n")
   if (is_windows()) {
     enc2utf8(path)
   } else {
+    cat("calling enc2native()\n")
     enc2native(path)
   }
 }
 
 # These functions adapted from https://github.com/tidyverse/readr/blob/192cb1ca5c445e359f153d2259391e6d324fd0a2/R/source.R
 standardise_path <- function(path) {
+  cat("calling standardise_path()\n")
   if (is.raw(path)) {
     return(list(rawConnection(path, "rb")))
   }
@@ -72,6 +75,7 @@ standardise_path <- function(path) {
 }
 
 standardise_one_path <- function (path, write = FALSE) {
+  cat("calling standardise_one_path()\n")
 
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))

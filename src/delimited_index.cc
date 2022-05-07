@@ -51,6 +51,7 @@ delimited_index::delimited_index(
       delim_len_(0) {
 
   std::error_code error;
+  Rprintf("about to call make_mmap_source from delimited_index constructor\n");
   mmap_ = make_mmap_source(filename, error);
 
   if (error) {
