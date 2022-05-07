@@ -46,6 +46,14 @@ inline FILE* unicode_fopen(const char* path, const char* mode) {
   return out;
 }
 
+inline void print_hex(const char* string) {
+  unsigned char* p = (unsigned char*) string;
+  for (int i = 0; i < 300 ; i++) {
+    if (p[i] == '\0') break;
+    printf("%c 0x%02x\n", p[i], p[i]);
+  }
+}
+
 inline mio::mmap_source
 make_mmap_source(const char* file, std::error_code& error) {
 #ifdef __WIN32
@@ -64,6 +72,9 @@ make_mmap_source(const char* file, std::error_code& error) {
   free(buf);
   return out;
 #else
+  Rprintf("calling make_mmap_source on file: %s\n", file);
+  print_hex(file);
+
   return mio::make_mmap_source(file, error);
 #endif
 }
