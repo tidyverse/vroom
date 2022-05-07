@@ -160,7 +160,8 @@ std::shared_ptr<vroom::index> make_delimited_index(
   Rprintf("just before conversion to std::string: %s\n", x_holder);
   print_hex(x_holder);
 
-  auto filename = cpp11::as_cpp<std::string>(x);
+  //auto filename = cpp11::as_cpp<std::string>(x);
+  std::string filename(CHAR(STRING_ELT(x, 0)));
 
   Rprintf("just after conversion to std::string: %s\n", filename.c_str());
   print_hex(filename.c_str());
