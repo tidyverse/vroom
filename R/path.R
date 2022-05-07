@@ -32,10 +32,6 @@ reencode_filepath <- function(path) {
 
 # These functions adapted from https://github.com/tidyverse/readr/blob/192cb1ca5c445e359f153d2259391e6d324fd0a2/R/source.R
 standardise_path <- function(path) {
-  cat("calling standardise_path()\n")
-  cat("Encoding(path)", Encoding(path), "\n")
-  cat("charToRaw(path)", charToRaw(path), "\n")
-
   if (is.raw(path)) {
     return(list(rawConnection(path, "rb")))
   }
@@ -74,13 +70,21 @@ standardise_path <- function(path) {
     }
   }
 
+  if (is.character(path)) {
+    cat("calling standardise_path()\n")
+    cat("Encoding(path)", Encoding(path), "\n")
+    if (length(path)) cat("charToRaw(path)", charToRaw(path), "\n")
+  }
+
   as.list(reencode_filepath(path))
 }
 
 standardise_one_path <- function (path, write = FALSE) {
-  cat("entering standardise_one_path()\n")
-  cat("Encoding(path)", Encoding(path), "\n")
-  cat("charToRaw(path)", charToRaw(path), "\n")
+  if (is.character(path)) {
+    cat("entering standardise_one_path()\n")
+    cat("Encoding(path)", Encoding(path), "\n")
+    cat("charToRaw(path)", charToRaw(path), "\n")
+  }
 
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))
@@ -157,15 +161,19 @@ standardise_one_path <- function (path, write = FALSE) {
     stop("Can only read from, not write to, .zip", call. = FALSE)
   }
 
-  cat("prior to reencoding path in standardise_one_path()\n")
-  cat("Encoding(path)", Encoding(path), "\n")
-  cat("charToRaw(path)", charToRaw(path), "\n")
+  if (is.character(path)) {
+    cat("prior to reencoding path in standardise_one_path()\n")
+    cat("Encoding(path)", Encoding(path), "\n")
+    cat("charToRaw(path)", charToRaw(path), "\n")
+  }
 
   path <- reencode_filepath(path)
 
-  cat("about to leave standardise_one_path()\n")
-  cat("Encoding(path)", Encoding(path), "\n")
-  cat("charToRaw(path)", charToRaw(path), "\n")
+  if (is.character(path)) {
+    cat("about to leave standardise_one_path()\n")
+    cat("Encoding(path)", Encoding(path), "\n")
+    cat("charToRaw(path)", charToRaw(path), "\n")
+  }
 
   switch(compression,
     gz = gzfile(path, ""),
