@@ -75,8 +75,8 @@ make_mmap_source(const char* file, std::error_code& error) {
   free(buf);
   return out;
 #else
-  Rprintf("calling make_mmap_source on file: %s\n", file);
-  print_hex(file);
+  // Rprintf("calling make_mmap_source on file: %s\n", file);
+  // print_hex(file);
 
   return mio::make_mmap_source(file, error);
 #endif
