@@ -1,5 +1,7 @@
 #pragma once
 
+#include "unicode_fopen.h" // temporary, for print_hex()
+
 #include "utils.h"
 
 #include <cpp11/R.hpp>
@@ -15,6 +17,10 @@ inline std::string
 get_pb_format(const std::string& which, const std::string& filename = "") {
   auto fun_name = std::string("pb_") + which + "_format";
   auto fun = cpp11::package("vroom")[fun_name.c_str()];
+
+  Rprintf("filename passed to get_pb_format(): %s\n", filename.c_str());
+  print_hex(filename.c_str());
+
   // in the past:
   // return cpp11::as_cpp<std::string>(fun(filename));
   // but changed because cpp11 is too determined to re-encode
