@@ -95,9 +95,12 @@
 [[cpp11::register]] bool has_trailing_newline(const cpp11::strings& filename) {
   std::FILE* f = unicode_fopen(CHAR(filename[0]), "rb");
 
+  Rprintf("In has_trailing_newline(): ");
   if (!f) {
+    Rprintf("no file\n");
     return true;
   }
+  Rprintf("yes file\n");
 
   std::setvbuf(f, nullptr, _IONBF, 0);
 

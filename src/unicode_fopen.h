@@ -20,6 +20,17 @@
 #include "cpp11/r_string.hpp"
 #endif
 
+inline void print_hex(const char* string) {
+  unsigned char* p = (unsigned char*) string;
+  for (int i = 0; i < 300 ; i++) {
+    if (p[i] == '\0') break;
+    Rprintf("%c 0x%02x ", p[i], p[i]);
+    if ((i%16 == 0) && i)
+      Rprintf("\n");
+  }
+  Rprintf("\n");
+}
+
 // This is needed to support wide character paths on windows
 inline FILE* unicode_fopen(const char* path, const char* mode) {
   FILE* out;
@@ -45,7 +56,11 @@ inline FILE* unicode_fopen(const char* path, const char* mode) {
 #else
   // cpp11 will have converted the user's path to UTF-8 by now
   // but we need to pass the path to fopen() in the native encoding
+  Rprintf("unicode_fopen() received path: %s\n", path);
+  print_hex(path);
   const char* native_path = Rf_translateChar(cpp11::r_string(path));
+  Rprintf("Calling fopen() on native path: %s\n", native_path);
+  print_hex(native_path);
   out = fopen(native_path, mode);
 #endif
 
@@ -72,7 +87,11 @@ make_mmap_source(const char* file, std::error_code& error) {
 #else
   // cpp11 will have converted the user's path to UTF-8 by now
   // but we need to pass the path to mio in the native encoding
+  Rprintf("make_mmap_source() received path: %s\n", file);
+  print_hex(file);
   const char* native_path = Rf_translateChar(cpp11::r_string(file));
+  Rprintf("Calling mio::make_mmap_source() on native path: %s\n", native_path);
+  print_hex(native_path);
   return mio::make_mmap_source(native_path, error);
 #endif
 }
