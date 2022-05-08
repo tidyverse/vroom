@@ -156,7 +156,12 @@ std::shared_ptr<vroom::index> make_delimited_index(
         progress);
   }
 
-  auto filename = cpp11::as_cpp<std::string>(x);
+  // previously:
+  // auto filename = cpp11::as_cpp<std::string>(x);
+  // changed, because cpp11 is too determined to re-encode everything as UTF-8
+  // the encoding returned by standardise_one_path() intentional!
+  std::string filename(CHAR(STRING_ELT(x, 0)));
+
   return std::make_shared<vroom::delimited_index>(
       filename.c_str(),
       delim,
