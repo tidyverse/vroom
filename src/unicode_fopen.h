@@ -12,9 +12,12 @@
 #endif
 // clang-format on
 
-#ifdef _WIN32
 #include <Rinternals.h>
+
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include "cpp11/r_string.hpp"
 #endif
 
 // This is needed to support wide character paths on windows
@@ -40,7 +43,10 @@ inline FILE* unicode_fopen(const char* path, const char* mode) {
   MultiByteToWideChar(CP_UTF8, 0, path, -1, buf, len);
   out = _wfopen(buf, mode_w);
 #else
-  out = fopen(path, mode);
+  // cpp11 will have converted the user's path to UTF-8 by now
+  // but we need to pass the path to fopen() in the native encoding
+  const char* native_path = Rf_translateChar(cpp11::r_string(path));
+  out = fopen(native_path, mode);
 #endif
 
   return out;
@@ -64,6 +70,9 @@ make_mmap_source(const char* file, std::error_code& error) {
   free(buf);
   return out;
 #else
-  return mio::make_mmap_source(file, error);
+  // cpp11 will have converted the user's path to UTF-8 by now
+  // but we need to pass the path to mio in the native encoding
+  const char* native_path = Rf_translateChar(cpp11::r_string(file));
+  return mio::make_mmap_source(native_path, error);
 #endif
 }
