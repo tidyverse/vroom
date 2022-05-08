@@ -22,10 +22,6 @@ on:
         - oldrel-2
         - oldrel-3
         - oldrel-4
-      timeout_minutes:
-        description: 'How many minutes before debug job times out?'
-        required: true
-        default: '20'
       special:
         description: 'Do the current special thing (if it exists)?'
         type: boolean
@@ -66,6 +62,6 @@ jobs:
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
-        timeout-minutes: ${{ github.event.inputs.timeout_minutes }}
+        timeout-minutes: 30
         with:
           limit-access-to-actor: true
