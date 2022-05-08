@@ -21,11 +21,11 @@ reencode_file <- function(path, encoding) {
 }
 
 reencode_filepath <- function(path) {
-  cat("calling reencode_filepath()\n")
+  #cat("calling reencode_filepath()\n")
   if (is_windows()) {
     enc2utf8(path)
   } else {
-    cat("calling enc2native()\n")
+    #cat("calling enc2native()\n")
     enc2native(path)
   }
 }
@@ -70,21 +70,21 @@ standardise_path <- function(path) {
     }
   }
 
-  if (is.character(path)) {
-    cat("calling standardise_path()\n")
-    cat("Encoding(path)", Encoding(path), "\n")
-    if (length(path)) cat("charToRaw(path)", charToRaw(path), "\n")
-  }
+  # if (is.character(path)) {
+  #   cat("calling standardise_path()\n")
+  #   cat("Encoding(path)", Encoding(path), "\n")
+  #   if (length(path)) cat("charToRaw(path)", charToRaw(path), "\n")
+  # }
 
   as.list(reencode_filepath(path))
 }
 
 standardise_one_path <- function (path, write = FALSE) {
-  if (is.character(path)) {
-    cat("entering standardise_one_path()\n")
-    cat("Encoding(path)", Encoding(path), "\n")
-    cat("charToRaw(path)", charToRaw(path), "\n")
-  }
+  # if (is.character(path)) {
+  #   cat("entering standardise_one_path()\n")
+  #   cat("Encoding(path)", Encoding(path), "\n")
+  #   cat("charToRaw(path)", charToRaw(path), "\n")
+  # }
 
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))
@@ -161,19 +161,19 @@ standardise_one_path <- function (path, write = FALSE) {
     stop("Can only read from, not write to, .zip", call. = FALSE)
   }
 
-  if (is.character(path)) {
-    cat("prior to reencoding path in standardise_one_path()\n")
-    cat("Encoding(path)", Encoding(path), "\n")
-    cat("charToRaw(path)", charToRaw(path), "\n")
-  }
+  # if (is.character(path)) {
+  #   cat("prior to reencoding path in standardise_one_path()\n")
+  #   cat("Encoding(path)", Encoding(path), "\n")
+  #   cat("charToRaw(path)", charToRaw(path), "\n")
+  # }
 
   path <- reencode_filepath(path)
 
-  if (is.character(path)) {
-    cat("about to leave standardise_one_path()\n")
-    cat("Encoding(path)", Encoding(path), "\n")
-    cat("charToRaw(path)", charToRaw(path), "\n")
-  }
+  # if (is.character(path)) {
+  #   cat("about to leave standardise_one_path()\n")
+  #   cat("Encoding(path)", Encoding(path), "\n")
+  #   cat("charToRaw(path)", charToRaw(path), "\n")
+  # }
 
   switch(compression,
     gz = gzfile(path, ""),

@@ -60,8 +60,8 @@ inline void print_hex(const char* string) {
 inline mio::mmap_source
 make_mmap_source(const char* file, std::error_code& error) {
 #ifdef __WIN32
-  Rprintf("prepping file for make_mmap_source: %s\n", file);
-  print_hex(file);
+  // Rprintf("prepping file for make_mmap_source: %s\n", file);
+  // print_hex(file);
 
   wchar_t* buf;
   size_t len = MultiByteToWideChar(CP_UTF8, 0, file, -1, NULL, 0);

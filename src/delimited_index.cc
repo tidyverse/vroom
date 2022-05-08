@@ -51,7 +51,7 @@ delimited_index::delimited_index(
       delim_len_(0) {
 
   std::error_code error;
-  Rprintf("about to call make_mmap_source from delimited_index constructor\n");
+  // Rprintf("about to call make_mmap_source from delimited_index constructor\n");
   mmap_ = make_mmap_source(filename, error);
 
   if (error) {
@@ -122,6 +122,8 @@ delimited_index::delimited_index(
 
   if (progress_) {
 #ifndef VROOM_STANDALONE
+    Rprintf("Setting up progress reporting for filename: %s\n", filename);
+    print_hex(filename);
     auto format = get_pb_format("file", filename);
     auto width = get_pb_width(format);
     pb = std::unique_ptr<multi_progress>(
