@@ -110,11 +110,6 @@ test_that("can read file w/o final newline, w/ multi-byte characters in path", {
 
 # for completeness, w.r.t. test above
 test_that("can read file w/ final newline, w/ multi-byte characters in path", {
-  # (our usage of) mio seems to fail for a non-ascii path, on linux, in a
-  # non-UTF-8 local
-  # I'm not convinced it's worth troubleshooting at this point
-  skip_if(!is_windows() && isTRUE(l10n_info()$`Latin-1`))
-
   pattern <- "yes-trailing-n\u00e8wline-m\u00fblti-byt\u00e9-path-"
   tfile <- withr::local_tempfile(pattern = pattern, fileext = ".csv")
   writeLines(c("a,b", "A,B"), tfile)
