@@ -260,6 +260,10 @@ vroom_progress <- function() {
 #' @importFrom crayon blue cyan green bold reset col_nchar
 pb_file_format <- function(filename) {
 
+  # cpp11 marks filename as UTF-8, even though it is actually natively encoded
+  # this is gross, but it's an interesting experiment
+  Encoding(filename) <- "unknown"
+
   # Workaround RStudio bug https://github.com/rstudio/rstudio/issues/4777
   withr::with_options(list(crayon.enabled = (!is_rstudio_console() || is_rstudio_version("1.2.1578")) && getOption("crayon.enabled", TRUE)),
     glue::glue_col("{bold}indexing{reset} {blue}{basename(filename)}{reset} [:bar] {green}:rate{reset}, eta: {cyan}:eta{reset}")
