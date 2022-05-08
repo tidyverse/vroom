@@ -60,7 +60,7 @@ standardise_path <- function(path) {
     }
   }
 
-  as.list(path)
+  as.list(enc2utf8(path))
 }
 
 standardise_one_path <- function (path, write = FALSE) {
@@ -139,6 +139,8 @@ standardise_one_path <- function (path, write = FALSE) {
   if (write && compression == "zip") {
     stop("Can only read from, not write to, .zip", call. = FALSE)
   }
+
+  path <- enc2utf8(path)
 
   switch(compression,
     gz = gzfile(path, ""),
