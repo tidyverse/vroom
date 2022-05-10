@@ -285,16 +285,19 @@ test_that("vroom_write() always outputs in UTF-8", {
 })
 
 test_that("vroom_write() does not quote strings that start with NA", {
-
   names_df <- tibble::tibble(x = c(NA, "NATHAN", "JOHN", "SALLY", "JONAH"))
 
   simple_output <- vroom_format(names_df)
-  expect_equal(simple_output,
-               "x\nNA\nNATHAN\nJOHN\nSALLY\nJONAH\n")
+  expect_equal(
+    simple_output,
+    "x\nNA\nNATHAN\nJOHN\nSALLY\nJONAH\n"
+  )
 
   output_unique_NA <- vroom_format(names_df, na = "JON")
-  expect_equal(output_unique_NA,
-               "x\nJON\nNATHAN\nJOHN\nSALLY\nJONAH\n")
+  expect_equal(
+    output_unique_NA,
+    "x\nJON\nNATHAN\nJOHN\nSALLY\nJONAH\n"
+  )
 
 
   output_roundtrip <- vroom(I(vroom_format(names_df)),
@@ -305,10 +308,11 @@ test_that("vroom_write() does not quote strings that start with NA", {
 })
 
 test_that("vroom_write() no longer quotes NAs", {
-
   quoted_NA <- tibble::tibble(x = c(NA, "NATHAN", "NA", "SALLY", "JONAH"))
   output <- vroom_format(quoted_NA)
 
-  expect_equal(output,
-               "x\nNA\nNATHAN\nNA\nSALLY\nJONAH\n")
+  expect_equal(
+    output,
+    "x\nNA\nNATHAN\nNA\nSALLY\nJONAH\n"
+  )
 })
