@@ -1,13 +1,10 @@
-mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
-
 test_that("vroom errors if the file does not exist", {
-
   tf <- tempfile()
-
   expect_error(vroom(tf, col_types = list()), "does not exist")
 })
 
 test_that("vroom works with compressed files", {
+  mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
   expect_equal(vroom(vroom_example("mtcars.csv.gz"), col_types = list()), mt)
   expect_equal(vroom(vroom_example("mtcars.csv.bz2"), col_types = list()), mt)
   expect_equal(vroom(vroom_example("mtcars.csv.xz"), col_types = list()), mt)
@@ -17,6 +14,7 @@ test_that("vroom works with compressed files", {
 test_that("read_file works via https", {
   skip_on_cran()
 
+  mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
   url <- "https://raw.githubusercontent.com/r-lib/vroom/main/inst/extdata/mtcars.csv"
   expect_equal(vroom(url, col_types = list()), mt)
 })
@@ -24,6 +22,7 @@ test_that("read_file works via https", {
 test_that("vroom works via https on gz file", {
   skip_on_cran()
 
+  mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
   url <- "https://raw.githubusercontent.com/r-lib/vroom/main/inst/extdata/mtcars.csv.gz"
   expect_equal(vroom(url, col_types = list()), mt)
 })
