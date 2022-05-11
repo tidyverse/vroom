@@ -42,7 +42,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Set locale
-        if: github.event.inputs.special
+        if: ${{ github.event.inputs.special == 'true' }}
         # en_US is an alias for what we want
         run: |
           sudo locale-gen en_US
