@@ -96,10 +96,12 @@ standardise_one_path <- function (path, write = FALSE) {
     )
   }
 
-  p <- split_path_ext(basename(path))
+  path <- enc2utf8(path)
+
+  p <- split_path_ext(enc2utf8(basename(path)))
 
   if (write) {
-    path <- normalizePath(path, mustWork = FALSE)
+    path <- enc2utf8(normalizePath(path, mustWork = FALSE))
   } else {
     path <- check_path(path)
   }
@@ -139,8 +141,6 @@ standardise_one_path <- function (path, write = FALSE) {
   if (write && compression == "zip") {
     stop("Can only read from, not write to, .zip", call. = FALSE)
   }
-
-  path <- enc2utf8(path)
 
   switch(compression,
     gz = gzfile(path, ""),
@@ -222,8 +222,9 @@ is_url <- function(path) {
 }
 
 check_path <- function(path) {
-  if (file.exists(path))
-    return(normalizePath(path, "/", mustWork = FALSE))
+  if (file.exists(path)) {
+    return(enc2utf8(normalizePath(path, "/", mustWork = FALSE)))
+  }
 
   stop("'", path, "' does not exist",
     if (!is_absolute_path(path)) {
