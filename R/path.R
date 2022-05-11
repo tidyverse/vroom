@@ -259,7 +259,7 @@ chr_to_file <- function(x, envir = parent.frame()) {
 
   withr::defer(unlink(out), envir = envir)
 
-  normalizePath(out)
+  enc2utf8(normalizePath(out))
 }
 
 detect_compression <- function(path) {
