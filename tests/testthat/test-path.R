@@ -126,3 +126,21 @@ test_that("can write to path with non-ascii characters", {
   vroom_write(dat, tfile, delim = ",")
   expect_equal(readLines(tfile), c("a,b", "A,B"))
 })
+
+test_that("can read/write .zip with non-ascii characters in path", {
+  skip_on_cran()
+  skip_if_not(rlang::is_installed("archive"))
+
+  tfile <- file.path(tempdir(), "d\u00E4t.zip")
+  on.exit(unlink(tfile))
+  dat <- tibble::tibble(a = "A", b = "B")
+  vroom_write(dat, tfile)
+
+  # PK is the zip magic number
+  expect_equal(
+    readBin(tfile, raw(), n = 2),
+    as.raw(c(0x50, 0x4b))
+  )
+
+  expect_equal(vroom(tfile), dat)
+})
