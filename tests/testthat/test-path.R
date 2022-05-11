@@ -118,3 +118,11 @@ test_that("can read file w/ final newline, w/ multi-byte characters in path", {
     tibble::tibble(a = "A", b = "B")
   )
 })
+
+test_that("can write to path with non-ascii characters", {
+  pattern <- "cr\u00E8me-br\u00FBl\u00E9e-"
+  tfile <- withr::local_tempfile(pattern = pattern, fileext = ".csv")
+  dat <- tibble::tibble(a = "A", b = "B")
+  vroom_write(dat, tfile, delim = ",")
+  expect_equal(readLines(tfile), c("a,b", "A,B"))
+})
