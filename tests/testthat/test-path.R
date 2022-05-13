@@ -127,20 +127,33 @@ test_that("can write to path with non-ascii characters", {
   expect_equal(readLines(tfile), c("a,b", "A,B"))
 })
 
-test_that("can read/write .zip with non-ascii characters in path", {
+test_that("can read/write a compressed file with non-ascii characters in path", {
   skip_on_cran()
   skip_if_not(rlang::is_installed("archive"))
+  # https://github.com/r-lib/archive/issues/75
+  skip_if(is_windows() && l10n_info()$`Latin-1`)
 
-  tfile <- file.path(tempdir(), "d\u00E4t.zip")
-  on.exit(unlink(tfile))
+  make_temp_path <- function(ext) file.path(tempdir(), paste0("d\u00E4t", ext))
+
+  gzfile   <- withr::local_file(make_temp_path(".tar.gz"))
+  bz2file  <- withr::local_file(make_temp_path(".tar.bz2"))
+  xzfile   <- withr::local_file(make_temp_path(".tar.xz"))
+  zipfile  <- withr::local_file(make_temp_path(".zip"))
+
   dat <- tibble::tibble(a = "A", b = "B")
-  vroom_write(dat, tfile)
 
-  # PK is the zip magic number
-  expect_equal(
-    readBin(tfile, raw(), n = 2),
-    as.raw(c(0x50, 0x4b))
-  )
+  vroom_write(dat, gzfile)
+  vroom_write(dat, bz2file)
+  vroom_write(dat, xzfile)
+  vroom_write(dat, zipfile)
 
-  expect_equal(vroom(tfile), dat)
+  expect_equal(detect_compression(gzfile), "gz")
+  expect_equal(detect_compression(bz2file), "bz2")
+  expect_equal(detect_compression(xzfile), "xz")
+  expect_equal(detect_compression(zipfile), "zip")
+
+  expect_equal(vroom(gzfile,  show_col_types = FALSE), dat)
+  expect_equal(vroom(bz2file, show_col_types = FALSE), dat)
+  expect_equal(vroom(xzfile,  show_col_types = FALSE), dat)
+  expect_equal(vroom(zipfile, show_col_types = FALSE), dat)
 })
