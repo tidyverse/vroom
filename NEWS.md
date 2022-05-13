@@ -1,5 +1,9 @@
 # vroom (development version)
 
+* `vroom_format()` and `vroom_write()` only quote values that contain a
+  delimiter, quote, or newline. Specifically values that are equal to the `na`
+  string (or that start with it) are no longer quoted (#426).
+
 * `vroom()` reads more reliably from filepaths containing non-ascii characters (#394).
 
 * Fixed segfault when reading in multiple files and the first file is header-only but subsequent files have at least one row (#430).

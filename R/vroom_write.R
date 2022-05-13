@@ -6,8 +6,10 @@
 #'   - `double` - quotes are escaped by doubling them.
 #'   - `backslash` - quotes are escaped by a preceding backslash.
 #'   - `none` - quotes are not escaped.
-#' @param quote How to handle fields which contain characters that need to be quoted.
-#'   - `needed` - Only quote fields which need them.
+#' @param quote How to handle fields which contain characters that need to be
+#'   quoted.
+#'   - `needed` - Values are only quoted if needed: if they contain a delimiter,
+#'     quote, or newline.
 #'   - `all` - Quote all fields.
 #'   - `none` - Never quote fields.
 #' @param bom If `TRUE` add a UTF-8 BOM at the beginning of the file. This is

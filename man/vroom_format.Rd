@@ -37,9 +37,11 @@ column names will be included. If not specified, \code{col_names} will take the 
 \item \code{none} - quotes are not escaped.
 }}
 
-\item{quote}{How to handle fields which contain characters that need to be quoted.
+\item{quote}{How to handle fields which contain characters that need to be
+quoted.
 \itemize{
-\item \code{needed} - Only quote fields which need them.
+\item \code{needed} - Values are only quoted if needed: if they contain a delimiter,
+quote, or newline.
 \item \code{all} - Quote all fields.
 \item \code{none} - Never quote fields.
 }}
