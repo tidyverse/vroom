@@ -62,7 +62,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vroom-development-version">vroom (development version)<a class="anchor" aria-label="anchor" href="#vroom-development-version"></a></h2>
-<ul><li><p><code><a href="../reference/vroom.html">vroom()</a></code> reads more reliably from filepaths containing non-ascii characters (<a href="https://github.com/r-lib/vroom/issues/394" class="external-link">#394</a>).</p></li>
+<ul><li><p><code><a href="../reference/vroom_format.html">vroom_format()</a></code> and <code><a href="../reference/vroom_write.html">vroom_write()</a></code> only quote values that contain a delimiter, quote, or newline. Specifically values that are equal to the <code>na</code> string (or that start with it) are no longer quoted (<a href="https://github.com/r-lib/vroom/issues/426" class="external-link">#426</a>).</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> reads more reliably from filepaths containing non-ascii characters (<a href="https://github.com/r-lib/vroom/issues/394" class="external-link">#394</a>).</p></li>
 <li><p>Fixed segfault when reading in multiple files and the first file is header-only but subsequent files have at least one row (<a href="https://github.com/r-lib/vroom/issues/430" class="external-link">#430</a>).</p></li>
 <li><p>Fixed segfault when <code><a href="../reference/vroom_format.html">vroom_format()</a></code> is given an empty data frame (<a href="https://github.com/r-lib/vroom/issues/425" class="external-link">#425</a>)</p></li>
 <li><p>Fixed a segfault that could occur when the final field of the final line is missing and the file also does not end in a newline (<a href="https://github.com/r-lib/vroom/issues/429" class="external-link">#429</a>).</p></li>
