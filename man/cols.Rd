@@ -61,13 +61,14 @@ will be read with this column type.}
 used in the call to \code{vroom()} it takes precedence over the one specified in
 \code{col_types}.}
 
-\item{levels}{Character vector providing set of allowed levels. if \code{NULL},
-will generate levels based on the unique values of \code{x}, ordered by order
-of appearance in \code{x}.}
+\item{levels}{Character vector of the allowed levels. When \code{levels = NULL}
+(the default), \code{levels} are discovered from the unique values of \code{x}, in
+the order in which they appear in \code{x}.}
 
 \item{ordered}{Is it an ordered factor?}
 
-\item{include_na}{If \code{NA} are present, include as an explicit factor to level?}
+\item{include_na}{If \code{TRUE} and \code{x} contains at least one \code{NA}, then \code{NA}
+is included in the levels of the constructed factor.}
 
 \item{format}{A format specification, as described below. If set to "",
 date times are parsed as ISO8601, dates and times used the date and

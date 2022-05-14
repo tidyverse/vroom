@@ -55,9 +55,9 @@ string with a new line.
 
 Using a value of \code{\link[readr:clipboard]{clipboard()}} will read from the system clipboard.}
 
-\item{col_positions}{Column positions, as created by \code{\link[readr:read_fwf]{fwf_empty()}},
-\code{\link[readr:read_fwf]{fwf_widths()}} or \code{\link[readr:read_fwf]{fwf_positions()}}. To read in only selected fields,
-use \code{\link[readr:read_fwf]{fwf_positions()}}. If the width of the last column is variable (a
+\item{col_positions}{Column positions, as created by \code{\link[readr:fwf_empty]{fwf_empty()}},
+\code{\link[readr:fwf_widths]{fwf_widths()}} or \code{\link[readr:fwf_positions]{fwf_positions()}}. To read in only selected fields,
+use \code{\link[readr:fwf_positions]{fwf_positions()}}. If the width of the last column is variable (a
 ragged fwf file), supply the last end position as NA.}
 
 \item{col_types}{One of \code{NULL}, a \code{\link[readr:cols]{cols()}} specification, or
@@ -70,7 +70,7 @@ the \code{guess_max} or supply the correct types yourself.
 
 Column specifications created by \code{\link[=list]{list()}} or \code{\link[readr:cols]{cols()}} must contain
 one column specification for each column. If you only want to read a
-subset of the columns, use \code{\link[readr:cols]{cols_only()}}.
+subset of the columns, use \code{\link[readr:cols_only]{cols_only()}}.
 
 Alternatively, you can use a compact string representation where each
 character represents one column:
