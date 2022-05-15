@@ -131,7 +131,7 @@ test_that("can read/write a compressed file with non-ascii characters in path", 
   skip_on_cran()
   skip_if_not(rlang::is_installed("archive"))
   # https://github.com/r-lib/archive/issues/75
-  skip_if(is_windows() && l10n_info()$`Latin-1`)
+  skip_if(l10n_info()$`Latin-1`)
 
   make_temp_path <- function(ext) file.path(tempdir(), paste0("d\u00E4t", ext))
 
