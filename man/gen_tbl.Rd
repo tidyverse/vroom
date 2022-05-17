@@ -27,7 +27,7 @@ the \code{guess_max} or supply the correct types yourself.
 
 Column specifications created by \code{\link[=list]{list()}} or \code{\link[readr:cols]{cols()}} must contain
 one column specification for each column. If you only want to read a
-subset of the columns, use \code{\link[readr:cols]{cols_only()}}.
+subset of the columns, use \code{\link[readr:cols_only]{cols_only()}}.
 
 Alternatively, you can use a compact string representation where each
 character represents one column:

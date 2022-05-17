@@ -55,6 +55,27 @@ extern "C" SEXP _vroom_convert_connection(SEXP in_con, SEXP out_con, SEXP from, 
     return cpp11::as_sexp(convert_connection(cpp11::as_cpp<cpp11::decay_t<SEXP>>(in_con), cpp11::as_cpp<cpp11::decay_t<SEXP>>(out_con), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(from), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(to)));
   END_CPP11
 }
+// vroom.cc
+SEXP vroom_(const cpp11::list& inputs, SEXP delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char* comment, const bool skip_empty_rows, size_t skip, ptrdiff_t n_max, bool progress, const cpp11::sexp& col_names, cpp11::sexp col_types, cpp11::sexp col_select, cpp11::sexp name_repair, SEXP id, const cpp11::strings& na, const cpp11::list& locale, ptrdiff_t guess_max, size_t num_threads, size_t altrep);
+extern "C" SEXP _vroom_vroom_(SEXP inputs, SEXP delim, SEXP quote, SEXP trim_ws, SEXP escape_double, SEXP escape_backslash, SEXP comment, SEXP skip_empty_rows, SEXP skip, SEXP n_max, SEXP progress, SEXP col_names, SEXP col_types, SEXP col_select, SEXP name_repair, SEXP id, SEXP na, SEXP locale, SEXP guess_max, SEXP num_threads, SEXP altrep) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(vroom_(cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(inputs), cpp11::as_cpp<cpp11::decay_t<SEXP>>(delim), cpp11::as_cpp<cpp11::decay_t<const char>>(quote), cpp11::as_cpp<cpp11::decay_t<bool>>(trim_ws), cpp11::as_cpp<cpp11::decay_t<bool>>(escape_double), cpp11::as_cpp<cpp11::decay_t<bool>>(escape_backslash), cpp11::as_cpp<cpp11::decay_t<const char*>>(comment), cpp11::as_cpp<cpp11::decay_t<const bool>>(skip_empty_rows), cpp11::as_cpp<cpp11::decay_t<size_t>>(skip), cpp11::as_cpp<cpp11::decay_t<ptrdiff_t>>(n_max), cpp11::as_cpp<cpp11::decay_t<bool>>(progress), cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp&>>(col_names), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(col_types), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(col_select), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(name_repair), cpp11::as_cpp<cpp11::decay_t<SEXP>>(id), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(na), cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(locale), cpp11::as_cpp<cpp11::decay_t<ptrdiff_t>>(guess_max), cpp11::as_cpp<cpp11::decay_t<size_t>>(num_threads), cpp11::as_cpp<cpp11::decay_t<size_t>>(altrep)));
+  END_CPP11
+}
+// vroom.cc
+bool has_trailing_newline(const cpp11::strings& filename);
+extern "C" SEXP _vroom_has_trailing_newline(SEXP filename) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(has_trailing_newline(cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(filename)));
+  END_CPP11
+}
+// vroom.cc
+SEXP vroom_rle(const cpp11::integers& input);
+extern "C" SEXP _vroom_vroom_rle(SEXP input) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(vroom_rle(cpp11::as_cpp<cpp11::decay_t<const cpp11::integers&>>(input)));
+  END_CPP11
+}
 // vroom_dttm.cc
 cpp11::writable::doubles utctime_(const cpp11::integers& year, const cpp11::integers& month, const cpp11::integers& day, const cpp11::integers& hour, const cpp11::integers& min, const cpp11::integers& sec, const cpp11::doubles& psec);
 extern "C" SEXP _vroom_utctime_(SEXP year, SEXP month, SEXP day, SEXP hour, SEXP min, SEXP sec, SEXP psec) {
@@ -104,27 +125,6 @@ cpp11::strings vroom_format_(const cpp11::list& input, const char delim, const s
 extern "C" SEXP _vroom_vroom_format_(SEXP input, SEXP delim, SEXP eol, SEXP na_str, SEXP col_names, SEXP append, SEXP options, SEXP num_threads, SEXP progress, SEXP buf_lines) {
   BEGIN_CPP11
     return cpp11::as_sexp(vroom_format_(cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(input), cpp11::as_cpp<cpp11::decay_t<const char>>(delim), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(eol), cpp11::as_cpp<cpp11::decay_t<const char*>>(na_str), cpp11::as_cpp<cpp11::decay_t<bool>>(col_names), cpp11::as_cpp<cpp11::decay_t<bool>>(append), cpp11::as_cpp<cpp11::decay_t<size_t>>(options), cpp11::as_cpp<cpp11::decay_t<size_t>>(num_threads), cpp11::as_cpp<cpp11::decay_t<bool>>(progress), cpp11::as_cpp<cpp11::decay_t<size_t>>(buf_lines)));
-  END_CPP11
-}
-// vroom.cc
-SEXP vroom_(const cpp11::list& inputs, SEXP delim, const char quote, bool trim_ws, bool escape_double, bool escape_backslash, const char* comment, const bool skip_empty_rows, size_t skip, ptrdiff_t n_max, bool progress, const cpp11::sexp& col_names, cpp11::sexp col_types, cpp11::sexp col_select, cpp11::sexp name_repair, SEXP id, const cpp11::strings& na, const cpp11::list& locale, ptrdiff_t guess_max, size_t num_threads, size_t altrep);
-extern "C" SEXP _vroom_vroom_(SEXP inputs, SEXP delim, SEXP quote, SEXP trim_ws, SEXP escape_double, SEXP escape_backslash, SEXP comment, SEXP skip_empty_rows, SEXP skip, SEXP n_max, SEXP progress, SEXP col_names, SEXP col_types, SEXP col_select, SEXP name_repair, SEXP id, SEXP na, SEXP locale, SEXP guess_max, SEXP num_threads, SEXP altrep) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(vroom_(cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(inputs), cpp11::as_cpp<cpp11::decay_t<SEXP>>(delim), cpp11::as_cpp<cpp11::decay_t<const char>>(quote), cpp11::as_cpp<cpp11::decay_t<bool>>(trim_ws), cpp11::as_cpp<cpp11::decay_t<bool>>(escape_double), cpp11::as_cpp<cpp11::decay_t<bool>>(escape_backslash), cpp11::as_cpp<cpp11::decay_t<const char*>>(comment), cpp11::as_cpp<cpp11::decay_t<const bool>>(skip_empty_rows), cpp11::as_cpp<cpp11::decay_t<size_t>>(skip), cpp11::as_cpp<cpp11::decay_t<ptrdiff_t>>(n_max), cpp11::as_cpp<cpp11::decay_t<bool>>(progress), cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp&>>(col_names), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(col_types), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(col_select), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(name_repair), cpp11::as_cpp<cpp11::decay_t<SEXP>>(id), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(na), cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(locale), cpp11::as_cpp<cpp11::decay_t<ptrdiff_t>>(guess_max), cpp11::as_cpp<cpp11::decay_t<size_t>>(num_threads), cpp11::as_cpp<cpp11::decay_t<size_t>>(altrep)));
-  END_CPP11
-}
-// vroom.cc
-bool has_trailing_newline(const cpp11::strings& filename);
-extern "C" SEXP _vroom_has_trailing_newline(SEXP filename) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(has_trailing_newline(cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(filename)));
-  END_CPP11
-}
-// vroom.cc
-SEXP vroom_rle(const cpp11::integers& input);
-extern "C" SEXP _vroom_vroom_rle(SEXP input) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(vroom_rle(cpp11::as_cpp<cpp11::decay_t<const cpp11::integers&>>(input)));
   END_CPP11
 }
 

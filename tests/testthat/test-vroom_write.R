@@ -32,15 +32,6 @@ test_that("strings are only quoted if needed", {
   expect_equal(ssv, 'a\n,\n')
 })
 
-test_that("a literal NA is quoted", {
-  expect_equal(vroom_format(data.frame(x = "NA")), "x\n\"NA\"\n")
-})
-
-test_that("na argument modifies how missing values are written", {
-  df <- data.frame(x = c(NA, "x", "."), y = c(1, 2, NA))
-  expect_equal(vroom_format(df, ",", na = "."), "x,y\n.,1\nx,2\n\".\",.\n")
-})
-
 test_that("read_delim/csv/tsv and write_delim round trip special chars", {
   x <- stats::setNames(list("a", '"', ",", "\n","at\t"), paste0("V", seq_len(5)))
 
@@ -286,4 +277,32 @@ test_that("vroom_write() always outputs in UTF-8", {
   actual_data <- readBin(f, "raw", file.size(f))
 
   expect_equal(actual_data, expected_data)
+})
+
+test_that("vroom_format() does not quote strings that start with the `na` string (#426)", {
+  names_df <- tibble::tibble(x = c(NA, "NA", "NATHAN", "JONAH"))
+
+  simple_output <- vroom_format(names_df)
+  expect_equal(
+    simple_output,
+    "x\nNA\nNA\nNATHAN\nJONAH\n"
+  )
+
+  output_unique_NA <- vroom_format(names_df, na = "JON")
+  expect_equal(
+    output_unique_NA,
+    "x\nJON\nNA\nNATHAN\nJONAH\n"
+  )
+
+  output_roundtrip <- vroom(
+    I(vroom_format(names_df)),
+    delim = ",",
+    show_col_types = FALSE
+  )
+  expect_equal(output_roundtrip, names_df)
+})
+
+test_that("na argument modifies how missing values are written", {
+  df <- data.frame(x = c(NA, "x"), y = c(1, 2))
+  expect_equal(vroom_format(df, ",", na = "None"), "x,y\nNone,1\nx,2\n")
 })
