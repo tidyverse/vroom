@@ -98,10 +98,10 @@ standardise_one_path <- function (path, write = FALSE) {
 
   path <- enc2utf8(path)
 
-  p <- split_path_ext(enc2utf8(basename(path)))
+  p <- split_path_ext(basename_utf8(path))
 
   if (write) {
-    path <- enc2utf8(normalizePath(path, mustWork = FALSE))
+    path <- normalizePath_utf8(path, mustWork = FALSE)
   } else {
     path <- check_path(path)
   }
@@ -223,7 +223,7 @@ is_url <- function(path) {
 
 check_path <- function(path) {
   if (file.exists(path)) {
-    return(enc2utf8(normalizePath(path, "/", mustWork = FALSE)))
+    return(normalizePath_utf8(path, mustWork = FALSE))
   }
 
   stop("'", path, "' does not exist",
@@ -260,7 +260,7 @@ chr_to_file <- function(x, envir = parent.frame()) {
 
   withr::defer(unlink(out), envir = envir)
 
-  enc2utf8(normalizePath(out))
+  normalizePath_utf8(out)
 }
 
 detect_compression <- function(path) {
@@ -313,4 +313,12 @@ detect_compression <- function(path) {
   }
 
   NA_character_
+}
+
+basename_utf8 <- function(path) {
+  enc2utf8(basename(path))
+}
+
+normalizePath_utf8 <- function(path, winslash = "/", mustWork = NA) {
+  enc2utf8(normalizePath(path, winslash = winslash, mustWork = mustWork))
 }
