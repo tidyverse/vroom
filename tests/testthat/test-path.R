@@ -157,3 +157,18 @@ test_that("can read/write a compressed file with non-ascii characters in path", 
   expect_equal(vroom(xzfile,  show_col_types = FALSE), dat)
   expect_equal(vroom(zipfile, show_col_types = FALSE), dat)
 })
+
+test_that("can read fwf file w/ non-ascii characters in path", {
+  tfile <- withr::local_tempfile(pattern = "fwf-y\u00F6-", fileext = ".txt")
+  writeLines(c("A B", "C D"), tfile)
+
+  expect_equal(
+    spec <- fwf_empty(tfile, col_names = c("a", "b")),
+    list(begin = c(0L, 2L), end = c(1L, NA), col_names = c("a", "b"))
+  )
+
+  expect_equal(
+    vroom_fwf(tfile, spec, show_col_types = FALSE),
+    tibble::tibble(a = c("A", "C"), b = c("B", "D"))
+  )
+})
