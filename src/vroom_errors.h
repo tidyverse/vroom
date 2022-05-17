@@ -89,7 +89,7 @@ public:
       cpp11::sexp warn_call = Rf_lang3(
           warn,
           Rf_mkString(
-              "One or more parsing issues, see `problems()` for details"),
+              "One or more parsing issues, use `problems()` on your data frame for details"),
           Rf_mkString("vroom_parse_issue"));
       Rf_eval(warn_call, R_EmptyEnv);
     }
