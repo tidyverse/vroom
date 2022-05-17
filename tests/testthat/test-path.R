@@ -1,13 +1,10 @@
-mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
-
 test_that("vroom errors if the file does not exist", {
-
   tf <- tempfile()
-
   expect_error(vroom(tf, col_types = list()), "does not exist")
 })
 
 test_that("vroom works with compressed files", {
+  mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
   expect_equal(vroom(vroom_example("mtcars.csv.gz"), col_types = list()), mt)
   expect_equal(vroom(vroom_example("mtcars.csv.bz2"), col_types = list()), mt)
   expect_equal(vroom(vroom_example("mtcars.csv.xz"), col_types = list()), mt)
@@ -17,6 +14,7 @@ test_that("vroom works with compressed files", {
 test_that("read_file works via https", {
   skip_on_cran()
 
+  mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
   url <- "https://raw.githubusercontent.com/r-lib/vroom/main/inst/extdata/mtcars.csv"
   expect_equal(vroom(url, col_types = list()), mt)
 })
@@ -24,6 +22,7 @@ test_that("read_file works via https", {
 test_that("vroom works via https on gz file", {
   skip_on_cran()
 
+  mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
   url <- "https://raw.githubusercontent.com/r-lib/vroom/main/inst/extdata/mtcars.csv.gz"
   expect_equal(vroom(url, col_types = list()), mt)
 })
@@ -110,11 +109,6 @@ test_that("can read file w/o final newline, w/ multi-byte characters in path", {
 
 # for completeness, w.r.t. test above
 test_that("can read file w/ final newline, w/ multi-byte characters in path", {
-  # (our usage of) mio seems to fail for a non-ascii path, on linux, in a
-  # non-UTF-8 local
-  # I'm not convinced it's worth troubleshooting at this point
-  skip_if(!is_windows() && isTRUE(l10n_info()$`Latin-1`))
-
   pattern <- "yes-trailing-n\u00e8wline-m\u00fblti-byt\u00e9-path-"
   tfile <- withr::local_tempfile(pattern = pattern, fileext = ".csv")
   writeLines(c("a,b", "A,B"), tfile)
@@ -122,5 +116,59 @@ test_that("can read file w/ final newline, w/ multi-byte characters in path", {
   expect_equal(
     vroom(tfile, show_col_types = FALSE),
     tibble::tibble(a = "A", b = "B")
+  )
+})
+
+test_that("can write to path with non-ascii characters", {
+  pattern <- "cr\u00E8me-br\u00FBl\u00E9e-"
+  tfile <- withr::local_tempfile(pattern = pattern, fileext = ".csv")
+  dat <- tibble::tibble(a = "A", b = "B")
+  vroom_write(dat, tfile, delim = ",")
+  expect_equal(readLines(tfile), c("a,b", "A,B"))
+})
+
+test_that("can read/write a compressed file with non-ascii characters in path", {
+  skip_on_cran()
+  skip_if_not(rlang::is_installed("archive"))
+  # https://github.com/r-lib/archive/issues/75
+  skip_if(l10n_info()$`Latin-1`)
+
+  make_temp_path <- function(ext) file.path(tempdir(), paste0("d\u00E4t", ext))
+
+  gzfile   <- withr::local_file(make_temp_path(".tar.gz"))
+  bz2file  <- withr::local_file(make_temp_path(".tar.bz2"))
+  xzfile   <- withr::local_file(make_temp_path(".tar.xz"))
+  zipfile  <- withr::local_file(make_temp_path(".zip"))
+
+  dat <- tibble::tibble(a = "A", b = "B")
+
+  vroom_write(dat, gzfile)
+  vroom_write(dat, bz2file)
+  vroom_write(dat, xzfile)
+  vroom_write(dat, zipfile)
+
+  expect_equal(detect_compression(gzfile), "gz")
+  expect_equal(detect_compression(bz2file), "bz2")
+  expect_equal(detect_compression(xzfile), "xz")
+  expect_equal(detect_compression(zipfile), "zip")
+
+  expect_equal(vroom(gzfile,  show_col_types = FALSE), dat)
+  expect_equal(vroom(bz2file, show_col_types = FALSE), dat)
+  expect_equal(vroom(xzfile,  show_col_types = FALSE), dat)
+  expect_equal(vroom(zipfile, show_col_types = FALSE), dat)
+})
+
+test_that("can read fwf file w/ non-ascii characters in path", {
+  tfile <- withr::local_tempfile(pattern = "fwf-y\u00F6-", fileext = ".txt")
+  writeLines(c("A B", "C D"), tfile)
+
+  expect_equal(
+    spec <- fwf_empty(tfile, col_names = c("a", "b")),
+    list(begin = c(0L, 2L), end = c(1L, NA), col_names = c("a", "b"))
+  )
+
+  expect_equal(
+    vroom_fwf(tfile, spec, show_col_types = FALSE),
+    tibble::tibble(a = c("A", "C"), b = c("B", "D"))
   )
 })

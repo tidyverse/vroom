@@ -20,14 +20,6 @@ reencode_file <- function(path, encoding) {
   return(list(out_file))
 }
 
-reencode_filepath <- function(path) {
-  if (is_windows()) {
-    enc2utf8(path)
-  } else {
-    enc2native(path)
-  }
-}
-
 # These functions adapted from https://github.com/tidyverse/readr/blob/192cb1ca5c445e359f153d2259391e6d324fd0a2/R/source.R
 standardise_path <- function(path) {
   if (is.raw(path)) {
@@ -68,7 +60,7 @@ standardise_path <- function(path) {
     }
   }
 
-  as.list(reencode_filepath(path))
+  as.list(enc2utf8(path))
 }
 
 standardise_one_path <- function (path, write = FALSE) {
@@ -104,10 +96,12 @@ standardise_one_path <- function (path, write = FALSE) {
     )
   }
 
-  p <- split_path_ext(basename(path))
+  path <- enc2utf8(path)
+
+  p <- split_path_ext(basename_utf8(path))
 
   if (write) {
-    path <- normalizePath(path, mustWork = FALSE)
+    path <- normalizePath_utf8(path, mustWork = FALSE)
   } else {
     path <- check_path(path)
   }
@@ -228,8 +222,9 @@ is_url <- function(path) {
 }
 
 check_path <- function(path) {
-  if (file.exists(path))
-    return(normalizePath(path, "/", mustWork = FALSE))
+  if (file.exists(path)) {
+    return(normalizePath_utf8(path, mustWork = FALSE))
+  }
 
   stop("'", path, "' does not exist",
     if (!is_absolute_path(path)) {
@@ -265,7 +260,7 @@ chr_to_file <- function(x, envir = parent.frame()) {
 
   withr::defer(unlink(out), envir = envir)
 
-  normalizePath(out)
+  normalizePath_utf8(out)
 }
 
 detect_compression <- function(path) {
@@ -318,4 +313,12 @@ detect_compression <- function(path) {
   }
 
   NA_character_
+}
+
+basename_utf8 <- function(path) {
+  enc2utf8(basename(path))
+}
+
+normalizePath_utf8 <- function(path, winslash = "/", mustWork = NA) {
+  enc2utf8(normalizePath(path, winslash = winslash, mustWork = mustWork))
 }
