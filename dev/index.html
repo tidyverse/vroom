@@ -102,7 +102,7 @@
 </div>
 <!-- badges: start -->
 <p>The fastest delimited reader for R, <strong>1.23 GB/sec</strong>.</p>
-<p><img src="https://raw.githubusercontent.com/r-lib/vroom/main/img/taylor.gif" align="right" width="30%"></p>
+<p><img src="https://raw.githubusercontent.com/r-lib/vroom/main/img/taylor.gif" align="right"></p>
 <p>But that’s impossible! How can it be <a href="https://vroom.r-lib.org/articles/benchmarks.html">so fast</a>?</p>
 <p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html" class="external-link">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use. This lazy access is done automatically, so no changes to your R data-manipulation code are needed.</p>
 <p>vroom also uses multiple threads for indexing, materializing non-character columns, and when writing to further improve performance.</p>
