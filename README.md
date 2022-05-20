@@ -16,7 +16,7 @@ stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://
 
 The fastest delimited reader for R, **1.23 GB/sec**.
 
-<img src="https://raw.githubusercontent.com/r-lib/vroom/main/img/taylor.gif" align="right" width = "30%"/>
+<img src="https://raw.githubusercontent.com/r-lib/vroom/main/img/taylor.gif" align="right" />
 
 But that’s impossible! How can it be [so
 fast](https://vroom.r-lib.org/articles/benchmarks.html)?
