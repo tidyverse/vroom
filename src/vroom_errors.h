@@ -3,6 +3,8 @@
 #include "index.h"
 #include <condition_variable>
 #include <cpp11/data_frame.hpp>
+#include <cpp11/function.hpp>
+#include <cpp11/strings.hpp>
 #include <mutex>
 #include <sstream>
 #include <string>
@@ -83,15 +85,12 @@ public:
   void warn_for_errors() const {
     if (!have_warned_ && rows_.size() > 0) {
       have_warned_ = true;
-      static auto warn = Rf_findFun(
-          Rf_install("warn"),
-          Rf_findVarInFrame(R_NamespaceRegistry, Rf_install("rlang")));
-      cpp11::sexp warn_call = Rf_lang3(
-          warn,
-          Rf_mkString(
-              "One or more parsing issues, use `problems()` on your data frame for details"),
-          Rf_mkString("vroom_parse_issue"));
-      Rf_eval(warn_call, R_EmptyEnv);
+      static auto cli_warn = cpp11::package("cli")["cli_warn"];
+      cpp11::strings bullets({
+        "w"_nm = "One or more parsing issues, call `problems()` on your data frame for details, e.g.:",
+        " "_nm = "dat <- vroom(...)",
+        " "_nm = "problems(dat)"});
+      cpp11::sexp warn_call = cli_warn(bullets, "class"_nm = "vroom_parse_issue", ".envir"_nm = R_EmptyEnv);
     }
   }
 
