@@ -87,7 +87,7 @@ public:
       have_warned_ = true;
       static auto cli_warn = cpp11::package("cli")["cli_warn"];
       cpp11::strings bullets({
-        "w"_nm = "One or more parsing issues, call `problems()` on your data frame for details, e.g.:",
+        "w"_nm = "One or more parsing issues, call {.fun problems} on your data frame for details, e.g.:",
         " "_nm = "dat <- vroom(...)",
         " "_nm = "problems(dat)"});
       cli_warn(bullets, "class"_nm = "vroom_parse_issue", ".envir"_nm = R_EmptyEnv);
