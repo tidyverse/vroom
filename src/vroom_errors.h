@@ -90,7 +90,7 @@ public:
         "w"_nm = "One or more parsing issues, call `problems()` on your data frame for details, e.g.:",
         " "_nm = "dat <- vroom(...)",
         " "_nm = "problems(dat)"});
-      cpp11::sexp warn_call = cli_warn(bullets, "class"_nm = "vroom_parse_issue", ".envir"_nm = R_EmptyEnv);
+      cli_warn(bullets, "class"_nm = "vroom_parse_issue", ".envir"_nm = R_EmptyEnv);
     }
   }
 
