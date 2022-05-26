@@ -11,7 +11,7 @@
 #'   problems are returned.
 #' @return A data frame with one row for each problem and four columns:
 #'   - row,col - Row and column number that caused the problem, referencing the
-#'   original file
+#'   original input
 #'   - expected - What vroom expected to find
 #'   - actual - What it actually found
 #'   - file - The file with the problem
