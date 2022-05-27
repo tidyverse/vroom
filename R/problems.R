@@ -10,7 +10,8 @@
 #'   `FALSE` (the default) the lazy data is first read completely and all
 #'   problems are returned.
 #' @return A data frame with one row for each problem and four columns:
-#'   - row,col - Row and column of problem
+#'   - row,col - Row and column number that caused the problem, referencing the
+#'   original input
 #'   - expected - What vroom expected to find
 #'   - actual - What it actually found
 #'   - file - The file with the problem
