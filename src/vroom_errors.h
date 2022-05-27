@@ -85,6 +85,8 @@ public:
   void warn_for_errors() const {
     if (!have_warned_ && rows_.size() > 0) {
       have_warned_ = true;
+      // it is intentional that we aren't using cpp11::package
+      // https://github.com/tidyverse/vroom/commit/984a3e5e37e124feacfec3d184dbeb02eb1145c4
       static auto cli_warn = Rf_findFun(
           Rf_install("cli_warn"),
           Rf_findVarInFrame(R_NamespaceRegistry, Rf_install("cli")));
