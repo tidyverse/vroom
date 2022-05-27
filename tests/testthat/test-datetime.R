@@ -270,7 +270,7 @@ test_that("times are guessed even without AM / PM", {
 })
 
 test_that("subsetting works with both double and integer indexes", {
-  x <- vroom(I("X1\n2020-01-01 01:01:01"), delim = ",", col_type = "T")
+  x <- vroom(I("X1\n2020-01-01 01:01:01"), delim = ",", col_types = "T")
   dt <- as.POSIXct("2020-01-01 01:01:01", tz = "UTC")
   na_dt <- .POSIXct(NA_real_, tz = "UTC")
   expect_equal(x$X1[1L], dt)
