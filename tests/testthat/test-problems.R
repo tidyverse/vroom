@@ -1,4 +1,4 @@
-test_that("problems returns a detailed warning message",{
+test_that("problems returns a detailed warning message", {
   expect_snapshot(vroom(I("a,b,c\nx,y,z,,"), altrep = FALSE, col_types = "ccc"))
 })
 
@@ -38,28 +38,32 @@ test_that("problems works for multiple files", {
 
 test_that("problems with number of columns works for single files", {
   expect_warning(probs3 <- problems(vroom(I("x,y,z\n1,2\n"), col_names = TRUE, col_types = "ddd", altrep = FALSE)),
-                 class = "vroom_parse_issue")
+    class = "vroom_parse_issue"
+  )
   expect_equal(probs3$row, 2)
   expect_equal(probs3$col, 2)
   expect_equal(probs3$expected, "3 columns")
   expect_equal(probs3$actual, "2 columns")
 
   expect_warning(probs3 <- problems(vroom(I("x,y,z\n1,2\n"), col_names = FALSE, col_types = "ddd", altrep = FALSE)),
-                 class = "vroom_parse_issue")
+    class = "vroom_parse_issue"
+  )
   expect_equal(probs3$row[[4]], 2)
   expect_equal(probs3$col[[4]], 2)
   expect_equal(probs3$expected[[4]], "3 columns")
   expect_equal(probs3$actual[[4]], "2 columns")
 
   expect_warning(probs4 <- problems(vroom(I("x,y\n1,2,3,4\n"), col_names = TRUE, col_types = "dd", altrep = FALSE)),
-                 class = "vroom_parse_issue")
+    class = "vroom_parse_issue"
+  )
   expect_equal(probs4$row[[2]], 2)
   expect_equal(probs4$col[[2]], 4)
   expect_equal(probs4$expected[[2]], "2 columns")
   expect_equal(probs4$actual[[2]], "4 columns")
 
   expect_warning(probs2 <- problems(vroom(I("x,y\n1,2,3,4\n"), col_names = FALSE, col_types = "dd", altrep = FALSE)),
-                 class = "vroom_parse_issue")
+    class = "vroom_parse_issue"
+  )
   expect_equal(probs2$row[[4]], 2)
   expect_equal(probs2$col[[4]], 4)
   expect_equal(probs2$expected[[4]], "2 columns")
@@ -99,7 +103,8 @@ test_that("parsing problems are shown for all datatypes", {
 
 
   expect_warning(res <- vroom(I("x\nxyz\n"), delim = ",", col_types = list(col_logical())),
-                 class = "vroom_parse_issue")
+    class = "vroom_parse_issue"
+  )
 })
 
 test_that("problems that are generated more than once are not duplicated", {
@@ -139,4 +144,29 @@ test_that("problems return the proper row number", {
     class = "vroom_parse_issue"
   )
   expect_equal(problems(z)$row, c(2, 3))
+})
+
+# https://github.com/tidyverse/vroom/pull/441#discussion_r883611090
+test_that("can promote vroom parse warning to error", {
+  make_warning <- function() {
+    x <- vroom(
+      I("a,b\n1.0,x\n"),
+      delim = ",",
+      col_types = "dd"
+    )
+
+    # Warning happens at print time so force a print
+    print(x)
+  }
+
+  expect_error(
+    # This fails hard if we unwind protect the warning (aborts RStudio)
+    # - Try to throw error after catching the warning
+    withCallingHandlers(
+      expr = make_warning(),
+      vroom_parse_issue = function(cnd) {
+        rlang::abort("oh no")
+      }
+    )
+  )
 })
