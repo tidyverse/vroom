@@ -85,12 +85,18 @@ public:
   void warn_for_errors() const {
     if (!have_warned_ && rows_.size() > 0) {
       have_warned_ = true;
-      static auto cli_warn = cpp11::package("cli")["cli_warn"];
+      static auto cli_warn = Rf_findFun(
+          Rf_install("cli_warn"),
+          Rf_findVarInFrame(R_NamespaceRegistry, Rf_install("cli")));
       cpp11::strings bullets({
         "w"_nm = "One or more parsing issues, call {.fun problems} on your data frame for details, e.g.:",
         " "_nm = "dat <- vroom(...)",
         " "_nm = "problems(dat)"});
-      cli_warn(bullets, "class"_nm = "vroom_parse_issue", ".envir"_nm = R_EmptyEnv);
+      cpp11::sexp cli_warn_call = Rf_lang3(
+        cli_warn,
+        bullets,
+        Rf_mkString("vroom_parse_issue"));
+      Rf_eval(cli_warn_call, R_EmptyEnv);
     }
   }
 
