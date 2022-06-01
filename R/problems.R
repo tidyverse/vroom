@@ -16,7 +16,7 @@
 #'   - actual - What it actually found
 #'   - file - The file with the problem
 #' @export
-problems <- function(x, lazy = FALSE) {
+problems <- function(x = .Last.value, lazy = FALSE) {
   if (!isTRUE(lazy)) {
     vroom_materialize(x, replace = FALSE)
   }
