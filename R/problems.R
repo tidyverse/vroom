@@ -23,7 +23,7 @@ problems <- function(x = .Last.value, lazy = FALSE) {
 
   probs <- attr(x, "problems")
   if (typeof(probs) != "externalptr") {
-    rlang::abort("`x` must have a problems attribute that is an external pointer.\n  Is this object from readr and not vroom?")
+    rlang::abort("`x` must have a problems attribute that is an external pointer.\n  Is this object from first edition readr?")
   }
   probs <- vroom_errors_(probs)
   probs <- probs[!duplicated(probs), ]
