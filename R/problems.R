@@ -17,13 +17,19 @@
 #'   - file - The file with the problem
 #' @export
 problems <- function(x = .Last.value, lazy = FALSE) {
+  if(!inherits(x, "tbl_df")) {
+    cli::cli_abort(c("{.var x} must be a tibble.",
+                     "x" = "You've supplied a {typeof(x)}."))
+  }
+
   if (!isTRUE(lazy)) {
     vroom_materialize(x, replace = FALSE)
   }
 
   probs <- attr(x, "problems")
   if (typeof(probs) != "externalptr") {
-    rlang::abort("`x` must have a problems attribute that is an external pointer.\n  Is this object from first edition readr?")
+    cli::cli_abort(c("{.var x} must have a problems attribute that is an external pointer.",
+                 "i" = "Is this object from first edition readr?"))
   }
   probs <- vroom_errors_(probs)
   probs <- probs[!duplicated(probs), ]
