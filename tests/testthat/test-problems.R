@@ -170,3 +170,13 @@ test_that("can promote vroom parse warning to error", {
     )
   )
 })
+
+test_that("problems works with .Last.value", {
+  vroom(I("x,y\n1,2\n1,1.x\n"), col_types = "dd", altrep = FALSE)
+  probs <- problems()
+
+  expect_equal(probs$row, 3)
+  expect_equal(probs$col, 2)
+  expect_equal(probs$expected, "a double")
+  expect_equal(probs$actual, "1.x")
+})
