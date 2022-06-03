@@ -4,7 +4,7 @@
 \alias{problems}
 \title{Retrieve parsing problems}
 \usage{
-problems(x, lazy = FALSE)
+problems(x = .Last.value, lazy = FALSE)
 }
 \arguments{
 \item{x}{A data frame from \code{vroom::vroom()}.}
