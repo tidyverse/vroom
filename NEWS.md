@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom::problems` can now be called without arguments on `.Last.value` and warning message from parsing problems are more descriptive (, #446, https://github.com/tidyverse/readr/issues/1322).
+
 * `vroom()` reads more reliably from filepaths containing non-ascii characters, in a non-UTF-8 locale (#394, #438).
 
 * `vroom_format()` and `vroom_write()` only quote values that contain a
