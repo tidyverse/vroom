@@ -18,8 +18,10 @@
 #' @export
 problems <- function(x = .Last.value, lazy = FALSE) {
   if(!inherits(x, "tbl_df")) {
-    cli::cli_abort(c("The {.var x} argument of {.fun vroom::problems} must be a data frame from vroom:",
-                     "i" = "You supplied a {typeof(x)}."))
+    cli::cli_abort(c(
+      "The {.arg x} argument of {.fun vroom::problems} must be a data frame created by vroom:",
+      x = "{.arg x} has class {.cls {class(x)}}"
+    ))
   }
 
   if (!isTRUE(lazy)) {
@@ -28,8 +30,10 @@ problems <- function(x = .Last.value, lazy = FALSE) {
 
   probs <- attr(x, "problems")
   if (typeof(probs) != "externalptr") {
-    cli::cli_abort(c("{.var x} must have a problems attribute that is from vroom.",
-                 "i" = "Is this object from readr?"))
+    cli::cli_abort(c(
+      "The {.arg x} argument of {.fun vroom::problems} must be a data frame created by vroom:",
+      x = "{.arg x} seems to have been created with something else, maybe readr?"
+    ))
   }
   probs <- vroom_errors_(probs)
   probs <- probs[!duplicated(probs), ]
