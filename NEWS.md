@@ -1,6 +1,8 @@
 # vroom (development version)
 
-* `vroom::problems` can now be called without arguments on `.Last.value` and warning message from parsing problems are more descriptive (#443, https://github.com/tidyverse/readr/issues/1322).
+* `vroom::problems()` now defaults to `.Last.value` for its primary input, similar to how `readr::problems()` works (#443).
+
+* The warning that indicates the existence of parsing problems has been improved, which should make it easier for the user to follow-up (https://github.com/tidyverse/readr/issues/1322).
 
 * `vroom()` reads more reliably from filepaths containing non-ascii characters, in a non-UTF-8 locale (#394, #438).
 
@@ -8,13 +10,13 @@
   delimiter, quote, or newline. Specifically values that are equal to the `na`
   string (or that start with it) are no longer quoted (#426).
   
-* Fixed segfault when reading in multiple files and the first file is header-only but subsequent files have at least one row (#430).
+* Fixed segfault when reading in multiple files and the first file has only a header row of column names, but subsequent files have at least one row (#430).
 
 * Fixed segfault when `vroom_format()` is given an empty data frame (#425)
 
 * Fixed a segfault that could occur when the final field of the final line is missing and the file also does not end in a newline (#429).
 
-* Fix recursive gc error that could occur during `vroom_write()` when `output_column()` generates an ALTREP vector (#389).
+* Fixed recursive garbage collection error that could occur during `vroom_write()` when `output_column()` generates an ALTREP vector (#389).
 
 * `vroom_progress()` uses `rlang::is_interactive()` instead of `base::interactive()`.
 
