@@ -13,3 +13,21 @@
         <chr> <chr> <chr>
       1 x     y     z,,  
 
+# emits an error message if provided incorrect input
+
+    Code
+      problems(a_vector)
+    Condition
+      Error in `problems()`:
+      ! The `x` argument of `vroom::problems()` must be a data frame created by vroom:
+      x `x` has class <numeric>
+
+---
+
+    Code
+      problems(a_tibble)
+    Condition
+      Error in `problems()`:
+      ! The `x` argument of `vroom::problems()` must be a data frame created by vroom:
+      x `x` seems to have been created with something else, maybe readr?
+

@@ -170,3 +170,13 @@ test_that("can promote vroom parse warning to error", {
     )
   )
 })
+
+test_that("emits an error message if provided incorrect input", {
+  # user provides something other than a data frame
+  a_vector <- c(1, 2, 3)
+  expect_snapshot(problems(a_vector), error = TRUE)
+
+  # user provides a data frame from an incorrect source
+  a_tibble <- tibble::tibble(x = c(1), y = c(2))
+  expect_snapshot(problems(a_tibble), error = TRUE)
+})
