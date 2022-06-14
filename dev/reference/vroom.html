@@ -98,9 +98,13 @@
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>file</dt>
 <dd><p>path to a local file.</p></dd>
+
+
 <dt>delim</dt>
 <dd><p>One or more characters used to delimit fields within a
 file. If <code>NULL</code> the delimiter is guessed from the set of <code>c(",", "\t", " ", "|", ":", ";")</code>.</p></dd>
+
+
 <dt>col_names</dt>
 <dd><p>Either <code>TRUE</code>, <code>FALSE</code> or a character vector
 of column names.</p>
@@ -114,6 +118,8 @@ the first row of the output data frame.</p>
 in with dummy names <code>...1</code>, <code>...2</code> etc. Duplicate column names
 will generate a warning and be made unique, see <code>name_repair</code> to control
 how this is done.</p></dd>
+
+
 <dt>col_types</dt>
 <dd><p>One of <code>NULL</code>, a <code><a href="cols.html">cols()</a></code> specification, or
 a string. See <code>vignette("readr")</code> for more details.</p>
@@ -140,6 +146,8 @@ character represents one column:</p><ul><li><p>c = character</p></li>
 message showing what <code>readr</code> guessed they were. To remove this message,
 set <code>show_col_types = FALSE</code> or set `options(readr.show_col_types = FALSE).</p></li>
 </ul></dd>
+
+
 <dt>col_select</dt>
 <dd><p>Columns to include in the results. You can use the same
 mini-language as <code><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">dplyr::select()</a></code> to refer to the columns by name. Use
@@ -147,68 +155,104 @@ mini-language as <code><a href="https://dplyr.tidyverse.org/reference/select.htm
 usage is less common, <code>col_select</code> also accepts a numeric column index. See
 <code><a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">?tidyselect::language</a></code> for full details on the
 selection language.</p></dd>
+
+
 <dt>id</dt>
 <dd><p>Either a string or 'NULL'. If a string, the output will contain a
 variable with that name with the filename(s) as the value. If 'NULL', the
 default, no variable will be created.</p></dd>
+
+
 <dt>skip</dt>
 <dd><p>Number of lines to skip before reading data. If <code>comment</code> is
 supplied any commented lines are ignored <em>after</em> skipping.</p></dd>
+
+
 <dt>n_max</dt>
 <dd><p>Maximum number of lines to read.</p></dd>
+
+
 <dt>na</dt>
 <dd><p>Character vector of strings to interpret as missing values. Set this
 option to <code><a href="https://rdrr.io/r/base/character.html" class="external-link">character()</a></code> to indicate no missing values.</p></dd>
+
+
 <dt>quote</dt>
 <dd><p>Single character used to quote strings.</p></dd>
+
+
 <dt>comment</dt>
 <dd><p>A string used to identify comments. Any text after the
 comment characters will be silently ignored.</p></dd>
+
+
 <dt>skip_empty_rows</dt>
 <dd><p>Should blank rows be ignored altogether? i.e. If this
 option is <code>TRUE</code> then blank rows will not be represented at all.  If it is
 <code>FALSE</code> then they will be represented by <code>NA</code> values in all the columns.</p></dd>
+
+
 <dt>trim_ws</dt>
 <dd><p>Should leading and trailing whitespace (ASCII spaces and tabs) be trimmed from
 each field before parsing it?</p></dd>
+
+
 <dt>escape_double</dt>
 <dd><p>Does the file escape quotes by doubling them?
 i.e. If this option is <code>TRUE</code>, the value '""' represents
 a single quote, '"'.</p></dd>
+
+
 <dt>escape_backslash</dt>
 <dd><p>Does the file use backslashes to escape special
 characters? This is more general than <code>escape_double</code> as backslashes
 can be used to escape the delimiter character, the quote character, or
 to add special characters like <code>\\n</code>.</p></dd>
+
+
 <dt>locale</dt>
 <dd><p>The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
 <code><a href="locale.html">locale()</a></code> to create your own locale that controls things like
 the default time zone, encoding, decimal mark, big mark, and day/month
 names.</p></dd>
+
+
 <dt>guess_max</dt>
 <dd><p>Maximum number of lines to use for guessing column types.
 See <code><a href="https://readr.tidyverse.org/articles/column-types.html" class="external-link">vignette("column-types", package = "readr")</a></code> for more details.</p></dd>
+
+
 <dt>altrep</dt>
 <dd><p>Control which column types use Altrep representations,
 either a character vector of types, <code>TRUE</code> or <code>FALSE</code>. See
 <code><a href="vroom_altrep.html">vroom_altrep()</a></code> for for full details.</p></dd>
+
+
 <dt>altrep_opts</dt>
 <dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a></p></dd>
+
+
 <dt>num_threads</dt>
 <dd><p>Number of threads to use when reading and materializing
 vectors. If your data contains newlines within fields the parser will
 automatically be forced to use a single thread only.</p></dd>
+
+
 <dt>progress</dt>
 <dd><p>Display a progress bar? By default it will only display
 in an interactive session and not while knitting a document. The automatic
 progress bar can be disabled by setting option <code>readr.show_progress</code> to
 <code>FALSE</code>.</p></dd>
+
+
 <dt>show_col_types</dt>
 <dd><p>Control showing the column specifications. If <code>TRUE</code>
 column specifications are always show, if <code>FALSE</code> they are never shown. If
 <code>NULL</code> (the default) they are shown only if an explicit specification is not
 given to <code>col_types</code>.</p></dd>
+
+
 <dt>.name_repair</dt>
 <dd><p>Handling of column names. The default behaviour is to
 ensure column names are <code>"unique"</code>. Various repair strategies are
@@ -222,6 +266,7 @@ for names in the style of base R).</p></li>
 </ul><p>This argument is passed on as <code>repair</code> to <code><a href="https://vctrs.r-lib.org/reference/vec_as_names.html" class="external-link">vctrs::vec_as_names()</a></code>.
 See there for more details on these terms and the strategies used
 to enforce them.</p></dd>
+
 </dl></div>
 
     <div class="section level2">
@@ -483,7 +528,7 @@ to enforce them.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
   </div></footer></body></html>

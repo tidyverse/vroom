@@ -111,28 +111,41 @@ character names (as described in the <code>col_types</code> argument of
 best to refer to columns by name. If not named, the column types must match
 the column names exactly. In <code>col_*()</code> functions these are stored in the
 object.</p></dd>
+
+
 <dt>.default</dt>
 <dd><p>Any named columns not explicitly overridden in <code>...</code>
 will be read with this column type.</p></dd>
+
+
 <dt>.delim</dt>
 <dd><p>The delimiter to use when parsing. If the <code>delim</code> argument
 used in the call to <code><a href="vroom.html">vroom()</a></code> it takes precedence over the one specified in
 <code>col_types</code>.</p></dd>
+
+
 <dt>levels</dt>
 <dd><p>Character vector of the allowed levels. When <code>levels = NULL</code>
 (the default), <code>levels</code> are discovered from the unique values of <code>x</code>, in
 the order in which they appear in <code>x</code>.</p></dd>
+
+
 <dt>ordered</dt>
 <dd><p>Is it an ordered factor?</p></dd>
+
+
 <dt>include_na</dt>
 <dd><p>If <code>TRUE</code> and <code>x</code> contains at least one <code>NA</code>, then <code>NA</code>
 is included in the levels of the constructed factor.</p></dd>
+
+
 <dt>format</dt>
 <dd><p>A format specification, as described below. If set to "",
 date times are parsed as ISO8601, dates and times used the date and
 time formats specified in the <code><a href="locale.html">locale()</a></code>.</p>
 <p>Unlike <code><a href="https://rdrr.io/r/base/strptime.html" class="external-link">strptime()</a></code>, the format specification must match
 the complete string.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -200,7 +213,7 @@ the complete string.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
   </div></footer></body></html>
