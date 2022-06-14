@@ -42,7 +42,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Set locale
-        if: ${{ inputs.special == 'true' }}
+        if: ${{ inputs.special }}
         # en_US is an alias for what we want
         run: |
           sudo locale-gen en_US
