@@ -83,9 +83,11 @@ delimited_index_connection::delimited_index_connection(
 
   bool has_quoted_newlines = quote != '\0';
 
+  size_t skip_counter = 0;
+
   // Parse header
   size_t start = find_first_line(
-      buf[i], skip_, comment_, skip_empty_rows, has_quoted_newlines, quote);
+      buf[i], skip_, comment_, skip_empty_rows, has_quoted_newlines, quote, &skip_counter);
 
   if (delim == nullptr) {
     delim_ = std::string(1, guess_delim(buf[i], start, 20, sz, quote));

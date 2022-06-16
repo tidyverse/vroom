@@ -77,13 +77,16 @@ public:
 
     size_t file_size = mmap_.size();
 
+    size_t skip_counter = 0;
+
     size_t start = find_first_line(
         mmap_,
         skip,
         comment,
         skip_empty_rows,
         /* embedded_nl */ false,
-        /* quote */ '\0');
+        /* quote */ '\0',
+        &skip_counter);
 
     // Check for windows newlines
     size_t first_nl;
