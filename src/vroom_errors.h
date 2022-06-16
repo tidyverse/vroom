@@ -29,7 +29,14 @@ public:
       std::string actual = "",
       std::string filename = "") {
     std::lock_guard<std::mutex> guard(mutex_);
-    rows_.push_back(row + 1);
+
+    if (skips_at_start > 0) {
+      // right now lets hard code has_header until we know where to input this
+      int has_header = 1;
+      lines_.push_back(row + has_header + skips_at_start);
+    }
+
+    rows_.push_back(row);
     columns_.push_back(column + 1);
     expected_.emplace_back(expected);
     actual_.emplace_back(actual);
@@ -73,7 +80,8 @@ public:
 
   cpp11::data_frame error_table() const {
     return cpp11::writable::data_frame(
-        {"row"_nm = rows_,
+        {"line"_nm = lines_,
+         "row"_nm = rows_,
          "col"_nm = columns_,
          "expected"_nm = expected_,
          "actual"_nm = actual_,
@@ -104,6 +112,7 @@ public:
 
   void clear() {
     std::lock_guard<std::mutex> guard(mutex_);
+    lines_.clear();
     rows_.clear();
     columns_.clear();
     expected_.clear();
@@ -112,13 +121,21 @@ public:
     parse_errors_.clear();
   }
 
+  void add_skips_at_start(size_t skip_count){
+    /* if there are multiple files we might have multiple
+    places where skips are added */
+    skips_at_start = skips_at_start + skip_count;
+  }
+
 private:
   mutable bool have_warned_ = false;
   std::mutex mutex_;
   std::vector<std::string> filenames_;
   std::vector<parse_error> parse_errors_;
+  std::vector<size_t> lines_;
   std::vector<size_t> rows_;
   std::vector<size_t> columns_;
   std::vector<std::string> expected_;
   std::vector<std::string> actual_;
+  size_t skips_at_start = 0;
 };
