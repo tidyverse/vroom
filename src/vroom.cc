@@ -58,6 +58,8 @@
 
   auto errors = new std::shared_ptr<vroom_errors>(new vroom_errors());
 
+  (*errors)->has_header(has_header);
+
   auto idx = std::make_shared<vroom::index_collection>(
       inputs,
       Rf_isNull(delim) ? nullptr : cpp11::as_cpp<const char*>(delim),
