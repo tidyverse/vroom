@@ -26,6 +26,7 @@ fixed_width_index_connection::fixed_width_index_connection(
     const char* comment,
     const bool skip_empty_rows,
     const size_t n_max,
+    std::shared_ptr<vroom_errors> errors,
     const bool progress,
     const size_t chunk_size) {
 
@@ -65,8 +66,11 @@ fixed_width_index_connection::fixed_width_index_connection(
       comment,
       skip_empty_rows,
       /* embedded_nl */ false,
-      /* quote */ '\0',
-      &skip_counter);
+      /* quote */ '\0');
+  
+  if (skip_counter) {
+    errors->add_skips_at_start(skip_counter);
+  }
 
   // Check for windows newlines
   size_t first_nl;

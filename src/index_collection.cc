@@ -290,6 +290,7 @@ std::shared_ptr<vroom::index> make_fixed_width_index(
     const char* comment,
     const bool skip_empty_rows,
     const size_t n_max,
+    const std::shared_ptr<vroom_errors>& errors,
     const bool progress) {
 
   auto standardise_one_path = cpp11::package("vroom")["standardise_one_path"];
@@ -308,6 +309,7 @@ std::shared_ptr<vroom::index> make_fixed_width_index(
         comment,
         skip_empty_rows,
         n_max,
+        errors,
         progress,
         get_env("VROOM_CONNECTION_SIZE", 1 << 17));
   } else {
@@ -321,6 +323,7 @@ std::shared_ptr<vroom::index> make_fixed_width_index(
         comment,
         skip_empty_rows,
         n_max,
+        errors,
         progress);
   }
 }
@@ -334,6 +337,7 @@ index_collection::index_collection(
     const char* comment,
     const bool skip_empty_rows,
     const size_t n_max,
+    const std::shared_ptr<vroom_errors>& errors,
     const bool progress)
     : rows_(0), columns_(0) {
 
@@ -346,6 +350,7 @@ index_collection::index_collection(
       comment,
       skip_empty_rows,
       n_max,
+      errors,
       progress);
 
   columns_ = first->num_columns();
@@ -363,6 +368,7 @@ index_collection::index_collection(
         comment,
         skip_empty_rows,
         n_max,
+        errors,
         progress);
 
     check_column_consistency(first, idx, false, i);
