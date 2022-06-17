@@ -85,11 +85,8 @@ delimited_index::delimited_index(
       mmap_, skip_, comment_, skip_empty_rows, has_quoted_newlines, quote, &skip_counter);
 
   if (skip_counter) {
-    errors->track_skips.has_skips = true;
-    errors->track_skips.skips_at_start = skip_counter;
+    errors->add_skips_at_start(skip_counter);
   }
-
-  skip_counter = 0;
 
   // If an empty file, or a file with only a newline.
   if (start >= file_size - 1) {
