@@ -9,6 +9,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <map>
 
 using namespace cpp11::literals;
 
@@ -29,7 +30,9 @@ public:
       std::string actual = "",
       std::string filename = "") {
     std::lock_guard<std::mutex> guard(mutex_);
-    lines_.push_back(row + 1 + skips_at_start_);
+    auto search = track_skips_.find(filename);
+    size_t skips_at_start = (search != track_skips_.end()) ? track_skips_.at(filename) : 0;
+    lines_.push_back(row + 1 + skips_at_start);
     /* if data contains a header line, the 0th iterator will be the header line,
        otherwise it will be the first line of data */
     /* for rows , we don't want to include the header line
@@ -119,10 +122,8 @@ public:
     parse_errors_.clear();
   }
 
-  void add_skips_at_start(size_t skip_count){
-    /* if there are multiple files we might have multiple
-    places where skips are added */
-    skips_at_start_ = skips_at_start_ + skip_count;
+  void add_skips_at_start(size_t skip_count, std::string filename){
+    track_skips_[filename] = skip_count;
   }
 
   void has_header(bool header){
@@ -139,6 +140,6 @@ private:
   std::vector<size_t> columns_;
   std::vector<std::string> expected_;
   std::vector<std::string> actual_;
-  size_t skips_at_start_ = 0;
   bool has_header_ = false;
+  std::map<std::string, size_t> track_skips_;
 };

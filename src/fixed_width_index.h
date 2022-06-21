@@ -91,7 +91,7 @@ public:
         &skip_counter);
 
     if (skip_counter) {
-      errors->add_skips_at_start(skip_counter);
+      errors->add_skips_at_start(skip_counter, filename);
     }
 
     // Check for windows newlines

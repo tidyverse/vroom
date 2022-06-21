@@ -70,7 +70,7 @@ fixed_width_index_connection::fixed_width_index_connection(
       &skip_counter);
   
   if (skip_counter) {
-    errors->add_skips_at_start(skip_counter);
+    errors->add_skips_at_start(skip_counter, filename_);
   }
 
   // Check for windows newlines
