@@ -88,7 +88,7 @@ public:
         skip_empty_rows,
         /* embedded_nl */ false,
         /* quote */ '\0',
-        &skip_counter);
+        skip_counter);
 
     if (skip_counter) {
       errors->add_skips_at_start(skip_counter, filename);

@@ -87,7 +87,7 @@ delimited_index_connection::delimited_index_connection(
 
   // Parse header
   size_t start = find_first_line(
-      buf[i], skip_, comment_, skip_empty_rows, has_quoted_newlines, quote, &skip_counter);
+      buf[i], skip_, comment_, skip_empty_rows, has_quoted_newlines, quote, skip_counter);
 
   if (skip_counter) {
     errors->add_skips_at_start(skip_counter, filename_);
