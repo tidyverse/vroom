@@ -57,7 +57,7 @@ fixed_width_index_connection::fixed_width_index_connection(
   size_t sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
   buf[i][sz] = '\0';
 
-  size_t skip_counter = 0;
+  size_t skip_counter;
 
   // Parse header
   size_t start = find_first_line(

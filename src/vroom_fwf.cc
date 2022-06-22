@@ -118,17 +118,14 @@ std::vector<bool> find_empty_cols(Iterator begin, Iterator end, ptrdiff_t n) {
     REprintf("mapping error: %s", error.message().c_str());
     return cpp11::list();
   }
-
-  size_t skip_counter = 0;
-
+  
   size_t s = find_first_line(
       mmap,
       skip,
       comment.data(),
       /* skip_empty_rows */ true,
       /* embedded_nl */ false,
-      /* quote */ '\0',
-      &skip_counter);
+      /* quote */ '\0');
 
   std::vector<bool> empty = find_empty_cols(mmap.begin() + s, mmap.end(), n);
   std::vector<int> begin, end;

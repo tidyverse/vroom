@@ -83,7 +83,7 @@ delimited_index_connection::delimited_index_connection(
 
   bool has_quoted_newlines = quote != '\0';
 
-  size_t skip_counter = 0;
+  size_t skip_counter;
 
   // Parse header
   size_t start = find_first_line(

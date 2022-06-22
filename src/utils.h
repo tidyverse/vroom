@@ -300,7 +300,7 @@ size_t find_first_line(
     const bool skip_empty_rows,
     const bool embedded_nl,
     const char quote,
-    size_t *skip_counter) {
+    size_t *skip_counter = 0) {
 
   auto begin = skip_bom(source);
   /* Skip skip parameters, comments and blank lines */

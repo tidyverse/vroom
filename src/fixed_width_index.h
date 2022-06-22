@@ -79,7 +79,7 @@ public:
 
     size_t file_size = mmap_.size();
     
-    size_t skip_counter = 0;
+    size_t skip_counter;
 
     size_t start = find_first_line(
         mmap_,
