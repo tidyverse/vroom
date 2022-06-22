@@ -79,7 +79,7 @@ delimited_index::delimited_index(
 
   bool has_quoted_newlines = quote != '\0';
 
-  size_t skip_counter;
+  size_t skip_counter = 0;
 
   size_t start = find_first_line(
       mmap_, skip_, comment_, skip_empty_rows, has_quoted_newlines, quote, &skip_counter);
