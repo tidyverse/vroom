@@ -150,13 +150,15 @@ test_that("problems return the proper row number", {
 test_that("can promote vroom parse warning to error", {
   make_warning <- function() {
     x <- vroom(
-      I("a,b\n1.0,x\n"),
+      I("a\nx\n"),
       delim = ",",
-      col_types = "dd"
+      col_types = "d",
+      altrep = TRUE
     )
 
-    # Warning happens at print time so force a print
-    print(x)
+    # trigger the warning using R's internal [ code
+    # https://github.com/r-lib/cpp11/issues/274
+    x$a[1]
   }
 
   expect_error(
