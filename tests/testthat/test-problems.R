@@ -156,7 +156,7 @@ test_that("can promote vroom parse warning to error", {
       altrep = TRUE
     )
 
-    # trigger the warning using R's internal [ code
+    # do something to trigger the warning using R's internal C code
     # https://github.com/r-lib/cpp11/issues/274
     x$a[1]
   }
