@@ -882,3 +882,14 @@ writeBin(charToRaw("foo,bar
   expect_equal(z, x)
 })
 
+test_that("vroom can read a date column with no data and skip 1", {
+  test_vroom("date\n", delim = ",", col_names = 'date', col_types = 'D', skip = 1,
+             equals = tibble::tibble(date = as.Date(character()))
+  )
+})
+
+test_that("vroom can read a datetime column with no data and skip 1", {
+  test_vroom("dt\n", delim = ",", col_names = 'dt', col_types = 'T', skip = 1,
+             equals = tibble::tibble(dt = as.POSIXct(character()))
+  )
+})

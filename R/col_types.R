@@ -515,10 +515,10 @@ collector_value.collector_logical <- function(x, ...) { logical() }
 collector_value.collector_factor <- function(x, ...) { factor() }
 
 #' @export
-collector_value.collector_datetime <- function(x, ...) { as.POSIXct(double()) }
+collector_value.collector_datetime <- function(x, ...) { as.POSIXct(character()) }
 
 #' @export
-collector_value.collector_date <- function(x, ...) { as.Date(double()) }
+collector_value.collector_date <- function(x, ...) { as.Date(character()) }
 
 #' @export
 collector_value.collector_time <- function(x, ...) { hms::hms() }
