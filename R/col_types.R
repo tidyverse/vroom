@@ -363,6 +363,9 @@ vroom_select <- function(x, col_select, id) {
       vars <- tidyselect::vars_select(c(id, names(spec(x)$cols)), !!!col_select)
     } else {
       vars <- tidyselect::vars_select(c(id, names(spec(x)$cols)), !!col_select)
+    if (!is.null(id) && !id %in% vars) {
+      names(id) <- id
+      vars <- c(id, vars)
     }
     # This can't be just names(x) as we need to have skipped
     # names as well to pass to vars_select()
