@@ -64,6 +64,25 @@ test_that("col_select can select the id column", {
   )
 })
 
+test_that("id column not required in col_select (#416)", {
+  expect_named(
+    vroom(vroom_example("mtcars.csv"), id = "path", col_select = list(model, mpg)),
+    c("path", "model", "mpg")
+  )
+})
+
+test_that("referencing columns by position in col_select works with id column (#455)", {
+  expect_named(
+    vroom(vroom_example("mtcars.csv"), id = "path", col_select = list(1:3)),
+    c("path", "model", "mpg", "cyl")
+  )
+
+  expect_named(
+    vroom(vroom_example("mtcars.csv"), id = "path", col_select = list(1:3,6:8)),
+    c("path", "model", "mpg", "cyl", "drat", "wt", "qsec")
+  )
+})
+
 test_that("col_select works with col_names = FALSE", {
   res <- vroom(I("foo\tbar\n1\t2\n"), col_names = FALSE, col_select = 1, col_types = list())
   expect_equal(res[[1]], c("foo", "1"))
