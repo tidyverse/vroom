@@ -4,12 +4,12 @@ on:
       os:
         description: 'Which operating system to debug on'
         required: true
-        default: 'ubuntu-18.04'
+        default: 'ubuntu-20.04'
         type: choice
         options:
         - macOS-latest
         - windows-latest
-        - ubuntu-18.04
+        - ubuntu-20.04
       r_version:
         description: 'Which R version to debug on'
         required: true
