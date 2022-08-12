@@ -309,13 +309,15 @@ test_that("na argument modifies how missing values are written", {
 
 test_that("vroom_write() does not overwrite file when appending empty data frame", {
   tf <- withr::local_tempfile()
-  data <- tibble::tibble(a = "1", b = "2", c = "3")
+  data <- tibble::tibble(a = "1",
+                         b = "2",
+                         c = "3")
 
-  vroom_write(data, file = tf)
-  first_write <- vroom(tf, altrep = FALSE, show_col_types = FALSE)
+  vroom_write(data, file = tf, delim = ",")
+  vroom_write(data.frame(), file = tf, append = TRUE, delim = ",")
 
-  vroom_write(data.frame(), file = tf, append = TRUE)
-  second_write <- vroom(tf, altrep = FALSE, show_col_types = FALSE)
-
-  expect_equal(first_write, second_write)
+  expect_equal(vroom_lines(tf,
+                           altrep = FALSE,
+                           skip_empty_rows = FALSE),
+               c("a,b,c", "1,2,3"))
 })
