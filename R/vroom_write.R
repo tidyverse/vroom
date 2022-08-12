@@ -58,10 +58,9 @@ vroom_write <- function(x, file, delim = '\t', eol = "\n", na = "NA", col_names 
   # Standardise path returns a list, but we will only ever have 1 output file.
   file <- standardise_one_path(file, write = TRUE)
 
-  # If there are no columns in the data frame and we aren't appending
-  # just create an empty file and return
-  if (NCOL(x) == 0 && !append) {
-    if (!inherits(file, "connection")) {
+  # If there are no columns in the data frame then return early
+  if (NCOL(x) == 0) {
+    if (!append && !inherits(file, "connection")) {
       file.create(file)
     }
     return(invisible(input))
