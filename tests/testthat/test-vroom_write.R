@@ -312,10 +312,10 @@ test_that("vroom_write() does not overwrite file when appending empty data frame
   data <- tibble::tibble(a = "1", b = "2", c = "3")
 
   vroom_write(data, file = tf)
-  first_write <- vroom(tf, show_col_types = FALSE)
+  first_write <- vroom(tf, altrep = FALSE, show_col_types = FALSE)
 
   vroom_write(data.frame(), file = tf, append = TRUE)
-  second_write <- vroom(tf, show_col_types = FALSE)
+  second_write <- vroom(tf, altrep = FALSE, show_col_types = FALSE)
 
   expect_equal(first_write, second_write)
 })
