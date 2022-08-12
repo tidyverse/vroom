@@ -14,9 +14,9 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><link href="../deps/_Source%20Sans%20Pro-0.4.1/font.css" rel="stylesheet">
-<link href="../deps/_Source%20Code%20Pro-0.4.1/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.2/font.css" rel="stylesheet">
+<link href="../deps/Source_Code_Pro-0.4.2/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Get started with vroom">
@@ -103,7 +103,7 @@
 <p>The vroom package contains one main function <code><a href="../reference/vroom.html">vroom()</a></code> which is used to read all types of delimited files. A delimited file is any file in which the data is separated (delimited) by one or more characters.</p>
 <p>The most common type of delimited files are CSV (Comma Separated Values) or TSV (Tab Separated Values) files, typically these files have a <code>.csv</code> and <code>.tsv</code> suffix respectively.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vroom.r-lib.org">vroom</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vroom.r-lib.org">vroom</a></span><span class="op">)</span></span></code></pre></div>
 <p>This vignette covers the following topics:</p>
 <ul>
 <li>The basics of reading files, including
@@ -124,47 +124,49 @@
 <p>To read a CSV, or other type of delimited file with vroom pass the file to <code><a href="../reference/vroom.html">vroom()</a></code>. The delimiter will be automatically guessed if it is a common delimiter; e.g. (“,” “” ” “|” “:” “;”). If the guessing fails or you are using a less common delimiter specify it with the <code>delim</code> parameter. (e.g. <code>delim = ","</code>).</p>
 <p>We have included an example CSV file in the vroom package for use in examples and tests. Access it with <code>vroom_example("mtcars.csv")</code></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># See where the example file is stored on your machine</span>
-<span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>
-<span class="va">file</span>
-<span class="co">#&gt; [1] "/home/runner/work/_temp/Library/vroom/extdata/mtcars.csv"</span>
-
-<span class="co"># Read the file, by default vroom will guess the delimiter automatically.</span>
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span>
-<span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">12</span></span>
-<span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span>
-<span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): model</span>
-<span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span>
-<span class="co">#&gt;   model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span>
-
-<span class="co"># You can also specify it explicitly, which is (slightly) faster, and safer if</span>
-<span class="co"># you know how the file is delimited.</span>
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, delim <span class="op">=</span> <span class="st">","</span><span class="op">)</span>
-<span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">12</span></span>
-<span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span>
-<span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): model</span>
-<span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span>
-<span class="co">#&gt;   model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># See where the example file is stored on your machine</span></span>
+<span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span></span>
+<span><span class="va">file</span></span>
+<span><span class="co">#&gt; [1] "/home/runner/work/_temp/Library/vroom/extdata/mtcars.csv"</span></span>
+<span></span>
+<span><span class="co"># Read the file, by default vroom will guess the delimiter automatically.</span></span>
+<span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">12</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): model</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span></span>
+<span><span class="co">#&gt;   model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span>
+<span></span>
+<span><span class="co"># You can also specify it explicitly, which is (slightly) faster, and safer if</span></span>
+<span><span class="co"># you know how the file is delimited.</span></span>
+<span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, delim <span class="op">=</span> <span class="st">","</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">12</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): model</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span></span>
+<span><span class="co">#&gt;   model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reading-multiple-files">Reading multiple files<a class="anchor" aria-label="anchor" href="#reading-multiple-files"></a>
@@ -172,84 +174,87 @@
 <p>If you are reading a set of files which all have the same columns, you can pass the filenames directly to <code><a href="../reference/vroom.html">vroom()</a></code> and it will combine them into one result.</p>
 <p>First we will create some files to read by splitting the mtcars dataset by number of cylinders, (it is OK if you don’t currently understand this code).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mt</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames_to_column</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="st">"model"</span><span class="op">)</span>
-<span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/imap.html" class="external-link">iwalk</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">mt</span>, <span class="va">mt</span><span class="op">$</span><span class="va">cyl</span><span class="op">)</span>,
-  <span class="op">~</span> <span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span><span class="op">(</span><span class="va">.x</span>, <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"mtcars_{.y}.csv"</span><span class="op">)</span>, <span class="st">"\t"</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">mt</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames_to_column</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="st">"model"</span><span class="op">)</span></span>
+<span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/imap.html" class="external-link">iwalk</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">mt</span>, <span class="va">mt</span><span class="op">$</span><span class="va">cyl</span><span class="op">)</span>,</span>
+<span>  <span class="op">~</span> <span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span><span class="op">(</span><span class="va">.x</span>, <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"mtcars_{.y}.csv"</span><span class="op">)</span>, <span class="st">"\t"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>Then we can efficiently read them into one table by passing the filenames directly to vroom.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/dir_ls.html" class="external-link">dir_ls</a></span><span class="op">(</span>glob <span class="op">=</span> <span class="st">"mtcars*csv"</span><span class="op">)</span>
-<span class="va">files</span>
-<span class="co">#&gt; mtcars_4.csv mtcars_6.csv mtcars_8.csv</span>
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">files</span><span class="op">)</span>
-<span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">12</span></span>
-<span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> "\t"</span>
-<span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): model</span>
-<span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span>
-<span class="co">#&gt;   model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Merc …  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/dir_ls.html" class="external-link">dir_ls</a></span><span class="op">(</span>glob <span class="op">=</span> <span class="st">"mtcars*csv"</span><span class="op">)</span></span>
+<span><span class="va">files</span></span>
+<span><span class="co">#&gt; mtcars_4.csv mtcars_6.csv mtcars_8.csv</span></span>
+<span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">files</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">12</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> "\t"</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): model</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span></span>
+<span><span class="co">#&gt;   model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Merc …  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
 <p>Often the filename or directory where the files are stored contains information. The <code>id</code> parameter can be used to add an extra column to the result with the full path to each file. (in this case we name the column <code>path</code>).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">files</span>, id <span class="op">=</span> <span class="st">"path"</span><span class="op">)</span>
-<span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">13</span></span>
-<span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> "\t"</span>
-<span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): model</span>
-<span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 13</span></span>
-<span class="co">#&gt;   path   model   mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> mtcar… Dats…  22.8     4  108     93  3.85  2.32  18.6     1     1     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> mtcar… Merc…  24.4     4  147.    62  3.69  3.19  20       1     0     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> mtcar… Merc…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows, and 1 more variable: carb &lt;dbl&gt;</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">files</span>, id <span class="op">=</span> <span class="st">"path"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">13</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> "\t"</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): model</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 13</span></span></span>
+<span><span class="co">#&gt;   path   model   mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> mtcar… Dats…  22.8     4  108     93  3.85  2.32  18.6     1     1     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> mtcar… Merc…  24.4     4  147.    62  3.69  3.19  20       1     0     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> mtcar… Merc…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows, and 1 more variable: carb &lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reading-compressed-files">Reading compressed files<a class="anchor" aria-label="anchor" href="#reading-compressed-files"></a>
 </h2>
 <p>vroom supports reading zip, gz, bz2 and xz compressed files automatically, just pass the filename of the compressed file to vroom.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv.gz"</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span>
-<span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">12</span></span>
-<span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span>
-<span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): model</span>
-<span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span>
-<span class="co">#&gt;   model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv.gz"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">12</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): model</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span></span>
+<span><span class="co">#&gt;   model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
 <p><code><a href="../reference/vroom.html">vroom()</a></code> decompresses, indexes and writes the decompressed data to a file in the temp directory in a single stream. The temporary file is used to lazily look up the values and will be automatically cleaned up when all values in the object have been fully read, the object is removed, or the R session ends.</p>
 <div class="section level3">
 <h3 id="reading-single-files-from-multiple-multi-file-zip-archives">Reading single files from multiple multi-file zip archives<a class="anchor" aria-label="anchor" href="#reading-single-files-from-multiple-multi-file-zip-archives"></a>
 </h3>
 <p>If you are reading a zip file that contains multiple files with the same format, you can use a wrapper function like this:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">read_all_zip</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">file</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">filenames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="va">file</span>, list <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">Name</span>
-  <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">filenames</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">unz</a></span><span class="op">(</span><span class="va">file</span>, <span class="va">.x</span><span class="op">)</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">read_all_zip</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">file</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">filenames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="va">file</span>, list <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">Name</span></span>
+<span>  <span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">filenames</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">unz</a></span><span class="op">(</span><span class="va">file</span>, <span class="va">.x</span><span class="op">)</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -257,42 +262,44 @@
 </h2>
 <p>vroom can read files directly from the internet as well by passing the URL of the file to vroom.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">file</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/r-lib/vroom/main/inst/extdata/mtcars.csv"</span>
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span>
-<span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">12</span></span>
-<span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span>
-<span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): model</span>
-<span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span>
-<span class="co">#&gt;   model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/r-lib/vroom/main/inst/extdata/mtcars.csv"</span></span>
+<span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">12</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): model</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span></span>
+<span><span class="co">#&gt;   model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
 <p>It can even read gzipped files from the internet (although not the other compressed formats).</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">file</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/r-lib/vroom/main/inst/extdata/mtcars.csv.gz"</span>
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span>
-<span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">12</span></span>
-<span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span>
-<span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): model</span>
-<span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span>
-<span class="co">#&gt;   model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/r-lib/vroom/main/inst/extdata/mtcars.csv.gz"</span></span>
+<span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">12</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): model</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span></span>
+<span><span class="co">#&gt;   model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="column-selection">Column selection<a class="anchor" aria-label="anchor" href="#column-selection"></a>
@@ -302,189 +309,193 @@
 <li>A character vector of column names</li>
 </ul>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv.gz"</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, col_select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">model</span>, <span class="va">cyl</span>, <span class="va">gear</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">3</span></span>
-<span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span>
-<span class="co">#&gt; <span style="color: #BB0000;">chr</span> (1): model</span>
-<span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (2): cyl, gear</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 3</span></span>
-<span class="co">#&gt;   model           cyl  gear</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda RX4         6     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda RX4 Wag     6     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsun 710        4     4</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv.gz"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, col_select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">model</span>, <span class="va">cyl</span>, <span class="va">gear</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span> (1): model</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (2): cyl, gear</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 3</span></span></span>
+<span><span class="co">#&gt;   model           cyl  gear</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda RX4         6     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda RX4 Wag     6     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsun 710        4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
 <ul>
 <li>A numeric vector of column indexes, e.g. <code>c(1, 2, 5)</code>
 </li>
 </ul>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, col_select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">11</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">3</span></span>
-<span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span>
-<span class="co">#&gt; <span style="color: #BB0000;">chr</span> (1): model</span>
-<span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (2): cyl, gear</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 3</span></span>
-<span class="co">#&gt;   model           cyl  gear</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda RX4         6     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda RX4 Wag     6     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsun 710        4     4</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, col_select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">11</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span> (1): model</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (2): cyl, gear</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 3</span></span></span>
+<span><span class="co">#&gt;   model           cyl  gear</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda RX4         6     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda RX4 Wag     6     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsun 710        4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
 <ul>
 <li>Using the selection helpers such as <code><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with()</a></code> and <code><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with()</a></code>
 </li>
 </ul>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, col_select <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"d"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">2</span></span>
-<span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span>
-<span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (2): disp, drat</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 2</span></span>
-<span class="co">#&gt;    disp  drat</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   160  3.9 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   160  3.9 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   108  3.85</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, col_select <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"d"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (2): disp, drat</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 2</span></span></span>
+<span><span class="co">#&gt;    disp  drat</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   160  3.9 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   160  3.9 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   108  3.85</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
 <ul>
 <li>You can also rename columns</li>
 </ul>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, col_select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>car <span class="op">=</span> <span class="va">model</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">12</span></span>
-<span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span>
-<span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): model</span>
-<span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span>
-<span class="co">#&gt;   car      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span>, col_select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>car <span class="op">=</span> <span class="va">model</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">12</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): model</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span></span>
+<span><span class="co">#&gt;   car      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reading-fixed-width-files">Reading fixed width files<a class="anchor" aria-label="anchor" href="#reading-fixed-width-files"></a>
 </h2>
 <p>A fixed width file can be a very compact representation of numeric data. Unfortunately, it’s also often painful to read because you need to describe the length of every field. vroom aims to make it as easy as possible by providing a number of different ways to describe the field structure. Use <code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> in conjunction with one of the following helper functions to read the file.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fwf_sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"fwf-sample.txt"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span><span class="va">fwf_sample</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; John Smith          WA        418-Y11-4111 Mary Hartford       CA        319-Z19-4341 Evan Nolan          IL        219-532-c301</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fwf_sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"fwf-sample.txt"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span><span class="va">fwf_sample</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; John Smith          WA        418-Y11-4111 Mary Hartford       CA        319-Z19-4341 Evan Nolan          IL        219-532-c301</span></span></code></pre></div>
 <ul>
 <li>
 <code><a href="../reference/vroom_fwf.html">fwf_empty()</a></code> - Guess based on the position of empty columns.</li>
 </ul>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span><span class="op">(</span><span class="va">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_empty</a></span><span class="op">(</span><span class="va">fwf_sample</span>, col_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"first"</span>, <span class="st">"last"</span>, <span class="st">"state"</span>, <span class="st">"ssn"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">3</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">4</span></span>
-<span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #BB0000;">chr</span> (4): first, last, state, ssn</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 4</span></span>
-<span class="co">#&gt;   first last     state ssn         </span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> John  Smith    WA    418-Y11-4111</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mary  Hartford CA    319-Z19-4341</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Evan  Nolan    IL    219-532-c301</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span><span class="op">(</span><span class="va">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_empty</a></span><span class="op">(</span><span class="va">fwf_sample</span>, col_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"first"</span>, <span class="st">"last"</span>, <span class="st">"state"</span>, <span class="st">"ssn"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">3</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">4</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span> (4): first, last, state, ssn</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 4</span></span></span>
+<span><span class="co">#&gt;   first last     state ssn         </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> John  Smith    WA    418-Y11-4111</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mary  Hartford CA    319-Z19-4341</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Evan  Nolan    IL    219-532-c301</span></span></code></pre></div>
 <ul>
 <li>
 <code><a href="../reference/vroom_fwf.html">fwf_widths()</a></code> - Use user provided set of field widths.</li>
 </ul>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span><span class="op">(</span><span class="va">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_widths</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">10</span>, <span class="fl">12</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"name"</span>, <span class="st">"state"</span>, <span class="st">"ssn"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">3</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">3</span></span>
-<span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #BB0000;">chr</span> (3): name, state, ssn</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 3</span></span>
-<span class="co">#&gt;   name          state ssn         </span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> John Smith    WA    418-Y11-4111</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mary Hartford CA    319-Z19-4341</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Evan Nolan    IL    219-532-c301</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span><span class="op">(</span><span class="va">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_widths</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">10</span>, <span class="fl">12</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"name"</span>, <span class="st">"state"</span>, <span class="st">"ssn"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">3</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span> (3): name, state, ssn</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 3</span></span></span>
+<span><span class="co">#&gt;   name          state ssn         </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> John Smith    WA    418-Y11-4111</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mary Hartford CA    319-Z19-4341</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Evan Nolan    IL    219-532-c301</span></span></code></pre></div>
 <ul>
 <li>
 <code><a href="../reference/vroom_fwf.html">fwf_positions()</a></code> - Use user provided sets of start and end positions.</li>
 </ul>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span><span class="op">(</span><span class="va">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_positions</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">30</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">42</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"name"</span>, <span class="st">"ssn"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">3</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">2</span></span>
-<span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #BB0000;">chr</span> (2): name, ssn</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 2</span></span>
-<span class="co">#&gt;   name          ssn         </span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> John Smith    418-Y11-4111</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mary Hartford 319-Z19-4341</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Evan Nolan    219-532-c301</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span><span class="op">(</span><span class="va">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_positions</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">30</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">42</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"name"</span>, <span class="st">"ssn"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">3</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span> (2): name, ssn</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 2</span></span></span>
+<span><span class="co">#&gt;   name          ssn         </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> John Smith    418-Y11-4111</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mary Hartford 319-Z19-4341</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Evan Nolan    219-532-c301</span></span></code></pre></div>
 <ul>
 <li>
 <code><a href="../reference/vroom_fwf.html">fwf_cols()</a></code> - Use user provided named widths.</li>
 </ul>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span><span class="op">(</span><span class="va">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_cols</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fl">20</span>, state <span class="op">=</span> <span class="fl">10</span>, ssn <span class="op">=</span> <span class="fl">12</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">3</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">3</span></span>
-<span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #BB0000;">chr</span> (3): name, state, ssn</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 3</span></span>
-<span class="co">#&gt;   name          state ssn         </span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> John Smith    WA    418-Y11-4111</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mary Hartford CA    319-Z19-4341</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Evan Nolan    IL    219-532-c301</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span><span class="op">(</span><span class="va">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_cols</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fl">20</span>, state <span class="op">=</span> <span class="fl">10</span>, ssn <span class="op">=</span> <span class="fl">12</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">3</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span> (3): name, state, ssn</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 3</span></span></span>
+<span><span class="co">#&gt;   name          state ssn         </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> John Smith    WA    418-Y11-4111</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mary Hartford CA    319-Z19-4341</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Evan Nolan    IL    219-532-c301</span></span></code></pre></div>
 <ul>
 <li>
 <code><a href="../reference/vroom_fwf.html">fwf_cols()</a></code> - Use user provided named pairs of positions.</li>
 </ul>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span><span class="op">(</span><span class="va">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_cols</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">20</span><span class="op">)</span>, ssn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">42</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">3</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">2</span></span>
-<span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #BB0000;">chr</span> (2): name, ssn</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 2</span></span>
-<span class="co">#&gt;   name          ssn         </span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> John Smith    418-Y11-4111</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mary Hartford 319-Z19-4341</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Evan Nolan    219-532-c301</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom_fwf.html">vroom_fwf</a></span><span class="op">(</span><span class="va">fwf_sample</span>, <span class="fu"><a href="../reference/vroom_fwf.html">fwf_cols</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">20</span><span class="op">)</span>, ssn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">42</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">3</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span> (2): name, ssn</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 2</span></span></span>
+<span><span class="co">#&gt;   name          ssn         </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> John Smith    418-Y11-4111</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mary Hartford 319-Z19-4341</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Evan Nolan    219-532-c301</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="column-types">Column types<a class="anchor" aria-label="anchor" href="#column-types"></a>
@@ -521,105 +532,111 @@
 <p>You can tell vroom what columns to use with the <code><a href="../reference/cols.html">col_types()</a></code> argument in a number of ways.</p>
 <p>If you only need to override a single column the most concise way is to use a named vector.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># read the 'hp' columns as an integer</span>
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>hp <span class="op">=</span> <span class="st">"i"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span>
-<span class="co">#&gt;   model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span>
-
-<span class="co"># also skip reading the 'cyl' column</span>
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>hp <span class="op">=</span> <span class="st">"i"</span>, cyl <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 11</span></span>
-<span class="co">#&gt;   model          mpg  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda RX4     21     160   110  3.9   2.62  16.5     0     1     4     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda RX4 W…  21     160   110  3.9   2.88  17.0     0     1     4     4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsun 710    22.8   108    93  3.85  2.32  18.6     1     1     4     1</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span>
-
-<span class="co"># also read the gears as a factor</span>
-<span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>hp <span class="op">=</span> <span class="st">"i"</span>, cyl <span class="op">=</span> <span class="st">"_"</span>, gear <span class="op">=</span> <span class="st">"f"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 11</span></span>
-<span class="co">#&gt;   model          mpg  disp    hp  drat    wt  qsec    vs    am gear   carb</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda RX4     21     160   110  3.9   2.62  16.5     0     1 4         4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda RX4 W…  21     160   110  3.9   2.88  17.0     0     1 4         4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsun 710    22.8   108    93  3.85  2.32  18.6     1     1 4         1</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># read the 'hp' columns as an integer</span></span>
+<span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>hp <span class="op">=</span> <span class="st">"i"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span></span>
+<span><span class="co">#&gt;   model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span>
+<span></span>
+<span><span class="co"># also skip reading the 'cyl' column</span></span>
+<span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>hp <span class="op">=</span> <span class="st">"i"</span>, cyl <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 11</span></span></span>
+<span><span class="co">#&gt;   model          mpg  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda RX4     21     160   110  3.9   2.62  16.5     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda RX4 W…  21     160   110  3.9   2.88  17.0     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsun 710    22.8   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span>
+<span></span>
+<span><span class="co"># also read the gears as a factor</span></span>
+<span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>hp <span class="op">=</span> <span class="st">"i"</span>, cyl <span class="op">=</span> <span class="st">"_"</span>, gear <span class="op">=</span> <span class="st">"f"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 11</span></span></span>
+<span><span class="co">#&gt;   model          mpg  disp    hp  drat    wt  qsec    vs    am gear   carb</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda RX4     21     160   110  3.9   2.62  16.5     0     1 4         4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda RX4 W…  21     160   110  3.9   2.88  17.0     0     1 4         4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsun 710    22.8   108    93  3.85  2.32  18.6     1     1 4         1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
 <p>You can read all the columns with the same type, by using the <code>.default</code> argument. For example reading everything as a character.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>.default <span class="op">=</span> <span class="st">"c"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span>
-<span class="co">#&gt;   model  mpg   cyl   disp  hp    drat  wt    qsec  vs    am    gear  carb </span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda… 21    6     160   110   3.9   2.62  16.46 0     1     4     4    </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda… 21    6     160   110   3.9   2.875 17.02 0     1     4     4    </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu… 22.8  4     108   93    3.85  2.32  18.61 1     1     4     1    </span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>.default <span class="op">=</span> <span class="st">"c"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span></span>
+<span><span class="co">#&gt;   model  mpg   cyl   disp  hp    drat  wt    qsec  vs    am    gear  carb </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda… 21    6     160   110   3.9   2.62  16.46 0     1     4     4    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda… 21    6     160   110   3.9   2.875 17.02 0     1     4     4    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu… 22.8  4     108   93    3.85  2.32  18.61 1     1     4     1    </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
 <p>However you can also use the <code>col_*()</code> functions in a list.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span>
-  <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>,
-  col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>hp <span class="op">=</span> <span class="fu"><a href="../reference/cols.html">col_integer</a></span><span class="op">(</span><span class="op">)</span>, cyl <span class="op">=</span> <span class="fu"><a href="../reference/cols.html">col_skip</a></span><span class="op">(</span><span class="op">)</span>, gear <span class="op">=</span> <span class="fu"><a href="../reference/cols.html">col_factor</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 11</span></span>
-<span class="co">#&gt;   model          mpg  disp    hp  drat    wt  qsec    vs    am gear   carb</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda RX4     21     160   110  3.9   2.62  16.5     0     1 4         4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda RX4 W…  21     160   110  3.9   2.88  17.0     0     1 4         4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsun 710    22.8   108    93  3.85  2.32  18.6     1     1 4         1</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>,</span>
+<span>  col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>hp <span class="op">=</span> <span class="fu"><a href="../reference/cols.html">col_integer</a></span><span class="op">(</span><span class="op">)</span>, cyl <span class="op">=</span> <span class="fu"><a href="../reference/cols.html">col_skip</a></span><span class="op">(</span><span class="op">)</span>, gear <span class="op">=</span> <span class="fu"><a href="../reference/cols.html">col_factor</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 11</span></span></span>
+<span><span class="co">#&gt;   model          mpg  disp    hp  drat    wt  qsec    vs    am gear   carb</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda RX4     21     160   110  3.9   2.62  16.5     0     1 4         4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda RX4 W…  21     160   110  3.9   2.88  17.0     0     1 4         4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsun 710    22.8   108    93  3.85  2.32  18.6     1     1 4         1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
 <p>This is most useful when a column type needs additional information, such as for categorical data when you know all of the levels of a factor.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span>
-  <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>,
-  col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>gear <span class="op">=</span> <span class="fu"><a href="../reference/cols.html">col_factor</a></span><span class="op">(</span>levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>gear <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span>
-<span class="co">#&gt;   model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am gear   carb</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1 4         4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1 4         4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1 4         1</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>,</span>
+<span>  col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>gear <span class="op">=</span> <span class="fu"><a href="../reference/cols.html">col_factor</a></span><span class="op">(</span>levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>gear <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span></span>
+<span><span class="co">#&gt;   model    mpg   cyl  disp    hp  drat    wt  qsec    vs    am gear   carb</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1 4         4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1 4         4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1 4         1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="name-repair">Name repair<a class="anchor" aria-label="anchor" href="#name-repair"></a>
 </h2>
 <p>Often the names of columns in the original dataset are not ideal to work with. <code><a href="../reference/vroom.html">vroom()</a></code> uses the same <code>.name_repair</code> argument as tibble, so you can use one of the default name repair strategies or provide a custom function. A great approach is to use the <a href="http://sfirke.github.io/janitor/reference/make_clean_names.html" class="external-link"><code>janitor::make_clean_names()</code></a> function as the input. This will automatically clean the names to use whatever case you specify, here I am setting it to use <code>ALLCAPS</code> names.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span>
-  <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>,
-  .name_repair <span class="op">=</span> <span class="op">~</span> <span class="fu">janitor</span><span class="fu">::</span><span class="fu">make_clean_names</span><span class="op">(</span><span class="va">.</span>, case <span class="op">=</span> <span class="st">"all_caps"</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>,</span>
+<span>  .name_repair <span class="op">=</span> <span class="op">~</span> <span class="fu">janitor</span><span class="fu">::</span><span class="fu">make_clean_names</span><span class="op">(</span><span class="va">.</span>, case <span class="op">=</span> <span class="st">"all_caps"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="writing-delimited-files">Writing delimited files<a class="anchor" aria-label="anchor" href="#writing-delimited-files"></a>
 </h2>
 <p>Use <code><a href="../reference/vroom_write.html">vroom_write()</a></code> to write delimited files, the default delimiter is tab, to write TSV files. Writing to TSV by default has the following benefits: - Avoids the issue of whether to use <code>;</code> (common in Europe) or <code>,</code> (common in the US) - Unlikely to require quoting in fields, as very few fields contain tabs - More easily and efficiently ingested by Unix command line tools such as <code>cut</code>, <code>perl</code> and <code>awk</code>.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="st">"mtcars.tsv"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="st">"mtcars.tsv"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="writing-csv-delimited-files">Writing CSV delimited files<a class="anchor" aria-label="anchor" href="#writing-csv-delimited-files"></a>
 </h3>
 <p>However you can also use <code>delim = ','</code> to write CSV files, which are common as inputs to GUI spreadsheet tools like Excel or Google Sheets.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="st">"mtcars.csv"</span>, delim <span class="op">=</span> <span class="st">","</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="st">"mtcars.csv"</span>, delim <span class="op">=</span> <span class="st">","</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="writing-compressed-files">Writing compressed files<a class="anchor" aria-label="anchor" href="#writing-compressed-files"></a>
 </h3>
 <p>For gzip, bzip2 and xz compression the outputs will be automatically compressed if the filename ends in <code>.gz</code>, <code>.bz2</code> or <code>.xz</code>.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="st">"mtcars.tsv.gz"</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="st">"mtcars.tsv.bz2"</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="st">"mtcars.tsv.xz"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="st">"mtcars.tsv.gz"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="st">"mtcars.tsv.bz2"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="st">"mtcars.tsv.xz"</span><span class="op">)</span></span></code></pre></div>
 <p>It is also possible to use other compressors by using <code><a href="https://rdrr.io/r/base/connections.html" class="external-link">pipe()</a></code> with <code><a href="../reference/vroom_write.html">vroom_write()</a></code> to create a pipe connection to command line utilities, such as</p>
 <ul>
 <li>
@@ -632,7 +649,7 @@
 </ul>
 <p>The parallel compression versions can be considerably faster for large output files and generally <code><a href="../reference/vroom_write.html">vroom_write()</a></code> is fast enough that the compression speed becomes the bottleneck when writing.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">pipe</a></span><span class="op">(</span><span class="st">"pigz &gt; mtcars.tsv.gz"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom_write.html">vroom_write</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">pipe</a></span><span class="op">(</span><span class="st">"pigz &gt; mtcars.tsv.gz"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="reading-and-writing-from-standard-input-and-output">Reading and writing from standard input and output<a class="anchor" aria-label="anchor" href="#reading-and-writing-from-standard-input-and-output"></a>
@@ -671,7 +688,7 @@ Rscript -e 'vroom::vroom_write(iris, stdout())' | head</code></pre>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
   </div></footer>

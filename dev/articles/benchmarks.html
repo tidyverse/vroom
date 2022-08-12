@@ -14,9 +14,9 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><link href="../deps/_Source%20Sans%20Pro-0.4.1/font.css" rel="stylesheet">
-<link href="../deps/_Source%20Code%20Pro-0.4.1/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.2/font.css" rel="stylesheet">
+<link href="../deps/Source_Code_Pro-0.4.2/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Vroom Benchmarks">
@@ -121,19 +121,19 @@
 </h3>
 <p>This real world dataset is from Freedom of Information Law (FOIL) Taxi Trip Data from the NYC Taxi and Limousine Commission 2013, originally posted at <a href="https://chriswhong.com/open-data/foil_nyc_taxi/" class="external-link uri">https://chriswhong.com/open-data/foil_nyc_taxi/</a>. It is also hosted on <a href="https://archive.org/details/nycTaxiTripData2013" class="external-link">archive.org</a>.</p>
 <p>The first table trip_fare_1.csv is 1.55G in size.</p>
-<pre><code><span class="co">#&gt; Observations: 14,776,615</span>
-<span class="co">#&gt; Variables: 11</span>
-<span class="co">#&gt; $ medallion       &lt;chr&gt; "89D227B655E5C82AECF13C3F540D4CF4", "0BD7C8F5B...</span>
-<span class="co">#&gt; $ hack_license    &lt;chr&gt; "BA96DE419E711691B9445D6A6307C170", "9FD8F69F0...</span>
-<span class="co">#&gt; $ vendor_id       &lt;chr&gt; "CMT", "CMT", "CMT", "CMT", "CMT", "CMT", "CMT...</span>
-<span class="co">#&gt; $ pickup_datetime &lt;chr&gt; "2013-01-01 15:11:48", "2013-01-06 00:18:35", ...</span>
-<span class="co">#&gt; $ payment_type    &lt;chr&gt; "CSH", "CSH", "CSH", "CSH", "CSH", "CSH", "CSH...</span>
-<span class="co">#&gt; $ fare_amount     &lt;dbl&gt; 6.5, 6.0, 5.5, 5.0, 9.5, 9.5, 6.0, 34.0, 5.5, ...</span>
-<span class="co">#&gt; $ surcharge       &lt;dbl&gt; 0.0, 0.5, 1.0, 0.5, 0.5, 0.0, 0.0, 0.0, 1.0, 0...</span>
-<span class="co">#&gt; $ mta_tax         &lt;dbl&gt; 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0...</span>
-<span class="co">#&gt; $ tip_amount      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...</span>
-<span class="co">#&gt; $ tolls_amount    &lt;dbl&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.8, 0.0, 0...</span>
-<span class="co">#&gt; $ total_amount    &lt;dbl&gt; 7.0, 7.0, 7.0, 6.0, 10.5, 10.0, 6.5, 39.3, 7.0...</span></code></pre>
+<pre><code><span><span class="co">#&gt; Observations: 14,776,615</span></span>
+<span><span class="co">#&gt; Variables: 11</span></span>
+<span><span class="co">#&gt; $ medallion       &lt;chr&gt; "89D227B655E5C82AECF13C3F540D4CF4", "0BD7C8F5B...</span></span>
+<span><span class="co">#&gt; $ hack_license    &lt;chr&gt; "BA96DE419E711691B9445D6A6307C170", "9FD8F69F0...</span></span>
+<span><span class="co">#&gt; $ vendor_id       &lt;chr&gt; "CMT", "CMT", "CMT", "CMT", "CMT", "CMT", "CMT...</span></span>
+<span><span class="co">#&gt; $ pickup_datetime &lt;chr&gt; "2013-01-01 15:11:48", "2013-01-06 00:18:35", ...</span></span>
+<span><span class="co">#&gt; $ payment_type    &lt;chr&gt; "CSH", "CSH", "CSH", "CSH", "CSH", "CSH", "CSH...</span></span>
+<span><span class="co">#&gt; $ fare_amount     &lt;dbl&gt; 6.5, 6.0, 5.5, 5.0, 9.5, 9.5, 6.0, 34.0, 5.5, ...</span></span>
+<span><span class="co">#&gt; $ surcharge       &lt;dbl&gt; 0.0, 0.5, 1.0, 0.5, 0.5, 0.0, 0.0, 0.0, 1.0, 0...</span></span>
+<span><span class="co">#&gt; $ mta_tax         &lt;dbl&gt; 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0...</span></span>
+<span><span class="co">#&gt; $ tip_amount      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...</span></span>
+<span><span class="co">#&gt; $ tolls_amount    &lt;dbl&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.8, 0.0, 0...</span></span>
+<span><span class="co">#&gt; $ total_amount    &lt;dbl&gt; 7.0, 7.0, 7.0, 6.0, 10.5, 10.0, 6.5, 39.3, 7.0...</span></span></code></pre>
 <div class="section level4">
 <h4 id="taxi-benchmarks">Taxi Benchmarks<a class="anchor" aria-label="anchor" href="#taxi-benchmarks"></a>
 </h4>
@@ -2241,7 +2241,7 @@ uncompressed
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
   </div></footer>
