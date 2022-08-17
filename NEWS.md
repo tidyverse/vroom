@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom_write(append = TRUE)` does not modify an existing file when appending an empty data frame. In particular, it does not overwrite (delete) the existing contents of that file (https://github.com/tidyverse/readr/issues/1408, #451).
+
 * `vroom::problems()` now defaults to `.Last.value` for its primary input, similar to how `readr::problems()` works (#443).
 
 * The warning that indicates the existence of parsing problems has been improved, which should make it easier for the user to follow-up (https://github.com/tidyverse/readr/issues/1322).
