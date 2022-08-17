@@ -318,7 +318,5 @@ test_that("vroom_write() does not overwrite file when appending empty data frame
   vroom_write(data, file = tf, delim = ",")
   vroom_write(data.frame(), file = tf, append = TRUE, delim = ",")
 
-  expect_equal(vroom_lines(tf,
-                           altrep = FALSE),
-               c("a,b,c", "1,2,3"))
+  expect_equal(vroom_lines(tf, altrep = FALSE), c("a,b,c", "1,2,3"))
 })
