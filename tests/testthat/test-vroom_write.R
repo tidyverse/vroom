@@ -306,3 +306,17 @@ test_that("na argument modifies how missing values are written", {
   df <- data.frame(x = c(NA, "x"), y = c(1, 2))
   expect_equal(vroom_format(df, ",", na = "None"), "x,y\nNone,1\nx,2\n")
 })
+
+test_that("vroom_write() does not overwrite file when appending empty data frame", {
+  tf <- withr::local_tempfile()
+  data <- tibble::tibble(
+    a = "1",
+    b = "2",
+    c = "3"
+  )
+
+  vroom_write(data, file = tf, delim = ",")
+  vroom_write(data.frame(), file = tf, append = TRUE, delim = ",")
+
+  expect_equal(vroom_lines(tf, altrep = FALSE), c("a,b,c", "1,2,3"))
+})
