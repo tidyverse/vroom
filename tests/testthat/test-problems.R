@@ -158,9 +158,9 @@ test_that("can promote vroom parse warning to error", {
 
     # Trigger vroom parse warning while inside R's internal C code for `[` and ensure it doesn't crash R.
     # `[` -> R's C function `do_subset()` -> ALTREP calls `vroom::real_Elt()` -> `vroom::warn_for_errors()`
-    # `warn_for_errors()` warns with base R's machinery rather than cpp11's to avoid calling
-    # `unwind_protect()` (which throws on longjmp, i.e. on `abort()`) while inside R's internal
-    # C code (which doesn't catch C++ exceptions).
+    # To avoid calling `cpp11::unwind_protect()` (which throws on longjmp, i.e. on `abort()`) while inside
+    # R's internal C code (which doesn't catch C++ exceptions), `vroom::warn_for_errors()` warns
+    # with base R's machinery rather than cpp11's
     # https://github.com/r-lib/cpp11/issues/274
     # https://github.com/tidyverse/vroom/pull/441#discussion_r883611090
     x$a[1]
