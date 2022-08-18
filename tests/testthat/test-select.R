@@ -66,19 +66,19 @@ test_that("col_select can select the id column", {
 
 test_that("id column is automatically included in col_select (#416)", {
   expect_named(
-    vroom(vroom_example("mtcars.csv"), id = "path", col_select = list(model, mpg)),
+    vroom(vroom_example("mtcars.csv"), id = "path", col_select = list(model, mpg), show_col_types = FALSE),
     c("path", "model", "mpg")
   )
 })
 
 test_that("referencing columns by position in col_select works with id column (#455)", {
   expect_named(
-    vroom(vroom_example("mtcars.csv"), id = "path", col_select = list(1:3)),
+    vroom(vroom_example("mtcars.csv"), id = "path", col_select = list(1:3), show_col_types = FALSE),
     c("path", "model", "mpg", "cyl")
   )
 
   expect_named(
-    vroom(vroom_example("mtcars.csv"), id = "path", col_select = list(1:3,6:8)),
+    vroom(vroom_example("mtcars.csv"), id = "path", col_select = list(1:3,6:8), show_col_types = FALSE),
     c("path", "model", "mpg", "cyl", "drat", "wt", "qsec")
   )
 })
