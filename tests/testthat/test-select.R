@@ -64,7 +64,7 @@ test_that("col_select can select the id column", {
   )
 })
 
-test_that("id column not required in col_select (#416)", {
+test_that("id column is automatically included in col_select (#416)", {
   expect_named(
     vroom(vroom_example("mtcars.csv"), id = "path", col_select = list(model, mpg)),
     c("path", "model", "mpg")
