@@ -77,7 +77,7 @@ NULL
 #' vroom(input_file, col_select = starts_with("d"))
 #'
 #' # You can also rename specific columns
-#' vroom(input_file, col_select = list(car = model, everything()))
+#' vroom(input_file, col_select = c(car = model, everything()))
 #'
 #' # Column types --------------------------------------------------------------
 #' # By default, vroom guesses the columns types, looking at 1000 rows
