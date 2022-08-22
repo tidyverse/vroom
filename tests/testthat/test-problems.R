@@ -150,13 +150,20 @@ test_that("problems return the proper row number", {
 test_that("can promote vroom parse warning to error", {
   make_warning <- function() {
     x <- vroom(
-      I("a,b\n1.0,x\n"),
+      I("a\nx\n"),
       delim = ",",
-      col_types = "dd"
+      col_types = "d",
+      altrep = TRUE
     )
 
-    # Warning happens at print time so force a print
-    print(x)
+    # Trigger vroom parse warning while inside R's internal C code for `[` and ensure it doesn't crash R.
+    # `[` -> R's C function `do_subset()` -> ALTREP calls `vroom::real_Elt()` -> `vroom::warn_for_errors()`
+    # To avoid calling `cpp11::unwind_protect()` (which throws on longjmp, i.e. on `abort()`) while inside
+    # R's internal C code (which doesn't catch C++ exceptions), `vroom::warn_for_errors()` warns
+    # with cli called from base R's machinery, rather than from `cpp11::package()`
+    # https://github.com/r-lib/cpp11/issues/274
+    # https://github.com/tidyverse/vroom/pull/441#discussion_r883611090
+    x$a[1]
   }
 
   expect_error(
