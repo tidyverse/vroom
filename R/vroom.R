@@ -20,7 +20,7 @@ NULL
 #'   default, no variable will be created.
 #' @param col_select Columns to include in the results. You can use the same
 #'   mini-language as `dplyr::select()` to refer to the columns by name. Use
-#'   `c()` or `list()` to use more than one selection expression. Although this
+#'   `c()` to use more than one selection expression. Although this
 #'   usage is less common, `col_select` also accepts a numeric column index. See
 #'   [`?tidyselect::language`][tidyselect::language] for full details on the
 #'   selection language.
