@@ -360,9 +360,13 @@ vroom_select <- function(x, col_select, id) {
   # reorder and rename columns
   if (inherits(col_select, "quosures") || !rlang::quo_is_null(col_select)) {
     if (inherits(col_select, "quosures")) {
-      vars <- tidyselect::vars_select(c(id, names(spec(x)$cols)), !!!col_select)
+      vars <- tidyselect::vars_select(c(names(spec(x)$cols), id), !!!col_select)
     } else {
-      vars <- tidyselect::vars_select(c(id, names(spec(x)$cols)), !!col_select)
+      vars <- tidyselect::vars_select(c(names(spec(x)$cols), id), !!col_select)
+    }
+    if (!is.null(id) && !id %in% vars) {
+      names(id) <- id
+      vars <- c(id, vars)
     }
     # This can't be just names(x) as we need to have skipped
     # names as well to pass to vars_select()

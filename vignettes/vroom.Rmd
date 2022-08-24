@@ -154,7 +154,7 @@ vroom(file, col_select = starts_with("d"))
 ```
 - You can also rename columns
 ```{r}
-vroom(file, col_select = list(car = model, everything()))
+vroom(file, col_select = c(car = model, everything()))
 ```
 
 ## Reading fixed width files

@@ -1,5 +1,9 @@
 # vroom (development version)
 
+* `vroom(col_select=)` now handles column selection by numeric position when `id` column is provided (#455)
+
+* `vroom(id = "path", col_select = a:c)` is treated like `vroom(id = "path", col_select = c(path, a:c))`. If an `id` column is provided, it is automatically included in the output (#416).
+
 * `vroom_write(append = TRUE)` does not modify an existing file when appending an empty data frame. In particular, it does not overwrite (delete) the existing contents of that file (https://github.com/tidyverse/readr/issues/1408, #451).
 
 * `vroom::problems()` now defaults to `.Last.value` for its primary input, similar to how `readr::problems()` works (#443).
