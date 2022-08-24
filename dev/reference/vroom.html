@@ -151,7 +151,7 @@ set <code>show_col_types = FALSE</code> or set `options(readr.show_col_types = F
 <dt>col_select</dt>
 <dd><p>Columns to include in the results. You can use the same
 mini-language as <code><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">dplyr::select()</a></code> to refer to the columns by name. Use
-<code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> or <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code> to use more than one selection expression. Although this
+<code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> to use more than one selection expression. Although this
 usage is less common, <code>col_select</code> also accepts a numeric column index. See
 <code><a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">?tidyselect::language</a></code> for full details on the
 selection language.</p></dd>
@@ -303,7 +303,6 @@ to enforce them.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Merc…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Merc…  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 22 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span>
 <span class="r-in"><span><span class="co"># You can also use paths directly</span></span></span>
 <span class="r-in"><span><span class="co"># vroom("mtcars.csv")</span></span></span>
 <span class="r-in"><span></span></span>
@@ -352,7 +351,6 @@ to enforce them.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Merc 230              4     4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Merc 280              6     4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 22 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span>
 <span class="r-in"><span><span class="fu">vroom</span><span class="op">(</span><span class="va">input_file</span>, col_select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">11</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">3</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
@@ -376,7 +374,6 @@ to enforce them.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Merc 230              4     4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Merc 280              6     4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 22 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Or use the selection helpers</span></span></span>
 <span class="r-in"><span><span class="fu">vroom</span><span class="op">(</span><span class="va">input_file</span>, col_select <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"d"</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -401,10 +398,9 @@ to enforce them.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>  141.  3.92</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>  168.  3.92</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 22 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># You can also rename specific columns</span></span></span>
-<span class="r-in"><span><span class="fu">vroom</span><span class="op">(</span><span class="va">input_file</span>, col_select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>car <span class="op">=</span> <span class="va">model</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">vroom</span><span class="op">(</span><span class="va">input_file</span>, col_select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>car <span class="op">=</span> <span class="va">model</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">32</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">12</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Delimiter:</span> ","</span>
@@ -427,7 +423,6 @@ to enforce them.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Merc…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Merc…  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 22 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Column types --------------------------------------------------------------</span></span></span>
 <span class="r-in"><span><span class="co"># By default, vroom guesses the columns types, looking at 1000 rows</span></span></span>
@@ -520,7 +515,6 @@ to enforce them.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Pors…  26       4 120.     91  4.43  2.14  16.7     0     1     5     2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Lotu…  30.4     4  95.1   113  3.77  1.51  16.9     1     1     5     2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 22 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
