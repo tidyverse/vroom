@@ -18,7 +18,8 @@ vroom_lines(
 )
 }
 \arguments{
-\item{file}{path to a local file.}
+\item{file}{Either a path to a file, a connection, or literal data
+(either a single string or a raw vector).}
 
 \item{n_max}{Maximum number of lines to read.}
 
@@ -34,7 +35,7 @@ option is \code{TRUE} then blank rows will not be represented at all.  If it is
 
 \item{locale}{The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
-\code{\link[readr:locale]{locale()}} to create your own locale that controls things like
+\code{\link[=locale]{locale()}} to create your own locale that controls things like
 the default time zone, encoding, decimal mark, big mark, and day/month
 names.}
 

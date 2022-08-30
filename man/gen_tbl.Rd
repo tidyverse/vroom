@@ -17,17 +17,17 @@ gen_tbl(
 
 \item{cols}{Number of columns to generate, if \code{NULL} this is derived from \code{col_types}.}
 
-\item{col_types}{One of \code{NULL}, a \code{\link[readr:cols]{cols()}} specification, or
-a string. See \code{vignette("readr")} for more details.
+\item{col_types}{One of \code{NULL}, a \code{\link[=cols]{cols()}} specification, or
+a string.
 
 If \code{NULL}, all column types will be imputed from \code{guess_max} rows
 on the input interspersed throughout the file. This is convenient (and
 fast), but not robust. If the imputation fails, you'll need to increase
 the \code{guess_max} or supply the correct types yourself.
 
-Column specifications created by \code{\link[=list]{list()}} or \code{\link[readr:cols]{cols()}} must contain
+Column specifications created by \code{\link[=list]{list()}} or \code{\link[=cols]{cols()}} must contain
 one column specification for each column. If you only want to read a
-subset of the columns, use \code{\link[readr:cols_only]{cols_only()}}.
+subset of the columns, use \code{\link[=cols_only]{cols_only()}}.
 
 Alternatively, you can use a compact string representation where each
 character represents one column:
@@ -51,7 +51,7 @@ set \code{show_col_types = FALSE} or set `options(readr.show_col_types = FALSE).
 
 \item{locale}{The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
-\code{\link[readr:locale]{locale()}} to create your own locale that controls things like
+\code{\link[=locale]{locale()}} to create your own locale that controls things like
 the default time zone, encoding, decimal mark, big mark, and day/month
 names.}
 
