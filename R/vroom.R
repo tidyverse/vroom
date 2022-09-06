@@ -4,8 +4,18 @@ NULL
 
 #' Read a delimited file into a tibble
 #'
-#' @param file Either a path to a file, a connection, or literal data
-#'    (either a single string or a raw vector).
+#' @param file Either a path to a file, a connection, or literal data (either a
+#'   single string or a raw vector).
+#'
+#'   Files ending in `.gz`, `.bz2`, `.xz`, or `.zip` will be automatically
+#'   uncompressed. Files starting with `http://`, `https://`, `ftp://`, or
+#'   `ftps://` will be automatically downloaded. Remote gz files can also be
+#'   automatically downloaded and decompressed.
+#'
+#'   Literal data is most useful for examples and tests. To be recognised as
+#'   literal data, the input must be either wrapped with `I()`, be a string
+#'   containing at least one new line, or be a vector containing at least one
+#'   string with a new line.
 #' @param delim One or more characters used to delimit fields within a
 #'   file. If `NULL` the delimiter is guessed from the set of `c(",", "\t", " ",
 #'   "|", ":", ";")`.

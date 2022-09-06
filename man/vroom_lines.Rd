@@ -18,8 +18,18 @@ vroom_lines(
 )
 }
 \arguments{
-\item{file}{Either a path to a file, a connection, or literal data
-(either a single string or a raw vector).}
+\item{file}{Either a path to a file, a connection, or literal data (either a
+single string or a raw vector).
+
+Files ending in \code{.gz}, \code{.bz2}, \code{.xz}, or \code{.zip} will be automatically
+uncompressed. Files starting with \verb{http://}, \verb{https://}, \verb{ftp://}, or
+\verb{ftps://} will be automatically downloaded. Remote gz files can also be
+automatically downloaded and decompressed.
+
+Literal data is most useful for examples and tests. To be recognised as
+literal data, the input must be either wrapped with \code{I()}, be a string
+containing at least one new line, or be a vector containing at least one
+string with a new line.}
 
 \item{n_max}{Maximum number of lines to read.}
 
