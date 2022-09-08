@@ -31,7 +31,18 @@ vroom(
 )
 }
 \arguments{
-\item{file}{path to a local file.}
+\item{file}{Either a path to a file, a connection, or literal data (either a
+single string or a raw vector).
+
+Files ending in \code{.gz}, \code{.bz2}, \code{.xz}, or \code{.zip} will be automatically
+uncompressed. Files starting with \verb{http://}, \verb{https://}, \verb{ftp://}, or
+\verb{ftps://} will be automatically downloaded. Remote gz files can also be
+automatically downloaded and decompressed.
+
+Literal data is most useful for examples and tests. To be recognised as
+literal data, the input must be either wrapped with \code{I()}, be a string
+containing at least one new line, or be a vector containing at least one
+string with a new line.}
 
 \item{delim}{One or more characters used to delimit fields within a
 file. If \code{NULL} the delimiter is guessed from the set of \code{c(",", "\\t", " ", "|", ":", ";")}.}
@@ -52,17 +63,17 @@ in with dummy names \code{...1}, \code{...2} etc. Duplicate column names
 will generate a warning and be made unique, see \code{name_repair} to control
 how this is done.}
 
-\item{col_types}{One of \code{NULL}, a \code{\link[readr:cols]{cols()}} specification, or
-a string. See \code{vignette("readr")} for more details.
+\item{col_types}{One of \code{NULL}, a \code{\link[=cols]{cols()}} specification, or
+a string.
 
 If \code{NULL}, all column types will be imputed from \code{guess_max} rows
 on the input interspersed throughout the file. This is convenient (and
 fast), but not robust. If the imputation fails, you'll need to increase
 the \code{guess_max} or supply the correct types yourself.
 
-Column specifications created by \code{\link[=list]{list()}} or \code{\link[readr:cols]{cols()}} must contain
+Column specifications created by \code{\link[=list]{list()}} or \code{\link[=cols]{cols()}} must contain
 one column specification for each column. If you only want to read a
-subset of the columns, use \code{\link[readr:cols_only]{cols_only()}}.
+subset of the columns, use \code{\link[=cols_only]{cols_only()}}.
 
 Alternatively, you can use a compact string representation where each
 character represents one column:
@@ -126,7 +137,7 @@ to add special characters like \verb{\\\\n}.}
 
 \item{locale}{The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
-\code{\link[readr:locale]{locale()}} to create your own locale that controls things like
+\code{\link[=locale]{locale()}} to create your own locale that controls things like
 the default time zone, encoding, decimal mark, big mark, and day/month
 names.}
 

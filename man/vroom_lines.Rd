@@ -18,7 +18,18 @@ vroom_lines(
 )
 }
 \arguments{
-\item{file}{path to a local file.}
+\item{file}{Either a path to a file, a connection, or literal data (either a
+single string or a raw vector).
+
+Files ending in \code{.gz}, \code{.bz2}, \code{.xz}, or \code{.zip} will be automatically
+uncompressed. Files starting with \verb{http://}, \verb{https://}, \verb{ftp://}, or
+\verb{ftps://} will be automatically downloaded. Remote gz files can also be
+automatically downloaded and decompressed.
+
+Literal data is most useful for examples and tests. To be recognised as
+literal data, the input must be either wrapped with \code{I()}, be a string
+containing at least one new line, or be a vector containing at least one
+string with a new line.}
 
 \item{n_max}{Maximum number of lines to read.}
 
@@ -34,7 +45,7 @@ option is \code{TRUE} then blank rows will not be represented at all.  If it is
 
 \item{locale}{The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
-\code{\link[readr:locale]{locale()}} to create your own locale that controls things like
+\code{\link[=locale]{locale()}} to create your own locale that controls things like
 the default time zone, encoding, decimal mark, big mark, and day/month
 names.}
 

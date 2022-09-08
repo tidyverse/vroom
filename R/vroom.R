@@ -4,26 +4,116 @@ NULL
 
 #' Read a delimited file into a tibble
 #'
-#' @inheritParams readr::read_delim
-#' @param file path to a local file.
+#' @param file Either a path to a file, a connection, or literal data (either a
+#'   single string or a raw vector).
+#'
+#'   Files ending in `.gz`, `.bz2`, `.xz`, or `.zip` will be automatically
+#'   uncompressed. Files starting with `http://`, `https://`, `ftp://`, or
+#'   `ftps://` will be automatically downloaded. Remote gz files can also be
+#'   automatically downloaded and decompressed.
+#'
+#'   Literal data is most useful for examples and tests. To be recognised as
+#'   literal data, the input must be either wrapped with `I()`, be a string
+#'   containing at least one new line, or be a vector containing at least one
+#'   string with a new line.
 #' @param delim One or more characters used to delimit fields within a
 #'   file. If `NULL` the delimiter is guessed from the set of `c(",", "\t", " ",
 #'   "|", ":", ";")`.
-#' @param num_threads Number of threads to use when reading and materializing
-#'   vectors. If your data contains newlines within fields the parser will
-#'   automatically be forced to use a single thread only.
-#' @param escape_double Does the file escape quotes by doubling them?
-#'   i.e. If this option is `TRUE`, the value '""' represents
-#'   a single quote, '"'.
+#' @param col_names Either `TRUE`, `FALSE` or a character vector
+#'   of column names.
+#'
+#'   If `TRUE`, the first row of the input will be used as the column
+#'   names, and will not be included in the data frame. If `FALSE`, column
+#'   names will be generated automatically: X1, X2, X3 etc.
+#'
+#'   If `col_names` is a character vector, the values will be used as the
+#'   names of the columns, and the first row of the input will be read into
+#'   the first row of the output data frame.
+#'
+#'   Missing (`NA`) column names will generate a warning, and be filled
+#'   in with dummy names `...1`, `...2` etc. Duplicate column names
+#'   will generate a warning and be made unique, see `name_repair` to control
+#'   how this is done.
+#' @param col_types One of `NULL`, a [cols()] specification, or
+#'   a string.
+#'
+#'   If `NULL`, all column types will be imputed from `guess_max` rows
+#'   on the input interspersed throughout the file. This is convenient (and
+#'   fast), but not robust. If the imputation fails, you'll need to increase
+#'   the `guess_max` or supply the correct types yourself.
+#'
+#'   Column specifications created by [list()] or [cols()] must contain
+#'   one column specification for each column. If you only want to read a
+#'   subset of the columns, use [cols_only()].
+#'
+#'   Alternatively, you can use a compact string representation where each
+#'   character represents one column:
+#' - c = character
+#' - i = integer
+#' - n = number
+#' - d = double
+#' - l = logical
+#' - f = factor
+#' - D = date
+#' - T = date time
+#' - t = time
+#' - ? = guess
+#' - _ or - = skip
+#'
+#'    By default, reading a file without a column specification will print a
+#'    message showing what `readr` guessed they were. To remove this message,
+#'    set `show_col_types = FALSE` or set `options(readr.show_col_types = FALSE).
 #' @param id Either a string or 'NULL'. If a string, the output will contain a
 #'   variable with that name with the filename(s) as the value. If 'NULL', the
 #'   default, no variable will be created.
+#' @param skip Number of lines to skip before reading data. If `comment` is
+#'   supplied any commented lines are ignored _after_ skipping.
+#' @param n_max Maximum number of lines to read.
+#' @param na Character vector of strings to interpret as missing values. Set this
+#'   option to `character()` to indicate no missing values.
+#' @param quote Single character used to quote strings.
+#' @param comment A string used to identify comments. Any text after the
+#'   comment characters will be silently ignored.
+#' @param skip_empty_rows Should blank rows be ignored altogether? i.e. If this
+#'   option is `TRUE` then blank rows will not be represented at all.  If it is
+#'   `FALSE` then they will be represented by `NA` values in all the columns.
+#' @param trim_ws Should leading and trailing whitespace (ASCII spaces and tabs) be trimmed from
+#'     each field before parsing it?
+#' @param escape_double Does the file escape quotes by doubling them?
+#'   i.e. If this option is `TRUE`, the value '""' represents
+#'   a single quote, '"'.
+#' @param escape_backslash Does the file use backslashes to escape special
+#'   characters? This is more general than `escape_double` as backslashes
+#'   can be used to escape the delimiter character, the quote character, or
+#'   to add special characters like `\\n`.
+#' @param locale The locale controls defaults that vary from place to place.
+#'   The default locale is US-centric (like R), but you can use
+#'   [locale()] to create your own locale that controls things like
+#'   the default time zone, encoding, decimal mark, big mark, and day/month
+#'   names.
+#' @param guess_max Maximum number of lines to use for guessing column types.
+#'   See `vignette("column-types", package = "readr")` for more details.
+#' @param altrep Control which column types use Altrep representations,
+#'   either a character vector of types, `TRUE` or `FALSE`. See
+#'   [vroom_altrep()] for for full details.
+#' @param altrep_opts \Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}
 #' @param col_select Columns to include in the results. You can use the same
 #'   mini-language as `dplyr::select()` to refer to the columns by name. Use
 #'   `c()` to use more than one selection expression. Although this
 #'   usage is less common, `col_select` also accepts a numeric column index. See
 #'   [`?tidyselect::language`][tidyselect::language] for full details on the
 #'   selection language.
+#' @param num_threads Number of threads to use when reading and materializing
+#'   vectors. If your data contains newlines within fields the parser will
+#'   automatically be forced to use a single thread only.
+#' @param progress Display a progress bar? By default it will only display
+#'   in an interactive session and not while knitting a document. The automatic
+#'   progress bar can be disabled by setting option `readr.show_progress` to
+#'   `FALSE`.
+#' @param show_col_types Control showing the column specifications. If `TRUE`
+#'   column specifications are always show, if `FALSE` they are never shown. If
+#'   `NULL` (the default) they are shown only if an explicit specification is not
+#'   given to `col_types`.
 #' @param .name_repair Handling of column names. The default behaviour is to
 #'   ensure column names are `"unique"`. Various repair strategies are
 #'   supported:
@@ -38,14 +128,6 @@ NULL
 #'   This argument is passed on as `repair` to [vctrs::vec_as_names()].
 #'   See there for more details on these terms and the strategies used
 #'   to enforce them.
-#' @param altrep Control which column types use Altrep representations,
-#'   either a character vector of types, `TRUE` or `FALSE`. See
-#'   [vroom_altrep()] for for full details.
-#' @param altrep_opts \Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}
-#' @param show_col_types Control showing the column specifications. If `TRUE`
-#'   column specifications are always show, if `FALSE` they are never shown. If
-#'   `NULL` (the default) they are shown only if an explicit specification is not
-#'   given to `col_types`.
 #' @export
 #' @examples
 #' # get path to example file
