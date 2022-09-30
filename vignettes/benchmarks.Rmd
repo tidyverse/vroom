@@ -185,7 +185,7 @@ The first table trip_fare_1.csv is 1.55G in size.
 
 ### Taxi Benchmarks
 
-code: [bench/taxi](https://github.com/r-lib/vroom/tree/main/inst/bench/taxi)
+code: [bench/taxi](https://github.com/tidyverse/vroom/tree/main/inst/bench/taxi)
 
 All benchmarks were run on a Amazon EC2
 [m5.4xlarge](https://aws.amazon.com/ec2/instance-types/m5/) instance with 16
@@ -236,7 +236,7 @@ However because vroom is multi-threaded it is a bit quicker than readr and
 read.delim for this type of data.
 
 ### Long
-code: [bench/all_numeric-long](https://github.com/r-lib/vroom/tree/main/inst/bench/all_numeric-long)
+code: [bench/all_numeric-long](https://github.com/tidyverse/vroom/tree/main/inst/bench/all_numeric-long)
 
 ```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
 all_num <- read_benchmark(path_package("vroom", "bench", "all_numeric-long.tsv"), desc)
@@ -248,7 +248,7 @@ make_table(all_num)
 
 ### Wide
 
-code: [bench/all_numeric-wide](https://github.com/r-lib/vroom/tree/main/inst/bench/all_numeric-wide)
+code: [bench/all_numeric-wide](https://github.com/tidyverse/vroom/tree/main/inst/bench/all_numeric-wide)
 
 ```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
 all_num_wide <- read_benchmark(path_package("bench", "all_numeric-wide.tsv", package = "vroom"), desc)
@@ -260,7 +260,7 @@ make_table(all_num_wide)
 
 ## All character data
 
-code: [bench/all_character-long](https://github.com/r-lib/vroom/tree/main/inst/bench/all_character-long)
+code: [bench/all_character-long](https://github.com/tidyverse/vroom/tree/main/inst/bench/all_character-long)
 
 All character data is a best case scenario for vroom when using Altrep, as it takes full advantage of the lazy reading.
 
@@ -276,7 +276,7 @@ make_table(all_chr)
 
 ### Wide
 
-code: [bench/all_character-wide](https://github.com/r-lib/vroom/tree/main/inst/bench/all_character-wide)
+code: [bench/all_character-wide](https://github.com/tidyverse/vroom/tree/main/inst/bench/all_character-wide)
 
 ```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
 all_chr_wide <- read_benchmark(path_package("vroom", "bench", "all_character-wide.tsv"), desc)
@@ -288,7 +288,7 @@ make_table(all_chr_wide)
 
 # Reading multiple delimited files
 
-code: [bench/taxi_multiple](https://github.com/r-lib/vroom/tree/main/inst/bench/taxi_multiple)
+code: [bench/taxi_multiple](https://github.com/tidyverse/vroom/tree/main/inst/bench/taxi_multiple)
 
 ```{r, echo = FALSE, message = FALSE, eval = TRUE}
 mult <- read_benchmark(path_package("vroom", "bench", "taxi_multiple.tsv"), desc)
@@ -318,7 +318,7 @@ and `r fwf$cols[[1]]` columns with a total file size of `r format(fs_bytes(fwf$s
 
 ## Census data benchmarks
 
-code: [bench/fwf](https://github.com/r-lib/vroom/tree/main/inst/bench/fwf)
+code: [bench/fwf](https://github.com/tidyverse/vroom/tree/main/inst/bench/fwf)
 
 ```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
 plot_benchmark(fwf, "Time to analyze fixed width data")
@@ -328,7 +328,7 @@ make_table(fwf)
 
 # Writing delimited files
 
-code: [bench/taxi_writing](https://github.com/r-lib/vroom/tree/main/inst/bench/taxi_writing)
+code: [bench/taxi_writing](https://github.com/tidyverse/vroom/tree/main/inst/bench/taxi_writing)
 
 The benchmarks write out the taxi trip dataset in a few different ways.
 

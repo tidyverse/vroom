@@ -30,6 +30,7 @@ Authors:
 
 Other contributors:
 \itemize{
+  \item Shelby Bearrows [contributor]
   \item https://github.com/mandreyel/ (mio library) [copyright holder]
   \item Jukka Jylänki (grisu3 implementation) [copyright holder]
   \item Mikkel Jørgensen (grisu3 implementation) [copyright holder]
