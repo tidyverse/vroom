@@ -44,7 +44,7 @@
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
       <ul class="navbar-nav"><li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/r-lib/vroom/" aria-label="github">
+  <a class="external-link nav-link" href="https://github.com/tidyverse/vroom/" aria-label="github">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -57,7 +57,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Generate individual vectors of the types supported by vroom</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/vroom/blob/HEAD/R/generator.R" class="external-link"><code>R/generator.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tidyverse/vroom/blob/HEAD/R/generator.R" class="external-link"><code>R/generator.R</code></a></small>
       <div class="d-none name"><code>generators.Rd</code></div>
     </div>
 
@@ -156,35 +156,34 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># characters</span></span></span>
 <span class="r-in"><span><span class="fu">gen_character</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "5p2oRynCza7I2xLf" "ONMoCHmXuh0"      "umHdM3Mh4"       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "saarv4fIzZ8Fy"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2BRFzfAf" "76ASKmAD" "G25gBr"   "2PtqL"   </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># factors</span></span></span>
 <span class="r-in"><span><span class="fu">gen_factor</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] whispering_fox   mammoth_squirrel cooing_hamster   mammoth_squirrel</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Levels: mammoth_squirrel juicy_dromedary ... cooing_hamster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] greasy_beetle   calm_gorilla    wrong_porcupine icy_chimpanzee </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 Levels: greasy_beetle tiny_coyote wrong_porcupine ... quick_chameleon</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># logical</span></span></span>
 <span class="r-in"><span><span class="fu">gen_logical</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE TRUE TRUE TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE FALSE  TRUE  TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># numbers</span></span></span>
 <span class="r-in"><span><span class="fu">gen_double</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  1.1188561  0.4384208  0.2334048 -0.4172479</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  1.7157223  0.3781055 -0.1577885 -1.1150721</span>
 <span class="r-in"><span><span class="fu">gen_integer</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  764299009 1480193011  100283965 1968442722</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]   38499669  151489843 1600689834 1492655780</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># temporal data</span></span></span>
 <span class="r-in"><span><span class="fu">gen_time</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 02:34:21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19:25:29</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 05:03:26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23:33:48</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 06:20:05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:23:12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:21:04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:03:22</span>
 <span class="r-in"><span><span class="fu">gen_date</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2019-02-23" "2003-07-29" "2003-09-10" "2013-04-06"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2002-04-11" "2018-09-06" "2011-02-14" "2012-10-23"</span>
 <span class="r-in"><span><span class="fu">gen_datetime</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2007-05-08 21:01:18 UTC" "2003-01-03 22:37:24 UTC"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "2018-06-26 20:23:29 UTC" "2005-03-02 01:49:12 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2015-06-11 19:29:47 UTC" "2013-10-02 02:08:52 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "2008-03-22 15:32:18 UTC" "2019-04-02 12:33:46 UTC"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

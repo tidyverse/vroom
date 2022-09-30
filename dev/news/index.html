@@ -44,7 +44,7 @@
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
       <ul class="navbar-nav"><li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/r-lib/vroom/" aria-label="github">
+  <a class="external-link nav-link" href="https://github.com/tidyverse/vroom/" aria-label="github">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -57,39 +57,39 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/r-lib/vroom/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/tidyverse/vroom/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vroom-development-version">vroom (development version)<a class="anchor" aria-label="anchor" href="#vroom-development-version"></a></h2>
-<ul><li><p><code>vroom(col_select=)</code> now handles column selection by numeric position when <code>id</code> column is provided (<a href="https://github.com/r-lib/vroom/issues/455" class="external-link">#455</a>)</p></li>
-<li><p><code>vroom(id = "path", col_select = a:c)</code> is treated like <code>vroom(id = "path", col_select = c(path, a:c))</code>. If an <code>id</code> column is provided, it is automatically included in the output (<a href="https://github.com/r-lib/vroom/issues/416" class="external-link">#416</a>).</p></li>
-<li><p><code>vroom_write(append = TRUE)</code> does not modify an existing file when appending an empty data frame. In particular, it does not overwrite (delete) the existing contents of that file (<a href="https://github.com/tidyverse/readr/issues/1408" class="external-link uri">https://github.com/tidyverse/readr/issues/1408</a>, <a href="https://github.com/r-lib/vroom/issues/451" class="external-link">#451</a>).</p></li>
-<li><p><code><a href="../reference/problems.html">vroom::problems()</a></code> now defaults to <code>.Last.value</code> for its primary input, similar to how <code>readr::problems()</code> works (<a href="https://github.com/r-lib/vroom/issues/443" class="external-link">#443</a>).</p></li>
+<ul><li><p><code>vroom(col_select=)</code> now handles column selection by numeric position when <code>id</code> column is provided (<a href="https://github.com/tidyverse/vroom/issues/455" class="external-link">#455</a>)</p></li>
+<li><p><code>vroom(id = "path", col_select = a:c)</code> is treated like <code>vroom(id = "path", col_select = c(path, a:c))</code>. If an <code>id</code> column is provided, it is automatically included in the output (<a href="https://github.com/tidyverse/vroom/issues/416" class="external-link">#416</a>).</p></li>
+<li><p><code>vroom_write(append = TRUE)</code> does not modify an existing file when appending an empty data frame. In particular, it does not overwrite (delete) the existing contents of that file (<a href="https://github.com/tidyverse/readr/issues/1408" class="external-link uri">https://github.com/tidyverse/readr/issues/1408</a>, <a href="https://github.com/tidyverse/vroom/issues/451" class="external-link">#451</a>).</p></li>
+<li><p><code><a href="../reference/problems.html">vroom::problems()</a></code> now defaults to <code>.Last.value</code> for its primary input, similar to how <code>readr::problems()</code> works (<a href="https://github.com/tidyverse/vroom/issues/443" class="external-link">#443</a>).</p></li>
 <li><p>The warning that indicates the existence of parsing problems has been improved, which should make it easier for the user to follow-up (<a href="https://github.com/tidyverse/readr/issues/1322" class="external-link uri">https://github.com/tidyverse/readr/issues/1322</a>).</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> reads more reliably from filepaths containing non-ascii characters, in a non-UTF-8 locale (<a href="https://github.com/r-lib/vroom/issues/394" class="external-link">#394</a>, <a href="https://github.com/r-lib/vroom/issues/438" class="external-link">#438</a>).</p></li>
-<li><p><code><a href="../reference/vroom_format.html">vroom_format()</a></code> and <code><a href="../reference/vroom_write.html">vroom_write()</a></code> only quote values that contain a delimiter, quote, or newline. Specifically values that are equal to the <code>na</code> string (or that start with it) are no longer quoted (<a href="https://github.com/r-lib/vroom/issues/426" class="external-link">#426</a>).</p></li>
-<li><p>Fixed segfault when reading in multiple files and the first file has only a header row of column names, but subsequent files have at least one row (<a href="https://github.com/r-lib/vroom/issues/430" class="external-link">#430</a>).</p></li>
-<li><p>Fixed segfault when <code><a href="../reference/vroom_format.html">vroom_format()</a></code> is given an empty data frame (<a href="https://github.com/r-lib/vroom/issues/425" class="external-link">#425</a>)</p></li>
-<li><p>Fixed a segfault that could occur when the final field of the final line is missing and the file also does not end in a newline (<a href="https://github.com/r-lib/vroom/issues/429" class="external-link">#429</a>).</p></li>
-<li><p>Fixed recursive garbage collection error that could occur during <code><a href="../reference/vroom_write.html">vroom_write()</a></code> when <code><a href="../reference/output_column.html">output_column()</a></code> generates an ALTREP vector (<a href="https://github.com/r-lib/vroom/issues/389" class="external-link">#389</a>).</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> reads more reliably from filepaths containing non-ascii characters, in a non-UTF-8 locale (<a href="https://github.com/tidyverse/vroom/issues/394" class="external-link">#394</a>, <a href="https://github.com/tidyverse/vroom/issues/438" class="external-link">#438</a>).</p></li>
+<li><p><code><a href="../reference/vroom_format.html">vroom_format()</a></code> and <code><a href="../reference/vroom_write.html">vroom_write()</a></code> only quote values that contain a delimiter, quote, or newline. Specifically values that are equal to the <code>na</code> string (or that start with it) are no longer quoted (<a href="https://github.com/tidyverse/vroom/issues/426" class="external-link">#426</a>).</p></li>
+<li><p>Fixed segfault when reading in multiple files and the first file has only a header row of column names, but subsequent files have at least one row (<a href="https://github.com/tidyverse/vroom/issues/430" class="external-link">#430</a>).</p></li>
+<li><p>Fixed segfault when <code><a href="../reference/vroom_format.html">vroom_format()</a></code> is given an empty data frame (<a href="https://github.com/tidyverse/vroom/issues/425" class="external-link">#425</a>)</p></li>
+<li><p>Fixed a segfault that could occur when the final field of the final line is missing and the file also does not end in a newline (<a href="https://github.com/tidyverse/vroom/issues/429" class="external-link">#429</a>).</p></li>
+<li><p>Fixed recursive garbage collection error that could occur during <code><a href="../reference/vroom_write.html">vroom_write()</a></code> when <code><a href="../reference/output_column.html">output_column()</a></code> generates an ALTREP vector (<a href="https://github.com/tidyverse/vroom/issues/389" class="external-link">#389</a>).</p></li>
 <li><p><code><a href="../reference/vroom_progress.html">vroom_progress()</a></code> uses <code><a href="https://rlang.r-lib.org/reference/is_interactive.html" class="external-link">rlang::is_interactive()</a></code> instead of <code><a href="https://rdrr.io/r/base/interactive.html" class="external-link">base::interactive()</a></code>.</p></li>
-<li><p><code>col_factor(levels = NULL)</code> honors the <code>na</code> strings of <code><a href="../reference/vroom.html">vroom()</a></code> and its own <code>include_na</code> argument, as described in the docs, and now reproduces the behaviour of readr’s first edition parser (<a href="https://github.com/r-lib/vroom/issues/396" class="external-link">#396</a>).</p></li>
+<li><p><code>col_factor(levels = NULL)</code> honors the <code>na</code> strings of <code><a href="../reference/vroom.html">vroom()</a></code> and its own <code>include_na</code> argument, as described in the docs, and now reproduces the behaviour of readr’s first edition parser (<a href="https://github.com/tidyverse/vroom/issues/396" class="external-link">#396</a>).</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.7" id="vroom-157">vroom 1.5.7<a class="anchor" aria-label="anchor" href="#vroom-157"></a></h2><p class="text-muted">CRAN release: 2021-11-30</p>
 <ul><li><p>Jenny Bryan is now the official maintainer.</p></li>
-<li><p>Fix uninitialized bool detected by CRAN’s UBSAN check (<a href="https://github.com/r-lib/vroom/pull/386" class="external-link uri">https://github.com/r-lib/vroom/pull/386</a>)</p></li>
+<li><p>Fix uninitialized bool detected by CRAN’s UBSAN check (<a href="https://github.com/tidyverse/vroom/pull/386" class="external-link uri">https://github.com/tidyverse/vroom/pull/386</a>)</p></li>
 <li><p>Fix buffer overflow when trying to parse an integer field that is over 64 characters long (<a href="https://github.com/tidyverse/readr/issues/1326" class="external-link uri">https://github.com/tidyverse/readr/issues/1326</a>)</p></li>
-<li><p>Fix subset indexing when indexes span a file boundary multiple times (<a href="https://github.com/r-lib/vroom/issues/383" class="external-link">#383</a>)</p></li>
+<li><p>Fix subset indexing when indexes span a file boundary multiple times (<a href="https://github.com/tidyverse/vroom/issues/383" class="external-link">#383</a>)</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.6" id="vroom-156">vroom 1.5.6<a class="anchor" aria-label="anchor" href="#vroom-156"></a></h2><p class="text-muted">CRAN release: 2021-11-10</p>
-<ul><li><p><code>vroom(col_select=)</code> now works if <code>col_names = FALSE</code> as intended (<a href="https://github.com/r-lib/vroom/issues/381" class="external-link">#381</a>)</p></li>
+<ul><li><p><code>vroom(col_select=)</code> now works if <code>col_names = FALSE</code> as intended (<a href="https://github.com/tidyverse/vroom/issues/381" class="external-link">#381</a>)</p></li>
 <li><p><code>vroom(n_max=)</code> now correctly handles cases when reading from a connection and the file does <em>not</em> end with a newline (<a href="https://github.com/tidyverse/readr/issues/1321" class="external-link uri">https://github.com/tidyverse/readr/issues/1321</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer issues a spurious warning when the parsing needs to be restarted due to the presence of embedded newlines (<a href="https://github.com/tidyverse/readr/issues/1313" class="external-link uri">https://github.com/tidyverse/readr/issues/1313</a>)</p></li>
-<li><p>Fix performance issue when materializing subsetted vectors (<a href="https://github.com/r-lib/vroom/issues/378" class="external-link">#378</a>)</p></li>
-<li><p><code><a href="../reference/vroom_format.html">vroom_format()</a></code> now uses the same internal multi-threaded code as <code><a href="../reference/vroom_write.html">vroom_write()</a></code>, improving its performance in most cases (<a href="https://github.com/r-lib/vroom/issues/377" class="external-link">#377</a>)</p></li>
+<li><p>Fix performance issue when materializing subsetted vectors (<a href="https://github.com/tidyverse/vroom/issues/378" class="external-link">#378</a>)</p></li>
+<li><p><code><a href="../reference/vroom_format.html">vroom_format()</a></code> now uses the same internal multi-threaded code as <code><a href="../reference/vroom_write.html">vroom_write()</a></code>, improving its performance in most cases (<a href="https://github.com/tidyverse/vroom/issues/377" class="external-link">#377</a>)</p></li>
 <li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> no longer omits the last line if it does <em>not</em> end with a newline (<a href="https://github.com/tidyverse/readr/issues/1293" class="external-link uri">https://github.com/tidyverse/readr/issues/1293</a>)</p></li>
 <li><p>Empty files or files with only a header line and no data no longer cause a crash if read with multiple files (<a href="https://github.com/tidyverse/readr/issues/1297" class="external-link uri">https://github.com/tidyverse/readr/issues/1297</a>)</p></li>
 <li><p>Files with a header but no contents, or a empty file if <code>col_names = FALSE</code> no longer cause a hang when <code>progress = TRUE</code> (<a href="https://github.com/tidyverse/readr/issues/1297" class="external-link uri">https://github.com/tidyverse/readr/issues/1297</a>)</p></li>
@@ -97,16 +97,16 @@
 <li><p>Comment lines containing unpaired quotes are no longer treated as unterminated quotations (<a href="https://github.com/tidyverse/readr/issues/1307" class="external-link uri">https://github.com/tidyverse/readr/issues/1307</a>)</p></li>
 <li><p>Values with only a <code>Inf</code> or <code>NaN</code> prefix but additional data afterwards, like <code>Inform</code> or no longer inappropriately guessed as doubles (<a href="https://github.com/tidyverse/readr/issues/1319" class="external-link uri">https://github.com/tidyverse/readr/issues/1319</a>)</p></li>
 <li><p>Time types now support <code>%h</code> format to denote hour durations greater than 24, like readr (<a href="https://github.com/tidyverse/readr/issues/1312" class="external-link uri">https://github.com/tidyverse/readr/issues/1312</a>)</p></li>
-<li><p>Fix performance issue when materializing subsetted vectors (<a href="https://github.com/r-lib/vroom/issues/378" class="external-link">#378</a>)</p></li>
+<li><p>Fix performance issue when materializing subsetted vectors (<a href="https://github.com/tidyverse/vroom/issues/378" class="external-link">#378</a>)</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.5" id="vroom-155">vroom 1.5.5<a class="anchor" aria-label="anchor" href="#vroom-155"></a></h2><p class="text-muted">CRAN release: 2021-09-14</p>
-<ul><li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports files with only carriage return newlines (<code>\r</code>). (<a href="https://github.com/r-lib/vroom/issues/360" class="external-link">#360</a>, <a href="https://github.com/tidyverse/readr/issues/1236" class="external-link uri">https://github.com/tidyverse/readr/issues/1236</a>)</p></li>
+<ul><li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports files with only carriage return newlines (<code>\r</code>). (<a href="https://github.com/tidyverse/vroom/issues/360" class="external-link">#360</a>, <a href="https://github.com/tidyverse/readr/issues/1236" class="external-link uri">https://github.com/tidyverse/readr/issues/1236</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now parses single digit datetimes more consistently as readr has done (<a href="https://github.com/tidyverse/readr/issues/1276" class="external-link uri">https://github.com/tidyverse/readr/issues/1276</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now parses <code>Inf</code> values as doubles (<a href="https://github.com/tidyverse/readr/issues/1283" class="external-link uri">https://github.com/tidyverse/readr/issues/1283</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now parses <code>NaN</code> values as doubles (<a href="https://github.com/tidyverse/readr/issues/1277" class="external-link uri">https://github.com/tidyverse/readr/issues/1277</a>)</p></li>
-<li><p><code>VROOM_CONNECTION_SIZE</code> is now parsed as a double, which supports scientific notation (<a href="https://github.com/r-lib/vroom/issues/364" class="external-link">#364</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now works around specifying a <code>\n</code> as the delimiter (<a href="https://github.com/r-lib/vroom/issues/365" class="external-link">#365</a>, <a href="https://github.com/tidyverse/dplyr/issues/5977" class="external-link uri">https://github.com/tidyverse/dplyr/issues/5977</a>)</p></li>
+<li><p><code>VROOM_CONNECTION_SIZE</code> is now parsed as a double, which supports scientific notation (<a href="https://github.com/tidyverse/vroom/issues/364" class="external-link">#364</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now works around specifying a <code>\n</code> as the delimiter (<a href="https://github.com/tidyverse/vroom/issues/365" class="external-link">#365</a>, <a href="https://github.com/tidyverse/dplyr/issues/5977" class="external-link uri">https://github.com/tidyverse/dplyr/issues/5977</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer crashes if given a <code>col_name</code> and <code>col_type</code> both less than the number of columns (<a href="https://github.com/tidyverse/readr/issues/1271" class="external-link uri">https://github.com/tidyverse/readr/issues/1271</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer hangs if given an empty value for <code>locale(grouping_mark=)</code> (<a href="https://github.com/tidyverse/readr/issues/1241" class="external-link uri">https://github.com/tidyverse/readr/issues/1241</a>)</p></li>
 <li><p>Fix performance regression when guessing with large numbers of rows (<a href="https://github.com/tidyverse/readr/issues/1267" class="external-link uri">https://github.com/tidyverse/readr/issues/1267</a>)</p></li>
@@ -120,65 +120,65 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.3" id="vroom-153">vroom 1.5.3<a class="anchor" aria-label="anchor" href="#vroom-153"></a></h2><p class="text-muted">CRAN release: 2021-07-14</p>
-<ul><li><p><code>vroom(col_types=)</code> now truncates the column types if the user passes too many types. (<a href="https://github.com/r-lib/vroom/issues/355" class="external-link">#355</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now always includes the last row when guessing (<a href="https://github.com/r-lib/vroom/issues/352" class="external-link">#352</a>)</p></li>
-<li><p><code>vroom(trim_ws = TRUE)</code> now trims field content within quotes as well as without (<a href="https://github.com/r-lib/vroom/issues/354" class="external-link">#354</a>). Previously vroom explicitly retained field content inside quotes regardless of the value of <code>trim_ws</code>.</p></li>
+<ul><li><p><code>vroom(col_types=)</code> now truncates the column types if the user passes too many types. (<a href="https://github.com/tidyverse/vroom/issues/355" class="external-link">#355</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now always includes the last row when guessing (<a href="https://github.com/tidyverse/vroom/issues/352" class="external-link">#352</a>)</p></li>
+<li><p><code>vroom(trim_ws = TRUE)</code> now trims field content within quotes as well as without (<a href="https://github.com/tidyverse/vroom/issues/354" class="external-link">#354</a>). Previously vroom explicitly retained field content inside quotes regardless of the value of <code>trim_ws</code>.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.2" id="vroom-152">vroom 1.5.2<a class="anchor" aria-label="anchor" href="#vroom-152"></a></h2><p class="text-muted">CRAN release: 2021-07-08</p>
-<ul><li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports inputs with unnamed column types that are less than the number of columns (<a href="https://github.com/r-lib/vroom/issues/296" class="external-link">#296</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now outputs the correct column names even in the presence of skipped columns (<a href="https://github.com/r-lib/vroom/issues/293" class="external-link">#293</a>, <a href="https://github.com/tidyverse/readr/issues/1215" class="external-link">tidyverse/readr#1215</a>)</p></li>
+<ul><li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports inputs with unnamed column types that are less than the number of columns (<a href="https://github.com/tidyverse/vroom/issues/296" class="external-link">#296</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now outputs the correct column names even in the presence of skipped columns (<a href="https://github.com/tidyverse/vroom/issues/293" class="external-link">#293</a>, <a href="https://github.com/tidyverse/readr/issues/1215" class="external-link">tidyverse/readr#1215</a>)</p></li>
 <li><p><code>vroom_fwf(n_max=)</code> now works as intended when the input is a connection.</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> and <code><a href="../reference/vroom_write.html">vroom_write()</a></code> now automatically detect the compression format regardless of the file extension for bzip2, xzip, gzip and zip files (<a href="https://github.com/r-lib/vroom/issues/348" class="external-link">#348</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> and <code><a href="../reference/vroom_write.html">vroom_write()</a></code> now automatically detect the compression format regardless of the file extension for bzip2, xzip, gzip and zip files (<a href="https://github.com/tidyverse/vroom/issues/348" class="external-link">#348</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> and <code><a href="../reference/vroom_write.html">vroom_write()</a></code> now automatically support many more archive formats thanks to the archive package. These include new support for writing zip files, reading and writing 7zip, tar and ISO files.</p></li>
 <li><p><code>vroom(num_threads = 1)</code> will now not spawn any threads. This can be used on as a workaround on systems without full thread support.</p></li>
 <li><p>Threads are now automatically disabled on non-macOS systems compiling against clang’s libc++. Most systems non-macOS systems use the more common gcc libstdc++, so this should not effect most users.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.1" id="vroom-151">vroom 1.5.1<a class="anchor" aria-label="anchor" href="#vroom-151"></a></h2><p class="text-muted">CRAN release: 2021-06-22</p>
-<ul><li><p>Parsers now treat NA values as NA even if they are valid values for the types (<a href="https://github.com/r-lib/vroom/issues/342" class="external-link">#342</a>)</p></li>
-<li><p>Element-wise indexing into lazy (ALTREP) vectors now has much less overhead (<a href="https://github.com/r-lib/vroom/issues/344" class="external-link">#344</a>)</p></li>
+<ul><li><p>Parsers now treat NA values as NA even if they are valid values for the types (<a href="https://github.com/tidyverse/vroom/issues/342" class="external-link">#342</a>)</p></li>
+<li><p>Element-wise indexing into lazy (ALTREP) vectors now has much less overhead (<a href="https://github.com/tidyverse/vroom/issues/344" class="external-link">#344</a>)</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.0" id="vroom-150">vroom 1.5.0<a class="anchor" aria-label="anchor" href="#vroom-150"></a></h2><p class="text-muted">CRAN release: 2021-06-14</p>
 <div class="section level3">
 <h3 id="major-improvements-1-5-0">Major improvements<a class="anchor" aria-label="anchor" href="#major-improvements-1-5-0"></a></h3>
 <ul><li><p>New <code>vroom(show_col_types=)</code> argument to more simply control when column types are shown.</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code>, <code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> and <code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> now support multi-byte encodings such as UTF-16 and UTF-32 by converting these files to UTF-8 under the hood (<a href="https://github.com/r-lib/vroom/issues/138" class="external-link">#138</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports skipping comments and blank lines within data, not just at the start of the file (<a href="https://github.com/r-lib/vroom/issues/294" class="external-link">#294</a>, <a href="https://github.com/r-lib/vroom/issues/302" class="external-link">#302</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now uses the tzdb package when parsing date-times (<a href="https://github.com/DavisVaughan" class="external-link">@DavisVaughan</a>, <a href="https://github.com/r-lib/vroom/issues/273" class="external-link">#273</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code>, <code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> and <code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> now support multi-byte encodings such as UTF-16 and UTF-32 by converting these files to UTF-8 under the hood (<a href="https://github.com/tidyverse/vroom/issues/138" class="external-link">#138</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports skipping comments and blank lines within data, not just at the start of the file (<a href="https://github.com/tidyverse/vroom/issues/294" class="external-link">#294</a>, <a href="https://github.com/tidyverse/vroom/issues/302" class="external-link">#302</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now uses the tzdb package when parsing date-times (<a href="https://github.com/DavisVaughan" class="external-link">@DavisVaughan</a>, <a href="https://github.com/tidyverse/vroom/issues/273" class="external-link">#273</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now emits a warning of class <code>vroom_parse_issue</code> if there are non-fatal parsing issues.</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now emits a warning of class <code>vroom_mismatched_column_name</code> if the user supplies a column type that does not match the name of a read column (<a href="https://github.com/r-lib/vroom/issues/317" class="external-link">#317</a>).</p></li>
-<li><p>The vroom package now uses the MIT license, as part of systematic relicensing throughout the r-lib and tidyverse packages (<a href="https://github.com/r-lib/vroom/issues/323" class="external-link">#323</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now emits a warning of class <code>vroom_mismatched_column_name</code> if the user supplies a column type that does not match the name of a read column (<a href="https://github.com/tidyverse/vroom/issues/317" class="external-link">#317</a>).</p></li>
+<li><p>The vroom package now uses the MIT license, as part of systematic relicensing throughout the r-lib and tidyverse packages (<a href="https://github.com/tidyverse/vroom/issues/323" class="external-link">#323</a>)</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="minor-improvements-and-fixes-1-5-0">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-1-5-0"></a></h3>
-<ul><li><p>`vroom() correctly reads double values with comma as decimal separator (<a href="https://github.com/kent37" class="external-link">@kent37</a> <a href="https://github.com/r-lib/vroom/issues/313" class="external-link">#313</a>)</p></li>
+<ul><li><p>`vroom() correctly reads double values with comma as decimal separator (<a href="https://github.com/kent37" class="external-link">@kent37</a> <a href="https://github.com/tidyverse/vroom/issues/313" class="external-link">#313</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now correctly skips lines with only one quote if the format doesn’t use quoting (<a href="https://github.com/tidyverse/readr/issues/991#issuecomment-616378446" class="external-link uri">https://github.com/tidyverse/readr/issues/991#issuecomment-616378446</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> and <code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> now handle files with mixed windows and POSIX line endings (<a href="https://github.com/tidyverse/readr/issues/1210" class="external-link uri">https://github.com/tidyverse/readr/issues/1210</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now outputs a tibble with the expected number of columns and types based on <code>col_types</code> and <code>col_names</code> even if the file is empty (<a href="https://github.com/r-lib/vroom/issues/297" class="external-link">#297</a>).</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer mis-indexes files read from connections with windows line endings when the two line endings falls on separate sides of the read buffer (<a href="https://github.com/r-lib/vroom/issues/331" class="external-link">#331</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer crashes if <code>n_max = 0</code> and <code>col_names</code> is a character (<a href="https://github.com/r-lib/vroom/issues/316" class="external-link">#316</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now preserves the spec attribute when vroom and readr are both loaded (<a href="https://github.com/r-lib/vroom/issues/303" class="external-link">#303</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now allows specifying column names in <code>col_types</code> that have been repaired (<a href="https://github.com/r-lib/vroom/issues/311" class="external-link">#311</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer inadvertently calls <code>.name_repair</code> functions twice (<a href="https://github.com/r-lib/vroom/issues/310" class="external-link">#310</a>).</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> is now more robust to quoting issues when tracking the CSV state (<a href="https://github.com/r-lib/vroom/issues/301" class="external-link">#301</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now outputs a tibble with the expected number of columns and types based on <code>col_types</code> and <code>col_names</code> even if the file is empty (<a href="https://github.com/tidyverse/vroom/issues/297" class="external-link">#297</a>).</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer mis-indexes files read from connections with windows line endings when the two line endings falls on separate sides of the read buffer (<a href="https://github.com/tidyverse/vroom/issues/331" class="external-link">#331</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer crashes if <code>n_max = 0</code> and <code>col_names</code> is a character (<a href="https://github.com/tidyverse/vroom/issues/316" class="external-link">#316</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now preserves the spec attribute when vroom and readr are both loaded (<a href="https://github.com/tidyverse/vroom/issues/303" class="external-link">#303</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now allows specifying column names in <code>col_types</code> that have been repaired (<a href="https://github.com/tidyverse/vroom/issues/311" class="external-link">#311</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer inadvertently calls <code>.name_repair</code> functions twice (<a href="https://github.com/tidyverse/vroom/issues/310" class="external-link">#310</a>).</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> is now more robust to quoting issues when tracking the CSV state (<a href="https://github.com/tidyverse/vroom/issues/301" class="external-link">#301</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now registers the S3 class with <code><a href="https://rdrr.io/r/methods/setOldClass.html" class="external-link">methods::setOldClass()</a></code> (r-dbi/DBI#345)</p></li>
 <li><p><code><a href="../reference/cols.html">col_datetime()</a></code> now supports ‘%s’ format, which represents decimal seconds since the Unix epoch.</p></li>
 <li><p><code>col_numeric()</code> now supports <code>grouping_mark</code> and <code>decimal_mark</code> that are unicode characters, such as U+00A0 which is commonly used as the grouping mark for numbers in France (<a href="https://github.com/tidyverse/readr/issues/796" class="external-link uri">https://github.com/tidyverse/readr/issues/796</a>).</p></li>
 <li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> gains a <code>skip_empty_rows</code> argument to skip empty lines (<a href="https://github.com/tidyverse/readr/issues/1211" class="external-link uri">https://github.com/tidyverse/readr/issues/1211</a>)</p></li>
-<li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> now respects <code>n_max</code>, as intended (<a href="https://github.com/r-lib/vroom/issues/334" class="external-link">#334</a>)</p></li>
+<li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> now respects <code>n_max</code>, as intended (<a href="https://github.com/tidyverse/vroom/issues/334" class="external-link">#334</a>)</p></li>
 <li><p><code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> gains a <code>na</code> argument.</p></li>
 <li><p><code><a href="../reference/vroom_write_lines.html">vroom_write_lines()</a></code> no longer escapes or quotes lines.</p></li>
-<li><p><code><a href="../reference/vroom_write_lines.html">vroom_write_lines()</a></code> now works as intended (<a href="https://github.com/r-lib/vroom/issues/291" class="external-link">#291</a>).</p></li>
+<li><p><code><a href="../reference/vroom_write_lines.html">vroom_write_lines()</a></code> now works as intended (<a href="https://github.com/tidyverse/vroom/issues/291" class="external-link">#291</a>).</p></li>
 <li><p><code>vroom_write(path=)</code> has been deprecated, in favor of <code>file</code>, to match readr.</p></li>
 <li><p><code><a href="../reference/vroom_write_lines.html">vroom_write_lines()</a></code> now exposes the <code>num_threads</code> argument.</p></li>
-<li><p><code><a href="../reference/problems.html">problems()</a></code> now prints the correct row number of parse errors (<a href="https://github.com/r-lib/vroom/issues/326" class="external-link">#326</a>)</p></li>
-<li><p><code><a href="../reference/problems.html">problems()</a></code> now throws a more informative error if called on a readr object (<a href="https://github.com/r-lib/vroom/issues/308" class="external-link">#308</a>).</p></li>
-<li><p><code><a href="../reference/problems.html">problems()</a></code> now de-duplicates identical problems (<a href="https://github.com/r-lib/vroom/issues/318" class="external-link">#318</a>)</p></li>
-<li><p>Fix an inadvertent performance regression when reading values (<a href="https://github.com/r-lib/vroom/issues/309" class="external-link">#309</a>)</p></li>
-<li><p><code>n_max</code> argument is correctly respected in edge cases (<a href="https://github.com/r-lib/vroom/issues/306" class="external-link">#306</a>)</p></li>
-<li><p>factors with implicit levels now work when fields are quoted, as intended (<a href="https://github.com/r-lib/vroom/issues/330" class="external-link">#330</a>)</p></li>
+<li><p><code><a href="../reference/problems.html">problems()</a></code> now prints the correct row number of parse errors (<a href="https://github.com/tidyverse/vroom/issues/326" class="external-link">#326</a>)</p></li>
+<li><p><code><a href="../reference/problems.html">problems()</a></code> now throws a more informative error if called on a readr object (<a href="https://github.com/tidyverse/vroom/issues/308" class="external-link">#308</a>).</p></li>
+<li><p><code><a href="../reference/problems.html">problems()</a></code> now de-duplicates identical problems (<a href="https://github.com/tidyverse/vroom/issues/318" class="external-link">#318</a>)</p></li>
+<li><p>Fix an inadvertent performance regression when reading values (<a href="https://github.com/tidyverse/vroom/issues/309" class="external-link">#309</a>)</p></li>
+<li><p><code>n_max</code> argument is correctly respected in edge cases (<a href="https://github.com/tidyverse/vroom/issues/306" class="external-link">#306</a>)</p></li>
+<li><p>factors with implicit levels now work when fields are quoted, as intended (<a href="https://github.com/tidyverse/vroom/issues/330" class="external-link">#330</a>)</p></li>
 <li><p>Guessing double types no longer unconditionally ignores leading whitespace. Now whitespace is only ignored when <code>trim_ws</code> is set.</p></li>
 </ul></div>
 </div>
@@ -186,54 +186,54 @@
 <h2 class="pkg-version" data-toc-text="1.4.0" id="vroom-140">vroom 1.4.0<a class="anchor" aria-label="anchor" href="#vroom-140"></a></h2><p class="text-muted">CRAN release: 2021-02-01</p>
 <div class="section level3">
 <h3 id="major-changes-and-new-functions-1-4-0">Major changes and new functions<a class="anchor" aria-label="anchor" href="#major-changes-and-new-functions-1-4-0"></a></h3>
-<ul><li><p>vroom now tracks indexing and parsing errors like readr. The first time an issue is encountered a warning will be signaled. A tibble of all found problems can be retrieved with <code><a href="../reference/problems.html">vroom::problems()</a></code>. (<a href="https://github.com/r-lib/vroom/issues/247" class="external-link">#247</a>)</p></li>
-<li><p>Data with newlines within quoted fields will now automatically revert to using a single thread and be properly read (<a href="https://github.com/r-lib/vroom/issues/282" class="external-link">#282</a>)</p></li>
+<ul><li><p>vroom now tracks indexing and parsing errors like readr. The first time an issue is encountered a warning will be signaled. A tibble of all found problems can be retrieved with <code><a href="../reference/problems.html">vroom::problems()</a></code>. (<a href="https://github.com/tidyverse/vroom/issues/247" class="external-link">#247</a>)</p></li>
+<li><p>Data with newlines within quoted fields will now automatically revert to using a single thread and be properly read (<a href="https://github.com/tidyverse/vroom/issues/282" class="external-link">#282</a>)</p></li>
 <li><p>NUL values in character data are now permitted, with a warning.</p></li>
-<li><p>New <code><a href="../reference/vroom_write_lines.html">vroom_write_lines()</a></code> function to write a character vector to a file (<a href="https://github.com/r-lib/vroom/issues/291" class="external-link">#291</a>)</p></li>
-<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> gains a <code>eol=</code> parameter to specify the end of line character(s) to use. Use <code>vroom_write(eol = "\r\n")</code> to write a file with Windows style newlines (<a href="https://github.com/r-lib/vroom/issues/263" class="external-link">#263</a>).</p></li>
+<li><p>New <code><a href="../reference/vroom_write_lines.html">vroom_write_lines()</a></code> function to write a character vector to a file (<a href="https://github.com/tidyverse/vroom/issues/291" class="external-link">#291</a>)</p></li>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> gains a <code>eol=</code> parameter to specify the end of line character(s) to use. Use <code>vroom_write(eol = "\r\n")</code> to write a file with Windows style newlines (<a href="https://github.com/tidyverse/vroom/issues/263" class="external-link">#263</a>).</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="minor-improvements-and-fixes-1-4-0">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-1-4-0"></a></h3>
-<ul><li><p>Datetime formats used when guessing now match those used when parsing (<a href="https://github.com/r-lib/vroom/issues/240" class="external-link">#240</a>)</p></li>
-<li><p>Quotes are now only valid next to newlines or delimiters (<a href="https://github.com/r-lib/vroom/issues/224" class="external-link">#224</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now signals an R error for invalid date and datetime formats, instead of crashing the session (<a href="https://github.com/r-lib/vroom/issues/220" class="external-link">#220</a>).</p></li>
-<li><p><code>vroom(comment = )</code> now accepts multi-character comments (<a href="https://github.com/r-lib/vroom/issues/286" class="external-link">#286</a>)</p></li>
-<li><p><code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> now works with empty files (<a href="https://github.com/r-lib/vroom/issues/285" class="external-link">#285</a>)</p></li>
-<li><p>Vectors are now subset properly when given invalid subscripts (<a href="https://github.com/r-lib/vroom/issues/283" class="external-link">#283</a>)</p></li>
-<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now works when the delimiter is empty, e.g. <code>delim = ""</code> (<a href="https://github.com/r-lib/vroom/issues/287" class="external-link">#287</a>).</p></li>
-<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now works with all ALTREP vectors, including string vectors (<a href="https://github.com/r-lib/vroom/issues/270" class="external-link">#270</a>)</p></li>
-<li><p>An internal call to <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env()</a></code> now correctly uses the <code>parent</code> argument (<a href="https://github.com/r-lib/vroom/issues/281" class="external-link">#281</a>)</p></li>
+<ul><li><p>Datetime formats used when guessing now match those used when parsing (<a href="https://github.com/tidyverse/vroom/issues/240" class="external-link">#240</a>)</p></li>
+<li><p>Quotes are now only valid next to newlines or delimiters (<a href="https://github.com/tidyverse/vroom/issues/224" class="external-link">#224</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now signals an R error for invalid date and datetime formats, instead of crashing the session (<a href="https://github.com/tidyverse/vroom/issues/220" class="external-link">#220</a>).</p></li>
+<li><p><code>vroom(comment = )</code> now accepts multi-character comments (<a href="https://github.com/tidyverse/vroom/issues/286" class="external-link">#286</a>)</p></li>
+<li><p><code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> now works with empty files (<a href="https://github.com/tidyverse/vroom/issues/285" class="external-link">#285</a>)</p></li>
+<li><p>Vectors are now subset properly when given invalid subscripts (<a href="https://github.com/tidyverse/vroom/issues/283" class="external-link">#283</a>)</p></li>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now works when the delimiter is empty, e.g. <code>delim = ""</code> (<a href="https://github.com/tidyverse/vroom/issues/287" class="external-link">#287</a>).</p></li>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now works with all ALTREP vectors, including string vectors (<a href="https://github.com/tidyverse/vroom/issues/270" class="external-link">#270</a>)</p></li>
+<li><p>An internal call to <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env()</a></code> now correctly uses the <code>parent</code> argument (<a href="https://github.com/tidyverse/vroom/issues/281" class="external-link">#281</a>)</p></li>
 </ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.3.2" id="vroom-132">vroom 1.3.2<a class="anchor" aria-label="anchor" href="#vroom-132"></a></h2><p class="text-muted">CRAN release: 2020-09-30</p>
-<ul><li><p>Test failures on R 4.1 related to factors with NA values fixed (<a href="https://github.com/r-lib/vroom/issues/262" class="external-link">#262</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now works without error with readr versions of col specs (<a href="https://github.com/r-lib/vroom/issues/256" class="external-link">#256</a>, <a href="https://github.com/r-lib/vroom/issues/264" class="external-link">#264</a>, <a href="https://github.com/r-lib/vroom/issues/266" class="external-link">#266</a>)</p></li>
+<ul><li><p>Test failures on R 4.1 related to factors with NA values fixed (<a href="https://github.com/tidyverse/vroom/issues/262" class="external-link">#262</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now works without error with readr versions of col specs (<a href="https://github.com/tidyverse/vroom/issues/256" class="external-link">#256</a>, <a href="https://github.com/tidyverse/vroom/issues/264" class="external-link">#264</a>, <a href="https://github.com/tidyverse/vroom/issues/266" class="external-link">#266</a>)</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.3.1" id="vroom-131">vroom 1.3.1<a class="anchor" aria-label="anchor" href="#vroom-131"></a></h2><p class="text-muted">CRAN release: 2020-08-27</p>
-<ul><li><p>Test failures on R 4.1 related to POSIXct classes fixed (<a href="https://github.com/r-lib/vroom/issues/260" class="external-link">#260</a>)</p></li>
-<li><p>Column subsetting with double indexes now works again (<a href="https://github.com/r-lib/vroom/issues/257" class="external-link">#257</a>)</p></li>
-<li><p><code>vroom(n_max=)</code> now only partially downloads files from connections, as intended (<a href="https://github.com/r-lib/vroom/issues/259" class="external-link">#259</a>)</p></li>
+<ul><li><p>Test failures on R 4.1 related to POSIXct classes fixed (<a href="https://github.com/tidyverse/vroom/issues/260" class="external-link">#260</a>)</p></li>
+<li><p>Column subsetting with double indexes now works again (<a href="https://github.com/tidyverse/vroom/issues/257" class="external-link">#257</a>)</p></li>
+<li><p><code>vroom(n_max=)</code> now only partially downloads files from connections, as intended (<a href="https://github.com/tidyverse/vroom/issues/259" class="external-link">#259</a>)</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.3.0" id="vroom-130">vroom 1.3.0<a class="anchor" aria-label="anchor" href="#vroom-130"></a></h2><p class="text-muted">CRAN release: 2020-08-14</p>
 <ul><li><p>The Rcpp dependency has been removed in favor of cpp11.</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now handles cases when <code>id</code> is set and a column in skipped (<a href="https://github.com/r-lib/vroom/issues/237" class="external-link">#237</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports column selections when there are some empty column names (<a href="https://github.com/r-lib/vroom/issues/238" class="external-link">#238</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> argument <code>n_max</code> now works properly for files with windows newlines and no final newline (<a href="https://github.com/r-lib/vroom/issues/244" class="external-link">#244</a>)</p></li>
-<li><p>Subsetting vectors now works with <code><a href="https://rdrr.io/r/utils/View.html" class="external-link">View()</a></code> in RStudio if there are now rows to subset (<a href="https://github.com/r-lib/vroom/issues/253" class="external-link">#253</a>).</p></li>
-<li><p>Subsetting datetime columns now works with <code>NA</code> indices (<a href="https://github.com/r-lib/vroom/issues/236" class="external-link">#236</a>).</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now handles cases when <code>id</code> is set and a column in skipped (<a href="https://github.com/tidyverse/vroom/issues/237" class="external-link">#237</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports column selections when there are some empty column names (<a href="https://github.com/tidyverse/vroom/issues/238" class="external-link">#238</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> argument <code>n_max</code> now works properly for files with windows newlines and no final newline (<a href="https://github.com/tidyverse/vroom/issues/244" class="external-link">#244</a>)</p></li>
+<li><p>Subsetting vectors now works with <code><a href="https://rdrr.io/r/utils/View.html" class="external-link">View()</a></code> in RStudio if there are now rows to subset (<a href="https://github.com/tidyverse/vroom/issues/253" class="external-link">#253</a>).</p></li>
+<li><p>Subsetting datetime columns now works with <code>NA</code> indices (<a href="https://github.com/tidyverse/vroom/issues/236" class="external-link">#236</a>).</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.1" id="vroom-121">vroom 1.2.1<a class="anchor" aria-label="anchor" href="#vroom-121"></a></h2><p class="text-muted">CRAN release: 2020-05-12</p>
-<ul><li><p><code><a href="../reference/vroom.html">vroom()</a></code> now writes the column names if given an input with no rows (<a href="https://github.com/r-lib/vroom/issues/213" class="external-link">#213</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> columns now support indexing with NA values (<a href="https://github.com/r-lib/vroom/issues/201" class="external-link">#201</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer truncates the last value in a file if the file contains windows newlines but no final newline (<a href="https://github.com/r-lib/vroom/issues/219" class="external-link">#219</a>).</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now works when the <code>na</code> argument is encoded in non ASCII or UTF-8 locales <em>and</em> the file encoding is not the same as the native encoding (<a href="https://github.com/r-lib/vroom/issues/233" class="external-link">#233</a>).</p></li>
-<li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> now verifies that the positions are valid, namely that the begin value is always less than the previous end (<a href="https://github.com/r-lib/vroom/issues/217" class="external-link">#217</a>).</p></li>
-<li><p><code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> gains a <code>locale</code> argument so you can control the encoding of the file (<a href="https://github.com/r-lib/vroom/issues/218" class="external-link">#218</a>)</p></li>
-<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now supports the <code>append</code> argument with R connections (<a href="https://github.com/r-lib/vroom/issues/232" class="external-link">#232</a>)</p></li>
+<ul><li><p><code><a href="../reference/vroom.html">vroom()</a></code> now writes the column names if given an input with no rows (<a href="https://github.com/tidyverse/vroom/issues/213" class="external-link">#213</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> columns now support indexing with NA values (<a href="https://github.com/tidyverse/vroom/issues/201" class="external-link">#201</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer truncates the last value in a file if the file contains windows newlines but no final newline (<a href="https://github.com/tidyverse/vroom/issues/219" class="external-link">#219</a>).</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now works when the <code>na</code> argument is encoded in non ASCII or UTF-8 locales <em>and</em> the file encoding is not the same as the native encoding (<a href="https://github.com/tidyverse/vroom/issues/233" class="external-link">#233</a>).</p></li>
+<li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> now verifies that the positions are valid, namely that the begin value is always less than the previous end (<a href="https://github.com/tidyverse/vroom/issues/217" class="external-link">#217</a>).</p></li>
+<li><p><code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> gains a <code>locale</code> argument so you can control the encoding of the file (<a href="https://github.com/tidyverse/vroom/issues/218" class="external-link">#218</a>)</p></li>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now supports the <code>append</code> argument with R connections (<a href="https://github.com/tidyverse/vroom/issues/232" class="external-link">#232</a>)</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.0" id="vroom-120">vroom 1.2.0<a class="anchor" aria-label="anchor" href="#vroom-120"></a></h2><p class="text-muted">CRAN release: 2020-01-13</p>
@@ -243,55 +243,55 @@
 <code><a href="../reference/vroom_altrep_opts.html">vroom_altrep_opts()</a></code> and the argument <code>vroom(altrep_opts =)</code> have been renamed to <code><a href="../reference/vroom_altrep.html">vroom_altrep()</a></code> and <code>altrep</code> respectively. The prior names have been deprecated.</li></ul></div>
 <div class="section level3">
 <h3 id="new-features-1-2-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-2-0"></a></h3>
-<ul><li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports reading Big Integer values with the <code>bit64</code> package. Use <code><a href="../reference/cols.html">col_big_integer()</a></code> or the “I” shortcut to read a column as big integers. (<a href="https://github.com/r-lib/vroom/issues/198" class="external-link">#198</a>)</p></li>
-<li><p><code><a href="../reference/cols.html">cols()</a></code> gains a <code>.delim</code> argument and <code><a href="../reference/vroom.html">vroom()</a></code> now uses it as the delimiter if it is provided (<a href="https://github.com/r-lib/vroom/issues/192" class="external-link">#192</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports reading from <code><a href="https://rdrr.io/r/base/showConnections.html" class="external-link">stdin()</a></code> directly, interpreted as the C-level standard input (<a href="https://github.com/r-lib/vroom/issues/106" class="external-link">#106</a>).</p></li>
+<ul><li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports reading Big Integer values with the <code>bit64</code> package. Use <code><a href="../reference/cols.html">col_big_integer()</a></code> or the “I” shortcut to read a column as big integers. (<a href="https://github.com/tidyverse/vroom/issues/198" class="external-link">#198</a>)</p></li>
+<li><p><code><a href="../reference/cols.html">cols()</a></code> gains a <code>.delim</code> argument and <code><a href="../reference/vroom.html">vroom()</a></code> now uses it as the delimiter if it is provided (<a href="https://github.com/tidyverse/vroom/issues/192" class="external-link">#192</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now supports reading from <code><a href="https://rdrr.io/r/base/showConnections.html" class="external-link">stdin()</a></code> directly, interpreted as the C-level standard input (<a href="https://github.com/tidyverse/vroom/issues/106" class="external-link">#106</a>).</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="minor-improvements-and-fixes-1-2-0">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-1-2-0"></a></h3>
-<ul><li><p><code>col_date</code> now parses single digit month and day (<a href="https://github.com/edzer" class="external-link">@edzer</a>, <a href="https://github.com/r-lib/vroom/issues/123" class="external-link">#123</a>, <a href="https://github.com/r-lib/vroom/issues/170" class="external-link">#170</a>)</p></li>
+<ul><li><p><code>col_date</code> now parses single digit month and day (<a href="https://github.com/edzer" class="external-link">@edzer</a>, <a href="https://github.com/tidyverse/vroom/issues/123" class="external-link">#123</a>, <a href="https://github.com/tidyverse/vroom/issues/170" class="external-link">#170</a>)</p></li>
 <li><p><code><a href="../reference/vroom_fwf.html">fwf_empty()</a></code> now uses the <code>skip</code> parameter, as intended.</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> can now read single line files without a terminal newline (<a href="https://github.com/r-lib/vroom/issues/173" class="external-link">#173</a>).</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> can now select the id column if provided (<a href="https://github.com/r-lib/vroom/issues/110" class="external-link">#110</a>).</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now correctly copies string data for factor levels (<a href="https://github.com/r-lib/vroom/issues/184" class="external-link">#184</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> can now read single line files without a terminal newline (<a href="https://github.com/tidyverse/vroom/issues/173" class="external-link">#173</a>).</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> can now select the id column if provided (<a href="https://github.com/tidyverse/vroom/issues/110" class="external-link">#110</a>).</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now correctly copies string data for factor levels (<a href="https://github.com/tidyverse/vroom/issues/184" class="external-link">#184</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer crashes when files have trailing fields, windows newlines and the file is not newline or null terminated.</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now includes a spec object with the <code>col_types</code> class, as intended.</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now better handles floating point values with very large exponents (<a href="https://github.com/r-lib/vroom/issues/164" class="external-link">#164</a>).</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now uses better heuristics to guess the delimiter and now throws an error if a delimiter cannot be guessed (<a href="https://github.com/r-lib/vroom/issues/126" class="external-link">#126</a>, <a href="https://github.com/r-lib/vroom/issues/141" class="external-link">#141</a>, <a href="https://github.com/r-lib/vroom/issues/167" class="external-link">#167</a>).</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now has an improved error message when a file does not exist (<a href="https://github.com/r-lib/vroom/issues/169" class="external-link">#169</a>).</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer leaks file handles (<a href="https://github.com/r-lib/vroom/issues/177" class="external-link">#177</a>, <a href="https://github.com/r-lib/vroom/issues/180" class="external-link">#180</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now better handles floating point values with very large exponents (<a href="https://github.com/tidyverse/vroom/issues/164" class="external-link">#164</a>).</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now uses better heuristics to guess the delimiter and now throws an error if a delimiter cannot be guessed (<a href="https://github.com/tidyverse/vroom/issues/126" class="external-link">#126</a>, <a href="https://github.com/tidyverse/vroom/issues/141" class="external-link">#141</a>, <a href="https://github.com/tidyverse/vroom/issues/167" class="external-link">#167</a>).</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> now has an improved error message when a file does not exist (<a href="https://github.com/tidyverse/vroom/issues/169" class="external-link">#169</a>).</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer leaks file handles (<a href="https://github.com/tidyverse/vroom/issues/177" class="external-link">#177</a>, <a href="https://github.com/tidyverse/vroom/issues/180" class="external-link">#180</a>)</p></li>
 <li><p><code><a href="../reference/vroom.html">vroom()</a></code> now outputs its messages on <code><a href="https://rdrr.io/r/base/showConnections.html" class="external-link">stdout()</a></code> rather than <code><a href="https://rdrr.io/r/base/showConnections.html" class="external-link">stderr()</a></code>, which avoids the text being red in RStudio and in the Windows GUI.</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer overflows when reading files with more than 2B entries (<a href="https://github.com/wlattner" class="external-link">@wlattner</a>, <a href="https://github.com/r-lib/vroom/issues/183" class="external-link">#183</a>).</p></li>
-<li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> is now more robust if not all lines are the expected length (<a href="https://github.com/r-lib/vroom/issues/78" class="external-link">#78</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> no longer overflows when reading files with more than 2B entries (<a href="https://github.com/wlattner" class="external-link">@wlattner</a>, <a href="https://github.com/tidyverse/vroom/issues/183" class="external-link">#183</a>).</p></li>
+<li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> is now more robust if not all lines are the expected length (<a href="https://github.com/tidyverse/vroom/issues/78" class="external-link">#78</a>)</p></li>
 <li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> and <code><a href="../reference/vroom_fwf.html">fwf_empty()</a></code> now support passing <code>Inf</code> to <code>guess_max()</code>.</p></li>
 <li><p><code><a href="../reference/vroom_str.html">vroom_str()</a></code> now works with S4 objects.</p></li>
 <li><p><code><a href="../reference/vroom_fwf.html">vroom_fwf()</a></code> now handles files with dos newlines properly.</p></li>
-<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now does not try to write anything when given empty inputs (<a href="https://github.com/r-lib/vroom/issues/172" class="external-link">#172</a>).</p></li>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now does not try to write anything when given empty inputs (<a href="https://github.com/tidyverse/vroom/issues/172" class="external-link">#172</a>).</p></li>
 <li><p>Dates, times, and datetimes now properly consider the locale when parsing.</p></li>
-<li><p>Added benchmarks with <em>wide</em> data for both numeric and character data (<a href="https://github.com/r-lib/vroom/issues/87" class="external-link">#87</a>, <a href="https://github.com/R3myG" class="external-link">@R3myG</a>)</p></li>
-<li><p>The delimiter used for parsing is now shown in the message output (<a href="https://github.com/r-lib/vroom/issues/95" class="external-link">#95</a> <a href="https://github.com/R3myG" class="external-link">@R3myG</a>)</p></li>
+<li><p>Added benchmarks with <em>wide</em> data for both numeric and character data (<a href="https://github.com/tidyverse/vroom/issues/87" class="external-link">#87</a>, <a href="https://github.com/R3myG" class="external-link">@R3myG</a>)</p></li>
+<li><p>The delimiter used for parsing is now shown in the message output (<a href="https://github.com/tidyverse/vroom/issues/95" class="external-link">#95</a> <a href="https://github.com/R3myG" class="external-link">@R3myG</a>)</p></li>
 </ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.2" id="vroom-102">vroom 1.0.2<a class="anchor" aria-label="anchor" href="#vroom-102"></a></h2><p class="text-muted">CRAN release: 2019-06-28</p>
 <div class="section level3">
 <h3 id="new-features-1-0-2">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-0-2"></a></h3>
-<ul><li>The column created by <code>id</code> is now stored as an run length encoded Altrep vector, which uses less memory and is much faster for large inputs. (<a href="https://github.com/r-lib/vroom/issues/111" class="external-link">#111</a>)</li></ul></div>
+<ul><li>The column created by <code>id</code> is now stored as an run length encoded Altrep vector, which uses less memory and is much faster for large inputs. (<a href="https://github.com/tidyverse/vroom/issues/111" class="external-link">#111</a>)</li></ul></div>
 <div class="section level3">
 <h3 id="minor-improvements-and-fixes-1-0-2">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-1-0-2"></a></h3>
-<ul><li><p><code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> now properly respects the <code>n_max</code> parameter (<a href="https://github.com/r-lib/vroom/issues/142" class="external-link">#142</a>)</p></li>
-<li><p><code><a href="../reference/vroom.html">vroom()</a></code> and <code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> now support reading files which do not end in newlines by using a file connection (<a href="https://github.com/r-lib/vroom/issues/40" class="external-link">#40</a>).</p></li>
-<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now works with the standard output connection <code><a href="https://rdrr.io/r/base/showConnections.html" class="external-link">stdout()</a></code> (<a href="https://github.com/r-lib/vroom/issues/106" class="external-link">#106</a>).</p></li>
+<ul><li><p><code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> now properly respects the <code>n_max</code> parameter (<a href="https://github.com/tidyverse/vroom/issues/142" class="external-link">#142</a>)</p></li>
+<li><p><code><a href="../reference/vroom.html">vroom()</a></code> and <code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> now support reading files which do not end in newlines by using a file connection (<a href="https://github.com/tidyverse/vroom/issues/40" class="external-link">#40</a>).</p></li>
+<li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> now works with the standard output connection <code><a href="https://rdrr.io/r/base/showConnections.html" class="external-link">stdout()</a></code> (<a href="https://github.com/tidyverse/vroom/issues/106" class="external-link">#106</a>).</p></li>
 <li><p><code><a href="../reference/vroom_write.html">vroom_write()</a></code> no longer crashes non-deterministically when used on Altrep vectors.</p></li>
-<li><p>The integer parser now returns NA values for invalid inputs (<a href="https://github.com/r-lib/vroom/issues/135" class="external-link">#135</a>)</p></li>
-<li><p>Fix additional UBSAN issue in the mio project reported by CRAN (<a href="https://github.com/r-lib/vroom/issues/97" class="external-link">#97</a>)</p></li>
-<li><p>Fix indexing into connections with quoted fields (<a href="https://github.com/r-lib/vroom/issues/119" class="external-link">#119</a>)</p></li>
+<li><p>The integer parser now returns NA values for invalid inputs (<a href="https://github.com/tidyverse/vroom/issues/135" class="external-link">#135</a>)</p></li>
+<li><p>Fix additional UBSAN issue in the mio project reported by CRAN (<a href="https://github.com/tidyverse/vroom/issues/97" class="external-link">#97</a>)</p></li>
+<li><p>Fix indexing into connections with quoted fields (<a href="https://github.com/tidyverse/vroom/issues/119" class="external-link">#119</a>)</p></li>
 <li><p>Move example files for <code><a href="../reference/vroom.html">vroom()</a></code> out of <code>\dontshow{}</code>.</p></li>
-<li><p>Fix integer overflow with very large files (<a href="https://github.com/r-lib/vroom/issues/116" class="external-link">#116</a>, <a href="https://github.com/r-lib/vroom/issues/119" class="external-link">#119</a>)</p></li>
-<li><p>Fix missing columns and windows newlines (<a href="https://github.com/r-lib/vroom/issues/114" class="external-link">#114</a>)</p></li>
-<li><p>Fix encoding of column names (<a href="https://github.com/r-lib/vroom/issues/113" class="external-link">#113</a>, <a href="https://github.com/r-lib/vroom/issues/115" class="external-link">#115</a>)</p></li>
-<li><p>Throw an error message when writing a zip file, which is not supported (<a href="https://github.com/metaOO" class="external-link">@metaOO</a>, <a href="https://github.com/r-lib/vroom/issues/145" class="external-link">#145</a>)</p></li>
-<li><p>Default message output from <code><a href="../reference/vroom.html">vroom()</a></code> now uses <code>Rows</code> and <code>Cols</code> (<a href="https://github.com/meta00" class="external-link">@meta00</a>, <a href="https://github.com/r-lib/vroom/issues/140" class="external-link">#140</a>)</p></li>
+<li><p>Fix integer overflow with very large files (<a href="https://github.com/tidyverse/vroom/issues/116" class="external-link">#116</a>, <a href="https://github.com/tidyverse/vroom/issues/119" class="external-link">#119</a>)</p></li>
+<li><p>Fix missing columns and windows newlines (<a href="https://github.com/tidyverse/vroom/issues/114" class="external-link">#114</a>)</p></li>
+<li><p>Fix encoding of column names (<a href="https://github.com/tidyverse/vroom/issues/113" class="external-link">#113</a>, <a href="https://github.com/tidyverse/vroom/issues/115" class="external-link">#115</a>)</p></li>
+<li><p>Throw an error message when writing a zip file, which is not supported (<a href="https://github.com/metaOO" class="external-link">@metaOO</a>, <a href="https://github.com/tidyverse/vroom/issues/145" class="external-link">#145</a>)</p></li>
+<li><p>Default message output from <code><a href="../reference/vroom.html">vroom()</a></code> now uses <code>Rows</code> and <code>Cols</code> (<a href="https://github.com/meta00" class="external-link">@meta00</a>, <a href="https://github.com/tidyverse/vroom/issues/140" class="external-link">#140</a>)</p></li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -299,17 +299,17 @@
 <div class="section level3">
 <h3 id="new-features-1-0-1">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-0-1"></a></h3>
 <ul><li>
-<code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> function added, to (lazily) read lines from a file into a character vector (<a href="https://github.com/r-lib/vroom/issues/90" class="external-link">#90</a>).</li></ul></div>
+<code><a href="../reference/vroom_lines.html">vroom_lines()</a></code> function added, to (lazily) read lines from a file into a character vector (<a href="https://github.com/tidyverse/vroom/issues/90" class="external-link">#90</a>).</li></ul></div>
 <div class="section level3">
 <h3 id="minor-improvements-and-fixes-1-0-1">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-1-0-1"></a></h3>
-<ul><li><p>Fix for a hang on Windows caused by a race condition in the progress bar (<a href="https://github.com/r-lib/vroom/issues/98" class="external-link">#98</a>)</p></li>
-<li><p>Remove accidental runtime dependency on testthat (<a href="https://github.com/r-lib/vroom/issues/104" class="external-link">#104</a>)</p></li>
+<ul><li><p>Fix for a hang on Windows caused by a race condition in the progress bar (<a href="https://github.com/tidyverse/vroom/issues/98" class="external-link">#98</a>)</p></li>
+<li><p>Remove accidental runtime dependency on testthat (<a href="https://github.com/tidyverse/vroom/issues/104" class="external-link">#104</a>)</p></li>
 <li><p>Fix to actually return non-Altrep character columns on R 3.2, 3.3 and 3.4.</p></li>
 <li><p>Disable colors in the progress bar when running in RStudio, to work around an issue where the progress bar would be garbled (<a href="https://github.com/rstudio/rstudio/issues/4777" class="external-link uri">https://github.com/rstudio/rstudio/issues/4777</a>)</p></li>
-<li><p>Fix for UBSAN issues reported by CRAN (<a href="https://github.com/r-lib/vroom/issues/97" class="external-link">#97</a>)</p></li>
-<li><p>Fix for rchk issues reported by CRAN (<a href="https://github.com/r-lib/vroom/issues/94" class="external-link">#94</a>)</p></li>
+<li><p>Fix for UBSAN issues reported by CRAN (<a href="https://github.com/tidyverse/vroom/issues/97" class="external-link">#97</a>)</p></li>
+<li><p>Fix for rchk issues reported by CRAN (<a href="https://github.com/tidyverse/vroom/issues/94" class="external-link">#94</a>)</p></li>
 <li><p>The progress bar now only updates every 10 milliseconds.</p></li>
-<li><p>Getting started vignette index entry now more informative (<a href="https://github.com/r-lib/vroom/issues/92" class="external-link">#92</a>)</p></li>
+<li><p>Getting started vignette index entry now more informative (<a href="https://github.com/tidyverse/vroom/issues/92" class="external-link">#92</a>)</p></li>
 </ul></div>
 </div>
     <div class="section level2">

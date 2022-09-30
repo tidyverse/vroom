@@ -82,7 +82,7 @@
 
       <ul class="navbar-nav">
 <li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/r-lib/vroom/" aria-label="github">
+  <a class="external-link nav-link" href="https://github.com/tidyverse/vroom/" aria-label="github">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -102,7 +102,7 @@
 </div>
 <!-- badges: start -->
 <p>The fastest delimited reader for R, <strong>1.23 GB/sec</strong>.</p>
-<p><img src="https://raw.githubusercontent.com/r-lib/vroom/main/img/taylor.gif" align="right"></p>
+<p><img src="https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif" align="right"></p>
 <p>But that’s impossible! How can it be <a href="https://vroom.r-lib.org/articles/benchmarks.html">so fast</a>?</p>
 <p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html" class="external-link">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use. This lazy access is done automatically, so no changes to your R data-manipulation code are needed.</p>
 <p>vroom also uses multiple threads for indexing, materializing non-character columns, and when writing to further improve performance.</p>
@@ -232,14 +232,15 @@
 <span><span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
 <span><span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
 <span><span class="co">#&gt; # A tibble: 336,776 × 19</span></span>
-<span><span class="co">#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time</span></span>
-<span><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1  2013     1     1      810            810         0     1048           1037</span></span>
-<span><span class="co">#&gt; 2  2013     1     1     1451           1500        -9     1634           1636</span></span>
-<span><span class="co">#&gt; 3  2013     1     1     1452           1455        -3     1637           1639</span></span>
-<span><span class="co">#&gt; # … with 336,773 more rows, and 11 more variables: arr_delay &lt;dbl&gt;,</span></span>
-<span><span class="co">#&gt; #   carrier &lt;chr&gt;, flight &lt;dbl&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,</span></span>
-<span><span class="co">#&gt; #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt;    year month   day dep_time sched_dep…¹ dep_d…² arr_t…³ sched…⁴ arr_d…⁵ carrier</span></span>
+<span><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;  </span></span>
+<span><span class="co">#&gt; 1  2013     1     1      810         810       0    1048    1037      11 9E     </span></span>
+<span><span class="co">#&gt; 2  2013     1     1     1451        1500      -9    1634    1636      -2 9E     </span></span>
+<span><span class="co">#&gt; 3  2013     1     1     1452        1455      -3    1637    1639      -2 9E     </span></span>
+<span><span class="co">#&gt; # … with 336,773 more rows, 9 more variables: flight &lt;dbl&gt;, tailnum &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;, and abbreviated variable names</span></span>
+<span><span class="co">#&gt; #   ¹​sched_dep_time, ²​dep_delay, ³​arr_time, ⁴​sched_arr_time, ⁵​arr_delay</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="learning-more">Learning more<a class="anchor" aria-label="anchor" href="#learning-more"></a>
@@ -255,7 +256,7 @@
 <div class="section level2">
 <h2 id="benchmarks">Benchmarks<a class="anchor" aria-label="anchor" href="#benchmarks"></a>
 </h2>
-<p>The speed quoted above is from a real 1.53G dataset with 14,388,451 rows and 11 columns, see the <a href="https://vroom.r-lib.org/articles/benchmarks.html">benchmark article</a> for full details of the dataset and <a href="https://github.com/r-lib/vroom/tree/main/inst/bench" class="external-link">bench/</a> for the code used to retrieve the data and perform the benchmarks.</p>
+<p>The speed quoted above is from a real 1.53G dataset with 14,388,451 rows and 11 columns, see the <a href="https://vroom.r-lib.org/articles/benchmarks.html">benchmark article</a> for full details of the dataset and <a href="https://github.com/tidyverse/vroom/tree/main/inst/bench" class="external-link">bench/</a> for the code used to retrieve the data and perform the benchmarks.</p>
 </div>
 </div>
 <div class="section level1">
@@ -314,8 +315,8 @@
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li><a href="https://cloud.r-project.org/package=vroom" class="external-link">View on CRAN</a></li>
-<li><a href="https://github.com/r-lib/vroom/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/r-lib/vroom/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://github.com/tidyverse/vroom/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/tidyverse/vroom/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -359,8 +360,8 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/r-lib/vroom/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/r-lib/vroom/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://app.codecov.io/gh/r-lib/vroom?branch=main" class="external-link"><img src="https://codecov.io/gh/r-lib/vroom/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://github.com/tidyverse-lib/vroom/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/tidyverse/vroom/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://app.codecov.io/gh/tidyverse/vroom?branch=main" class="external-link"><img src="https://codecov.io/gh/tidyverse/vroom/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://cran.r-project.org/package=vroom" class="external-link"><img src="https://www.r-pkg.org/badges/version/vroom" alt="CRAN status"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
 </ul>
