@@ -15,7 +15,7 @@ test_that("read_file works via https", {
   skip_on_cran()
 
   mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
-  url <- "https://raw.githubusercontent.com/r-lib/vroom/main/inst/extdata/mtcars.csv"
+  url <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv"
   expect_equal(vroom(url, col_types = list()), mt)
 })
 
@@ -23,14 +23,14 @@ test_that("vroom works via https on gz file", {
   skip_on_cran()
 
   mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
-  url <- "https://raw.githubusercontent.com/r-lib/vroom/main/inst/extdata/mtcars.csv.gz"
+  url <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv.gz"
   expect_equal(vroom(url, col_types = list()), mt)
 })
 
 test_that("vroom errors via https on non-gz file", {
   skip_on_cran()
 
-  url <- "https://raw.githubusercontent.com/r-lib/vroom/main/inst/extdata/mtcars.csv.bz2"
+  url <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv.bz2"
   expect_error(vroom(url, col_types = list()), "Reading from remote `bz2` compressed files is not supported")
 })
 
@@ -95,7 +95,7 @@ test_that("can write to a tar.gz file if the archive package is available", {
   expect_equal(res$size, 1281)
 })
 
-# https://github.com/r-lib/vroom/issues/394
+# https://github.com/tidyverse/vroom/issues/394
 test_that("can read file w/o final newline, w/ multi-byte characters in path", {
   pattern <- "no-trailing-n\u00e8wline-m\u00fblti-byt\u00e9-path-"
   tfile <- withr::local_tempfile(pattern = pattern, fileext = ".csv")

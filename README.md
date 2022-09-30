@@ -5,9 +5,9 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/r-lib/vroom/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/vroom/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/tidyverse/vroom/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/tidyverse-lib/vroom/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
-coverage](https://codecov.io/gh/r-lib/vroom/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r-lib/vroom?branch=main)
+coverage](https://codecov.io/gh/tidyverse/vroom/branch/main/graph/badge.svg)](https://app.codecov.io/gh/tidyverse/vroom?branch=main)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/package=vroom)
 [![Lifecycle:
@@ -16,7 +16,7 @@ stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://
 
 The fastest delimited reader for R, **1.23 GB/sec**.
 
-<img src="https://raw.githubusercontent.com/r-lib/vroom/main/img/taylor.gif" align="right" />
+<img src="https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif" align="right" />
 
 But that’s impossible! How can it be [so
 fast](https://vroom.r-lib.org/articles/benchmarks.html)?
@@ -143,14 +143,15 @@ vroom::vroom(files)
 #> ℹ Use `spec()` to retrieve the full column specification for this data.
 #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 #> # A tibble: 336,776 × 19
-#>    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
-#>   <dbl> <dbl> <dbl>    <dbl>          <dbl>     <dbl>    <dbl>          <dbl>
-#> 1  2013     1     1      810            810         0     1048           1037
-#> 2  2013     1     1     1451           1500        -9     1634           1636
-#> 3  2013     1     1     1452           1455        -3     1637           1639
-#> # … with 336,773 more rows, and 11 more variables: arr_delay <dbl>,
-#> #   carrier <chr>, flight <dbl>, tailnum <chr>, origin <chr>, dest <chr>,
-#> #   air_time <dbl>, distance <dbl>, hour <dbl>, minute <dbl>, time_hour <dttm>
+#>    year month   day dep_time sched_dep…¹ dep_d…² arr_t…³ sched…⁴ arr_d…⁵ carrier
+#>   <dbl> <dbl> <dbl>    <dbl>       <dbl>   <dbl>   <dbl>   <dbl>   <dbl> <chr>  
+#> 1  2013     1     1      810         810       0    1048    1037      11 9E     
+#> 2  2013     1     1     1451        1500      -9    1634    1636      -2 9E     
+#> 3  2013     1     1     1452        1455      -3    1637    1639      -2 9E     
+#> # … with 336,773 more rows, 9 more variables: flight <dbl>, tailnum <chr>,
+#> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
+#> #   minute <dbl>, time_hour <dttm>, and abbreviated variable names
+#> #   ¹​sched_dep_time, ²​dep_delay, ³​arr_time, ⁴​sched_arr_time, ⁵​arr_delay
 ```
 
 ## Learning more
@@ -171,8 +172,8 @@ The speed quoted above is from a real 1.53G dataset with 14,388,451 rows
 and 11 columns, see the [benchmark
 article](https://vroom.r-lib.org/articles/benchmarks.html) for full
 details of the dataset and
-[bench/](https://github.com/r-lib/vroom/tree/main/inst/bench) for the
-code used to retrieve the data and perform the benchmarks.
+[bench/](https://github.com/tidyverse/vroom/tree/main/inst/bench) for
+the code used to retrieve the data and perform the benchmarks.
 
 # Environment variables
 

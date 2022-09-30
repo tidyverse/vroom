@@ -14,8 +14,8 @@ The goal of 'vroom' is to read and write data (like 'csv', 'tsv' and 'fwf') quic
 Useful links:
 \itemize{
   \item \url{https://vroom.r-lib.org}
-  \item \url{https://github.com/r-lib/vroom}
-  \item Report bugs at \url{https://github.com/r-lib/vroom/issues}
+  \item \url{https://github.com/tidyverse/vroom}
+  \item Report bugs at \url{https://github.com/tidyverse/vroom/issues}
 }
 
 }

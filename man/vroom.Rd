@@ -199,7 +199,7 @@ vroom(input_file)
 
 \dontrun{
 # Including remote paths
-vroom("https://github.com/r-lib/vroom/raw/main/inst/extdata/mtcars.csv")
+vroom("https://github.com/tidyverse/vroom/raw/main/inst/extdata/mtcars.csv")
 }
 
 # Or directly from a string with `I()`
