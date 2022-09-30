@@ -14,7 +14,7 @@ vroom_write_lines(
 )
 }
 \arguments{
-\item{x}{A data frame or tibble to write to disk.}
+\item{x}{A character vector.}
 
 \item{file}{File or connection to write to.}
 

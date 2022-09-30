@@ -147,6 +147,7 @@ vroom_format <- function(x, delim = "\t", eol = "\n", na = "NA", col_names = TRU
 
 #' Write lines to a file
 #'
+#' @param x A character vector.
 #' @inheritParams vroom_write
 #' @export
 vroom_write_lines <- function(x, file, eol = "\n", na = "NA", append = FALSE, num_threads = vroom_threads()) {
