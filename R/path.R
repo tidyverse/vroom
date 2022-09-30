@@ -21,7 +21,7 @@ reencode_file <- function(path, encoding) {
 }
 
 # These functions adapted from https://github.com/tidyverse/readr/blob/192cb1ca5c445e359f153d2259391e6d324fd0a2/R/source.R
-standardise_path <- function(path) {
+standardise_path <- function(path, user_env = caller_env(2)) {
   if (is.raw(path)) {
     return(list(rawConnection(path, "rb")))
   }
@@ -46,7 +46,9 @@ standardise_path <- function(path) {
     }
 
     if (any(grepl("\n", path))) {
-      lifecycle::deprecate_soft("1.5.0", "vroom(file = 'must use `I()` for literal data')",
+      lifecycle::deprecate_soft(
+        "1.5.0",
+        "vroom(file = 'must use `I()` for literal data')",
         details = c(
           "",
           "# Bad:",
@@ -54,7 +56,8 @@ standardise_path <- function(path) {
           "",
           "# Good:",
           "vroom(I(\"foo\\nbar\\n\"))"
-        )
+        ),
+        user_env = user_env()
       )
       return(list(chr_to_file(path, envir = parent.frame())))
     }
