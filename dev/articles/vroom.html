@@ -590,7 +590,7 @@
 <div class="section level2">
 <h2 id="name-repair">Name repair<a class="anchor" aria-label="anchor" href="#name-repair"></a>
 </h2>
-<p>Often the names of columns in the original dataset are not ideal to work with. <code><a href="../reference/vroom.html">vroom()</a></code> uses the same <code>.name_repair</code> argument as tibble, so you can use one of the default name repair strategies or provide a custom function. A great approach is to use the <a href="http://sfirke.github.io/janitor/reference/make_clean_names.html" class="external-link"><code>janitor::make_clean_names()</code></a> function as the input. This will automatically clean the names to use whatever case you specify, here I am setting it to use <code>ALLCAPS</code> names.</p>
+<p>Often the names of columns in the original dataset are not ideal to work with. <code><a href="../reference/vroom.html">vroom()</a></code> uses the same <code>.name_repair</code> argument as tibble, so you can use one of the default name repair strategies or provide a custom function. A great approach is to use the <a href="https://sfirke.github.io/janitor/reference/make_clean_names.html" class="external-link"><code>janitor::make_clean_names()</code></a> function as the input. This will automatically clean the names to use whatever case you specify, here I am setting it to use <code>ALLCAPS</code> names.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>,</span>
