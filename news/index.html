@@ -61,7 +61,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.6.0" id="vroom-160">vroom 1.6.0<a class="anchor" aria-label="anchor" href="#vroom-160"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.6.0" id="vroom-160">vroom 1.6.0<a class="anchor" aria-label="anchor" href="#vroom-160"></a></h2><p class="text-muted">CRAN release: 2022-09-30</p>
 <ul><li><p><code>vroom(col_select=)</code> now handles column selection by numeric position when <code>id</code> column is provided (<a href="https://github.com/tidyverse/vroom/issues/455" class="external-link">#455</a>).</p></li>
 <li><p><code>vroom(id = "path", col_select = a:c)</code> is treated like <code>vroom(id = "path", col_select = c(path, a:c))</code>. If an <code>id</code> column is provided, it is automatically included in the output (<a href="https://github.com/tidyverse/vroom/issues/416" class="external-link">#416</a>).</p></li>
 <li><p><code>vroom_write(append = TRUE)</code> does not modify an existing file when appending an empty data frame. In particular, it does not overwrite (delete) the existing contents of that file (<a href="https://github.com/tidyverse/readr/issues/1408" class="external-link uri">https://github.com/tidyverse/readr/issues/1408</a>, <a href="https://github.com/tidyverse/vroom/issues/451" class="external-link">#451</a>).</p></li>
