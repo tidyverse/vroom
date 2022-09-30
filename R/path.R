@@ -47,14 +47,14 @@ standardise_path <- function(path) {
 
     if (any(grepl("\n", path))) {
       lifecycle::deprecate_soft("1.5.0", "vroom(file = 'must use `I()` for literal data')",
-        details = glue::glue('
-
-          # Bad:
-          vroom("foo\\nbar\\n")
-
-          # Good:
-          vroom(I("foo\\nbar\\n"))
-        ')
+        details = c(
+          "",
+          "# Bad:",
+          "vroom(\"foo\\nbar\\n\")",
+          "",
+          "# Good:",
+          "vroom(I(\"foo\\nbar\\n\"))"
+        )
       )
       return(list(chr_to_file(path, envir = parent.frame())))
     }
