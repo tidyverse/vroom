@@ -43,3 +43,4 @@
 ^debug$
 ^\.vscode$
 ^rchk.*$
+^CRAN-SUBMISSION$
