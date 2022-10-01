@@ -50,12 +50,12 @@ standardise_path <- function(path, user_env = rlang::caller_env(2)) {
         "1.5.0",
         "vroom(file = 'must use `I()` for literal data')",
         details = c(
-          "",
-          "# Bad:",
-          "vroom(\"foo\\nbar\\n\")",
-          "",
-          "# Good:",
-          "vroom(I(\"foo\\nbar\\n\"))"
+          " " = "",
+          " " = "# Bad:",
+          " " = 'vroom("foo\\nbar\\n")',
+          " " = "",
+          " " = "# Good:",
+          " " = 'vroom(I("foo\\nbar\\n"))'
         ),
         user_env = user_env
       )
