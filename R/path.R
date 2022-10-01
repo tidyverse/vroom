@@ -57,7 +57,7 @@ standardise_path <- function(path, user_env = rlang::caller_env(2)) {
           "# Good:",
           "vroom(I(\"foo\\nbar\\n\"))"
         ),
-        user_env = user_env()
+        user_env = user_env
       )
       return(list(chr_to_file(path, envir = parent.frame())))
     }
