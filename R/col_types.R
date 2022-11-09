@@ -262,6 +262,7 @@ colourise_cols <- function(cols, colourise = crayon::has_color()) {
 
       col_double = ,
       col_integer = ,
+      col_big_integer = ,
       col_number = crayon::green(cols[[i]]),
 
       col_date = ,
