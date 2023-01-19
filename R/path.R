@@ -52,10 +52,10 @@ standardise_path <- function(path, user_env = rlang::caller_env(2)) {
         details = c(
           " " = "",
           " " = "# Bad:",
-          " " = 'vroom("foo\\nbar\\n")',
+          " " = 'vroom("X,Y\\n1.5,2.3\\n")',
           " " = "",
           " " = "# Good:",
-          " " = 'vroom(I("foo\\nbar\\n"))'
+          " " = 'vroom(I("X,Y\\n1.5,2.3\\n"))'
         ),
         user_env = user_env
       )

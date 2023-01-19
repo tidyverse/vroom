@@ -7,10 +7,10 @@
       The `file` argument of `vroom()` must use `I()` for literal data as of vroom 1.5.0.
         
         # Bad:
-        vroom("foo\nbar\n")
+        vroom("X,Y\n1.5,2.3\n")
         
         # Good:
-        vroom(I("foo\nbar\n"))
+        vroom(I("X,Y\n1.5,2.3\n"))
 
 ---
 
@@ -21,8 +21,8 @@
       The `file` argument of `vroom()` must use `I()` for literal data as of vroom 1.5.0.
         
         # Bad:
-        vroom("foo\nbar\n")
+        vroom("X,Y\n1.5,2.3\n")
         
         # Good:
-        vroom(I("foo\nbar\n"))
+        vroom(I("X,Y\n1.5,2.3\n"))
 
