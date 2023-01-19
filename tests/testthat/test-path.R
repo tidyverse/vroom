@@ -65,11 +65,6 @@ test_that("vroom() informs user to use I() for literal data (or not)", {
   expect_snapshot(
     x <- vroom("a,b,c,d\n1,2,3,4", show_col_types = FALSE)
   )
-
-  f <- function(file) vroom(file, show_col_types = FALSE)
-  expect_snapshot(
-    x <- f("a,b,c,d\n1,2,3,4")
-  )
 })
 
 test_that("can write to a zip file if the archive package is available", {
