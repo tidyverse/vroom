@@ -28,18 +28,6 @@ convert_connection <- function(in_con, out_con, from, to) {
   .Call(`_vroom_convert_connection`, in_con, out_con, from, to)
 }
 
-vroom_ <- function(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip_empty_rows, skip, n_max, progress, col_names, col_types, col_select, name_repair, id, na, locale, guess_max, num_threads, altrep) {
-  .Call(`_vroom_vroom_`, inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip_empty_rows, skip, n_max, progress, col_names, col_types, col_select, name_repair, id, na, locale, guess_max, num_threads, altrep)
-}
-
-has_trailing_newline <- function(filename) {
-  .Call(`_vroom_has_trailing_newline`, filename)
-}
-
-vroom_rle <- function(input) {
-  .Call(`_vroom_vroom_rle`, input)
-}
-
 utctime_ <- function(year, month, day, hour, min, sec, psec) {
   .Call(`_vroom_utctime_`, year, month, day, hour, min, sec, psec)
 }
@@ -66,4 +54,16 @@ vroom_write_connection_ <- function(input, con, delim, eol, na_str, col_names, o
 
 vroom_format_ <- function(input, delim, eol, na_str, col_names, append, options, num_threads, progress, buf_lines) {
   .Call(`_vroom_vroom_format_`, input, delim, eol, na_str, col_names, append, options, num_threads, progress, buf_lines)
+}
+
+vroom_ <- function(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip_empty_rows, skip, n_max, progress, col_names, col_types, col_select, name_repair, id, na, locale, guess_max, num_threads, altrep) {
+  .Call(`_vroom_vroom_`, inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip_empty_rows, skip, n_max, progress, col_names, col_types, col_select, name_repair, id, na, locale, guess_max, num_threads, altrep)
+}
+
+has_trailing_newline <- function(filename) {
+  .Call(`_vroom_has_trailing_newline`, filename)
+}
+
+vroom_rle <- function(input) {
+  .Call(`_vroom_vroom_rle`, input)
 }
