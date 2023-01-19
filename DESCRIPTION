@@ -33,7 +33,7 @@ Imports:
     crayon,
     glue,
     hms,
-    lifecycle,
+    lifecycle (>= 1.0.3),
     methods,
     rlang (>= 0.4.2),
     stats,
