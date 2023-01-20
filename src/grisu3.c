@@ -348,7 +348,7 @@ int dtoa_grisu3(double v, char *dst)
 	assert(dst);
 
 	// Prehandle NaNs
-	if ((u64 << 1) > 0xFFE0000000000000ULL) return sprintf(dst, "NaN(%08X%08X)", (uint32_t)(u64 >> 32), (uint32_t)u64);
+	if ((u64 << 1) > 0xFFE0000000000000ULL) return snprintf(dst, 22, "NaN(%08X%08X)", (uint32_t)(u64 >> 32), (uint32_t)u64);
 	// Prehandle negative values.
 	if ((u64 & D64_SIGN) != 0) { *s2++ = '-'; v = -v; u64 ^= D64_SIGN; }
 	// Prehandle zero.
@@ -358,7 +358,7 @@ int dtoa_grisu3(double v, char *dst)
 
 	success = grisu3(v, s2, &len, &d_exp);
 	// If grisu3 was not able to convert the number to a string, then use old sprintf (suboptimal).
-	if (!success) return sprintf(s2, "%.17g", v) + (int)(s2 - dst);
+	if (!success) return snprintf(s2, 30, "%.17g", v) + (int)(s2 - dst);
 
 	// handle whole numbers as integers if they are < 10^15
 	if (d_exp >= 0 && d_exp <= MAX(2, 15 - len)) {
@@ -367,7 +367,7 @@ int dtoa_grisu3(double v, char *dst)
 		return (int)(s2+len-dst);
 	}
 	// We now have an integer string of form "151324135" and a base-10 exponent for that number.
-	// Next, decide the best presentation for that string by whether to use a decimal point, or the scientific exponent notation 'e'.
+	// Next, decide the best presentation for that string by whether to use a decimal point, or the scientific exponent notation 'e'.
 	// We don't pick the absolute shortest representation, but pick a balance between readability and shortness, e.g.
 	// 1.545056189557677e-308 could be represented in a shorter form
 	// 1545056189557677e-323 but that would be somewhat unreadable.
