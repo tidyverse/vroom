@@ -319,7 +319,7 @@ std::vector<char> get_header(
       out.push_back(delim);
     }
   }
-  if(out.size() != 0) {
+  if(!out.empty()) {
     if (delim != '\0') {
       out.pop_back();
     }
