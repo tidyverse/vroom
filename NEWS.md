@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `str()` now works in a colourised context in the presence of a column of class `integer64`, i.e. parsed with `col_big_integer()` (@bart1, #477).
+
 # vroom 1.6.0
 
 * `vroom(col_select=)` now handles column selection by numeric position when `id` column is provided (#455).
