@@ -519,11 +519,15 @@ collector_value.collector_logical <- function(x, ...) { logical() }
 #' @export
 collector_value.collector_factor <- function(x, ...) { factor() }
 
+# the more obvious as.POSIXct(double()) doesn't work on R < 4.0
+# https://github.com/tidyverse/vroom/issues/453
 #' @export
-collector_value.collector_datetime <- function(x, ...) { as.POSIXct(double()) }
+collector_value.collector_datetime <- function(x, ...) { vctrs::vec_ptype(Sys.time()) }
 
+# the more obvious as.Date(double()) doesn't work on R < 4.0
+# and again: https://github.com/tidyverse/vroom/issues/453
 #' @export
-collector_value.collector_date <- function(x, ...) { as.Date(double()) }
+collector_value.collector_date <- function(x, ...) { vctrs::vec_ptype(Sys.Date()) }
 
 #' @export
 collector_value.collector_time <- function(x, ...) { hms::hms() }
