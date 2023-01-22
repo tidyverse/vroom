@@ -1,6 +1,6 @@
 # vroom 1.6.1
 
-* `str()` now works in a colourised context in the presence of a column of class `integer64`, i.e. parsed with `col_big_integer()` (@bart1, #477).
+* `str()` now works in a colorized context in the presence of a column of class `integer64`, i.e. parsed with `col_big_integer()` (@bart1, #477).
 
 * The embedded implementation of the Grisu algorithm for printing floating point numbers now uses `snprintf()` instead of `sprintf()` and likewise for vroom's own code (@jeroen, #480).
 
