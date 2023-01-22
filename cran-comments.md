@@ -1,3 +1,5 @@
+This patch release removes all usage of sprintf() and is being done under a deadline of 2023-01-23.
+
 ## revdepcheck results
 
 We checked 33 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
