@@ -45,25 +45,25 @@ vroom has nearly all of the parsing features of
 [readr](https://readr.tidyverse.org) for delimited and fixed width
 files, including
 
--   delimiter guessing\*
--   custom delimiters (including multi-byte\* and Unicode\* delimiters)
--   specification of column types (including type guessing)
-    -   numeric types (double, integer, big integer\*, number)
-    -   logical types
-    -   datetime types (datetime, date, time)
-    -   categorical types (characters, factors)
--   column selection, like `dplyr::select()`\*
--   skipping headers, comments and blank lines
--   quoted fields
--   double and backslashed escapes
--   whitespace trimming
--   windows newlines
--   [reading from multiple files or
-    connections\*](#reading-multiple-files)
--   embedded newlines in headers and fields\*\*
--   writing delimited files with as-needed quoting.
--   robust to invalid inputs (vroom has been extensively tested with the
-    [afl](https://lcamtuf.coredump.cx/afl/) fuzz tester)\*.
+- delimiter guessing\*
+- custom delimiters (including multi-byte\* and Unicode\* delimiters)
+- specification of column types (including type guessing)
+  - numeric types (double, integer, big integer\*, number)
+  - logical types
+  - datetime types (datetime, date, time)
+  - categorical types (characters, factors)
+- column selection, like `dplyr::select()`\*
+- skipping headers, comments and blank lines
+- quoted fields
+- double and backslashed escapes
+- whitespace trimming
+- windows newlines
+- [reading from multiple files or
+  connections\*](#reading-multiple-files)
+- embedded newlines in headers and fields\*\*
+- writing delimited files with as-needed quoting.
+- robust to invalid inputs (vroom has been extensively tested with the
+  [afl](https://lcamtuf.coredump.cx/afl/) fuzz tester)\*.
 
 \* *these are additional features not in readr.*
 
@@ -156,15 +156,15 @@ vroom::vroom(files)
 
 ## Learning more
 
--   [Getting started with
-    vroom](https://vroom.r-lib.org/articles/vroom.html)
--   [📽 vroom: Because Life is too short to read
-    slow](https://www.youtube.com/watch?v=RA9AjqZXxMU&t=10s) -
-    Presentation at UseR!2019
-    ([slides](https://speakerdeck.com/jimhester/vroom))
--   [📹 vroom: Read and write rectangular data
-    quickly](https://www.youtube.com/watch?v=ZP_y5eaAc60) - a video tour
-    of the vroom features.
+- [Getting started with
+  vroom](https://vroom.r-lib.org/articles/vroom.html)
+- [📽 vroom: Because Life is too short to read
+  slow](https://www.youtube.com/watch?v=RA9AjqZXxMU&t=10s) -
+  Presentation at UseR!2019
+  ([slides](https://speakerdeck.com/jimhester/vroom))
+- [📹 vroom: Read and write rectangular data
+  quickly](https://www.youtube.com/watch?v=ZP_y5eaAc60) - a video tour
+  of the vroom features.
 
 ## Benchmarks
 
@@ -181,20 +181,19 @@ In addition to the arguments to the `vroom()` function, you can control
 the behavior of vroom with a few environment variables. Generally these
 will not need to be set by most users.
 
--   `VROOM_TEMP_PATH` - Path to the directory used to store temporary
-    files when reading from a R connection. If unset defaults to the R
-    session’s temporary directory (`tempdir()`).
--   `VROOM_THREADS` - The number of processor threads to use when
-    indexing and parsing. If unset defaults to
-    `parallel::detectCores()`.
--   `VROOM_SHOW_PROGRESS` - Whether to show the progress bar when
-    indexing. Regardless of this setting the progress bar is disabled in
-    non-interactive settings, R notebooks, when running tests with
-    testthat and when knitting documents.
--   `VROOM_CONNECTION_SIZE` - The size (in bytes) of the connection
-    buffer when reading from connections (default is 128 KiB).
--   `VROOM_WRITE_BUFFER_LINES` - The number of lines to use for each
-    buffer when writing files (default: 1000).
+- `VROOM_TEMP_PATH` - Path to the directory used to store temporary
+  files when reading from a R connection. If unset defaults to the R
+  session’s temporary directory (`tempdir()`).
+- `VROOM_THREADS` - The number of processor threads to use when indexing
+  and parsing. If unset defaults to `parallel::detectCores()`.
+- `VROOM_SHOW_PROGRESS` - Whether to show the progress bar when
+  indexing. Regardless of this setting the progress bar is disabled in
+  non-interactive settings, R notebooks, when running tests with
+  testthat and when knitting documents.
+- `VROOM_CONNECTION_SIZE` - The size (in bytes) of the connection buffer
+  when reading from connections (default is 128 KiB).
+- `VROOM_WRITE_BUFFER_LINES` - The number of lines to use for each
+  buffer when writing files (default: 1000).
 
 There are also a family of variables to control use of the Altrep
 framework. For versions of R where the Altrep framework is unavailable
@@ -202,22 +201,22 @@ framework. For versions of R where the Altrep framework is unavailable
 effect. The variables can take one of `true`, `false`, `TRUE`, `FALSE`,
 `1`, or `0`.
 
--   `VROOM_USE_ALTREP_NUMERICS` - If set use Altrep for *all* numeric
-    types (default `false`).
+- `VROOM_USE_ALTREP_NUMERICS` - If set use Altrep for *all* numeric
+  types (default `false`).
 
 There are also individual variables for each type. Currently only
 `VROOM_USE_ALTREP_CHR` defaults to `true`.
 
--   `VROOM_USE_ALTREP_CHR`
--   `VROOM_USE_ALTREP_FCT`
--   `VROOM_USE_ALTREP_INT`
--   `VROOM_USE_ALTREP_BIG_INT`
--   `VROOM_USE_ALTREP_DBL`
--   `VROOM_USE_ALTREP_NUM`
--   `VROOM_USE_ALTREP_LGL`
--   `VROOM_USE_ALTREP_DTTM`
--   `VROOM_USE_ALTREP_DATE`
--   `VROOM_USE_ALTREP_TIME`
+- `VROOM_USE_ALTREP_CHR`
+- `VROOM_USE_ALTREP_FCT`
+- `VROOM_USE_ALTREP_INT`
+- `VROOM_USE_ALTREP_BIG_INT`
+- `VROOM_USE_ALTREP_DBL`
+- `VROOM_USE_ALTREP_NUM`
+- `VROOM_USE_ALTREP_LGL`
+- `VROOM_USE_ALTREP_DTTM`
+- `VROOM_USE_ALTREP_DATE`
+- `VROOM_USE_ALTREP_TIME`
 
 ## RStudio caveats
 
@@ -230,17 +229,17 @@ issue, so it is recommended you use at least that version.
 
 ## Thanks
 
--   [Gabe Becker](https://twitter.com/groundwalkergmb), [Luke
-    Tierney](https://homepage.divms.uiowa.edu/~luke/) and [Tomas
-    Kalibera](https://github.com/kalibera) for conceiving, Implementing
-    and maintaining the [Altrep
-    framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html)
--   [Romain François](https://twitter.com/romain_francois), whose
-    [Altrepisode](https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
-    package and [related
-    blog-posts](https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
-    were a great guide for creating new Altrep objects in C++.
--   [Matt Dowle](https://twitter.com/mattdowle) and the rest of the
-    [Rdatatable](https://github.com/Rdatatable) team,
-    `data.table::fread()` is blazing fast and great motivation to see
-    how fast we could go faster!
+- [Gabe Becker](https://twitter.com/groundwalkergmb), [Luke
+  Tierney](https://homepage.divms.uiowa.edu/~luke/) and [Tomas
+  Kalibera](https://github.com/kalibera) for conceiving, Implementing
+  and maintaining the [Altrep
+  framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html)
+- [Romain François](https://twitter.com/romain_francois), whose
+  [Altrepisode](https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
+  package and [related
+  blog-posts](https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
+  were a great guide for creating new Altrep objects in C++.
+- [Matt Dowle](https://twitter.com/mattdowle) and the rest of the
+  [Rdatatable](https://github.com/Rdatatable) team,
+  `data.table::fread()` is blazing fast and great motivation to see how
+  fast we could go faster!
