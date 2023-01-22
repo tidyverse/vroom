@@ -79,5 +79,5 @@ Copyright: file COPYRIGHTS
 Encoding: UTF-8
 Language: en-US
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 SystemRequirements: C++11
