@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">vroom</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.6.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.6.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -156,35 +156,35 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># characters</span></span></span>
 <span class="r-in"><span><span class="fu">gen_character</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "wgxFrZ6DTgryXDQS5yvl9N" "pegh4fiHtLH"           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "rKfEZvuLRDw3RKFKUU0A0"  "IqyHobmOdknUsMeakpvt"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "xocUEp90ssiUrC"       "aevyu60xoxJdZgpDaTPB" "GBXms"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "mROUXae"             </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># factors</span></span></span>
 <span class="r-in"><span><span class="fu">gen_factor</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] itchy_crocodile itchy_crocodile itchy_crocodile itchy_crocodile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Levels: itchy_crocodile</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] odd_mule    odd_mule    jolly_finch odd_mule   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Levels: breeze_chimpanzee last_iguana modern_pony ... odd_mule</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># logical</span></span></span>
 <span class="r-in"><span><span class="fu">gen_logical</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  TRUE  TRUE  TRUE FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE FALSE FALSE FALSE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># numbers</span></span></span>
 <span class="r-in"><span><span class="fu">gen_double</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  1.1824425 -0.8469205  1.3539927 -1.3218694</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.7333274 0.6182472 0.7378433 0.7388622</span>
 <span class="r-in"><span><span class="fu">gen_integer</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1592899246 1966377988   62556269 1823046722</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1063360213 2021104932  952412025 1839615604</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># temporal data</span></span></span>
 <span class="r-in"><span><span class="fu">gen_time</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:20:34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 06:34:45</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23:59:43</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:07:09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 03:05:27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:36:34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:40:56</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:03:35</span>
 <span class="r-in"><span><span class="fu">gen_date</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2006-03-08" "2012-06-15" "2006-03-30" "2019-09-17"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2016-11-26" "2001-04-10" "2007-06-18" "2018-08-13"</span>
 <span class="r-in"><span><span class="fu">gen_datetime</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2011-01-26 01:54:30 UTC" "2013-11-10 04:43:20 UTC"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "2007-05-27 07:51:07 UTC" "2006-05-12 13:46:38 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2015-08-27 05:34:34 UTC" "2020-07-26 12:08:33 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "2005-05-27 20:17:56 UTC" "2003-02-11 04:17:14 UTC"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
