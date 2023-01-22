@@ -62,8 +62,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vroom-development-version">vroom (development version)<a class="anchor" aria-label="anchor" href="#vroom-development-version"></a></h2>
-<ul><li>
-<code><a href="https://rdrr.io/r/utils/str.html" class="external-link">str()</a></code> now works in a colourised context in the presence of a column of class <code>integer64</code>, i.e. parsed with <code><a href="../reference/cols.html">col_big_integer()</a></code> (<a href="https://github.com/bart1" class="external-link">@bart1</a>, <a href="https://github.com/tidyverse/vroom/issues/477" class="external-link">#477</a>).</li>
+<ul><li><p><code><a href="https://rdrr.io/r/utils/str.html" class="external-link">str()</a></code> now works in a colourised context in the presence of a column of class <code>integer64</code>, i.e. parsed with <code><a href="../reference/cols.html">col_big_integer()</a></code> (<a href="https://github.com/bart1" class="external-link">@bart1</a>, <a href="https://github.com/tidyverse/vroom/issues/477" class="external-link">#477</a>).</p></li>
+<li><p>The embedded implementation of the Grisu algorithm for printing floating point numbers now uses <code>snprintf()</code> instead of <code><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf()</a></code> and likewise for vroom’s own code (<a href="https://github.com/jeroen" class="external-link">@jeroen</a>, <a href="https://github.com/tidyverse/vroom/issues/480" class="external-link">#480</a>).</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.6.0" id="vroom-160">vroom 1.6.0<a class="anchor" aria-label="anchor" href="#vroom-160"></a></h2><p class="text-muted">CRAN release: 2022-09-30</p>
