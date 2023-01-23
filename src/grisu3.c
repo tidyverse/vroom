@@ -36,7 +36,7 @@
 #include <stdint.h> // uint64_t etc.
 #include <assert.h> // assert
 #include <math.h> // ceil
-#include <stdio.h> // sprintf
+#include <stdio.h> // snprintf
 #include <string.h>
 
 #ifdef _MSC_VER
@@ -348,6 +348,10 @@ int dtoa_grisu3(double v, char *dst)
 	assert(dst);
 
 	// Prehandle NaNs
+	// Why size = 22?
+	//  5 for "NaN()"
+	// 16 for two hexadecimal intgers at width 8
+	//  1 for null terminator
 	if ((u64 << 1) > 0xFFE0000000000000ULL) return snprintf(dst, 22, "NaN(%08X%08X)", (uint32_t)(u64 >> 32), (uint32_t)u64);
 	// Prehandle negative values.
 	if ((u64 & D64_SIGN) != 0) { *s2++ = '-'; v = -v; u64 ^= D64_SIGN; }
@@ -358,6 +362,17 @@ int dtoa_grisu3(double v, char *dst)
 
 	success = grisu3(v, s2, &len, &d_exp);
 	// If grisu3 was not able to convert the number to a string, then use old sprintf (suboptimal).
+	// (Putative) rationale for size = 30:
+	// 17 digits after decimal at most
+	//  1 for the `.`
+	//  1 for a possible `-`, if the number is negative
+	//  5 for a possible e+308 if it chooses exponential form and uses the largest
+	//    exponent possible
+	//  1 for null terminator
+	// --
+	// 25 total so far
+	//  5 left for displaying the value before the decimal (in the worst case,
+	//    which I'm not even sure is possible)
 	if (!success) return snprintf(s2, 30, "%.17g", v) + (int)(s2 - dst);
 
 	// handle whole numbers as integers if they are < 10^15
