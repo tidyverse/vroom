@@ -373,6 +373,8 @@ int dtoa_grisu3(double v, char *dst)
 	// 25 total so far
 	//  5 left for displaying the value before the decimal (in the worst case,
 	//    which I'm not even sure is possible)
+	// More context: when vroom calls dtoa_grisu3(), dst points to a buffer of
+	// size 33 (at the time of writing), and that's where s2 starts out FWIW.
 	if (!success) return snprintf(s2, 30, "%.17g", v) + (int)(s2 - dst);
 
 	// handle whole numbers as integers if they are < 10^15
