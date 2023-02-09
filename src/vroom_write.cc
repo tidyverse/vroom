@@ -217,7 +217,7 @@ std::vector<char> fill_buf(
           // TODO: use something like https://github.com/jeaiii/itoa for
           // faster integer writing
           char temp_buf[12];
-          auto len = snprintf(temp_buf, 12, "%i", value);
+          auto len = snprintf(temp_buf, sizeof(temp_buf), "%i", value);
           std::copy(temp_buf, temp_buf + len, std::back_inserter(buf));
         }
         break;
