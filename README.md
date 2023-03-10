@@ -81,8 +81,8 @@ Alternatively, if you need the development version from
 [GitHub](https://github.com/) install it with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_dev("vroom")
+# install.packages("pak")
+pak::pak("tidyverse/vroom")
 ```
 
 ## Usage
