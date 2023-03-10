@@ -20,12 +20,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Jennifer Bryan \email{jenny@rstudio.com} (\href{https://orcid.org/0000-0002-6983-2759}{ORCID})
+\strong{Maintainer}: Jennifer Bryan \email{jenny@posit.co} (\href{https://orcid.org/0000-0002-6983-2759}{ORCID})
 
 Authors:
 \itemize{
-  \item Jim Hester \email{jim.hester@rstudio.com} (\href{https://orcid.org/0000-0002-2739-7082}{ORCID})
-  \item Hadley Wickham \email{hadley@rstudio.com} (\href{https://orcid.org/0000-0003-4757-117X}{ORCID})
+  \item Jim Hester (\href{https://orcid.org/0000-0002-2739-7082}{ORCID})
+  \item Hadley Wickham \email{hadley@posit.co} (\href{https://orcid.org/0000-0003-4757-117X}{ORCID})
 }
 
 Other contributors:
@@ -34,7 +34,7 @@ Other contributors:
   \item https://github.com/mandreyel/ (mio library) [copyright holder]
   \item Jukka Jylänki (grisu3 implementation) [copyright holder]
   \item Mikkel Jørgensen (grisu3 implementation) [copyright holder]
-  \item RStudio [copyright holder, funder]
+  \item Posit Software, PBC [copyright holder, funder]
 }
 
 }

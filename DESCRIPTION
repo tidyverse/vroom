@@ -2,11 +2,11 @@ Package: vroom
 Title: Read and Write Rectangular Text Data Quickly
 Version: 1.6.1.9000
 Authors@R: c(
-    person("Jim", "Hester", , "jim.hester@rstudio.com", role = "aut",
+    person("Jim", "Hester", role = "aut",
            comment = c(ORCID = "0000-0002-2739-7082")),
-    person("Hadley", "Wickham", , "hadley@rstudio.com", role = "aut",
+    person("Hadley", "Wickham", , "hadley@posit.co", role = "aut",
            comment = c(ORCID = "0000-0003-4757-117X")),
-    person("Jennifer", "Bryan", , "jenny@rstudio.com", role = c("aut", "cre"),
+    person("Jennifer", "Bryan", , "jenny@posit.co", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-6983-2759")),
     person("Shelby", "Bearrows", role = "ctb"),
     person("https://github.com/mandreyel/", role = "cph",
@@ -15,7 +15,7 @@ Authors@R: c(
            comment = "grisu3 implementation"),
     person("Mikkel", "Jørgensen", role = "cph",
            comment = "grisu3 implementation"),
-    person("RStudio", role = c("cph", "fnd"))
+    person("Posit Software, PBC", role = c("cph", "fnd"))
   )
 Description: The goal of 'vroom' is to read and write data (like 'csv',
     'tsv' and 'fwf') quickly. When reading it uses a quick initial
