@@ -18,8 +18,8 @@ vroom_lines <- function(file, n_max = Inf, skip = 0,
   altrep_opts = deprecated(), num_threads = vroom_threads(),
   progress = vroom_progress()) {
 
-  if (!rlang::is_missing(altrep_opts)) {
-    lifecycle::deprecate_warn("1.1.0", "vroom_lines(altrep_opts = )", "vroom_lines(altrep = )")
+  if (!is_missing(altrep_opts)) {
+    deprecate_warn("1.1.0", "vroom_lines(altrep_opts = )", "vroom_lines(altrep = )")
     altrep <- altrep_opts
   }
 
@@ -38,7 +38,7 @@ vroom_lines <- function(file, n_max = Inf, skip = 0,
     return(character())
   }
 
-  col_select <- rlang::quo(NULL)
+  col_select <- quo(NULL)
 
   # delim = "\1" sets the delimiter to be start of header, which should never
   # appear in modern text. This essentially means the only record breaks will

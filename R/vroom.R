@@ -1,7 +1,3 @@
-#' @useDynLib vroom, .registration = TRUE
-#' @importFrom bit64 integer64
-NULL
-
 #' Read a delimited file into a tibble
 #'
 #' @param file Either a path to a file, a connection, or literal data (either a
@@ -217,7 +213,7 @@ vroom <- function(
     delim <- "\x01"
   }
 
-  if (!rlang::is_missing(altrep_opts)) {
+  if (!is_missing(altrep_opts)) {
     deprecate_warn("1.1.0", "vroom(altrep_opts = )", "vroom(altrep = )")
     altrep <- altrep_opts
   }
@@ -249,7 +245,7 @@ vroom <- function(
     Sys.setenv("RSTUDIO" = "1")
   }
 
-  col_select <- vroom_enquo(rlang::enquo(col_select))
+  col_select <- vroom_enquo(enquo(col_select))
 
   has_col_types <- !is.null(col_types)
 
@@ -331,7 +327,7 @@ make_names <- function(x, len) {
 #' vroom_progress()
 vroom_progress <- function() {
   env_to_logical("VROOM_SHOW_PROGRESS", TRUE) &&
-    rlang::is_interactive() &&
+    is_interactive() &&
     # some analysis re: rstudio.notebook.executing can be found in:
     # https://github.com/r-lib/rlang/issues/1031
     # TL;DR it's not consulted by is_interactive(), but probably should be
@@ -339,7 +335,6 @@ vroom_progress <- function() {
     !isTRUE(getOption("rstudio.notebook.executing"))
 }
 
-#' @importFrom crayon blue cyan green bold reset col_nchar
 pb_file_format <- function(filename) {
 
   # Workaround RStudio bug https://github.com/rstudio/rstudio/issues/4777
@@ -349,7 +344,7 @@ pb_file_format <- function(filename) {
 }
 
 pb_width <- function(format) {
-  ansii_chars <- nchar(format) - col_nchar(format)
+  ansii_chars <- nchar(format) - crayon::col_nchar(format)
   getOption("width", 80L) + ansii_chars
 }
 

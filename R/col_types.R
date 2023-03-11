@@ -59,7 +59,7 @@
 #' t3$cols <- c(t1$cols, t2$cols)
 #' t3
 cols <- function(..., .default = col_guess(), .delim = NULL) {
-  col_types <- rlang::list2(...)
+  col_types <- list2(...)
   is_character <- vapply(col_types, is.character, logical(1))
   col_types[is_character] <- lapply(col_types[is_character], col_concise)
 
@@ -199,7 +199,7 @@ format.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_co
   delim <- x$delim
 
   if (!is.null(delim) && nzchar(delim)) {
-    delim <- paste0('.delim = ', double_quote(delim), '')
+    delim <- paste0('.delim = ', glue::double_quote(delim), '')
   }
 
   cols_args <- c(
@@ -263,11 +263,11 @@ colourise_cols <- function(cols, colourise = crayon::has_color()) {
       col_double = ,
       col_integer = ,
       col_big_integer = ,
-      col_number = crayon::green(cols[[i]]),
+      col_number = green(cols[[i]]),
 
       col_date = ,
       col_datetime = ,
-      col_time = crayon::blue(cols[[i]])
+      col_time = blue(cols[[i]])
       )
   }
   cols
@@ -346,8 +346,8 @@ col_concise <- function(x) {
 }
 
 vroom_enquo <- function(x) {
-  if (rlang::quo_is_call(x, "c") || rlang::quo_is_call(x, "list")) {
-    return(rlang::as_quosures(rlang::get_expr(x)[-1], rlang::get_env(x)))
+  if (quo_is_call(x, "c") || quo_is_call(x, "list")) {
+    return(as_quosures(get_expr(x)[-1], get_env(x)))
   }
   x
 }
@@ -359,7 +359,7 @@ vroom_select <- function(x, col_select, id) {
   is_null <- vapply(x, is.null, logical(1))
   x[is_null] <- NULL
   # reorder and rename columns
-  if (inherits(col_select, "quosures") || !rlang::quo_is_null(col_select)) {
+  if (inherits(col_select, "quosures") || !quo_is_null(col_select)) {
     if (inherits(col_select, "quosures")) {
       vars <- tidyselect::vars_select(c(names(spec(x)$cols), id), !!!col_select)
     } else {
@@ -417,7 +417,7 @@ col_types_standardise <- function(spec, num_cols, col_names, col_select, name_re
 
     bad_types <- !(type_names %in% col_names)
     if (any(bad_types)) {
-      rlang::warn(paste0("The following named parsers don't match the column names: ",
+      warn(paste0("The following named parsers don't match the column names: ",
         paste0(type_names[bad_types], collapse = ", ")), class = "vroom_mismatched_column_name")
       spec$cols <- spec$cols[!bad_types]
       type_names <- type_names[!bad_types]
@@ -433,7 +433,7 @@ col_types_standardise <- function(spec, num_cols, col_names, col_select, name_re
     spec$cols <- spec$cols[col_names]
   }
 
-  if (inherits(col_select, "quosures") || !rlang::quo_is_null(col_select)) {
+  if (inherits(col_select, "quosures") || !quo_is_null(col_select)) {
     if (inherits(col_select, "quosures")) {
       to_keep <- names(spec$cols) %in% tidyselect::vars_select(names(spec$cols), !!!col_select, .strict = FALSE)
     } else {
@@ -535,8 +535,6 @@ collector_value.collector_time <- function(x, ...) { hms::hms() }
 #' @export
 collector_value.collector_guess <- function(x, ...) { character() }
 
-#' @importFrom crayon silver
-#' @importFrom glue double_quote
 #' @export
 summary.col_spec <- function(object, width = getOption("width"), locale = default_locale(), ...) {
   if (length(object$cols) == 0) {
@@ -571,7 +569,7 @@ summary.col_spec <- function(object, width = getOption("width"), locale = defaul
     entries = glue::glue("{format(types)} {counts}: {columns}"),
 
     '
-    {if (nzchar(delim)) paste(bold("Delimiter:"), double_quote(delim)) else ""}
+    {if (nzchar(delim)) paste(bold("Delimiter:"), glue::double_quote(delim)) else ""}
     {entries*}
 
 
@@ -616,10 +614,10 @@ color_type <- function(type) {
     lgl = crayon::yellow(type),
     dbl = ,
     int = ,
-    num = crayon::green(type),
+    num = green(type),
     date = ,
     dttm = ,
-    time = crayon::blue(type),
+    time = blue(type),
     "???" = type
   )
 }

@@ -40,8 +40,8 @@ vroom_fwf <- function(file,
 
   verify_fwf_positions(col_positions)
 
-  if (!rlang::is_missing(altrep_opts)) {
-    lifecycle::deprecate_warn("1.1.0", "vroom_fwf(altrep_opts = )", "vroom_fwf(altrep = )")
+  if (!is_missing(altrep_opts)) {
+    deprecate_warn("1.1.0", "vroom_fwf(altrep_opts = )", "vroom_fwf(altrep = )")
     altrep <- altrep_opts
   }
 
@@ -66,7 +66,7 @@ vroom_fwf <- function(file,
     guess_max <- -1
   }
 
-  col_select <- vroom_enquo(rlang::enquo(col_select))
+  col_select <- vroom_enquo(enquo(col_select))
 
   has_col_types <- !is.null(col_types)
 

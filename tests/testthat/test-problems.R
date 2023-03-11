@@ -172,7 +172,7 @@ test_that("can promote vroom parse warning to error", {
     withCallingHandlers(
       expr = make_warning(),
       vroom_parse_issue = function(cnd) {
-        rlang::abort("oh no")
+        abort("oh no")
       }
     )
   )

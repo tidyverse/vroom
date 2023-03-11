@@ -21,7 +21,7 @@ reencode_file <- function(path, encoding) {
 }
 
 # These functions adapted from https://github.com/tidyverse/readr/blob/192cb1ca5c445e359f153d2259391e6d324fd0a2/R/source.R
-standardise_path <- function(path, user_env = rlang::caller_env(2)) {
+standardise_path <- function(path, user_env = caller_env(2)) {
   if (is.raw(path)) {
     return(list(rawConnection(path, "rb")))
   }
@@ -80,7 +80,7 @@ standardise_one_path <- function (path, write = FALSE) {
     if (requireNamespace("curl", quietly = TRUE)) {
       con <- curl::curl(path)
     } else {
-      rlang::inform("`curl` package not installed, falling back to using `url()`")
+      inform("`curl` package not installed, falling back to using `url()`")
       con <- url(path)
     }
     ext <- tolower(tools::file_ext(path))
@@ -109,7 +109,7 @@ standardise_one_path <- function (path, write = FALSE) {
     path <- check_path(path)
   }
 
-  if (rlang::is_installed("archive")) {
+  if (is_installed("archive")) {
     formats <- archive_formats(p$extension)
     extension <- p$extension
     while(is.null(formats) && nzchar(extension)) {
@@ -247,7 +247,7 @@ zipfile <- function(path, open = "r") {
   file <- files$Name[[1]]
 
   if (nrow(files) > 1) {
-    rlang::inform(paste0("Multiple files in zip: reading '", file, "'"))
+    inform(paste0("Multiple files in zip: reading '", file, "'"))
   }
 
   unz(path, file, open = open)
