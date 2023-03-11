@@ -69,7 +69,7 @@ test_that("vroom() informs user to use I() for literal data (or not)", {
 
 test_that("can write to a zip file if the archive package is available", {
   skip_on_cran()
-  skip_if(!rlang::is_installed("archive"))
+  skip_if_not_installed("archive")
 
   tempfile <- file.path(tempdir(), "mtcars.zip")
   on.exit(unlink(tempfile))
@@ -84,7 +84,7 @@ test_that("can write to a zip file if the archive package is available", {
 
 test_that("can write to a tar.gz file if the archive package is available", {
   skip_on_cran()
-  skip_if(!rlang::is_installed("archive"))
+  skip_if_not_installed("archive")
 
   tempfile <- file.path(tempdir(), "mtcars.tar.gz")
   on.exit(unlink(tempfile))
@@ -135,7 +135,7 @@ test_that("can write to path with non-ascii characters", {
 
 test_that("can read/write a compressed file with non-ascii characters in path", {
   skip_on_cran()
-  skip_if_not(rlang::is_installed("archive"))
+  skip_if_not_installed("archive")
   # https://github.com/r-lib/archive/issues/75
   skip_if(l10n_info()$`Latin-1`)
 
