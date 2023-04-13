@@ -299,7 +299,10 @@ test_that("vroom_format() does not quote strings that start with the `na` string
     delim = ",",
     show_col_types = FALSE
   )
-  expect_equal(output_roundtrip, names_df)
+  expect_equal(
+    output_roundtrip,
+    tibble::tibble(x = c(NA, NA, "NATHAN", "JONAH"))
+  )
 })
 
 test_that("na argument modifies how missing values are written", {
