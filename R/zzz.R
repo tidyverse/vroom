@@ -21,10 +21,7 @@
   }
 }
 
-.onAttach <- function(libname, pkgname) {
-  env <- as.environment(paste0("package:", pkgname))
-  env[[".conflicts.OK"]] <- TRUE
-}
+.conflicts.OK <- TRUE
 
 s3_register <- function(generic, class, method = NULL) {
   stopifnot(is.character(generic), length(generic) == 1)
