@@ -202,7 +202,7 @@
 <span><span class="co">#&gt; 1 Mazda RX4      21       6   110  2.62  16.5 FALSE TRUE  4         4</span></span>
 <span><span class="co">#&gt; 2 Mazda RX4 Wag  21       6   110  2.88  17.0 FALSE TRUE  4         4</span></span>
 <span><span class="co">#&gt; 3 Datsun 710     22.8     4    93  2.32  18.6 TRUE  TRUE  4         1</span></span>
-<span><span class="co">#&gt; # … with 29 more rows</span></span></code></pre></div>
+<span><span class="co">#&gt; # ℹ 29 more rows</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reading-multiple-files">Reading multiple files<a class="anchor" aria-label="anchor" href="#reading-multiple-files"></a>
@@ -234,15 +234,15 @@
 <span><span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
 <span><span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
 <span><span class="co">#&gt; # A tibble: 336,776 × 19</span></span>
-<span><span class="co">#&gt;    year month   day dep_time sched_dep…¹ dep_d…² arr_t…³ sched…⁴ arr_d…⁵ carrier</span></span>
-<span><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;  </span></span>
-<span><span class="co">#&gt; 1  2013     1     1      810         810       0    1048    1037      11 9E     </span></span>
-<span><span class="co">#&gt; 2  2013     1     1     1451        1500      -9    1634    1636      -2 9E     </span></span>
-<span><span class="co">#&gt; 3  2013     1     1     1452        1455      -3    1637    1639      -2 9E     </span></span>
-<span><span class="co">#&gt; # … with 336,773 more rows, 9 more variables: flight &lt;dbl&gt;, tailnum &lt;chr&gt;,</span></span>
-<span><span class="co">#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,</span></span>
-<span><span class="co">#&gt; #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;, and abbreviated variable names</span></span>
-<span><span class="co">#&gt; #   ¹​sched_dep_time, ²​dep_delay, ³​arr_time, ⁴​sched_arr_time, ⁵​arr_delay</span></span></code></pre></div>
+<span><span class="co">#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time</span></span>
+<span><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1  2013     1     1      810            810         0     1048           1037</span></span>
+<span><span class="co">#&gt; 2  2013     1     1     1451           1500        -9     1634           1636</span></span>
+<span><span class="co">#&gt; 3  2013     1     1     1452           1455        -3     1637           1639</span></span>
+<span><span class="co">#&gt; # ℹ 336,773 more rows</span></span>
+<span><span class="co">#&gt; # ℹ 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="learning-more">Learning more<a class="anchor" aria-label="anchor" href="#learning-more"></a>
@@ -305,12 +305,12 @@
 </h2>
 <ul>
 <li>
-<a href="https://twitter.com/groundwalkergmb" class="external-link">Gabe Becker</a>, <a href="https://homepage.divms.uiowa.edu/~luke/" class="external-link">Luke Tierney</a> and <a href="https://github.com/kalibera" class="external-link">Tomas Kalibera</a> for conceiving, Implementing and maintaining the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html" class="external-link">Altrep framework</a>
+<a href="https://github.com/gmbecker" class="external-link">Gabe Becker</a>, <a href="https://homepage.divms.uiowa.edu/~luke/" class="external-link">Luke Tierney</a> and <a href="https://github.com/kalibera" class="external-link">Tomas Kalibera</a> for conceiving, Implementing and maintaining the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html" class="external-link">Altrep framework</a>
 </li>
 <li>
-<a href="https://twitter.com/romain_francois" class="external-link">Romain François</a>, whose <a href="https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/" class="external-link">Altrepisode</a> package and <a href="https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/" class="external-link">related blog-posts</a> were a great guide for creating new Altrep objects in C++.</li>
+<a href="https://github.com/romainfrancois" class="external-link">Romain François</a>, whose <a href="https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/" class="external-link">Altrepisode</a> package and <a href="https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/" class="external-link">related blog-posts</a> were a great guide for creating new Altrep objects in C++.</li>
 <li>
-<a href="https://twitter.com/mattdowle" class="external-link">Matt Dowle</a> and the rest of the <a href="https://github.com/Rdatatable" class="external-link">Rdatatable</a> team, <code>data.table::fread()</code> is blazing fast and great motivation to see how fast we could go faster!</li>
+<a href="https://github.com/mattdowle" class="external-link">Matt Dowle</a> and the rest of the <a href="https://github.com/Rdatatable" class="external-link">Rdatatable</a> team, <code>data.table::fread()</code> is blazing fast and great motivation to see how fast we could go faster!</li>
 </ul>
 </div>
 </div>
