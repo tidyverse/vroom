@@ -19,8 +19,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><link href="deps/Source_Sans_Pro-0.4.4/font.css" rel="stylesheet">
-<link href="deps/Source_Code_Pro-0.4.4/font.css" rel="stylesheet">
+<script src="deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><link href="deps/Source_Sans_Pro-0.4.5/font.css" rel="stylesheet">
+<link href="deps/Source_Code_Pro-0.4.5/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Read and Write Rectangular Text Data Quickly">
@@ -43,7 +43,7 @@
     
     <a class="navbar-brand me-2" href="index.html">vroom</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.6.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -182,8 +182,8 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"vroom"</span><span class="op">)</span></span></code></pre></div>
 <p>Alternatively, if you need the development version from <a href="https://github.com/" class="external-link">GitHub</a> install it with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_dev</span><span class="op">(</span><span class="st">"vroom"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="http://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"tidyverse/vroom"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
@@ -201,7 +201,7 @@
 <span><span class="co">#&gt; 1 Mazda RX4      21       6   110  2.62  16.5 FALSE TRUE  4         4</span></span>
 <span><span class="co">#&gt; 2 Mazda RX4 Wag  21       6   110  2.88  17.0 FALSE TRUE  4         4</span></span>
 <span><span class="co">#&gt; 3 Datsun 710     22.8     4    93  2.32  18.6 TRUE  TRUE  4         1</span></span>
-<span><span class="co">#&gt; # … with 29 more rows</span></span></code></pre></div>
+<span><span class="co">#&gt; # ℹ 29 more rows</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reading-multiple-files">Reading multiple files<a class="anchor" aria-label="anchor" href="#reading-multiple-files"></a>
@@ -233,15 +233,15 @@
 <span><span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
 <span><span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
 <span><span class="co">#&gt; # A tibble: 336,776 × 19</span></span>
-<span><span class="co">#&gt;    year month   day dep_time sched_dep…¹ dep_d…² arr_t…³ sched…⁴ arr_d…⁵ carrier</span></span>
-<span><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;  </span></span>
-<span><span class="co">#&gt; 1  2013     1     1      810         810       0    1048    1037      11 9E     </span></span>
-<span><span class="co">#&gt; 2  2013     1     1     1451        1500      -9    1634    1636      -2 9E     </span></span>
-<span><span class="co">#&gt; 3  2013     1     1     1452        1455      -3    1637    1639      -2 9E     </span></span>
-<span><span class="co">#&gt; # … with 336,773 more rows, 9 more variables: flight &lt;dbl&gt;, tailnum &lt;chr&gt;,</span></span>
-<span><span class="co">#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,</span></span>
-<span><span class="co">#&gt; #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;, and abbreviated variable names</span></span>
-<span><span class="co">#&gt; #   ¹​sched_dep_time, ²​dep_delay, ³​arr_time, ⁴​sched_arr_time, ⁵​arr_delay</span></span></code></pre></div>
+<span><span class="co">#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time</span></span>
+<span><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1  2013     1     1      810            810         0     1048           1037</span></span>
+<span><span class="co">#&gt; 2  2013     1     1     1451           1500        -9     1634           1636</span></span>
+<span><span class="co">#&gt; 3  2013     1     1     1452           1455        -3     1637           1639</span></span>
+<span><span class="co">#&gt; # ℹ 336,773 more rows</span></span>
+<span><span class="co">#&gt; # ℹ 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="learning-more">Learning more<a class="anchor" aria-label="anchor" href="#learning-more"></a>
@@ -304,12 +304,12 @@
 </h2>
 <ul>
 <li>
-<a href="https://twitter.com/groundwalkergmb" class="external-link">Gabe Becker</a>, <a href="https://homepage.divms.uiowa.edu/~luke/" class="external-link">Luke Tierney</a> and <a href="https://github.com/kalibera" class="external-link">Tomas Kalibera</a> for conceiving, Implementing and maintaining the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html" class="external-link">Altrep framework</a>
+<a href="https://github.com/gmbecker" class="external-link">Gabe Becker</a>, <a href="https://homepage.divms.uiowa.edu/~luke/" class="external-link">Luke Tierney</a> and <a href="https://github.com/kalibera" class="external-link">Tomas Kalibera</a> for conceiving, Implementing and maintaining the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html" class="external-link">Altrep framework</a>
 </li>
 <li>
-<a href="https://twitter.com/romain_francois" class="external-link">Romain François</a>, whose <a href="https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/" class="external-link">Altrepisode</a> package and <a href="https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/" class="external-link">related blog-posts</a> were a great guide for creating new Altrep objects in C++.</li>
+<a href="https://github.com/romainfrancois" class="external-link">Romain François</a>, whose <a href="https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/" class="external-link">Altrepisode</a> package and <a href="https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/" class="external-link">related blog-posts</a> were a great guide for creating new Altrep objects in C++.</li>
 <li>
-<a href="https://twitter.com/mattdowle" class="external-link">Matt Dowle</a> and the rest of the <a href="https://github.com/Rdatatable" class="external-link">Rdatatable</a> team, <code>data.table::fread()</code> is blazing fast and great motivation to see how fast we could go faster!</li>
+<a href="https://github.com/mattdowle" class="external-link">Matt Dowle</a> and the rest of the <a href="https://github.com/Rdatatable" class="external-link">Rdatatable</a> team, <code>data.table::fread()</code> is blazing fast and great motivation to see how fast we could go faster!</li>
 </ul>
 </div>
 </div>
@@ -355,7 +355,7 @@
 <li>
 <a href="https://jennybryan.org" class="external-link">Jennifer Bryan</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-6983-2759" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li>
-<a href="https://www.rstudio.com" class="external-link"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" width="72"></a> <br><small class="roles"> Copyright holder, funder </small>  </li>
+<a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" style="margin-bottom: 3px;"></a> <br><small class="roles"> Copyright holder, funder </small>  </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
@@ -370,7 +370,7 @@
   <footer><div class="container">
   <div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by <a href="https://www.jimhester.com/" class="external-link">Jim Hester</a>, <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, <a href="https://jennybryan.org" class="external-link">Jennifer Bryan</a>, <a href="https://www.rstudio.com" class="external-link"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" width="72"></a>.</p>
+<p>Developed by <a href="https://www.jimhester.com/" class="external-link">Jim Hester</a>, <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, <a href="https://jennybryan.org" class="external-link">Jennifer Bryan</a>, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" style="margin-bottom: 3px;"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
