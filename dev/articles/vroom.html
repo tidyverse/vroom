@@ -157,7 +157,7 @@ examples and tests. Access it with
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span>
 <span></span>
 <span><span class="co"># You can also specify it explicitly, which is (slightly) faster, and safer if</span></span>
 <span><span class="co"># you know how the file is delimited.</span></span>
@@ -176,7 +176,7 @@ examples and tests. Access it with
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reading-multiple-files">Reading multiple files<a class="anchor" aria-label="anchor" href="#reading-multiple-files"></a>
@@ -214,7 +214,7 @@ filenames directly to vroom.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Merc …  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span></code></pre></div>
 <p>Often the filename or directory where the files are stored contains
 information. The <code>id</code> parameter can be used to add an extra
 column to the result with the full path to each file. (in this case we
@@ -235,7 +235,8 @@ name the column <code>path</code>).</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> mtcar… Dats…  22.8     4  108     93  3.85  2.32  18.6     1     1     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> mtcar… Merc…  24.4     4  147.    62  3.69  3.19  20       1     0     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> mtcar… Merc…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows, and 1 more variable: carb &lt;dbl&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: carb &lt;dbl&gt;</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reading-compressed-files">Reading compressed files<a class="anchor" aria-label="anchor" href="#reading-compressed-files"></a>
@@ -261,7 +262,7 @@ vroom.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span></code></pre></div>
 <p><code><a href="../reference/vroom.html">vroom()</a></code> decompresses, indexes and writes the
 decompressed data to a file in the temp directory in a single stream.
 The temporary file is used to lazily look up the values and will be
@@ -301,7 +302,7 @@ the URL of the file to vroom.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span></code></pre></div>
 <p>It can even read gzipped files from the internet (although not the
 other compressed formats).</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -321,7 +322,7 @@ other compressed formats).</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="column-selection">Column selection<a class="anchor" aria-label="anchor" href="#column-selection"></a>
@@ -351,7 +352,7 @@ example you can select by:</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda RX4         6     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda RX4 Wag     6     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsun 710        4     4</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span></code></pre></div>
 <ul>
 <li>A numeric vector of column indexes,
 e.g. <code>c(1, 2, 5)</code>
@@ -373,7 +374,7 @@ e.g. <code>c(1, 2, 5)</code>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda RX4         6     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda RX4 Wag     6     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsun 710        4     4</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span></code></pre></div>
 <ul>
 <li>Using the selection helpers such as <code><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with()</a></code> and
 <code><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with()</a></code>
@@ -394,7 +395,7 @@ e.g. <code>c(1, 2, 5)</code>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   160  3.9 </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   160  3.9 </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   108  3.85</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span></code></pre></div>
 <ul>
 <li>You can also rename columns</li>
 </ul>
@@ -414,7 +415,7 @@ e.g. <code>c(1, 2, 5)</code>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reading-fixed-width-files">Reading fixed width files<a class="anchor" aria-label="anchor" href="#reading-fixed-width-files"></a>
@@ -585,7 +586,7 @@ to use a named vector.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span>
 <span></span>
 <span><span class="co"># also skip reading the 'cyl' column</span></span>
 <span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>hp <span class="op">=</span> <span class="st">"i"</span>, cyl <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span></span>
@@ -595,7 +596,7 @@ to use a named vector.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda RX4     21     160   110  3.9   2.62  16.5     0     1     4     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda RX4 W…  21     160   110  3.9   2.88  17.0     0     1     4     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsun 710    22.8   108    93  3.85  2.32  18.6     1     1     4     1</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span>
 <span></span>
 <span><span class="co"># also read the gears as a factor</span></span>
 <span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="fu"><a href="../reference/vroom_example.html">vroom_example</a></span><span class="op">(</span><span class="st">"mtcars.csv"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>hp <span class="op">=</span> <span class="st">"i"</span>, cyl <span class="op">=</span> <span class="st">"_"</span>, gear <span class="op">=</span> <span class="st">"f"</span><span class="op">)</span><span class="op">)</span></span>
@@ -605,7 +606,7 @@ to use a named vector.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda RX4     21     160   110  3.9   2.62  16.5     0     1 4         4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda RX4 W…  21     160   110  3.9   2.88  17.0     0     1 4         4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsun 710    22.8   108    93  3.85  2.32  18.6     1     1 4         1</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span></code></pre></div>
 <p>You can read all the columns with the same type, by using the
 <code>.default</code> argument. For example reading everything as a
 character.</p>
@@ -617,7 +618,7 @@ character.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda… 21    6     160   110   3.9   2.62  16.46 0     1     4     4    </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda… 21    6     160   110   3.9   2.875 17.02 0     1     4     4    </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu… 22.8  4     108   93    3.85  2.32  18.61 1     1     4     1    </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span></code></pre></div>
 <p>However you can also use the <code>col_*()</code> functions in a
 list.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
@@ -631,7 +632,7 @@ list.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda RX4     21     160   110  3.9   2.62  16.5     0     1 4         4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda RX4 W…  21     160   110  3.9   2.88  17.0     0     1 4         4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsun 710    22.8   108    93  3.85  2.32  18.6     1     1 4         1</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span></code></pre></div>
 <p>This is most useful when a column type needs additional information,
 such as for categorical data when you know all of the levels of a
 factor.</p>
@@ -646,7 +647,7 @@ factor.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Mazda…  21       6   160   110  3.9   2.62  16.5     0     1 4         4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Mazda…  21       6   160   110  3.9   2.88  17.0     0     1 4         4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsu…  22.8     4   108    93  3.85  2.32  18.6     1     1 4         1</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 29 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="name-repair">Name repair<a class="anchor" aria-label="anchor" href="#name-repair"></a>
