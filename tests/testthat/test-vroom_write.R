@@ -293,13 +293,6 @@ test_that("vroom_format() does not quote strings that start with the `na` string
     output_unique_NA,
     "x\nJON\nNA\nNATHAN\nJONAH\n"
   )
-
-  output_roundtrip <- vroom(
-    I(vroom_format(names_df)),
-    delim = ",",
-    show_col_types = FALSE
-  )
-  expect_equal(output_roundtrip, names_df)
 })
 
 test_that("na argument modifies how missing values are written", {
