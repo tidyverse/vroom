@@ -103,7 +103,7 @@ vroom::vroom("mtcars.tsv",
 #> 1 Mazda RX4      21       6   110  2.62  16.5 FALSE TRUE  4         4
 #> 2 Mazda RX4 Wag  21       6   110  2.88  17.0 FALSE TRUE  4         4
 #> 3 Datsun 710     22.8     4    93  2.32  18.6 TRUE  TRUE  4         1
-#> # … with 29 more rows
+#> # ℹ 29 more rows
 ```
 
 ## Reading multiple files
@@ -143,15 +143,15 @@ vroom::vroom(files)
 #> ℹ Use `spec()` to retrieve the full column specification for this data.
 #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 #> # A tibble: 336,776 × 19
-#>    year month   day dep_time sched_dep…¹ dep_d…² arr_t…³ sched…⁴ arr_d…⁵ carrier
-#>   <dbl> <dbl> <dbl>    <dbl>       <dbl>   <dbl>   <dbl>   <dbl>   <dbl> <chr>  
-#> 1  2013     1     1      810         810       0    1048    1037      11 9E     
-#> 2  2013     1     1     1451        1500      -9    1634    1636      -2 9E     
-#> 3  2013     1     1     1452        1455      -3    1637    1639      -2 9E     
-#> # … with 336,773 more rows, 9 more variables: flight <dbl>, tailnum <chr>,
-#> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
-#> #   minute <dbl>, time_hour <dttm>, and abbreviated variable names
-#> #   ¹​sched_dep_time, ²​dep_delay, ³​arr_time, ⁴​sched_arr_time, ⁵​arr_delay
+#>    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+#>   <dbl> <dbl> <dbl>    <dbl>          <dbl>     <dbl>    <dbl>          <dbl>
+#> 1  2013     1     1      810            810         0     1048           1037
+#> 2  2013     1     1     1451           1500        -9     1634           1636
+#> 3  2013     1     1     1452           1455        -3     1637           1639
+#> # ℹ 336,773 more rows
+#> # ℹ 11 more variables: arr_delay <dbl>, carrier <chr>, flight <dbl>,
+#> #   tailnum <chr>, origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>,
+#> #   hour <dbl>, minute <dbl>, time_hour <dttm>
 ```
 
 ## Learning more
@@ -229,17 +229,17 @@ issue, so it is recommended you use at least that version.
 
 ## Thanks
 
-- [Gabe Becker](https://twitter.com/groundwalkergmb), [Luke
+- [Gabe Becker](https://github.com/gmbecker), [Luke
   Tierney](https://homepage.divms.uiowa.edu/~luke/) and [Tomas
   Kalibera](https://github.com/kalibera) for conceiving, Implementing
   and maintaining the [Altrep
   framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html)
-- [Romain François](https://twitter.com/romain_francois), whose
+- [Romain François](https://github.com/romainfrancois), whose
   [Altrepisode](https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
   package and [related
   blog-posts](https://web.archive.org/web/20200315075838/https://purrple.cat/blog/2018/10/14/altrep-and-cpp/)
   were a great guide for creating new Altrep objects in C++.
-- [Matt Dowle](https://twitter.com/mattdowle) and the rest of the
+- [Matt Dowle](https://github.com/mattdowle) and the rest of the
   [Rdatatable](https://github.com/Rdatatable) team,
   `data.table::fread()` is blazing fast and great motivation to see how
   fast we could go faster!
