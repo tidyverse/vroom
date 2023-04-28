@@ -2,9 +2,11 @@
 
 # vroom 1.6.3
 
+* No user-facing changes.
+
 # vroom 1.6.2
 
-* No user-facing changes.
+* There was no CRAN release with this version number.
 
 # vroom 1.6.1
 
