@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">vroom</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.6.2.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.6.3.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -156,35 +156,35 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># characters</span></span></span>
 <span class="r-in"><span><span class="fu">gen_character</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "UQjrI97R4KY9r1"            "9XWgVATvof"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "nyOwbAmuix5Ql14chFp20b8FE" "aVCOvGfTHOPJGy"           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "YzjknO5BSJbLk5L0g"        "8r5qgpSwTMKfpG3VqZnM3Dri"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "HIV1Q7ILS"                "1gnxwpz74S"              </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># factors</span></span></span>
 <span class="r-in"><span><span class="fu">gen_factor</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] voiceless_cow proud_deer    melted_snake  witty_hog    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 Levels: different_yak inexpensive_fox ... fancy_seal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] wet_alligator sweet_chamois rapid_wildcat good_mouse   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 Levels: angry_rooster sweet_chamois helpful_canary ... sparse_bat</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># logical</span></span></span>
 <span class="r-in"><span><span class="fu">gen_logical</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE TRUE TRUE TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE FALSE  TRUE FALSE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># numbers</span></span></span>
 <span class="r-in"><span><span class="fu">gen_double</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  0.4995475  2.0124476  0.9430483 -0.7497820</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  1.46063983  1.17492282 -0.04971703 -0.39983808</span>
 <span class="r-in"><span><span class="fu">gen_integer</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 403117393 515180414 605608889 145728979</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1535060536 1298363789 2082798242  187117812</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># temporal data</span></span></span>
 <span class="r-in"><span><span class="fu">gen_time</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21:11:51</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20:57:15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 09:33:43</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22:52:48</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22:48:24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 01:04:21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:42:05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 02:27:31</span>
 <span class="r-in"><span><span class="fu">gen_date</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2014-12-17" "2010-05-16" "2018-05-29" "2015-01-18"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2014-08-07" "2013-10-26" "2010-04-12" "2017-09-27"</span>
 <span class="r-in"><span><span class="fu">gen_datetime</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2012-07-13 15:42:49 UTC" "2006-04-05 15:12:42 UTC"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "2009-11-09 05:21:09 UTC" "2014-04-13 22:03:24 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2011-10-19 07:16:35 UTC" "2011-03-05 09:33:48 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "2017-11-24 03:21:08 UTC" "2018-02-08 08:08:42 UTC"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
