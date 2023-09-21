@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Internal change for compatibility with cpp11 >= 0.4.6 (@DavisVaughan).
+
 # vroom 1.6.3
 
 * No user-facing changes.
