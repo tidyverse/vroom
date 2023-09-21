@@ -381,7 +381,7 @@ void vroom_write_out(
       auto end = begin + num_lines;
       futures[idx][t++] = std::async(
           fill_buf,
-          input,
+          std::cref(input),
           delim,
           eol,
           na_str,
@@ -526,7 +526,7 @@ void vroom_write_out(
       auto end = begin + num_lines;
       futures[idx][t++] = std::async(
           fill_buf,
-          input,
+          std::cref(input),
           delim,
           eol,
           na_str,
