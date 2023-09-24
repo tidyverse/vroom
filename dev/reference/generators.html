@@ -156,35 +156,37 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># characters</span></span></span>
 <span class="r-in"><span><span class="fu">gen_character</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2PJlA6vzGjg2wYE"    "Nu1BioctUy9cuj8z"   "74CHR3bLqTJwmiRe22"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "As8zWutCMSJ7c"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "qqs6t"           "YNxXLOcc"        "wpWupkLNmVIXmKh"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "cPzgVg2tQ"      </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># factors</span></span></span>
 <span class="r-in"><span><span class="fu">gen_factor</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] small_newt      clumsy_aardvark colossal_canary last_dugong    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 Levels: important_lovebird next_crab last_dugong ... careful_alpaca</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] proud_dugong      obedient_kitten   greasy_chimpanzee</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] sticky_dingo     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 Levels: swift_porpoise voiceless_hyena fierce_pony ... numerous_ewe</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>duplicated level [14] in factor</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># logical</span></span></span>
 <span class="r-in"><span><span class="fu">gen_logical</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE TRUE TRUE TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE  TRUE FALSE FALSE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># numbers</span></span></span>
 <span class="r-in"><span><span class="fu">gen_double</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  0.12786006 -1.20471038 -3.11328106  0.06599001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  0.14061245 -0.05968988 -1.09378828  2.23662409</span>
 <span class="r-in"><span><span class="fu">gen_integer</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  482742712 1693742346 1891311955 1652703115</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1093147534  723779937   60473163   29913620</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># temporal data</span></span></span>
 <span class="r-in"><span><span class="fu">gen_time</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21:10:38</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17:50:40</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 07:11:42</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18:30:52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 05:47:36</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 01:28:57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 05:55:58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23:13:53</span>
 <span class="r-in"><span><span class="fu">gen_date</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2018-08-29" "2015-04-02" "2013-03-14" "2020-05-07"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2015-12-25" "2009-01-10" "2012-02-07" "2018-06-02"</span>
 <span class="r-in"><span><span class="fu">gen_datetime</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2010-05-19 11:41:41 UTC" "2005-10-07 14:27:13 UTC"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "2009-06-11 18:33:30 UTC" "2011-10-09 17:24:47 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2011-06-08 13:25:46 UTC" "2018-11-11 07:30:21 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "2002-02-04 21:24:42 UTC" "2013-01-10 14:50:36 UTC"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
