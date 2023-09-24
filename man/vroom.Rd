@@ -239,4 +239,10 @@ mtcars_by_cyl
 
 # Pass the filenames directly to vroom, they are efficiently combined
 vroom(mtcars_by_cyl)
+
+# If you need to extract data from the filenames, use `id` to request a
+# column that reveals the underlying file path
+dat <- vroom(mtcars_by_cyl, id = "source")
+dat$source <- basename(dat$source)
+dat
 }

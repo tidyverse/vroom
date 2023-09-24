@@ -112,18 +112,20 @@ vroom natively supports reading from multiple files (or even multiple
 connections!).
 
 First we generate some files to read by splitting the nycflights dataset
-by airline.
+by airline. For the sake of the example, we’ll just take the first 2
+lines of each file.
 
 ``` r
 library(nycflights13)
 purrr::iwalk(
   split(flights, flights$carrier),
-  ~ { .x$carrier[[1]]; vroom::vroom_write(.x, glue::glue("flights_{.y}.tsv"), delim = "\t") }
+  ~ { .x$carrier[[1]]; vroom::vroom_write(head(.x, 2), glue::glue("flights_{.y}.tsv"), delim = "\t") }
 )
 ```
 
 Then we can efficiently read them into one tibble by passing the
-filenames directly to vroom.
+filenames directly to vroom. The `id` argument can be used to request a
+column that reveals the filename that each row originated from.
 
 ``` r
 files <- fs::dir_ls(glob = "flights*tsv")
@@ -132,8 +134,8 @@ files
 #> flights_EV.tsv flights_F9.tsv flights_FL.tsv flights_HA.tsv flights_MQ.tsv 
 #> flights_OO.tsv flights_UA.tsv flights_US.tsv flights_VX.tsv flights_WN.tsv 
 #> flights_YV.tsv
-vroom::vroom(files)
-#> Rows: 336776 Columns: 19
+vroom::vroom(files, id = "source")
+#> Rows: 32 Columns: 20
 #> ── Column specification ────────────────────────────────────────────────────────
 #> Delimiter: "\t"
 #> chr   (4): carrier, tailnum, origin, dest
@@ -142,16 +144,16 @@ vroom::vroom(files)
 #> 
 #> ℹ Use `spec()` to retrieve the full column specification for this data.
 #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-#> # A tibble: 336,776 × 19
-#>    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
-#>   <dbl> <dbl> <dbl>    <dbl>          <dbl>     <dbl>    <dbl>          <dbl>
-#> 1  2013     1     1      810            810         0     1048           1037
-#> 2  2013     1     1     1451           1500        -9     1634           1636
-#> 3  2013     1     1     1452           1455        -3     1637           1639
-#> # ℹ 336,773 more rows
-#> # ℹ 11 more variables: arr_delay <dbl>, carrier <chr>, flight <dbl>,
-#> #   tailnum <chr>, origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>,
-#> #   hour <dbl>, minute <dbl>, time_hour <dttm>
+#> # A tibble: 32 × 20
+#>   source          year month   day dep_time sched_dep_time dep_delay arr_time
+#>   <chr>          <dbl> <dbl> <dbl>    <dbl>          <dbl>     <dbl>    <dbl>
+#> 1 flights_9E.tsv  2013     1     1      810            810         0     1048
+#> 2 flights_9E.tsv  2013     1     1     1451           1500        -9     1634
+#> 3 flights_AA.tsv  2013     1     1      542            540         2      923
+#> # ℹ 29 more rows
+#> # ℹ 12 more variables: sched_arr_time <dbl>, arr_delay <dbl>, carrier <chr>,
+#> #   flight <dbl>, tailnum <chr>, origin <chr>, dest <chr>, air_time <dbl>,
+#> #   distance <dbl>, hour <dbl>, minute <dbl>, time_hour <dttm>
 ```
 
 ## Learning more
