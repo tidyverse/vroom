@@ -92,7 +92,6 @@ inline cpp11::list create_columns(
     size_t num_threads) {
 
   R_xlen_t num_cols = idx->num_columns();
-  auto num_rows = idx->num_rows();
 
   auto locale_info = std::make_shared<LocaleInfo>(locale);
 
@@ -121,14 +120,6 @@ inline cpp11::list create_columns(
       locale_info,
       guess_max,
       altrep);
-
-  size_t to_parse = 0;
-  for (R_xlen_t col = 0; col < num_cols; ++col) {
-    auto collector = my_collectors[col];
-    if (collector.use_altrep()) {
-      to_parse += num_rows;
-    }
-  }
 
   for (R_xlen_t col = 0; col < num_cols; ++col) {
     auto collector = my_collectors[col];
