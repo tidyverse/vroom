@@ -58,7 +58,7 @@
 #'
 #'    By default, reading a file without a column specification will print a
 #'    message showing what `readr` guessed they were. To remove this message,
-#'    set `show_col_types = FALSE` or set `options(readr.show_col_types = FALSE).
+#'    set `show_col_types = FALSE` or set `options(readr.show_col_types = FALSE)`.
 #' @param id Either a string or 'NULL'. If a string, the output will contain a
 #'   variable with that name with the filename(s) as the value. If 'NULL', the
 #'   default, no variable will be created.
