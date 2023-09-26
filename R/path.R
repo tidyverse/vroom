@@ -30,7 +30,7 @@ standardise_path <- function(path, user_env = caller_env(2)) {
     return(list(path))
   }
 
-  if (is_list(path) && all(sapply(path, \(x) inherits(x, "connection")))) {
+  if (is_list(path) && all(sapply(path, inherits, "connection"))) {
     return(lapply(path, standardise_connection))
   }
 
