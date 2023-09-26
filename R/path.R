@@ -27,14 +27,11 @@ standardise_path <- function(path, user_env = caller_env(2)) {
   }
 
   if (inherits(path, "connection")) {
-    # If the connection is `stdin()`, change it to `file("stdin")`, as we don't
-    # support text mode connections.
+    return(list(standardise_connection(path)))
+  }
 
-    if (path == stdin()) {
-      return(list(file("stdin")))
-    }
-
-    return(list(path))
+  if (is_list(path) && all(sapply(path, inherits, "connection"))) {
+    return(lapply(path, standardise_connection))
   }
 
   if (is.character(path)) {
@@ -64,6 +61,17 @@ standardise_path <- function(path, user_env = caller_env(2)) {
   }
 
   as.list(enc2utf8(path))
+}
+
+standardise_connection <- function(con) {
+  # If the connection is `stdin()`, change it to `file("stdin")`, as we don't
+  # support text mode connections.
+
+  if (con == stdin()) {
+    return(file("stdin"))
+  }
+
+  con
 }
 
 standardise_one_path <- function (path, write = FALSE) {

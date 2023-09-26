@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* It is now possible (again?) to read from a list of connections (@bairdj, #514).
+
 * Internal change for compatibility with cpp11 >= 0.4.6 (@DavisVaughan).
 
 # vroom 1.6.3

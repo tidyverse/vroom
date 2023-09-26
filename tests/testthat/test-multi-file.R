@@ -75,7 +75,7 @@ test_that("vroom works with many connections", {
   dir.create(dir)
   on.exit(unlink(dir, recursive = TRUE))
 
-  for (i in seq_len(200)) {
+  for (i in seq_len(20)) {
     vroom_write(
       tibble::tibble(
         x = rnorm(10),
@@ -87,11 +87,12 @@ test_that("vroom works with many connections", {
   }
 
   files <- list.files(dir, pattern = ".*[.]csv[.]gz", full.names = TRUE)
+  connections <- lapply(files, gzfile)
 
-  res <- vroom::vroom(files, col_types = list())
+  res <- vroom::vroom(connections, col_types = list())
 
   expect_equal(colnames(res), c("x", "y"))
-  expect_equal(NROW(res), 2000)
+  expect_equal(NROW(res), 200)
 })
 
 test_that("vroom errors if numbers of columns are inconsistent", {
