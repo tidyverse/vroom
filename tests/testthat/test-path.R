@@ -178,3 +178,31 @@ test_that("can read fwf file w/ non-ascii characters in path", {
     tibble::tibble(a = c("A", "C"), b = c("B", "D"))
   )
 })
+
+test_that("standardise_path() errors for a mix of connection and not connection", {
+  file <- test_path("multi-file", "foo")
+  conn <- file(test_path("multi-file", "bar"))
+
+  # wrap it, so we can check the caller is displayed correctly
+  f <- function(some_arg_name) {
+    standardise_path(some_arg_name)
+  }
+
+  expect_snapshot(
+    error = TRUE,
+    f(list(file, conn))
+  )
+})
+
+test_that("standardise_path() errors for invalid input", {
+  files <- test_path("multi-file", c("foo", "baz"))
+  # wrap it, so we can check the caller is displayed correctly
+  f <- function(some_arg_name) {
+    standardise_path(some_arg_name)
+  }
+
+  expect_snapshot(
+    error = TRUE,
+    f(as.list(files))
+  )
+})
