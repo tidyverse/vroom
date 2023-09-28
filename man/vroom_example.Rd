@@ -12,9 +12,8 @@ vroom_examples(pattern = NULL)
 \arguments{
 \item{path}{Name of file.}
 
-\item{pattern}{A regular expression of filenames to match. If \code{NULL} all
-available files are returned.
-listed.}
+\item{pattern}{A regular expression of filenames to match. If \code{NULL}, all
+available files are returned.}
 }
 \description{
 vroom comes bundled with a number of sample files in

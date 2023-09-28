@@ -59,22 +59,20 @@ vroom(file, delim = ",")
 
 ## Reading multiple files
 
-If you are reading a set of files which all have the same columns, you can pass the filenames directly to `vroom()` and it will combine them into one result.
+If you are reading a set of files which all have the same columns (as in, names and types), you can pass the filenames directly to `vroom()` and it will combine them into one result.
+vroom's example datasets include several files named like `mtcars-i.csv`.
+These files contain subsets of the `mtcars` data, for cars with different numbers of cylinders.
+First, we get a character vector of these filepaths.
 
-First we will create some files to read by splitting the mtcars dataset by number of cylinders, (it is OK if you don't currently understand this code).
 ```{r}
-mt <- tibble::rownames_to_column(mtcars, "model")
-purrr::iwalk(
-  split(mt, mt$cyl),
-  ~ vroom_write(.x, glue::glue("mtcars_{.y}.csv"), "\t")
-)
+ve <- grep("mtcars-[0-9].csv", vroom_examples(), value = TRUE)
+files <- sapply(ve, vroom_example)
+files
 ```
 
-Then we can efficiently read them into one table by passing the filenames directly to vroom.
+Now we can efficiently read them into one table by passing the filenames directly to vroom.
 
 ```{r}
-files <- fs::dir_ls(glob = "mtcars*csv")
-files
 vroom(files)
 ```
 
@@ -84,13 +82,6 @@ The `id` parameter can be used to add an extra column to the result with the ful
 
 ```{r}
 vroom(files, id = "path")
-```
-
-```{r, include = FALSE}
-# just to clear .Last.value
-1 + 1
-gc()
-unlink(files)
 ```
 
 ## Reading compressed files
@@ -106,15 +97,17 @@ vroom(file)
 `vroom()` decompresses, indexes and writes the decompressed data to a file in the temp directory in a single stream.
 The temporary file is used to lazily look up the values and will be automatically cleaned up when all values in the object have been fully read, the object is removed, or the R session ends.
 
-### Reading single files from multiple multi-file zip archives
+### Reading individual files from multiple multi-file zip archives
 
-If you are reading a zip file that contains multiple files with the same format, you can use a wrapper function like this:
+If you are reading a zip file that contains multiple files with the same format, you can read a subset of the files at once like so:
 
 ```{r}
-read_all_zip <- function(file, ...) {
-  filenames <- unzip(file, list = TRUE)$Name
-  vroom(purrr::map(filenames, ~ unz(file, .x)), ...)
-}
+zip_file <- vroom_example("mtcars-multi-cyl.zip")
+filenames <- unzip(zip_file, list = TRUE)$Name
+filenames
+
+# imagine we only want to read 2 of the 3 files
+vroom(purrr::map(filenames[c(1, 3)], ~ unz(zip_file, .x)))
 ```
 
 ## Reading remote files

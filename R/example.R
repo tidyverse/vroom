@@ -5,9 +5,8 @@
 #' available examples and `vroom_example()` to retrieve the path to one
 #' example.
 #' @param path Name of file.
-#' @param pattern A regular expression of filenames to match. If `NULL` all
+#' @param pattern A regular expression of filenames to match. If `NULL`, all
 #'   available files are returned.
-#' listed.
 #' @export
 #' @examples
 #' # List all available examples
