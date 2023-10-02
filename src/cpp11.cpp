@@ -4,6 +4,7 @@
 #include "vroom_types.h"
 #include "cpp11/declarations.hpp"
 #include <R_ext/Visibility.h>
+#include <cstddef>
 
 // altrep.cc
 void force_materialization(SEXP x);
