@@ -26,7 +26,7 @@ License: MIT + file LICENSE
 URL: https://vroom.r-lib.org, https://github.com/tidyverse/vroom
 BugReports: https://github.com/tidyverse/vroom/issues
 Depends: 
-    R (>= 3.4)
+    R (>= 3.6)
 Imports: 
     bit64,
     cli (>= 3.2.0),
