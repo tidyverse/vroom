@@ -200,7 +200,7 @@ better to download the file first before reading.
 }
 \examples{
 fwf_sample <- vroom_example("fwf-sample.txt")
-cat(readLines(fwf_sample))
+writeLines(vroom_lines(fwf_sample))
 
 # You can specify column positions in several ways:
 # 1. Guess based on position of empty columns
