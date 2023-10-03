@@ -1,5 +1,6 @@
 #include "grisu3.h"
 #include <array>
+#include <functional>
 #include <future>
 #include <iterator>
 
