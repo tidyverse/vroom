@@ -97,7 +97,7 @@ vroom(file)
 `vroom()` decompresses, indexes and writes the decompressed data to a file in the temp directory in a single stream.
 The temporary file is used to lazily look up the values and will be automatically cleaned up when all values in the object have been fully read, the object is removed, or the R session ends.
 
-### Reading individual files from multiple multi-file zip archives
+### Reading individual files from a multi-file zip archive
 
 If you are reading a zip file that contains multiple files with the same format, you can read a subset of the files at once like so:
 
