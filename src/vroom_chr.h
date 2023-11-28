@@ -39,10 +39,9 @@ public:
   static Rboolean
   Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
-      "vroom_chr (len=%" R_PRIdXLEN_T ", materialized=%s)\n",
-      Length(x),
-      R_altrep_data2(x) != R_NilValue ? "T" : "F");
-
+        "vroom_chr (len=%" R_PRIdXLEN_T ", materialized=%s)\n",
+        Length(x),
+        R_altrep_data2(x) != R_NilValue ? "T" : "F");
     return TRUE;
   }
 
