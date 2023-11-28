@@ -2,6 +2,7 @@
 
 #include "altrep.h"
 #include "parallel.h"
+#include "r_utils.h"
 #include "vroom_vec.h"
 
 double bsd_strtod(const char* begin, const char* end, const char decimalMark);
@@ -37,7 +38,7 @@ public:
   static Rboolean
   Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
-        "vroom_dbl (len=%d, materialized=%s)\n",
+        "vroom_dbl (len=%" R_PRIdXLEN_T ", materialized=%s)\n",
         Length(x),
         R_altrep_data2(x) != R_NilValue ? "T" : "F");
     return TRUE;

@@ -3,6 +3,7 @@
 #include <cpp11/strings.hpp>
 
 #include "altrep.h"
+#include "r_utils.h"
 #include "vroom.h"
 #include "vroom_vec.h"
 
@@ -122,7 +123,7 @@ public:
   static Rboolean
   Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
-        "vroom_factor (len=%d, materialized=%s)\n",
+        "vroom_factor (len=%" R_PRIdXLEN_T ", materialized=%s)\n",
         Length(x),
         R_altrep_data2(x) != R_NilValue ? "T" : "F");
     return TRUE;
