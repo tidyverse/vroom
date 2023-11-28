@@ -9,6 +9,16 @@
 #include <string>
 #include <vector>
 
+#ifdef R_VERSION
+#  if (R_VERSION >= R_Version(4, 4, 0))
+#    define R_PRIdXLEN_T "td"
+#  else
+#    define R_PRIdXLEN_T "d"
+#  endif
+#else
+#  define R_PRIdXLEN_T "d"
+#endif
+
 namespace vroom {
 
 inline std::string
