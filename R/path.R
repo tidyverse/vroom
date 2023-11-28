@@ -7,7 +7,7 @@ reencode_file <- function(path, encoding) {
   if (length(path) > 1) {
     stop(sprintf("Reading files of encoding '%s' can only be done for single files at a time", encoding), call. = FALSE)
   }
-  
+
   if (inherits(path[[1]], "connection")) {
     in_con <- path[[1]]
   } else {
@@ -28,11 +28,11 @@ standardise_path <- function(path,
   if (is.raw(path)) {
     return(list(rawConnection(path, "rb")))
   }
-  
+
   if (inherits(path, "connection")) {
     return(list(standardise_connection(path)))
   }
-  
+
   if (is_list(path)) {
     is_connection <- vapply(path, function(x) inherits(x, "connection"), logical(1))
     if (all(is_connection)) {
@@ -45,7 +45,7 @@ standardise_path <- function(path,
       )
     }
   }
-  
+
   if (!is.character(path)) {
     cli::cli_abort(
       c(
@@ -57,14 +57,14 @@ standardise_path <- function(path,
       call = call
     )
   }
-  
+
   if (inherits(path, "AsIs")) {
     if (length(path) > 1) {
       path <- paste(path, collapse = "\n")
     }
     return(list(chr_to_file(path, envir = parent.frame())))
   }
-  
+
   if (any(grepl("\n", path))) {
     lifecycle::deprecate_soft(
       "1.5.0",
@@ -81,31 +81,31 @@ standardise_path <- function(path,
     )
     return(list(chr_to_file(path, envir = parent.frame())))
   }
-  
+
   as.list(enc2utf8(path))
 }
 
 standardise_connection <- function(con) {
   # If the connection is `stdin()`, change it to `file("stdin")`, as we don't
   # support text mode connections.
-  
+
   if (con == stdin()) {
     return(file("stdin"))
   }
-  
+
   con
 }
 
 standardise_one_path <- function (path, write = FALSE) {
-  
+
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))
   }
-  
+
   if (!is.character(path)) {
     return(path)
   }
-  
+
   if (is_url(path)) {
     if (requireNamespace("curl", quietly = TRUE)) {
       con <- curl::curl(path)
@@ -207,46 +207,46 @@ split_path_ext <- function(path) {
 archive_formats <- function(ext) {
   switch(ext,
   "7z" = list("7zip", "none"),
-  
+
   "cpio" = list("cpio", "none"),
-  
+
   "iso" = list("iso9660", "none"),
-  
+
   "mtree" = list("mtree", "none"),
-  
+
   "tar" = list("tar", "none"),
-  
+
   "tgz" = list("tar", "gzip"),
   "taz" = list("tar", "gzip"),
   "tar.gz" = list("tar", "gzip"),
-  
+
   "tbz" = list("tar", "bzip2"),
   "tbz2" = list("tar", "bzip2"),
   "tz2" = list("tar", "bzip2"),
   "tar.bz2" = list("tar", "bzip2"),
-  
+
   "tlz" = list("tar", "lzma"),
   "tar.lzma" = list("tar", "lzma"),
-  
+
   "txz" = list("tar", "xz"),
   "tar.xz" = list("tar", "xz"),
-  
+
   "tzo" = list("tar", "lzop"),
-  
+
   "taZ" = list("tar", "compress"),
   "tZ" = list("tar", "compress"),
-  
+
   "tar.zst"= list("tar", "zstd"),
-  
+
   "warc" = list("warc", "none"),
-  
+
   "jar" = list("zip", "none"),
   "zip" = list("zip", "none"),
-  
+
   "Z" = list(NULL, "compress"),
-  
+
   "zst" = list(NULL, "zst"),
-  
+
   NULL)
 }
 
@@ -258,7 +258,7 @@ check_path <- function(path) {
   if (file.exists(path)) {
     return(normalizePath_utf8(path, mustWork = FALSE))
   }
-  
+
   stop("'", path, "' does not exist",
   if (!is_absolute_path(path)) {
     paste0(" in current working directory ('", getwd(), "')")
@@ -275,11 +275,11 @@ is_absolute_path <- function(path) {
 zipfile <- function(path, open = "r") {
   files <- utils::unzip(path, list = TRUE)
   file <- files$Name[[1]]
-  
+
   if (nrow(files) > 1) {
     inform(paste0("Multiple files in zip: reading '", file, "'"))
   }
-  
+
   unz(path, file, open = open)
 }
 
@@ -290,9 +290,9 @@ chr_to_file <- function(x, envir = parent.frame()) {
   con <- file(out, "wb")
   writeLines(sub("\n$", "", x), con, useBytes = TRUE)
   close(con)
-  
+
   withr::defer(unlink(out), envir = envir)
-  
+
   normalizePath_utf8(out)
 }
 
@@ -310,14 +310,14 @@ detect_compression <- function(path) {
   bytes[[6]] == 0x00) {
     return("xz")
   }
-  
+
   if (length(bytes) >= 3 &&
   bytes[[1]] == 0x42 &&
   bytes[[2]] == 0x5a &&
   bytes[[3]] == 0x68) {
     return("bz2")
   }
-  
+
   # normal zip
   if (length(bytes) >= 4 &&
   bytes[[1]] == 0x50 &&
@@ -326,7 +326,7 @@ detect_compression <- function(path) {
   bytes[[4]] == 0x04) {
     return("zip")
   }
-  
+
   # empty zip
   if (length(bytes) >= 4 &&
   bytes[[1]] == 0x50 &&
@@ -335,7 +335,7 @@ detect_compression <- function(path) {
   bytes[[4]] == 0x06) {
     return("zip")
   }
-  
+
   # spanned zip
   if (length(bytes) >= 4 &&
   bytes[[1]] == 0x50 &&
@@ -344,7 +344,7 @@ detect_compression <- function(path) {
   bytes[[4]] == 0x08) {
     return("zip")
   }
-  
+
   NA_character_
 }
 
