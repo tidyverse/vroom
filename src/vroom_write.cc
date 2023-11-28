@@ -270,7 +270,7 @@ void write_buf_con(const std::vector<char>& buf, SEXP con, bool is_stdout) {
   if (is_stdout) {
     std::string out;
     std::copy(buf.begin(), buf.end(), std::back_inserter(out));
-    Rprintf("%.*s", buf.size(), out.c_str());
+    Rprintf("%.*s", (int) buf.size(), out.c_str());
   } else {
     write_buf(buf, con);
   }
