@@ -22,6 +22,10 @@ jobs:
       fail-fast: false
       matrix:
         config:
+          # temporary additions re: vetting #524
+          - {os: windows-latest, r: 'devel'}
+          - {os: windows-latest, r: '4.2'}
+
           - {os: macos-latest,   r: 'release'}
 
           - {os: windows-latest, r: 'release'}
