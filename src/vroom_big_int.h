@@ -6,6 +6,7 @@
 
 constexpr long long NA_INTEGER64 = 0x8000000000000000LL;
 
+#include "r_utils.h"
 #include "vroom.h"
 
 namespace cpp11 {
@@ -56,7 +57,7 @@ public:
   static Rboolean
   Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
-        "vroom_big_int (len=%d, materialized=%s)\n",
+        "vroom_big_int (len=%" R_PRIdXLEN_T ", materialized=%s)\n",
         Length(x),
         R_altrep_data2(x) != R_NilValue ? "T" : "F");
     return TRUE;

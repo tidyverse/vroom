@@ -1,6 +1,7 @@
 #pragma once
 
 #include "altrep.h"
+#include "r_utils.h"
 
 #ifdef HAS_ALTREP
 
@@ -40,7 +41,7 @@ public:
   static Rboolean
   Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
-        "vroom_rle (len=%d, materialized=%s)\n",
+        "vroom_rle (len=%" R_PRIdXLEN_T ", materialized=%s)\n",
         Length(x),
         R_altrep_data2(x) != R_NilValue ? "T" : "F");
     return TRUE;

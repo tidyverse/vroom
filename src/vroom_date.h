@@ -2,6 +2,7 @@
 
 #include <cpp11/doubles.hpp>
 
+#include "r_utils.h"
 #include "vroom_dttm.h"
 
 using namespace vroom;
@@ -47,7 +48,7 @@ public:
   static Rboolean
   Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
-        "vroom_date (len=%d, materialized=%s)\n",
+        "vroom_date (len=%" R_PRIdXLEN_T ", materialized=%s)\n",
         Length(x),
         R_altrep_data2(x) != R_NilValue ? "T" : "F");
     return TRUE;

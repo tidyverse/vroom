@@ -4,6 +4,7 @@
 
 #include "altrep.h"
 
+#include "r_utils.h"
 #include "vroom_vec.h"
 
 cpp11::strings read_chr(vroom_vec_info* info);
@@ -38,7 +39,7 @@ public:
   static Rboolean
   Inspect(SEXP x, int, int, int, void (*)(SEXP, int, int, int)) {
     Rprintf(
-        "vroom_chr (len=%d, materialized=%s)\n",
+        "vroom_chr (len=%" R_PRIdXLEN_T ", materialized=%s)\n",
         Length(x),
         R_altrep_data2(x) != R_NilValue ? "T" : "F");
     return TRUE;
