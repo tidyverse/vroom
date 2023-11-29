@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Internal changes requested by CRAN around format specification (#524).
+
 # vroom 1.6.4
 
 * It is now possible (again?) to read from a list of connections (@bairdj, #514).
