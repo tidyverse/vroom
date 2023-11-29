@@ -22,10 +22,6 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          # temporary additions re: vetting #524
-          - {os: windows-latest, r: 'devel'}
-          - {os: windows-latest, r: '4.2'}
-
           - {os: macos-latest,   r: 'release'}
 
           - {os: windows-latest, r: 'release'}
@@ -33,6 +29,8 @@ jobs:
           - {os: windows-latest, r: '3.6'}
           # use 4.1 to check with rtools40's older compiler
           - {os: windows-latest, r: '4.1'}
+          # keep this until the format specifier dust is truly settled (#524)
+          - {os: windows-latest, r: 'devel'}
 
           - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,   r: 'release'}
