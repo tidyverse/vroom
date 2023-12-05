@@ -3,7 +3,6 @@
 \docType{package}
 \name{vroom-package}
 \alias{vroom-package}
-\alias{_PACKAGE}
 \title{vroom: Read and Write Rectangular Text Data Quickly}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
