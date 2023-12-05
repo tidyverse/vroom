@@ -1,4 +1,4 @@
-# vroom (development version)
+# vroom 1.6.5
 
 * Internal changes requested by CRAN around format specification (#524).
 
