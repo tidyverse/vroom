@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">vroom</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.6.4.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.6.5.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -156,35 +156,35 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># characters</span></span></span>
 <span class="r-in"><span><span class="fu">gen_character</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "TVAwsG3S"                "9Kan1FA7o"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "y1wHM"                   "TG9pVvxgkic5N5o1OzgWjoI"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MQr3ermOkaaEexchgg"      "kIumns2zZSVsX"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "E9MCVtIbp"               "9Ds4iGej55T3VlDFnicIhFw"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># factors</span></span></span>
 <span class="r-in"><span><span class="fu">gen_factor</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] noisy_alligator fancy_zebra     drab_hedgehog   cuddly_bird    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Levels: noisy_alligator shy_chicken drab_hedgehog ... fancy_zebra</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] rapid_wolverine same_toad       fancy_chipmunk  jealous_cheetah</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 Levels: abundant_ewe rapid_wolverine zealous_hamster ... unsightly_doe</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># logical</span></span></span>
 <span class="r-in"><span><span class="fu">gen_logical</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE  TRUE  TRUE  TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE  TRUE FALSE FALSE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># numbers</span></span></span>
 <span class="r-in"><span><span class="fu">gen_double</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  1.4650629  0.1033140 -1.0405438 -0.2433981</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  0.3749157 -0.5891954 -0.1275094 -1.3693271</span>
 <span class="r-in"><span><span class="fu">gen_integer</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  582610638 1012678740 1776102231     915474</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1871169847  526537406  777985433 1476618479</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># temporal data</span></span></span>
 <span class="r-in"><span><span class="fu">gen_time</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16:45:22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 09:46:07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 02:02:21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15:00:37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23:35:30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:16:00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 02:53:21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 03:06:04</span>
 <span class="r-in"><span><span class="fu">gen_date</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2001-04-04" "2018-08-01" "2017-09-03" "2012-01-12"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2009-05-26" "2002-12-20" "2011-11-22" "2020-09-14"</span>
 <span class="r-in"><span><span class="fu">gen_datetime</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2017-10-13 08:20:34 UTC" "2001-10-01 07:39:52 UTC"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "2019-12-04 04:52:09 UTC" "2016-07-24 06:06:22 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2016-05-14 06:48:02 UTC" "2007-02-20 14:13:11 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "2015-11-07 16:13:46 UTC" "2009-11-18 16:04:48 UTC"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
