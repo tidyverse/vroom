@@ -66,7 +66,7 @@ Suggests:
     xml2
 LinkingTo: 
     cpp11 (>= 0.2.0),
-    progress (>= 1.2.1),
+    progress (>= 1.2.3),
     tzdb (>= 0.1.1)
 VignetteBuilder: 
     knitr
