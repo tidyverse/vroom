@@ -300,7 +300,8 @@ size_t find_first_line(
     const char* comment,
     const bool skip_empty_rows,
     const bool embedded_nl,
-    const char quote) {
+    const char quote,
+    size_t &skip_counter) {
 
   auto begin = skip_bom(source);
   /* Skip skip parameters, comments and blank lines */
@@ -321,6 +322,7 @@ size_t find_first_line(
         is_comment ? '\0' : quote); /* don't deal with quotes in comment lines*/
     ++begin;
     skip = skip > 0 ? skip - 1 : skip;
+    ++skip_counter;
 
     std::tie(should_skip, is_comment) = is_blank_or_comment_line(
         source.data() + begin,

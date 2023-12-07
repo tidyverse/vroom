@@ -1,6 +1,7 @@
 #pragma once
 
 #include "index.h"
+#include "vroom_errors.h"
 
 // clang-format off
 #ifdef __clang__
@@ -53,6 +54,7 @@ public:
       const char* comment,
       const bool skip_empty_rows,
       const size_t n_max,
+      std::shared_ptr<vroom_errors> errors,
       const bool progress)
       : col_starts_(col_starts),
         col_ends_(col_ends),
@@ -76,6 +78,8 @@ public:
     }
 
     size_t file_size = mmap_.size();
+    
+    size_t skip_counter = 0;
 
     size_t start = find_first_line(
         mmap_,
@@ -83,7 +87,12 @@ public:
         comment,
         skip_empty_rows,
         /* embedded_nl */ false,
-        /* quote */ '\0');
+        /* quote */ '\0',
+        skip_counter);
+
+    if (skip_counter) {
+      errors->add_skips_at_start(skip_counter, filename);
+    }
 
     // Check for windows newlines
     size_t first_nl;
