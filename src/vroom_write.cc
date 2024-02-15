@@ -20,7 +20,8 @@ typedef enum {
   quote_all = 2,
   escape_double = 4,
   escape_backslash = 8,
-  bom = 16
+  bom = 16,
+  escape_sep = 32
 } vroom_write_opt_t;
 
 size_t get_buffer_size(
@@ -135,16 +136,41 @@ void str_to_buf(
   }
 
   auto end = str_p + len;
-  bool should_escape = options & (escape_double | escape_backslash);
-  auto escape =
-      options & escape_double ? '"' : options & escape_backslash ? '\\' : '\0';
-
   buf.reserve(buf.size() + len);
-  while (str_p < end) {
-    if (should_escape && *str_p == '"') {
-      buf.push_back(escape);
+
+  if (options & escape_sep) {
+    while (str_p < end) {
+      if (*str_p == '\t') {
+        buf.push_back('\\');
+        buf.push_back('t');
+        ++str_p;
+      } else if (*str_p == '\n') {
+        buf.push_back('\\');
+        buf.push_back('n');
+        ++str_p;
+      } else if (*str_p == '\r') {
+        buf.push_back('\\');
+        buf.push_back('r');
+        ++str_p;
+      } else if (*str_p == '\\') {
+        buf.push_back('\\');
+        buf.push_back('\\');
+        ++str_p;
+      } else {
+        buf.push_back(*str_p++);
+      }
     }
-    buf.push_back(*str_p++);
+  } else {
+    bool should_escape = options & (escape_double | escape_backslash);
+    auto escape =
+        options & escape_double ? '"' : options & escape_backslash ? '\\' : '\0';
+
+    while (str_p < end) {
+      if (should_escape && *str_p == '"') {
+        buf.push_back(escape);
+      }
+      buf.push_back(*str_p++);
+    }
   }
 
   if (should_quote) {
