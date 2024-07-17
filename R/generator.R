@@ -171,7 +171,9 @@ gen_tbl <- function(rows, cols = NULL, col_types = NULL, locale = default_locale
       specs$cols[[i]] <- do.call(paste0("col_", type), list())
     }
     fun_nme <- paste0("gen_", type)
-    res[[i]] <- do.call(fun_nme, c(rows, specs$cols[[i]]))
+    args <- specs$cols[[i]]
+    args[["na"]] <- NULL
+    res[[i]] <- do.call(fun_nme, c(rows, args))
   }
 
   if (missing > 0) {
