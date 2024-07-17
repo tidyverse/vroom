@@ -129,11 +129,14 @@ inline cpp11::list create_columns(
       continue;
     }
 
+    auto col_na = collector.na();
+    auto col_na_res = Rf_isNull(col_na) ? na : cpp11::strings(col_na);
+
     // This is deleted in the finalizers when the vectors are GC'd by R
     auto info = new vroom_vec_info{
         idx->get_column(col),
         num_threads,
-        std::make_shared<cpp11::strings>(na),
+        std::make_shared<cpp11::strings>(col_na_res),
         locale_info,
         *errors,
         std::string()};

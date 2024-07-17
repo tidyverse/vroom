@@ -54,6 +54,7 @@ public:
         type_(derive_type(cpp11::strings(data_.attr("class"))[0])),
         altrep_(altrep) {}
   column_type type() const { return type_; }
+  SEXP na() const { return data_["na"]; }
   SEXP name() const { return name_; }
   SEXP operator[](const char* nme) { return data_[nme]; }
   bool use_altrep() {
@@ -170,6 +171,8 @@ inline collectors resolve_collectors(
     std::string my_col_type = cpp11::strings(my_collector.attr("class"))[0];
 
     if (my_col_type == "collector_guess") {
+      auto my_col_na = my_collector["na"];
+      auto my_col_na_res = Rf_isNull(my_col_na) ? na : my_col_na;
       cpp11::writable::strings col_vals(guess_num);
       for (R_xlen_t j = 0; j < guess_num - 1; ++j) {
         size_t row = j * guess_step;
@@ -187,10 +190,10 @@ inline collectors resolve_collectors(
             locale_info->encoder_.makeSEXP(str.begin(), str.end(), true);
       }
 
-      auto type = guess_type__(col_vals, na, locale_info.get(), false);
+      auto type = guess_type__(col_vals, my_col_na_res, locale_info.get(), false);
       auto fun_name = std::string("col_") + type;
       auto col_type = vroom[fun_name.c_str()];
-      my_collectors[col] = col_type();
+      my_collectors[col] = col_type("na"_nm = my_col_na);
     }
   }
 
