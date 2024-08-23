@@ -1,4 +1,5 @@
 #include <cerrno>
+#include <cpp11/as.hpp>
 #include <cpp11/R.hpp>
 
 #include "R_ext/Riconv.h"
@@ -23,8 +24,8 @@
   size_t insize = 0;
   void* cd;
 
-  bool should_close_in = !isOpen(in_con);
-  bool should_close_out = !isOpen(out_con);
+  bool should_close_in = !cpp11::as_cpp<bool>(isOpen(in_con));
+  bool should_close_out = !cpp11::as_cpp<bool>(isOpen(out_con));
 
   if (should_close_in) {
     open(in_con, "rb");
