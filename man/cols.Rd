@@ -22,29 +22,29 @@ cols(..., .default = col_guess(), .delim = NULL)
 
 cols_only(...)
 
-col_logical(...)
+col_logical(na = NULL, ...)
 
-col_integer(...)
+col_integer(na = NULL, ...)
 
-col_big_integer(...)
+col_big_integer(na = NULL, ...)
 
-col_double(...)
+col_double(na = NULL, ...)
 
-col_character(...)
+col_character(na = NULL, ...)
 
 col_skip(...)
 
-col_number(...)
+col_number(na = NULL, ...)
 
-col_guess(...)
+col_guess(na = NULL, ...)
 
-col_factor(levels = NULL, ordered = FALSE, include_na = FALSE, ...)
+col_factor(levels = NULL, ordered = FALSE, include_na = FALSE, na = NULL, ...)
 
-col_datetime(format = "", ...)
+col_datetime(format = "", na = NULL, ...)
 
-col_date(format = "", ...)
+col_date(format = "", na = NULL, ...)
 
-col_time(format = "", ...)
+col_time(format = "", na = NULL, ...)
 }
 \arguments{
 \item{...}{Either column objects created by \verb{col_*()}, or their abbreviated
@@ -60,6 +60,12 @@ will be read with this column type.}
 \item{.delim}{The delimiter to use when parsing. If the \code{delim} argument
 used in the call to \code{vroom()} it takes precedence over the one specified in
 \code{col_types}.}
+
+\item{na}{Character vector of strings to interpret as missing values for the
+column. If \code{NULL}, the column will use the missing values specified in the
+\code{na} argument in the call to \code{vroom()}, otherwise, the missing values
+specified here will take precedence. Set this option to \code{character()} to
+indicate no missing values for the column.}
 
 \item{levels}{Character vector of the allowed levels. When \code{levels = NULL}
 (the default), \code{levels} are discovered from the unique values of \code{x}, in

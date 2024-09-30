@@ -32,6 +32,11 @@
 #' @param .delim The delimiter to use when parsing. If the `delim` argument
 #'   used in the call to `vroom()` it takes precedence over the one specified in
 #'   `col_types`.
+#' @param na Character vector of strings to interpret as missing values for the
+#'   column. If `NULL`, the column will use the missing values specified in the
+#'   `na` argument in the call to `vroom()`, otherwise, the missing values
+#'   specified here will take precedence. Set this option to `character()` to
+#'   indicate no missing values for the column.
 #' @export
 #' @aliases col_types
 #' @examples
@@ -207,7 +212,11 @@ format.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_co
     vapply(seq_along(cols),
       function(i) {
         col_funs <- sub("^collector_", "col_", class(cols[[i]])[[1]])
-        args <- vapply(cols[[i]], deparse2, character(1), sep = "\n    ")
+        args <- cols[[i]]
+        if (is.null(args[["na"]])) {
+          args[["na"]] <- NULL
+        }
+        args <- vapply(args, deparse2, character(1), sep = "\n    ")
         args <- paste(names(args), args, sep = " = ", collapse = ", ")
 
         col_funs <- paste0(col_funs, "(", args, ")")
@@ -624,32 +633,32 @@ color_type <- function(type) {
 
 #' @rdname cols
 #' @export
-col_logical <- function(...) {
-  collector("logical", ...)
+col_logical <- function(na = NULL, ...) {
+  collector("logical", na = na, ...)
 }
 
 #' @rdname cols
 #' @export
-col_integer <- function(...) {
-  collector("integer", ...)
+col_integer <- function(na = NULL, ...) {
+  collector("integer", na = na, ...)
 }
 
 #' @rdname cols
 #' @export
-col_big_integer <- function(...) {
-  collector("big_integer", ...)
+col_big_integer <- function(na = NULL, ...) {
+  collector("big_integer", na = na, ...)
 }
 
 #' @rdname cols
 #' @export
-col_double <- function(...) {
-  collector("double", ...)
+col_double <- function(na = NULL, ...) {
+  collector("double", na = na, ...)
 }
 
 #' @rdname cols
 #' @export
-col_character <- function(...) {
-  collector("character", ...)
+col_character <- function(na = NULL, ...) {
+  collector("character", na = na, ...)
 }
 
 #' @rdname cols
@@ -660,38 +669,38 @@ col_skip <- function(...) {
 
 #' @rdname cols
 #' @export
-col_number <- function(...) {
-  collector("number", ...)
+col_number <- function(na = NULL, ...) {
+  collector("number", na = na, ...)
 }
 
 #' @rdname cols
 #' @export
-col_guess <- function(...) {
-  collector("guess", ...)
+col_guess <- function(na = NULL, ...) {
+  collector("guess", na = na, ...)
 }
 
 #' @inheritParams readr::col_factor
 #' @rdname cols
 #' @export
-col_factor <- function(levels = NULL, ordered = FALSE, include_na = FALSE, ...) {
-  collector("factor", levels = levels, ordered = ordered, include_na = include_na, ...)
+col_factor <- function(levels = NULL, ordered = FALSE, include_na = FALSE, na = NULL, ...) {
+  collector("factor", levels = levels, ordered = ordered, include_na = include_na, na = na, ...)
 }
 
 #' @inheritParams readr::col_datetime
 #' @rdname cols
 #' @export
-col_datetime <- function(format = "", ...) {
-  collector("datetime", format = format, ...)
+col_datetime <- function(format = "", na = NULL, ...) {
+  collector("datetime", format = format, na = na, ...)
 }
 
 #' @rdname cols
 #' @export
-col_date <- function(format = "", ...) {
-  collector("date", format = format, ...)
+col_date <- function(format = "", na = NULL, ...) {
+  collector("date", format = format, na = na, ...)
 }
 
 #' @rdname cols
 #' @export
-col_time <- function(format = "", ...) {
-  collector("time", format = format, ...)
+col_time <- function(format = "", na = NULL, ...) {
+  collector("time", format = format, na = na, ...)
 }
