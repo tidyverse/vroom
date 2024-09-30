@@ -44,6 +44,7 @@ public:
       const char* comment,
       const bool skip_empty_rows,
       const size_t n_max,
+      const std::shared_ptr<vroom_errors>& errors,
       const bool progress);
 
   string get(size_t row, size_t col) const override;
