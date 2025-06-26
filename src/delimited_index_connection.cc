@@ -118,7 +118,7 @@ delimited_index_connection::delimited_index_connection(
       ss << "The size of the connection buffer (" << chunk_size
          << ") was not large enough\nto fit a complete line:\n  * Increase it "
             "by "
-            "setting `Sys.setenv(\"VROOM_CONNECTION_SIZE\")`";
+            "setting `Sys.setenv(\"VROOM_CONNECTION_SIZE\" = a number larger than the current size reported above)`";
 
       cpp11::stop("%s", ss.str().c_str());
     }
