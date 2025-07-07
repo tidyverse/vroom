@@ -146,7 +146,7 @@ as.col_spec.default <- function(x) {
 
 # Conditionally exported in zzz.R
 # @export
-print.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_color(), ...) {
+print.col_spec <- function(x, n = Inf, condense = NULL, colour = cli::num_ansi_colors() > 1, ...) {
   cat(format.col_spec(x, n = n, condense = condense, colour = colour, ...))
 
   invisible(x)
@@ -170,7 +170,7 @@ cols_condense <- function(x) {
 
 # Conditionally exported in zzz.R
 # @export
-format.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_color(), ...) {
+format.col_spec <- function(x, n = Inf, condense = NULL, colour = cli::num_ansi_colors() > 1, ...) {
 
   if (n == 0) {
     return("")
@@ -243,7 +243,7 @@ format.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_co
   out
 }
 
-colourise_cols <- function(cols, colourise = crayon::has_color()) {
+colourise_cols <- function(cols, colourise = cli::num_ansi_colors() > 1) {
 
   if (!isTRUE(colourise)) {
     return(cols)
@@ -256,18 +256,18 @@ colourise_cols <- function(cols, colourise = crayon::has_color()) {
       col_guess = cols[[i]],
 
       col_character = ,
-      col_factor = crayon::red(cols[[i]]),
+      col_factor = cli::col_red(cols[[i]]),
 
-      col_logical = crayon::yellow(cols[[i]]),
+      col_logical = cli::col_yellow(cols[[i]]),
 
       col_double = ,
       col_integer = ,
       col_big_integer = ,
-      col_number = green(cols[[i]]),
+      col_number = cli::col_green(cols[[i]]),
 
       col_date = ,
       col_datetime = ,
-      col_time = blue(cols[[i]])
+      col_time = cli::col_blue(cols[[i]])
       )
   }
   cols
@@ -555,7 +555,7 @@ summary.col_spec <- function(object, width = getOption("width"), locale = defaul
 
   types <- format(vapply(names(type_counts), color_type, character(1)))
   counts <- format(glue::glue("({type_counts})"), justify = "right")
-  col_width <- min(width - (crayon::col_nchar(types) + nchar(counts) + 4))
+  col_width <- min(width - (cli::ansi_nchar(types) + nchar(counts) + 4))
   columns <- vapply(split(names(object$cols), col_types), function(x) glue::glue_collapse(x, ", ", width = col_width), character(1))
 
   fmt_num <- function(x) {
@@ -569,7 +569,7 @@ summary.col_spec <- function(object, width = getOption("width"), locale = defaul
     entries = glue::glue("{format(types)} {counts}: {columns}"),
 
     '
-    {if (nzchar(delim)) paste(bold("Delimiter:"), glue::double_quote(delim)) else ""}
+    {if (nzchar(delim)) paste(cli::style_bold("Delimiter:"), glue::double_quote(delim)) else ""}
     {entries*}
 
 
@@ -610,14 +610,14 @@ cli_block <- function(expr, class = NULL, type = rlang::inform) {
 color_type <- function(type) {
   switch(type,
     chr = ,
-    fct = crayon::red(type),
-    lgl = crayon::yellow(type),
+    fct = cli::col_red(type),
+    lgl = cli::col_yellow(type),
     dbl = ,
     int = ,
-    num = green(type),
+    num = cli::col_green(type),
     date = ,
     dttm = ,
-    time = blue(type),
+    time = cli::col_blue(type),
     "???" = type
   )
 }

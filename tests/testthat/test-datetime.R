@@ -200,7 +200,7 @@ test_that("offsets can cross date boundaries", {
 })
 
 test_that("unambiguous times with and without daylight savings", {
-  skip("Not working on CI")
+  skip_on_ci()
   skip_on_cran() # need to figure out why this fails
 
   melb <- locale(tz = "Australia/Melbourne")

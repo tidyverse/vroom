@@ -349,7 +349,7 @@ pb_file_format <- function(filename) {
 }
 
 pb_width <- function(format) {
-  ansii_chars <- nchar(format) - crayon::col_nchar(format)
+  ansii_chars <- nchar(format) - cli::ansi_nchar(format)
   getOption("width", 80L) + ansii_chars
 }
 
@@ -393,10 +393,10 @@ guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";")) {
     }
   }
   if (top_idx == 0) {
-    stop(glue::glue('
-        Could not guess the delimiter.\n
-        {silver("Use `vroom(delim =)` to specify one explicitly.")}
-        '), call. = FALSE)
+    cli::cli_abort(c(
+      "Could not guess the delimiter.",
+      "i" = "Use {.code vroom(delim =)} to specify one explicitly."
+    ))
   }
 
   delims[[top_idx]]
