@@ -23,6 +23,7 @@ options(tibble.print_min = 3)
 [![Codecov test coverage](https://codecov.io/gh/tidyverse/vroom/branch/main/graph/badge.svg)](https://app.codecov.io/gh/tidyverse/vroom?branch=main)
 [![CRAN status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/package=vroom)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![Codecov test coverage](https://codecov.io/gh/tidyverse/vroom/graph/badge.svg)](https://app.codecov.io/gh/tidyverse/vroom)
 <!-- badges: end -->
 
 ```{r echo = FALSE, message = FALSE}
