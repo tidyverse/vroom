@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 options(tibble.print_min = 3)
 ```
 
-# 🏎💨vroom <a href='https:/vroom.r-lib.org'><img src='man/figures/logo.png' align="right" height="135" /></a>
+# 🏎💨vroom <a href='https://vroom.r-lib.org'><img src='man/figures/logo.png' align="right" height="135" /></a>
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/tidyverse/vroom/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/tidyverse/vroom/actions/workflows/R-CMD-check.yaml)
