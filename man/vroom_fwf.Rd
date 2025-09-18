@@ -90,7 +90,7 @@ character represents one column:
 
 By default, reading a file without a column specification will print a
 message showing what \code{readr} guessed they were. To remove this message,
-set \code{show_col_types = FALSE} or set `options(readr.show_col_types = FALSE).}
+set \code{show_col_types = FALSE} or set \code{options(readr.show_col_types = FALSE)}.}
 
 \item{col_select}{Columns to include in the results. You can use the same
 mini-language as \code{dplyr::select()} to refer to the columns by name. Use
@@ -159,9 +159,11 @@ supported:
 \itemize{
 \item \code{"minimal"}: No name repair or checks, beyond basic existence of names.
 \item \code{"unique"} (default value): Make sure names are unique and not empty.
-\item \code{"check_unique"}: no name repair, but check they are \code{unique}.
+\item \code{"check_unique"}: No name repair, but check they are \code{unique}.
+\item \code{"unique_quiet"}: Repair with the \code{unique} strategy, quietly.
 \item \code{"universal"}: Make the names \code{unique} and syntactic.
-\item A function: apply custom name repair (e.g., \code{name_repair = make.names}
+\item \code{"universal_quiet"}: Repair with the \code{universal} strategy, quietly.
+\item A function: Apply custom name repair (e.g., \code{name_repair = make.names}
 for names in the style of base R).
 \item A purrr-style anonymous function, see \code{\link[rlang:as_function]{rlang::as_function()}}.
 }
