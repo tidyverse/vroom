@@ -5,6 +5,7 @@
 #' @param escape The type of escape to use when quotes are in the data.
 #'   - `double` - quotes are escaped by doubling them.
 #'   - `backslash` - quotes are escaped by a preceding backslash.
+#'   - `sep` - tabs, newlines, and backslashes are escaped as `\t`, `\n`, and `\\`
 #'   - `none` - quotes are not escaped.
 #' @param quote How to handle fields which contain characters that need to be
 #'   quoted.
@@ -37,7 +38,7 @@
 #' # vroom_write(mtcars, "mtcars.tsv.xz")
 vroom_write <- function(x, file, delim = '\t', eol = "\n", na = "NA", col_names = !append,
   append = FALSE, quote = c("needed", "all", "none"), escape =
-    c("double", "backslash", "none"), bom = FALSE, num_threads =
+    c("double", "backslash", "sep", "none"), bom = FALSE, num_threads =
     vroom_threads(), progress = vroom_progress(), path = deprecated()) {
 
   if (lifecycle::is_present(path)) {
@@ -52,6 +53,15 @@ vroom_write <- function(x, file, delim = '\t', eol = "\n", na = "NA", col_names 
 
   quote <- match.arg(quote)
   escape <- match.arg(escape)
+
+  if (escape == "sep") {
+    if (!all(c(delim, eol) %in% c("\t", "\n", "\r", "\r\n"))) {
+      stop("Can only escape separators `\\t`, `\\n`, and `\\r`")
+    }
+    if (quote != "none") {
+      warning("quotes in data will not be escaped with `escape = sep`")
+    }
+  }
 
   opts <- get_vroom_write_opts(quote, escape, bom)
 
@@ -109,7 +119,8 @@ vroom_write_opts <- function() c(
   "quote_all" = 2L,
   "escape_double" = 4L,
   "escape_backslash" = 8L,
-  "bom" = 16L
+  "bom" = 16L,
+  "escape_sep" = 32L
 )
 
 #' Convert a data frame to a delimited string
@@ -121,7 +132,7 @@ vroom_write_opts <- function() c(
 #' @inheritParams vroom_write
 #' @export
 vroom_format <- function(x, delim = "\t", eol = "\n", na = "NA", col_names = TRUE,
-                         escape = c("double", "backslash", "none"),
+                         escape = c("double", "backslash", "sep", "none"),
                          quote = c("needed", "all", "none"),
                          bom = FALSE,
                          num_threads = vroom_threads()) {
@@ -134,6 +145,15 @@ vroom_format <- function(x, delim = "\t", eol = "\n", na = "NA", col_names = TRU
 
   quote <- match.arg(quote)
   escape <- match.arg(escape)
+
+  if (escape == "sep") {
+    if (!all(c(delim, eol) %in% c("\t", "\n", "\r", "\r\n"))) {
+      stop("Can only escape separators `\\t`, `\\n`, and `\\r`")
+    }
+    if (quote != "none") {
+      warning("quotes in data will not be escaped with `escape = sep`")
+    }
+  }
 
   opts <- get_vroom_write_opts(quote, escape, bom)
 
