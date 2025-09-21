@@ -39,6 +39,10 @@
     filenames = get_filenames(inputs);
   }
 
+  auto errors = new std::shared_ptr<vroom_errors>(new vroom_errors());
+
+  (*errors)->has_header(false);
+
   auto idx = std::make_shared<vroom::index_collection>(
       inputs,
       col_starts,
@@ -48,9 +52,8 @@
       comment,
       skip_empty_rows,
       n_max,
+      *errors,
       progress);
-
-  auto errors = new std::shared_ptr<vroom_errors>(new vroom_errors());
 
   return create_columns(
       idx,
@@ -116,13 +119,16 @@ std::vector<bool> find_empty_cols(Iterator begin, Iterator end, ptrdiff_t n) {
     return cpp11::list();
   }
 
+  size_t skip_counter = 0;
+  
   size_t s = find_first_line(
       mmap,
       skip,
       comment.data(),
       /* skip_empty_rows */ true,
       /* embedded_nl */ false,
-      /* quote */ '\0');
+      /* quote */ '\0',
+      skip_counter);
 
   std::vector<bool> empty = find_empty_cols(mmap.begin() + s, mmap.end(), n);
   std::vector<int> begin, end;
