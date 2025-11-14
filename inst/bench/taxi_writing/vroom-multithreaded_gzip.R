@@ -4,4 +4,8 @@
   vroom:::vroom_materialize(data, replace = TRUE)
 }
 
-vroom_write(data, pipe(sprintf("pigz > %s", tempfile(fileext = ".gz"))), delim = "\t")
+vroom_write(
+  data,
+  pipe(sprintf("pigz > %s", tempfile(fileext = ".gz"))),
+  delim = "\t"
+)

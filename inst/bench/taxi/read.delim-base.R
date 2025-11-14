@@ -1,5 +1,11 @@
 ({})
-x <- read.delim(file, sep = ",", quote = "", na.strings = NULL, stringsAsFactors = FALSE)
+x <- read.delim(
+  file,
+  sep = ",",
+  quote = "",
+  na.strings = NULL,
+  stringsAsFactors = FALSE
+)
 print(head(x, 10))
 a <- head(x)
 b <- tail(x)

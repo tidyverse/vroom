@@ -1,5 +1,17 @@
-({library(vroom); library(dplyr)})
-x <- vroom(file, id = "path", col_types = c(pickup_datetime = "c"), trim_ws = FALSE, quote = "", escape_double = FALSE, na = character(), altrep = TRUE)
+({
+  library(vroom)
+  library(dplyr)
+})
+x <- vroom(
+  file,
+  id = "path",
+  col_types = c(pickup_datetime = "c"),
+  trim_ws = FALSE,
+  quote = "",
+  escape_double = FALSE,
+  na = character(),
+  altrep = TRUE
+)
 print(x)
 a <- head(x)
 b <- tail(x)

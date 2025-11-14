@@ -35,10 +35,15 @@
 #'
 #' # South American locale
 #' locale("es", decimal_mark = ",")
-locale <- function(date_names = "en",
-                   date_format = "%AD", time_format = "%AT",
-                   decimal_mark = ".", grouping_mark = ",",
-                   tz = "UTC", encoding = "UTF-8") {
+locale <- function(
+  date_names = "en",
+  date_format = "%AD",
+  time_format = "%AT",
+  decimal_mark = ".",
+  grouping_mark = ",",
+  tz = "UTC",
+  encoding = "UTF-8"
+) {
   if (is.character(date_names)) {
     date_names <- date_names_lang(date_names)
   }
@@ -79,8 +84,17 @@ is.locale <- function(x) inherits(x, "locale")
 # @export
 print.locale <- function(x, ...) {
   cat("<locale>\n")
-  cat("Numbers:  ", prettyNum(123456.78, big.mark = x$grouping_mark,
-    decimal.mark = x$decimal_mark, digits = 8), "\n", sep = "")
+  cat(
+    "Numbers:  ",
+    prettyNum(
+      123456.78,
+      big.mark = x$grouping_mark,
+      decimal.mark = x$decimal_mark,
+      digits = 8
+    ),
+    "\n",
+    sep = ""
+  )
   cat("Formats:  ", x$date_format, " / ", x$time_format, "\n", sep = "")
   cat("Timezone: ", x$tz, "\n", sep = "")
   cat("Encoding: ", x$encoding, "\n", sep = "")
@@ -119,8 +133,9 @@ check_tz <- function(x) {
 check_encoding <- function(x) {
   stopifnot(is.character(x), length(x) == 1)
 
-  if (tolower(x) %in% tolower(iconvlist()))
+  if (tolower(x) %in% tolower(iconvlist())) {
     return(TRUE)
+  }
 
   stop("Unknown encoding ", x, call. = FALSE)
 }

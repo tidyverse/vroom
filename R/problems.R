@@ -17,7 +17,7 @@
 #'   - file - The file with the problem
 #' @export
 problems <- function(x = .Last.value, lazy = FALSE) {
-  if(!inherits(x, "tbl_df")) {
+  if (!inherits(x, "tbl_df")) {
     cli::cli_abort(c(
       "The {.arg x} argument of {.fun vroom::problems} must be a data frame created by vroom:",
       x = "{.arg x} has class {.cls {class(x)}}"

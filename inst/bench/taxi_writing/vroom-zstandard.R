@@ -4,4 +4,8 @@
   vroom:::vroom_materialize(data, replace = TRUE)
 }
 
-vroom_write(data, pipe(sprintf("zstd > %s", tempfile(fileext = ".zst"))), delim = "\t")
+vroom_write(
+  data,
+  pipe(sprintf("zstd > %s", tempfile(fileext = ".zst"))),
+  delim = "\t"
+)

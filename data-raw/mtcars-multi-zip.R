@@ -9,7 +9,9 @@ files
 
 target <- "mtcars-multi-cyl.zip"
 # if target exists, nuke it first
-if (file.exists(target)) unlink(target)
+if (file.exists(target)) {
+  unlink(target)
+}
 
 zip(target, files)
 

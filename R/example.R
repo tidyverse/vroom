@@ -14,12 +14,12 @@
 #'
 #' # Get path to one example
 #' vroom_example("mtcars.csv")
-vroom_example <- function (path) {
+vroom_example <- function(path) {
   system.file("extdata", path, package = "vroom", mustWork = TRUE)
 }
 
 #' @rdname vroom_example
 #' @export
-vroom_examples <- function (pattern = NULL) {
+vroom_examples <- function(pattern = NULL) {
   list.files(system.file("extdata", package = "vroom"), pattern = pattern)
 }

@@ -1,5 +1,11 @@
 library(vroom)
-x <- vroom(file, trim_ws = FALSE, quote = "", escape_double = FALSE, na = character())
+x <- vroom(
+  file,
+  trim_ws = FALSE,
+  quote = "",
+  escape_double = FALSE,
+  na = character()
+)
 print(x)
 a <- head(x)
 b <- tail(x)

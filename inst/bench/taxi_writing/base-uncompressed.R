@@ -4,4 +4,10 @@
   vroom:::vroom_materialize(data, replace = TRUE)
 }
 
-write.table(data, tempfile(fileext = ".tsv"), sep = "\t", quote = FALSE, row.names = FALSE)
+write.table(
+  data,
+  tempfile(fileext = ".tsv"),
+  sep = "\t",
+  quote = FALSE,
+  row.names = FALSE
+)

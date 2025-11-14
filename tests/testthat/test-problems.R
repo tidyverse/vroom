@@ -37,7 +37,13 @@ test_that("problems works for multiple files", {
 })
 
 test_that("problems with number of columns works for single files", {
-  expect_warning(probs3 <- problems(vroom(I("x,y,z\n1,2\n"), col_names = TRUE, col_types = "ddd", altrep = FALSE)),
+  expect_warning(
+    probs3 <- problems(vroom(
+      I("x,y,z\n1,2\n"),
+      col_names = TRUE,
+      col_types = "ddd",
+      altrep = FALSE
+    )),
     class = "vroom_parse_issue"
   )
   expect_equal(probs3$row, 2)
@@ -45,7 +51,13 @@ test_that("problems with number of columns works for single files", {
   expect_equal(probs3$expected, "3 columns")
   expect_equal(probs3$actual, "2 columns")
 
-  expect_warning(probs3 <- problems(vroom(I("x,y,z\n1,2\n"), col_names = FALSE, col_types = "ddd", altrep = FALSE)),
+  expect_warning(
+    probs3 <- problems(vroom(
+      I("x,y,z\n1,2\n"),
+      col_names = FALSE,
+      col_types = "ddd",
+      altrep = FALSE
+    )),
     class = "vroom_parse_issue"
   )
   expect_equal(probs3$row[[4]], 2)
@@ -53,7 +65,13 @@ test_that("problems with number of columns works for single files", {
   expect_equal(probs3$expected[[4]], "3 columns")
   expect_equal(probs3$actual[[4]], "2 columns")
 
-  expect_warning(probs4 <- problems(vroom(I("x,y\n1,2,3,4\n"), col_names = TRUE, col_types = "dd", altrep = FALSE)),
+  expect_warning(
+    probs4 <- problems(vroom(
+      I("x,y\n1,2,3,4\n"),
+      col_names = TRUE,
+      col_types = "dd",
+      altrep = FALSE
+    )),
     class = "vroom_parse_issue"
   )
   expect_equal(probs4$row[[2]], 2)
@@ -61,7 +79,13 @@ test_that("problems with number of columns works for single files", {
   expect_equal(probs4$expected[[2]], "2 columns")
   expect_equal(probs4$actual[[2]], "4 columns")
 
-  expect_warning(probs2 <- problems(vroom(I("x,y\n1,2,3,4\n"), col_names = FALSE, col_types = "dd", altrep = FALSE)),
+  expect_warning(
+    probs2 <- problems(vroom(
+      I("x,y\n1,2,3,4\n"),
+      col_names = FALSE,
+      col_types = "dd",
+      altrep = FALSE
+    )),
     class = "vroom_parse_issue"
   )
   expect_equal(probs2$row[[4]], 2)
@@ -88,21 +112,34 @@ test_that("parsing problems are shown for all datatypes", {
     type <- types[[i]]
     expected <- names(types)[[i]]
 
-    res <- vroom(I("x\nxyz\n"), delim = ",", col_types = list(type), altrep = TRUE)
+    res <- vroom(
+      I("x\nxyz\n"),
+      delim = ",",
+      col_types = list(type),
+      altrep = TRUE
+    )
 
     # This calls the type_Elt function
     expect_warning(res[[1]][[1]], class = "vroom_parse_issue")
     expect_equal(problems(res)$expected, expected)
 
-    res <- vroom(I("x\nxyz\n"), delim = ",", col_types = list(type), altrep = TRUE)
+    res <- vroom(
+      I("x\nxyz\n"),
+      delim = ",",
+      col_types = list(type),
+      altrep = TRUE
+    )
 
     # This calls the read_type function
-    expect_warning(vroom_materialize(res, replace = FALSE), class = "vroom_parse_issue")
+    expect_warning(
+      vroom_materialize(res, replace = FALSE),
+      class = "vroom_parse_issue"
+    )
     expect_equal(problems(res)$expected, expected)
   }
 
-
-  expect_warning(res <- vroom(I("x\nxyz\n"), delim = ",", col_types = list(col_logical())),
+  expect_warning(
+    res <- vroom(I("x\nxyz\n"), delim = ",", col_types = list(col_logical())),
     class = "vroom_parse_issue"
   )
 })
@@ -140,7 +177,11 @@ test_that("problems return the proper row number", {
   expect_equal(problems(y)$row, 3)
 
   expect_warning(
-    z <- vroom(I("a,b,c\nx,y,z,,\nx,y,z,,\n"), altrep = FALSE, col_types = "ccc"),
+    z <- vroom(
+      I("a,b,c\nx,y,z,,\nx,y,z,,\n"),
+      altrep = FALSE,
+      col_types = "ccc"
+    ),
     class = "vroom_parse_issue"
   )
   expect_equal(problems(z)$row, c(2, 3))

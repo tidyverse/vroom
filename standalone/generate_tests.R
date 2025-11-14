@@ -19,7 +19,10 @@ data[[4]][[1]] <- paste0('"f\to\no"')
 vroom_write(data, file.path(out_dir, "02.tsv"), bom = TRUE, quote = "all")
 
 # Add a header and blank lines to the start
-writeLines(c("", "# foo\t, bar", vroom_format(data)), file.path(out_dir, "03.tsv"))
+writeLines(
+  c("", "# foo\t, bar", vroom_format(data)),
+  file.path(out_dir, "03.tsv")
+)
 
 # Write a fixed width file
 data[] <- lapply(data, format)

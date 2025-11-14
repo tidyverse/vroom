@@ -1,5 +1,5 @@
 .onUnload <- function(libpath) {
-    library.dynam.unload("vroom", libpath)
+  library.dynam.unload("vroom", libpath)
 }
 
 .onLoad <- function(...) {

@@ -1,4 +1,7 @@
-({ library(readr); library(dplyr) })
+({
+  library(readr)
+  library(dplyr)
+})
 x <- read_fwf(file, fields, col_types = types)
 print(x)
 a <- head(x)

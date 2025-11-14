@@ -1,5 +1,14 @@
-({ library(vroom); library(dplyr) })
-x <- vroom(file, trim_ws = FALSE, quote = "", escape_double = FALSE, na = character())
+({
+  library(vroom)
+  library(dplyr)
+})
+x <- vroom(
+  file,
+  trim_ws = FALSE,
+  quote = "",
+  escape_double = FALSE,
+  na = character()
+)
 print(x)
 a <- head(x)
 b <- tail(x)

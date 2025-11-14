@@ -31,7 +31,10 @@ test_that("vroom errors via https on non-gz file", {
   skip_on_cran()
 
   url <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv.bz2"
-  expect_error(vroom(url, col_types = list()), "Reading from remote `bz2` compressed files is not supported")
+  expect_error(
+    vroom(url, col_types = list()),
+    "Reading from remote `bz2` compressed files is not supported"
+  )
 })
 
 test_that("split_path_ext works", {
@@ -141,10 +144,10 @@ test_that("can read/write a compressed file with non-ascii characters in path", 
 
   make_temp_path <- function(ext) file.path(tempdir(), paste0("d\u00E4t", ext))
 
-  gzfile   <- withr::local_file(make_temp_path(".tar.gz"))
-  bz2file  <- withr::local_file(make_temp_path(".tar.bz2"))
-  xzfile   <- withr::local_file(make_temp_path(".tar.xz"))
-  zipfile  <- withr::local_file(make_temp_path(".zip"))
+  gzfile <- withr::local_file(make_temp_path(".tar.gz"))
+  bz2file <- withr::local_file(make_temp_path(".tar.bz2"))
+  xzfile <- withr::local_file(make_temp_path(".tar.xz"))
+  zipfile <- withr::local_file(make_temp_path(".zip"))
 
   dat <- tibble::tibble(a = "A", b = "B")
 
@@ -158,9 +161,9 @@ test_that("can read/write a compressed file with non-ascii characters in path", 
   expect_equal(detect_compression(xzfile), "xz")
   expect_equal(detect_compression(zipfile), "zip")
 
-  expect_equal(vroom(gzfile,  show_col_types = FALSE), dat)
+  expect_equal(vroom(gzfile, show_col_types = FALSE), dat)
   expect_equal(vroom(bz2file, show_col_types = FALSE), dat)
-  expect_equal(vroom(xzfile,  show_col_types = FALSE), dat)
+  expect_equal(vroom(xzfile, show_col_types = FALSE), dat)
   expect_equal(vroom(zipfile, show_col_types = FALSE), dat)
 })
 

@@ -12,14 +12,24 @@
 #' tail(lines, n = 2)
 #' sample(lines, size = 2)
 #' @export
-vroom_lines <- function(file, n_max = Inf, skip = 0,
-  na = character(), skip_empty_rows = FALSE,
-  locale = default_locale(), altrep = TRUE,
-  altrep_opts = deprecated(), num_threads = vroom_threads(),
-  progress = vroom_progress()) {
-
+vroom_lines <- function(
+  file,
+  n_max = Inf,
+  skip = 0,
+  na = character(),
+  skip_empty_rows = FALSE,
+  locale = default_locale(),
+  altrep = TRUE,
+  altrep_opts = deprecated(),
+  num_threads = vroom_threads(),
+  progress = vroom_progress()
+) {
   if (!is_missing(altrep_opts)) {
-    deprecate_warn("1.1.0", "vroom_lines(altrep_opts = )", "vroom_lines(altrep = )")
+    deprecate_warn(
+      "1.1.0",
+      "vroom_lines(altrep_opts = )",
+      "vroom_lines(altrep = )"
+    )
     altrep <- altrep_opts
   }
 
@@ -44,12 +54,27 @@ vroom_lines <- function(file, n_max = Inf, skip = 0,
   # appear in modern text. This essentially means the only record breaks will
   # be newlines. Ideally this would be "\0", but R doesn't let you have nulls
   # in character vectors.
-  out <- vroom_(file, delim = "\1", col_names = "V1", col_types = cols(col_character()),
-    id = NULL, skip = skip, col_select = col_select, name_repair = "minimal",
-    na = na, quote = "", trim_ws = FALSE, escape_double = FALSE,
-    escape_backslash = FALSE, comment = "", skip_empty_rows = skip_empty_rows,
-    locale = locale, guess_max = 0, n_max = n_max,
-    altrep = vroom_altrep(altrep), num_threads = num_threads,
+  out <- vroom_(
+    file,
+    delim = "\1",
+    col_names = "V1",
+    col_types = cols(col_character()),
+    id = NULL,
+    skip = skip,
+    col_select = col_select,
+    name_repair = "minimal",
+    na = na,
+    quote = "",
+    trim_ws = FALSE,
+    escape_double = FALSE,
+    escape_backslash = FALSE,
+    comment = "",
+    skip_empty_rows = skip_empty_rows,
+    locale = locale,
+    guess_max = 0,
+    n_max = n_max,
+    altrep = vroom_altrep(altrep),
+    num_threads = num_threads,
     progress = progress
   )
   if (length(out) == 0) {

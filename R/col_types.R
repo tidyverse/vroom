@@ -85,8 +85,11 @@ col_spec <- function(col_types, default = col_guess(), delim) {
 
   is_collector <- vapply(col_types, is.collector, logical(1))
   if (any(!is_collector)) {
-    stop("Some `col_types` are not S3 collector objects: ",
-      paste(which(!is_collector), collapse = ", "), call. = FALSE)
+    stop(
+      "Some `col_types` are not S3 collector objects: ",
+      paste(which(!is_collector), collapse = ", "),
+      call. = FALSE
+    )
   }
 
   structure(
@@ -146,7 +149,13 @@ as.col_spec.default <- function(x) {
 
 # Conditionally exported in zzz.R
 # @export
-print.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_color(), ...) {
+print.col_spec <- function(
+  x,
+  n = Inf,
+  condense = NULL,
+  colour = crayon::has_color(),
+  ...
+) {
   cat(format.col_spec(x, n = n, condense = condense, colour = colour, ...))
 
   invisible(x)
@@ -170,8 +179,13 @@ cols_condense <- function(x) {
 
 # Conditionally exported in zzz.R
 # @export
-format.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_color(), ...) {
-
+format.col_spec <- function(
+  x,
+  n = Inf,
+  condense = NULL,
+  colour = crayon::has_color(),
+  ...
+) {
   if (n == 0) {
     return("")
   }
@@ -204,7 +218,8 @@ format.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_co
 
   cols_args <- c(
     default,
-    vapply(seq_along(cols),
+    vapply(
+      seq_along(cols),
       function(i) {
         col_funs <- sub("^collector_", "col_", class(cols[[i]])[[1]])
         args <- vapply(cols[[i]], deparse2, character(1), sep = "\n    ")
@@ -219,7 +234,11 @@ format.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_co
         named <- col_names != ""
 
         non_syntactic <- !is_syntactic(col_names) & named
-        col_names[non_syntactic] <- paste0("`", gsub("`", "\\\\`", col_names[non_syntactic]), "`")
+        col_names[non_syntactic] <- paste0(
+          "`",
+          gsub("`", "\\\\`", col_names[non_syntactic]),
+          "`"
+        )
 
         out <- paste0(col_names, " = ", col_funs)
         out[!named] <- col_funs[!named]
@@ -244,14 +263,14 @@ format.col_spec <- function(x, n = Inf, condense = NULL, colour = crayon::has_co
 }
 
 colourise_cols <- function(cols, colourise = crayon::has_color()) {
-
   if (!isTRUE(colourise)) {
     return(cols)
   }
 
   fname <- sub("[(].*", "", cols)
   for (i in seq_along(cols)) {
-    cols[[i]] <- switch(fname,
+    cols[[i]] <- switch(
+      fname,
       col_skip = ,
       col_guess = cols[[i]],
 
@@ -268,7 +287,7 @@ colourise_cols <- function(cols, colourise = crayon::has_color()) {
       col_date = ,
       col_datetime = ,
       col_time = blue(cols[[i]])
-      )
+    )
   }
   cols
 }
@@ -277,16 +296,17 @@ colourise_cols <- function(cols, colourise = crayon::has_color()) {
 # Conditionally exported in zzz.R
 # @export
 str.col_spec <- function(object, ..., indent.str = "") {
-
   # Split the formatted column spec into strings
   specs <- strsplit(format(object), "\n")[[1]]
-  cat(sep = "",
+  cat(
+    sep = "",
     "\n",
 
     # Append the current indentation string to the specs
     paste(indent.str, specs, collapse = "\n"),
 
-    "\n")
+    "\n"
+  )
 }
 
 
@@ -311,23 +331,24 @@ spec <- function(x) {
 }
 
 col_concise <- function(x) {
-  switch(x,
+  switch(
+    x,
     "_" = ,
-    "skip" =,
-    "NULL" =,
+    "skip" = ,
+    "NULL" = ,
     "-" = col_skip(),
     "NA" = ,
     "?" = col_guess(),
-    character =,
+    character = ,
     c = col_character(),
-    factor =,
+    factor = ,
     f = col_factor(),
-    double =,
-    numeric =,
+    double = ,
+    numeric = ,
     d = col_double(),
-    integer =,
+    integer = ,
     i = col_integer(),
-    big_integer =,
+    big_integer = ,
     I = col_big_integer(),
     logical = ,
     l = col_logical(),
@@ -339,7 +360,7 @@ col_concise <- function(x) {
     datetime = ,
     POSIXct = ,
     T = col_datetime(),
-    time =,
+    time = ,
     t = col_time(),
     stop("Unknown shortcut: ", x, call. = FALSE)
   )
@@ -378,7 +399,13 @@ vroom_select <- function(x, col_select, id) {
   x
 }
 
-col_types_standardise <- function(spec, num_cols, col_names, col_select, name_repair) {
+col_types_standardise <- function(
+  spec,
+  num_cols,
+  col_names,
+  col_select,
+  name_repair
+) {
   if (num_cols == 0) {
     if (length(spec$cols) > 0) {
       num_cols <- length(spec$cols)
@@ -405,7 +432,10 @@ col_types_standardise <- function(spec, num_cols, col_names, col_select, name_re
     if (num_cols < length(spec$cols)) {
       spec$cols <- spec$cols[seq_len(num_cols)]
     } else {
-      spec$cols <- c(spec$cols, rep(list(spec$default), num_cols - length(spec$cols)))
+      spec$cols <- c(
+        spec$cols,
+        rep(list(spec$default), num_cols - length(spec$cols))
+      )
     }
     names(spec$cols) <- col_names[seq_along(spec$cols)]
   } else {
@@ -417,8 +447,13 @@ col_types_standardise <- function(spec, num_cols, col_names, col_select, name_re
 
     bad_types <- !(type_names %in% col_names)
     if (any(bad_types)) {
-      warn(paste0("The following named parsers don't match the column names: ",
-        paste0(type_names[bad_types], collapse = ", ")), class = "vroom_mismatched_column_name")
+      warn(
+        paste0(
+          "The following named parsers don't match the column names: ",
+          paste0(type_names[bad_types], collapse = ", ")
+        ),
+        class = "vroom_mismatched_column_name"
+      )
       spec$cols <- spec$cols[!bad_types]
       type_names <- type_names[!bad_types]
     }
@@ -435,9 +470,15 @@ col_types_standardise <- function(spec, num_cols, col_names, col_select, name_re
 
   if (inherits(col_select, "quosures") || !quo_is_null(col_select)) {
     if (inherits(col_select, "quosures")) {
-      to_keep <- names(spec$cols) %in% tidyselect::vars_select(names(spec$cols), !!!col_select, .strict = FALSE)
+      to_keep <- names(spec$cols) %in%
+        tidyselect::vars_select(
+          names(spec$cols),
+          !!!col_select,
+          .strict = FALSE
+        )
     } else {
-      to_keep <- names(spec$cols) %in% tidyselect::vars_select(names(spec$cols), !!col_select, .strict = FALSE)
+      to_keep <- names(spec$cols) %in%
+        tidyselect::vars_select(names(spec$cols), !!col_select, .strict = FALSE)
     }
 
     spec$cols[!to_keep] <- rep(list(col_skip()), sum(!to_keep))
@@ -479,21 +520,38 @@ col_types_standardise <- function(spec, num_cols, col_names, col_select, name_re
 #'  guess_type(c("2010-10-10 01:02:03"))
 #'  guess_type(c("01:02:03 AM"))
 #' @export
-guess_type <- function(x, na = c("", "NA"), locale = default_locale(), guess_integer = FALSE) {
-  type <- guess_type_(x, na = na, locale = locale, guess_integer = guess_integer)
+guess_type <- function(
+  x,
+  na = c("", "NA"),
+  locale = default_locale(),
+  guess_integer = FALSE
+) {
+  type <- guess_type_(
+    x,
+    na = na,
+    locale = locale,
+    guess_integer = guess_integer
+  )
   get(paste0("col_", type), asNamespace("vroom"))()
 }
 
-guess_parser <- function(x, na = c("", "NA"), locale = default_locale(), guess_integer = FALSE) {
+guess_parser <- function(
+  x,
+  na = c("", "NA"),
+  locale = default_locale(),
+  guess_integer = FALSE
+) {
   guess_type_(x, na = na, locale = locale, guess_integer = guess_integer)
 }
 
 show_dims <- function(x) {
   cli_block(class = "vroom_dim_message", {
-    cli::cli_text("
+    cli::cli_text(
+      "
       {.strong Rows: }{.val {NROW(x)}}
       {.strong Columns: }{.val {NCOL(x)}}
-      ")
+      "
+    )
   })
 }
 
@@ -502,53 +560,88 @@ collector_value <- function(x, ...) {
 }
 
 #' @export
-collector_value.collector_character <- function(x, ...) { character() }
+collector_value.collector_character <- function(x, ...) {
+  character()
+}
 
 #' @export
-collector_value.collector_double <- function(x, ...) { numeric() }
+collector_value.collector_double <- function(x, ...) {
+  numeric()
+}
 
 #' @export
-collector_value.collector_integer <- function(x, ...) { integer() }
+collector_value.collector_integer <- function(x, ...) {
+  integer()
+}
 
 #' @export
-collector_value.collector_numeric <- function(x, ...) { numeric() }
+collector_value.collector_numeric <- function(x, ...) {
+  numeric()
+}
 
 #' @export
-collector_value.collector_logical <- function(x, ...) { logical() }
+collector_value.collector_logical <- function(x, ...) {
+  logical()
+}
 
 #' @export
-collector_value.collector_factor <- function(x, ...) { factor() }
+collector_value.collector_factor <- function(x, ...) {
+  factor()
+}
 
 # the more obvious as.POSIXct(double()) doesn't work on R < 4.0
 # https://github.com/tidyverse/vroom/issues/453
 #' @export
-collector_value.collector_datetime <- function(x, ...) { vctrs::vec_ptype(Sys.time()) }
+collector_value.collector_datetime <- function(x, ...) {
+  vctrs::vec_ptype(Sys.time())
+}
 
 # the more obvious as.Date(double()) doesn't work on R < 4.0
 # and again: https://github.com/tidyverse/vroom/issues/453
 #' @export
-collector_value.collector_date <- function(x, ...) { vctrs::vec_ptype(Sys.Date()) }
+collector_value.collector_date <- function(x, ...) {
+  vctrs::vec_ptype(Sys.Date())
+}
 
 #' @export
-collector_value.collector_time <- function(x, ...) { hms::hms() }
+collector_value.collector_time <- function(x, ...) {
+  hms::hms()
+}
 
 #' @export
-collector_value.collector_guess <- function(x, ...) { character() }
+collector_value.collector_guess <- function(x, ...) {
+  character()
+}
 
 #' @export
-summary.col_spec <- function(object, width = getOption("width"), locale = default_locale(), ...) {
+summary.col_spec <- function(
+  object,
+  width = getOption("width"),
+  locale = default_locale(),
+  ...
+) {
   if (length(object$cols) == 0) {
     return(invisible(object))
   }
 
-  type_map <- c("collector_character" = "chr", "collector_double" = "dbl",
-    "collector_integer" = "int", "collector_number" = "num", "collector_logical" = "lgl",
-    "collector_factor" = "fct", "collector_datetime" = "dttm", "collector_date" = "date",
+  type_map <- c(
+    "collector_character" = "chr",
+    "collector_double" = "dbl",
+    "collector_integer" = "int",
+    "collector_number" = "num",
+    "collector_logical" = "lgl",
+    "collector_factor" = "fct",
+    "collector_datetime" = "dttm",
+    "collector_date" = "date",
     "collector_time" = "time",
-    "collector_guess" = "???")
+    "collector_guess" = "???"
+  )
 
   col_types <- vapply(object$cols, function(x) class(x)[[1]], character(1))
-  col_types <- droplevels(factor(type_map[col_types], levels = unname(type_map)))
+  col_types <- droplevels(factor(
+    type_map[col_types],
+    levels = unname(type_map)
+  ))
   type_counts <- table(col_types)
 
   n <- length(type_counts)
@@ -556,10 +649,18 @@ summary.col_spec <- function(object, width = getOption("width"), locale = defaul
   types <- format(vapply(names(type_counts), color_type, character(1)))
   counts <- format(glue::glue("({type_counts})"), justify = "right")
   col_width <- min(width - (crayon::col_nchar(types) + nchar(counts) + 4))
-  columns <- vapply(split(names(object$cols), col_types), function(x) glue::glue_collapse(x, ", ", width = col_width), character(1))
+  columns <- vapply(
+    split(names(object$cols), col_types),
+    function(x) glue::glue_collapse(x, ", ", width = col_width),
+    character(1)
+  )
 
   fmt_num <- function(x) {
-    prettyNum(x, big.mark = locale$grouping_mark, decimal.mark = locale$decimal_mark)
+    prettyNum(
+      x,
+      big.mark = locale$grouping_mark,
+      decimal.mark = locale$decimal_mark
+    )
   }
 
   delim <- object$delim %||% ""
@@ -573,7 +674,8 @@ summary.col_spec <- function(object, width = getOption("width"), locale = defaul
     {entries*}
 
 
-    ')
+    '
+  )
   cli_block(class = "vroom_spec_message", {
     cli::cli_h1("Column specification")
     cli::cli_verbatim(txt)
@@ -587,8 +689,12 @@ show_col_types <- function(x, locale) {
   summary(spec(x), locale = locale)
   cli_block(class = "vroom_spec_message", {
     cli::cli_verbatim("\n\n")
-    cli::cli_alert_info("Use {.fn spec} to retrieve the full column specification for this data.")
-    cli::cli_alert_info("Specify the column types or set {.arg show_col_types = FALSE} to quiet this message.")
+    cli::cli_alert_info(
+      "Use {.fn spec} to retrieve the full column specification for this data."
+    )
+    cli::cli_alert_info(
+      "Specify the column types or set {.arg show_col_types = FALSE} to quiet this message."
+    )
   })
 }
 
@@ -608,7 +714,8 @@ cli_block <- function(expr, class = NULL, type = rlang::inform) {
 }
 
 color_type <- function(type) {
-  switch(type,
+  switch(
+    type,
     chr = ,
     fct = crayon::red(type),
     lgl = crayon::yellow(type),
@@ -673,8 +780,19 @@ col_guess <- function(...) {
 #' @inheritParams readr::col_factor
 #' @rdname cols
 #' @export
-col_factor <- function(levels = NULL, ordered = FALSE, include_na = FALSE, ...) {
-  collector("factor", levels = levels, ordered = ordered, include_na = include_na, ...)
+col_factor <- function(
+  levels = NULL,
+  ordered = FALSE,
+  include_na = FALSE,
+  ...
+) {
+  collector(
+    "factor",
+    levels = levels,
+    ordered = ordered,
+    include_na = include_na,
+    ...
+  )
 }
 
 #' @inheritParams readr::col_datetime

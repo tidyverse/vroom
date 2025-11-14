@@ -8,8 +8,10 @@ file <- args[-c(1:2)]
 
 library(vroom)
 
-fields <- vroom(col_names = c("begin", "end", "width", "col_names"), delim = "\t",
-"1	1	1	RECTYPE
+fields <- vroom(
+  col_names = c("begin", "end", "width", "col_names"),
+  delim = "\t",
+  "1	1	1	RECTYPE
 2	8	7	SERIALNO
 9	9	1	SAMPLE
 10	11	2	STATE
@@ -122,7 +124,8 @@ fields <- vroom(col_names = c("begin", "end", "width", "col_names"), delim = "\t
 249	250	2	WORKEXP
 251	258	8	HINC
 259	266	8	FINC
-")
+"
+)
 
 fields$begin <- fields$begin - 1
 
@@ -173,7 +176,10 @@ types <- cols(
 )
 
 cat(source_file, "\n")
-out <- bench::workout_expressions(as.list(parse(source_file, keep.source = FALSE)))
+out <- bench::workout_expressions(as.list(parse(
+  source_file,
+  keep.source = FALSE
+)))
 
 x <- vroom::vroom(file, col_types = list())
 
