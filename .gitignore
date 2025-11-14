@@ -13,3 +13,4 @@ compile_commands.json
 .clangd/
 .cache/
 investigations
+.claude/settings.local.json

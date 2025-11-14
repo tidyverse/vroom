@@ -22,22 +22,27 @@
 #' vroom_fwf(fwf_sample, fwf_cols(name = c(1, 20), ssn = c(30, 42)))
 #' # 5. Named arguments with column widths
 #' vroom_fwf(fwf_sample, fwf_cols(name = 20, state = 10, ssn = 12))
-vroom_fwf <- function(file,
-                      col_positions = fwf_empty(file, skip, n = guess_max),
-                      col_types = NULL,
-                      col_select = NULL, id = NULL,
-                      locale = default_locale(), na = c("", "NA"),
-                      comment = "",
-                      skip_empty_rows = TRUE,
-                      trim_ws = TRUE, skip = 0, n_max = Inf,
-                      guess_max = 100,
-                      altrep = TRUE,
-                      altrep_opts = deprecated(),
-                      num_threads = vroom_threads(),
-                      progress = vroom_progress(),
-                      show_col_types = NULL,
-                      .name_repair = "unique") {
-
+vroom_fwf <- function(
+  file,
+  col_positions = fwf_empty(file, skip, n = guess_max),
+  col_types = NULL,
+  col_select = NULL,
+  id = NULL,
+  locale = default_locale(),
+  na = c("", "NA"),
+  comment = "",
+  skip_empty_rows = TRUE,
+  trim_ws = TRUE,
+  skip = 0,
+  n_max = Inf,
+  guess_max = 100,
+  altrep = TRUE,
+  altrep_opts = deprecated(),
+  num_threads = vroom_threads(),
+  progress = vroom_progress(),
+  show_col_types = NULL,
+  .name_repair = "unique"
+) {
   verify_fwf_positions(col_positions)
 
   if (!is_missing(altrep_opts)) {
@@ -52,7 +57,10 @@ vroom_fwf <- function(file,
     locale$encoding <- "UTF-8"
   }
 
-  if (length(file) == 0 || (n_max == 0 & identical(col_positions$col_names, FALSE))) {
+  if (
+    length(file) == 0 ||
+      (n_max == 0 & identical(col_positions$col_names, FALSE))
+  ) {
     out <- tibble::tibble()
     class(out) <- c("spec_tbl_df", class(out))
     return(out)
@@ -72,15 +80,27 @@ vroom_fwf <- function(file,
 
   col_types <- as.col_spec(col_types)
 
-  out <- vroom_fwf_(file, as.integer(col_positions$begin), as.integer(col_positions$end),
-    trim_ws = trim_ws, col_names = col_positions$col_names,
-    col_types = col_types, col_select = col_select,
+  out <- vroom_fwf_(
+    file,
+    as.integer(col_positions$begin),
+    as.integer(col_positions$end),
+    trim_ws = trim_ws,
+    col_names = col_positions$col_names,
+    col_types = col_types,
+    col_select = col_select,
     name_repair = .name_repair,
-    id = id, na = na, guess_max = guess_max, skip = skip, comment = comment,
+    id = id,
+    na = na,
+    guess_max = guess_max,
+    skip = skip,
+    comment = comment,
     skip_empty_rows = skip_empty_rows,
-    n_max = n_max, num_threads = num_threads,
-    altrep = vroom_altrep(altrep), locale = locale,
-    progress = progress)
+    n_max = n_max,
+    num_threads = num_threads,
+    altrep = vroom_altrep(altrep),
+    locale = locale,
+    progress = progress
+  )
 
   out <- tibble::as_tibble(out, .name_repair = .name_repair)
 
@@ -100,8 +120,13 @@ vroom_fwf <- function(file,
 #' @export
 #' @param n Number of lines the tokenizer will read to determine file structure. By default
 #'      it is set to 100.
-fwf_empty <- function(file, skip = 0, col_names = NULL, comment = "", n = 100L) {
-
+fwf_empty <- function(
+  file,
+  skip = 0,
+  col_names = NULL,
+  comment = "",
+  n = 100L
+) {
   file <- standardise_one_path(standardise_path(file)[[1]])
 
   if (inherits(file, "connection")) {
@@ -135,7 +160,6 @@ fwf_widths <- function(widths, col_names = NULL) {
 #' @param start,end Starting and ending (inclusive) positions of each field.
 #'    Use NA as last end field when reading a ragged fwf file.
 fwf_positions <- function(start, end = NULL, col_names = NULL) {
-
   stopifnot(length(start) == length(end))
   col_names <- fwf_col_names(col_names, length(start))
 
@@ -164,8 +188,10 @@ fwf_cols <- function(...) {
   } else if (nrow(x) == 1) {
     fwf_widths(as.integer(x[1, ]), names(x))
   } else {
-    stop("All variables must have either one (width) two (start, end) values.",
-         call. = FALSE)
+    stop(
+      "All variables must have either one (width) two (start, end) values.",
+      call. = FALSE
+    )
   }
 }
 
@@ -180,6 +206,10 @@ verify_fwf_positions <- function(col_positions) {
   is_greater <- stats::na.omit(col_positions$begin > col_positions$end)
   if (any(is_greater)) {
     bad <- which(is_greater)
-    stop("`col_positions` must have begin less than end.\n* Invalid values at position(s): ", paste0(collapse = ", ", bad), call. = FALSE)
+    stop(
+      "`col_positions` must have begin less than end.\n* Invalid values at position(s): ",
+      paste0(collapse = ", ", bad),
+      call. = FALSE
+    )
   }
 }

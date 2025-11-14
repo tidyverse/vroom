@@ -44,3 +44,6 @@
 ^\.vscode$
 ^rchk.*$
 ^CRAN-SUBMISSION$
+^CLAUDE\.md$
+^\.claude$
+^[.]?air[.]toml$

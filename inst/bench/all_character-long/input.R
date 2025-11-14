@@ -17,11 +17,15 @@ filt_p <- 1000 / rows
 # The prob for the rest should just be evenly spaced
 rest_p <- rep((1 - filt_p) / (num_levels - 1), num_levels - 1)
 
-col_types <-  stats::setNames(
-  c(list(
-      col_factor(levels = levels, prob = c(filt_p, rest_p))),
+col_types <- stats::setNames(
+  c(
+    list(
+      col_factor(levels = levels, prob = c(filt_p, rest_p))
+    ),
     rep(list(col_character()), cols - 1)
-  ), make.names(seq_len(cols)))
+  ),
+  make.names(seq_len(cols))
+)
 
 data <- gen_tbl(rows, cols, col_types = col_types)
 

@@ -209,8 +209,7 @@ vroom <- function(
   progress = vroom_progress(),
   show_col_types = NULL,
   .name_repair = "unique"
-  ) {
-
+) {
   # vroom does not support newlines as the delimiter, just as the EOL, so just
   # assign a value that should never appear in CSV text as the delimiter,
   # 001, start of heading.
@@ -245,8 +244,9 @@ vroom <- function(
   # Workaround weird RStudio / Progress bug: https://github.com/r-lib/progress/issues/56#issuecomment-384232184
   if (
     isTRUE(progress) &&
-    is_windows() &&
-    identical(Sys.getenv("RSTUDIO"), "1")) {
+      is_windows() &&
+      identical(Sys.getenv("RSTUDIO"), "1")
+  ) {
     Sys.setenv("RSTUDIO" = "1")
   }
 
@@ -258,14 +258,29 @@ vroom <- function(
 
   na <- enc2utf8(na)
 
-  out <- vroom_(file, delim = delim %||% col_types$delim, col_names = col_names,
-    col_types = col_types, id = id, skip = skip, col_select = col_select,
+  out <- vroom_(
+    file,
+    delim = delim %||% col_types$delim,
+    col_names = col_names,
+    col_types = col_types,
+    id = id,
+    skip = skip,
+    col_select = col_select,
     name_repair = .name_repair,
-    na = na, quote = quote, trim_ws = trim_ws, escape_double = escape_double,
-    escape_backslash = escape_backslash, comment = comment,
-    skip_empty_rows = skip_empty_rows, locale = locale,
-    guess_max = guess_max, n_max = n_max, altrep = vroom_altrep(altrep),
-    num_threads = num_threads, progress = progress)
+    na = na,
+    quote = quote,
+    trim_ws = trim_ws,
+    escape_double = escape_double,
+    escape_backslash = escape_backslash,
+    comment = comment,
+    skip_empty_rows = skip_empty_rows,
+    locale = locale,
+    guess_max = guess_max,
+    n_max = n_max,
+    altrep = vroom_altrep(altrep),
+    num_threads = num_threads,
+    progress = progress
+  )
 
   # Drop any NULL columns
   is_null <- vapply(out, is.null, logical(1))
@@ -341,10 +356,16 @@ vroom_progress <- function() {
 }
 
 pb_file_format <- function(filename) {
-
   # Workaround RStudio bug https://github.com/rstudio/rstudio/issues/4777
-  withr::with_options(list(crayon.enabled = (!is_rstudio_console() || is_rstudio_version("1.2.1578")) && getOption("crayon.enabled", TRUE)),
-    glue::glue_col("{bold}indexing{reset} {blue}{basename(filename)}{reset} [:bar] {green}:rate{reset}, eta: {cyan}:eta{reset}")
+  withr::with_options(
+    list(
+      crayon.enabled = (!is_rstudio_console() ||
+        is_rstudio_version("1.2.1578")) &&
+        getOption("crayon.enabled", TRUE)
+    ),
+    glue::glue_col(
+      "{bold}indexing{reset} {blue}{basename(filename)}{reset} [:bar] {green}:rate{reset}, eta: {cyan}:eta{reset}"
+    )
   )
 }
 
@@ -354,14 +375,28 @@ pb_width <- function(format) {
 }
 
 pb_connection_format <- function(unused) {
-  withr::with_options(list(crayon.enabled = (!is_rstudio_console() || is_rstudio_version("1.2.1578")) && getOption("crayon.enabled", TRUE)),
-    glue::glue_col("{bold}indexed{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}")
+  withr::with_options(
+    list(
+      crayon.enabled = (!is_rstudio_console() ||
+        is_rstudio_version("1.2.1578")) &&
+        getOption("crayon.enabled", TRUE)
+    ),
+    glue::glue_col(
+      "{bold}indexed{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}"
+    )
   )
 }
 
 pb_write_format <- function(unused) {
-  withr::with_options(list(crayon.enabled = (!is_rstudio_console() || is_rstudio_version("1.2.1578")) && getOption("crayon.enabled", TRUE)),
-    glue::glue_col("{bold}wrote{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}")
+  withr::with_options(
+    list(
+      crayon.enabled = (!is_rstudio_console() ||
+        is_rstudio_version("1.2.1578")) &&
+        getOption("crayon.enabled", TRUE)
+    ),
+    glue::glue_col(
+      "{bold}wrote{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}"
+    )
   )
 }
 
@@ -379,15 +414,23 @@ guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";")) {
 
   counts <- lapply(splits, function(x) table(lengths(x)))
 
-  num_fields <- vapply(counts, function(x) as.integer(names(x)[[1]]), integer(1))
+  num_fields <- vapply(
+    counts,
+    function(x) as.integer(names(x)[[1]]),
+    integer(1)
+  )
 
   num_lines <- vapply(counts, function(x) (x)[[1]], integer(1))
 
   top_lines <- 0
   top_idx <- 0
   for (i in seq_along(delims)) {
-    if (num_fields[[i]] >= 2 && num_lines[[i]] > top_lines ||
-      (top_lines == num_lines[[i]] && (top_idx <= 0 || num_fields[[top_idx]] < num_fields[[i]]))) {
+    if (
+      num_fields[[i]] >= 2 &&
+        num_lines[[i]] > top_lines ||
+        (top_lines == num_lines[[i]] &&
+          (top_idx <= 0 || num_fields[[top_idx]] < num_fields[[i]]))
+    ) {
       top_lines <- num_lines[[i]]
       top_idx <- i
     }
@@ -406,7 +449,8 @@ cached <- new.env(parent = emptyenv())
 
 vroom_threads <- function() {
   res <- as.integer(
-    Sys.getenv("VROOM_THREADS",
+    Sys.getenv(
+      "VROOM_THREADS",
       cached$num_threads <- cached$num_threads %||% parallel::detectCores()
     )
   )
@@ -477,7 +521,6 @@ vroom_altrep <- function(which = NULL) {
     }
   }
 
-
   args <- list(
     getRversion() >= "3.5.0" && which$chr %||% vroom_use_altrep_chr(),
     getRversion() >= "3.5.0" && which$fct %||% vroom_use_altrep_fct(),
@@ -491,7 +534,7 @@ vroom_altrep <- function(which = NULL) {
     getRversion() >= "3.5.0" && which$big_int %||% vroom_use_altrep_big_int()
   )
 
-  out <-  0L
+  out <- 0L
   for (i in seq_along(args)) {
     out <- bitwOr(out, bitwShiftL(as.integer(args[[i]]), i - 1L))
   }
@@ -511,30 +554,39 @@ vroom_altrep_opts <- function(which = NULL) {
   vroom_altrep(which)
 }
 
-altrep_vals <- function() c(
-  "none" = 0L,
-  "chr" = 1L,
-  "fct" = 2L,
-  "int" = 4L,
-  "dbl" = 8L,
-  "num" = 16L,
-  "lgl" = 32L,
-  "dttm" = 64L,
-  "date" = 128L,
-  "time" = 256L,
-  "big_int" = 512L,
-  "skip" = 1024L
-)
+altrep_vals <- function() {
+  c(
+    "none" = 0L,
+    "chr" = 1L,
+    "fct" = 2L,
+    "int" = 4L,
+    "dbl" = 8L,
+    "num" = 16L,
+    "lgl" = 32L,
+    "dttm" = 64L,
+    "date" = 128L,
+    "time" = 256L,
+    "big_int" = 512L,
+    "skip" = 1024L
+  )
+}
 
 #' @export
 print.vroom_altrep <- function(x, ...) {
   vals <- altrep_vals()
   reps <- names(vals)[bitwAnd(vals, x) > 0]
 
-  cat("Using Altrep representations for:\n",
-    glue::glue("
+  cat(
+    "Using Altrep representations for:\n",
+    glue::glue(
+      "
         * {reps}
-       ", reps = glue::glue_collapse(reps, "\n * ")), "\n", sep = "")
+       ",
+      reps = glue::glue_collapse(reps, "\n * ")
+    ),
+    "\n",
+    sep = ""
+  )
 }
 
 vroom_use_altrep_chr <- function() {
@@ -543,37 +595,46 @@ vroom_use_altrep_chr <- function() {
 
 vroom_use_altrep_fct <- function() {
   # fct is a numeric internally
-  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_FCT", FALSE)
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) ||
+    env_to_logical("VROOM_USE_ALTREP_FCT", FALSE)
 }
 
 vroom_use_altrep_int <- function() {
-  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_INT", FALSE)
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) ||
+    env_to_logical("VROOM_USE_ALTREP_INT", FALSE)
 }
 
 vroom_use_altrep_big_int <- function() {
-  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_BIG_INT", FALSE)
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) ||
+    env_to_logical("VROOM_USE_ALTREP_BIG_INT", FALSE)
 }
 
 vroom_use_altrep_dbl <- function() {
-  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_DBL", FALSE)
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) ||
+    env_to_logical("VROOM_USE_ALTREP_DBL", FALSE)
 }
 
 vroom_use_altrep_num <- function() {
-  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_NUM", FALSE)
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) ||
+    env_to_logical("VROOM_USE_ALTREP_NUM", FALSE)
 }
 
 vroom_use_altrep_lgl <- function() {
-  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_LGL", FALSE)
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) ||
+    env_to_logical("VROOM_USE_ALTREP_LGL", FALSE)
 }
 
 vroom_use_altrep_dttm <- function() {
-  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_DTTM", FALSE)
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) ||
+    env_to_logical("VROOM_USE_ALTREP_DTTM", FALSE)
 }
 
 vroom_use_altrep_date <- function() {
-  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_DATE", FALSE)
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) ||
+    env_to_logical("VROOM_USE_ALTREP_DATE", FALSE)
 }
 
 vroom_use_altrep_time <- function() {
-  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) || env_to_logical("VROOM_USE_ALTREP_TIME", FALSE)
+  env_to_logical("VROOM_USE_ALTREP_NUMERICS", FALSE) ||
+    env_to_logical("VROOM_USE_ALTREP_TIME", FALSE)
 }

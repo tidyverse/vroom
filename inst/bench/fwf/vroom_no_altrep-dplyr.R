@@ -1,4 +1,7 @@
-({library(vroom); library(dplyr)})
+({
+  library(vroom)
+  library(dplyr)
+})
 x <- vroom_fwf(file, fields, col_types = types, altrep_opts = FALSE)
 print(x)
 a <- head(x)

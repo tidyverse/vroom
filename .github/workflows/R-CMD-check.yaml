@@ -8,9 +8,10 @@ on:
   push:
     branches: [main, master]
   pull_request:
-    branches: [main, master]
 
-name: R-CMD-check
+name: R-CMD-check.yaml
+
+permissions: read-all
 
 jobs:
   R-CMD-check:
@@ -25,19 +26,15 @@ jobs:
           - {os: macos-latest,   r: 'release'}
 
           - {os: windows-latest, r: 'release'}
-          # Use 3.6 to trigger usage of RTools35
-          - {os: windows-latest, r: '3.6'}
-          # use 4.1 to check with rtools40's older compiler
-          - {os: windows-latest, r: '4.1'}
-          # keep this until the format specifier dust is truly settled (#524)
-          - {os: windows-latest, r: 'devel'}
+          # use 4.0 or 4.1 to check with rtools40's older compiler
+          - {os: windows-latest, r: 'oldrel-4'}
 
-          - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
-          - {os: ubuntu-latest,   r: 'release'}
-          - {os: ubuntu-latest,   r: 'oldrel-1'}
-          - {os: ubuntu-latest,   r: 'oldrel-2'}
-          - {os: ubuntu-latest,   r: 'oldrel-3'}
-          - {os: ubuntu-latest,   r: 'oldrel-4'}
+          - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
+          - {os: ubuntu-latest,  r: 'release'}
+          - {os: ubuntu-latest,  r: 'oldrel-1'}
+          - {os: ubuntu-latest,  r: 'oldrel-2'}
+          - {os: ubuntu-latest,  r: 'oldrel-3'}
+          - {os: ubuntu-latest,  r: 'oldrel-4'}
           # Check with a non-UTF-8 encoding
           - {os: ubuntu-latest,   r: 'release', cran: "https://demo.rstudiopm.com/all/__linux__/jammy/latest", locale: 'en_US.ISO-8859-1'}
 
@@ -46,7 +43,7 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set locale
         if: matrix.config.locale == 'en_US.ISO-8859-1'
@@ -71,3 +68,4 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
+          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'

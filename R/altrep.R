@@ -16,7 +16,11 @@ vroom_str <- function(x) {
 
 #' @export
 vroom_str.data.frame <- function(x) {
-  classes <- glue::glue_collapse(glue::single_quote(class(x)), ", ", last = ", and ")
+  classes <- glue::glue_collapse(
+    glue::single_quote(class(x)),
+    ", ",
+    last = ", and "
+  )
   rows <- nrow(x)
   cols <- ncol(x)
 

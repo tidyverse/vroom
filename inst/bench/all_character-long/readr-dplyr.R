@@ -1,4 +1,7 @@
-({ library(readr); library(dplyr) })
+({
+  library(readr)
+  library(dplyr)
+})
 x <- read_tsv(file, trim_ws = FALSE, quote = "", na = character())
 print(x)
 a <- head(x)

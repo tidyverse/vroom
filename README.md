@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# 🏎💨vroom <a href='https:/vroom.r-lib.org'><img src='man/figures/logo.png' align="right" height="135" /></a>
+# 🏎💨vroom <a href='https://vroom.r-lib.org'><img src='man/figures/logo.png' align="right" height="135" /></a>
 
 <!-- badges: start -->
 
@@ -12,6 +12,8 @@ coverage](https://codecov.io/gh/tidyverse/vroom/branch/main/graph/badge.svg)](ht
 status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/package=vroom)
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![Codecov test
+coverage](https://codecov.io/gh/tidyverse/vroom/graph/badge.svg)](https://app.codecov.io/gh/tidyverse/vroom)
 <!-- badges: end -->
 
 The fastest delimited reader for R, **1.23 GB/sec**.

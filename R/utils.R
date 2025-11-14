@@ -1,4 +1,4 @@
-env_to_logical <- function (var, default = TRUE) {
+env_to_logical <- function(var, default = TRUE) {
   res <- Sys.getenv(var, default)
   if (res %in% c("1", "yes", "true")) {
     TRUE
@@ -31,7 +31,7 @@ collapse_transformer <- function(regex = "[*]$", ...) {
   }
 }
 
-is_named <- function (x) {
+is_named <- function(x) {
   nms <- names(x)
   if (is.null(nms)) {
     return(FALSE)
@@ -47,7 +47,7 @@ is_syntactic <- function(x) make.names(x) == x
 
 # Conditionally exported in zzz.R
 # @export
-compare.spec_tbl_df <- function (x, y, ...) {
+compare.spec_tbl_df <- function(x, y, ...) {
   attr(x, "spec") <- NULL
   attr(x, "problems") <- NULL
   attr(y, "spec") <- NULL
@@ -119,6 +119,13 @@ is_rstudio_version <- function(min, max = .Machine$integer.max) {
 setOldClass(c("spec_tbl_df", "tbl_df", "tbl", "data.frame"))
 
 utctime <- function(year, month, day, hour, min, sec, psec) {
-  utctime_(as.integer(year), as.integer(month), as.integer(day),
-    as.integer(hour), as.integer(min), as.integer(sec), as.numeric(psec))
+  utctime_(
+    as.integer(year),
+    as.integer(month),
+    as.integer(day),
+    as.integer(hour),
+    as.integer(min),
+    as.integer(sec),
+    as.numeric(psec)
+  )
 }

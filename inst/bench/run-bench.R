@@ -7,7 +7,10 @@ out_file <- args[[2]]
 file <- args[-c(1:2)]
 
 cat(source_file, "\n")
-out <- bench::workout_expressions(as.list(parse(source_file, keep.source = FALSE)))
+out <- bench::workout_expressions(as.list(parse(
+  source_file,
+  keep.source = FALSE
+)))
 
 x <- vroom::vroom(file, col_types = list())
 

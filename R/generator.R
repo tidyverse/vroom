@@ -27,8 +27,13 @@
 #' gen_date(4)
 #' gen_datetime(4)
 #' @export
-gen_character <- function(n, min = 5, max = 25, values = c(letters, LETTERS, 0:9), ...) {
-
+gen_character <- function(
+  n,
+  min = 5,
+  max = 25,
+  values = c(letters, LETTERS, 0:9),
+  ...
+) {
   if (min > max) {
     max <- min
   }
@@ -37,7 +42,14 @@ gen_character <- function(n, min = 5, max = 25, values = c(letters, LETTERS, 0:9
   # multiply int max by 2. Possibly an off by one error here though...
   seeds <- sample.int(2 * .Machine$integer.max, 2)
 
-  gen_character_(n, min, max, paste(values, collapse = ""), seeds[[1]], seeds[[2]])
+  gen_character_(
+    n,
+    min,
+    max,
+    paste(values, collapse = ""),
+    seeds[[1]],
+    seeds[[2]]
+  )
 }
 
 #' @rdname generators
@@ -52,7 +64,13 @@ gen_number <- gen_double
 
 #' @rdname generators
 #' @export
-gen_integer <- function(n, min = 1L, max = .Machine$integer.max, prob = NULL, ...) {
+gen_integer <- function(
+  n,
+  min = 1L,
+  max = .Machine$integer.max,
+  prob = NULL,
+  ...
+) {
   max <- max - min + 1L
   sample.int(max, size = n, replace = TRUE, prob = prob) + min - 1L
 }
@@ -62,7 +80,13 @@ gen_integer <- function(n, min = 1L, max = .Machine$integer.max, prob = NULL, ..
 #' @param ordered Should the factors be ordered factors?
 #' @param levels The explicit levels to use, if `NULL` random levels are generated using [gen_name()].
 #' @export
-gen_factor <- function(n, levels = NULL, ordered = FALSE, num_levels = gen_integer(1L, 1L, 25L), ...) {
+gen_factor <- function(
+  n,
+  levels = NULL,
+  ordered = FALSE,
+  num_levels = gen_integer(1L, 1L, 25L),
+  ...
+) {
   if (is.null(levels)) {
     levels <- gen_name(num_levels)
   }
@@ -81,7 +105,13 @@ gen_factor <- function(n, levels = NULL, ordered = FALSE, num_levels = gen_integ
 #' @rdname generators
 #' @param fractional Whether to generate times with fractional seconds
 #' @export
-gen_time <- function(n, min = 0, max = hms::hms(days = 1), fractional = FALSE, ...) {
+gen_time <- function(
+  n,
+  min = 0,
+  max = hms::hms(days = 1),
+  fractional = FALSE,
+  ...
+) {
   res <- hms::hms(seconds = stats::runif(n, min = min, max = max))
   if (!fractional) {
     res <- hms::as_hms(floor(res))
@@ -91,15 +121,30 @@ gen_time <- function(n, min = 0, max = hms::hms(days = 1), fractional = FALSE, .
 
 #' @rdname generators
 #' @export
-gen_date <- function(n, min = as.Date("2001-01-01"), max = as.Date("2021-01-01"), ...) {
+gen_date <- function(
+  n,
+  min = as.Date("2001-01-01"),
+  max = as.Date("2021-01-01"),
+  ...
+) {
   structure(as.numeric(gen_integer(n, min = min, max = max)), class = "Date")
 }
 
 #' @rdname generators
 #' @param tz The timezone to use for dates
 #' @export
-gen_datetime <- function(n, min = as.POSIXct("2001-01-01"), max = as.POSIXct("2021-01-01"), tz = "UTC", ...) {
-  structure(stats::runif(n, min = min, max = max), class = c("POSIXct", "POSIXt"), tzone = tz)
+gen_datetime <- function(
+  n,
+  min = as.POSIXct("2001-01-01"),
+  max = as.POSIXct("2021-01-01"),
+  tz = "UTC",
+  ...
+) {
+  structure(
+    stats::runif(n, min = min, max = max),
+    class = c("POSIXct", "POSIXt"),
+    tzone = tz
+  )
 }
 
 #' @rdname generators
@@ -109,15 +154,15 @@ gen_logical <- function(n, ...) {
 }
 
 all_col_types <- tibble::tribble(
-  ~ type, ~ class,
-  "character", "character",
-  "factor", "character",
-  "double", "numeric",
-  "integer", "numeric",
-  "number", "numeric",
-  "date", "temporal",
-  "datetime", "temporal",
-  "time", "temporal",
+  ~type       , ~class      ,
+  "character" , "character" ,
+  "factor"    , "character" ,
+  "double"    , "numeric"   ,
+  "integer"   , "numeric"   ,
+  "number"    , "numeric"   ,
+  "date"      , "temporal"  ,
+  "datetime"  , "temporal"  ,
+  "time"      , "temporal"  ,
 )
 
 #' Generate a random tibble
@@ -148,8 +193,13 @@ all_col_types <- tibble::tribble(
 #' dbl_tbl2 <- gen_tbl(25, 4, col_types = types)
 #' dbl_tbl2
 #' @export
-gen_tbl <- function(rows, cols = NULL, col_types = NULL, locale = default_locale(), missing = 0) {
-
+gen_tbl <- function(
+  rows,
+  cols = NULL,
+  col_types = NULL,
+  locale = default_locale(),
+  missing = 0
+) {
   if (is.null(cols) && is.null(col_types)) {
     stop("One of `cols` or `col_types` must be set", call. = FALSE)
   }
@@ -162,7 +212,13 @@ gen_tbl <- function(rows, cols = NULL, col_types = NULL, locale = default_locale
 
   nms <- make_names(names(spec$cols), cols)
 
-  specs <- col_types_standardise(spec, length(nms), nms, vroom_enquo(quo(NULL)), "unique")
+  specs <- col_types_standardise(
+    spec,
+    length(nms),
+    nms,
+    vroom_enquo(quo(NULL)),
+    "unique"
+  )
   res <- vector("list", cols)
   for (i in seq_len(cols)) {
     type <- sub("collector_", "", class(specs$cols[[i]])[[1]])
@@ -176,7 +232,12 @@ gen_tbl <- function(rows, cols = NULL, col_types = NULL, locale = default_locale
 
   if (missing > 0) {
     res[] <- lapply(res, function(x) {
-      x[sample(c(TRUE, FALSE), size = rows, prob = c(missing, 1 - missing), replace = TRUE)] <- NA
+      x[sample(
+        c(TRUE, FALSE),
+        size = rows,
+        prob = c(missing, 1 - missing),
+        replace = TRUE
+      )] <- NA
       x
     })
   }
@@ -189,12 +250,19 @@ gen_tbl <- function(rows, cols = NULL, col_types = NULL, locale = default_locale
 #' @rdname generators
 #' @export
 gen_name <- local({
-
   # This will run during build / installation, but that is OK
-  adjectives <- readLines(system.file("words", "adjectives.txt", package = "vroom"))
+  adjectives <- readLines(system.file(
+    "words",
+    "adjectives.txt",
+    package = "vroom"
+  ))
   animals <- readLines(system.file("words", "animals.txt", package = "vroom"))
 
   function(n) {
-    paste0(sample(adjectives, n, replace = TRUE), "_", sample(animals, n, replace = TRUE))
+    paste0(
+      sample(adjectives, n, replace = TRUE),
+      "_",
+      sample(animals, n, replace = TRUE)
+    )
   }
 })

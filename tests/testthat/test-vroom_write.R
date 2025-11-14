@@ -26,19 +26,37 @@ test_that("empty rows print the headers", {
 test_that("strings are only quoted if needed", {
   x <- c("a", ',')
 
-  csv <- vroom_format(data.frame(x), delim = ",",col_names = FALSE)
+  csv <- vroom_format(data.frame(x), delim = ",", col_names = FALSE)
   expect_equal(csv, 'a\n\",\"\n')
-  ssv <- vroom_format(data.frame(x), delim = " ",col_names = FALSE)
+  ssv <- vroom_format(data.frame(x), delim = " ", col_names = FALSE)
   expect_equal(ssv, 'a\n,\n')
 })
 
 test_that("read_delim/csv/tsv and write_delim round trip special chars", {
-  x <- stats::setNames(list("a", '"', ",", "\n","at\t"), paste0("V", seq_len(5)))
+  x <- stats::setNames(
+    list("a", '"', ",", "\n", "at\t"),
+    paste0("V", seq_len(5))
+  )
 
   output <- tibble::as_tibble(x)
-  output_space <- vroom(I(vroom_format(output, delim = " ")), trim_ws = FALSE, progress = FALSE, col_types = list())
-  output_csv <- vroom(I(vroom_format(output, delim = ",")), trim_ws = FALSE, progress = FALSE, col_types = list())
-  output_tsv <- vroom(I(vroom_format(output, delim = "\t")), trim_ws = FALSE, progress = FALSE, col_types = list())
+  output_space <- vroom(
+    I(vroom_format(output, delim = " ")),
+    trim_ws = FALSE,
+    progress = FALSE,
+    col_types = list()
+  )
+  output_csv <- vroom(
+    I(vroom_format(output, delim = ",")),
+    trim_ws = FALSE,
+    progress = FALSE,
+    col_types = list()
+  )
+  output_tsv <- vroom(
+    I(vroom_format(output, delim = "\t")),
+    trim_ws = FALSE,
+    progress = FALSE,
+    col_types = list()
+  )
   expect_equal(output_space, output)
   expect_equal(output_csv, output)
   expect_equal(output_tsv, output)
@@ -61,7 +79,11 @@ test_that("logical values give long names", {
 
 test_that("roundtrip preserved floating point numbers", {
   input <- data.frame(x = runif(100))
-  output <- vroom(I(vroom_format(input, delim = " ")), delim = " ", col_types = list())
+  output <- vroom(
+    I(vroom_format(input, delim = " ")),
+    delim = " ",
+    col_types = list()
+  )
 
   expect_equal(input$x, output$x)
 })
@@ -72,15 +94,21 @@ test_that("roundtrip preserves dates and datetimes", {
   attr(y, "tzone") <- "UTC"
 
   input <- data.frame(x, y)
-  output <- vroom(I(vroom_format(input, delim = " ")), delim = " ", col_types = list())
+  output <- vroom(
+    I(vroom_format(input, delim = " ")),
+    delim = " ",
+    col_types = list()
+  )
 
   expect_equal(output$x, x)
   expect_equal(output$y, y)
 })
 
 test_that("fails to create file in non-existent directory", {
-  expect_error(vroom_write(mtcars, file.path(tempdir(), "/x/y"), "\t"),
-    "Cannot open file for writing")
+  expect_error(
+    vroom_write(mtcars, file.path(tempdir(), "/x/y"), "\t"),
+    "Cannot open file for writing"
+  )
 })
 
 test_that("includes a byte order mark if desired", {
@@ -127,7 +155,6 @@ test_that("write_csv can write to compressed files", {
   vroom_write(mt, filename)
 
   is_bz2_file <- function(x) {
-
     # Magic number for bz2 is "BZh" in ASCII
     # https://en.wikipedia.org/wiki/Bzip2#File_format
     identical(charToRaw("BZh"), readBin(x, n = 3, what = "raw"))
@@ -145,23 +172,26 @@ test_that("write_csv writes large integers without scientific notation #671", {
 
 test_that("write_csv writes large integers without scientific notation up to 1E15 #671", {
   x <- data.frame(a = c(1E13, 1E14, 1E15, 1E16))
-  expect_equal(vroom_format(x), "a\n10000000000000\n100000000000000\n1e15\n1e16\n")
+  expect_equal(
+    vroom_format(x),
+    "a\n10000000000000\n100000000000000\n1e15\n1e16\n"
+  )
 })
 
 #test_that("write_csv2 and format_csv2 writes ; sep and , decimal mark", {
-  #df <- tibble::tibble(x = c(0.5, 2, 1.2), y = c("a", "b", "c"))
-  #expect_equal(format_csv2(df), "x;y\n0,5;a\n2,0;b\n1,2;c\n")
+#df <- tibble::tibble(x = c(0.5, 2, 1.2), y = c("a", "b", "c"))
+#expect_equal(format_csv2(df), "x;y\n0,5;a\n2,0;b\n1,2;c\n")
 
-  #filename <- tempfile(pattern = "readr", fileext = ".csv")
-  #on.exit(unlink(filename))
-  #write_csv2(df, filename)
+#filename <- tempfile(pattern = "readr", fileext = ".csv")
+#on.exit(unlink(filename))
+#write_csv2(df, filename)
 
-  #expect_equivalent(df, suppressMessages(read_csv2(filename)))
+#expect_equivalent(df, suppressMessages(read_csv2(filename)))
 #})
 
 #test_that("write_csv2 and format_csv2 writes NA appropriately", {
-  #df <- tibble::tibble(x = c(0.5, NA, 1.2), y = c("a", "b", NA))
-  #expect_equal(format_csv2(df), "x;y\n0,5;a\nNA;b\n1,2;NA\n")
+#df <- tibble::tibble(x = c(0.5, NA, 1.2), y = c("a", "b", NA))
+#expect_equal(format_csv2(df), "x;y\n0,5;a\nNA;b\n1,2;NA\n")
 #})
 
 test_that("Can change the escape behavior for quotes", {
@@ -170,9 +200,18 @@ test_that("Can change the escape behavior for quotes", {
   expect_error(vroom_format(df, "\t", escape = "invalid"), "should be one of")
 
   expect_equal(vroom_format(df, "\t"), 'x\na\n""""\n,\n"\n"\n')
-  expect_equal(vroom_format(df, "\t", escape = "double"), "x\na\n\"\"\"\"\n,\n\"\n\"\n")
-  expect_equal(vroom_format(df, "\t", escape = "backslash"), "x\na\n\"\\\"\"\n,\n\"\n\"\n")
-  expect_equal(vroom_format(df, "\t", escape = "none"), "x\na\n\"\"\"\n,\n\"\n\"\n")
+  expect_equal(
+    vroom_format(df, "\t", escape = "double"),
+    "x\na\n\"\"\"\"\n,\n\"\n\"\n"
+  )
+  expect_equal(
+    vroom_format(df, "\t", escape = "backslash"),
+    "x\na\n\"\\\"\"\n,\n\"\n\"\n"
+  )
+  expect_equal(
+    vroom_format(df, "\t", escape = "none"),
+    "x\na\n\"\"\"\n,\n\"\n\"\n"
+  )
 })
 
 test_that("hms NAs are written without padding (#930)", {
@@ -186,7 +225,8 @@ test_that("vroom_write equals the same thing as vroom_format", {
   on.exit(unlink(tf))
 
   # Temporarily run with 2 lines per buffer, to test the multithreading
-  withr::with_envvar(c("VROOM_WRITE_BUFFER_LINES" = "2"),
+  withr::with_envvar(
+    c("VROOM_WRITE_BUFFER_LINES" = "2"),
     vroom_write(df, tf, "\t")
   )
 
@@ -266,11 +306,13 @@ test_that("vroom_write() always outputs in UTF-8", {
   vroom_write(data, f, delim = ",")
 
   expected_data <- charToRaw(
-    paste0(collapse = "\n",
+    paste0(
+      collapse = "\n",
       c(
         enc2utf8(names(data)),
         enc2utf8(data[[1]]),
-        "")
+        ""
+      )
     )
   )
 
