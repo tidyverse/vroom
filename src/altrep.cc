@@ -16,7 +16,7 @@
 
 [[cpp11::register]] void force_materialization(SEXP x) {
 #ifdef HAS_ALTREP
-  DATAPTR(x);
+  DATAPTR_RW(x);
 #endif
 }
 
@@ -44,7 +44,7 @@ bool vroom_altrep(SEXP x) {
     SEXP elt = VECTOR_ELT(x, col);
     // First materialize all of the non-character vectors
     if (vroom_altrep(elt)) {
-      DATAPTR(elt);
+      DATAPTR_RW(elt);
     }
   }
 
@@ -108,7 +108,7 @@ bool vroom_altrep(SEXP x) {
       case STRSXP: {
         SET_VECTOR_ELT(out, col, Rf_allocVector(STRSXP, nrow));
         SEXP out_elt = VECTOR_ELT(out, col);
-        DATAPTR(elt);
+        DATAPTR_RW(elt);
         for (R_xlen_t row = 0; row < nrow; ++row) {
           SET_STRING_ELT(out_elt, row, STRING_ELT(elt, row));
         }
