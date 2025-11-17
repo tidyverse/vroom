@@ -27,14 +27,14 @@ jobs:
 
           - {os: windows-latest, r: 'release'}
           # use 4.0 or 4.1 to check with rtools40's older compiler
-          - {os: windows-latest, r: 'oldrel-4', no-vignettes: true}
+          - {os: windows-latest, r: 'oldrel-4'}
 
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,  r: 'release'}
           - {os: ubuntu-latest,  r: 'oldrel-1'}
           - {os: ubuntu-latest,  r: 'oldrel-2'}
           - {os: ubuntu-latest,  r: 'oldrel-3'}
-          - {os: ubuntu-latest,  r: 'oldrel-4', no-vignettes: true}
+          - {os: ubuntu-latest,  r: 'oldrel-4'}
           # Check with a non-UTF-8 encoding
           - {os: ubuntu-latest,   r: 'release', cran: "https://demo.rstudiopm.com/all/__linux__/jammy/latest", locale: 'en_US.ISO-8859-1'}
 
@@ -62,11 +62,10 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck, ggplot2@4.0.1
+          extra-packages: any::rcmdcheck
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
-          build_args: ${{ matrix.config.no-vignettes && 'c("--no-manual", "--no-build-vignettes")' || 'c("--no-manual","--compact-vignettes=gs+qpdf")' }}
-          args: ${{ matrix.config.no-vignettes && 'c("--ignore-vignettes")' || 'NULL' }}
+          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
