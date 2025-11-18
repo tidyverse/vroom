@@ -210,7 +210,7 @@ public:
   }
 
   static void* Dataptr(SEXP vec, Rboolean) {
-    return REAL(Materialize(vec));
+    return DATAPTR_RW(Materialize(vec));
   }
 
   // -------- initialize the altrep class with the methods above
