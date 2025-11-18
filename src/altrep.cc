@@ -16,7 +16,26 @@
 
 [[cpp11::register]] void force_materialization(SEXP x) {
 #ifdef HAS_ALTREP
-  DATAPTR_RW(x);
+  // Note: vroom_lgl has no ALTREP implementation, so not included
+  if (R_altrep_inherits(x, vroom_chr::class_t)) {
+    vroom_chr::Materialize(x);
+  } else if (R_altrep_inherits(x, vroom_date::class_t)) {
+    vroom_date::Materialize(x);
+  } else if (R_altrep_inherits(x, vroom_dbl::class_t)) {
+    vroom_dbl::Materialize(x);
+  } else if (R_altrep_inherits(x, vroom_dttm::class_t)) {
+    vroom_dttm::Materialize(x);
+  } else if (R_altrep_inherits(x, vroom_fct::class_t)) {
+    vroom_fct::Materialize(x);
+  } else if (R_altrep_inherits(x, vroom_int::class_t)) {
+    vroom_int::Materialize(x);
+  } else if (R_altrep_inherits(x, vroom_num::class_t)) {
+    vroom_num::Materialize(x);
+  } else if (R_altrep_inherits(x, vroom_time::class_t)) {
+    vroom_time::Materialize(x);
+  } else if (R_altrep_inherits(x, vroom_big_int::class_t)) {
+    vroom_big_int::Materialize(x);
+  }
 #endif
 }
 
@@ -40,15 +59,13 @@ bool vroom_altrep(SEXP x) {
 [[cpp11::register]] SEXP vroom_materialize(SEXP x, bool replace) {
 #ifdef HAS_ALTREP
   for (R_xlen_t col = 0; col < Rf_xlength(x); ++col) {
-
     SEXP elt = VECTOR_ELT(x, col);
-    // First materialize all of the non-character vectors
     if (vroom_altrep(elt)) {
-      DATAPTR_RW(elt);
+      force_materialization(elt);
     }
   }
 
-  // If replace replace the altrep vectors with their materialized
+  // If replace, replace the altrep vectors with their materialized
   // vectors
   if (replace) {
     for (R_xlen_t col = 0; col < Rf_xlength(x); ++col) {
@@ -108,7 +125,7 @@ bool vroom_altrep(SEXP x) {
       case STRSXP: {
         SET_VECTOR_ELT(out, col, Rf_allocVector(STRSXP, nrow));
         SEXP out_elt = VECTOR_ELT(out, col);
-        DATAPTR_RW(elt);
+        force_materialization(elt);
         for (R_xlen_t row = 0; row < nrow; ++row) {
           SET_STRING_ELT(out_elt, row, STRING_ELT(elt, row));
         }
