@@ -98,7 +98,7 @@ bool vroom_altrep(SEXP x) {
       case LGLSXP: {
         SET_VECTOR_ELT(out, col, Rf_allocVector(LGLSXP, nrow));
         int* out_p = LOGICAL(VECTOR_ELT(out, col));
-        int* in_p = LOGICAL(elt);
+        const int* in_p = LOGICAL_RO(elt);
         for (R_xlen_t row = 0; row < nrow; ++row) {
           out_p[row] = in_p[row];
         }
@@ -107,7 +107,7 @@ bool vroom_altrep(SEXP x) {
       case INTSXP: {
         SET_VECTOR_ELT(out, col, Rf_allocVector(INTSXP, nrow));
         int* out_p = INTEGER(VECTOR_ELT(out, col));
-        int* in_p = INTEGER(elt);
+        const int* in_p = INTEGER_RO(elt);
         for (R_xlen_t row = 0; row < nrow; ++row) {
           out_p[row] = in_p[row];
         }
@@ -116,7 +116,7 @@ bool vroom_altrep(SEXP x) {
       case REALSXP: {
         SET_VECTOR_ELT(out, col, Rf_allocVector(REALSXP, nrow));
         double* out_p = REAL(VECTOR_ELT(out, col));
-        double* in_p = REAL(elt);
+        const double* in_p = REAL_RO(elt);
         for (R_xlen_t row = 0; row < nrow; ++row) {
           out_p[row] = in_p[row];
         }
@@ -125,9 +125,9 @@ bool vroom_altrep(SEXP x) {
       case STRSXP: {
         SET_VECTOR_ELT(out, col, Rf_allocVector(STRSXP, nrow));
         SEXP out_elt = VECTOR_ELT(out, col);
-        force_materialization(elt);
+        const SEXP* in_p = STRING_PTR_RO(elt);
         for (R_xlen_t row = 0; row < nrow; ++row) {
-          SET_STRING_ELT(out_elt, row, STRING_ELT(elt, row));
+          SET_STRING_ELT(out_elt, row, in_p[row]);
         }
         break;
       }
