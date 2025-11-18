@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* vroom no longer uses `STDVEC_DATAPTR()` and takes the recommended approach for phasing out usage of `DATAPTR()` (#561).
+
 # vroom 1.6.6
 
 * Fixed a bad URL in the README at CRAN's request.
