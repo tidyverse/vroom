@@ -130,12 +130,29 @@ check_tz <- function(x) {
     stop("Unknown TZ ", x, call. = FALSE)
   }
 }
+
+# see https://github.com/tidyverse/readr/pull/1537 for why this more relaxed
+# than you might expect (and than it used to be)
 check_encoding <- function(x) {
   stopifnot(is.character(x), length(x) == 1)
 
-  if (tolower(x) %in% tolower(iconvlist())) {
+  # portable encoding names
+  if (x %in% c("latin1", "UTF-8")) {
     return(TRUE)
   }
 
-  stop("Unknown encoding ", x, call. = FALSE)
+  # 'iconvlist' could be incomplete (musl) or even unavailable
+  known <- tryCatch(iconvlist(), error = identity)
+  if (inherits(known, "error")) {
+    warning("Could not check `encoding` against `iconvlist()`.", call. = FALSE)
+  } else if (tolower(x) %in% tolower(known)) {
+    TRUE
+  } else {
+    warning(
+      "Unknown encoding ",
+      encodeString(x, quote = '"'),
+      ".",
+      call. = FALSE
+    )
+  }
 }

@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `locale(encoding =)` now warns, instead of errors, when the encoding cannot be found in `iconvlist()` return value. This removes an unnecessary blocker on platforms like Alpine Linux where the output doesn't reflect actual capabilities.
+
 * vroom no longer uses `STDVEC_DATAPTR()` and takes the recommended approach for phasing out usage of `DATAPTR()` (#561).
 
 # vroom 1.6.6
