@@ -1307,3 +1307,50 @@ test_that("vroom can read a datetime column with no data and skip 1", {
     equals = tibble::tibble(dt = as.POSIXct(character()))
   )
 })
+
+# https://github.com/tidyverse/vroom/issues/554
+# https://github.com/tidyverse/vroom/issues/534
+test_that("vroom(col_select =) output has 'spec_tbl_df' class, spec, and problems when readr is attached", {
+  # Register readr's [.spec_tbl_df method which drops attributes and the "spec_tbl_df" class
+  readr_single_bracket <- function(x, ...) {
+    attr(x, "spec") <- NULL
+    attr(x, "problems") <- NULL
+    class(x) <- setdiff(class(x), "spec_tbl_df")
+    NextMethod(`[`)
+  }
+  registerS3method("[", "spec_tbl_df", readr_single_bracket)
+
+  # Clean up: replace with inert pass-through method when test completes
+  # Unfortunately you can't just de-register the method and
+  # local_mocked_s3_method() only works if method exists to begin with
+  withr::defer({
+    registerS3method("[", "spec_tbl_df", function(x, ...) NextMethod(`[`))
+  })
+
+  expect_warning(
+    dat <- vroom(
+      I("a,b\n1,2\nz,3\n4,5"),
+      col_types = "dc",
+      col_select = c(a, b),
+      show_col_types = FALSE,
+      altrep = FALSE
+    ),
+    class = "vroom_parse_issue"
+  )
+
+  expect_s3_class(dat, "spec_tbl_df")
+  expect_equal(
+    attr(dat, "spec", exact = TRUE),
+    cols(
+      a = col_double(),
+      b = col_character(),
+      .delim = ","
+    )
+  )
+  expect_no_error(probs <- problems(dat))
+  if (exists("probs")) {
+    expect_equal(nrow(probs), 1)
+    expect_equal(probs$row, 3)
+    expect_equal(probs$col, 1)
+  }
+})
