@@ -296,9 +296,9 @@ vroom <- function(
   }
 
   out <- tibble::as_tibble(out, .name_repair = identity)
-  class(out) <- c("spec_tbl_df", class(out))
 
   out <- vroom_select(out, col_select, id)
+  class(out) <- c("spec_tbl_df", class(out))
 
   if (should_show_col_types(has_col_types, show_col_types)) {
     show_col_types(out, locale)
