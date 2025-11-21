@@ -374,12 +374,7 @@ vroom_enquo <- function(x) {
 }
 
 vroom_select <- function(x, col_select, id) {
-  spec <- attr(x, "spec")
-
-  # Drop any NULL columns
-  is_null <- vapply(x, is.null, logical(1))
-  x[is_null] <- NULL
-  # reorder and rename columns
+  # column reordering and renaming
   if (inherits(col_select, "quosures") || !quo_is_null(col_select)) {
     if (inherits(col_select, "quosures")) {
       vars <- tidyselect::vars_select(c(names(spec(x)$cols), id), !!!col_select)
@@ -395,7 +390,6 @@ vroom_select <- function(x, col_select, id) {
     x <- x[vars]
     names(x) <- names(vars)
   }
-  attr(x, "spec") <- spec
   x
 }
 
