@@ -282,10 +282,6 @@ vroom <- function(
     progress = progress
   )
 
-  # Drop any NULL columns
-  is_null <- vapply(out, is.null, logical(1))
-  out[is_null] <- NULL
-
   # If no rows expand columns to be the same length and names as the spec
   if (NROW(out) == 0) {
     cols <- attr(out, "spec")[["cols"]]
