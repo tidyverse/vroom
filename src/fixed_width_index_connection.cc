@@ -26,6 +26,7 @@ fixed_width_index_connection::fixed_width_index_connection(
     const char* comment,
     const bool skip_empty_rows,
     const size_t n_max,
+    std::shared_ptr<vroom_errors> errors,
     const bool progress,
     const size_t chunk_size) {
 
@@ -56,6 +57,8 @@ fixed_width_index_connection::fixed_width_index_connection(
   size_t sz = R_ReadConnection(con, buf[i].data(), chunk_size - 1);
   buf[i][sz] = '\0';
 
+  size_t skip_counter = 0;
+
   // Parse header
   size_t start = find_first_line(
       buf[i],
@@ -63,7 +66,12 @@ fixed_width_index_connection::fixed_width_index_connection(
       comment,
       skip_empty_rows,
       /* embedded_nl */ false,
-      /* quote */ '\0');
+      /* quote */ '\0',
+      skip_counter);
+  
+  if (skip_counter) {
+    errors->add_skips_at_start(skip_counter, filename_);
+  }
 
   // Check for windows newlines
   size_t first_nl;

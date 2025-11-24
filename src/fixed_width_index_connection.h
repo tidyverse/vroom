@@ -17,6 +17,7 @@ public:
       const char* comment,
       const bool skip_empty_rows,
       const size_t n_max,
+      std::shared_ptr<vroom_errors> errors,
       const bool progress,
       const size_t chunk_size);
 

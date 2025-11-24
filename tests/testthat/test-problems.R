@@ -9,7 +9,8 @@ test_that("problems with data parsing works for single files", {
   )
   probs <- problems(x)
 
-  expect_equal(probs$row, 3)
+  expect_equal(probs$line, 3)
+  expect_equal(probs$row, 2)
   expect_equal(probs$col, 2)
   expect_equal(probs$expected, "a double")
   expect_equal(probs$actual, "1.x")
@@ -29,7 +30,8 @@ test_that("problems works for multiple files", {
   )
   probs <- problems(x)
 
-  expect_equal(probs$row, c(3, 2))
+  expect_equal(probs$line, c(3, 2))
+  expect_equal(probs$row, c(2, 1))
   expect_equal(probs$col, c(2, 1))
   expect_equal(probs$expected, c("a double", "a double"))
   expect_equal(probs$actual, c("1.x", "3.x"))
@@ -46,7 +48,8 @@ test_that("problems with number of columns works for single files", {
     )),
     class = "vroom_parse_issue"
   )
-  expect_equal(probs3$row, 2)
+  expect_equal(probs3$line, 2)
+  expect_equal(probs3$row, 1)
   expect_equal(probs3$col, 2)
   expect_equal(probs3$expected, "3 columns")
   expect_equal(probs3$actual, "2 columns")
@@ -60,6 +63,7 @@ test_that("problems with number of columns works for single files", {
     )),
     class = "vroom_parse_issue"
   )
+  expect_equal(probs3$line[[4]], 2)
   expect_equal(probs3$row[[4]], 2)
   expect_equal(probs3$col[[4]], 2)
   expect_equal(probs3$expected[[4]], "3 columns")
@@ -74,7 +78,8 @@ test_that("problems with number of columns works for single files", {
     )),
     class = "vroom_parse_issue"
   )
-  expect_equal(probs4$row[[2]], 2)
+  expect_equal(probs4$line[[2]], 2)
+  expect_equal(probs4$row[[2]], 1)
   expect_equal(probs4$col[[2]], 4)
   expect_equal(probs4$expected[[2]], "2 columns")
   expect_equal(probs4$actual[[2]], "4 columns")
@@ -88,6 +93,7 @@ test_that("problems with number of columns works for single files", {
     )),
     class = "vroom_parse_issue"
   )
+  expect_equal(probs2$line[[4]], 2)
   expect_equal(probs2$row[[4]], 2)
   expect_equal(probs2$col[[4]], 4)
   expect_equal(probs2$expected[[4]], "2 columns")
@@ -158,23 +164,26 @@ test_that("problems that are generated more than once are not duplicated", {
   res[[1]][[6]]
 
   probs <- problems(res)
-  expect_equal(probs$row, 7)
+  expect_equal(probs$line, 7)
+  expect_equal(probs$row, 6)
   expect_equal(probs$col, 1)
   expect_equal(probs$expected, "an integer")
 })
 
-test_that("problems return the proper row number", {
+test_that("problems return the proper row and line number", {
   expect_warning(
     x <- vroom(I("a,b,c\nx,y,z,,"), altrep = FALSE, col_types = "ccc"),
     class = "vroom_parse_issue"
   )
-  expect_equal(problems(x)$row, 2)
+  expect_equal(problems(x)$line, 2)
+  expect_equal(problems(x)$row, 1)
 
   expect_warning(
     y <- vroom(I("a,b,c\nx,y,z\nx,y,z,,"), altrep = FALSE, col_types = "ccc"),
     class = "vroom_parse_issue"
   )
-  expect_equal(problems(y)$row, 3)
+  expect_equal(problems(y)$line, 3)
+  expect_equal(problems(y)$row, 2)
 
   expect_warning(
     z <- vroom(
@@ -184,7 +193,8 @@ test_that("problems return the proper row number", {
     ),
     class = "vroom_parse_issue"
   )
-  expect_equal(problems(z)$row, c(2, 3))
+  expect_equal(problems(z)$line, c(2, 3))
+  expect_equal(problems(z)$row, c(1, 2))
 })
 
 # https://github.com/tidyverse/vroom/pull/441#discussion_r883611090
@@ -227,4 +237,78 @@ test_that("emits an error message if provided incorrect input", {
   # user provides a data frame from an incorrect source
   a_tibble <- tibble::tibble(x = c(1), y = c(2))
   expect_snapshot(problems(a_tibble), error = TRUE)
+})
+
+test_that("problems tracks skiped rows at the beginning of a file", {
+  # inline delimited
+  delim_input <- "#Name:,Sharla\n#Date:,02/01/22\nx,y\n1,2\n1,1.x\n"
+  expect_warning(
+    delim_inline <- vroom(I(delim_input),
+      col_types = "dd",
+      comment = "#",
+      altrep = FALSE
+    ),
+    class = "vroom_parse_issue"
+  )
+  probs <- problems(delim_inline)
+
+  expect_equal(probs$line, 5)
+  expect_equal(probs$row, 2)
+  expect_equal(probs$col, 2)
+
+  # delimited connection
+
+  tfile_delim <- withr::local_tempfile(fileext = ".csv")
+  vroom_write_lines(delim_input, tfile_delim)
+
+  expect_warning(
+    delim_connection <- vroom(tfile_delim,
+      col_types = "dd",
+      comment = "#",
+      altrep = FALSE
+    ),
+    class = "vroom_parse_issue"
+  )
+  probs <- problems(delim_connection)
+
+  expect_equal(probs$line, 5)
+  expect_equal(probs$row, 2)
+  expect_equal(probs$col, 2)
+
+  skip("fwf is reporting incorrect row/line numbers for problems")
+  # fwf inline
+  fwf_input <- "#Name:  Sharla\n#Date:  02/01/22\n1       2\n1       1\n1       2.x\n"
+  expect_warning(
+    fwf_inline <- vroom_fwf(I(fwf_input),
+      fwf_empty(fwf_input, col_names = c("x", "y")),
+      col_types = "dd",
+      comment = "#", altrep = FALSE
+    ),
+    class = "vroom_parse_issue"
+  )
+
+  probs <- problems(fwf_inline)
+
+  expect_equal(probs$line, 5)
+  expect_equal(probs$row, 3)
+  expect_equal(probs$col, 2)
+
+  # fwf connection
+  tfile_fwf <- withr::local_tempfile(fileext = ".txt")
+  vroom_write_lines(fwf_input, tfile_fwf)
+
+  expect_warning(
+    fwf_connection <- vroom_fwf(tfile_fwf,
+      fwf_empty(tfile_fwf, col_names = c("x", "y")),
+      col_types = "dd",
+      comment = "#", altrep = FALSE
+    ),
+    class = "vroom_parse_issue"
+  )
+
+  probs <- problems(fwf_connection)
+
+  expect_equal(probs$line, 5)
+  expect_equal(probs$row, 3)
+  expect_equal(probs$col, 2)
 })

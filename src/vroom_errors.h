@@ -9,6 +9,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <map>
 
 using namespace cpp11::literals;
 
@@ -29,7 +30,14 @@ public:
       std::string actual = "",
       std::string filename = "") {
     std::lock_guard<std::mutex> guard(mutex_);
-    rows_.push_back(row + 1);
+    auto search = track_skips_.find(filename);
+    size_t skips_at_start = (search != track_skips_.end()) ? track_skips_.at(filename) : 0;
+    lines_.push_back(row + 1 + skips_at_start);
+    /* if data contains a header line, the 0th iterator will be the header line,
+       otherwise it will be the first line of data */
+    /* for rows , we don't want to include the header line
+    so only add a 1 if there is NOT a header */
+    rows_.push_back(row + !has_header_);
     columns_.push_back(column + 1);
     expected_.emplace_back(expected);
     actual_.emplace_back(actual);
@@ -73,7 +81,8 @@ public:
 
   cpp11::data_frame error_table() const {
     return cpp11::writable::data_frame(
-        {"row"_nm = rows_,
+        {"line"_nm = lines_,
+         "row"_nm = rows_,
          "col"_nm = columns_,
          "expected"_nm = expected_,
          "actual"_nm = actual_,
@@ -104,6 +113,7 @@ public:
 
   void clear() {
     std::lock_guard<std::mutex> guard(mutex_);
+    lines_.clear();
     rows_.clear();
     columns_.clear();
     expected_.clear();
@@ -112,13 +122,24 @@ public:
     parse_errors_.clear();
   }
 
+  void add_skips_at_start(size_t skip_count, std::string filename){
+    track_skips_[filename] = skip_count;
+  }
+
+  void has_header(bool header){
+    has_header_ = header;
+  }
+
 private:
   mutable bool have_warned_ = false;
   std::mutex mutex_;
   std::vector<std::string> filenames_;
   std::vector<parse_error> parse_errors_;
+  std::vector<size_t> lines_;
   std::vector<size_t> rows_;
   std::vector<size_t> columns_;
   std::vector<std::string> expected_;
   std::vector<std::string> actual_;
+  bool has_header_ = false;
+  std::map<std::string, size_t> track_skips_;
 };
