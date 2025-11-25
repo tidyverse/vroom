@@ -50,7 +50,7 @@ public:
     string at(ptrdiff_t n) const override { return it_[(*indexes_)[n]]; }
 
     std::string filename() const override { return it_.filename(); }
-    size_t index() const override { return it_.index(); }
+    size_t index() const override { return (start_ + (*indexes_)[i_]).index(); }
     size_t position() const override {
       return (it_ + (*indexes_)[i_]).position();
     }
