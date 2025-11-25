@@ -228,3 +228,19 @@ test_that("emits an error message if provided incorrect input", {
   a_tibble <- tibble::tibble(x = c(1), y = c(2))
   expect_snapshot(problems(a_tibble), error = TRUE)
 })
+
+# https://github.com/tidyverse/vroom/issues/535
+test_that("problems are correct even if print is first encounter", {
+  foo <- vroom(
+    I("a\n1\nz\n3\nF\n5"),
+    delim = ",",
+    col_types = cols(a = col_double()),
+    show_col_types = FALSE
+  )
+
+  print(foo)
+
+  probs <- problems(foo)
+  expect_equal(probs$row, c(3, 5))
+  expect_equal(probs$actual, c("z", "F"))
+})
