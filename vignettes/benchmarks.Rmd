@@ -33,8 +33,8 @@ pretty_lgl <- function(x) {
 }
 
 read_benchmark <- function(file, desc) {
-  vroom::vroom(file, col_types = c("ccccddddd")) %>%
-    filter(op != "setup") %>%
+  vroom::vroom(file, col_types = c("ccccddddd")) |>
+    filter(op != "setup") |>
     mutate(
       altrep = case_when(
         grepl("^vroom_no_altrep", reading_package) ~ FALSE,
@@ -65,10 +65,10 @@ generate_subtitle <- function(data) {
 plot_benchmark <- function(data, title) {
 
   subtitle <- generate_subtitle(data)
-  data <- data %>%
+  data <- data |>
     filter(reading_package != "read.delim", type == "real")
 
-  p1 <- data %>%
+  p1 <- data |>
     ggplot() +
     geom_bar(aes(x = label, y = time, fill = op, group = label), stat = "identity") +
     scale_fill_brewer(type = "qual", palette = "Set2") +
@@ -77,9 +77,9 @@ plot_benchmark <- function(data, title) {
     labs(title = title, subtitle = subtitle, x = NULL, y = NULL, fill = NULL) +
     theme(legend.position = "bottom")
 
-  p2 <- data %>%
-    group_by(label) %>%
-    summarise(max_memory = max(max_memory)) %>%
+  p2 <- data |>
+    group_by(label) |>
+    summarise(max_memory = max(max_memory)) |>
     ggplot() +
     geom_bar(aes(x = label, y = max_memory / (1024 * 1024)), stat = "identity") +
     scale_y_continuous(labels = scales::number_format(suffix = "Mb")) +
@@ -92,23 +92,23 @@ plot_benchmark <- function(data, title) {
 }
 
 make_table <- function(data) {
-  data %>%
-    filter(type == "real") %>%
-    select(-label, -size, -type, -rows, -cols) %>%
-    spread(op, time) %>%
+  data |>
+    filter(type == "real") |>
+    select(-label, -size, -type, -rows, -cols) |>
+    spread(op, time) |>
     mutate(
       total = read + print + head + tail + sample + filter + aggregate,
       max_memory = as.character(bench::as_bench_bytes(max_memory))
-    ) %>%
-    arrange(desc(total)) %>%
-    mutate_if(is.numeric, pretty_sec) %>%
-    mutate_if(is.logical, pretty_lgl) %>%
-    select(reading_package, manip_package, altrep, max_memory, everything()) %>%
+    ) |>
+    arrange(desc(total)) |>
+    mutate_if(is.numeric, pretty_sec) |>
+    mutate_if(is.logical, pretty_lgl) |>
+    select(reading_package, manip_package, altrep, max_memory, everything()) |>
     rename(
       "reading\npackage" = reading_package,
       "manipulating\npackage" = manip_package,
       memory = max_memory
-    ) %>%
+    ) |>
     knitr::kable(digits = 2, align = "r", format = "html")
 }
 
@@ -294,7 +294,7 @@ code: [bench/taxi_multiple](https://github.com/tidyverse/vroom/tree/main/inst/be
 mult <- read_benchmark(path_package("vroom", "bench", "taxi_multiple.tsv"), desc)
 ```
 
-The benchmark reads all 12 files in the taxi trip fare data, totaling `r scales::comma(mult$rows[[1]])` rows 
+The benchmark reads all 12 files in the taxi trip fare data, totaling `r scales::comma(mult$rows[[1]])` rows
 and `r mult$cols[[1]]` columns for a total file size of `r format(fs_bytes(mult$size[[1]]))`.
 
 ```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
@@ -313,7 +313,7 @@ fwf <- read_benchmark(path_package("vroom", "bench", "fwf.tsv"), desc)
 
 This fixed width dataset contains individual records of the characteristics of a 5 percent sample of people and housing units from the year 2000 and is freely available at <https://web.archive.org/web/20150908055439/https://www2.census.gov/census_2000/datasets/PUMS/FivePercent/California/all_California.zip>. The data is split into files by state, and the state of California was used in this benchmark.
 
-The data totals `r scales::comma(fwf$rows[[1]])` rows 
+The data totals `r scales::comma(fwf$rows[[1]])` rows
 and `r fwf$cols[[1]]` columns with a total file size of `r format(fs_bytes(fwf$size[[1]]))`.
 
 ## Census data benchmarks
@@ -338,18 +338,18 @@ The benchmarks write out the taxi trip dataset in a few different ways.
 - A [Zstandard](https://facebook.github.io/zstd/) compressed file (data.table does not support this format).
 
 ```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
-taxi_writing <- read_benchmark(path_package("vroom", "bench", "taxi_writing.tsv"), c("setup", "writing")) %>%
+taxi_writing <- read_benchmark(path_package("vroom", "bench", "taxi_writing.tsv"), c("setup", "writing")) |>
   rename(
     package = reading_package,
     compression = manip_package
-  ) %>% mutate(
+  ) |> mutate(
     package = factor(package, c("base", "readr", "data.table", "vroom")),
     compression = factor(compression, rev(c("gzip", "multithreaded_gzip", "zstandard", "uncompressed")))
-  ) %>% filter(type == "real")
+  ) |> filter(type == "real")
 
 subtitle <- generate_subtitle(taxi_writing)
 
-taxi_writing %>%
+taxi_writing |>
   ggplot(aes(x = compression, y = time, fill = package)) +
   geom_bar(stat = "identity", position = position_dodge2(reverse = TRUE, padding = .05)) +
   scale_fill_brewer(type = "qual", palette = "Set2") +
@@ -358,11 +358,11 @@ taxi_writing %>%
   coord_flip() +
   labs(title = "Writing taxi trip data", subtitle = subtitle, x = NULL, y = NULL, fill = NULL)
 
-taxi_writing %>%
-  select(-size, -op, -rows, -cols, -type, -altrep, -label, -max_memory) %>%
-  mutate_if(is.numeric, pretty_sec) %>%
-  pivot_wider(names_from = package, values_from = time) %>%
-  arrange(desc(compression)) %>%
+taxi_writing |>
+  select(-size, -op, -rows, -cols, -type, -altrep, -label, -max_memory) |>
+  mutate_if(is.numeric, pretty_sec) |>
+  pivot_wider(names_from = package, values_from = time) |>
+  arrange(desc(compression)) |>
   knitr::kable(digits = 2, align = "r", format = "html")
 ```
 
@@ -371,6 +371,6 @@ taxi_writing %>%
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 si <- vroom::vroom(path_package("vroom", "bench", "session_info.tsv"))
 class(si) <- c("packages_info", "data.frame")
-select(as.data.frame(si), package, version = ondiskversion, date, source) %>%
+select(as.data.frame(si), package, version = ondiskversion, date, source) |>
   knitr::kable()
 ```
