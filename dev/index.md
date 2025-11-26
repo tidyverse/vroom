@@ -80,9 +80,18 @@ jump start your use of vroom!
 vroom uses the same interface as readr to specify column types.
 
 ``` r
-vroom::vroom("mtcars.tsv",
-  col_types = list(cyl = "i", gear = "f",hp = "i", disp = "_",
-                   drat = "_", vs = "l", am = "l", carb = "i")
+vroom::vroom(
+  "mtcars.tsv",
+  col_types = list(
+    cyl = "i",
+    gear = "f",
+    hp = "i",
+    disp = "_",
+    drat = "_",
+    vs = "l",
+    am = "l",
+    carb = "i"
+  )
 )
 #> # A tibble: 32 × 10
 #>   model           mpg   cyl    hp    wt  qsec vs    am    gear   carb
@@ -106,7 +115,14 @@ lines of each file.
 library(nycflights13)
 purrr::iwalk(
   split(flights, flights$carrier),
-  ~ { .x$carrier[[1]]; vroom::vroom_write(head(.x, 2), glue::glue("flights_{.y}.tsv"), delim = "\t") }
+  \(x, y) {
+    x$carrier[[1]]
+    vroom::vroom_write(
+      head(x, 2),
+      glue::glue("flights_{y}.tsv"),
+      delim = "\t"
+    )
+  }
 )
 ```
 

@@ -199,7 +199,7 @@ filenames
 #> [1] "mtcars-4.csv" "mtcars-6.csv" "mtcars-8.csv"
 
 # imagine we only want to read 2 of the 3 files
-vroom(purrr::map(filenames[c(1, 3)], ~ unz(zip_file, .x)))
+vroom(purrr::map(filenames[c(1, 3)], \(x) unz(zip_file, x)))
 #> Rows: 25 Columns: 12
 #> ── Column specification ───────────────────────────────────────────────
 #> Delimiter: ","
@@ -614,7 +614,7 @@ whatever case you specify, here I am setting it to use `ALLCAPS` names.
 ``` r
 vroom(
   vroom_example("mtcars.csv"),
-  .name_repair = ~ janitor::make_clean_names(., case = "all_caps")
+  .name_repair = \(x) janitor::make_clean_names(x, case = "all_caps")
 )
 ```
 
