@@ -87,9 +87,10 @@ public:
       have_warned_ = true;
       // it is intentional that we aren't using cpp11::package
       // https://github.com/tidyverse/vroom/commit/984a3e5e37e124feacfec3d184dbeb02eb1145c4
-      static auto cli_warn = Rf_findFun(
-          Rf_install("cli_warn"),
-          Rf_findVarInFrame(R_NamespaceRegistry, Rf_install("cli")));
+      SEXP cli_ns = Rf_findVarInFrame(R_NamespaceRegistry, Rf_install("cli"));
+      PROTECT(cli_ns);
+      SEXP cli_warn = Rf_findFun(Rf_install("cli_warn"), cli_ns);
+      PROTECT(cli_warn);
       cpp11::strings bullets({
         "w"_nm = "One or more parsing issues, call {.fun problems} on your data frame for details, e.g.:",
         " "_nm = "dat <- vroom(...)",
@@ -99,6 +100,7 @@ public:
         bullets,
         Rf_mkString("vroom_parse_issue"));
       Rf_eval(cli_warn_call, R_EmptyEnv);
+      UNPROTECT(2);
     }
   }
 
