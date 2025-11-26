@@ -90,7 +90,7 @@ public:
       SEXP cli_ns = Rf_findVarInFrame(R_NamespaceRegistry, Rf_install("cli"));
       PROTECT(cli_ns);
       SEXP cli_warn = Rf_findFun(Rf_install("cli_warn"), cli_ns);
-      UNPROTECT(1);
+      PROTECT(cli_warn);
       cpp11::strings bullets({
         "w"_nm = "One or more parsing issues, call {.fun problems} on your data frame for details, e.g.:",
         " "_nm = "dat <- vroom(...)",
@@ -100,6 +100,7 @@ public:
         bullets,
         Rf_mkString("vroom_parse_issue"));
       Rf_eval(cli_warn_call, R_EmptyEnv);
+      UNPROTECT(2);
     }
   }
 
