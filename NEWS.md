@@ -6,6 +6,8 @@
 
 * `problems()` works normally for vroom-produced objects, even if readr is attached (#534, #554).
 
+* `problems()` are no longer corrupted if the offending data frame is partially materialized, e.g. by viewing a subset, before calling `problems()` (#535).
+
 # vroom 1.6.6
 
 * Fixed a bad URL in the README at CRAN's request.
