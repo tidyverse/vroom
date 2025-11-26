@@ -234,7 +234,7 @@ test_that("problems are correct even if print is first encounter", {
   foo <- vroom(
     I("a\n1\nz\n3\nF\n5"),
     delim = ",",
-    col_types = cols(a = col_double()),
+    col_types = "d",
     show_col_types = FALSE
   )
 
@@ -242,5 +242,19 @@ test_that("problems are correct even if print is first encounter", {
 
   probs <- problems(foo)
   expect_equal(probs$row, c(3, 5))
+  expect_equal(probs$actual, c("z", "F"))
+
+  foo <- vroom(
+    I("1\nz\n3\nF\n5"),
+    delim = ",",
+    col_names = FALSE,
+    col_types = "d",
+    show_col_types = FALSE
+  )
+
+  print(foo)
+
+  probs <- problems(foo)
+  expect_equal(probs$row, c(2, 4))
   expect_equal(probs$actual, c("z", "F"))
 })
