@@ -15,7 +15,7 @@ Authors@R: c(
            comment = "grisu3 implementation"),
     person("Mikkel", "Jørgensen", role = "cph",
            comment = "grisu3 implementation"),
-    person("Posit Software, PBC", role = c("cph", "fnd"))
+    person("Posit Software, PBC", role = c("cph", "fnd"), comment = c(ROR = "03wc8by49"))
   )
 Description: The goal of 'vroom' is to read and write data (like 'csv',
     'tsv' and 'fwf') quickly. When reading it uses a quick initial
