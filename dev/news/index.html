@@ -48,6 +48,7 @@
 <ul><li><p><code>locale(encoding =)</code> now warns, instead of errors, when the encoding cannot be found in <code><a href="https://rdrr.io/r/base/iconv.html" class="external-link">iconvlist()</a></code> return value. This removes an unnecessary blocker on platforms like Alpine Linux where the output doesn’t reflect actual capabilities.</p></li>
 <li><p>vroom no longer uses <code>STDVEC_DATAPTR()</code> and takes the recommended approach for phasing out usage of <code>DATAPTR()</code> (<a href="https://github.com/tidyverse/vroom/issues/561" class="external-link">#561</a>).</p></li>
 <li><p><code><a href="../reference/problems.html">problems()</a></code> works normally for vroom-produced objects, even if readr is attached (<a href="https://github.com/tidyverse/vroom/issues/534" class="external-link">#534</a>, <a href="https://github.com/tidyverse/vroom/issues/554" class="external-link">#554</a>).</p></li>
+<li><p><code><a href="../reference/problems.html">problems()</a></code> are no longer corrupted if the offending data frame is partially materialized, e.g. by viewing a subset, before calling <code><a href="../reference/problems.html">problems()</a></code> (<a href="https://github.com/tidyverse/vroom/issues/535" class="external-link">#535</a>).</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.6.6" id="vroom-166">vroom 1.6.6<a class="anchor" aria-label="anchor" href="#vroom-166"></a></h2><p class="text-muted">CRAN release: 2025-09-19</p>

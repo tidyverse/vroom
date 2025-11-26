@@ -16,6 +16,12 @@
   ([\#534](https://github.com/tidyverse/vroom/issues/534),
   [\#554](https://github.com/tidyverse/vroom/issues/554)).
 
+- [`problems()`](https://vroom.r-lib.org/dev/reference/problems.md) are
+  no longer corrupted if the offending data frame is partially
+  materialized, e.g. by viewing a subset, before calling
+  [`problems()`](https://vroom.r-lib.org/dev/reference/problems.md)
+  ([\#535](https://github.com/tidyverse/vroom/issues/535)).
+
 ## vroom 1.6.6
 
 CRAN release: 2025-09-19
