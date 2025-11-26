@@ -3,6 +3,7 @@
 #include "iterator.h"
 #include "vroom.h"
 
+#include <exception>
 #include <memory>
 #include <vector>
 
