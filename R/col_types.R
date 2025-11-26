@@ -374,8 +374,6 @@ vroom_enquo <- function(x) {
 }
 
 vroom_select <- function(x, col_select, id) {
-  spec <- attr(x, "spec")
-
   # reorder and rename columns
   if (inherits(col_select, "quosures") || !quo_is_null(col_select)) {
     if (inherits(col_select, "quosures")) {
@@ -392,7 +390,6 @@ vroom_select <- function(x, col_select, id) {
     x <- x[vars]
     names(x) <- names(vars)
   }
-  attr(x, "spec") <- spec
   x
 }
 
