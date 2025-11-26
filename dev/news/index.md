@@ -11,6 +11,11 @@
   approach for phasing out usage of `DATAPTR()`
   ([\#561](https://github.com/tidyverse/vroom/issues/561)).
 
+- [`problems()`](https://vroom.r-lib.org/dev/reference/problems.md)
+  works normally for vroom-produced objects, even if readr is attached
+  ([\#534](https://github.com/tidyverse/vroom/issues/534),
+  [\#554](https://github.com/tidyverse/vroom/issues/554)).
+
 ## vroom 1.6.6
 
 CRAN release: 2025-09-19
