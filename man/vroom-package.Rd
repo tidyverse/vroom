@@ -33,7 +33,7 @@ Other contributors:
   \item https://github.com/mandreyel/ (mio library) [copyright holder]
   \item Jukka Jylänki (grisu3 implementation) [copyright holder]
   \item Mikkel Jørgensen (grisu3 implementation) [copyright holder]
-  \item Posit Software, PBC [copyright holder, funder]
+  \item Posit Software, PBC (\href{https://ror.org/03wc8by49}{ROR}) [copyright holder, funder]
 }
 
 }

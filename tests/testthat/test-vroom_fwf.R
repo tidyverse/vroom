@@ -468,3 +468,51 @@ test_that("vroom_fwf correctly reads DOS files with no trailing newline (https:/
 
   expect_equal(out, out2)
 })
+
+# https://github.com/tidyverse/vroom/issues/554
+# https://github.com/tidyverse/vroom/issues/534
+test_that("vroom_fwf(col_select =) output has 'spec_tbl_df' class, spec, and problems when readr is attached", {
+  # Register readr's [.spec_tbl_df method which drops attributes and the "spec_tbl_df" class
+  readr_single_bracket <- function(x, ...) {
+    attr(x, "spec") <- NULL
+    attr(x, "problems") <- NULL
+    class(x) <- setdiff(class(x), "spec_tbl_df")
+    NextMethod(`[`)
+  }
+  registerS3method("[", "spec_tbl_df", readr_single_bracket)
+
+  # Unfortunately you can't just de-register the method and
+  # local_mocked_s3_method() only works if method exists to begin with.
+  # We'll do next best thing which is to put a pass-through method back.
+  withr::defer({
+    registerS3method("[", "spec_tbl_df", function(x, ...) NextMethod(`[`))
+  })
+
+  expect_warning(
+    dat <- vroom_fwf(
+      I("a  b  \n1  2  \nz  3  \n4  5  "),
+      fwf_widths(c(3, 3)),
+      col_types = "dc",
+      col_select = c(X1, X2),
+      show_col_types = FALSE,
+      altrep = FALSE
+    ),
+    class = "vroom_parse_issue"
+  )
+
+  expect_s3_class(dat, "spec_tbl_df")
+  expect_equal(
+    attr(dat, "spec", exact = TRUE),
+    cols(
+      X1 = col_double(),
+      X2 = col_character(),
+      .delim = ""
+    )
+  )
+  expect_no_error(probs <- problems(dat))
+  if (exists("probs")) {
+    expect_equal(nrow(probs), 2)
+    expect_equal(probs$row, c(1, 2))
+    expect_equal(probs$col, c(1, 1))
+  }
+})
