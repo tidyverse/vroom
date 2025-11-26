@@ -3,8 +3,8 @@
 #include "iterator.h"
 #include "vroom.h"
 
-#include <exception>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 namespace vroom {
