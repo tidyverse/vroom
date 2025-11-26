@@ -1,14 +1,12 @@
-This small patch release is at the request of Kurt Hornik:
+This patch release is at the request of CRAN:
 
-> Specifically, plase see the URLs with
+> Specifically, please see the WARNING in the r-devel compiled code check
+about using non-API entry points which may be removed soon.  These have
+replacements documented in "Some API replacements for non-API entry
+points" of "Writing R Extensions": please change to use these
+replacements.
 
->  Message: Invalid URL: missing authority part
-
-> in the CRAN incoming feasibility check.
-
-vroom also has a NOTE about non-API calls to R which I know I need to address but I will do that in a near-term minor or major release, where I will also do full reverse dependency checks (involving vroom and readr).
-
-My near term goal is to just fix the bad URL in vroom's README.
+vroom no longer uses `STDVEC_DATAPTR()` and takes the recommended approach for phasing out usage of `DATAPTR()`.
 
 ## revdepcheck results
 
