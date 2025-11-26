@@ -42,7 +42,7 @@ Imports:
     tzdb (>= 0.1.1),
     vctrs (>= 0.2.0),
     withr
-Suggests: 
+Suggests:
     archive,
     bench (>= 1.1.0),
     covr,
@@ -64,17 +64,16 @@ Suggests:
     utils,
     waldo,
     xml2
-LinkingTo: 
+LinkingTo:
     cpp11 (>= 0.2.0),
     progress (>= 1.2.3),
     tzdb (>= 0.1.1)
-VignetteBuilder: 
+VignetteBuilder:
     knitr
-Config/Needs/website:
-    nycflights13,
-    tidyverse/tidytemplate
+Config/Needs/website: nycflights13, tidyverse/tidytemplate
 Config/testthat/edition: 3
 Config/testthat/parallel: false
+Config/usethis/last-upkeep: 2025-11-25
 Copyright: file COPYRIGHTS
 Encoding: UTF-8
 Language: en-US
