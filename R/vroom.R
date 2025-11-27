@@ -282,13 +282,24 @@ vroom <- function(
     progress = progress
   )
 
-  # If no rows expand columns to be the same length and names as the spec
+  # If no rows, expand columns to be the same length and names as the spec
+  # Skipped columns present a bit of a wrinkle: they appear in the spec,
+  # but not in the result
   if (NROW(out) == 0) {
     cols <- attr(out, "spec")[["cols"]]
-    for (i in seq_along(cols)) {
-      out[[i]] <- collector_value(cols[[i]])
+    nms <- names(cols)
+
+    out_i <- 1
+    for (cols_i in seq_along(cols)) {
+      value <- collector_value(cols[[cols_i]])
+      if (is.null(value)) {
+        # this is a skipped column
+        next
+      }
+      out[[out_i]] <- value
+      names(out)[out_i] <- nms[cols_i]
+      out_i <- out_i + 1
     }
-    names(out) <- names(cols)
   }
 
   out <- tibble::as_tibble(out, .name_repair = identity)
