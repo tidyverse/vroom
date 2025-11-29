@@ -2,6 +2,10 @@
 
 ## vroom (development version)
 
+## vroom 1.6.7
+
+CRAN release: 2025-11-28
+
 - `locale(encoding =)` now warns, instead of errors, when the encoding
   cannot be found in [`iconvlist()`](https://rdrr.io/r/base/iconv.html)
   return value. This removes an unnecessary blocker on platforms like
