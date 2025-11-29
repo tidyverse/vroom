@@ -33,3 +33,19 @@ test_that("all col_types can be reported with color", {
   )
   expect_snapshot(spec(dat))
 })
+
+# https://github.com/tidyverse/vroom/issues/548
+test_that("col_number() works with empty data", {
+  out <- vroom(I(""), col_types = "in")
+  expect_equal(out, tibble::tibble(X1 = integer(), X2 = numeric()))
+})
+
+# https://github.com/tidyverse/vroom/issues/540
+test_that("col_skip works with empty data (#540)", {
+  out <- vroom(I("a\tb\tc\n"), delim = "\t", col_types = "c-d", skip = 1L)
+  expect_equal(out, tibble::tibble(X1 = character(), X3 = numeric()))
+
+  # All columns skipped
+  out <- vroom(I("a\tb\n"), delim = "\t", col_types = "--", skip = 1L)
+  expect_equal(out, tibble::tibble())
+})
