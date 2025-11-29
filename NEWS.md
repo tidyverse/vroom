@@ -1,3 +1,5 @@
+# vroom (development version)
+
 # vroom 1.6.7
 
 * `locale(encoding =)` now warns, instead of errors, when the encoding cannot be found in `iconvlist()` return value. This removes an unnecessary blocker on platforms like Alpine Linux where the output doesn't reflect actual capabilities.
