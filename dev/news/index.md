@@ -2,6 +2,15 @@
 
 ## vroom (development version)
 
+- Columns specified as having type “number” (requested via
+  [`col_number()`](https://vroom.r-lib.org/dev/reference/cols.md) or
+  `"number"` or `'n'`) or “skip” (requested via
+  [`col_skip()`](https://vroom.r-lib.org/dev/reference/cols.md) or
+  `"skip"` or `_` or `-`) now work in the case where 0 rows of data are
+  parsed ([\#427](https://github.com/tidyverse/vroom/issues/427),
+  [\#540](https://github.com/tidyverse/vroom/issues/540),
+  [\#548](https://github.com/tidyverse/vroom/issues/548)).
+
 ## vroom 1.6.7
 
 CRAN release: 2025-11-28

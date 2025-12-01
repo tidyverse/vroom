@@ -45,7 +45,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vroom-development-version">vroom (development version)<a class="anchor" aria-label="anchor" href="#vroom-development-version"></a></h2>
-</div>
+<ul><li>Columns specified as having type “number” (requested via <code><a href="../reference/cols.html">col_number()</a></code> or <code>"number"</code> or <code>'n'</code>) or “skip” (requested via <code><a href="../reference/cols.html">col_skip()</a></code> or <code>"skip"</code> or <code>_</code> or <code>-</code>) now work in the case where 0 rows of data are parsed (<a href="https://github.com/tidyverse/vroom/issues/427" class="external-link">#427</a>, <a href="https://github.com/tidyverse/vroom/issues/540" class="external-link">#540</a>, <a href="https://github.com/tidyverse/vroom/issues/548" class="external-link">#548</a>).</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.6.7" id="vroom-167">vroom 1.6.7<a class="anchor" aria-label="anchor" href="#vroom-167"></a></h2><p class="text-muted">CRAN release: 2025-11-28</p>
 <ul><li><p><code>locale(encoding =)</code> now warns, instead of errors, when the encoding cannot be found in <code><a href="https://rdrr.io/r/base/iconv.html" class="external-link">iconvlist()</a></code> return value. This removes an unnecessary blocker on platforms like Alpine Linux where the output doesn’t reflect actual capabilities.</p></li>
