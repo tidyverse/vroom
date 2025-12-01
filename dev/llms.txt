@@ -359,8 +359,6 @@ objects.
 
 - [`vroom_lines()`](https://vroom.r-lib.org/dev/reference/vroom_lines.md)
   : Read lines from a file
-- [`vroom_altrep_opts()`](https://vroom.r-lib.org/dev/reference/vroom_altrep_opts.md)
-  : Show which column types are using Altrep
 - [`vroom_altrep()`](https://vroom.r-lib.org/dev/reference/vroom_altrep.md)
   : Show which column types are using Altrep
 - [`vroom_example()`](https://vroom.r-lib.org/dev/reference/vroom_example.md)

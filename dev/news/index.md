@@ -2,6 +2,20 @@
 
 ## vroom (development version)
 
+- The `path` parameter has been removed from
+  [`vroom_write()`](https://vroom.r-lib.org/dev/reference/vroom_write.md).
+  This parameter was deprecated in vroom 1.5.0 (2021-06-14) in favor of
+  the `file` parameter
+  ([\#575](https://github.com/tidyverse/vroom/issues/575)).
+
+- The function `vroom_altrep_opts()` and the argument
+  `vroom(altrep_opts =)` have been removed. They were deprecated in
+  favor of
+  [`vroom_altrep()`](https://vroom.r-lib.org/dev/reference/vroom_altrep.md)
+  and `altrep =`, respectively, in v1.2.0 (2020-01-13). Also applies to
+  `vroom_fwf(altrep_opts =)` and `vroom_lines(altrep_opts =)`
+  ([\#575](https://github.com/tidyverse/vroom/issues/575)).
+
 - Columns specified as having type “number” (requested via
   [`col_number()`](https://vroom.r-lib.org/dev/reference/cols.md) or
   `"number"` or `'n'`) or “skip” (requested via
@@ -661,8 +675,8 @@ CRAN release: 2020-01-13
 
 ### Breaking changes
 
-- [`vroom_altrep_opts()`](https://vroom.r-lib.org/dev/reference/vroom_altrep_opts.md)
-  and the argument `vroom(altrep_opts =)` have been renamed to
+- `vroom_altrep_opts()` and the argument `vroom(altrep_opts =)` have
+  been renamed to
   [`vroom_altrep()`](https://vroom.r-lib.org/dev/reference/vroom_altrep.md)
   and `altrep` respectively. The prior names have been deprecated.
 

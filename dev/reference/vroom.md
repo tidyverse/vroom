@@ -24,7 +24,6 @@ vroom(
   locale = default_locale(),
   guess_max = 100,
   altrep = TRUE,
-  altrep_opts = deprecated(),
   num_threads = vroom_threads(),
   progress = vroom_progress(),
   show_col_types = NULL,
@@ -206,10 +205,6 @@ vroom(
   character vector of types, `TRUE` or `FALSE`. See
   [`vroom_altrep()`](https://vroom.r-lib.org/dev/reference/vroom_altrep.md)
   for for full details.
-
-- altrep_opts:
-
-  **\[deprecated\]**
 
 - num_threads:
 

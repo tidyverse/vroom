@@ -21,7 +21,6 @@ vroom_lines(
   skip_empty_rows = FALSE,
   locale = default_locale(),
   altrep = TRUE,
-  altrep_opts = deprecated(),
   num_threads = vroom_threads(),
   progress = vroom_progress()
 )
@@ -80,10 +79,6 @@ vroom_lines(
   character vector of types, `TRUE` or `FALSE`. See
   [`vroom_altrep()`](https://vroom.r-lib.org/dev/reference/vroom_altrep.md)
   for for full details.
-
-- altrep_opts:
-
-  **\[deprecated\]**
 
 - num_threads:
 

@@ -17,8 +17,7 @@ vroom_write(
   escape = c("double", "backslash", "none"),
   bom = FALSE,
   num_threads = vroom_threads(),
-  progress = vroom_progress(),
-  path = deprecated()
+  progress = vroom_progress()
 )
 ```
 
@@ -98,10 +97,6 @@ vroom_write(
   updated every 50,000 values and will only display if estimated reading
   time is 5 seconds or more. The automatic progress bar can be disabled
   by setting option `readr.show_progress` to `FALSE`.
-
-- path:
-
-  **\[deprecated\]** is no longer supported, use `file` instead.
 
 ## Examples
 
