@@ -20,19 +20,9 @@ vroom_lines <- function(
   skip_empty_rows = FALSE,
   locale = default_locale(),
   altrep = TRUE,
-  altrep_opts = deprecated(),
   num_threads = vroom_threads(),
   progress = vroom_progress()
 ) {
-  if (!is_missing(altrep_opts)) {
-    deprecate_warn(
-      "1.1.0",
-      "vroom_lines(altrep_opts = )",
-      "vroom_lines(altrep = )"
-    )
-    altrep <- altrep_opts
-  }
-
   file <- standardise_path(file)
 
   if (!is_ascii_compatible(locale$encoding)) {

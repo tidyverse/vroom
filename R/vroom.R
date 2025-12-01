@@ -91,7 +91,6 @@
 #' @param altrep Control which column types use Altrep representations,
 #'   either a character vector of types, `TRUE` or `FALSE`. See
 #'   [vroom_altrep()] for for full details.
-#' @param altrep_opts \Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}
 #' @param col_select Columns to include in the results. You can use the same
 #'   mini-language as `dplyr::select()` to refer to the columns by name. Use
 #'   `c()` to use more than one selection expression. Although this
@@ -204,7 +203,6 @@ vroom <- function(
   locale = default_locale(),
   guess_max = 100,
   altrep = TRUE,
-  altrep_opts = deprecated(),
   num_threads = vroom_threads(),
   progress = vroom_progress(),
   show_col_types = NULL,
@@ -215,11 +213,6 @@ vroom <- function(
   # 001, start of heading.
   if (identical(delim, "\n")) {
     delim <- "\x01"
-  }
-
-  if (!is_missing(altrep_opts)) {
-    deprecate_warn("1.1.0", "vroom(altrep_opts = )", "vroom(altrep = )")
-    altrep <- altrep_opts
   }
 
   file <- standardise_path(file)
@@ -551,19 +544,6 @@ vroom_altrep <- function(which = NULL) {
     out <- bitwOr(out, bitwShiftL(as.integer(args[[i]]), i - 1L))
   }
   structure(out, class = "vroom_altrep")
-}
-
-#' Show which column types are using Altrep
-#'
-#' @description
-#' \Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}
-#' This function is deprecated in favor of `vroom_altrep()`.
-#'
-#' @inheritParams vroom_altrep
-#' @export
-vroom_altrep_opts <- function(which = NULL) {
-  deprecate_warn("1.1.0", "vroom_altrep_opts()", "vroom_altrep()")
-  vroom_altrep(which)
 }
 
 altrep_vals <- function() {

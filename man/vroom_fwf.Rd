@@ -23,7 +23,6 @@ vroom_fwf(
   n_max = Inf,
   guess_max = 100,
   altrep = TRUE,
-  altrep_opts = deprecated(),
   num_threads = vroom_threads(),
   progress = vroom_progress(),
   show_col_types = NULL,
@@ -134,8 +133,6 @@ See \code{vignette("column-types", package = "readr")} for more details.}
 \item{altrep}{Control which column types use Altrep representations,
 either a character vector of types, \code{TRUE} or \code{FALSE}. See
 \code{\link[=vroom_altrep]{vroom_altrep()}} for for full details.}
-
-\item{altrep_opts}{\Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}}
 
 \item{num_threads}{The number of processing threads to use for initial
 parsing and lazy reading of data. If your data contains newlines within

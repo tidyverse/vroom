@@ -37,18 +37,12 @@ vroom_fwf <- function(
   n_max = Inf,
   guess_max = 100,
   altrep = TRUE,
-  altrep_opts = deprecated(),
   num_threads = vroom_threads(),
   progress = vroom_progress(),
   show_col_types = NULL,
   .name_repair = "unique"
 ) {
   verify_fwf_positions(col_positions)
-
-  if (!is_missing(altrep_opts)) {
-    deprecate_warn("1.1.0", "vroom_fwf(altrep_opts = )", "vroom_fwf(altrep = )")
-    altrep <- altrep_opts
-  }
 
   file <- standardise_path(file)
 
