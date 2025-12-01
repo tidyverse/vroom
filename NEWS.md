@@ -1,10 +1,12 @@
 # vroom (development version)
 
 * The `path` parameter has been removed from `vroom_write()`. This parameter was
-  deprecated in vroom 1.5.0 (2021-06-14) in favor of the `file` parameter.
-  Use `file` instead.
+  deprecated in vroom 1.5.0 (2021-06-14) in favor of the `file` parameter (#575).
 
-* The function `vroom_altrep_opts()` and the argument `vroom(altrep_opts =)` have been removed. They were deprecated in favor of `vroom_altrep()` and `altrep =`, respectively, in v1.2.0 (2020-01-13).
+* The function `vroom_altrep_opts()` and the argument `vroom(altrep_opts =)`
+  have been removed. They were deprecated in favor of `vroom_altrep()` and
+  `altrep =`, respectively, in v1.2.0 (2020-01-13). Also applies to
+  `vroom_fwf(altrep_opts =)` and `vroom_lines(altrep_opts =)` (#575).
 
 * Columns specified as having type "number" (requested via `col_number()` or `"number"` or `'n'`) or "skip" (requested via `col_skip()` or `"skip"` or `_` or `-`) now work in the case where 0 rows of data are parsed (#427, #540, #548).
 
