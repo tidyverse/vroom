@@ -569,7 +569,7 @@ collector_value.collector_integer <- function(x, ...) {
 }
 
 #' @export
-collector_value.collector_numeric <- function(x, ...) {
+collector_value.collector_number <- function(x, ...) {
   numeric()
 }
 
@@ -605,6 +605,11 @@ collector_value.collector_time <- function(x, ...) {
 #' @export
 collector_value.collector_guess <- function(x, ...) {
   character()
+}
+
+#' @export
+collector_value.collector_skip <- function(x, ...) {
+  NULL
 }
 
 #' @export
