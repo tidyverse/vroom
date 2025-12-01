@@ -18,8 +18,6 @@
 #' @param delim Delimiter used to separate values. Defaults to `\t` to write
 #'   tab separated value (TSV) files.
 #' @param na String used for missing values. Defaults to 'NA'.
-#' @param path `r lifecycle::badge("deprecated")` is no longer supported, use
-#'   `file` instead.
 #' @export
 #' @examples
 #' # If you only specify a file name, vroom_write() will write
@@ -47,17 +45,8 @@ vroom_write <- function(
   escape = c("double", "backslash", "none"),
   bom = FALSE,
   num_threads = vroom_threads(),
-  progress = vroom_progress(),
-  path = deprecated()
+  progress = vroom_progress()
 ) {
-  if (lifecycle::is_present(path)) {
-    file <- path
-    lifecycle::deprecate_soft(
-      when = "1.5.0",
-      what = "vroom_write(file)"
-    )
-  }
-
   input <- x
 
   quote <- match.arg(quote)
