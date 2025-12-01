@@ -83,7 +83,7 @@ standardise_path <- function(
   }
 
   if (any(grepl("\n", path))) {
-    lifecycle::deprecate_soft(
+    lifecycle::deprecate_warn(
       "1.5.0",
       "vroom(file = 'must use `I()` for literal data')",
       details = c(

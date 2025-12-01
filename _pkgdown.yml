@@ -75,7 +75,6 @@ reference:
     These functions are used as helpers for other functions, or to inspect objects.
   contents:
   - vroom_lines
-  - vroom_altrep_opts
   - vroom_altrep
   - vroom_example
   - vroom_progress
