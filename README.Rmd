@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 options(tibble.print_min = 3)
 ```
 
-# 🏎💨vroom <a href='https://vroom.r-lib.org'><img src='man/figures/logo.png' align="right" height="135" /></a>
+# 🏎💨vroom <a href='https://vroom.tidyverse.org'><img src='man/figures/logo.png' align="right" height="135" /></a>
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/tidyverse/vroom/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/tidyverse/vroom/actions/workflows/R-CMD-check.yaml)
@@ -61,7 +61,7 @@ The fastest delimited reader for R, **`r filter(tbl, package == "vroom") |> pull
 
 <img src="https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif" align="right" />
 
-But that's impossible! How can it be [so fast](https://vroom.r-lib.org/articles/benchmarks.html)?
+But that's impossible! How can it be [so fast](https://vroom.tidyverse.org/articles/benchmarks.html)?
 
 vroom doesn't stop to actually _read_ all of your data, it simply indexes where each record is located so it can be read later.
 The vectors returned use the [Altrep framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html) to lazily load the data on-demand when it is accessed, so you only pay for what you use.
@@ -118,7 +118,7 @@ pak::pak("tidyverse/vroom")
 ```
 ## Usage
 
-See [getting started](https://vroom.r-lib.org/articles/vroom.html)
+See [getting started](https://vroom.tidyverse.org/articles/vroom.html)
 to jump start your use of vroom!
 
 vroom uses the same interface as readr to specify column types.
@@ -186,14 +186,14 @@ fs::file_delete(files)
 
 ## Learning more
 
-- [Getting started with vroom](https://vroom.r-lib.org/articles/vroom.html)
+- [Getting started with vroom](https://vroom.tidyverse.org/articles/vroom.html)
 - [📽 vroom: Because Life is too short to read slow](https://www.youtube.com/watch?v=RA9AjqZXxMU&t=10s) - Presentation at UseR!2019 ([slides](https://speakerdeck.com/jimhester/vroom))
 - [📹 vroom: Read and write rectangular data quickly](https://www.youtube.com/watch?v=ZP_y5eaAc60) - a video tour of the vroom features.
 
 ## Benchmarks
 
 The speed quoted above is from a real `r format(fs::fs_bytes(tm$size[[1]]))` dataset with `r format(tm$rows[[1]], big.mark = ",")` rows and `r tm$cols[[1]]` columns,
-see the [benchmark article](https://vroom.r-lib.org/articles/benchmarks.html)
+see the [benchmark article](https://vroom.tidyverse.org/articles/benchmarks.html)
 for full details of the dataset and
 [bench/](https://github.com/tidyverse/vroom/tree/main/inst/bench) for the code
 used to retrieve the data and perform the benchmarks.

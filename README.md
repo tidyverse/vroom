@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# 🏎💨vroom <a href='https://vroom.r-lib.org'><img src='man/figures/logo.png' align="right" height="135" /></a>
+# 🏎💨vroom <a href='https://vroom.tidyverse.org'><img src='man/figures/logo.png' align="right" height="135" /></a>
 
 <!-- badges: start -->
 
@@ -19,7 +19,7 @@ The fastest delimited reader for R, **1.23 GB/sec**.
 <img src="https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif" align="right" />
 
 But that’s impossible! How can it be [so
-fast](https://vroom.r-lib.org/articles/benchmarks.html)?
+fast](https://vroom.tidyverse.org/articles/benchmarks.html)?
 
 vroom doesn’t stop to actually *read* all of your data, it simply
 indexes where each record is located so it can be read later. The
@@ -87,7 +87,7 @@ pak::pak("tidyverse/vroom")
 
 ## Usage
 
-See [getting started](https://vroom.r-lib.org/articles/vroom.html) to
+See [getting started](https://vroom.tidyverse.org/articles/vroom.html) to
 jump start your use of vroom!
 
 vroom uses the same interface as readr to specify column types.
@@ -175,7 +175,7 @@ vroom::vroom(files, id = "source")
 ## Learning more
 
 - [Getting started with
-  vroom](https://vroom.r-lib.org/articles/vroom.html)
+  vroom](https://vroom.tidyverse.org/articles/vroom.html)
 - [📽 vroom: Because Life is too short to read
   slow](https://www.youtube.com/watch?v=RA9AjqZXxMU&t=10s) -
   Presentation at UseR!2019
@@ -188,7 +188,7 @@ vroom::vroom(files, id = "source")
 
 The speed quoted above is from a real 1.53G dataset with 14,388,451 rows
 and 11 columns, see the [benchmark
-article](https://vroom.r-lib.org/articles/benchmarks.html) for full
+article](https://vroom.tidyverse.org/articles/benchmarks.html) for full
 details of the dataset and
 [bench/](https://github.com/tidyverse/vroom/tree/main/inst/bench) for
 the code used to retrieve the data and perform the benchmarks.
