@@ -31,9 +31,9 @@ test_that("vroom errors via https on non-gz file", {
   skip_on_cran()
 
   url <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv.bz2"
-  expect_error(
+  expect_snapshot(
     vroom(url, col_types = list()),
-    "Reading from remote `bz2` compressed files is not supported"
+    error = TRUE
   )
 })
 
@@ -214,6 +214,15 @@ test_that("multiple files with non-ASCII encoding fails informatively", {
   input <- vroom_example("mtcars.csv")
   expect_snapshot(
     vroom(c(input, input), locale = locale(encoding = "UTF-16")),
+    error = TRUE
+  )
+})
+
+test_that("writing to .zip without archive package fails informatively", {
+  local_mocked_bindings(is_installed = function(pkg) FALSE)
+
+  expect_snapshot(
+    vroom_write(mtcars, tempfile(fileext = ".zip")),
     error = TRUE
   )
 })

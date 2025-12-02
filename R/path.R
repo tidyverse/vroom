@@ -113,7 +113,7 @@ standardise_connection <- function(con) {
   con
 }
 
-standardise_one_path <- function(path, write = FALSE) {
+standardise_one_path <- function(path, write = FALSE, call = caller_env()) {
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))
   }
@@ -137,12 +137,12 @@ standardise_one_path <- function(path, write = FALSE) {
         bz2 = ,
         xz = {
           close(con)
-          stop(
-            "Reading from remote `",
-            ext,
-            "` compressed files is not supported,\n",
-            "  download the files locally first.",
-            call. = FALSE
+          cli::cli_abort(
+            c(
+              "Reading from remote {.val .{ext}} compressed files is not supported.",
+              "i" = "Download the file locally first."
+            ),
+            call = call
           )
         },
         gz = gzcon(con),
@@ -169,7 +169,6 @@ standardise_one_path <- function(path, write = FALSE) {
       formats <- archive_formats(extension)
     }
     if (!is.null(formats)) {
-      p$extension <- extension
       if (write) {
         if (is.null(formats[[1]])) {
           return(archive::file_write(path, filter = formats[[2]]))
@@ -203,7 +202,13 @@ standardise_one_path <- function(path, write = FALSE) {
   }
 
   if (write && compression == "zip") {
-    stop("Can only read from, not write to, .zip", call. = FALSE)
+    cli::cli_abort(
+      c(
+        "Can only read from, not write to, {.val .zip} files.",
+        "i" = "Install the {.pkg archive} package to write {.val .zip} files."
+      ),
+      call = call
+    )
   }
 
   switch(
