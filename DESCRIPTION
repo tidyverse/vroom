@@ -23,7 +23,7 @@ Description: The goal of 'vroom' is to read and write data (like 'csv',
     actually use needs to be read.  The writer formats the data in
     parallel and writes to disk asynchronously from formatting.
 License: MIT + file LICENSE
-URL: https://vroom.r-lib.org, https://github.com/tidyverse/vroom
+URL: https://vroom.tidyverse.org, https://github.com/tidyverse/vroom
 BugReports: https://github.com/tidyverse/vroom/issues
 Depends:
     R (>= 4.1)
