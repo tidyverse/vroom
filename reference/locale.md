@@ -28,9 +28,9 @@ default_locale()
 
   Character representations of day and month names. Either the language
   code as string (passed on to
-  [`date_names_lang()`](https://vroom.r-lib.org/reference/date_names.md))
+  [`date_names_lang()`](https://vroom.tidyverse.org/reference/date_names.md))
   or an object created by
-  [`date_names()`](https://vroom.r-lib.org/reference/date_names.md).
+  [`date_names()`](https://vroom.tidyverse.org/reference/date_names.md).
 
 - date_format, time_format:
 

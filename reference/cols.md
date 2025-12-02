@@ -42,10 +42,10 @@ col_time(format = "", ...)
 
   Either column objects created by `col_*()`, or their abbreviated
   character names (as described in the `col_types` argument of
-  [`vroom()`](https://vroom.r-lib.org/reference/vroom.md)). If you're
-  only overriding a few columns, it's best to refer to columns by name.
-  If not named, the column types must match the column names exactly. In
-  `col_*()` functions these are stored in the object.
+  [`vroom()`](https://vroom.tidyverse.org/reference/vroom.md)). If
+  you're only overriding a few columns, it's best to refer to columns by
+  name. If not named, the column types must match the column names
+  exactly. In `col_*()` functions these are stored in the object.
 
 - .default:
 
@@ -55,7 +55,7 @@ col_time(format = "", ...)
 - .delim:
 
   The delimiter to use when parsing. If the `delim` argument used in the
-  call to [`vroom()`](https://vroom.r-lib.org/reference/vroom.md) it
+  call to [`vroom()`](https://vroom.tidyverse.org/reference/vroom.md) it
   takes precedence over the one specified in `col_types`.
 
 - levels:
@@ -78,7 +78,7 @@ col_time(format = "", ...)
   A format specification, as described below. If set to "", date times
   are parsed as ISO8601, dates and times used the date and time formats
   specified in the
-  [`locale()`](https://vroom.r-lib.org/reference/locale.md).
+  [`locale()`](https://vroom.tidyverse.org/reference/locale.md).
 
   Unlike [`strptime()`](https://rdrr.io/r/base/strptime.html), the
   format specification must match the complete string.

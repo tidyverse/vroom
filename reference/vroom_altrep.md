@@ -1,7 +1,7 @@
 # Show which column types are using Altrep
 
 `vroom_altrep()` can be used directly as input to the `altrep` argument
-of [`vroom()`](https://vroom.r-lib.org/reference/vroom.md).
+of [`vroom()`](https://vroom.tidyverse.org/reference/vroom.md).
 
 ## Usage
 

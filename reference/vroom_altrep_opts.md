@@ -1,7 +1,7 @@
 # Show which column types are using Altrep
 
 **\[deprecated\]** This function is deprecated in favor of
-[`vroom_altrep()`](https://vroom.r-lib.org/reference/vroom_altrep.md).
+[`vroom_altrep()`](https://vroom.tidyverse.org/reference/vroom_altrep.md).
 
 ## Usage
 

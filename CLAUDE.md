@@ -61,50 +61,51 @@ specification system (shared with readr) - Key C++ components:
 data)
 
 **Core Functions** - Reading:
-[`vroom()`](https://vroom.r-lib.org/reference/vroom.md) (main delimited
-reader with delimiter guessing),
-[`vroom_fwf()`](https://vroom.r-lib.org/reference/vroom_fwf.md)
+[`vroom()`](https://vroom.tidyverse.org/reference/vroom.md) (main
+delimited reader with delimiter guessing),
+[`vroom_fwf()`](https://vroom.tidyverse.org/reference/vroom_fwf.md)
 (fixed-width files),
-[`vroom_lines()`](https://vroom.r-lib.org/reference/vroom_lines.md)
+[`vroom_lines()`](https://vroom.tidyverse.org/reference/vroom_lines.md)
 (lazy line reading) - Writing:
-[`vroom_write()`](https://vroom.r-lib.org/reference/vroom_write.md)
+[`vroom_write()`](https://vroom.tidyverse.org/reference/vroom_write.md)
 (async formatting, multi-threaded writing),
-[`vroom_write_lines()`](https://vroom.r-lib.org/reference/vroom_write_lines.md),
-[`vroom_format()`](https://vroom.r-lib.org/reference/vroom_format.md)
+[`vroom_write_lines()`](https://vroom.tidyverse.org/reference/vroom_write_lines.md),
+[`vroom_format()`](https://vroom.tidyverse.org/reference/vroom_format.md)
 (format without writing to disk) - Fixed-width positioning:
-[`fwf_empty()`](https://vroom.r-lib.org/reference/vroom_fwf.md)
+[`fwf_empty()`](https://vroom.tidyverse.org/reference/vroom_fwf.md)
 (auto-detect),
-[`fwf_widths()`](https://vroom.r-lib.org/reference/vroom_fwf.md)
+[`fwf_widths()`](https://vroom.tidyverse.org/reference/vroom_fwf.md)
 (specify widths),
-[`fwf_positions()`](https://vroom.r-lib.org/reference/vroom_fwf.md)
+[`fwf_positions()`](https://vroom.tidyverse.org/reference/vroom_fwf.md)
 (start/end),
-[`fwf_cols()`](https://vroom.r-lib.org/reference/vroom_fwf.md) (named
-arguments) - Utilities:
-[`problems()`](https://vroom.r-lib.org/reference/problems.md) (inspect
-parsing issues), [`spec()`](https://vroom.r-lib.org/reference/spec.md)
-(extract column spec),
-[`vroom_altrep()`](https://vroom.r-lib.org/reference/vroom_altrep.md)
+[`fwf_cols()`](https://vroom.tidyverse.org/reference/vroom_fwf.md)
+(named arguments) - Utilities:
+[`problems()`](https://vroom.tidyverse.org/reference/problems.md)
+(inspect parsing issues),
+[`spec()`](https://vroom.tidyverse.org/reference/spec.md) (extract
+column spec),
+[`vroom_altrep()`](https://vroom.tidyverse.org/reference/vroom_altrep.md)
 (control Altrep usage),
-[`vroom_str()`](https://vroom.r-lib.org/reference/vroom_str.md)
+[`vroom_str()`](https://vroom.tidyverse.org/reference/vroom_str.md)
 (structure display for Altrep objects)
 
 **Column Type System** - Automatic type guessing from sample of rows
 (controlled by `guess_max`) - Explicit specification via
-[`cols()`](https://vroom.r-lib.org/reference/cols.md),
-[`cols_only()`](https://vroom.r-lib.org/reference/cols.md), or compact
-string notation - Column parsers:
-[`col_character()`](https://vroom.r-lib.org/reference/cols.md),
-[`col_integer()`](https://vroom.r-lib.org/reference/cols.md),
-[`col_big_integer()`](https://vroom.r-lib.org/reference/cols.md),
-[`col_double()`](https://vroom.r-lib.org/reference/cols.md),
-[`col_number()`](https://vroom.r-lib.org/reference/cols.md),
-[`col_date()`](https://vroom.r-lib.org/reference/cols.md),
-[`col_datetime()`](https://vroom.r-lib.org/reference/cols.md),
-[`col_time()`](https://vroom.r-lib.org/reference/cols.md),
-[`col_factor()`](https://vroom.r-lib.org/reference/cols.md),
-[`col_logical()`](https://vroom.r-lib.org/reference/cols.md),
-[`col_skip()`](https://vroom.r-lib.org/reference/cols.md),
-[`col_guess()`](https://vroom.r-lib.org/reference/cols.md) - Compact
+[`cols()`](https://vroom.tidyverse.org/reference/cols.md),
+[`cols_only()`](https://vroom.tidyverse.org/reference/cols.md), or
+compact string notation - Column parsers:
+[`col_character()`](https://vroom.tidyverse.org/reference/cols.md),
+[`col_integer()`](https://vroom.tidyverse.org/reference/cols.md),
+[`col_big_integer()`](https://vroom.tidyverse.org/reference/cols.md),
+[`col_double()`](https://vroom.tidyverse.org/reference/cols.md),
+[`col_number()`](https://vroom.tidyverse.org/reference/cols.md),
+[`col_date()`](https://vroom.tidyverse.org/reference/cols.md),
+[`col_datetime()`](https://vroom.tidyverse.org/reference/cols.md),
+[`col_time()`](https://vroom.tidyverse.org/reference/cols.md),
+[`col_factor()`](https://vroom.tidyverse.org/reference/cols.md),
+[`col_logical()`](https://vroom.tidyverse.org/reference/cols.md),
+[`col_skip()`](https://vroom.tidyverse.org/reference/cols.md),
+[`col_guess()`](https://vroom.tidyverse.org/reference/cols.md) - Compact
 string notation: `c`=character, `i`=integer, `I`=big integer,
 `d`=double, `n`=number, `l`=logical, `f`=factor, `D`=date, `T`=datetime,
 `t`=time, `?`=guess, `_` or `-`=skip - tidyselect-style column
@@ -114,16 +115,17 @@ selection:
 [`contains()`](https://tidyselect.r-lib.org/reference/starts_with.html),
 [`matches()`](https://tidyselect.r-lib.org/reference/starts_with.html),
 etc. - Problems tracking:
-[`problems()`](https://vroom.r-lib.org/reference/problems.md) function
-to inspect parsing issues
+[`problems()`](https://vroom.tidyverse.org/reference/problems.md)
+function to inspect parsing issues
 
 **Locale Support** -
-[`locale()`](https://vroom.r-lib.org/reference/locale.md) object
+[`locale()`](https://vroom.tidyverse.org/reference/locale.md) object
 controls region-specific settings: decimal mark, grouping mark,
 date/time formats, encoding, timezone - Defaults to US-centric locale
 but fully customizable via
-[`date_names()`](https://vroom.r-lib.org/reference/date_names.md) and
-[`date_names_langs()`](https://vroom.r-lib.org/reference/date_names.md)
+[`date_names()`](https://vroom.tidyverse.org/reference/date_names.md)
+and
+[`date_names_langs()`](https://vroom.tidyverse.org/reference/date_names.md)
 
 **Performance & Parsing** - Multi-threaded indexing, materialization,
 and writing (controlled by `num_threads` parameter or `VROOM_THREADS`

@@ -3,8 +3,8 @@
 `vroom_lines()` is similar to
 [`readLines()`](https://rdrr.io/r/base/readLines.html), however it reads
 the lines lazily like
-[`vroom()`](https://vroom.r-lib.org/reference/vroom.md), so operations
-like [`length()`](https://rdrr.io/r/base/length.html),
+[`vroom()`](https://vroom.tidyverse.org/reference/vroom.md), so
+operations like [`length()`](https://rdrr.io/r/base/length.html),
 [`head()`](https://rdrr.io/r/utils/head.html),
 [`tail()`](https://rdrr.io/r/utils/head.html) and
 [`sample()`](https://rdrr.io/r/base/sample.html) can be done much more
@@ -70,15 +70,15 @@ vroom_lines(
 
   The locale controls defaults that vary from place to place. The
   default locale is US-centric (like R), but you can use
-  [`locale()`](https://vroom.r-lib.org/reference/locale.md) to create
-  your own locale that controls things like the default time zone,
-  encoding, decimal mark, big mark, and day/month names.
+  [`locale()`](https://vroom.tidyverse.org/reference/locale.md) to
+  create your own locale that controls things like the default time
+  zone, encoding, decimal mark, big mark, and day/month names.
 
 - altrep:
 
   Control which column types use Altrep representations, either a
   character vector of types, `TRUE` or `FALSE`. See
-  [`vroom_altrep()`](https://vroom.r-lib.org/reference/vroom_altrep.md)
+  [`vroom_altrep()`](https://vroom.tidyverse.org/reference/vroom_altrep.md)
   for for full details.
 
 - altrep_opts:

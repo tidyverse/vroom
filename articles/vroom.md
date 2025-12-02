@@ -1,9 +1,9 @@
 # Get started with vroom
 
 The vroom package contains one main function
-[`vroom()`](https://vroom.r-lib.org/reference/vroom.md) which is used to
-read all types of delimited files. A delimited file is any file in which
-the data is separated (delimited) by one or more characters.
+[`vroom()`](https://vroom.tidyverse.org/reference/vroom.md) which is
+used to read all types of delimited files. A delimited file is any file
+in which the data is separated (delimited) by one or more characters.
 
 The most common type of delimited files are CSV (Comma Separated Values)
 or TSV (Tab Separated Values) files, typically these files have a `.csv`
@@ -28,7 +28,7 @@ This vignette covers the following topics:
 ## Reading files
 
 To read a CSV, or other type of delimited file with vroom pass the file
-to [`vroom()`](https://vroom.r-lib.org/reference/vroom.md). The
+to [`vroom()`](https://vroom.tidyverse.org/reference/vroom.md). The
 delimiter will be automatically guessed if it is a common delimiter;
 e.g. (“,” “” ” “\|” “:” “;”). If the guessing fails or you are using a
 less common delimiter specify it with the `delim` parameter.
@@ -87,7 +87,7 @@ vroom(file, delim = ",")
 
 If you are reading a set of files which all have the same columns (as
 in, names and types), you can pass the filenames directly to
-[`vroom()`](https://vroom.r-lib.org/reference/vroom.md) and it will
+[`vroom()`](https://vroom.tidyverse.org/reference/vroom.md) and it will
 combine them into one result. vroom’s example datasets include several
 files named like `mtcars-i.csv`. These files contain subsets of the
 `mtcars` data, for cars with different numbers of cylinders. First, we
@@ -180,12 +180,12 @@ vroom(file)
 #> # ℹ 1 more variable: carb <dbl>
 ```
 
-[`vroom()`](https://vroom.r-lib.org/reference/vroom.md) decompresses,
-indexes and writes the decompressed data to a file in the temp directory
-in a single stream. The temporary file is used to lazily look up the
-values and will be automatically cleaned up when all values in the
-object have been fully read, the object is removed, or the R session
-ends.
+[`vroom()`](https://vroom.tidyverse.org/reference/vroom.md)
+decompresses, indexes and writes the decompressed data to a file in the
+temp directory in a single stream. The temporary file is used to lazily
+look up the values and will be automatically cleaned up when all values
+in the object have been fully read, the object is removed, or the R
+session ends.
 
 ### Reading individual files from a multi-file zip archive
 
@@ -371,7 +371,7 @@ Unfortunately, it’s also often painful to read because you need to
 describe the length of every field. vroom aims to make it as easy as
 possible by providing a number of different ways to describe the field
 structure. Use
-[`vroom_fwf()`](https://vroom.r-lib.org/reference/vroom_fwf.md) in
+[`vroom_fwf()`](https://vroom.tidyverse.org/reference/vroom_fwf.md) in
 conjunction with one of the following helper functions to read the file.
 
 ``` r
@@ -380,7 +380,7 @@ cat(readLines(fwf_sample))
 #> John Smith          WA        418-Y11-4111 Mary Hartford       CA        319-Z19-4341 Evan Nolan          IL        219-532-c301
 ```
 
-- [`fwf_empty()`](https://vroom.r-lib.org/reference/vroom_fwf.md) -
+- [`fwf_empty()`](https://vroom.tidyverse.org/reference/vroom_fwf.md) -
   Guess based on the position of empty columns.
 
 ``` r
@@ -400,8 +400,8 @@ vroom_fwf(fwf_sample, fwf_empty(fwf_sample, col_names = c("first", "last", "stat
 #> 3 Evan  Nolan    IL    219-532-c301
 ```
 
-- [`fwf_widths()`](https://vroom.r-lib.org/reference/vroom_fwf.md) - Use
-  user provided set of field widths.
+- [`fwf_widths()`](https://vroom.tidyverse.org/reference/vroom_fwf.md) -
+  Use user provided set of field widths.
 
 ``` r
 vroom_fwf(fwf_sample, fwf_widths(c(20, 10, 12), c("name", "state", "ssn")))
@@ -420,7 +420,7 @@ vroom_fwf(fwf_sample, fwf_widths(c(20, 10, 12), c("name", "state", "ssn")))
 #> 3 Evan Nolan    IL    219-532-c301
 ```
 
-- [`fwf_positions()`](https://vroom.r-lib.org/reference/vroom_fwf.md) -
+- [`fwf_positions()`](https://vroom.tidyverse.org/reference/vroom_fwf.md) -
   Use user provided sets of start and end positions.
 
 ``` r
@@ -440,8 +440,8 @@ vroom_fwf(fwf_sample, fwf_positions(c(1, 30), c(20, 42), c("name", "ssn")))
 #> 3 Evan Nolan    219-532-c301
 ```
 
-- [`fwf_cols()`](https://vroom.r-lib.org/reference/vroom_fwf.md) - Use
-  user provided named widths.
+- [`fwf_cols()`](https://vroom.tidyverse.org/reference/vroom_fwf.md) -
+  Use user provided named widths.
 
 ``` r
 vroom_fwf(fwf_sample, fwf_cols(name = 20, state = 10, ssn = 12))
@@ -460,8 +460,8 @@ vroom_fwf(fwf_sample, fwf_cols(name = 20, state = 10, ssn = 12))
 #> 3 Evan Nolan    IL    219-532-c301
 ```
 
-- [`fwf_cols()`](https://vroom.r-lib.org/reference/vroom_fwf.md) - Use
-  user provided named pairs of positions.
+- [`fwf_cols()`](https://vroom.tidyverse.org/reference/vroom_fwf.md) -
+  Use user provided named pairs of positions.
 
 ``` r
 vroom_fwf(fwf_sample, fwf_cols(name = c(1, 20), ssn = c(30, 42)))
@@ -489,30 +489,30 @@ type of one or more columns.
 The available specifications are: (with single letter abbreviations in
 quotes)
 
-- [`col_logical()`](https://vroom.r-lib.org/reference/cols.md) ‘l’,
+- [`col_logical()`](https://vroom.tidyverse.org/reference/cols.md) ‘l’,
   containing only `T`, `F`, `TRUE`, `FALSE`, `1` or `0`.
-- [`col_integer()`](https://vroom.r-lib.org/reference/cols.md) ‘i’,
+- [`col_integer()`](https://vroom.tidyverse.org/reference/cols.md) ‘i’,
   integer values.
-- [`col_big_integer()`](https://vroom.r-lib.org/reference/cols.md) ‘I’,
-  Big integer values. (64bit integers)
-- [`col_double()`](https://vroom.r-lib.org/reference/cols.md) ‘d’,
+- [`col_big_integer()`](https://vroom.tidyverse.org/reference/cols.md)
+  ‘I’, Big integer values. (64bit integers)
+- [`col_double()`](https://vroom.tidyverse.org/reference/cols.md) ‘d’,
   floating point values.
-- [`col_number()`](https://vroom.r-lib.org/reference/cols.md) ‘n’,
+- [`col_number()`](https://vroom.tidyverse.org/reference/cols.md) ‘n’,
   numbers containing the `grouping_mark`
 - `col_date(format = "")` ‘D’: with the locale’s `date_format`.
 - `col_time(format = "")` ‘t’: with the locale’s `time_format`.
 - `col_datetime(format = "")` ‘T’: ISO8601 date times.
 - `col_factor(levels, ordered)` ‘f’, a fixed set of values.
-- [`col_character()`](https://vroom.r-lib.org/reference/cols.md) ‘c’,
-  everything else.
-- [`col_skip()`](https://vroom.r-lib.org/reference/cols.md) ’\_, -’,
+- [`col_character()`](https://vroom.tidyverse.org/reference/cols.md)
+  ‘c’, everything else.
+- [`col_skip()`](https://vroom.tidyverse.org/reference/cols.md) ’\_, -’,
   don’t import this column.
-- [`col_guess()`](https://vroom.r-lib.org/reference/cols.md) ‘?’, parse
-  using the “best” type based on the input.
+- [`col_guess()`](https://vroom.tidyverse.org/reference/cols.md) ‘?’,
+  parse using the “best” type based on the input.
 
 You can tell vroom what columns to use with the
-[`col_types()`](https://vroom.r-lib.org/reference/cols.md) argument in a
-number of ways.
+[`col_types()`](https://vroom.tidyverse.org/reference/cols.md) argument
+in a number of ways.
 
 If you only need to override a single column the most concise way is to
 use a named vector.
@@ -603,8 +603,8 @@ vroom(
 ## Name repair
 
 Often the names of columns in the original dataset are not ideal to work
-with. [`vroom()`](https://vroom.r-lib.org/reference/vroom.md) uses the
-same `.name_repair` argument as tibble, so you can use one of the
+with. [`vroom()`](https://vroom.tidyverse.org/reference/vroom.md) uses
+the same `.name_repair` argument as tibble, so you can use one of the
 default name repair strategies or provide a custom function. A great
 approach is to use the
 [`janitor::make_clean_names()`](https://sfirke.github.io/janitor/reference/make_clean_names.html)
@@ -620,7 +620,8 @@ vroom(
 
 ## Writing delimited files
 
-Use [`vroom_write()`](https://vroom.r-lib.org/reference/vroom_write.md)
+Use
+[`vroom_write()`](https://vroom.tidyverse.org/reference/vroom_write.md)
 to write delimited files, the default delimiter is tab, to write TSV
 files. Writing to TSV by default has the following benefits: - Avoids
 the issue of whether to use `;` (common in Europe) or `,` (common in the
@@ -656,8 +657,8 @@ vroom_write(mtcars, "mtcars.tsv.xz")
 
 It is also possible to use other compressors by using
 [`pipe()`](https://rdrr.io/r/base/connections.html) with
-[`vroom_write()`](https://vroom.r-lib.org/reference/vroom_write.md) to
-create a pipe connection to command line utilities, such as
+[`vroom_write()`](https://vroom.tidyverse.org/reference/vroom_write.md)
+to create a pipe connection to command line utilities, such as
 
 - [pigz](https://zlib.net/pigz/), a parallel gzip implementation
 - lbzip2, a parallel bzip2 implementation
@@ -667,8 +668,8 @@ create a pipe connection to command line utilities, such as
 
 The parallel compression versions can be considerably faster for large
 output files and generally
-[`vroom_write()`](https://vroom.r-lib.org/reference/vroom_write.md) is
-fast enough that the compression speed becomes the bottleneck when
+[`vroom_write()`](https://vroom.tidyverse.org/reference/vroom_write.md)
+is fast enough that the compression speed becomes the bottleneck when
 writing.
 
 ``` r
@@ -697,7 +698,7 @@ user’s expectations for this use case.
 
 ## Further reading
 
-- [`vignette("benchmarks")`](https://vroom.r-lib.org/articles/benchmarks.md)
+- [`vignette("benchmarks")`](https://vroom.tidyverse.org/articles/benchmarks.md)
   discusses the performance of vroom, how it compares to alternatives
   and how it achieves its results.
 - [📽 vroom: Because Life is too short to read
