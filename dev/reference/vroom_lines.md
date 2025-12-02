@@ -3,7 +3,7 @@
 `vroom_lines()` is similar to
 [`readLines()`](https://rdrr.io/r/base/readLines.html), however it reads
 the lines lazily like
-[`vroom()`](https://vroom.r-lib.org/dev/reference/vroom.md), so
+[`vroom()`](https://vroom.tidyverse.org/dev/reference/vroom.md), so
 operations like [`length()`](https://rdrr.io/r/base/length.html),
 [`head()`](https://rdrr.io/r/utils/head.html),
 [`tail()`](https://rdrr.io/r/utils/head.html) and
@@ -69,7 +69,7 @@ vroom_lines(
 
   The locale controls defaults that vary from place to place. The
   default locale is US-centric (like R), but you can use
-  [`locale()`](https://vroom.r-lib.org/dev/reference/locale.md) to
+  [`locale()`](https://vroom.tidyverse.org/dev/reference/locale.md) to
   create your own locale that controls things like the default time
   zone, encoding, decimal mark, big mark, and day/month names.
 
@@ -77,7 +77,7 @@ vroom_lines(
 
   Control which column types use Altrep representations, either a
   character vector of types, `TRUE` or `FALSE`. See
-  [`vroom_altrep()`](https://vroom.r-lib.org/dev/reference/vroom_altrep.md)
+  [`vroom_altrep()`](https://vroom.tidyverse.org/dev/reference/vroom_altrep.md)
   for for full details.
 
 - num_threads:

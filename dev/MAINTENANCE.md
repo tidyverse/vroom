@@ -48,14 +48,14 @@ isn’t really needed.
 ## Known outstanding issues
 
 Currently the line numbers in
-[`problems()`](https://vroom.r-lib.org/dev/reference/problems.md) don’t
-take into account skipped or commented lines, as we don’t keep track of
-how many of those we have seen. This would not be entirely trivial to
-do, as we would need to keep track of the locations of the skipped or
-commented lines in each chunk, so we could fix them up when assembling
-the problems data frame. It is not clear to me that this trade off is
-worth the effort. On the other hand reporting incorrect line numbers is
-also not very good.
+[`problems()`](https://vroom.tidyverse.org/dev/reference/problems.md)
+don’t take into account skipped or commented lines, as we don’t keep
+track of how many of those we have seen. This would not be entirely
+trivial to do, as we would need to keep track of the locations of the
+skipped or commented lines in each chunk, so we could fix them up when
+assembling the problems data frame. It is not clear to me that this
+trade off is worth the effort. On the other hand reporting incorrect
+line numbers is also not very good.
 
 <https://github.com/r-lib/vroom/issues/295> tracks this issue
 

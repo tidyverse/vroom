@@ -65,7 +65,7 @@ fwf_cols(...)
 - col_types:
 
   One of `NULL`, a
-  [`cols()`](https://vroom.r-lib.org/dev/reference/cols.md)
+  [`cols()`](https://vroom.tidyverse.org/dev/reference/cols.md)
   specification, or a string. See `vignette("readr")` for more details.
 
   If `NULL`, all column types will be inferred from `guess_max` rows of
@@ -75,10 +75,10 @@ fwf_cols(...)
 
   Column specifications created by
   [`list()`](https://rdrr.io/r/base/list.html) or
-  [`cols()`](https://vroom.r-lib.org/dev/reference/cols.md) must contain
-  one column specification for each column. If you only want to read a
-  subset of the columns, use
-  [`cols_only()`](https://vroom.r-lib.org/dev/reference/cols.md).
+  [`cols()`](https://vroom.tidyverse.org/dev/reference/cols.md) must
+  contain one column specification for each column. If you only want to
+  read a subset of the columns, use
+  [`cols_only()`](https://vroom.tidyverse.org/dev/reference/cols.md).
 
   Alternatively, you can use a compact string representation where each
   character represents one column:
@@ -133,7 +133,7 @@ fwf_cols(...)
 
   The locale controls defaults that vary from place to place. The
   default locale is US-centric (like R), but you can use
-  [`locale()`](https://vroom.r-lib.org/dev/reference/locale.md) to
+  [`locale()`](https://vroom.tidyverse.org/dev/reference/locale.md) to
   create your own locale that controls things like the default time
   zone, encoding, decimal mark, big mark, and day/month names.
 
@@ -178,7 +178,7 @@ fwf_cols(...)
 
   Control which column types use Altrep representations, either a
   character vector of types, `TRUE` or `FALSE`. See
-  [`vroom_altrep()`](https://vroom.r-lib.org/dev/reference/vroom_altrep.md)
+  [`vroom_altrep()`](https://vroom.tidyverse.org/dev/reference/vroom_altrep.md)
   for for full details.
 
 - num_threads:

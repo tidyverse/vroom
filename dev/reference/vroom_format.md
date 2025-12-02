@@ -1,7 +1,7 @@
 # Convert a data frame to a delimited string
 
 This is equivalent to
-[`vroom_write()`](https://vroom.r-lib.org/dev/reference/vroom_write.md),
+[`vroom_write()`](https://vroom.tidyverse.org/dev/reference/vroom_write.md),
 but instead of writing to disk, it returns a string. It is primarily
 useful for examples and for testing.
 

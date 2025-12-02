@@ -33,12 +33,12 @@ Source:
 
 Hester J, Wickham H, Bryan J (2025). *vroom: Read and Write Rectangular
 Text Data Quickly*. R package version 1.6.7.9000,
-<https://vroom.r-lib.org>.
+<https://vroom.tidyverse.org>.
 
     @Manual{,
       title = {vroom: Read and Write Rectangular Text Data Quickly},
       author = {Jim Hester and Hadley Wickham and Jennifer Bryan},
       year = {2025},
       note = {R package version 1.6.7.9000},
-      url = {https://vroom.r-lib.org},
+      url = {https://vroom.tidyverse.org},
     }

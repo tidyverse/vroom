@@ -15,9 +15,9 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Read and Write Rectangular Text Data Quickly">
 <meta name="description" content="The goal of vroom is to read and write data (like csv, tsv and fwf) quickly. When reading it uses a quick initial indexing step, then reads the values lazily , so only the data you actually use needs to be read. The writer formats the data in parallel and writes to disk asynchronously from formatting.">
 <meta property="og:description" content="The goal of vroom is to read and write data (like csv, tsv and fwf) quickly. When reading it uses a quick initial indexing step, then reads the values lazily , so only the data you actually use needs to be read. The writer formats the data in parallel and writes to disk asynchronously from formatting.">
-<meta property="og:image" content="https://vroom.r-lib.org/logo.png">
+<meta property="og:image" content="https://vroom.tidyverse.org/logo.png">
 <meta name="robots" content="noindex">
-<script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="vroom.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="vroom.tidyverse.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
 <body>
     <a href="#container" class="visually-hidden-focusable">Skip to content</a>
@@ -77,7 +77,7 @@
 
 <p>The fastest delimited reader for R, <strong>1.23 GB/sec</strong>.</p>
 <p><img src="https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif" align="right"></p>
-<p>But that’s impossible! How can it be <a href="https://vroom.r-lib.org/articles/benchmarks.html">so fast</a>?</p>
+<p>But that’s impossible! How can it be <a href="https://vroom.tidyverse.org/articles/benchmarks.html">so fast</a>?</p>
 <p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html" class="external-link">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use. This lazy access is done automatically, so no changes to your R data-manipulation code are needed.</p>
 <p>vroom also uses multiple threads for indexing, materializing non-character columns, and when writing to further improve performance.</p>
 <table class="table">
@@ -162,7 +162,7 @@
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<p>See <a href="https://vroom.r-lib.org/articles/vroom.html">getting started</a> to jump start your use of vroom!</p>
+<p>See <a href="https://vroom.tidyverse.org/articles/vroom.html">getting started</a> to jump start your use of vroom!</p>
 <p>vroom uses the same interface as readr to specify column types.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">vroom</span><span class="fu">::</span><span class="fu"><a href="reference/vroom.html">vroom</a></span><span class="op">(</span></span>
@@ -237,7 +237,7 @@
 <h2 id="learning-more">Learning more<a class="anchor" aria-label="anchor" href="#learning-more"></a>
 </h2>
 <ul>
-<li><a href="https://vroom.r-lib.org/articles/vroom.html">Getting started with vroom</a></li>
+<li><a href="https://vroom.tidyverse.org/articles/vroom.html">Getting started with vroom</a></li>
 <li>
 <a href="https://www.youtube.com/watch?v=RA9AjqZXxMU&amp;t=10s" class="external-link">📽 vroom: Because Life is too short to read slow</a> - Presentation at UseR!2019 (<a href="https://speakerdeck.com/jimhester/vroom" class="external-link">slides</a>)</li>
 <li>
@@ -247,7 +247,7 @@
 <div class="section level2">
 <h2 id="benchmarks">Benchmarks<a class="anchor" aria-label="anchor" href="#benchmarks"></a>
 </h2>
-<p>The speed quoted above is from a real 1.53G dataset with 14,388,451 rows and 11 columns, see the <a href="https://vroom.r-lib.org/articles/benchmarks.html">benchmark article</a> for full details of the dataset and <a href="https://github.com/tidyverse/vroom/tree/main/inst/bench" class="external-link">bench/</a> for the code used to retrieve the data and perform the benchmarks.</p>
+<p>The speed quoted above is from a real 1.53G dataset with 14,388,451 rows and 11 columns, see the <a href="https://vroom.tidyverse.org/articles/benchmarks.html">benchmark article</a> for full details of the dataset and <a href="https://github.com/tidyverse/vroom/tree/main/inst/bench" class="external-link">bench/</a> for the code used to retrieve the data and perform the benchmarks.</p>
 </div>
 </div>
 <div class="section level1">

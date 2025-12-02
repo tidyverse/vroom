@@ -5,7 +5,7 @@ The fastest delimited reader for R, **1.23 GB/sec**.
 ![](https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif)
 
 But that’s impossible! How can it be [so
-fast](https://vroom.r-lib.org/articles/benchmarks.html)?
+fast](https://vroom.tidyverse.org/articles/benchmarks.html)?
 
 vroom doesn’t stop to actually *read* all of your data, it simply
 indexes where each record is located so it can be read later. The
@@ -74,8 +74,8 @@ pak::pak("tidyverse/vroom")
 
 ## Usage
 
-See [getting started](https://vroom.r-lib.org/articles/vroom.html) to
-jump start your use of vroom!
+See [getting started](https://vroom.tidyverse.org/articles/vroom.html)
+to jump start your use of vroom!
 
 vroom uses the same interface as readr to specify column types.
 
@@ -162,7 +162,7 @@ vroom::vroom(files, id = "source")
 ## Learning more
 
 - [Getting started with
-  vroom](https://vroom.r-lib.org/articles/vroom.html)
+  vroom](https://vroom.tidyverse.org/articles/vroom.html)
 - [📽 vroom: Because Life is too short to read
   slow](https://www.youtube.com/watch?v=RA9AjqZXxMU&t=10s) -
   Presentation at UseR!2019
@@ -175,7 +175,7 @@ vroom::vroom(files, id = "source")
 
 The speed quoted above is from a real 1.53G dataset with 14,388,451 rows
 and 11 columns, see the [benchmark
-article](https://vroom.r-lib.org/articles/benchmarks.html) for full
+article](https://vroom.tidyverse.org/articles/benchmarks.html) for full
 details of the dataset and
 [bench/](https://github.com/tidyverse/vroom/tree/main/inst/bench) for
 the code used to retrieve the data and perform the benchmarks.
@@ -183,9 +183,9 @@ the code used to retrieve the data and perform the benchmarks.
 # Environment variables
 
 In addition to the arguments to the
-[`vroom()`](https://vroom.r-lib.org/dev/reference/vroom.md) function,
-you can control the behavior of vroom with a few environment variables.
-Generally these will not need to be set by most users.
+[`vroom()`](https://vroom.tidyverse.org/dev/reference/vroom.md)
+function, you can control the behavior of vroom with a few environment
+variables. Generally these will not need to be set by most users.
 
 - `VROOM_TEMP_PATH` - Path to the directory used to store temporary
   files when reading from a R connection. If unset defaults to the R
