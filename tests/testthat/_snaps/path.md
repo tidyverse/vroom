@@ -31,3 +31,12 @@
       * A connection or list of connections
       * Literal or raw input
 
+# multiple files with non-ASCII encoding fails informatively
+
+    Code
+      vroom(c(input, input), locale = locale(encoding = "UTF-16"))
+    Condition
+      Error in `vroom()`:
+      ! Encoding "UTF-16" is only supported when reading a single input.
+      i `file` has length 2.
+

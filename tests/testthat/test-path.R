@@ -209,3 +209,11 @@ test_that("standardise_path() errors for invalid input", {
     f(as.list(files))
   )
 })
+
+test_that("multiple files with non-ASCII encoding fails informatively", {
+  input <- vroom_example("mtcars.csv")
+  expect_snapshot(
+    vroom(c(input, input), locale = locale(encoding = "UTF-16")),
+    error = TRUE
+  )
+})

@@ -8,21 +8,21 @@ is_ascii_compatible <- function(encoding) {
 }
 
 # this is about the encoding of the file (contents), not the filepath
-reencode_file <- function(path, encoding) {
-  if (length(path) > 1) {
-    stop(
-      sprintf(
-        "Reading files of encoding '%s' can only be done for single files at a time",
-        encoding
+reencode_file <- function(file, encoding, call = caller_env()) {
+  if (length(file) > 1) {
+    cli::cli_abort(
+      c(
+        "!" = "Encoding {.val {encoding}} is only supported when reading a single input.",
+        "i" = "{.arg file} has length {length(file)}."
       ),
-      call. = FALSE
+      call = call
     )
   }
 
-  if (inherits(path[[1]], "connection")) {
-    in_con <- path[[1]]
+  if (inherits(file[[1]], "connection")) {
+    in_con <- file[[1]]
   } else {
-    in_con <- file(path[[1]])
+    in_con <- file(file[[1]])
   }
   out_file <- tempfile()
   out_con <- file(out_file)
