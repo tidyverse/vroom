@@ -293,21 +293,24 @@ is_url <- function(path) {
   grepl("^((http|ftp)s?|sftp)://", path)
 }
 
-check_path <- function(path) {
+check_path <- function(path, call = caller_env()) {
   if (file.exists(path)) {
     return(normalizePath_utf8(path, mustWork = FALSE))
   }
 
-  stop(
-    "'",
-    path,
-    "' does not exist",
-    if (!is_absolute_path(path)) {
-      paste0(" in current working directory ('", getwd(), "')")
-    },
-    ".",
-    call. = FALSE
+  where <- function(path) {
+    if (is_absolute_path(path)) {
+      ""
+    } else {
+      " in current working directory: {.file {getwd()}}"
+    }
+  }
+  msg <- glue(
+    "{.file {path}} does not exist<<where(path)>>.",
+    .open = "<<",
+    .close = ">>"
   )
+  cli::cli_abort(msg, call = call)
 }
 
 is_absolute_path <- function(path) {

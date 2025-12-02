@@ -1,6 +1,28 @@
 test_that("vroom errors if the file does not exist", {
   tf <- tempfile()
-  expect_error(vroom(tf, col_types = list()), "does not exist")
+  wd <- getwd()
+  scrubber <- function(x) {
+    gsub(
+      wd,
+      "<workdir>",
+      gsub(tf, "<tempfile>", x, fixed = TRUE),
+      fixed = TRUE
+    )
+  }
+
+  # absolute path
+  expect_snapshot(
+    vroom(tf, col_types = list()),
+    error = TRUE,
+    transform = scrubber
+  )
+
+  # relative path
+  expect_snapshot(
+    vroom("does-not-exist.csv", col_types = list()),
+    error = TRUE,
+    transform = scrubber
+  )
 })
 
 test_that("vroom works with compressed files", {

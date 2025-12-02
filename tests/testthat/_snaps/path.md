@@ -1,3 +1,19 @@
+# vroom errors if the file does not exist
+
+    Code
+      vroom(tf, col_types = list())
+    Condition
+      Error:
+      ! '<tempfile>' does not exist.
+
+---
+
+    Code
+      vroom("does-not-exist.csv", col_types = list())
+    Condition
+      Error:
+      ! 'does-not-exist.csv' does not exist in current working directory: '<workdir>'.
+
 # vroom errors via https on non-gz file
 
     Code

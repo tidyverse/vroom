@@ -592,14 +592,6 @@ test_that("vroom can read files with no trailing newline", {
   )
 })
 
-test_that("Missing files error with a nice error message", {
-  f <- tempfile()
-  expect_error(vroom(f, col_types = list()), "does not exist")
-  expect_error(
-    vroom("foo", col_types = list()),
-    "does not exist in current working directory"
-  )
-})
 
 test_that("Can return the spec object", {
   x <- vroom(I("foo,bar\n1,c\n"), col_types = list())
