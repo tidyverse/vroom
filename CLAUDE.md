@@ -15,8 +15,8 @@ General advice:
 ### Testing
 
 - Tests for `R/{name}.R` go in `tests/testthat/test-{name}.R`.
-- Use `devtools::test(reporter = "check")` to run all tests
-- Use `devtools::test(filter = "name", reporter = "check")` to run tests for `R/{name}.R`
+- Use `devtools::test()` to run all tests
+- Use `devtools::test(filter = "name")` to run tests for `R/{name}.R`
 - DO NOT USE `devtools::test_active_file()`
 - All testing functions automatically load code; you don't need to.
 

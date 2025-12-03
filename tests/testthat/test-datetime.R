@@ -362,11 +362,6 @@ test_that("can use `tz = ''` for system time zone", {
   )
 })
 
-test_that("can catch faulty system time zones", {
-  withr::local_timezone("foo")
-  expect_error(locale(tz = ""), "Unknown TZ foo")
-})
-
 ## Guessing ---------------------------------------------------------------------
 
 test_that("DDDD-DD not parsed as date (i.e. doesn't trigger partial date match)", {

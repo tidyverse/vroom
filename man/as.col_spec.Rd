@@ -4,7 +4,7 @@
 \alias{as.col_spec}
 \title{Coerce to a column specification}
 \usage{
-as.col_spec(x)
+as.col_spec(x, call = caller_env())
 }
 \arguments{
 \item{x}{Input object}

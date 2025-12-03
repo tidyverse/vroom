@@ -79,16 +79,36 @@ cols_only <- function(...) {
 
 # col_spec ----------------------------------------------------------------
 
-col_spec <- function(col_types, default = col_guess(), delim) {
+col_spec <- function(
+  col_types,
+  default = col_guess(),
+  delim,
+  call = caller_env()
+) {
   stopifnot(is.list(col_types))
-  stopifnot(is.collector(default))
+
+  hint <- "Column specifications must be created with the {.code col_*()} functions or their abbreviated character names."
+
+  if (!is.collector(default)) {
+    cli::cli_abort(
+      c(
+        hint,
+        "x" = "Bad {.arg .default} specification."
+      ),
+      call = call
+    )
+  }
 
   is_collector <- vapply(col_types, is.collector, logical(1))
   if (any(!is_collector)) {
-    stop(
-      "Some `col_types` are not S3 collector objects: ",
-      paste(which(!is_collector), collapse = ", "),
-      call. = FALSE
+    # the as.character() is favorable for cli pluralization
+    bad_idx <- as.character(which(!is_collector))
+    cli::cli_abort(
+      c(
+        hint,
+        "x" = "Bad specification{?s} at position{?s}: {bad_idx}."
+      ),
+      call = call
     )
   }
 
@@ -114,28 +134,28 @@ is.col_spec <- function(x) inherits(x, "col_spec")
 #' @examples
 #' as.col_spec("cccnnn")
 #' @export
-as.col_spec <- function(x) UseMethod("as.col_spec")
+as.col_spec <- function(x, call = caller_env()) UseMethod("as.col_spec")
 
 #' @export
-as.col_spec.character <- function(x) {
+as.col_spec.character <- function(x, call = caller_env()) {
   if (is_named(x)) {
-    return(as.col_spec(as.list(x)))
+    return(as.col_spec(as.list(x), call = call))
   }
   letters <- strsplit(x, "")[[1]]
-  col_spec(lapply(letters, col_concise), col_guess(), delim = NULL)
+  col_spec(lapply(letters, col_concise), col_guess(), delim = NULL, call = call)
 }
 
 #' @export
-as.col_spec.NULL <- function(x) {
-  col_spec(list(), delim = NULL)
+as.col_spec.NULL <- function(x, call = caller_env()) {
+  col_spec(list(), delim = NULL, call = call)
 }
 
 #' @export
-as.col_spec.list <- function(x) {
+as.col_spec.list <- function(x, call = caller_env()) {
   do.call(cols, x)
 }
 #' @export
-as.col_spec.col_spec <- function(x) {
+as.col_spec.col_spec <- function(x, call = caller_env()) {
   if (!"delim" %in% names(x)) {
     x["delim"] <- list(NULL)
   }
@@ -143,8 +163,11 @@ as.col_spec.col_spec <- function(x) {
 }
 
 #' @export
-as.col_spec.default <- function(x) {
-  stop("`col_types` must be NULL, a list or a string", call. = FALSE)
+as.col_spec.default <- function(x, call = caller_env()) {
+  cli::cli_abort(
+    "{.arg col_types} must be {.code NULL}, a {.fun cols} specification, or a string.",
+    call = call
+  )
 }
 
 # Conditionally exported in zzz.R
@@ -330,7 +353,7 @@ spec <- function(x) {
   attr(x, "spec")
 }
 
-col_concise <- function(x) {
+col_concise <- function(x, call = caller_env()) {
   switch(
     x,
     "_" = ,
@@ -362,7 +385,10 @@ col_concise <- function(x) {
     T = col_datetime(),
     time = ,
     t = col_time(),
-    stop("Unknown shortcut: ", x, call. = FALSE)
+    cli::cli_abort(
+      "Unknown column type specification: {.val {x}}",
+      call = call
+    )
   )
 }
 

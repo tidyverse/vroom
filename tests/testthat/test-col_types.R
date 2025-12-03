@@ -49,3 +49,31 @@ test_that("col_skip works with empty data (#540)", {
   out <- vroom(I("a\tb\n"), delim = "\t", col_types = "--", skip = 1L)
   expect_equal(out, tibble::tibble())
 })
+
+test_that("cols() errors for invalid collector objects", {
+  expect_snapshot(
+    cols(a = col_character(), b = 123),
+    error = TRUE
+  )
+
+  expect_snapshot(
+    cols(a = col_character(), .default = 123),
+    error = TRUE
+  )
+})
+
+test_that("cols() errors for invalid character specifications", {
+  expect_snapshot(cols(X = "z", Y = "i", Z = col_character()), error = TRUE)
+  expect_snapshot(cols(X = "i", .default = "wut"), error = TRUE)
+})
+
+test_that("as.col_spec() errors for unhandled input type", {
+  expect_snapshot(
+    vroom(I("whatever"), col_types = data.frame()),
+    error = TRUE
+  )
+})
+
+test_that("as.col_spec() errors for unrecognized single-letter spec", {
+  expect_snapshot(vroom(I("whatever"), col_types = "dz"), error = TRUE)
+})

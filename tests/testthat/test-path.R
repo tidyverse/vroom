@@ -1,6 +1,28 @@
 test_that("vroom errors if the file does not exist", {
   tf <- tempfile()
-  expect_error(vroom(tf, col_types = list()), "does not exist")
+  wd <- getwd()
+  scrubber <- function(x) {
+    gsub(
+      wd,
+      "<workdir>",
+      gsub(tf, "<tempfile>", x, fixed = TRUE),
+      fixed = TRUE
+    )
+  }
+
+  # absolute path
+  expect_snapshot(
+    vroom(tf, col_types = list()),
+    error = TRUE,
+    transform = scrubber
+  )
+
+  # relative path
+  expect_snapshot(
+    vroom("does-not-exist.csv", col_types = list()),
+    error = TRUE,
+    transform = scrubber
+  )
 })
 
 test_that("vroom works with compressed files", {
@@ -31,9 +53,9 @@ test_that("vroom errors via https on non-gz file", {
   skip_on_cran()
 
   url <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv.bz2"
-  expect_error(
+  expect_snapshot(
     vroom(url, col_types = list()),
-    "Reading from remote `bz2` compressed files is not supported"
+    error = TRUE
   )
 })
 
@@ -207,5 +229,22 @@ test_that("standardise_path() errors for invalid input", {
   expect_snapshot(
     error = TRUE,
     f(as.list(files))
+  )
+})
+
+test_that("multiple files with non-ASCII encoding fails informatively", {
+  input <- vroom_example("mtcars.csv")
+  expect_snapshot(
+    vroom(c(input, input), locale = locale(encoding = "UTF-16")),
+    error = TRUE
+  )
+})
+
+test_that("writing to .zip without archive package fails informatively", {
+  local_mocked_bindings(is_installed = function(pkg) FALSE)
+
+  expect_snapshot(
+    vroom_write(mtcars, tempfile(fileext = ".zip")),
+    error = TRUE
   )
 })

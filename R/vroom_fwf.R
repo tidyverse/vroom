@@ -124,7 +124,7 @@ fwf_empty <- function(
   file <- standardise_one_path(standardise_path(file)[[1]])
 
   if (inherits(file, "connection")) {
-    stop("`file` must be a regular file, not a connection", call. = FALSE)
+    cli::cli_abort("{.arg file} must be a regular file, not a connection.")
   }
 
   if (n < 0 || is.infinite(n)) {
@@ -167,25 +167,45 @@ fwf_positions <- function(start, end = NULL, col_names = NULL) {
 
 #' @rdname vroom_fwf
 #' @export
-#' @param ... If the first element is a data frame,
-#'   then it must have all numeric columns and either one or two rows.
-#'   The column names are the variable names. The column values are the
-#'   variable widths if a length one vector, and if length two, variable start and end
-#'   positions. The elements of `...` are used to construct a data frame
-#'   with or or two rows as above.
+#' @param ... Named or unnamed arguments, each addressing one column. Each input
+#' should be either a single integer (a column width) or a pair of integers
+#' (column start and end positions). All arguments must have the same shape,
+#' i.e. all widths or all positions.
 fwf_cols <- function(...) {
   x <- lapply(list(...), as.integer)
+
+  # Check that all inputs have the same length (1 or 2)
+  lengths <- lengths(x)
+  unique_lengths <- unique(lengths)
+
+  if (length(unique_lengths) > 1) {
+    cli::cli_abort(
+      c(
+        "All inputs must have the same shape.",
+        "x" = "Found inputs with different lengths: {unique_lengths}.",
+        "i" = "Provide either single values (widths) or pairs of values (positions)."
+      )
+    )
+  }
+
+  if (!unique_lengths %in% c(1, 2)) {
+    cli::cli_abort(
+      c(
+        "All inputs must be either a single value or a pair of values.",
+        "x" = "The provided inputs each have length {unique_lengths}.",
+        "i" = "Single values specify column widths: {.code fwf_cols(a = 10, b = 5)}.",
+        "i" = "Pairs of values specify start and end positions: {.code fwf_cols(a = c(1, 10), b = c(11, 15))}."
+      )
+    )
+  }
+
   names(x) <- fwf_col_names(names(x), length(x))
   x <- tibble::as_tibble(x)
+
   if (nrow(x) == 2) {
     fwf_positions(as.integer(x[1, ]), as.integer(x[2, ]), names(x))
-  } else if (nrow(x) == 1) {
-    fwf_widths(as.integer(x[1, ]), names(x))
   } else {
-    stop(
-      "All variables must have either one (width) two (start, end) values.",
-      call. = FALSE
-    )
+    fwf_widths(as.integer(x[1, ]), names(x))
   }
 }
 
@@ -199,11 +219,12 @@ fwf_col_names <- function(nm, n) {
 verify_fwf_positions <- function(col_positions) {
   is_greater <- stats::na.omit(col_positions$begin > col_positions$end)
   if (any(is_greater)) {
-    bad <- which(is_greater)
-    stop(
-      "`col_positions` must have begin less than end.\n* Invalid values at position(s): ",
-      paste0(collapse = ", ", bad),
-      call. = FALSE
+    bad_cols <- col_positions$col_names[is_greater]
+    cli::cli_abort(
+      c(
+        "{.arg begin} cannot be greater than {.arg end}.",
+        "x" = "Problem with column{?s}: {.val {bad_cols}}."
+      )
     )
   }
 }
