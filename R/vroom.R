@@ -401,7 +401,8 @@ pb_write_format <- function(unused) {
 }
 
 # Guess delimiter by splitting every line by each delimiter and choosing the
-# delimiter which splits the lines into the highest number of consistent fields
+# delimiter which splits the lines into the highest number of consistent fields.
+# This looks like dead code on the R side, but it's called from C++.
 guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";")) {
   if (length(lines) == 0) {
     return("")
@@ -436,15 +437,10 @@ guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";")) {
     }
   }
   if (top_idx == 0) {
-    stop(
-      glue::glue(
-        '
-        Could not guess the delimiter.\n
-        {silver("Use `vroom(delim =)` to specify one explicitly.")}
-        '
-      ),
-      call. = FALSE
-    )
+    cli::cli_abort(c(
+      "Could not guess the delimiter.",
+      "i" = "Use {.code vroom(delim =)} to explicitly specify the delimiter."
+    ))
   }
 
   delims[[top_idx]]

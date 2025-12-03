@@ -14,6 +14,13 @@ test_that("vroom can read a csv", {
   )
 })
 
+test_that("vroom errors informatively when it cannot guess delimiter", {
+  expect_snapshot(
+    vroom(I("foo\nbar\nbaz\n"), col_types = list()),
+    error = TRUE
+  )
+})
+
 test_that("vroom guesses columns with NAs", {
   test_vroom(
     "a,b,c\nNA,2,3\n4,5,6\n",
