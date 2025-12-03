@@ -69,10 +69,10 @@ gen_tbl(
 
   - \_ or - = skip
 
-    By default, reading a file without a column specification will print
-    a message showing what `readr` guessed they were. To remove this
-    message, set `show_col_types = FALSE` or set
-    `options(readr.show_col_types = FALSE)`.
+  By default, reading a file without a column specification will print a
+  message showing what `readr` guessed they were. To remove this
+  message, set `show_col_types = FALSE` or set
+  `options(readr.show_col_types = FALSE)`.
 
 - locale:
 

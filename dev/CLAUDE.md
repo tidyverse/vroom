@@ -24,10 +24,9 @@ the Air extension used by Positron, e.g. something like
 
 - Tests for `R/{name}.R` go in `tests/testthat/test-{name}.R`.
 
-- Use `devtools::test(reporter = "check")` to run all tests
+- Use `devtools::test()` to run all tests
 
-- Use `devtools::test(filter = "name", reporter = "check")` to run tests
-  for `R/{name}.R`
+- Use `devtools::test(filter = "name")` to run tests for `R/{name}.R`
 
 - DO NOT USE `devtools::test_active_file()`
 

@@ -56,8 +56,8 @@
 <div class="section level3">
 <h3 id="testing">Testing<a class="anchor" aria-label="anchor" href="#testing"></a></h3>
 <ul><li><p>Tests for <code>R/{name}.R</code> go in <code>tests/testthat/test-{name}.R</code>.</p></li>
-<li><p>Use <code>devtools::test(reporter = "check")</code> to run all tests</p></li>
-<li><p>Use <code>devtools::test(filter = "name", reporter = "check")</code> to run tests for <code>R/{name}.R</code></p></li>
+<li><p>Use <code>devtools::test()</code> to run all tests</p></li>
+<li><p>Use <code>devtools::test(filter = "name")</code> to run tests for <code>R/{name}.R</code></p></li>
 <li><p>DO NOT USE <code>devtools::test_active_file()</code></p></li>
 <li><p>All testing functions automatically load code; you don’t need to.</p></li>
 <li><p>All new code should have an accompanying test.</p></li>
