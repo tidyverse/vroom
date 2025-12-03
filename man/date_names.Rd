@@ -8,7 +8,7 @@
 \usage{
 date_names(mon, mon_ab = mon, day, day_ab = day, am_pm = c("AM", "PM"))
 
-date_names_lang(language)
+date_names_lang(language, call = caller_env())
 
 date_names_langs()
 }
@@ -22,6 +22,11 @@ date_names_langs()
 \item{language}{A BCP 47 locale, made up of a language and a region,
 e.g. \code{"en_US"} for American English. See \code{date_names_langs()}
 for a complete list of available locales.}
+
+\item{call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \description{
 When parsing dates, you often need to know how weekdays of the week and

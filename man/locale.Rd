@@ -12,7 +12,8 @@ locale(
   decimal_mark = ".",
   grouping_mark = ",",
   tz = "UTC",
-  encoding = "UTF-8"
+  encoding = "UTF-8",
+  call = caller_env()
 )
 
 default_locale()
@@ -44,6 +45,11 @@ DST. It is \emph{not} Eastern Standard Time. It's better to use
 "US/Eastern", "US/Central" etc.}
 
 \item{encoding}{Default encoding.}
+
+\item{call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \description{
 A locale object tries to capture all the defaults that can vary between

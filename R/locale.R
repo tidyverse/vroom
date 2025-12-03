@@ -28,6 +28,7 @@
 #'   DST. It is *not* Eastern Standard Time. It's better to use
 #'   "US/Eastern", "US/Central" etc.
 #' @param encoding Default encoding.
+#' @inheritParams rlang::args_error_context
 #' @export
 #' @examples
 #' locale()
@@ -42,10 +43,11 @@ locale <- function(
   decimal_mark = ".",
   grouping_mark = ",",
   tz = "UTC",
-  encoding = "UTF-8"
+  encoding = "UTF-8",
+  call = caller_env()
 ) {
   if (is.character(date_names)) {
-    date_names <- date_names_lang(date_names)
+    date_names <- date_names_lang(date_names, call = call)
   }
   stopifnot(is.date_names(date_names))
 
