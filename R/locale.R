@@ -28,7 +28,6 @@
 #'   DST. It is *not* Eastern Standard Time. It's better to use
 #'   "US/Eastern", "US/Central" etc.
 #' @param encoding Default encoding.
-#' @inheritParams rlang::args_error_context
 #' @export
 #' @examples
 #' locale()
@@ -43,11 +42,10 @@ locale <- function(
   decimal_mark = ".",
   grouping_mark = ",",
   tz = "UTC",
-  encoding = "UTF-8",
-  call = caller_env()
+  encoding = "UTF-8"
 ) {
   if (is.character(date_names)) {
-    date_names <- date_names_lang(date_names, call = call)
+    date_names <- date_names_lang(date_names, call = current_env())
   }
   stopifnot(is.date_names(date_names))
 
@@ -60,10 +58,15 @@ locale <- function(
   stopifnot(is.character(decimal_mark), length(decimal_mark) == 1)
   stopifnot(is.character(grouping_mark), length(grouping_mark) == 1)
   if (decimal_mark == grouping_mark) {
-    stop("`decimal_mark` and `grouping_mark` must be different", call. = FALSE)
+    cli::cli_abort(
+      c(
+        "{.arg decimal_mark} and {.arg grouping_mark} must be different.",
+        "i" = "Both were specified as {.val {decimal_mark}}."
+      )
+    )
   }
 
-  tz <- check_tz(tz)
+  tz <- check_tz(tz, call = current_env())
   check_encoding(encoding)
 
   structure(
@@ -115,11 +118,14 @@ default_locale <- function() {
   loc
 }
 
-check_tz <- function(x) {
+check_tz <- function(x, call = caller_env()) {
   stopifnot(is.character(x), length(x) == 1)
+
+  tz_source <- ""
 
   if (identical(x, "")) {
     x <- Sys.timezone()
+    tz_source <- "system "
 
     if (identical(x, "") || identical(x, NA_character_)) {
       x <- "UTC"
@@ -129,7 +135,7 @@ check_tz <- function(x) {
   if (x %in% tzdb::tzdb_names()) {
     x
   } else {
-    stop("Unknown TZ ", x, call. = FALSE)
+    cli::cli_abort("Unknown {tz_source}timezone: {.val {x}}.", call = call)
   }
 }
 
