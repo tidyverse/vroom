@@ -181,7 +181,7 @@ entirely.</p>
 total).</li>
 <li>Aggregation of mean fare amount per payment type.</li>
 </ul>
-<img src="benchmarks_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="Horizontal bar chart comparing time and memory usage across different R packages (vroom, data.table, readr) for analyzing taxi trip data. The chart shows operation breakdowns including read, print, head, tail, sample, filter, and aggregate operations. Consult the associated table for detailed timing and memory usage statistics." width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 reading package
@@ -470,7 +470,7 @@ readr and read.delim for this type of data.</p>
 <h4 id="long">Long<a class="anchor" aria-label="anchor" href="#long"></a>
 </h4>
 <p>code: <a href="https://github.com/tidyverse/vroom/tree/main/inst/bench/all_numeric-long" class="external-link">bench/all_numeric-long</a></p>
-<img src="benchmarks_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="Horizontal bar chart comparing time and memory usage for reading and analyzing long all-numeric data across different R packages. Shows performance breakdown by operation type, with data.table performing slightly faster than vroom for this numeric-heavy workload." width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 reading package
@@ -780,7 +780,7 @@ data.table
 <h4 id="wide">Wide<a class="anchor" aria-label="anchor" href="#wide"></a>
 </h4>
 <p>code: <a href="https://github.com/tidyverse/vroom/tree/main/inst/bench/all_numeric-wide" class="external-link">bench/all_numeric-wide</a></p>
-<img src="benchmarks_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="Horizontal bar chart comparing time and memory usage for reading and analyzing wide all-numeric data across different R packages. Shows performance breakdown by operation type, with data.table performing slightly faster than vroom for this wide numeric dataset." width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 reading package
@@ -1096,7 +1096,7 @@ Altrep, as it takes full advantage of the lazy reading.</p>
 <div class="section level4">
 <h4 id="long-1">Long<a class="anchor" aria-label="anchor" href="#long-1"></a>
 </h4>
-<img src="benchmarks_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="Horizontal bar chart comparing time and memory usage for reading and analyzing long all-character data across different R packages. Shows vroom with Altrep significantly outperforming other packages due to lazy character vector evaluation." width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 reading package
@@ -1368,7 +1368,7 @@ TRUE
 <h4 id="wide-1">Wide<a class="anchor" aria-label="anchor" href="#wide-1"></a>
 </h4>
 <p>code: <a href="https://github.com/tidyverse/vroom/tree/main/inst/bench/all_character-wide" class="external-link">bench/all_character-wide</a></p>
-<img src="benchmarks_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Horizontal bar chart comparing time and memory usage for reading and analyzing wide all-character data across different R packages. Shows vroom with Altrep significantly outperforming other packages due to lazy character vector evaluation." width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 reading package
@@ -1644,7 +1644,7 @@ TRUE
 <p>code: <a href="https://github.com/tidyverse/vroom/tree/main/inst/bench/taxi_multiple" class="external-link">bench/taxi_multiple</a></p>
 <p>The benchmark reads all 12 files in the taxi trip fare data, totaling
 173,179,759 rows and 11 columns for a total file size of 18.4G.</p>
-<img src="benchmarks_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Horizontal bar chart comparing time and memory usage for reading and analyzing data from multiple taxi trip files across different R packages. Shows vroom's performance advantage when reading multiple files simultaneously." width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 reading package
@@ -1894,7 +1894,7 @@ of 677M.</p>
 <h3 id="census-data-benchmarks">Census data benchmarks<a class="anchor" aria-label="anchor" href="#census-data-benchmarks"></a>
 </h3>
 <p>code: <a href="https://github.com/tidyverse/vroom/tree/main/inst/bench/fwf" class="external-link">bench/fwf</a></p>
-<img src="benchmarks_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="Horizontal bar chart comparing time and memory usage for reading and analyzing fixed-width format data (US Census data) across different R packages. Shows vroom's performance with fixed-width files." width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 reading package
@@ -2143,7 +2143,7 @@ for data.table and using a <code><a href="https://rdrr.io/r/base/connections.htm
 <li>A <a href="https://facebook.github.io/zstd/" class="external-link">Zstandard</a>
 compressed file (data.table does not support this format).</li>
 </ul>
-<img src="benchmarks_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="Grouped horizontal bar chart comparing file writing performance across R packages (base, readr, data.table, vroom) with different compression methods (uncompressed, gzip, multithreaded gzip, and Zstandard). Shows vroom's competitive writing performance, especially with compression." width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 compression
