@@ -448,24 +448,23 @@ test_that("subsetting works with both double and integer indexes", {
 })
 
 test_that("malformed date / datetime formats cause R errors", {
-  expect_error(
+  expect_snapshot(
+    error = TRUE,
     vroom(
       I("x\n6/28/2016"),
       delim = ",",
       col_types = list(x = col_date("%m/%/%Y")),
       altrep = FALSE
-    ),
-    "Unsupported format"
+    )
   )
-
-  expect_error(
+  expect_snapshot(
+    error = TRUE,
     vroom(
       I("x\n6/28/2016"),
       delim = ",",
       col_types = list(x = col_datetime("%m/%/%Y")),
       altrep = FALSE
-    ),
-    "Unsupported format"
+    )
   )
 })
 

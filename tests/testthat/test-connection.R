@@ -37,11 +37,9 @@ test_that("reading from connection is consistent with reading directly from a fi
 })
 
 test_that("vroom errors when the connection buffer is too small", {
-  withr::with_envvar(c("VROOM_CONNECTION_SIZE" = 32), {
-    expect_error(
-      vroom(file(vroom_example("mtcars.csv")), col_types = list()),
-      "not large enough"
-    )
+  withr::local_envvar(c("VROOM_CONNECTION_SIZE" = 32))
+  expect_snapshot(error = TRUE, {
+    vroom(file(vroom_example("mtcars.csv")), col_types = list())
   })
 })
 

@@ -124,15 +124,16 @@ test_that("vroom works with many connections", {
 
 test_that("vroom errors if numbers of columns are inconsistent", {
   files <- test_path("multi-file", c("foo", "baz"))
-  expect_error(vroom::vroom(files, col_types = list()), "must all have")
+  expect_snapshot(error = TRUE, {
+    vroom::vroom(files, col_types = list())
+  })
 })
 
 test_that("vroom errors if column names are inconsistent", {
   files <- test_path("multi-file", c("foo", "bar"))
-  expect_error(
-    vroom::vroom(files, col_types = list()),
-    "consistent column names"
-  )
+  expect_snapshot(error = TRUE, {
+    vroom::vroom(files, col_types = list())
+  })
 })
 
 test_that("vroom works if a file contains no data", {

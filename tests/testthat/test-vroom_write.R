@@ -105,9 +105,11 @@ test_that("roundtrip preserves dates and datetimes", {
 })
 
 test_that("fails to create file in non-existent directory", {
-  expect_error(
-    vroom_write(mtcars, file.path(tempdir(), "/x/y"), "\t"),
-    "Cannot open file for writing"
+  td <- tempdir()
+  expect_snapshot(
+    vroom_write(mtcars, file.path(tempdir(), "x", "y"), "\t"),
+    error = TRUE,
+    transform = function(x) gsub(td, "<tempdir>", x, fixed = TRUE)
   )
 })
 
@@ -197,7 +199,9 @@ test_that("write_csv writes large integers without scientific notation up to 1E1
 test_that("Can change the escape behavior for quotes", {
   df <- data.frame(x = c("a", '"', ",", "\n"))
 
-  expect_error(vroom_format(df, "\t", escape = "invalid"), "should be one of")
+  expect_snapshot(error = TRUE, {
+    vroom_format(df, "\t", escape = "invalid")
+  })
 
   expect_equal(vroom_format(df, "\t"), 'x\na\n""""\n,\n"\n"\n')
   expect_equal(

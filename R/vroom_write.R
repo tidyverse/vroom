@@ -49,8 +49,8 @@ vroom_write <- function(
 ) {
   input <- x
 
-  quote <- match.arg(quote)
-  escape <- match.arg(escape)
+  quote <- arg_match(quote)
+  escape <- arg_match(escape)
 
   opts <- get_vroom_write_opts(quote, escape, bom)
 
@@ -166,8 +166,8 @@ vroom_format <- function(
     return("")
   }
 
-  quote <- match.arg(quote)
-  escape <- match.arg(escape)
+  quote <- arg_match(quote)
+  escape <- arg_match(escape)
 
   opts <- get_vroom_write_opts(quote, escape, bom)
 
