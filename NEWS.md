@@ -1,5 +1,11 @@
 # vroom (development version)
 
+* [vroom.tidyverse.org](https://vroom.tidyverse.org/) is the new home of
+  vroom's website, catching up to the much earlier move (April 2022) of vroom's
+  GitHub repository from the r-lib organization to the tidyverse. The motivation
+  for that was to make it easier to transfer issues between these two closely
+  connected packages.
+
 * The `path` parameter has been removed from `vroom_write()`. This parameter was
   deprecated in vroom 1.5.0 (2021-06-14) in favor of the `file` parameter (#575).
 
