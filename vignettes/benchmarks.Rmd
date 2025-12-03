@@ -217,6 +217,7 @@ The following operations are performed.
 #| message: false
 #| fig-height: 8
 #| fig-width: 10
+#| fig-alt: "Horizontal bar chart comparing time and memory usage across different R packages (vroom, data.table, readr) for analyzing taxi trip data. The chart shows operation breakdowns including read, print, head, tail, sample, filter, and aggregate operations. Consult the associated table for detailed timing and memory usage statistics."
 taxi <- read_benchmark(path_package("vroom", "bench", "taxi.tsv"), desc)
 
 plot_benchmark(taxi, "Time to analyze taxi trip data")
@@ -250,6 +251,7 @@ code: [bench/all_numeric-long](https://github.com/tidyverse/vroom/tree/main/inst
 #| echo: false
 #| fig-height: 8
 #| fig-width: 10
+#| fig-alt: "Horizontal bar chart comparing time and memory usage for reading and analyzing long all-numeric data across different R packages. Shows performance breakdown by operation type, with data.table performing slightly faster than vroom for this numeric-heavy workload."
 all_num <- read_benchmark(path_package("vroom", "bench", "all_numeric-long.tsv"), desc)
 
 plot_benchmark(all_num, "Time to analyze long all numeric data")
@@ -267,6 +269,7 @@ code: [bench/all_numeric-wide](https://github.com/tidyverse/vroom/tree/main/inst
 #| echo: false
 #| fig-height: 8
 #| fig-width: 10
+#| fig-alt: "Horizontal bar chart comparing time and memory usage for reading and analyzing wide all-numeric data across different R packages. Shows performance breakdown by operation type, with data.table performing slightly faster than vroom for this wide numeric dataset."
 all_num_wide <- read_benchmark(path_package("bench", "all_numeric-wide.tsv", package = "vroom"), desc)
 
 plot_benchmark(all_num_wide, "Time to analyze wide all numeric data")
@@ -288,6 +291,7 @@ All character data is a best case scenario for vroom when using Altrep, as it ta
 #| echo: false
 #| fig-height: 8
 #| fig-width: 10
+#| fig-alt: "Horizontal bar chart comparing time and memory usage for reading and analyzing long all-character data across different R packages. Shows vroom with Altrep significantly outperforming other packages due to lazy character vector evaluation."
 all_chr <- read_benchmark(path_package("vroom", "bench", "all_character-long.tsv"), desc)
 
 plot_benchmark(all_chr, "Time to analyze long all character data")
@@ -305,6 +309,7 @@ code: [bench/all_character-wide](https://github.com/tidyverse/vroom/tree/main/in
 #| echo: false
 #| fig-height: 8
 #| fig-width: 10
+#| fig-alt: "Horizontal bar chart comparing time and memory usage for reading and analyzing wide all-character data across different R packages. Shows vroom with Altrep significantly outperforming other packages due to lazy character vector evaluation."
 all_chr_wide <- read_benchmark(path_package("vroom", "bench", "all_character-wide.tsv"), desc)
 
 plot_benchmark(all_chr_wide, "Time to analyze wide all character data")
@@ -332,6 +337,7 @@ and `r mult$cols[[1]]` columns for a total file size of `r format(fs_bytes(mult$
 #| echo: false
 #| fig-height: 8
 #| fig-width: 10
+#| fig-alt: "Horizontal bar chart comparing time and memory usage for reading and analyzing data from multiple taxi trip files across different R packages. Shows vroom's performance advantage when reading multiple files simultaneously."
 plot_benchmark(mult, "Time to analyze multiple file data")
 
 make_table(mult)
@@ -363,6 +369,7 @@ code: [bench/fwf](https://github.com/tidyverse/vroom/tree/main/inst/bench/fwf)
 #| echo: false
 #| fig-height: 8
 #| fig-width: 10
+#| fig-alt: "Horizontal bar chart comparing time and memory usage for reading and analyzing fixed-width format data (US Census data) across different R packages. Shows vroom's performance with fixed-width files."
 plot_benchmark(fwf, "Time to analyze fixed width data")
 
 make_table(fwf)
@@ -385,6 +392,7 @@ The benchmarks write out the taxi trip dataset in a few different ways.
 #| echo: false
 #| fig-height: 8
 #| fig-width: 10
+#| fig-alt: "Grouped horizontal bar chart comparing file writing performance across R packages (base, readr, data.table, vroom) with different compression methods (uncompressed, gzip, multithreaded gzip, and Zstandard). Shows vroom's competitive writing performance, especially with compression."
 taxi_writing <- read_benchmark(path_package("vroom", "bench", "taxi_writing.tsv"), c("setup", "writing")) |>
   rename(
     package = reading_package,
