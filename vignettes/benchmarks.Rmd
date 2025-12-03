@@ -7,7 +7,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -210,7 +211,12 @@ The following operations are performed.
   - Filtering for "UNK" payment, this is 6434 rows (0.0435% of total).
   - Aggregation of mean fare amount per payment type.
 
-```{r, fig.height = 8, fig.width=10, warning = FALSE, echo = FALSE, message = FALSE}
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| fig-height: 8
+#| fig-width: 10
 taxi <- read_benchmark(path_package("vroom", "bench", "taxi.tsv"), desc)
 
 plot_benchmark(taxi, "Time to analyze taxi trip data")
@@ -238,7 +244,12 @@ read.delim for this type of data.
 ### Long
 code: [bench/all_numeric-long](https://github.com/tidyverse/vroom/tree/main/inst/bench/all_numeric-long)
 
-```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
+```{r}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-height: 8
+#| fig-width: 10
 all_num <- read_benchmark(path_package("vroom", "bench", "all_numeric-long.tsv"), desc)
 
 plot_benchmark(all_num, "Time to analyze long all numeric data")
@@ -250,7 +261,12 @@ make_table(all_num)
 
 code: [bench/all_numeric-wide](https://github.com/tidyverse/vroom/tree/main/inst/bench/all_numeric-wide)
 
-```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
+```{r}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-height: 8
+#| fig-width: 10
 all_num_wide <- read_benchmark(path_package("bench", "all_numeric-wide.tsv", package = "vroom"), desc)
 
 plot_benchmark(all_num_wide, "Time to analyze wide all numeric data")
@@ -266,7 +282,12 @@ All character data is a best case scenario for vroom when using Altrep, as it ta
 
 ### Long
 
-```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
+```{r}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-height: 8
+#| fig-width: 10
 all_chr <- read_benchmark(path_package("vroom", "bench", "all_character-long.tsv"), desc)
 
 plot_benchmark(all_chr, "Time to analyze long all character data")
@@ -278,7 +299,12 @@ make_table(all_chr)
 
 code: [bench/all_character-wide](https://github.com/tidyverse/vroom/tree/main/inst/bench/all_character-wide)
 
-```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
+```{r}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-height: 8
+#| fig-width: 10
 all_chr_wide <- read_benchmark(path_package("vroom", "bench", "all_character-wide.tsv"), desc)
 
 plot_benchmark(all_chr_wide, "Time to analyze wide all character data")
@@ -290,14 +316,22 @@ make_table(all_chr_wide)
 
 code: [bench/taxi_multiple](https://github.com/tidyverse/vroom/tree/main/inst/bench/taxi_multiple)
 
-```{r, echo = FALSE, message = FALSE, eval = TRUE}
+```{r}
+#| echo: false
+#| message: false
+#| eval: true
 mult <- read_benchmark(path_package("vroom", "bench", "taxi_multiple.tsv"), desc)
 ```
 
 The benchmark reads all 12 files in the taxi trip fare data, totaling `r scales::comma(mult$rows[[1]])` rows
 and `r mult$cols[[1]]` columns for a total file size of `r format(fs_bytes(mult$size[[1]]))`.
 
-```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
+```{r}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-height: 8
+#| fig-width: 10
 plot_benchmark(mult, "Time to analyze multiple file data")
 
 make_table(mult)
@@ -307,7 +341,10 @@ make_table(mult)
 
 ## United States Census 5-Percent Public Use Microdata Sample files
 
-```{r, echo = FALSE, message = FALSE, eval = TRUE}
+```{r}
+#| echo: false
+#| message: false
+#| eval: true
 fwf <- read_benchmark(path_package("vroom", "bench", "fwf.tsv"), desc)
 ```
 
@@ -320,7 +357,12 @@ and `r fwf$cols[[1]]` columns with a total file size of `r format(fs_bytes(fwf$s
 
 code: [bench/fwf](https://github.com/tidyverse/vroom/tree/main/inst/bench/fwf)
 
-```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
+```{r}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-height: 8
+#| fig-width: 10
 plot_benchmark(fwf, "Time to analyze fixed width data")
 
 make_table(fwf)
@@ -337,7 +379,12 @@ The benchmarks write out the taxi trip dataset in a few different ways.
 - A gzip compressed file compressed with multiple threads (natively for data.table and using a `pipe()` connection to [pigz](https://zlib.net/pigz/) for the rest).
 - A [Zstandard](https://facebook.github.io/zstd/) compressed file (data.table does not support this format).
 
-```{r, fig.height = 8, fig.width=10, warning = FALSE, message = FALSE, echo = FALSE}
+```{r}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-height: 8
+#| fig-width: 10
 taxi_writing <- read_benchmark(path_package("vroom", "bench", "taxi_writing.tsv"), c("setup", "writing")) |>
   rename(
     package = reading_package,
@@ -368,7 +415,10 @@ taxi_writing |>
 
 ## Session and package information
 
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
 si <- vroom::vroom(path_package("vroom", "bench", "session_info.tsv"))
 class(si) <- c("packages_info", "data.frame")
 select(as.data.frame(si), package, version = ondiskversion, date, source) |>

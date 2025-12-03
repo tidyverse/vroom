@@ -7,7 +7,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include = FALSE}
+```{r}
+#| label: setup
+#| include: false
 knitr::opts_knit$set(root.dir = tempdir())
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -114,14 +116,16 @@ vroom(purrr::map(filenames[c(1, 3)], \(x) unz(zip_file, x)))
 
 vroom can read files directly from the internet as well by passing the URL of the file to vroom.
 
-```{r, eval = as.logical(Sys.getenv("NOT_CRAN", "false"))}
+```{r}
+#| eval: !expr as.logical(Sys.getenv("NOT_CRAN", "false"))
 file <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv"
 vroom(file)
 ```
 
 It can even read gzipped files from the internet (although not the other compressed formats).
 
-```{r, eval = as.logical(Sys.getenv("NOT_CRAN", "false"))}
+```{r}
+#| eval: !expr as.logical(Sys.getenv("NOT_CRAN", "false"))
 file <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv.gz"
 vroom(file)
 ```
@@ -253,7 +257,8 @@ Often the names of columns in the original dataset are not ideal to work with.
 A great approach is to use the [`janitor::make_clean_names()`](https://sfirke.github.io/janitor/reference/make_clean_names.html) function as the input.
 This will automatically clean the names to use whatever case you specify, here I am setting it to use `ALLCAPS` names.
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
 vroom(
   vroom_example("mtcars.csv"),
   .name_repair = \(x) janitor::make_clean_names(x, case = "all_caps")
@@ -272,7 +277,8 @@ Use `vroom_write()` to write delimited files, the default delimiter is tab, to w
 vroom_write(mtcars, "mtcars.tsv")
 ```
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 unlink("mtcars.tsv")
 ```
 
@@ -284,7 +290,8 @@ However you can also use `delim = ','` to write CSV files, which are common as i
 vroom_write(mtcars, "mtcars.csv", delim = ",")
 ```
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 unlink("mtcars.csv")
 ```
 
@@ -300,7 +307,8 @@ vroom_write(mtcars, "mtcars.tsv.bz2")
 vroom_write(mtcars, "mtcars.tsv.xz")
 ```
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 unlink(c("mtcars.tsv.gz", "mtcars.tsv.bz2", "mtcars.tsv.xz"))
 ```
 
@@ -313,11 +321,13 @@ It is also possible to use other compressors by using `pipe()` with `vroom_write
 
 The parallel compression versions can be considerably faster for large output files and generally `vroom_write()` is fast enough that the compression speed becomes the bottleneck when writing.
 
-```{r, eval = nzchar(Sys.which("pigz"))}
+```{r}
+#| eval: !expr nzchar(Sys.which("pigz"))
 vroom_write(mtcars, pipe("pigz > mtcars.tsv.gz"))
 ```
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 unlink("mtcars.tsv.gz")
 ```
 
