@@ -2,7 +2,8 @@
 
 The fastest delimited reader for R, **1.23 GB/sec**.
 
-![](https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif)
+![Animated GIF of Taylor Swift in a
+car](https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif)
 
 But that’s impossible! How can it be [so
 fast](https://vroom.tidyverse.org/articles/benchmarks.html)?

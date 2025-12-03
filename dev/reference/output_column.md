@@ -29,5 +29,5 @@ output_column("x")
 output_column(Sys.Date())
 #> [1] "2025-12-03"
 output_column(Sys.time())
-#> [1] "2025-12-03T22:33:59Z"
+#> [1] "2025-12-03T22:44:22Z"
 ```
