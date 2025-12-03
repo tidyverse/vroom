@@ -201,7 +201,7 @@ gen_tbl <- function(
   missing = 0
 ) {
   if (is.null(cols) && is.null(col_types)) {
-    stop("One of `cols` or `col_types` must be set", call. = FALSE)
+    cli::cli_abort("One of {.arg cols} or {.arg col_types} must be set.")
   }
 
   spec <- as.col_spec(col_types)
