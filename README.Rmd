@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 options(tibble.print_min = 3)
 ```
 
-# 🏎💨vroom <a href='https://vroom.tidyverse.org'><img src='man/figures/logo.png' align="right" height="135" /></a>
+# 🏎💨vroom <a href='https://vroom.tidyverse.org'><img src='man/figures/logo.png' align="right" height="135"  alt="vroom package hex logo"/></a>
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/tidyverse/vroom/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/tidyverse/vroom/actions/workflows/R-CMD-check.yaml)
@@ -59,7 +59,7 @@ tbl <- tm |>
 
 The fastest delimited reader for R, **`r filter(tbl, package == "vroom") |> pull("throughput") |> trimws()`**.
 
-<img src="https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif" align="right" />
+<img src="https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif" align="right" alt="Animated GIF of Taylor Swift in a car" />
 
 But that's impossible! How can it be [so fast](https://vroom.tidyverse.org/articles/benchmarks.html)?
 

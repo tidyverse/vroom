@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# 🏎💨vroom <a href='https://vroom.tidyverse.org'><img src='man/figures/logo.png' align="right" height="135" /></a>
+# 🏎💨vroom <a href='https://vroom.tidyverse.org'><img src='man/figures/logo.png' align="right" height="135"  alt="vroom package hex logo"/></a>
 
 <!-- badges: start -->
 
@@ -16,7 +16,7 @@ coverage](https://codecov.io/gh/tidyverse/vroom/graph/badge.svg)](https://app.co
 
 The fastest delimited reader for R, **1.23 GB/sec**.
 
-<img src="https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif" align="right" />
+<img src="https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif" align="right" alt="Animated GIF of Taylor Swift in a car" />
 
 But that’s impossible! How can it be [so
 fast](https://vroom.tidyverse.org/articles/benchmarks.html)?
@@ -87,8 +87,8 @@ pak::pak("tidyverse/vroom")
 
 ## Usage
 
-See [getting started](https://vroom.tidyverse.org/articles/vroom.html) to
-jump start your use of vroom!
+See [getting started](https://vroom.tidyverse.org/articles/vroom.html)
+to jump start your use of vroom!
 
 vroom uses the same interface as readr to specify column types.
 
