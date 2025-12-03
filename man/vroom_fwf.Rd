@@ -180,12 +180,10 @@ reading a ragged fwf file.}
 \item{start, end}{Starting and ending (inclusive) positions of each field.
 Use NA as last end field when reading a ragged fwf file.}
 
-\item{...}{If the first element is a data frame,
-then it must have all numeric columns and either one or two rows.
-The column names are the variable names. The column values are the
-variable widths if a length one vector, and if length two, variable start and end
-positions. The elements of \code{...} are used to construct a data frame
-with or or two rows as above.}
+\item{...}{Named or unnamed arguments, each addressing one column. Each input
+should be either a single integer (a column width) or a pair of integers
+(column start and end positions). All arguments must have the same shape,
+i.e. all widths or all positions.}
 }
 \description{
 Read a fixed width file into a tibble

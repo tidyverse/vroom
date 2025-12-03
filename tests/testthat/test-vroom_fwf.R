@@ -235,9 +235,28 @@ test_that("fwf_cols produces correct fwf_positions object with elements of lengt
 })
 
 
-test_that("fwf_cols throws error when arguments are not length 1 or 2", {
-  expect_error(fwf_cols(a = 1:3, b = 4:5))
-  expect_error(fwf_cols(a = c(), b = 4:5))
+test_that("fwf_cols errors when arguments have different shapes", {
+  expect_snapshot(
+    fwf_cols(a = 10, b = c(11, 15)),
+    error = TRUE
+  )
+
+  expect_snapshot(
+    fwf_cols(a = 1:3, b = 4:5),
+    error = TRUE
+  )
+})
+
+test_that("fwf_cols errors with invalid number of values", {
+  expect_snapshot(
+    fwf_cols(a = 1:4, b = 5:8),
+    error = TRUE
+  )
+
+  expect_snapshot(
+    fwf_cols(a = c(), b = c()),
+    error = TRUE
+  )
 })
 
 test_that("fwf_cols works with unnamed columns", {
@@ -336,9 +355,9 @@ test_that("Errors if begin is greater than end", {
     col_names = c("foo", "bar", "baz")
   )
 
-  expect_error(
+  expect_snapshot(
     vroom_fwf(I("1  2  3\n"), positions, col_types = list()),
-    "`col_positions` must have begin less than end"
+    error = TRUE
   )
 })
 
