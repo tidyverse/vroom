@@ -238,7 +238,7 @@ test_that("problems are correct even if print is first encounter", {
     show_col_types = FALSE
   )
 
-  expect_warning(print(foo), class = "vroom_parse_issue")
+  expect_output(expect_warning(print(foo), class = "vroom_parse_issue"))
 
   probs <- problems(foo)
   expect_equal(probs$row, c(3, 5))
@@ -252,7 +252,7 @@ test_that("problems are correct even if print is first encounter", {
     show_col_types = FALSE
   )
 
-  expect_warning(print(foo), class = "vroom_parse_issue")
+  expect_output(expect_warning(print(foo), class = "vroom_parse_issue"))
 
   probs <- problems(foo)
   expect_equal(probs$row, c(2, 4))
