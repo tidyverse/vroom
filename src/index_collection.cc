@@ -185,8 +185,8 @@ void check_column_consistency(
     std::stringstream ss;
     ss << "Files must all have " << first->num_columns()
        << " columns:\n"
-          "* File "
-       << i + 1 << " has " << check->num_columns() << " columns";
+          "i File "
+       << i + 1 << " has " << check->num_columns() << " columns.";
 
     cpp11::stop("%s", ss.str().c_str());
   }
