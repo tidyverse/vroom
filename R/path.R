@@ -8,21 +8,21 @@ is_ascii_compatible <- function(encoding) {
 }
 
 # this is about the encoding of the file (contents), not the filepath
-reencode_file <- function(path, encoding) {
-  if (length(path) > 1) {
-    stop(
-      sprintf(
-        "Reading files of encoding '%s' can only be done for single files at a time",
-        encoding
+reencode_file <- function(file, encoding, call = caller_env()) {
+  if (length(file) > 1) {
+    cli::cli_abort(
+      c(
+        "!" = "Encoding {.val {encoding}} is only supported when reading a single input.",
+        "i" = "{.arg file} has length {length(file)}."
       ),
-      call. = FALSE
+      call = call
     )
   }
 
-  if (inherits(path[[1]], "connection")) {
-    in_con <- path[[1]]
+  if (inherits(file[[1]], "connection")) {
+    in_con <- file[[1]]
   } else {
-    in_con <- file(path[[1]])
+    in_con <- file(file[[1]])
   }
   out_file <- tempfile()
   out_con <- file(out_file)
@@ -83,7 +83,7 @@ standardise_path <- function(
   }
 
   if (any(grepl("\n", path))) {
-    lifecycle::deprecate_soft(
+    lifecycle::deprecate_warn(
       "1.5.0",
       "vroom(file = 'must use `I()` for literal data')",
       details = c(
@@ -113,7 +113,7 @@ standardise_connection <- function(con) {
   con
 }
 
-standardise_one_path <- function(path, write = FALSE) {
+standardise_one_path <- function(path, write = FALSE, call = caller_env()) {
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))
   }
@@ -137,12 +137,12 @@ standardise_one_path <- function(path, write = FALSE) {
         bz2 = ,
         xz = {
           close(con)
-          stop(
-            "Reading from remote `",
-            ext,
-            "` compressed files is not supported,\n",
-            "  download the files locally first.",
-            call. = FALSE
+          cli::cli_abort(
+            c(
+              "Reading from remote {.val .{ext}} compressed files is not supported.",
+              "i" = "Download the file locally first."
+            ),
+            call = call
           )
         },
         gz = gzcon(con),
@@ -169,7 +169,6 @@ standardise_one_path <- function(path, write = FALSE) {
       formats <- archive_formats(extension)
     }
     if (!is.null(formats)) {
-      p$extension <- extension
       if (write) {
         if (is.null(formats[[1]])) {
           return(archive::file_write(path, filter = formats[[2]]))
@@ -203,7 +202,13 @@ standardise_one_path <- function(path, write = FALSE) {
   }
 
   if (write && compression == "zip") {
-    stop("Can only read from, not write to, .zip", call. = FALSE)
+    cli::cli_abort(
+      c(
+        "Can only read from, not write to, {.val .zip} files.",
+        "i" = "Install the {.pkg archive} package to write {.val .zip} files."
+      ),
+      call = call
+    )
   }
 
   switch(
@@ -288,21 +293,24 @@ is_url <- function(path) {
   grepl("^((http|ftp)s?|sftp)://", path)
 }
 
-check_path <- function(path) {
+check_path <- function(path, call = caller_env()) {
   if (file.exists(path)) {
     return(normalizePath_utf8(path, mustWork = FALSE))
   }
 
-  stop(
-    "'",
-    path,
-    "' does not exist",
-    if (!is_absolute_path(path)) {
-      paste0(" in current working directory ('", getwd(), "')")
-    },
-    ".",
-    call. = FALSE
+  where <- function(path) {
+    if (is_absolute_path(path)) {
+      ""
+    } else {
+      " in current working directory: {.file {getwd()}}"
+    }
+  }
+  msg <- glue(
+    "{.file {path}} does not exist<<where(path)>>.",
+    .open = "<<",
+    .close = ">>"
   )
+  cli::cli_abort(msg, call = call)
 }
 
 is_absolute_path <- function(path) {

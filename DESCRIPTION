@@ -1,6 +1,6 @@
 Package: vroom
 Title: Read and Write Rectangular Text Data Quickly
-Version: 1.6.6.9000
+Version: 1.6.7.9000
 Authors@R: c(
     person("Jim", "Hester", role = "aut",
            comment = c(ORCID = "0000-0002-2739-7082")),
@@ -15,7 +15,7 @@ Authors@R: c(
            comment = "grisu3 implementation"),
     person("Mikkel", "Jørgensen", role = "cph",
            comment = "grisu3 implementation"),
-    person("Posit Software, PBC", role = c("cph", "fnd"))
+    person("Posit Software, PBC", role = c("cph", "fnd"), comment = c(ROR = "03wc8by49"))
   )
 Description: The goal of 'vroom' is to read and write data (like 'csv',
     'tsv' and 'fwf') quickly. When reading it uses a quick initial
@@ -23,11 +23,11 @@ Description: The goal of 'vroom' is to read and write data (like 'csv',
     actually use needs to be read.  The writer formats the data in
     parallel and writes to disk asynchronously from formatting.
 License: MIT + file LICENSE
-URL: https://vroom.r-lib.org, https://github.com/tidyverse/vroom
+URL: https://vroom.tidyverse.org, https://github.com/tidyverse/vroom
 BugReports: https://github.com/tidyverse/vroom/issues
-Depends: 
-    R (>= 3.6)
-Imports: 
+Depends:
+    R (>= 4.1)
+Imports:
     bit64,
     cli (>= 3.2.0),
     crayon,
@@ -42,7 +42,7 @@ Imports:
     tzdb (>= 0.1.1),
     vctrs (>= 0.2.0),
     withr
-Suggests: 
+Suggests:
     archive,
     bench (>= 1.1.0),
     covr,
@@ -64,17 +64,16 @@ Suggests:
     utils,
     waldo,
     xml2
-LinkingTo: 
+LinkingTo:
     cpp11 (>= 0.2.0),
     progress (>= 1.2.3),
     tzdb (>= 0.1.1)
-VignetteBuilder: 
+VignetteBuilder:
     knitr
-Config/Needs/website:
-    nycflights13,
-    tidyverse/tidytemplate
+Config/Needs/website: nycflights13, tidyverse/tidytemplate
 Config/testthat/edition: 3
 Config/testthat/parallel: false
+Config/usethis/last-upkeep: 2025-11-25
 Copyright: file COPYRIGHTS
 Encoding: UTF-8
 Language: en-US

@@ -143,7 +143,7 @@ public:
     if (data2 == R_NilValue)
       return nullptr;
 
-    return STDVEC_DATAPTR(data2);
+    return DATAPTR_RO(data2);
   }
 
   static std::shared_ptr<std::vector<size_t>>

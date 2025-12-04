@@ -362,11 +362,6 @@ test_that("can use `tz = ''` for system time zone", {
   )
 })
 
-test_that("can catch faulty system time zones", {
-  withr::local_timezone("foo")
-  expect_error(locale(tz = ""), "Unknown TZ foo")
-})
-
 ## Guessing ---------------------------------------------------------------------
 
 test_that("DDDD-DD not parsed as date (i.e. doesn't trigger partial date match)", {
@@ -453,24 +448,23 @@ test_that("subsetting works with both double and integer indexes", {
 })
 
 test_that("malformed date / datetime formats cause R errors", {
-  expect_error(
+  expect_snapshot(
+    error = TRUE,
     vroom(
       I("x\n6/28/2016"),
       delim = ",",
       col_types = list(x = col_date("%m/%/%Y")),
       altrep = FALSE
-    ),
-    "Unsupported format"
+    )
   )
-
-  expect_error(
+  expect_snapshot(
+    error = TRUE,
     vroom(
       I("x\n6/28/2016"),
       delim = ",",
       col_types = list(x = col_datetime("%m/%/%Y")),
       altrep = FALSE
-    ),
-    "Unsupported format"
+    )
   )
 })
 

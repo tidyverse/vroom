@@ -6,7 +6,6 @@ BOM
 CMD
 CRAN's
 Codecov
-Datetime
 Dowle
 EBS
 François
@@ -22,6 +21,8 @@ PBC
 POSIXct
 Parsers
 Preprocess
+README
+ROR
 RStudio
 RStudio's
 RStudio’s
@@ -38,20 +39,16 @@ afl
 backslashed
 behaviour
 benchmarking
-bool
 bz
 bzip
 centric
 cpp
 csv
-datetime
-datetimes
 dbi
 de
 delim
 deterministically
 dplyr
-durations
 extdata
 fread
 funder
@@ -66,7 +63,6 @@ https
 lbzip
 libc
 libstdc
-macOS
 mandreyel
 mio
 mis

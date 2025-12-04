@@ -96,7 +96,7 @@ public:
   }
 
   static void* Dataptr(SEXP vec, Rboolean) {
-    return STDVEC_DATAPTR(Materialize(vec));
+    return DATAPTR_RW(Materialize(vec));
   }
 
   static const void* Dataptr_or_null(SEXP vec) {
@@ -104,7 +104,7 @@ public:
     if (data2 == R_NilValue)
       return nullptr;
 
-    return STDVEC_DATAPTR(data2);
+    return DATAPTR_RO(data2);
   }
 
   // -------- initialize the altrep class with the methods above

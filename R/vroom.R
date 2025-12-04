@@ -55,9 +55,9 @@
 #' - ? = guess
 #' - _ or - = skip
 #'
-#'    By default, reading a file without a column specification will print a
-#'    message showing what `readr` guessed they were. To remove this message,
-#'    set `show_col_types = FALSE` or set `options(readr.show_col_types = FALSE)`.
+#' By default, reading a file without a column specification will print a
+#' message showing what `readr` guessed they were. To remove this message,
+#' set `show_col_types = FALSE` or set `options(readr.show_col_types = FALSE)`.
 #' @param id Either a string or 'NULL'. If a string, the output will contain a
 #'   variable with that name with the filename(s) as the value. If 'NULL', the
 #'   default, no variable will be created.
@@ -91,7 +91,6 @@
 #' @param altrep Control which column types use Altrep representations,
 #'   either a character vector of types, `TRUE` or `FALSE`. See
 #'   [vroom_altrep()] for for full details.
-#' @param altrep_opts \Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}
 #' @param col_select Columns to include in the results. You can use the same
 #'   mini-language as `dplyr::select()` to refer to the columns by name. Use
 #'   `c()` to use more than one selection expression. Although this
@@ -204,7 +203,6 @@ vroom <- function(
   locale = default_locale(),
   guess_max = 100,
   altrep = TRUE,
-  altrep_opts = deprecated(),
   num_threads = vroom_threads(),
   progress = vroom_progress(),
   show_col_types = NULL,
@@ -215,11 +213,6 @@ vroom <- function(
   # 001, start of heading.
   if (identical(delim, "\n")) {
     delim <- "\x01"
-  }
-
-  if (!is_missing(altrep_opts)) {
-    deprecate_warn("1.1.0", "vroom(altrep_opts = )", "vroom(altrep = )")
-    altrep <- altrep_opts
   }
 
   file <- standardise_path(file)
@@ -282,23 +275,30 @@ vroom <- function(
     progress = progress
   )
 
-  # Drop any NULL columns
-  is_null <- vapply(out, is.null, logical(1))
-  out[is_null] <- NULL
-
-  # If no rows expand columns to be the same length and names as the spec
+  # If no rows, expand columns to be the same length and names as the spec
+  # Skipped columns present a bit of a wrinkle: they appear in the spec,
+  # but not in the result
   if (NROW(out) == 0) {
     cols <- attr(out, "spec")[["cols"]]
-    for (i in seq_along(cols)) {
-      out[[i]] <- collector_value(cols[[i]])
+    nms <- names(cols)
+
+    out_i <- 1
+    for (cols_i in seq_along(cols)) {
+      value <- collector_value(cols[[cols_i]])
+      if (is.null(value)) {
+        # this is a skipped column
+        next
+      }
+      out[[out_i]] <- value
+      names(out)[out_i] <- nms[cols_i]
+      out_i <- out_i + 1
     }
-    names(out) <- names(cols)
   }
 
   out <- tibble::as_tibble(out, .name_repair = identity)
-  class(out) <- c("spec_tbl_df", class(out))
 
   out <- vroom_select(out, col_select, id)
+  class(out) <- c("spec_tbl_df", class(out))
 
   if (should_show_col_types(has_col_types, show_col_types)) {
     show_col_types(out, locale)
@@ -401,7 +401,8 @@ pb_write_format <- function(unused) {
 }
 
 # Guess delimiter by splitting every line by each delimiter and choosing the
-# delimiter which splits the lines into the highest number of consistent fields
+# delimiter which splits the lines into the highest number of consistent fields.
+# This looks like dead code on the R side, but it's called from C++.
 guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";")) {
   if (length(lines) == 0) {
     return("")
@@ -438,7 +439,7 @@ guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";")) {
   if (top_idx == 0) {
     cli::cli_abort(c(
       "Could not guess the delimiter.",
-      "i" = "Use {.code vroom(delim =)} to specify one explicitly."
+      "i" = "Use {.code vroom(delim =)} to explicitly specify the delimiter."
     ))
   }
 
@@ -539,19 +540,6 @@ vroom_altrep <- function(which = NULL) {
     out <- bitwOr(out, bitwShiftL(as.integer(args[[i]]), i - 1L))
   }
   structure(out, class = "vroom_altrep")
-}
-
-#' Show which column types are using Altrep
-#'
-#' @description
-#' \Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}
-#' This function is deprecated in favor of `vroom_altrep()`.
-#'
-#' @inheritParams vroom_altrep
-#' @export
-vroom_altrep_opts <- function(which = NULL) {
-  deprecate_warn("1.1.0", "vroom_altrep_opts()", "vroom_altrep()")
-  vroom_altrep(which)
 }
 
 altrep_vals <- function() {

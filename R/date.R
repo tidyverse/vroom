@@ -42,15 +42,16 @@ date_names <- function(
 #' @param language A BCP 47 locale, made up of a language and a region,
 #'   e.g. `"en_US"` for American English. See `date_names_langs()`
 #'   for a complete list of available locales.
-date_names_lang <- function(language) {
+#' @inheritParams rlang::args_error_context
+date_names_lang <- function(language, call = caller_env()) {
   stopifnot(is.character(language), length(language) == 1)
 
-  symbols <- date_symbols[[language]]
-  if (is.null(symbols)) {
-    stop("Unknown language '", language, "'", call. = FALSE)
+  symbol <- date_symbols[[language]]
+  if (is.null(symbol)) {
+    cli::cli_abort("Unknown language: {.val {language}}", call = call)
   }
 
-  symbols
+  symbol
 }
 
 #' @export

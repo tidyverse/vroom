@@ -12,7 +12,6 @@ vroom_lines(
   skip_empty_rows = FALSE,
   locale = default_locale(),
   altrep = TRUE,
-  altrep_opts = deprecated(),
   num_threads = vroom_threads(),
   progress = vroom_progress()
 )
@@ -51,8 +50,6 @@ names.}
 \item{altrep}{Control which column types use Altrep representations,
 either a character vector of types, \code{TRUE} or \code{FALSE}. See
 \code{\link[=vroom_altrep]{vroom_altrep()}} for for full details.}
-
-\item{altrep_opts}{\Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}}
 
 \item{num_threads}{Number of threads to use when reading and materializing
 vectors. If your data contains newlines within fields the parser will

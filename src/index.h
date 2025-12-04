@@ -4,6 +4,7 @@
 #include "vroom.h"
 
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 namespace vroom {
@@ -50,9 +51,13 @@ public:
     string at(ptrdiff_t n) const override { return it_[(*indexes_)[n]]; }
 
     std::string filename() const override { return it_.filename(); }
-    size_t index() const override { return it_.index(); }
+    size_t index() const override { return (start_ + (*indexes_)[i_]).index(); }
+
     size_t position() const override {
-      return (it_ + (*indexes_)[i_]).position();
+      // There is no known use of this method for subset_iterator.
+      // position() is only used in resolve_parse_errors(), which always uses a
+      // column_iterator or full_iterator, never subset_iterator.
+      throw std::runtime_error("subset_iterator::position() is not implemented.");
     }
 
     virtual ~subset_iterator() {}

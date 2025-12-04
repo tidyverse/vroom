@@ -9,7 +9,16 @@
 # It is unlikely that you need to modify this file manually.
 
 name: R-hub
-run-name: "${{ github.event.inputs.id }}: ${{ github.event.inputs.name || format('Manually run by {0}', github.triggering_actor) }}"
+run-name: >
+  ${{
+    github.event_name == 'workflow_dispatch' && (github.event.inputs.id && format('{0}: ', github.event.inputs.id)) || ''
+  }}
+  ${{
+    github.event_name == 'workflow_dispatch' && (github.event.inputs.name || format('Manually run by {0}', github.triggering_actor))
+    || github.event_name == 'push' && format('Push by {0} to {1}', github.actor, github.ref_name)
+    || github.event_name == 'pull_request' && format('PR #{0}: {1}', github.event.number, github.event.pull_request.title)
+    || github.workflow
+  }}
 
 on:
   push:

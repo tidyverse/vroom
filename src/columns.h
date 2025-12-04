@@ -257,7 +257,8 @@ inline cpp11::list create_columns(
     ++i;
   }
 
-  if (i < num_cols) {
+  // use res.size() to finesse presence/absence of filename column
+  if (i < res.size()) {
     // Resize the list appropriately
     SETLENGTH(res, i);
     SET_TRUELENGTH(res, i);

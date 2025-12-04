@@ -26,12 +26,14 @@ cpp11::strings read_chr(vroom_vec_info* info) {
     for (auto b = col->begin(), e = col->end(); b != e; ++b) {
       auto str = *b;
       auto val = info->locale->encoder_.makeSEXP(str.begin(), str.end(), true);
+      PROTECT(val);
       if (Rf_xlength(val) < str.end() - str.begin()) {
         info->errors->add_error(
             b.index(), col->get_index(), "", "embedded null", b.filename());
       }
 
       SET_STRING_ELT(out, i++, check_na(nas, val));
+      UNPROTECT(1);
     }
   });
 

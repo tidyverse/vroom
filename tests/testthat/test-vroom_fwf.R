@@ -235,9 +235,28 @@ test_that("fwf_cols produces correct fwf_positions object with elements of lengt
 })
 
 
-test_that("fwf_cols throws error when arguments are not length 1 or 2", {
-  expect_error(fwf_cols(a = 1:3, b = 4:5))
-  expect_error(fwf_cols(a = c(), b = 4:5))
+test_that("fwf_cols errors when arguments have different shapes", {
+  expect_snapshot(
+    fwf_cols(a = 10, b = c(11, 15)),
+    error = TRUE
+  )
+
+  expect_snapshot(
+    fwf_cols(a = 1:3, b = 4:5),
+    error = TRUE
+  )
+})
+
+test_that("fwf_cols errors with invalid number of values", {
+  expect_snapshot(
+    fwf_cols(a = 1:4, b = 5:8),
+    error = TRUE
+  )
+
+  expect_snapshot(
+    fwf_cols(a = c(), b = c()),
+    error = TRUE
+  )
 })
 
 test_that("fwf_cols works with unnamed columns", {
@@ -336,9 +355,9 @@ test_that("Errors if begin is greater than end", {
     col_names = c("foo", "bar", "baz")
   )
 
-  expect_error(
+  expect_snapshot(
     vroom_fwf(I("1  2  3\n"), positions, col_types = list()),
-    "`col_positions` must have begin less than end"
+    error = TRUE
   )
 })
 
@@ -467,4 +486,52 @@ test_that("vroom_fwf correctly reads DOS files with no trailing newline (https:/
   out2 <- vroom_fwf(file(f), fwf_widths(c(3, 3)), col_types = "ii")
 
   expect_equal(out, out2)
+})
+
+# https://github.com/tidyverse/vroom/issues/554
+# https://github.com/tidyverse/vroom/issues/534
+test_that("vroom_fwf(col_select =) output has 'spec_tbl_df' class, spec, and problems when readr is attached", {
+  # Register readr's [.spec_tbl_df method which drops attributes and the "spec_tbl_df" class
+  readr_single_bracket <- function(x, ...) {
+    attr(x, "spec") <- NULL
+    attr(x, "problems") <- NULL
+    class(x) <- setdiff(class(x), "spec_tbl_df")
+    NextMethod(`[`)
+  }
+  registerS3method("[", "spec_tbl_df", readr_single_bracket)
+
+  # Unfortunately you can't just de-register the method and
+  # local_mocked_s3_method() only works if method exists to begin with.
+  # We'll do next best thing which is to put a pass-through method back.
+  withr::defer({
+    registerS3method("[", "spec_tbl_df", function(x, ...) NextMethod(`[`))
+  })
+
+  expect_warning(
+    dat <- vroom_fwf(
+      I("a  b  \n1  2  \nz  3  \n4  5  "),
+      fwf_widths(c(3, 3)),
+      col_types = "dc",
+      col_select = c(X1, X2),
+      show_col_types = FALSE,
+      altrep = FALSE
+    ),
+    class = "vroom_parse_issue"
+  )
+
+  expect_s3_class(dat, "spec_tbl_df")
+  expect_equal(
+    attr(dat, "spec", exact = TRUE),
+    cols(
+      X1 = col_double(),
+      X2 = col_character(),
+      .delim = ""
+    )
+  )
+  expect_no_error(probs <- problems(dat))
+  if (exists("probs")) {
+    expect_equal(nrow(probs), 2)
+    expect_equal(probs$row, c(1, 2))
+    expect_equal(probs$col, c(1, 1))
+  }
 })

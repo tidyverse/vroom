@@ -33,3 +33,47 @@ test_that("all col_types can be reported with color", {
   )
   expect_snapshot(spec(dat))
 })
+
+# https://github.com/tidyverse/vroom/issues/548
+test_that("col_number() works with empty data", {
+  out <- vroom(I(""), col_types = "in")
+  expect_equal(out, tibble::tibble(X1 = integer(), X2 = numeric()))
+})
+
+# https://github.com/tidyverse/vroom/issues/540
+test_that("col_skip works with empty data (#540)", {
+  out <- vroom(I("a\tb\tc\n"), delim = "\t", col_types = "c-d", skip = 1L)
+  expect_equal(out, tibble::tibble(X1 = character(), X3 = numeric()))
+
+  # All columns skipped
+  out <- vroom(I("a\tb\n"), delim = "\t", col_types = "--", skip = 1L)
+  expect_equal(out, tibble::tibble())
+})
+
+test_that("cols() errors for invalid collector objects", {
+  expect_snapshot(
+    cols(a = col_character(), b = 123),
+    error = TRUE
+  )
+
+  expect_snapshot(
+    cols(a = col_character(), .default = 123),
+    error = TRUE
+  )
+})
+
+test_that("cols() errors for invalid character specifications", {
+  expect_snapshot(cols(X = "z", Y = "i", Z = col_character()), error = TRUE)
+  expect_snapshot(cols(X = "i", .default = "wut"), error = TRUE)
+})
+
+test_that("as.col_spec() errors for unhandled input type", {
+  expect_snapshot(
+    vroom(I("whatever"), col_types = data.frame()),
+    error = TRUE
+  )
+})
+
+test_that("as.col_spec() errors for unrecognized single-letter spec", {
+  expect_snapshot(vroom(I("whatever"), col_types = "dz"), error = TRUE)
+})

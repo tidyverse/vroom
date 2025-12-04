@@ -207,16 +207,16 @@ test_that("can promote vroom parse warning to error", {
     x$a[1]
   }
 
-  expect_error(
-    # This fails hard if we unwind protect the warning (aborts RStudio)
-    # - Try to throw error after catching the warning
+  # This fails hard if we unwind protect the warning (aborts RStudio)
+  # - Try to throw error after catching the warning
+  expect_snapshot(error = TRUE, {
     withCallingHandlers(
       expr = make_warning(),
       vroom_parse_issue = function(cnd) {
         abort("oh no")
       }
     )
-  )
+  })
 })
 
 test_that("emits an error message if provided incorrect input", {
@@ -227,4 +227,34 @@ test_that("emits an error message if provided incorrect input", {
   # user provides a data frame from an incorrect source
   a_tibble <- tibble::tibble(x = c(1), y = c(2))
   expect_snapshot(problems(a_tibble), error = TRUE)
+})
+
+# https://github.com/tidyverse/vroom/issues/535
+test_that("problems are correct even if print is first encounter", {
+  foo <- vroom(
+    I("a\n1\nz\n3\nF\n5"),
+    delim = ",",
+    col_types = "d",
+    show_col_types = FALSE
+  )
+
+  expect_output(expect_warning(print(foo), class = "vroom_parse_issue"))
+
+  probs <- problems(foo)
+  expect_equal(probs$row, c(3, 5))
+  expect_equal(probs$actual, c("z", "F"))
+
+  foo <- vroom(
+    I("1\nz\n3\nF\n5"),
+    delim = ",",
+    col_names = FALSE,
+    col_types = "d",
+    show_col_types = FALSE
+  )
+
+  expect_output(expect_warning(print(foo), class = "vroom_parse_issue"))
+
+  probs <- problems(foo)
+  expect_equal(probs$row, c(2, 4))
+  expect_equal(probs$actual, c("z", "F"))
 })

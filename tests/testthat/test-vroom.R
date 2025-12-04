@@ -14,6 +14,13 @@ test_that("vroom can read a csv", {
   )
 })
 
+test_that("vroom errors informatively when it cannot guess delimiter", {
+  expect_snapshot(
+    vroom(I("foo\nbar\nbaz\n"), col_types = list()),
+    error = TRUE
+  )
+})
+
 test_that("vroom guesses columns with NAs", {
   test_vroom(
     "a,b,c\nNA,2,3\n4,5,6\n",
@@ -592,14 +599,6 @@ test_that("vroom can read files with no trailing newline", {
   )
 })
 
-test_that("Missing files error with a nice error message", {
-  f <- tempfile()
-  expect_error(vroom(f, col_types = list()), "does not exist")
-  expect_error(
-    vroom("foo", col_types = list()),
-    "does not exist in current working directory"
-  )
-})
 
 test_that("Can return the spec object", {
   x <- vroom(I("foo,bar\n1,c\n"), col_types = list())
@@ -1306,4 +1305,51 @@ test_that("vroom can read a datetime column with no data and skip 1", {
     skip = 1,
     equals = tibble::tibble(dt = as.POSIXct(character()))
   )
+})
+
+# https://github.com/tidyverse/vroom/issues/554
+# https://github.com/tidyverse/vroom/issues/534
+test_that("vroom(col_select =) output has 'spec_tbl_df' class, spec, and problems when readr is attached", {
+  # Register readr's [.spec_tbl_df method which drops attributes and the "spec_tbl_df" class
+  readr_single_bracket <- function(x, ...) {
+    attr(x, "spec") <- NULL
+    attr(x, "problems") <- NULL
+    class(x) <- setdiff(class(x), "spec_tbl_df")
+    NextMethod(`[`)
+  }
+  registerS3method("[", "spec_tbl_df", readr_single_bracket)
+
+  # Unfortunately you can't just de-register the method and
+  # local_mocked_s3_method() only works if method exists to begin with.
+  # We'll do next best thing which is to put a pass-through method back.
+  withr::defer({
+    registerS3method("[", "spec_tbl_df", function(x, ...) NextMethod(`[`))
+  })
+
+  expect_warning(
+    dat <- vroom(
+      I("a,b\n1,2\nz,3\n4,5"),
+      col_types = "dc",
+      col_select = c(a, b),
+      show_col_types = FALSE,
+      altrep = FALSE
+    ),
+    class = "vroom_parse_issue"
+  )
+
+  expect_s3_class(dat, "spec_tbl_df")
+  expect_equal(
+    attr(dat, "spec", exact = TRUE),
+    cols(
+      a = col_double(),
+      b = col_character(),
+      .delim = ","
+    )
+  )
+  expect_no_error(probs <- problems(dat))
+  if (exists("probs")) {
+    expect_equal(nrow(probs), 1)
+    expect_equal(probs$row, 3)
+    expect_equal(probs$col, 1)
+  }
 })

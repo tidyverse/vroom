@@ -16,11 +16,10 @@ knitr::opts_chunk$set(
 options(tibble.print_min = 3)
 ```
 
-# 🏎💨vroom <a href='https://vroom.r-lib.org'><img src='man/figures/logo.png' align="right" height="135" /></a>
+# 🏎💨vroom <a href='https://vroom.tidyverse.org'><img src='man/figures/logo.png' align="right" height="135"  alt="vroom package hex logo"/></a>
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/tidyverse/vroom/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/tidyverse/vroom/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/tidyverse/vroom/branch/main/graph/badge.svg)](https://app.codecov.io/gh/tidyverse/vroom?branch=main)
 [![CRAN status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/package=vroom)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Codecov test coverage](https://codecov.io/gh/tidyverse/vroom/graph/badge.svg)](https://app.codecov.io/gh/tidyverse/vroom)
@@ -28,30 +27,41 @@ options(tibble.print_min = 3)
 
 ```{r echo = FALSE, message = FALSE}
 tm <- vroom::vroom(system.file("bench", "taxi.tsv", package = "vroom"))
-versions <- vroom::vroom(system.file("bench", "session_info.tsv", package = "vroom"))
+versions <- vroom::vroom(system.file(
+  "bench",
+  "session_info.tsv",
+  package = "vroom"
+))
 
 # Use the base version number for read.delim
 versions$package[versions$package == "base"] <- "read.delim"
 
 library(dplyr)
-tbl <- tm %>% filter(type == "real", op == "read", reading_package %in% c("data.table", "readr", "read.delim") | manip_package == "base") %>%
-  rename(package = reading_package) %>%
-  left_join(versions) %>%
+tbl <- tm |>
+  filter(
+    type == "real",
+    op == "read",
+    reading_package %in%
+      c("data.table", "readr", "read.delim") |
+      manip_package == "base"
+  ) |>
+  rename(package = reading_package) |>
+  left_join(versions) |>
   transmute(
     package = package,
     version = ondiskversion,
     "time (sec)" = time,
     speedup = max(time) / time,
     "throughput" = paste0(prettyunits::pretty_bytes(size / time), "/sec")
-  ) %>%
+  ) |>
   arrange(desc(speedup))
 ```
 
-The fastest delimited reader for R, **`r filter(tbl, package == "vroom") %>% pull("throughput") %>% trimws()`**.
+The fastest delimited reader for R, **`r filter(tbl, package == "vroom") |> pull("throughput") |> trimws()`**.
 
-<img src="https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif" align="right" />
+<img src="https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif" align="right" alt="Animated GIF of Taylor Swift in a car" />
 
-But that's impossible! How can it be [so fast](https://vroom.r-lib.org/articles/benchmarks.html)?
+But that's impossible! How can it be [so fast](https://vroom.tidyverse.org/articles/benchmarks.html)?
 
 vroom doesn't stop to actually _read_ all of your data, it simply indexes where each record is located so it can be read later.
 The vectors returned use the [Altrep framework](https://svn.r-project.org/R/branches/ALTREP/ALTREP.html) to lazily load the data on-demand when it is accessed, so you only pay for what you use.
@@ -108,20 +118,29 @@ pak::pak("tidyverse/vroom")
 ```
 ## Usage
 
-See [getting started](https://vroom.r-lib.org/articles/vroom.html)
+See [getting started](https://vroom.tidyverse.org/articles/vroom.html)
 to jump start your use of vroom!
 
 vroom uses the same interface as readr to specify column types.
 
 ```{r, include = FALSE}
-tibble::rownames_to_column(mtcars, "model") %>%
+tibble::rownames_to_column(mtcars, "model") |>
   vroom::vroom_write("mtcars.tsv", delim = "\t")
 ```
 
 ```{r example}
-vroom::vroom("mtcars.tsv",
-  col_types = list(cyl = "i", gear = "f",hp = "i", disp = "_",
-                   drat = "_", vs = "l", am = "l", carb = "i")
+vroom::vroom(
+  "mtcars.tsv",
+  col_types = list(
+    cyl = "i",
+    gear = "f",
+    hp = "i",
+    disp = "_",
+    drat = "_",
+    vs = "l",
+    am = "l",
+    carb = "i"
+  )
 )
 ```
 
@@ -141,7 +160,14 @@ For the sake of the example, we'll just take the first 2 lines of each file.
 library(nycflights13)
 purrr::iwalk(
   split(flights, flights$carrier),
-  ~ { .x$carrier[[1]]; vroom::vroom_write(head(.x, 2), glue::glue("flights_{.y}.tsv"), delim = "\t") }
+  \(x, y) {
+    x$carrier[[1]]
+    vroom::vroom_write(
+      head(x, 2),
+      glue::glue("flights_{y}.tsv"),
+      delim = "\t"
+    )
+  }
 )
 ```
 
@@ -160,14 +186,14 @@ fs::file_delete(files)
 
 ## Learning more
 
-- [Getting started with vroom](https://vroom.r-lib.org/articles/vroom.html)
+- [Getting started with vroom](https://vroom.tidyverse.org/articles/vroom.html)
 - [📽 vroom: Because Life is too short to read slow](https://www.youtube.com/watch?v=RA9AjqZXxMU&t=10s) - Presentation at UseR!2019 ([slides](https://speakerdeck.com/jimhester/vroom))
 - [📹 vroom: Read and write rectangular data quickly](https://www.youtube.com/watch?v=ZP_y5eaAc60) - a video tour of the vroom features.
 
 ## Benchmarks
 
 The speed quoted above is from a real `r format(fs::fs_bytes(tm$size[[1]]))` dataset with `r format(tm$rows[[1]], big.mark = ",")` rows and `r tm$cols[[1]]` columns,
-see the [benchmark article](https://vroom.r-lib.org/articles/benchmarks.html)
+see the [benchmark article](https://vroom.tidyverse.org/articles/benchmarks.html)
 for full details of the dataset and
 [bench/](https://github.com/tidyverse/vroom/tree/main/inst/bench) for the code
 used to retrieve the data and perform the benchmarks.

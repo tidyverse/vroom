@@ -1,13 +1,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# 🏎💨vroom <a href='https://vroom.r-lib.org'><img src='man/figures/logo.png' align="right" height="135" /></a>
+# 🏎💨vroom <a href='https://vroom.tidyverse.org'><img src='man/figures/logo.png' align="right" height="135"  alt="vroom package hex logo"/></a>
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/tidyverse/vroom/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/tidyverse/vroom/actions/workflows/R-CMD-check.yaml)
-[![Codecov test
-coverage](https://codecov.io/gh/tidyverse/vroom/branch/main/graph/badge.svg)](https://app.codecov.io/gh/tidyverse/vroom?branch=main)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/vroom)](https://cran.r-project.org/package=vroom)
 [![Lifecycle:
@@ -18,10 +16,10 @@ coverage](https://codecov.io/gh/tidyverse/vroom/graph/badge.svg)](https://app.co
 
 The fastest delimited reader for R, **1.23 GB/sec**.
 
-<img src="https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif" align="right" />
+<img src="https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif" align="right" alt="Animated GIF of Taylor Swift in a car" />
 
 But that’s impossible! How can it be [so
-fast](https://vroom.r-lib.org/articles/benchmarks.html)?
+fast](https://vroom.tidyverse.org/articles/benchmarks.html)?
 
 vroom doesn’t stop to actually *read* all of your data, it simply
 indexes where each record is located so it can be read later. The
@@ -89,15 +87,24 @@ pak::pak("tidyverse/vroom")
 
 ## Usage
 
-See [getting started](https://vroom.r-lib.org/articles/vroom.html) to
-jump start your use of vroom!
+See [getting started](https://vroom.tidyverse.org/articles/vroom.html)
+to jump start your use of vroom!
 
 vroom uses the same interface as readr to specify column types.
 
 ``` r
-vroom::vroom("mtcars.tsv",
-  col_types = list(cyl = "i", gear = "f",hp = "i", disp = "_",
-                   drat = "_", vs = "l", am = "l", carb = "i")
+vroom::vroom(
+  "mtcars.tsv",
+  col_types = list(
+    cyl = "i",
+    gear = "f",
+    hp = "i",
+    disp = "_",
+    drat = "_",
+    vs = "l",
+    am = "l",
+    carb = "i"
+  )
 )
 #> # A tibble: 32 × 10
 #>   model           mpg   cyl    hp    wt  qsec vs    am    gear   carb
@@ -121,7 +128,14 @@ lines of each file.
 library(nycflights13)
 purrr::iwalk(
   split(flights, flights$carrier),
-  ~ { .x$carrier[[1]]; vroom::vroom_write(head(.x, 2), glue::glue("flights_{.y}.tsv"), delim = "\t") }
+  \(x, y) {
+    x$carrier[[1]]
+    vroom::vroom_write(
+      head(x, 2),
+      glue::glue("flights_{y}.tsv"),
+      delim = "\t"
+    )
+  }
 )
 ```
 
@@ -161,7 +175,7 @@ vroom::vroom(files, id = "source")
 ## Learning more
 
 - [Getting started with
-  vroom](https://vroom.r-lib.org/articles/vroom.html)
+  vroom](https://vroom.tidyverse.org/articles/vroom.html)
 - [📽 vroom: Because Life is too short to read
   slow](https://www.youtube.com/watch?v=RA9AjqZXxMU&t=10s) -
   Presentation at UseR!2019
@@ -174,7 +188,7 @@ vroom::vroom(files, id = "source")
 
 The speed quoted above is from a real 1.53G dataset with 14,388,451 rows
 and 11 columns, see the [benchmark
-article](https://vroom.r-lib.org/articles/benchmarks.html) for full
+article](https://vroom.tidyverse.org/articles/benchmarks.html) for full
 details of the dataset and
 [bench/](https://github.com/tidyverse/vroom/tree/main/inst/bench) for
 the code used to retrieve the data and perform the benchmarks.

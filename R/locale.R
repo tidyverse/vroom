@@ -45,7 +45,7 @@ locale <- function(
   encoding = "UTF-8"
 ) {
   if (is.character(date_names)) {
-    date_names <- date_names_lang(date_names)
+    date_names <- date_names_lang(date_names, call = current_env())
   }
   stopifnot(is.date_names(date_names))
 
@@ -58,10 +58,15 @@ locale <- function(
   stopifnot(is.character(decimal_mark), length(decimal_mark) == 1)
   stopifnot(is.character(grouping_mark), length(grouping_mark) == 1)
   if (decimal_mark == grouping_mark) {
-    stop("`decimal_mark` and `grouping_mark` must be different", call. = FALSE)
+    cli::cli_abort(
+      c(
+        "{.arg decimal_mark} and {.arg grouping_mark} must be different.",
+        "i" = "Both were specified as {.val {decimal_mark}}."
+      )
+    )
   }
 
-  tz <- check_tz(tz)
+  tz <- check_tz(tz, call = current_env())
   check_encoding(encoding)
 
   structure(
@@ -113,11 +118,14 @@ default_locale <- function() {
   loc
 }
 
-check_tz <- function(x) {
+check_tz <- function(x, call = caller_env()) {
   stopifnot(is.character(x), length(x) == 1)
+
+  tz_source <- ""
 
   if (identical(x, "")) {
     x <- Sys.timezone()
+    tz_source <- "system "
 
     if (identical(x, "") || identical(x, NA_character_)) {
       x <- "UTC"
@@ -127,15 +135,32 @@ check_tz <- function(x) {
   if (x %in% tzdb::tzdb_names()) {
     x
   } else {
-    stop("Unknown TZ ", x, call. = FALSE)
+    cli::cli_abort("Unknown {tz_source}timezone: {.val {x}}.", call = call)
   }
 }
+
+# see https://github.com/tidyverse/readr/pull/1537 for why this more relaxed
+# than you might expect (and than it used to be)
 check_encoding <- function(x) {
   stopifnot(is.character(x), length(x) == 1)
 
-  if (tolower(x) %in% tolower(iconvlist())) {
+  # portable encoding names
+  if (x %in% c("latin1", "UTF-8")) {
     return(TRUE)
   }
 
-  stop("Unknown encoding ", x, call. = FALSE)
+  # 'iconvlist' could be incomplete (musl) or even unavailable
+  known <- tryCatch(iconvlist(), error = identity)
+  if (inherits(known, "error")) {
+    warning("Could not check `encoding` against `iconvlist()`.", call. = FALSE)
+  } else if (tolower(x) %in% tolower(known)) {
+    TRUE
+  } else {
+    warning(
+      "Unknown encoding ",
+      encodeString(x, quote = '"'),
+      ".",
+      call. = FALSE
+    )
+  }
 }
