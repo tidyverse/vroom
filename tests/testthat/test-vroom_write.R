@@ -105,11 +105,15 @@ test_that("roundtrip preserves dates and datetimes", {
 })
 
 test_that("fails to create file in non-existent directory", {
-  td <- tempdir()
   expect_snapshot(
     vroom_write(mtcars, file.path(tempdir(), "x", "y"), "\t"),
     error = TRUE,
-    transform = function(x) gsub(td, "<tempdir>", x, fixed = TRUE)
+    transform = function(x) {
+      # Scrub any path before x/y (works on all platforms)
+      x <- gsub("\\\\", "/", x) # Normalize backslashes first
+      x <- gsub("'[^']+/(?=x/y)", "'<temp>/", x, perl = TRUE)
+      x
+    }
   )
 })
 

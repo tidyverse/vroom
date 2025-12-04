@@ -5,7 +5,7 @@
     Condition
       Error:
       ! Cannot open file for writing:
-      * '<tempdir>/x/y'
+      * '<temp>/x/y'
 
 # Can change the escape behavior for quotes
 
