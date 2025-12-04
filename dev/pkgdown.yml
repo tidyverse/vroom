@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   benchmarks: benchmarks.html
   vroom: vroom.html
-last_built: 2025-12-04T00:45Z
+last_built: 2025-12-04T07:07Z
 urls:
   reference: https://vroom.tidyverse.org/reference
   article: https://vroom.tidyverse.org/articles
