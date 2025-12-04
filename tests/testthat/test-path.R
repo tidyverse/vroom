@@ -207,6 +207,7 @@ test_that("can read fwf file w/ non-ascii characters in path", {
 test_that("standardise_path() errors for a mix of connection and not connection", {
   file <- test_path("multi-file", "foo")
   conn <- file(test_path("multi-file", "bar"))
+  on.exit(close(conn))
 
   # wrap it, so we can check the caller is displayed correctly
   f <- function(some_arg_name) {
