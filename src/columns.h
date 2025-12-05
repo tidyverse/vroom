@@ -5,6 +5,7 @@
 #include <cpp11/list.hpp>
 #include <cpp11/strings.hpp>
 
+#include "altrep.h"
 #include "vroom.h"
 #include "vroom_big_int.h"
 #include "vroom_chr.h"
@@ -99,9 +100,11 @@ inline cpp11::list create_columns(
 
   bool add_filename = !Rf_isNull(id);
 
-  cpp11::writable::list res(num_cols + add_filename);
+  cpp11::writable::list res(
+      R_allocResizableVector(VECSXP, num_cols + add_filename));
 
-  cpp11::writable::strings res_nms(num_cols + add_filename);
+  cpp11::writable::strings res_nms(
+      R_allocResizableVector(STRSXP, num_cols + add_filename));
 
   if (add_filename) {
     res[i] =
@@ -259,12 +262,9 @@ inline cpp11::list create_columns(
 
   // use res.size() to finesse presence/absence of filename column
   if (i < res.size()) {
-    // Resize the list appropriately
-    SETLENGTH(res, i);
-    SET_TRUELENGTH(res, i);
-
-    SETLENGTH(res_nms, i);
-    SET_TRUELENGTH(res_nms, i);
+    // use the resizable vector API slated for R 4.6.0
+    R_resizeVector(res, i);
+    R_resizeVector(res_nms, i);
   }
 
   res.attr("names") = res_nms;
