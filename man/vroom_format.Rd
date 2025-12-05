@@ -22,13 +22,14 @@ vroom_format(
 \item{delim}{Delimiter used to separate values. Defaults to \verb{\\t} to write
 tab separated value (TSV) files.}
 
-\item{eol}{The end of line character to use. Most commonly either \code{"\n"} for
-Unix style newlines, or \code{"\r\n"} for Windows style newlines.}
+\item{eol}{The end of line character to use. Most commonly either \code{"\\n"} for
+Unix style newlines, or \code{"\\r\\n"} for Windows style newlines.}
 
 \item{na}{String used for missing values. Defaults to 'NA'.}
 
-\item{col_names}{If \code{FALSE}, column names will not be included at the top of the file. If \code{TRUE},
-column names will be included. If not specified, \code{col_names} will take the opposite value given to \code{append}.}
+\item{col_names}{If \code{FALSE}, column names will not be included at the top of
+the file. If \code{TRUE}, column names will be included. If not specified,
+\code{col_names} will take the opposite value given to \code{append}.}
 
 \item{escape}{The type of escape to use when quotes are in the data.
 \itemize{

@@ -1,7 +1,8 @@
 #' Write a data frame to a delimited file
 #'
-#' @inheritParams readr::write_tsv
 #' @inheritParams vroom
+#' @param x A data frame or tibble to write to disk.
+#' @param file File or connection to write to.
 #' @param escape The type of escape to use when quotes are in the data.
 #'   - `double` - quotes are escaped by doubling them.
 #'   - `backslash` - quotes are escaped by a preceding backslash.
@@ -17,7 +18,15 @@
 #'   excel to read the data with the correct encoding (UTF-8)
 #' @param delim Delimiter used to separate values. Defaults to `\t` to write
 #'   tab separated value (TSV) files.
+#' @param eol The end of line character to use. Most commonly either `"\n"` for
+#'   Unix style newlines, or `"\r\n"` for Windows style newlines.
 #' @param na String used for missing values. Defaults to 'NA'.
+#' @param col_names If `FALSE`, column names will not be included at the top of
+#'   the file. If `TRUE`, column names will be included. If not specified,
+#'   `col_names` will take the opposite value given to `append`.
+#' @param append If `FALSE`, will overwrite existing file. If `TRUE`,
+#'   will append to existing file. In both cases, if the file does not exist, a
+#'   new file is created.
 #' @export
 #' @examples
 #' # If you only specify a file name, vroom_write() will write

@@ -64,10 +64,10 @@ how this is done.}
 \item{col_types}{One of \code{NULL}, a \code{\link[=cols]{cols()}} specification, or
 a string.
 
-If \code{NULL}, all column types will be imputed from \code{guess_max} rows
-on the input interspersed throughout the file. This is convenient (and
-fast), but not robust. If the imputation fails, you'll need to increase
-the \code{guess_max} or supply the correct types yourself.
+If \code{NULL}, all column types will be inferred from \code{guess_max} rows
+of the input, interspersed throughout the file. This is convenient (and
+fast), but not robust. If the guessed types are wrong, you'll need to
+increase \code{guess_max} or supply the correct types yourself.
 
 Column specifications created by \code{\link[=list]{list()}} or \code{\link[=cols]{cols()}} must contain
 one column specification for each column. If you only want to read a
@@ -90,8 +90,8 @@ character represents one column:
 }
 
 By default, reading a file without a column specification will print a
-message showing what \code{readr} guessed they were. To remove this message,
-set \code{show_col_types = FALSE} or set \code{options(readr.show_col_types = FALSE)}.}
+message showing the guessed types. To suppress this message, set
+\code{show_col_types = FALSE}.}
 
 \item{col_select}{Columns to include in the results. You can use the same
 mini-language as \code{dplyr::select()} to refer to the columns by name. Use
@@ -101,8 +101,9 @@ usage is less common, \code{col_select} also accepts a numeric column index. See
 selection language.}
 
 \item{id}{Either a string or 'NULL'. If a string, the output will contain a
-variable with that name with the filename(s) as the value. If 'NULL', the
-default, no variable will be created.}
+column with that name with the filename(s) as the value, i.e. this column
+effectively tells you the source of each row. If 'NULL' (the default), no
+such column will be created.}
 
 \item{skip}{Number of lines to skip before reading data. If \code{comment} is
 supplied any commented lines are ignored \emph{after} skipping.}
@@ -151,14 +152,14 @@ vectors. If your data contains newlines within fields the parser will
 automatically be forced to use a single thread only.}
 
 \item{progress}{Display a progress bar? By default it will only display
-in an interactive session and not while knitting a document. The automatic
-progress bar can be disabled by setting option \code{readr.show_progress} to
-\code{FALSE}.}
+in an interactive session and not while executing in an RStudio notebook
+chunk. The display of the progress bar can be disabled by setting the
+environment variable \code{VROOM_SHOW_PROGRESS} to \code{"false"}.}
 
 \item{show_col_types}{Control showing the column specifications. If \code{TRUE}
-column specifications are always show, if \code{FALSE} they are never shown. If
-\code{NULL} (the default) they are shown only if an explicit specification is not
-given to \code{col_types}.}
+column specifications are always shown, if \code{FALSE} they are never shown. If
+\code{NULL} (the default), they are shown only if an explicit specification is
+not given in \code{col_types}, i.e. if the types have been guessed.}
 
 \item{.name_repair}{Handling of column names. The default behaviour is to
 ensure column names are \code{"unique"}. Various repair strategies are
@@ -166,9 +167,11 @@ supported:
 \itemize{
 \item \code{"minimal"}: No name repair or checks, beyond basic existence of names.
 \item \code{"unique"} (default value): Make sure names are unique and not empty.
-\item \code{"check_unique"}: no name repair, but check they are \code{unique}.
+\item \code{"check_unique"}: No name repair, but check they are \code{unique}.
+\item \code{"unique_quiet"}: Repair with the \code{unique} strategy, quietly.
 \item \code{"universal"}: Make the names \code{unique} and syntactic.
-\item A function: apply custom name repair (e.g., \code{name_repair = make.names}
+\item \code{"universal_quiet"}: Repair with the \code{universal} strategy, quietly.
+\item A function: Apply custom name repair (e.g., \code{name_repair = make.names}
 for names in the style of base R).
 \item A purrr-style anonymous function, see \code{\link[rlang:as_function]{rlang::as_function()}}.
 }
