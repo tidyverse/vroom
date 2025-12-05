@@ -85,22 +85,7 @@ public:
   void warn_for_errors() const {
     if (!have_warned_ && rows_.size() > 0) {
       have_warned_ = true;
-      // it is intentional that we aren't using cpp11::package
-      // https://github.com/tidyverse/vroom/commit/984a3e5e37e124feacfec3d184dbeb02eb1145c4
-      SEXP cli_ns = Rf_findVarInFrame(R_NamespaceRegistry, Rf_install("cli"));
-      PROTECT(cli_ns);
-      SEXP cli_warn = Rf_findFun(Rf_install("cli_warn"), cli_ns);
-      PROTECT(cli_warn);
-      cpp11::strings bullets({
-        "w"_nm = "One or more parsing issues, call {.fun problems} on your data frame for details, e.g.:",
-        " "_nm = "dat <- vroom(...)",
-        " "_nm = "problems(dat)"});
-      cpp11::sexp cli_warn_call = Rf_lang3(
-        cli_warn,
-        bullets,
-        Rf_mkString("vroom_parse_issue"));
-      Rf_eval(cli_warn_call, R_EmptyEnv);
-      UNPROTECT(2);
+      Rf_warningcall(R_NilValue, "%s", "One or more parsing issues, call `problems()` on your data frame for details, e.g.:\n  dat <- vroom(...)\n  problems(dat)");
     }
   }
 
