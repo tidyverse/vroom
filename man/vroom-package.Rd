@@ -12,7 +12,7 @@ The goal of 'vroom' is to read and write data (like 'csv', 'tsv' and 'fwf') quic
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://vroom.r-lib.org}
+  \item \url{https://vroom.tidyverse.org}
   \item \url{https://github.com/tidyverse/vroom}
   \item Report bugs at \url{https://github.com/tidyverse/vroom/issues}
 }
