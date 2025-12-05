@@ -10,7 +10,7 @@ asynchronously from formatting.
 
 Useful links:
 
-- <https://vroom.r-lib.org>
+- <https://vroom.tidyverse.org>
 
 - <https://github.com/tidyverse/vroom>
 
