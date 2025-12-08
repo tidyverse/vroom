@@ -27,17 +27,18 @@ vroom_write(
 \item{delim}{Delimiter used to separate values. Defaults to \verb{\\t} to write
 tab separated value (TSV) files.}
 
-\item{eol}{The end of line character to use. Most commonly either \code{"\n"} for
-Unix style newlines, or \code{"\r\n"} for Windows style newlines.}
+\item{eol}{The end of line character to use. Most commonly either \code{"\\n"} for
+Unix style newlines, or \code{"\\r\\n"} for Windows style newlines.}
 
 \item{na}{String used for missing values. Defaults to 'NA'.}
 
-\item{col_names}{If \code{FALSE}, column names will not be included at the top of the file. If \code{TRUE},
-column names will be included. If not specified, \code{col_names} will take the opposite value given to \code{append}.}
+\item{col_names}{If \code{FALSE}, column names will not be included at the top of
+the file. If \code{TRUE}, column names will be included. If not specified,
+\code{col_names} will take the opposite value given to \code{append}.}
 
 \item{append}{If \code{FALSE}, will overwrite existing file. If \code{TRUE},
-will append to existing file. In both cases, if the file does not exist a new
-file is created.}
+will append to existing file. In both cases, if the file does not exist, a
+new file is created.}
 
 \item{quote}{How to handle fields which contain characters that need to be
 quoted.
@@ -64,10 +65,9 @@ vectors. If your data contains newlines within fields the parser will
 automatically be forced to use a single thread only.}
 
 \item{progress}{Display a progress bar? By default it will only display
-in an interactive session and not while knitting a document. The display
-is updated every 50,000 values and will only display if estimated reading
-time is 5 seconds or more. The automatic progress bar can be disabled by
-setting option \code{readr.show_progress} to \code{FALSE}.}
+in an interactive session and not while executing in an RStudio notebook
+chunk. The display of the progress bar can be disabled by setting the
+environment variable \code{VROOM_SHOW_PROGRESS} to \code{"false"}.}
 }
 \description{
 Write a data frame to a delimited file

@@ -21,7 +21,7 @@ the default column type to the most frequent type and only listing columns
 with a different type.
 
 \code{spec()} extracts the full column specification from a tibble
-created by readr.
+created by vroom.
 }
 \examples{
 df <- vroom(vroom_example("mtcars.csv"))

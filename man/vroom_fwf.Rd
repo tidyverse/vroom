@@ -38,38 +38,33 @@ fwf_positions(start, end = NULL, col_names = NULL)
 fwf_cols(...)
 }
 \arguments{
-\item{file}{Either a path to a file, a connection, or literal data
-(either a single string or a raw vector).
+\item{file}{Either a path to a file, a connection, or literal data (either a
+single string or a raw vector).
 
-Files ending in \code{.gz}, \code{.bz2}, \code{.xz}, or \code{.zip} will
-be automatically uncompressed. Files starting with \verb{http://},
-\verb{https://}, \verb{ftp://}, or \verb{ftps://} will be automatically
-downloaded. Remote gz files can also be automatically downloaded and
-decompressed.
+Files ending in \code{.gz}, \code{.bz2}, \code{.xz}, or \code{.zip} will be automatically
+uncompressed. Files starting with \verb{http://}, \verb{https://}, \verb{ftp://}, or
+\verb{ftps://} will be automatically downloaded. Remote \code{.gz} files can also be
+automatically downloaded and decompressed.
 
 Literal data is most useful for examples and tests. To be recognised as
-literal data, the input must be either wrapped with \code{I()}, be a string
-containing at least one new line, or be a vector containing at least one
-string with a new line.
+literal data, wrap the input with \code{I()}.}
 
-Using a value of \code{\link[readr:clipboard]{clipboard()}} will read from the system clipboard.}
+\item{col_positions}{Column positions, as created by \code{\link[=fwf_empty]{fwf_empty()}},
+\code{\link[=fwf_widths]{fwf_widths()}}, \code{\link[=fwf_positions]{fwf_positions()}}, or \code{\link[=fwf_cols]{fwf_cols()}}. To read in only
+selected fields, use \code{\link[=fwf_positions]{fwf_positions()}}. If the width of the last column
+is variable (a ragged fwf file), supply the last end position as \code{NA}.}
 
-\item{col_positions}{Column positions, as created by \code{\link[readr:fwf_empty]{fwf_empty()}},
-\code{\link[readr:fwf_widths]{fwf_widths()}} or \code{\link[readr:fwf_positions]{fwf_positions()}}. To read in only selected fields,
-use \code{\link[readr:fwf_positions]{fwf_positions()}}. If the width of the last column is variable (a
-ragged fwf file), supply the last end position as NA.}
+\item{col_types}{One of \code{NULL}, a \code{\link[=cols]{cols()}} specification, or
+a string.
 
-\item{col_types}{One of \code{NULL}, a \code{\link[readr:cols]{cols()}} specification, or
-a string. See \code{vignette("readr")} for more details.
+If \code{NULL}, all column types will be inferred from \code{guess_max} rows
+of the input, interspersed throughout the file. This is convenient (and
+fast), but not robust. If the guessed types are wrong, you'll need to
+increase \code{guess_max} or supply the correct types yourself.
 
-If \code{NULL}, all column types will be inferred from \code{guess_max} rows of the
-input, interspersed throughout the file. This is convenient (and fast),
-but not robust. If the guessed types are wrong, you'll need to increase
-\code{guess_max} or supply the correct types yourself.
-
-Column specifications created by \code{\link[=list]{list()}} or \code{\link[readr:cols]{cols()}} must contain
+Column specifications created by \code{\link[=list]{list()}} or \code{\link[=cols]{cols()}} must contain
 one column specification for each column. If you only want to read a
-subset of the columns, use \code{\link[readr:cols_only]{cols_only()}}.
+subset of the columns, use \code{\link[=cols_only]{cols_only()}}.
 
 Alternatively, you can use a compact string representation where each
 character represents one column:
@@ -88,8 +83,8 @@ character represents one column:
 }
 
 By default, reading a file without a column specification will print a
-message showing what \code{readr} guessed they were. To remove this message,
-set \code{show_col_types = FALSE} or set \code{options(readr.show_col_types = FALSE)}.}
+message showing the guessed types. To suppress this message, set
+\code{show_col_types = FALSE}.}
 
 \item{col_select}{Columns to include in the results. You can use the same
 mini-language as \code{dplyr::select()} to refer to the columns by name. Use
@@ -98,22 +93,24 @@ usage is less common, \code{col_select} also accepts a numeric column index. See
 \code{\link[tidyselect:language]{?tidyselect::language}} for full details on the
 selection language.}
 
-\item{id}{The name of a column in which to store the file path. This is
-useful when reading multiple input files and there is data in the file
-paths, such as the data collection date. If \code{NULL} (the default) no extra
-column is created.}
+\item{id}{Either a string or 'NULL'. If a string, the output will contain a
+column with that name with the filename(s) as the value, i.e. this column
+effectively tells you the source of each row. If 'NULL' (the default), no
+such column will be created.}
 
 \item{locale}{The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
-\code{\link[readr:locale]{locale()}} to create your own locale that controls things like
+\code{\link[=locale]{locale()}} to create your own locale that controls things like
 the default time zone, encoding, decimal mark, big mark, and day/month
 names.}
 
 \item{na}{Character vector of strings to interpret as missing values. Set this
 option to \code{character()} to indicate no missing values.}
 
-\item{comment}{A string used to identify comments. Any text after the
-comment characters will be silently ignored.}
+\item{comment}{A string used to identify comments. Any line that starts
+with the comment string at the beginning of the file (before any data
+lines) will be ignored. Unlike \code{\link[=vroom]{vroom()}}, comment lines in the middle
+of the file are not filtered out.}
 
 \item{skip_empty_rows}{Should blank rows be ignored altogether? i.e. If this
 option is \code{TRUE} then blank rows will not be represented at all.  If it is
@@ -122,33 +119,31 @@ option is \code{TRUE} then blank rows will not be represented at all.  If it is
 \item{trim_ws}{Should leading and trailing whitespace (ASCII spaces and tabs) be trimmed from
 each field before parsing it?}
 
-\item{skip}{Number of lines to skip before reading data.}
+\item{skip}{Number of lines to skip before reading data. If \code{comment} is
+supplied any commented lines are ignored \emph{after} skipping.}
 
 \item{n_max}{Maximum number of lines to read.}
 
 \item{guess_max}{Maximum number of lines to use for guessing column types.
-Will never use more than the number of lines read.
 See \code{vignette("column-types", package = "readr")} for more details.}
 
 \item{altrep}{Control which column types use Altrep representations,
 either a character vector of types, \code{TRUE} or \code{FALSE}. See
 \code{\link[=vroom_altrep]{vroom_altrep()}} for for full details.}
 
-\item{num_threads}{The number of processing threads to use for initial
-parsing and lazy reading of data. If your data contains newlines within
-fields the parser should automatically detect this and fall back to using
-one thread only. However if you know your file has newlines within quoted
-fields it is safest to set \code{num_threads = 1} explicitly.}
+\item{num_threads}{Number of threads to use when reading and materializing
+vectors. If your data contains newlines within fields the parser will
+automatically be forced to use a single thread only.}
 
 \item{progress}{Display a progress bar? By default it will only display
-in an interactive session and not while knitting a document. The automatic
-progress bar can be disabled by setting option \code{readr.show_progress} to
-\code{FALSE}.}
+in an interactive session and not while executing in an RStudio notebook
+chunk. The display of the progress bar can be disabled by setting the
+environment variable \code{VROOM_SHOW_PROGRESS} to \code{"false"}.}
 
-\item{show_col_types}{If \code{FALSE}, do not show the guessed column types. If
-\code{TRUE} always show the column types, even if they are supplied. If \code{NULL}
-(the default) only show the column types if they are not explicitly supplied
-by the \code{col_types} argument.}
+\item{show_col_types}{Control showing the column specifications. If \code{TRUE}
+column specifications are always shown, if \code{FALSE} they are never shown. If
+\code{NULL} (the default), they are shown only if an explicit specification is
+not given in \code{col_types}, i.e. if the types have been guessed.}
 
 \item{.name_repair}{Handling of column names. The default behaviour is to
 ensure column names are \code{"unique"}. Various repair strategies are
