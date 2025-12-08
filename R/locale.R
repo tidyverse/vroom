@@ -86,6 +86,7 @@ locale <- function(
 is.locale <- function(x) inherits(x, "locale")
 
 # Conditionally exported in zzz.R
+#' @noRd
 # @export
 print.locale <- function(x, ...) {
   cat("<locale>\n")

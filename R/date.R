@@ -61,6 +61,7 @@ date_names_langs <- function() {
 }
 
 # Conditionally exported in zzz.R
+#' @noRd
 # @export
 print.date_names <- function(x, ...) {
   cat("<date_names>\n")

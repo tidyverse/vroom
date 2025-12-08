@@ -171,6 +171,7 @@ as.col_spec.default <- function(x, call = caller_env()) {
 }
 
 # Conditionally exported in zzz.R
+#' @noRd
 # @export
 print.col_spec <- function(
   x,
@@ -201,6 +202,7 @@ cols_condense <- function(x) {
 }
 
 # Conditionally exported in zzz.R
+#' @noRd
 # @export
 format.col_spec <- function(
   x,
@@ -317,6 +319,7 @@ colourise_cols <- function(cols, colourise = crayon::has_color()) {
 
 # This allows str() on a tibble object to print a little nicer.
 # Conditionally exported in zzz.R
+#' @noRd
 # @export
 str.col_spec <- function(object, ..., indent.str = "") {
   # Split the formatted column spec into strings
