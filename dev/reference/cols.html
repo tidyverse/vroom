@@ -111,8 +111,8 @@ used in the call to <code><a href="vroom.html">vroom()</a></code> it takes prece
 
 <dt id="arg-levels">levels<a class="anchor" aria-label="anchor" href="#arg-levels"></a></dt>
 <dd><p>Character vector of the allowed levels. When <code>levels = NULL</code>
-(the default), <code>levels</code> are discovered from the unique values of <code>x</code>, in
-the order in which they appear in <code>x</code>.</p></dd>
+(the default), <code>levels</code> are discovered from the unique values of the data,
+in the order in which they are encountered.</p></dd>
 
 
 <dt id="arg-ordered">ordered<a class="anchor" aria-label="anchor" href="#arg-ordered"></a></dt>
@@ -120,21 +120,70 @@ the order in which they appear in <code>x</code>.</p></dd>
 
 
 <dt id="arg-include-na">include_na<a class="anchor" aria-label="anchor" href="#arg-include-na"></a></dt>
-<dd><p>If <code>TRUE</code> and <code>x</code> contains at least one <code>NA</code>, then <code>NA</code>
-is included in the levels of the constructed factor.</p></dd>
+<dd><p>If <code>TRUE</code> and the data contains at least one <code>NA</code>, then
+<code>NA</code> is included in the levels of the constructed factor.</p></dd>
 
 
 <dt id="arg-format">format<a class="anchor" aria-label="anchor" href="#arg-format"></a></dt>
-<dd><p>A format specification, as described below. If set to "",
-date times are parsed as ISO8601, dates and times used the date and
-time formats specified in the <code><a href="locale.html">locale()</a></code>.</p>
-<p>Unlike <code><a href="https://rdrr.io/r/base/strptime.html" class="external-link">strptime()</a></code>, the format specification must match
-the complete string.</p></dd>
+<dd><p>A format specification. If set to "":</p><ul><li><p><code>col_datetime()</code> expects ISO8601 datetimes. Here are some examples of
+input that should just work:
+"2024-01-15", "2024-01-15 14:30:00", "2024-01-15T14:30:00Z".</p></li>
+<li><p><code>col_date()</code> uses the <code>date_format</code> from <code><a href="locale.html">locale()</a></code> (default <code>"%AD"</code>).
+These inputs should just work: "2024-01-15", "01/15/2024".</p></li>
+<li><p><code>col_time()</code> uses the <code>time_format</code> from <code><a href="locale.html">locale()</a></code> (default <code>"%AT"</code>).
+These inputs should just work: "14:30:00", "2:30:00 PM".</p></li>
+</ul><p>Unlike <code><a href="https://rdrr.io/r/base/strptime.html" class="external-link">strptime()</a></code>, the format specification must match the complete
+string. For more details, see below.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The available specifications are: (long names in quotes and string abbreviations in brackets)</p><table class="table table"><tr><td>function</td><td>long name</td><td>short name</td><td>description</td></tr><tr><td><code>col_logical()</code></td><td>"logical"</td><td>"l"</td><td>Logical values containing only <code>T</code>, <code>F</code>, <code>TRUE</code> or <code>FALSE</code>.</td></tr><tr><td><code>col_integer()</code></td><td>"integer"</td><td>"i"</td><td>Integer numbers.</td></tr><tr><td><code>col_big_integer()</code></td><td>"big_integer"</td><td>"I"</td><td>Big Integers (64bit), requires the <code>bit64</code> package.</td></tr><tr><td><code>col_double()</code></td><td>"double", "numeric"</td><td>"d"</td><td>64-bit double floating point numbers.</td></tr><tr><td><code>col_character()</code></td><td>"character"</td><td>"c"</td><td>Character string data.</td></tr><tr><td><code>col_factor(levels, ordered)</code></td><td>"factor"</td><td>"f"</td><td>A fixed set of values.</td></tr><tr><td><code>col_date(format = "")</code></td><td>"date"</td><td>"D"</td><td>Calendar dates formatted with the locale's <code>date_format</code>.</td></tr><tr><td><code>col_time(format = "")</code></td><td>"time"</td><td>"t"</td><td>Times formatted with the locale's <code>time_format</code>.</td></tr><tr><td><code>col_datetime(format = "")</code></td><td>"datetime", "POSIXct"</td><td>"T"</td><td>ISO8601 date times.</td></tr><tr><td><code>col_number()</code></td><td>"number"</td><td>"n"</td><td>Human readable numbers containing the <code>grouping_mark</code></td></tr><tr><td><code>col_skip()</code></td><td>"skip", "NULL"</td><td>"_", "-"</td><td>Skip and don't import this column.</td></tr><tr><td><code>col_guess()</code></td><td>"guess", "NA"</td><td>"?"</td><td>Parse using the "best" guessed type based on the input.</td></tr></table></div>
+    <p>The available specifications are: (long names in quotes and string abbreviations in brackets)</p><table class="table table"><tr><td>function</td><td>long name</td><td>short name</td><td>description</td></tr><tr><td><code>col_logical()</code></td><td>"logical"</td><td>"l"</td><td>Logical values containing only <code>T</code>, <code>F</code>, <code>TRUE</code> or <code>FALSE</code>.</td></tr><tr><td><code>col_integer()</code></td><td>"integer"</td><td>"i"</td><td>Integer numbers.</td></tr><tr><td><code>col_big_integer()</code></td><td>"big_integer"</td><td>"I"</td><td>Big Integers (64bit), requires the <code>bit64</code> package.</td></tr><tr><td><code>col_double()</code></td><td>"double", "numeric"</td><td>"d"</td><td>64-bit double floating point numbers.</td></tr><tr><td><code>col_character()</code></td><td>"character"</td><td>"c"</td><td>Character string data.</td></tr><tr><td><code>col_factor(levels, ordered)</code></td><td>"factor"</td><td>"f"</td><td>A fixed set of values.</td></tr><tr><td><code>col_date(format = "")</code></td><td>"date"</td><td>"D"</td><td>Calendar dates formatted with the locale's <code>date_format</code>.</td></tr><tr><td><code>col_time(format = "")</code></td><td>"time"</td><td>"t"</td><td>Times formatted with the locale's <code>time_format</code>.</td></tr><tr><td><code>col_datetime(format = "")</code></td><td>"datetime", "POSIXct"</td><td>"T"</td><td>ISO8601 date times.</td></tr><tr><td><code>col_number()</code></td><td>"number"</td><td>"n"</td><td>Human readable numbers containing the <code>grouping_mark</code></td></tr><tr><td><code>col_skip()</code></td><td>"skip", "NULL"</td><td>"_", "-"</td><td>Skip and don't import this column.</td></tr><tr><td><code>col_guess()</code></td><td>"guess", "NA"</td><td>"?"</td><td>Parse using the "best" guessed type based on the input.</td></tr></table><div class="section">
+<h3 id="date-time-and-datetime-formats-">Date, time, and datetime formats:<a class="anchor" aria-label="anchor" href="#date-time-and-datetime-formats-"></a></h3>
+
+
+<p><span class="pkg">vroom</span> uses a format specification similar to <code><a href="https://rdrr.io/r/base/strptime.html" class="external-link">strptime()</a></code>.
+There are three types of element:</p><ol><li><p>A conversion specification that is "%" followed by a letter. For example
+"%Y" matches a 4 digit year, "%m", matches a 2 digit month and "%d" matches
+a 2 digit day. Month and day default to <code>1</code>, (i.e. Jan 1st) if not present,
+for example if only a year is given.</p></li>
+<li><p>Whitespace is any sequence of zero or more whitespace characters.</p></li>
+<li><p>Any other character is matched exactly.</p></li>
+</ol><p><span class="pkg">vroom</span>'s datetime <code>col_*()</code> functions recognize the following
+specifications:</p><ul><li><p>Year: "%Y" (4 digits). "%y" (2 digits); 00-69 -&gt; 2000-2069, 70-99 -&gt;
+1970-1999.</p></li>
+<li><p>Month: "%m" (2 digits), "%b" (abbreviated name in current locale), "%B"
+(full name in current locale).</p></li>
+<li><p>Day: "%d" (2 digits), "%e" (optional leading space), "%a" (abbreviated
+name in current locale).</p></li>
+<li><p>Hour: "%H" or "%I" or "%h", use I (and not H) with AM/PM, use h (and not H)
+if your times represent durations longer than one day.</p></li>
+<li><p>Minutes: "%M"</p></li>
+<li><p>Seconds: "%S" (integer seconds), "%OS" (partial seconds)</p></li>
+<li><p>Time zone: "%Z" (as name, e.g. "America/Chicago"), "%z" (as offset from
+UTC, e.g. "+0800")</p></li>
+<li><p>AM/PM indicator: "%p".</p></li>
+<li><p>Non-digits: "%." skips one non-digit character, "%+" skips one or more
+non-digit characters, "%*" skips any number of non-digits characters.</p></li>
+<li><p>Automatic parsers: "%AD" parses with a flexible YMD parser, "%AT" parses
+with a flexible HMS parser.</p></li>
+<li><p>Shortcuts: "%D" = "%m/%d/%y", "%F" = "%Y-%m-%d", "%R" = "%H:%M", "%T" =
+"%H:%M:%S", "%x" = "%y/%m/%d".</p></li>
+</ul><div class="section">
+<h4 id="iso-support">ISO8601 support<a class="anchor" aria-label="anchor" href="#iso-support"></a></h4>
+
+
+<p>Currently, vroom does not support all of ISO8601. Missing features:</p><ul><li><p>Week &amp; weekday specifications, e.g. "2013-W05", "2013-W05-10".</p></li>
+<li><p>Ordinal dates, e.g. "2013-095".</p></li>
+<li><p>Using commas instead of a period for decimal separator.</p></li>
+</ul><p>The parser is also a little laxer than ISO8601:</p><ul><li><p>Dates and times can be separated with a space, not just T.</p></li>
+<li><p>Mostly correct specifications like "2009-05-19 14:" and "200912-01" work.</p></li>
+</ul></div>
+
+
+</div>
+
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>

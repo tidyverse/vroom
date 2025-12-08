@@ -37,8 +37,8 @@ vroom_write_lines(
 - append:
 
   If `FALSE`, will overwrite existing file. If `TRUE`, will append to
-  existing file. In both cases, if the file does not exist a new file is
-  created.
+  existing file. In both cases, if the file does not exist, a new file
+  is created.
 
 - num_threads:
 

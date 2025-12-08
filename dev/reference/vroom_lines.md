@@ -89,9 +89,9 @@ vroom_lines(
 - progress:
 
   Display a progress bar? By default it will only display in an
-  interactive session and not while knitting a document. The automatic
-  progress bar can be disabled by setting option `readr.show_progress`
-  to `FALSE`.
+  interactive session and not while executing in an RStudio notebook
+  chunk. The display of the progress bar can be disabled by setting the
+  environment variable `VROOM_SHOW_PROGRESS` to `"false"`.
 
 ## Examples
 

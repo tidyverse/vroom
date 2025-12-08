@@ -54,8 +54,8 @@ vroom_write(
 - append:
 
   If `FALSE`, will overwrite existing file. If `TRUE`, will append to
-  existing file. In both cases, if the file does not exist a new file is
-  created.
+  existing file. In both cases, if the file does not exist, a new file
+  is created.
 
 - quote:
 
@@ -93,10 +93,9 @@ vroom_write(
 - progress:
 
   Display a progress bar? By default it will only display in an
-  interactive session and not while knitting a document. The display is
-  updated every 50,000 values and will only display if estimated reading
-  time is 5 seconds or more. The automatic progress bar can be disabled
-  by setting option `readr.show_progress` to `FALSE`.
+  interactive session and not while executing in an RStudio notebook
+  chunk. The display of the progress bar can be disabled by setting the
+  environment variable `VROOM_SHOW_PROGRESS` to `"false"`.
 
 ## Examples
 

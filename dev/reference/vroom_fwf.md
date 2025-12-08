@@ -44,29 +44,25 @@ fwf_cols(...)
 
   Files ending in `.gz`, `.bz2`, `.xz`, or `.zip` will be automatically
   uncompressed. Files starting with `http://`, `https://`, `ftp://`, or
-  `ftps://` will be automatically downloaded. Remote gz files can also
-  be automatically downloaded and decompressed.
+  `ftps://` will be automatically downloaded. Remote `.gz` files can
+  also be automatically downloaded and decompressed.
 
   Literal data is most useful for examples and tests. To be recognised
-  as literal data, the input must be either wrapped with
-  [`I()`](https://rdrr.io/r/base/AsIs.html), be a string containing at
-  least one new line, or be a vector containing at least one string with
-  a new line.
-
-  Using a value of `clipboard()` will read from the system clipboard.
+  as literal data, wrap the input with
+  [`I()`](https://rdrr.io/r/base/AsIs.html).
 
 - col_positions:
 
-  Column positions, as created by `fwf_empty()`, `fwf_widths()` or
-  `fwf_positions()`. To read in only selected fields, use
-  `fwf_positions()`. If the width of the last column is variable (a
-  ragged fwf file), supply the last end position as NA.
+  Column positions, as created by `fwf_empty()`, `fwf_widths()`,
+  `fwf_positions()`, or `fwf_cols()`. To read in only selected fields,
+  use `fwf_positions()`. If the width of the last column is variable (a
+  ragged fwf file), supply the last end position as `NA`.
 
 - col_types:
 
   One of `NULL`, a
   [`cols()`](https://vroom.tidyverse.org/dev/reference/cols.md)
-  specification, or a string. See `vignette("readr")` for more details.
+  specification, or a string.
 
   If `NULL`, all column types will be inferred from `guess_max` rows of
   the input, interspersed throughout the file. This is convenient (and
@@ -106,9 +102,8 @@ fwf_cols(...)
   - \_ or - = skip
 
   By default, reading a file without a column specification will print a
-  message showing what `readr` guessed they were. To remove this
-  message, set `show_col_types = FALSE` or set
-  `options(readr.show_col_types = FALSE)`.
+  message showing the guessed types. To suppress this message, set
+  `show_col_types = FALSE`.
 
 - col_select:
 
@@ -124,10 +119,10 @@ fwf_cols(...)
 
 - id:
 
-  The name of a column in which to store the file path. This is useful
-  when reading multiple input files and there is data in the file paths,
-  such as the data collection date. If `NULL` (the default) no extra
-  column is created.
+  Either a string or 'NULL'. If a string, the output will contain a
+  column with that name with the filename(s) as the value, i.e. this
+  column effectively tells you the source of each row. If 'NULL' (the
+  default), no such column will be created.
 
 - locale:
 
@@ -145,8 +140,11 @@ fwf_cols(...)
 
 - comment:
 
-  A string used to identify comments. Any text after the comment
-  characters will be silently ignored.
+  A string used to identify comments. Any line that starts with the
+  comment string at the beginning of the file (before any data lines)
+  will be ignored. Unlike
+  [`vroom()`](https://vroom.tidyverse.org/dev/reference/vroom.md),
+  comment lines in the middle of the file are not filtered out.
 
 - skip_empty_rows:
 
@@ -161,7 +159,8 @@ fwf_cols(...)
 
 - skip:
 
-  Number of lines to skip before reading data.
+  Number of lines to skip before reading data. If `comment` is supplied
+  any commented lines are ignored *after* skipping.
 
 - n_max:
 
@@ -169,8 +168,7 @@ fwf_cols(...)
 
 - guess_max:
 
-  Maximum number of lines to use for guessing column types. Will never
-  use more than the number of lines read. See
+  Maximum number of lines to use for guessing column types. See
   [`vignette("column-types", package = "readr")`](https://readr.tidyverse.org/articles/column-types.html)
   for more details.
 
@@ -183,25 +181,23 @@ fwf_cols(...)
 
 - num_threads:
 
-  The number of processing threads to use for initial parsing and lazy
-  reading of data. If your data contains newlines within fields the
-  parser should automatically detect this and fall back to using one
-  thread only. However if you know your file has newlines within quoted
-  fields it is safest to set `num_threads = 1` explicitly.
+  Number of threads to use when reading and materializing vectors. If
+  your data contains newlines within fields the parser will
+  automatically be forced to use a single thread only.
 
 - progress:
 
   Display a progress bar? By default it will only display in an
-  interactive session and not while knitting a document. The automatic
-  progress bar can be disabled by setting option `readr.show_progress`
-  to `FALSE`.
+  interactive session and not while executing in an RStudio notebook
+  chunk. The display of the progress bar can be disabled by setting the
+  environment variable `VROOM_SHOW_PROGRESS` to `"false"`.
 
 - show_col_types:
 
-  If `FALSE`, do not show the guessed column types. If `TRUE` always
-  show the column types, even if they are supplied. If `NULL` (the
-  default) only show the column types if they are not explicitly
-  supplied by the `col_types` argument.
+  Control showing the column specifications. If `TRUE` column
+  specifications are always shown, if `FALSE` they are never shown. If
+  `NULL` (the default), they are shown only if an explicit specification
+  is not given in `col_types`, i.e. if the types have been guessed.
 
 - .name_repair:
 
