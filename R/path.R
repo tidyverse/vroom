@@ -64,6 +64,9 @@ standardise_path <- function(
   }
 
   if (!is.character(path)) {
+    # TODO: good place to use obj_type_friendly() when I institute the
+    # standalone type checking files. We should describe the nonconforming
+    # input here.
     cli::cli_abort(
       c(
         "{.arg {arg}} is not one of the supported inputs:",
@@ -113,7 +116,7 @@ standardise_connection <- function(con) {
   con
 }
 
-standardise_one_path <- function(path, write = FALSE, call = caller_env()) {
+connection_or_filepath <- function(path, write = FALSE, call = caller_env()) {
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))
   }

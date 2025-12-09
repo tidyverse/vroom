@@ -63,8 +63,7 @@ vroom_write <- function(
 
   opts <- get_vroom_write_opts(quote, escape, bom)
 
-  # Standardise path returns a list, but we will only ever have 1 output file.
-  file <- standardise_one_path(file, write = TRUE)
+  file <- connection_or_filepath(file, write = TRUE)
 
   if (NCOL(x) == 0) {
     if (!append && !inherits(file, "connection")) {

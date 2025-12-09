@@ -132,9 +132,9 @@ std::shared_ptr<vroom::index> make_delimited_index(
     const size_t num_threads,
     const bool progress) {
 
-  auto standardise_one_path = cpp11::package("vroom")["standardise_one_path"];
+  auto connection_or_filepath = cpp11::package("vroom")["connection_or_filepath"];
 
-  auto x = standardise_one_path(in);
+  auto x = connection_or_filepath(in);
 
   bool is_connection = TYPEOF(x) != STRSXP;
 
@@ -292,9 +292,9 @@ std::shared_ptr<vroom::index> make_fixed_width_index(
     const size_t n_max,
     const bool progress) {
 
-  auto standardise_one_path = cpp11::package("vroom")["standardise_one_path"];
+  auto connection_or_filepath = cpp11::package("vroom")["connection_or_filepath"];
 
-  auto x = standardise_one_path(in);
+  auto x = connection_or_filepath(in);
 
   bool is_connection = TYPEOF(x) != STRSXP;
 
