@@ -42,7 +42,7 @@ fixed_width_index_connection::fixed_width_index_connection(
 
   bool should_open = !is_open(in);
   if (should_open) {
-    cpp11::package("base")["open"](in, "rb");
+    cpp11::package("vroom")["open_safely"](in, "rb");
   }
 
   std::array<std::vector<char>, 2> buf = {
