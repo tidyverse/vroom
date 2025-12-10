@@ -168,7 +168,7 @@ vroom_format <- function(
   bom = FALSE,
   num_threads = vroom_threads()
 ) {
-  stopifnot(is.data.frame(x))
+  check_data_frame(x)
 
   if (NCOL(x) == 0) {
     return("")
@@ -216,7 +216,7 @@ vroom_write_lines <- function(
   append = FALSE,
   num_threads = vroom_threads()
 ) {
-  stopifnot(is.character(x))
+  check_character(x)
 
   x <- list(X1 = x)
   class(x) <- "data.frame"

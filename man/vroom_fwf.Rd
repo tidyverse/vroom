@@ -173,7 +173,7 @@ it is set to 100.}
 reading a ragged fwf file.}
 
 \item{start, end}{Starting and ending (inclusive) positions of each field.
-Use NA as last end field when reading a ragged fwf file.}
+Use \code{NA} as the value of \code{end} when reading a ragged fwf file.}
 
 \item{...}{Named or unnamed arguments, each addressing one column. Each input
 should be either a single integer (a column width) or a pair of integers

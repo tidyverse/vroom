@@ -20,10 +20,15 @@ date_names <- function(
   day_ab = day,
   am_pm = c("AM", "PM")
 ) {
-  stopifnot(is.character(mon), length(mon) == 12)
-  stopifnot(is.character(mon_ab), length(mon_ab) == 12)
-  stopifnot(is.character(day), length(day) == 7)
-  stopifnot(is.character(day_ab), length(day_ab) == 7)
+  check_character(mon)
+  check_character(mon_ab)
+  check_character(day)
+  check_character(day_ab)
+
+  check_length(mon, 12)
+  check_length(mon_ab, 12)
+  check_length(day, 7)
+  check_length(day_ab, 7)
 
   structure(
     list(
@@ -44,7 +49,7 @@ date_names <- function(
 #'   for a complete list of available locales.
 #' @inheritParams rlang::args_error_context
 date_names_lang <- function(language, call = caller_env()) {
-  stopifnot(is.character(language), length(language) == 1)
+  check_string(language, call = call)
 
   symbol <- date_symbols[[language]]
   if (is.null(symbol)) {
