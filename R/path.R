@@ -64,6 +64,9 @@ standardise_path <- function(
   }
 
   if (!is.character(path)) {
+    # TODO: good place to use obj_type_friendly() when I institute the
+    # standalone type checking files. We should describe the nonconforming
+    # input here.
     cli::cli_abort(
       c(
         "{.arg {arg}} is not one of the supported inputs:",
@@ -113,7 +116,7 @@ standardise_connection <- function(con) {
   con
 }
 
-standardise_one_path <- function(path, write = FALSE, call = caller_env()) {
+connection_or_filepath <- function(path, write = FALSE, call = caller_env()) {
   if (is.raw(path)) {
     return(rawConnection(path, "rb"))
   }
@@ -221,6 +224,23 @@ standardise_one_path <- function(path, write = FALSE, call = caller_env()) {
       file(path)
     } else {
       path
+    }
+  )
+}
+
+# Safe wrapper around base::open() that ensures connections are cleaned up
+# even when open() fails. We need this especially for opening connections from
+# C++. If base::open() fails in that context, R will long jump and there aren't
+# good options for arranging the necessary cleanup.
+open_safely <- function(con, open_mode = "rb") {
+  tryCatch(
+    open(con, open_mode),
+    error = function(e) {
+      # The failed connection is already "closed", so this attempt to close() it
+      # is really about removing it from R's connection table.
+      try(close(con), silent = TRUE)
+
+      stop(conditionMessage(e), call. = FALSE)
     }
   )
 }

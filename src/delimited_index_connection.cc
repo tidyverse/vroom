@@ -53,7 +53,7 @@ delimited_index_connection::delimited_index_connection(
 
   bool should_open = !is_open(in);
   if (should_open) {
-    cpp11::package("base")["open"](in, "rb");
+    cpp11::package("vroom")["open_safely"](in, "rb");
   }
 
   /* raw connections are always created as open, but we should close them */

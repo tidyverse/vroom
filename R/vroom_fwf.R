@@ -137,7 +137,7 @@ fwf_empty <- function(
   comment = "",
   n = 100L
 ) {
-  file <- standardise_one_path(standardise_path(file)[[1]])
+  file <- connection_or_filepath(standardise_path(file)[[1]])
 
   if (inherits(file, "connection")) {
     cli::cli_abort("{.arg file} must be a regular file, not a connection.")

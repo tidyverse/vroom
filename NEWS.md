@@ -16,6 +16,10 @@
 
 * Columns specified as having type "number" (requested via `col_number()` or `"number"` or `'n'`) or "skip" (requested via `col_skip()` or `"skip"` or `_` or `-`) now work in the case where 0 rows of data are parsed (#427, #540, #548).
 
+* `vroom()`, `vroom_lines()`, and `vroom_fwf()` now close and destroy (instead
+  of leak) the connection in the case where opening the connection fails due to,
+  e.g., a nonexistent URL (#488).
+
 # vroom 1.6.7
 
 * `locale(encoding =)` now warns, instead of errors, when the encoding cannot be found in `iconvlist()` return value. This removes an unnecessary blocker on platforms like Alpine Linux where the output doesn't reflect actual capabilities.
