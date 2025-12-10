@@ -31,6 +31,14 @@
   [\#540](https://github.com/tidyverse/vroom/issues/540),
   [\#548](https://github.com/tidyverse/vroom/issues/548)).
 
+- [`vroom()`](https://vroom.tidyverse.org/dev/reference/vroom.md),
+  [`vroom_lines()`](https://vroom.tidyverse.org/dev/reference/vroom_lines.md),
+  and
+  [`vroom_fwf()`](https://vroom.tidyverse.org/dev/reference/vroom_fwf.md)
+  now close and destroy (instead of leak) the connection in the case
+  where opening the connection fails due to, e.g., a nonexistent URL
+  ([\#488](https://github.com/tidyverse/vroom/issues/488)).
+
 ## vroom 1.6.7
 
 CRAN release: 2025-11-28
