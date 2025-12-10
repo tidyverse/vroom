@@ -240,7 +240,7 @@ open_safely <- function(con, open_mode = "rb") {
       # is really about removing it from R's connection table.
       try(close(con), silent = TRUE)
 
-      stop(e, call. = FALSE)
+      stop(conditionMessage(e), call. = FALSE)
     }
   )
 }
