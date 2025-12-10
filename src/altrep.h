@@ -46,11 +46,3 @@ extern "C" {
 #endif
 
 #endif
-
-// Backport resizable vector API for R < 4.6.0
-// See: https://rstudio.github.io/r-manuals/r-exts/The-R-API.html#moving-into-c-api-compliance
-#if R_VERSION < R_Version(4, 6, 0)
-# define R_allocResizableVector(type, maxlen) Rf_allocVector(type, maxlen)
-# define R_duplicateAsResizable(x) Rf_duplicate(x)
-# define R_resizeVector(x, newlen) SETLENGTH(x, newlen)
-#endif
