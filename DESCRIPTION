@@ -35,7 +35,7 @@ Imports:
     hms,
     lifecycle (>= 1.0.3),
     methods,
-    rlang (>= 0.4.2),
+    rlang (>= 1.1.0),
     stats,
     tibble (>= 2.0.0),
     tidyselect,
