@@ -105,13 +105,13 @@ test_that("vroom() doesn't leak a connection when opening fails (bad URL)", {
   expect_equal(nrow(connections_before), nrow(connections_after))
 })
 
-test_that("vroom() doesn't leak a connection when opening fails (permission denied)", {
+test_that("vroom_fwf() doesn't leak a connection when opening fails (permission denied)", {
   skip_on_os("windows")
 
   tfile <- withr::local_tempfile(
-    lines = c("a,b", "1,2"),
-    pattern = "no-permissions",
-    fileext = ".csv"
+    lines = c("col1  col2  col3", "val1  val2  val3"),
+    pattern = "no-permissions-",
+    fileext = ".txt"
   )
   Sys.chmod(tfile, mode = "000") # Remove all permissions
   connections_before <- showConnections(all = TRUE)
@@ -119,7 +119,7 @@ test_that("vroom() doesn't leak a connection when opening fails (permission deni
   # Not using snapshots, because not our error or warning
   expect_error(
     expect_warning(
-      vroom(tfile, show_col_types = FALSE)
+      vroom_fwf(file(tfile), fwf_widths(c(6, 6, 6)), show_col_types = FALSE)
     ),
     "cannot open"
   )
