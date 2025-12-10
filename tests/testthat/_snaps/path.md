@@ -51,10 +51,11 @@
       f(as.list(files))
     Condition
       Error in `f()`:
-      ! `some_arg_name` is not one of the supported inputs:
+      ! `some_arg_name` must be one of the supported input types:
       * A filepath or character vector of filepaths
       * A connection or list of connections
       * Literal or raw input
+      x `some_arg_name` is a list
 
 # multiple files with non-ASCII encoding fails informatively
 
