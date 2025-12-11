@@ -27,7 +27,7 @@
 // Backport resizable vector API for R < 4.6.0
 // See: https://rstudio.github.io/r-manuals/r-exts/The-R-API.html#moving-into-c-api-compliance
 #if R_VERSION < R_Version(4, 6, 0)
-# define R_resizeVector(x, newlen) SETLENGTH(x, newlen)
+#define R_resizeVector(x, newlen) SETLENGTH(x, newlen)
 
 inline SEXP R_allocResizableVector(SEXPTYPE type, R_xlen_t maxlen)
 {
