@@ -55,7 +55,7 @@
       * A filepath or character vector of filepaths
       * A connection or list of connections
       * Literal or raw input
-      x `some_arg_name` is a list
+      x `some_arg_name` is a list.
 
 # multiple files with non-ASCII encoding fails informatively
 

@@ -70,7 +70,7 @@ standardise_path <- function(
         "*" = "A filepath or character vector of filepaths",
         "*" = "A connection or list of connections",
         "*" = "Literal or raw input",
-        "x" = "{.arg {arg}} is {obj_type_friendly(path)}"
+        "x" = "{.arg {arg}} is {obj_type_friendly(path)}."
       ),
       call = call
     )

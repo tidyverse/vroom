@@ -170,7 +170,7 @@ as.col_spec.col_spec <- function(x, call = caller_env()) {
 #' @export
 as.col_spec.default <- function(x, call = caller_env()) {
   cli::cli_abort(
-    "{.arg col_types} must be {.code NULL}, a {.fun cols} specification, or a string.",
+    "{.arg col_types} must be {.code NULL}, a {.fun cols} specification, or a string, not {obj_type_friendly(x)}.",
     call = call
   )
 }

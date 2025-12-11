@@ -58,7 +58,7 @@
       vroom(I("whatever"), col_types = data.frame())
     Condition
       Error in `vroom()`:
-      ! `col_types` must be `NULL`, a `cols()` specification, or a string.
+      ! `col_types` must be `NULL`, a `cols()` specification, or a string, not a <data.frame> object.
 
 # as.col_spec() errors for unrecognized single-letter spec
 
