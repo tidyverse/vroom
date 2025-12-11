@@ -85,3 +85,45 @@ test_that("vroom works with windows newlines and a connection size that lies dir
   })
   expect_equal(x[[1]], c("a", "e"))
 })
+
+# https://github.com/tidyverse/vroom/issues/488
+test_that("vroom() doesn't leak a connection when opening fails (bad URL)", {
+  skip_if_offline()
+  connections_before <- showConnections(all = TRUE)
+
+  # Try to read from a bad URL (should fail with 404)
+  bad_url <- "https://cloud.r-project.org/CRAN_mirrorsZ.csv"
+  # Not using snapshots, because not our error or warning
+  expect_error(
+    expect_warning(
+      vroom(bad_url, show_col_types = FALSE)
+    ),
+    "cannot open"
+  )
+
+  connections_after <- showConnections(all = TRUE)
+  expect_equal(nrow(connections_before), nrow(connections_after))
+})
+
+test_that("vroom_fwf() doesn't leak a connection when opening fails (permission denied)", {
+  skip_on_os("windows")
+
+  tfile <- withr::local_tempfile(
+    lines = c("col1  col2  col3", "val1  val2  val3"),
+    pattern = "no-permissions-",
+    fileext = ".txt"
+  )
+  Sys.chmod(tfile, mode = "000") # Remove all permissions
+  connections_before <- showConnections(all = TRUE)
+
+  # Not using snapshots, because not our error or warning
+  expect_error(
+    expect_warning(
+      vroom_fwf(file(tfile), fwf_widths(c(6, 6, 6)), show_col_types = FALSE)
+    ),
+    "cannot open"
+  )
+
+  connections_after <- showConnections(all = TRUE)
+  expect_equal(nrow(connections_before), nrow(connections_after))
+})

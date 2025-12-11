@@ -56,9 +56,9 @@ vectors. If your data contains newlines within fields the parser will
 automatically be forced to use a single thread only.}
 
 \item{progress}{Display a progress bar? By default it will only display
-in an interactive session and not while knitting a document. The automatic
-progress bar can be disabled by setting option \code{readr.show_progress} to
-\code{FALSE}.}
+in an interactive session and not while executing in an RStudio notebook
+chunk. The display of the progress bar can be disabled by setting the
+environment variable \code{VROOM_SHOW_PROGRESS} to \code{"false"}.}
 }
 \description{
 \code{vroom_lines()} is similar to \code{readLines()}, however it reads the lines

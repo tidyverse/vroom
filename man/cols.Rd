@@ -62,20 +62,27 @@ used in the call to \code{vroom()} it takes precedence over the one specified in
 \code{col_types}.}
 
 \item{levels}{Character vector of the allowed levels. When \code{levels = NULL}
-(the default), \code{levels} are discovered from the unique values of \code{x}, in
-the order in which they appear in \code{x}.}
+(the default), \code{levels} are discovered from the unique values of the data,
+in the order in which they are encountered.}
 
 \item{ordered}{Is it an ordered factor?}
 
-\item{include_na}{If \code{TRUE} and \code{x} contains at least one \code{NA}, then \code{NA}
-is included in the levels of the constructed factor.}
+\item{include_na}{If \code{TRUE} and the data contains at least one \code{NA}, then
+\code{NA} is included in the levels of the constructed factor.}
 
-\item{format}{A format specification, as described below. If set to "",
-date times are parsed as ISO8601, dates and times used the date and
-time formats specified in the \code{\link[readr:locale]{locale()}}.
+\item{format}{A format specification. If set to "":
+\itemize{
+\item \code{col_datetime()} expects ISO8601 datetimes. Here are some examples of
+input that should just work:
+"2024-01-15", "2024-01-15 14:30:00", "2024-01-15T14:30:00Z".
+\item \code{col_date()} uses the \code{date_format} from \code{\link[=locale]{locale()}} (default \code{"\%AD"}).
+These inputs should just work: "2024-01-15", "01/15/2024".
+\item \code{col_time()} uses the \code{time_format} from \code{\link[=locale]{locale()}} (default \code{"\%AT"}).
+These inputs should just work: "14:30:00", "2:30:00 PM".
+}
 
-Unlike \code{\link[=strptime]{strptime()}}, the format specification must match
-the complete string.}
+Unlike \code{\link[=strptime]{strptime()}}, the format specification must match the complete
+string. For more details, see below.}
 }
 \description{
 \code{cols()} includes all columns in the input data, guessing the column types
@@ -97,6 +104,60 @@ The available specifications are: (long names in quotes and string abbreviations
    \code{col_number()} \tab "number" \tab "n" \tab Human readable numbers containing the \code{grouping_mark} \cr
    \code{col_skip()} \tab "skip", "NULL" \tab "_", "-" \tab Skip and don't import this column. \cr
    \code{col_guess()} \tab "guess", "NA" \tab "?" \tab Parse using the "best" guessed type based on the input. \cr
+}
+
+\subsection{Date, time, and datetime formats:}{
+
+\pkg{vroom} uses a format specification similar to \code{\link[=strptime]{strptime()}}.
+There are three types of element:
+\enumerate{
+\item A conversion specification that is "\%" followed by a letter. For example
+"\%Y" matches a 4 digit year, "\%m", matches a 2 digit month and "\%d" matches
+a 2 digit day. Month and day default to \code{1}, (i.e. Jan 1st) if not present,
+for example if only a year is given.
+\item Whitespace is any sequence of zero or more whitespace characters.
+\item Any other character is matched exactly.
+}
+
+\pkg{vroom}'s datetime \verb{col_*()} functions recognize the following
+specifications:
+\itemize{
+\item Year: "\%Y" (4 digits). "\%y" (2 digits); 00-69 -> 2000-2069, 70-99 ->
+1970-1999.
+\item Month: "\%m" (2 digits), "\%b" (abbreviated name in current locale), "\%B"
+(full name in current locale).
+\item Day: "\%d" (2 digits), "\%e" (optional leading space), "\%a" (abbreviated
+name in current locale).
+\item Hour: "\%H" or "\%I" or "\%h", use I (and not H) with AM/PM, use h (and not H)
+if your times represent durations longer than one day.
+\item Minutes: "\%M"
+\item Seconds: "\%S" (integer seconds), "\%OS" (partial seconds)
+\item Time zone: "\%Z" (as name, e.g. "America/Chicago"), "\%z" (as offset from
+UTC, e.g. "+0800")
+\item AM/PM indicator: "\%p".
+\item Non-digits: "\%." skips one non-digit character, "\%+" skips one or more
+non-digit characters, "\%*" skips any number of non-digits characters.
+\item Automatic parsers: "\%AD" parses with a flexible YMD parser, "\%AT" parses
+with a flexible HMS parser.
+\item Shortcuts: "\%D" = "\%m/\%d/\%y", "\%F" = "\%Y-\%m-\%d", "\%R" = "\%H:\%M", "\%T" =
+"\%H:\%M:\%S", "\%x" = "\%y/\%m/\%d".
+}
+\subsection{ISO8601 support}{
+
+Currently, vroom does not support all of ISO8601. Missing features:
+\itemize{
+\item Week & weekday specifications, e.g. "2013-W05", "2013-W05-10".
+\item Ordinal dates, e.g. "2013-095".
+\item Using commas instead of a period for decimal separator.
+}
+
+The parser is also a little laxer than ISO8601:
+\itemize{
+\item Dates and times can be separated with a space, not just T.
+\item Mostly correct specifications like "2009-05-19 14:" and "200912-01" work.
+}
+}
+
 }
 }
 \examples{

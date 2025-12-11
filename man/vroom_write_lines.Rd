@@ -18,14 +18,14 @@ vroom_write_lines(
 
 \item{file}{File or connection to write to.}
 
-\item{eol}{The end of line character to use. Most commonly either \code{"\n"} for
-Unix style newlines, or \code{"\r\n"} for Windows style newlines.}
+\item{eol}{The end of line character to use. Most commonly either \code{"\\n"} for
+Unix style newlines, or \code{"\\r\\n"} for Windows style newlines.}
 
 \item{na}{String used for missing values. Defaults to 'NA'.}
 
 \item{append}{If \code{FALSE}, will overwrite existing file. If \code{TRUE},
-will append to existing file. In both cases, if the file does not exist a new
-file is created.}
+will append to existing file. In both cases, if the file does not exist, a
+new file is created.}
 
 \item{num_threads}{Number of threads to use when reading and materializing
 vectors. If your data contains newlines within fields the parser will

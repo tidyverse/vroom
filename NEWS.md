@@ -16,6 +16,10 @@
 
 * Columns specified as having type "number" (requested via `col_number()` or `"number"` or `'n'`) or "skip" (requested via `col_skip()` or `"skip"` or `_` or `-`) now work in the case where 0 rows of data are parsed (#427, #540, #548).
 
+* `vroom()`, `vroom_lines()`, and `vroom_fwf()` now close and destroy (instead
+  of leak) the connection in the case where opening the connection fails due to,
+  e.g., a nonexistent URL (#488).
+
 * vroom takes the recommended approach for phasing out usage of the non-API
   entry points `SETLENGTH`, `SET_GROWABLE_BIT`, and `SET_TRUELENGTH` (#582).
 

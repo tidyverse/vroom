@@ -493,7 +493,7 @@ void vroom_write_out(
 
   bool should_open = !is_open(con);
   if (should_open) {
-    cpp11::package("base")["open"](con, mode);
+    cpp11::package("vroom")["open_safely"](con, mode);
   }
 
   bool should_close = should_open;

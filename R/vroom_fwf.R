@@ -4,8 +4,25 @@
 #' *Note*: `fwf_empty()` cannot take a R connection such as a URL as input, as
 #' this would result in reading from the connection twice. In these cases it is
 #' better to download the file first before reading.
-#' @inheritParams readr::read_fwf
 #' @inheritParams vroom
+#' @param file Either a path to a file, a connection, or literal data (either a
+#'   single string or a raw vector).
+#'
+#'   Files ending in `.gz`, `.bz2`, `.xz`, or `.zip` will be automatically
+#'   uncompressed. Files starting with `http://`, `https://`, `ftp://`, or
+#'   `ftps://` will be automatically downloaded. Remote `.gz` files can also be
+#'   automatically downloaded and decompressed.
+#'
+#'   Literal data is most useful for examples and tests. To be recognised as
+#'   literal data, wrap the input with `I()`.
+#' @param col_positions Column positions, as created by [fwf_empty()],
+#'   [fwf_widths()], [fwf_positions()], or [fwf_cols()]. To read in only
+#'   selected fields, use [fwf_positions()]. If the width of the last column
+#'   is variable (a ragged fwf file), supply the last end position as `NA`.
+#' @param comment A string used to identify comments. Any line that starts
+#'   with the comment string at the beginning of the file (before any data
+#'   lines) will be ignored. Unlike [vroom()], comment lines in the middle
+#'   of the file are not filtered out.
 #' @export
 #' @examples
 #' fwf_sample <- vroom_example("fwf-sample.txt")
@@ -110,7 +127,6 @@ vroom_fwf <- function(
 
 
 #' @rdname vroom_fwf
-#' @inheritParams readr::read_fwf
 #' @export
 #' @param n Number of lines the tokenizer will read to determine file structure. By default
 #'      it is set to 100.
@@ -121,7 +137,7 @@ fwf_empty <- function(
   comment = "",
   n = 100L
 ) {
-  file <- standardise_one_path(standardise_path(file)[[1]])
+  file <- connection_or_filepath(standardise_path(file)[[1]])
 
   if (inherits(file, "connection")) {
     cli::cli_abort("{.arg file} must be a regular file, not a connection.")
