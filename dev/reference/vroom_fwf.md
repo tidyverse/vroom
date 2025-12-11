@@ -245,8 +245,8 @@ fwf_cols(...)
 
 - start, end:
 
-  Starting and ending (inclusive) positions of each field. Use NA as
-  last end field when reading a ragged fwf file.
+  Starting and ending (inclusive) positions of each field. Use `NA` as
+  the last value of `end` when reading a ragged fwf file.
 
 - ...:
 
