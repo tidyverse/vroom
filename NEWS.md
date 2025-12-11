@@ -20,6 +20,9 @@
   of leak) the connection in the case where opening the connection fails due to,
   e.g., a nonexistent URL (#488).
 
+* vroom takes the recommended approach for phasing out usage of the non-API
+  entry points `SETLENGTH` and `SET_TRUELENGTH` (#582).
+
 # vroom 1.6.7
 
 * `locale(encoding =)` now warns, instead of errors, when the encoding cannot be found in `iconvlist()` return value. This removes an unnecessary blocker on platforms like Alpine Linux where the output doesn't reflect actual capabilities.

@@ -24,6 +24,28 @@
 
 #include "collectors.h"
 
+// Backport resizable vector API for R < 4.6.0
+// See: https://rstudio.github.io/r-manuals/r-exts/The-R-API.html#moving-into-c-api-compliance
+#if R_VERSION < R_Version(4, 6, 0)
+#define R_resizeVector(x, newlen) SETLENGTH(x, newlen)
+
+inline SEXP R_allocResizableVector(SEXPTYPE type, R_xlen_t maxlen)
+{
+    SEXP ret = Rf_allocVector(type, maxlen);
+    SET_TRUELENGTH(ret, maxlen);
+    SET_GROWABLE_BIT(ret);
+    return ret;
+}
+
+inline SEXP R_duplicateAsResizable(SEXP x)
+{
+    SEXP ret = Rf_duplicate(x);
+    SET_TRUELENGTH(ret, Rf_xlength(x));
+    SET_GROWABLE_BIT(ret);
+    return ret;
+}
+#endif
+
 namespace vroom {
 
 inline std::vector<std::string> get_filenames(SEXP in) {
@@ -99,14 +121,17 @@ inline cpp11::list create_columns(
 
   bool add_filename = !Rf_isNull(id);
 
-  cpp11::writable::list res(num_cols + add_filename);
+  cpp11::sexp res(R_allocResizableVector(VECSXP, num_cols + add_filename));
 
-  cpp11::writable::strings res_nms(num_cols + add_filename);
+  cpp11::sexp res_nms(
+      R_allocResizableVector(STRSXP, num_cols + add_filename));
 
   if (add_filename) {
-    res[i] =
-        generate_filename_column(filenames, idx->row_sizes(), idx->num_rows());
-    res_nms[i] = cpp11::strings(id)[0];
+    SET_VECTOR_ELT(
+        res,
+        i,
+        generate_filename_column(filenames, idx->row_sizes(), idx->num_rows()));
+    SET_STRING_ELT(res_nms, i, cpp11::strings(id)[0]);
     ++i;
   }
 
@@ -138,73 +163,76 @@ inline cpp11::list create_columns(
         *errors,
         std::string()};
 
-    res_nms[i] = collector.name();
+    SET_STRING_ELT(res_nms, i, collector.name());
 
     switch (collector.type()) {
     case column_type::Dbl:
       if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
-        res[i] = vroom_dbl::Make(info);
+        SET_VECTOR_ELT(res, i, vroom_dbl::Make(info));
 #endif
       } else {
-        res[i] = read_dbl(info);
+        SET_VECTOR_ELT(res, i, read_dbl(info));
         delete info;
       }
       break;
     case column_type::Int:
       if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
-        res[i] = vroom_int::Make(info);
+        SET_VECTOR_ELT(res, i, vroom_int::Make(info));
 #endif
       } else {
-        res[i] = read_int(info);
+        SET_VECTOR_ELT(res, i, read_int(info));
         delete info;
       }
       break;
     case column_type::BigInt:
       if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
-        res[i] = vroom_big_int::Make(info);
+        SET_VECTOR_ELT(res, i, vroom_big_int::Make(info));
 #endif
       } else {
-        res[i] = read_big_int(info);
+        SET_VECTOR_ELT(res, i, read_big_int(info));
         delete info;
       }
       break;
     case column_type::Num:
       if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
-        res[i] = vroom_num::Make(info);
+        SET_VECTOR_ELT(res, i, vroom_num::Make(info));
 #endif
       } else {
-        res[i] = read_num(info);
+        SET_VECTOR_ELT(res, i, read_num(info));
         delete info;
       }
       break;
     case column_type::Lgl:
       // if (collector.use_altrep()) {
       //#if defined HAS_ALTREP && R_VERSION >= R_Version(3, 6, 0)
-      // res[i] = vroom_lgl::Make(info);
+      // SET_VECTOR_ELT(res, i, vroom_lgl::Make(info));
       //#endif
       //} else {
-      res[i] = read_lgl(info);
+      SET_VECTOR_ELT(res, i, read_lgl(info));
       delete info;
       //}
       break;
     case column_type::Fct: {
       auto levels = collector["levels"];
       if (Rf_isNull(levels)) {
-        res[i] = read_fct_implicit(
-            info, cpp11::as_cpp<bool>(collector["include_na"]));
+        SET_VECTOR_ELT(
+            res,
+            i,
+            read_fct_implicit(
+                info, cpp11::as_cpp<bool>(collector["include_na"])));
         delete info;
       } else {
         bool ordered = cpp11::as_cpp<bool>(collector["ordered"]);
         if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
-          res[i] = vroom_fct::Make(info, levels, ordered);
+          SET_VECTOR_ELT(res, i, vroom_fct::Make(info, levels, ordered));
 #endif
         } else {
-          res[i] = read_fct_explicit(info, levels, ordered);
+          SET_VECTOR_ELT(res, i, read_fct_explicit(info, levels, ordered));
           delete info;
         }
       }
@@ -214,10 +242,10 @@ inline cpp11::list create_columns(
       info->format = cpp11::as_cpp<std::string>(collector["format"]);
       if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
-        res[i] = vroom_date::Make(info);
+        SET_VECTOR_ELT(res, i, vroom_date::Make(info));
 #endif
       } else {
-        res[i] = read_date(info);
+        SET_VECTOR_ELT(res, i, read_date(info));
         delete info;
       }
       break;
@@ -225,10 +253,10 @@ inline cpp11::list create_columns(
       info->format = cpp11::as_cpp<std::string>(collector["format"]);
       if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
-        res[i] = vroom_dttm::Make(info);
+        SET_VECTOR_ELT(res, i, vroom_dttm::Make(info));
 #endif
       } else {
-        res[i] = read_dttm(info);
+        SET_VECTOR_ELT(res, i, read_dttm(info));
         delete info;
       }
       break;
@@ -236,20 +264,20 @@ inline cpp11::list create_columns(
       info->format = cpp11::as_cpp<std::string>(collector["format"]);
       if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
-        res[i] = vroom_time::Make(info);
+        SET_VECTOR_ELT(res, i, vroom_time::Make(info));
 #endif
       } else {
-        res[i] = read_time(info);
+        SET_VECTOR_ELT(res, i, read_time(info));
         delete info;
       }
       break;
     default:
       if (collector.use_altrep()) {
 #ifdef HAS_ALTREP
-        res[i] = vroom_chr::Make(info);
+        SET_VECTOR_ELT(res, i, vroom_chr::Make(info));
 #endif
       } else {
-        res[i] = read_chr(info);
+        SET_VECTOR_ELT(res, i, read_chr(info));
         delete info;
       }
     }
@@ -257,14 +285,11 @@ inline cpp11::list create_columns(
     ++i;
   }
 
-  // use res.size() to finesse presence/absence of filename column
-  if (i < res.size()) {
-    // Resize the list appropriately
-    SETLENGTH(res, i);
-    SET_TRUELENGTH(res, i);
-
-    SETLENGTH(res_nms, i);
-    SET_TRUELENGTH(res_nms, i);
+  // use Rf_xlength() to finesse presence/absence of filename column
+  if (i < Rf_xlength(res)) {
+    // use the resizable vector API slated for R 4.6.0
+    R_resizeVector(res, i);
+    R_resizeVector(res_nms, i);
   }
 
   res.attr("names") = res_nms;
@@ -274,6 +299,6 @@ inline cpp11::list create_columns(
   res.attr("spec") = spec;
   res.attr("problems") = errors;
 
-  return res;
+  return cpp11::list(SEXP(res));
 }
 } // namespace vroom
