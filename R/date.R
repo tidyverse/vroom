@@ -49,11 +49,15 @@ date_names <- function(
 #'   for a complete list of available locales.
 #' @inheritParams rlang::args_error_context
 date_names_lang <- function(language, call = caller_env()) {
-  check_string(language, call = call)
+  check_string(
+    language,
+    arg = caller_arg(language),
+    call = call
+  )
 
   symbol <- date_symbols[[language]]
   if (is.null(symbol)) {
-    cli::cli_abort("Unknown language: {.val {language}}", call = call)
+    cli::cli_abort("Unrecognized language code: {.val {language}}", call = call)
   }
 
   symbol

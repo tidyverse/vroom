@@ -274,6 +274,13 @@ test_that("fwf_cols works with unnamed columns", {
 
 # fwf_positions ---------------------------------------------------------------
 
+test_that("fwf_positions errors when start and end have different lengths", {
+  expect_snapshot(
+    fwf_positions(c(1, 5, 10), c(4, 9)),
+    error = TRUE
+  )
+})
+
 test_that("fwf_positions always returns col_names as character (#797)", {
   begin <- c(1, 2, 4, 8)
   end <- c(1, 3, 7, 15)

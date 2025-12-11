@@ -144,7 +144,7 @@ check_tz <- function(x, call = caller_env()) {
   }
 }
 
-# see https://github.com/tidyverse/readr/pull/1537 for why this more relaxed
+# see https://github.com/tidyverse/readr/pull/1537 for why this is more relaxed
 # than you might expect (and than it used to be)
 check_encoding <- function(x, call = caller_env()) {
   check_string(x, arg = caller_arg(x), call = call)
@@ -157,15 +157,10 @@ check_encoding <- function(x, call = caller_env()) {
   # 'iconvlist' could be incomplete (musl) or even unavailable
   known <- tryCatch(iconvlist(), error = identity)
   if (inherits(known, "error")) {
-    warning("Could not check `encoding` against `iconvlist()`.", call. = FALSE)
+    cli::cli_warn("Could not check {.arg encoding} against {.fun iconvlist}.")
   } else if (tolower(x) %in% tolower(known)) {
     TRUE
   } else {
-    warning(
-      "Unknown encoding ",
-      encodeString(x, quote = '"'),
-      ".",
-      call. = FALSE
-    )
+    cli::cli_warn("{.arg encoding} not found in {.fun iconvlist}: {.val {x}}.")
   }
 }

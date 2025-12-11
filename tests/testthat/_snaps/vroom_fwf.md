@@ -40,6 +40,16 @@
       i Single values specify column widths: `fwf_cols(a = 10, b = 5)`.
       i Pairs of values specify start and end positions: `fwf_cols(a = c(1, 10), b = c(11, 15))`.
 
+# fwf_positions errors when start and end have different lengths
+
+    Code
+      fwf_positions(c(1, 5, 10), c(4, 9))
+    Condition
+      Error in `fwf_positions()`:
+      ! `start` and `end` must have the same length.
+      i `start` has length 3.
+      i `end` has length 2.
+
 # Errors if begin is greater than end
 
     Code
