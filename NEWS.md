@@ -21,7 +21,7 @@
   e.g., a nonexistent URL (#488).
 
 * vroom takes the recommended approach for phasing out usage of the non-API
-  entry points `SETLENGTH`, `SET_GROWABLE_BIT`, and `SET_TRUELENGTH` (#582).
+  entry points `SETLENGTH` and `SET_TRUELENGTH` (#582).
 
 # vroom 1.6.7
 
