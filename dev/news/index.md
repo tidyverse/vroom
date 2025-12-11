@@ -39,6 +39,10 @@
   where opening the connection fails due to, e.g., a nonexistent URL
   ([\#488](https://github.com/tidyverse/vroom/issues/488)).
 
+- vroom takes the recommended approach for phasing out usage of the
+  non-API entry points `SETLENGTH` and `SET_TRUELENGTH`
+  ([\#582](https://github.com/tidyverse/vroom/issues/582)).
+
 ## vroom 1.6.7
 
 CRAN release: 2025-11-28
