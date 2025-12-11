@@ -64,15 +64,13 @@ standardise_path <- function(
   }
 
   if (!is.character(path)) {
-    # TODO: good place to use obj_type_friendly() when I institute the
-    # standalone type checking files. We should describe the nonconforming
-    # input here.
     cli::cli_abort(
       c(
-        "{.arg {arg}} is not one of the supported inputs:",
+        "{.arg {arg}} must be one of the supported input types:",
         "*" = "A filepath or character vector of filepaths",
         "*" = "A connection or list of connections",
-        "*" = "Literal or raw input"
+        "*" = "Literal or raw input",
+        "x" = "{.arg {arg}} is {obj_type_friendly(path)}."
       ),
       call = call
     )

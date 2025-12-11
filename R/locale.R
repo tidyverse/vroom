@@ -45,9 +45,13 @@ locale <- function(
   encoding = "UTF-8"
 ) {
   if (is.character(date_names)) {
-    date_names <- date_names_lang(date_names, call = current_env())
+    date_names <- date_names_lang(date_names)
   }
-  stopifnot(is.date_names(date_names))
+  if (!is.date_names(date_names)) {
+    cli::cli_abort(
+      "{.arg date_names} must be a language code like {.val en} or an object created by {.fun date_names}."
+    )
+  }
 
   if (missing(grouping_mark) && !missing(decimal_mark)) {
     grouping_mark <- if (decimal_mark == ".") "," else "."
@@ -55,8 +59,8 @@ locale <- function(
     decimal_mark <- if (grouping_mark == ".") "," else "."
   }
 
-  stopifnot(is.character(decimal_mark), length(decimal_mark) == 1)
-  stopifnot(is.character(grouping_mark), length(grouping_mark) == 1)
+  check_string(decimal_mark)
+  check_string(grouping_mark)
   if (decimal_mark == grouping_mark) {
     cli::cli_abort(
       c(
@@ -66,7 +70,7 @@ locale <- function(
     )
   }
 
-  tz <- check_tz(tz, call = current_env())
+  tz <- check_tz(tz)
   check_encoding(encoding)
 
   structure(
@@ -120,7 +124,7 @@ default_locale <- function() {
 }
 
 check_tz <- function(x, call = caller_env()) {
-  stopifnot(is.character(x), length(x) == 1)
+  check_string(x, arg = caller_arg(x), call = call)
 
   tz_source <- ""
 
@@ -140,10 +144,10 @@ check_tz <- function(x, call = caller_env()) {
   }
 }
 
-# see https://github.com/tidyverse/readr/pull/1537 for why this more relaxed
+# see https://github.com/tidyverse/readr/pull/1537 for why this is more relaxed
 # than you might expect (and than it used to be)
-check_encoding <- function(x) {
-  stopifnot(is.character(x), length(x) == 1)
+check_encoding <- function(x, call = caller_env()) {
+  check_string(x, arg = caller_arg(x), call = call)
 
   # portable encoding names
   if (x %in% c("latin1", "UTF-8")) {
@@ -153,15 +157,10 @@ check_encoding <- function(x) {
   # 'iconvlist' could be incomplete (musl) or even unavailable
   known <- tryCatch(iconvlist(), error = identity)
   if (inherits(known, "error")) {
-    warning("Could not check `encoding` against `iconvlist()`.", call. = FALSE)
+    cli::cli_warn("Could not check {.arg encoding} against {.fun iconvlist}.")
   } else if (tolower(x) %in% tolower(known)) {
     TRUE
   } else {
-    warning(
-      "Unknown encoding ",
-      encodeString(x, quote = '"'),
-      ".",
-      call. = FALSE
-    )
+    cli::cli_warn("{.arg encoding} not found in {.fun iconvlist}: {.val {x}}.")
   }
 }

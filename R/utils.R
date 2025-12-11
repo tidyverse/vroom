@@ -134,3 +134,15 @@ utctime <- function(year, month, day, hour, min, sec, psec) {
     as.numeric(psec)
   )
 }
+
+check_length <- function(x, n, ..., arg = caller_arg(x), call = caller_env()) {
+  if (length(x) != n) {
+    cli::cli_abort(
+      "{.arg {arg}} must have length {n}, not {length(x)}.",
+      ...,
+      call = call,
+      arg = arg
+    )
+  }
+  invisible(NULL)
+}

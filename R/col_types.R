@@ -85,7 +85,12 @@ col_spec <- function(
   delim,
   call = caller_env()
 ) {
-  stopifnot(is.list(col_types))
+  if (!is.list(col_types)) {
+    cli::cli_abort(
+      "{.arg col_types} must be a column specification like that created with {.fun cols} or {.fun cols_only}, not {obj_type_friendly(col_types)}.",
+      call = call
+    )
+  }
 
   hint <- "Column specifications must be created with the {.code col_*()} functions or their abbreviated character names."
 
@@ -165,7 +170,7 @@ as.col_spec.col_spec <- function(x, call = caller_env()) {
 #' @export
 as.col_spec.default <- function(x, call = caller_env()) {
   cli::cli_abort(
-    "{.arg col_types} must be {.code NULL}, a {.fun cols} specification, or a string.",
+    "{.arg col_types} must be {.code NULL}, a {.fun cols} specification, or a string, not {obj_type_friendly(x)}.",
     call = call
   )
 }
@@ -352,7 +357,11 @@ str.col_spec <- function(object, ..., indent.str = "") {
 #'
 #' cols_condense(s)
 spec <- function(x) {
-  stopifnot(inherits(x, "tbl_df"))
+  if (!inherits(x, "tbl_df")) {
+    cli::cli_abort(
+      "{.arg x} must be a tibble created by vroom, not {obj_type_friendly(x)}."
+    )
+  }
   attr(x, "spec")
 }
 

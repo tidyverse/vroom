@@ -42,6 +42,19 @@ test_that("locale() accepts language codes for date_names", {
   expect_equal(es$date_names$mon[[1]], "enero")
 })
 
+test_that("locale() errors for unrecognized language code", {
+  expect_snapshot(
+    locale(date_names = "fake"),
+    error = TRUE
+  )
+})
+
+test_that("locale() warns for unrecognized encoding", {
+  expect_snapshot(
+    locale(encoding = "FAKE-ENCODING-9999")
+  )
+})
+
 test_that("locale() validates timezone", {
   expect_no_error(locale(tz = "UTC"))
   expect_no_error(locale(tz = "America/New_York"))

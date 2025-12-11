@@ -168,9 +168,17 @@ fwf_widths <- function(widths, col_names = NULL) {
 #' @rdname vroom_fwf
 #' @export
 #' @param start,end Starting and ending (inclusive) positions of each field.
-#'    Use NA as last end field when reading a ragged fwf file.
+#'    Use `NA` as the last value of `end` when reading a ragged fwf file.
 fwf_positions <- function(start, end = NULL, col_names = NULL) {
-  stopifnot(length(start) == length(end))
+  if (length(start) != length(end)) {
+    cli::cli_abort(
+      c(
+        "{.arg start} and {.arg end} must have the same length.",
+        "i" = "{.arg start} has length {length(start)}.",
+        "i" = "{.arg end} has length {length(end)}."
+      )
+    )
+  }
   col_names <- fwf_col_names(col_names, length(start))
 
   tibble::tibble(
