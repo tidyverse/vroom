@@ -6,8 +6,10 @@
 #include "r_utils.h"
 #include "unicode_fopen.h"
 #include <array>
+#include <atomic>
 #include <fstream>
 #include <future> // std::async, std::future
+#include <sstream>
 #include <utility>
 
 #ifdef VROOM_LOG
@@ -44,6 +46,9 @@ fixed_width_index_connection::fixed_width_index_connection(
   if (should_open) {
     cpp11::package("vroom")["open_safely"](in, "rb");
   }
+
+  /* raw connections are always created as open, but we should close them */
+  bool should_close = should_open || Rf_inherits(in, "rawConnection");
 
   std::array<std::vector<char>, 2> buf = {
       std::vector<char>(chunk_size), std::vector<char>(chunk_size)};
@@ -92,6 +97,9 @@ fixed_width_index_connection::fixed_width_index_connection(
   size_t lines_remaining = n_max;
   std::unique_ptr<RProgress::RProgress> empty_pb = nullptr;
 
+  std::atomic<bool> write_error(false);
+  size_t total_bytes_to_write = 0;
+
   if (n_max > 0) {
     newlines_.push_back(start - 1);
   }
@@ -121,8 +129,13 @@ fixed_width_index_connection::fixed_width_index_connection(
     if (write_fut.valid()) {
       write_fut.wait();
     }
-    write_fut = std::async(
-        [&, i, sz] { std::fwrite(buf[i].data(), sizeof(char), sz, out); });
+    total_bytes_to_write += sz;
+    write_fut = std::async([&, i, sz] {
+      size_t written = std::fwrite(buf[i].data(), sizeof(char), sz, out);
+      if (written != sz) {
+        write_error.store(true);
+      }
+    });
 
     if (progress) {
       pb->tick(sz);
@@ -148,16 +161,47 @@ fixed_width_index_connection::fixed_width_index_connection(
     write_fut.wait();
   }
 
+  if (should_close) {
+    cpp11::package("base")["close"](in);
+  }
+
+  // Check for write errors before closing
+  bool had_write_error = write_error.load() || std::ferror(out);
   std::fclose(out);
+
+  if (had_write_error) {
+    // We discovered we needed to check for this due to lack of disk space:
+    // https://github.com/tidyverse/vroom/issues/544
+    std::string temp_path = cpp11::as_cpp<std::string>(
+        cpp11::package("base")["dirname"](filename_));
+
+    // Clean up the incomplete temp file
+    std::remove(filename_.c_str());
+
+    std::stringstream ss;
+    ss << "Failed to write temporary file when reading from connection.\n"
+       << "This usually means there is not enough disk space.\n\n"
+       << "Temporary directory: " << temp_path << "\n";
+
+    // Show approximate size in human-readable format
+    double gb = total_bytes_to_write / (1024.0 * 1024.0 * 1024.0);
+    if (gb >= 1.0) {
+      ss << "Bytes attempted to write: ~" << static_cast<int>(gb) << " GB\n\n";
+    } else {
+      double mb = total_bytes_to_write / (1024.0 * 1024.0);
+      ss << "Bytes attempted to write: ~" << static_cast<int>(mb) << " MB\n\n";
+    }
+
+    ss << "To fix this:\n"
+       << "  * Free up disk space in your temporary directory\n"
+       << "  * Or set VROOM_TEMP_PATH to a directory with more space:\n"
+       << "    `Sys.setenv(\"VROOM_TEMP_PATH\" = \"/path/to/larger/disk\")`";
+
+    cpp11::stop("%s", ss.str().c_str());
+  }
 
   if (progress) {
     pb->update(1);
-  }
-
-  /* raw connections are always created as open, but we should close them */
-  bool should_close = should_open || Rf_inherits(in, "rawConnection");
-  if (should_close) {
-    cpp11::package("base")["close"](in);
   }
 
   std::error_code error;
