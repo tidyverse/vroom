@@ -191,7 +191,7 @@ fixed_width_index_connection::fixed_width_index_connection(
     }
 
     ss << "To fix this:\n"
-       << "  * Free up disk space in your temporary directory\n"
+       << "  * Free up disk space in your temporary directory.\n"
        << "  * Or set VROOM_TEMP_PATH to a directory with more space:\n"
        << "    `Sys.setenv(\"VROOM_TEMP_PATH\" = \"/path/to/larger/disk\")`";
 
