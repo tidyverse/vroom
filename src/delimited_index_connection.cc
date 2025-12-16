@@ -4,9 +4,11 @@
 
 #include "connection.h"
 
+#include <atomic>
 #include <fstream>
 #include <future> // std::async, std::future
 #include <numeric>
+#include <sstream>
 
 #include "r_utils.h"
 
@@ -173,6 +175,8 @@ delimited_index_connection::delimited_index_connection(
   std::future<void> write_fut;
   // We don't actually want any progress bar, so just pass a dummy one.
 
+  std::atomic<bool> write_error(false);
+
   while (sz > 0) {
     if (parse_fut.valid()) {
       parse_fut.wait();
@@ -209,8 +213,12 @@ delimited_index_connection::delimited_index_connection(
         break;
       }
     }
-    write_fut = std::async(
-        [&, i, sz] { std::fwrite(buf[i].data(), sizeof(char), sz, out); });
+    write_fut = std::async([&, i, sz] {
+      size_t written = std::fwrite(buf[i].data(), sizeof(char), sz, out);
+      if (written != sz) {
+        write_error.store(true);
+      }
+    });
 
     if (progress_) {
       pb->tick(sz);
@@ -235,15 +243,48 @@ delimited_index_connection::delimited_index_connection(
   if (write_fut.valid()) {
     write_fut.wait();
   }
+
+  if (should_close) {
+    cpp11::package("base")["close"](in);
+  }
+
+  // Check for write errors before closing
+  bool had_write_error = write_error.load() || std::ferror(out);
   std::fclose(out);
+
+  if (had_write_error) {
+    // We discovered we needed to check for this due to lack of disk space:
+    // https://github.com/tidyverse/vroom/issues/544
+    std::string temp_path = cpp11::as_cpp<std::string>(
+        cpp11::package("base")["dirname"](filename_));
+
+    // Clean up the incomplete temp file
+    std::remove(filename_.c_str());
+
+    std::stringstream ss;
+    ss << "Failed to write temporary file when reading from connection.\n"
+       << "This usually means there is not enough disk space.\n\n"
+       << "Temporary directory: " << temp_path << "\n";
+
+    // Show approximate size in human-readable format
+    double gb = total_read / (1024.0 * 1024.0 * 1024.0);
+    if (gb >= 1.0) {
+      ss << "Bytes attempted to write: ~" << static_cast<int>(gb) << " GB\n\n";
+    } else {
+      double mb = total_read / (1024.0 * 1024.0);
+      ss << "Bytes attempted to write: ~" << static_cast<int>(mb) << " MB\n\n";
+    }
+
+    ss << "To fix this:\n"
+       << "  * Free up disk space in your temporary directory.\n"
+       << "  * Or set VROOM_TEMP_PATH to a directory with more space:\n"
+       << "    `Sys.setenv(\"VROOM_TEMP_PATH\" = \"/path/to/larger/disk\")`";
+
+    cpp11::stop("%s", ss.str().c_str());
+  }
 
   if (progress_) {
     pb->update(1);
-  }
-
-  /* raw connections are always created as open, but we should close them */
-  if (should_close) {
-    cpp11::package("base")["close"](in);
   }
 
   std::error_code error;
