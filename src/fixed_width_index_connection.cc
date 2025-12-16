@@ -98,7 +98,6 @@ fixed_width_index_connection::fixed_width_index_connection(
   std::unique_ptr<RProgress::RProgress> empty_pb = nullptr;
 
   std::atomic<bool> write_error(false);
-  size_t total_bytes_to_write = 0;
 
   if (n_max > 0) {
     newlines_.push_back(start - 1);
@@ -129,7 +128,6 @@ fixed_width_index_connection::fixed_width_index_connection(
     if (write_fut.valid()) {
       write_fut.wait();
     }
-    total_bytes_to_write += sz;
     write_fut = std::async([&, i, sz] {
       size_t written = std::fwrite(buf[i].data(), sizeof(char), sz, out);
       if (written != sz) {
@@ -184,11 +182,11 @@ fixed_width_index_connection::fixed_width_index_connection(
        << "Temporary directory: " << temp_path << "\n";
 
     // Show approximate size in human-readable format
-    double gb = total_bytes_to_write / (1024.0 * 1024.0 * 1024.0);
+    double gb = total_read / (1024.0 * 1024.0 * 1024.0);
     if (gb >= 1.0) {
       ss << "Bytes attempted to write: ~" << static_cast<int>(gb) << " GB\n\n";
     } else {
-      double mb = total_bytes_to_write / (1024.0 * 1024.0);
+      double mb = total_read / (1024.0 * 1024.0);
       ss << "Bytes attempted to write: ~" << static_cast<int>(mb) << " MB\n\n";
     }
 

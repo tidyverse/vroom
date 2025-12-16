@@ -176,7 +176,6 @@ delimited_index_connection::delimited_index_connection(
   // We don't actually want any progress bar, so just pass a dummy one.
 
   std::atomic<bool> write_error(false);
-  size_t total_bytes_to_write = 0;
 
   while (sz > 0) {
     if (parse_fut.valid()) {
@@ -214,7 +213,6 @@ delimited_index_connection::delimited_index_connection(
         break;
       }
     }
-    total_bytes_to_write += sz;
     write_fut = std::async([&, i, sz] {
       size_t written = std::fwrite(buf[i].data(), sizeof(char), sz, out);
       if (written != sz) {
@@ -269,11 +267,11 @@ delimited_index_connection::delimited_index_connection(
        << "Temporary directory: " << temp_path << "\n";
 
     // Show approximate size in human-readable format
-    double gb = total_bytes_to_write / (1024.0 * 1024.0 * 1024.0);
+    double gb = total_read / (1024.0 * 1024.0 * 1024.0);
     if (gb >= 1.0) {
       ss << "Bytes attempted to write: ~" << static_cast<int>(gb) << " GB\n\n";
     } else {
-      double mb = total_bytes_to_write / (1024.0 * 1024.0);
+      double mb = total_read / (1024.0 * 1024.0);
       ss << "Bytes attempted to write: ~" << static_cast<int>(mb) << " MB\n\n";
     }
 
