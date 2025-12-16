@@ -43,6 +43,12 @@
   non-API entry points `SETLENGTH` and `SET_TRUELENGTH`
   ([\#582](https://github.com/tidyverse/vroom/issues/582)).
 
+- If there is insufficient space for the tempfile used when reading from
+  a connection (affects delimited and fixed width parsing, from
+  compressed files and URLs), that is now reported as an error and no
+  longer segfaults
+  ([\#544](https://github.com/tidyverse/vroom/issues/544)).
+
 ## vroom 1.6.7
 
 CRAN release: 2025-11-28
