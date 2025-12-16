@@ -23,6 +23,10 @@
 * vroom takes the recommended approach for phasing out usage of the non-API
   entry points `SETLENGTH` and `SET_TRUELENGTH` (#582).
 
+* If there is insufficient space for the tempfile used when reading from a
+  connection (affects delimited and fixed width parsing, from compressed files
+  and URLs), that is now reported as an error and no longer segfaults (#544).
+
 # vroom 1.6.7
 
 * `locale(encoding =)` now warns, instead of errors, when the encoding cannot be found in `iconvlist()` return value. This removes an unnecessary blocker on platforms like Alpine Linux where the output doesn't reflect actual capabilities.
