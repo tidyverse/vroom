@@ -27,7 +27,7 @@ output_column("x")
 
 # datetimes are formatted in ISO 8601
 output_column(Sys.Date())
-#> [1] "2025-12-11"
+#> [1] "2025-12-16"
 output_column(Sys.time())
-#> [1] "2025-12-11T21:35:44Z"
+#> [1] "2025-12-16T18:38:33Z"
 ```
