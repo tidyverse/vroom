@@ -295,7 +295,7 @@ test_that("fwf_positions always returns col_names as character (#797)", {
   expect_type(info$col_names, "character")
 })
 
-# Robustness
+# Robustness ----------------------------------------------------------------
 
 test_that("vroom_fwf() is robust to improper inputs", {
   expect_error_free(
@@ -445,6 +445,24 @@ test_that("vroom_fwf respects n_max when reading from a connection", {
   )
 
   expect_equal(dim(out5), c(1, 2))
+})
+
+test_that("vroom_fwf(n_max = 0) works with connection", {
+  f <- withr::local_tempfile(fileext = ".gz")
+  con <- gzfile(f, "w")
+  writeLines(c("abcdef", "ghijkl"), con)
+  close(con)
+
+  result <- vroom_fwf(
+    f,
+    col_positions = fwf_widths(c(2, 2, 2), c("a", "b", "c")),
+    n_max = 0
+  )
+
+  expect_equal(
+    result,
+    tibble::tibble(a = character(), b = character(), c = character())
+  )
 })
 
 test_that("vroom_fwf works when skip_empty_rows is false (https://github.com/tidyverse/readr/issues/1211)", {
