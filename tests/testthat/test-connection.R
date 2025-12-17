@@ -127,3 +127,30 @@ test_that("vroom_fwf() doesn't leak a connection when opening fails (permission 
   connections_after <- showConnections(all = TRUE)
   expect_equal(nrow(connections_before), nrow(connections_after))
 })
+
+test_that("reading no data, from a connection", {
+  skip_if_offline()
+  # inspired by:
+  # https://github.com/tidyverse/vroom/issues/539
+  # remote compressed file with n_max = 0 and explicit col_names
+  expect_equal(
+    vroom(
+      "https://vroom.tidyverse.org/mtcars.csv.gz",
+      col_names = c("a", "b", "c"),
+      n_max = 0,
+      show_col_types = FALSE
+    ),
+    tibble::tibble(a = character(), b = character(), c = character())
+  )
+
+  # remote file without extension - tests default switch case
+  expect_equal(
+    vroom(
+      "https://vroom.tidyverse.org/mtcars",
+      col_names = c("a", "b", "c"),
+      n_max = 0,
+      show_col_types = FALSE
+    ),
+    tibble::tibble(a = character(), b = character(), c = character())
+  )
+})

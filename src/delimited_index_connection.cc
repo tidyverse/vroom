@@ -162,7 +162,9 @@ delimited_index_connection::delimited_index_connection(
       1,
       -1);
 
-  columns_ = idx_[0].size() - 1;
+  if (idx_[0].size() > 0) {
+    columns_ = idx_[0].size() - 1;
+  }
 
   SPDLOG_DEBUG(
       "first_line_columns: {0} first_nl_loc: {1} size: {2}",

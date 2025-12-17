@@ -27,6 +27,10 @@
   connection (affects delimited and fixed width parsing, from compressed files
   and URLs), that is now reported as an error and no longer segfaults (#544).
 
+* Reading from a connection (compressed file, URL, raw connection) with
+  `n_max = 0` and explicit `col_names` no longer produces a "negative length
+  vectors are not allowed" error or crashes R (#539).
+
 # vroom 1.6.7
 
 * `locale(encoding =)` now warns, instead of errors, when the encoding cannot be found in `iconvlist()` return value. This removes an unnecessary blocker on platforms like Alpine Linux where the output doesn't reflect actual capabilities.
