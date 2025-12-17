@@ -152,7 +152,10 @@ public:
 #endif
   }
 
-  size_t num_rows() const override { return newlines_.size() - 1; }
+  // if `n_max = 0`, newlines_ is never been populated
+  size_t num_rows() const override {
+    return newlines_.empty() ? 0 : newlines_.size() - 1;
+  }
   size_t num_columns() const override { return col_starts_.size(); }
 
   std::string get_delim() const override {
