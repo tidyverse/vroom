@@ -49,6 +49,11 @@
   longer segfaults
   ([\#544](https://github.com/tidyverse/vroom/issues/544)).
 
+- Reading from a connection (compressed file, URL, raw connection) with
+  `n_max = 0` and explicit `col_names` no longer produces a “negative
+  length vectors are not allowed” error or crashes R
+  ([\#539](https://github.com/tidyverse/vroom/issues/539)).
+
 ## vroom 1.6.7
 
 CRAN release: 2025-11-28
