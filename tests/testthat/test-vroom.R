@@ -428,15 +428,27 @@ test_that("n_max works with connections files", {
     c(0, 12)
   )
 
-  # If you don't read the header or any rows it must be empty
+  # Zero rows with explicit column names should not error
+  # This used to error with "! negative length vectors are not allowed"
   expect_equal(
-    dim(vroom(
+    vroom(
+      vroom_example("mtcars.csv.gz"),
+      col_names = c("a", "b", "c"),
+      n_max = 0,
+      col_types = list()
+    ),
+    tibble::tibble(a = character(), b = character(), c = character())
+  )
+
+  # If you don't read any rows or read/provide the header, result is empty
+  expect_equal(
+    vroom(
       vroom_example("mtcars.csv.gz"),
       n_max = 0,
       col_names = FALSE,
       col_types = list()
-    )),
-    c(0, 0)
+    ),
+    tibble::tibble()
   )
 })
 
