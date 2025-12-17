@@ -49,10 +49,13 @@
   longer segfaults
   ([\#544](https://github.com/tidyverse/vroom/issues/544)).
 
-- Reading from a connection (compressed file, URL, raw connection) with
-  `n_max = 0` and explicit `col_names` no longer produces a “negative
+- `vroom(..., n_max = 0, col_names = c(...))` with a connection
+  (compressed file, URL, raw connection) no longer produces a “negative
   length vectors are not allowed” error or crashes R
   ([\#539](https://github.com/tidyverse/vroom/issues/539)).
+
+- `vroom_fwf(..., n_max = 0)` with a connection no longer segfaults
+  ([\#590](https://github.com/tidyverse/vroom/issues/590)).
 
 ## vroom 1.6.7
 
