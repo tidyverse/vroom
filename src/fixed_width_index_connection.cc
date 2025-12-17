@@ -35,6 +35,10 @@ fixed_width_index_connection::fixed_width_index_connection(
   col_ends_ = std::move(col_ends);
   trim_ws_ = trim_ws;
 
+  if (n_max == 0) {
+    return;
+  }
+
   filename_ =
       cpp11::as_cpp<std::string>(cpp11::package("vroom")["vroom_tempfile"]());
 
