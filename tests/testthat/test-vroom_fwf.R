@@ -295,6 +295,14 @@ test_that("fwf_positions always returns col_names as character (#797)", {
   expect_type(info$col_names, "character")
 })
 
+# https://github.com/tidyverse/readr/issues/1544
+test_that("fwf_positions() errors for start position of 0", {
+  expect_snapshot(
+    fwf_positions(c(0, 4), c(3, 7)),
+    error = TRUE
+  )
+})
+
 # Robustness ----------------------------------------------------------------
 
 test_that("vroom_fwf() is robust to improper inputs", {

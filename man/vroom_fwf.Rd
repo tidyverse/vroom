@@ -6,7 +6,7 @@
 \alias{fwf_widths}
 \alias{fwf_positions}
 \alias{fwf_cols}
-\title{Read a fixed width file into a tibble}
+\title{Read a fixed-width file into a tibble}
 \usage{
 vroom_fwf(
   file,
@@ -39,7 +39,8 @@ fwf_cols(...)
 }
 \arguments{
 \item{file}{Either a path to a file, a connection, or literal data (either a
-single string or a raw vector).
+single string or a raw vector). \code{file} can also be a character vector
+containing multiple filepaths or a list containing multiple connections.
 
 Files ending in \code{.gz}, \code{.bz2}, \code{.xz}, or \code{.zip} will be automatically
 uncompressed. Files starting with \verb{http://}, \verb{https://}, \verb{ftp://}, or
@@ -50,8 +51,8 @@ Literal data is most useful for examples and tests. To be recognised as
 literal data, wrap the input with \code{I()}.}
 
 \item{col_positions}{Column positions, as created by \code{\link[=fwf_empty]{fwf_empty()}},
-\code{\link[=fwf_widths]{fwf_widths()}}, \code{\link[=fwf_positions]{fwf_positions()}}, or \code{\link[=fwf_cols]{fwf_cols()}}. To read in only
-selected fields, use \code{\link[=fwf_positions]{fwf_positions()}}. If the width of the last column
+\code{fwf_widths()}, \code{fwf_positions()}, or \code{fwf_cols()}. To read in only
+selected fields, use \code{fwf_positions()}. If the width of the last column
 is variable (a ragged fwf file), supply the last end position as \code{NA}.}
 
 \item{col_types}{One of \code{NULL}, a \code{\link[=cols]{cols()}} specification, or
@@ -169,11 +170,13 @@ to enforce them.}
 \item{n}{Number of lines the tokenizer will read to determine file structure. By default
 it is set to 100.}
 
-\item{widths}{Width of each field. Use NA as width of last field when
-reading a ragged fwf file.}
+\item{widths}{Width of each field. Use \code{NA} as the width of the last field
+when reading a ragged fixed-width file.}
 
 \item{start, end}{Starting and ending (inclusive) positions of each field.
-Use \code{NA} as the last value of \code{end} when reading a ragged fwf file.}
+\strong{Positions are 1-based}: the first character in a line is at position 1.
+Use \code{NA} as the last value of \code{end} when reading a ragged fixed-width
+file.}
 
 \item{...}{Named or unnamed arguments, each addressing one column. Each input
 should be either a single integer (a column width) or a pair of integers
@@ -181,12 +184,52 @@ should be either a single integer (a column width) or a pair of integers
 i.e. all widths or all positions.}
 }
 \description{
-Read a fixed width file into a tibble
+Fixed-width files store tabular data with each field occupying a specific
+range of character positions in every line. Once the fields are identified,
+converting them to the appropriate R types works just like for delimited
+files. The unique challenge with fixed-width files is describing where each
+field begins and ends. \pkg{vroom} tries to ease this pain by offering a
+few different ways to specify the field structure:
+\itemize{
+\item \code{fwf_empty()} - Guesses based on the positions of empty columns. This is
+the default. (Note that \code{fwf_empty()} returns 0-based positions, for
+internal use.)
+\item \code{fwf_widths()} - Supply the widths of the columns.
+\item \code{fwf_positions()} - Supply paired vectors of start and end positions. These
+are interpreted as 1-based positions, so are off-by-one compared to the
+output of \code{fwf_empty()}.
+\item \code{fwf_cols()} - Supply named arguments of paired start and end positions or
+column widths.
+}
+
+Note: \code{fwf_empty()} cannot work with a connection or with any of the input
+types that involve a connection internally, which includes remote and
+compressed files. The reason is that this would necessitate reading from the
+connection twice. In these cases, you'll have to either provide the field
+structure explicitly with another \verb{fwf_*()} function or download (and
+decompress, if relevant) the file first.
 }
 \details{
-\emph{Note}: \code{fwf_empty()} cannot take a R connection such as a URL as input, as
-this would result in reading from the connection twice. In these cases it is
-better to download the file first before reading.
+Here's a enhanced example using the contents of the file accessed via
+\code{vroom_example("fwf-sample.txt")}.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{         1         2         3         4
+123456789012345678901234567890123456789012
+[     name 20      ][state 10][  ssn 12  ]
+John Smith          WA        418-Y11-4111
+Mary Hartford       CA        319-Z19-4341
+Evan Nolan          IL        219-532-c301
+}\if{html}{\out{</div>}}
+
+Here are some valid field specifications for the above (they aren't all
+equivalent! but they are all valid):
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{fwf_widths(c(20, 10, 12), c("name", "state", "ssn"))
+fwf_positions(c(1, 30), c(20, 42), c("name", "ssn"))
+fwf_cols(state = c(21, 30), last = c(6, 20), first = c(1, 4), ssn = c(31, 42))
+fwf_cols(name = c(1, 20), ssn = c(30, 42))
+fwf_cols(name = 20, state = 10, ssn = 12)
+}\if{html}{\out{</div>}}
 }
 \examples{
 fwf_sample <- vroom_example("fwf-sample.txt")
