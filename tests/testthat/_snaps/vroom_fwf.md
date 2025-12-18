@@ -50,6 +50,16 @@
       i `start` has length 3.
       i `end` has length 2.
 
+# fwf_positions() errors for start position of 0
+
+    Code
+      fwf_positions(c(0, 4), c(3, 7))
+    Condition
+      Error in `fwf_positions()`:
+      ! `start` positions must be >= 1, i.e. use 1-based indexing.
+      i The first character in a line is at position 1, not 0.
+      i If you got these positions from `fwf_empty()`, note that its output uses 0-based indexing.
+
 # Errors if begin is greater than end
 
     Code
