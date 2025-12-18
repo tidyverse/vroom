@@ -13,7 +13,7 @@ each line is divided up into fields.
   [`fwf_widths()`](https://vroom.tidyverse.org/dev/reference/vroom_fwf.md)
   [`fwf_positions()`](https://vroom.tidyverse.org/dev/reference/vroom_fwf.md)
   [`fwf_cols()`](https://vroom.tidyverse.org/dev/reference/vroom_fwf.md)
-  : Read a fixed width file into a tibble
+  : Read a fixed-width file into a tibble
 - [`problems()`](https://vroom.tidyverse.org/dev/reference/problems.md)
   : Retrieve parsing problems
 
