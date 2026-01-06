@@ -254,18 +254,6 @@ template <> void write_buf(const std::vector<char>& buf, SEXP& con) {
   R_WriteConnection(con, (void*)buf.data(), sizeof buf[0] * buf.size());
 }
 
-#ifdef VROOM_USE_CONNECTIONS_API
-void write_buf_con(
-    const std::vector<char>& buf, Rconnection con, bool is_stdout) {
-  if (is_stdout) {
-    std::string out;
-    std::copy(buf.begin(), buf.end(), std::back_inserter(out));
-    Rprintf("%.*s", buf.size(), out.c_str());
-  } else {
-    R_WriteConnection(con, (void*)buf.data(), sizeof buf[0] * buf.size());
-  }
-}
-#else
 void write_buf_con(const std::vector<char>& buf, SEXP con, bool is_stdout) {
   if (is_stdout) {
     std::string out;
@@ -275,7 +263,6 @@ void write_buf_con(const std::vector<char>& buf, SEXP con, bool is_stdout) {
     write_buf(buf, con);
   }
 }
-#endif
 
 std::vector<SEXPTYPE> get_types(const cpp11::list& input) {
   std::vector<SEXPTYPE> out;

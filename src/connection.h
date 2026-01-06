@@ -10,31 +10,6 @@
 #undef FALSE
 #include <cpp11/logicals.hpp>
 
-#ifdef VROOM_USE_CONNECTIONS_API
-
-// clang-format off
-#ifdef __clang__
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Wkeyword-macro"
-#endif
-#define class class_name
-#define private private_ptr
-#include <R_ext/Connections.h>
-#undef class
-#undef private
-#ifdef __clang__
-# pragma clang diagnostic pop
-#endif
-// clang-format on
-
-#if R_CONNECTIONS_VERSION != 1
-#error "Missing or unsupported connection API in R"
-#endif
-
-#else
-
-#pragma once
-
 inline SEXP R_GetConnection(SEXP con) { return con; }
 
 inline size_t R_ReadConnection(SEXP con, void* buf, size_t n) {
@@ -57,8 +32,6 @@ inline size_t R_WriteConnection(SEXP con, void* buf, size_t n) {
 
   return n;
 }
-
-#endif
 
 inline std::string con_description(SEXP con) {
   static auto summary_connection = cpp11::package("base")["summary.connection"];
