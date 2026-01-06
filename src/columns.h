@@ -160,7 +160,7 @@ inline cpp11::list create_columns(
     case column_type::Int:
       if (collector.use_altrep()) {
         SET_VECTOR_ELT(res, i, vroom_int::Make(info));
-      } else{
+      } else {
         SET_VECTOR_ELT(res, i, read_int(info));
         delete info;
       }
