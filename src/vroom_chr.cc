@@ -42,12 +42,6 @@ cpp11::strings read_chr(vroom_vec_info* info) {
   return out;
 }
 
-#ifdef HAS_ALTREP
-
 R_altrep_class_t vroom_chr::class_t;
 
 void init_vroom_chr(DllInfo* dll) { vroom_chr::Init(dll); }
-
-#else
-void init_vroom_chr(DllInfo* dll) {}
-#endif

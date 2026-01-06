@@ -59,12 +59,6 @@ cpp11::doubles read_time(vroom_vec_info* info) {
   return out;
 }
 
-#ifdef HAS_ALTREP
-
 R_altrep_class_t vroom_time::class_t;
 
 void init_vroom_time(DllInfo* dll) { vroom_time::Init(dll); }
-
-#else
-void init_vroom_time(DllInfo* dll) {}
-#endif

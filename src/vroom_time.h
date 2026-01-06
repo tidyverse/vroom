@@ -15,8 +15,6 @@ double parse_time(
     const std::string& format);
 cpp11::doubles read_time(vroom_vec_info* info);
 
-#ifdef HAS_ALTREP
-
 class vroom_time : public vroom_dttm {
 
 public:
@@ -122,7 +120,6 @@ public:
     R_set_altreal_Elt_method(class_t, time_Elt);
   }
 };
-#endif
 
 // Called the package is loaded
 [[cpp11::init]] void init_vroom_time(DllInfo* dll);

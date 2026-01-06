@@ -94,12 +94,6 @@ cpp11::integers read_fct_implicit(vroom_vec_info* info, bool include_na) {
   return out;
 }
 
-#ifdef HAS_ALTREP
-
 R_altrep_class_t vroom_fct::class_t;
 
 void init_vroom_fct(DllInfo* dll) { vroom_fct::Init(dll); }
-
-#else
-void init_vroom_fct(DllInfo* dll) {}
-#endif

@@ -24,8 +24,6 @@ double parse_dttm(
 
 cpp11::doubles read_dttm(vroom_vec_info* info);
 
-#ifdef HAS_ALTREP
-
 /* Vroom dttm */
 
 struct vroom_dttm_info {
@@ -231,8 +229,6 @@ public:
     R_set_altreal_Elt_method(class_t, dttm_Elt);
   }
 };
-
-#endif
 
 // Called the package is loaded
 [[cpp11::init]] void init_vroom_dttm(DllInfo* dll);

@@ -10,8 +10,6 @@
 cpp11::strings read_chr(vroom_vec_info* info);
 SEXP check_na(SEXP na, SEXP val);
 
-#ifdef HAS_ALTREP
-
 struct vroom_chr : vroom_vec {
 
 public:
@@ -124,8 +122,6 @@ public:
     R_set_altstring_Elt_method(class_t, string_Elt);
   }
 };
-
-#endif
 
 // Called the package is loaded
 [[cpp11::init]] void init_vroom_chr(DllInfo* dll);
