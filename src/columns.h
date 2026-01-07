@@ -67,11 +67,7 @@ inline std::vector<std::string> get_filenames(SEXP in) {
 
 inline SEXP generate_filename_column(
     const std::vector<std::string>& filenames,
-    const std::vector<size_t>& lengths,
-    size_t rows) {
-  // suppress compiler warning about unused parameter
-  (void)rows;
-
+    const std::vector<size_t>& lengths) {
   cpp11::writable::integers rle(filenames.size());
   for (R_xlen_t i = 0; i < R_xlen_t(lengths.size()); ++i) {
     rle[i] = lengths[i];
@@ -113,7 +109,7 @@ inline cpp11::list create_columns(
     SET_VECTOR_ELT(
         res,
         i,
-        generate_filename_column(filenames, idx->row_sizes(), idx->num_rows()));
+        generate_filename_column(filenames, idx->row_sizes()));
     SET_STRING_ELT(res_nms, i, cpp11::strings(id)[0]);
     ++i;
   }
