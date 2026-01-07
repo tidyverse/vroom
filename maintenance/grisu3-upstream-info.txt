@@ -1,0 +1,4 @@
+grisu3 vendored from: https://github.com/juj/MathGeoLib
+Commit: 55053da5e3e55a83043af7324944407b174c3724
+Date: 2023-01-21
+Permalink: https://github.com/juj/MathGeoLib/tree/55053da5e3e55a83043af7324944407b174c3724/src/Math

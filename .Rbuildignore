@@ -49,3 +49,4 @@
 ^[.]?air[.]toml$
 ^scratch\.R$
 ^compile_commands\.json$
+^maintenance$
