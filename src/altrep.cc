@@ -134,8 +134,8 @@ bool vroom_altrep(SEXP x) {
 
   if (ALTREP(x)) {
 
-    auto csym = CAR(ATTRIB(ALTREP_CLASS(x)));
-    auto psym = CADR(ATTRIB(ALTREP_CLASS(x)));
+    auto csym = R_altrep_class_name(x);
+    auto psym = R_altrep_class_package(x);
     bool is_altrep = ALTREP(x);
     bool materialzied = R_altrep_data2(x) != R_NilValue;
 
