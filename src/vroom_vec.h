@@ -98,8 +98,6 @@ static auto parse_value(
 }
 } // namespace vroom
 
-#ifdef HAS_ALTREP
-
 class vroom_vec {
 
 public:
@@ -215,5 +213,3 @@ public:
     return T::Make(info);
   }
 };
-
-#endif

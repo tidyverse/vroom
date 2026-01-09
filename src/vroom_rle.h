@@ -3,8 +3,6 @@
 #include "altrep.h"
 #include "r_utils.h"
 
-#ifdef HAS_ALTREP
-
 class vroom_rle {
 
 public:
@@ -123,8 +121,6 @@ public:
     R_set_altstring_Elt_method(class_t, string_Elt);
   }
 };
-
-#endif
 
 // Called the package is loaded
 [[cpp11::init]] void init_vroom_rle(DllInfo* dll);

@@ -15,9 +15,6 @@ double parse_date(
 
 cpp11::doubles read_date(vroom_vec_info* info);
 
-#ifdef HAS_ALTREP
-/* no support for altrep before 3.5 */
-
 class vroom_date : public vroom_dttm {
 
 public:
@@ -122,7 +119,6 @@ public:
     R_set_altreal_Elt_method(class_t, date_Elt);
   }
 };
-#endif
 
 // Called the package is loaded
 [[cpp11::init]] void init_vroom_date(DllInfo* dll);

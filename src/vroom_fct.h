@@ -69,8 +69,6 @@ int parse_factor(
   }
 }
 
-#ifdef HAS_ALTREP
-
 struct vroom_factor_info {
   vroom_vec_info* info;
   std::unordered_map<SEXP, size_t> levels;
@@ -271,7 +269,6 @@ public:
     R_set_altinteger_Elt_method(class_t, factor_Elt);
   }
 };
-#endif
 
 // Called the package is loaded
 [[cpp11::init]] void init_vroom_fct(DllInfo* dll);

@@ -67,13 +67,7 @@ inline std::vector<std::string> get_filenames(SEXP in) {
 
 inline SEXP generate_filename_column(
     const std::vector<std::string>& filenames,
-    const std::vector<size_t>& lengths,
-    size_t rows) {
-#ifdef HAS_ALTREP
-  // suppress compiler warning about unused parameter, as this is only used
-  // without altrep.
-  (void)rows;
-
+    const std::vector<size_t>& lengths) {
   cpp11::writable::integers rle(filenames.size());
   for (R_xlen_t i = 0; i < R_xlen_t(lengths.size()); ++i) {
     rle[i] = lengths[i];
@@ -81,21 +75,6 @@ inline SEXP generate_filename_column(
   rle.names() = filenames;
 
   return vroom_rle::Make(rle);
-#else
-  std::vector<std::string> out;
-  out.reserve(rows);
-
-  if (static_cast<size_t>(filenames.size()) != lengths.size()) {
-    cpp11::stop("inputs and lengths inconsistent");
-  }
-
-  for (size_t i = 0; i < filenames.size(); ++i) {
-    for (size_t j = 0; j < lengths[i]; ++j) {
-      out.push_back(filenames[i]);
-    }
-  }
-  return cpp11::as_sexp(out);
-#endif
 }
 
 inline cpp11::list create_columns(
@@ -130,7 +109,7 @@ inline cpp11::list create_columns(
     SET_VECTOR_ELT(
         res,
         i,
-        generate_filename_column(filenames, idx->row_sizes(), idx->num_rows()));
+        generate_filename_column(filenames, idx->row_sizes()));
     SET_STRING_ELT(res_nms, i, cpp11::strings(id)[0]);
     ++i;
   }
@@ -168,9 +147,7 @@ inline cpp11::list create_columns(
     switch (collector.type()) {
     case column_type::Dbl:
       if (collector.use_altrep()) {
-#ifdef HAS_ALTREP
         SET_VECTOR_ELT(res, i, vroom_dbl::Make(info));
-#endif
       } else {
         SET_VECTOR_ELT(res, i, read_dbl(info));
         delete info;
@@ -178,9 +155,7 @@ inline cpp11::list create_columns(
       break;
     case column_type::Int:
       if (collector.use_altrep()) {
-#ifdef HAS_ALTREP
         SET_VECTOR_ELT(res, i, vroom_int::Make(info));
-#endif
       } else {
         SET_VECTOR_ELT(res, i, read_int(info));
         delete info;
@@ -188,9 +163,7 @@ inline cpp11::list create_columns(
       break;
     case column_type::BigInt:
       if (collector.use_altrep()) {
-#ifdef HAS_ALTREP
         SET_VECTOR_ELT(res, i, vroom_big_int::Make(info));
-#endif
       } else {
         SET_VECTOR_ELT(res, i, read_big_int(info));
         delete info;
@@ -198,23 +171,15 @@ inline cpp11::list create_columns(
       break;
     case column_type::Num:
       if (collector.use_altrep()) {
-#ifdef HAS_ALTREP
         SET_VECTOR_ELT(res, i, vroom_num::Make(info));
-#endif
       } else {
         SET_VECTOR_ELT(res, i, read_num(info));
         delete info;
       }
       break;
     case column_type::Lgl:
-      // if (collector.use_altrep()) {
-      //#if defined HAS_ALTREP && R_VERSION >= R_Version(3, 6, 0)
-      // SET_VECTOR_ELT(res, i, vroom_lgl::Make(info));
-      //#endif
-      //} else {
       SET_VECTOR_ELT(res, i, read_lgl(info));
       delete info;
-      //}
       break;
     case column_type::Fct: {
       auto levels = collector["levels"];
@@ -228,9 +193,7 @@ inline cpp11::list create_columns(
       } else {
         bool ordered = cpp11::as_cpp<bool>(collector["ordered"]);
         if (collector.use_altrep()) {
-#ifdef HAS_ALTREP
           SET_VECTOR_ELT(res, i, vroom_fct::Make(info, levels, ordered));
-#endif
         } else {
           SET_VECTOR_ELT(res, i, read_fct_explicit(info, levels, ordered));
           delete info;
@@ -241,9 +204,7 @@ inline cpp11::list create_columns(
     case column_type::Date:
       info->format = cpp11::as_cpp<std::string>(collector["format"]);
       if (collector.use_altrep()) {
-#ifdef HAS_ALTREP
         SET_VECTOR_ELT(res, i, vroom_date::Make(info));
-#endif
       } else {
         SET_VECTOR_ELT(res, i, read_date(info));
         delete info;
@@ -252,9 +213,7 @@ inline cpp11::list create_columns(
     case column_type::Dttm:
       info->format = cpp11::as_cpp<std::string>(collector["format"]);
       if (collector.use_altrep()) {
-#ifdef HAS_ALTREP
         SET_VECTOR_ELT(res, i, vroom_dttm::Make(info));
-#endif
       } else {
         SET_VECTOR_ELT(res, i, read_dttm(info));
         delete info;
@@ -263,9 +222,7 @@ inline cpp11::list create_columns(
     case column_type::Time:
       info->format = cpp11::as_cpp<std::string>(collector["format"]);
       if (collector.use_altrep()) {
-#ifdef HAS_ALTREP
         SET_VECTOR_ELT(res, i, vroom_time::Make(info));
-#endif
       } else {
         SET_VECTOR_ELT(res, i, read_time(info));
         delete info;
@@ -273,9 +230,7 @@ inline cpp11::list create_columns(
       break;
     default:
       if (collector.use_altrep()) {
-#ifdef HAS_ALTREP
         SET_VECTOR_ELT(res, i, vroom_chr::Make(info));
-#endif
       } else {
         SET_VECTOR_ELT(res, i, read_chr(info));
         delete info;

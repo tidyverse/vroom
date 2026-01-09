@@ -61,12 +61,6 @@ cpp11::doubles read_big_int(vroom_vec_info* info) {
   return out;
 }
 
-#ifdef HAS_ALTREP
-
 R_altrep_class_t vroom_big_int::class_t;
 
 void init_vroom_big_int(DllInfo* dll) { vroom_big_int::Init(dll); }
-
-#else
-void init_vroom_big_int(DllInfo* dll) {}
-#endif

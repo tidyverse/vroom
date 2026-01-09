@@ -110,18 +110,5 @@
 }
 
 [[cpp11::register]] SEXP vroom_rle(const cpp11::integers& input) {
-#ifdef HAS_ALTREP
   return vroom_rle::Make(input);
-#else
-  R_xlen_t total_size = std::accumulate(input.begin(), input.end(), 0);
-  cpp11::writable::strings out(total_size);
-  cpp11::strings nms = input.names();
-  R_xlen_t idx = 0;
-  for (R_xlen_t i = 0; i < Rf_xlength(input); ++i) {
-    for (R_xlen_t j = 0; j < input[i]; ++j) {
-      SET_STRING_ELT(out, idx++, nms[i]);
-    }
-  }
-  return out;
-#endif
 }

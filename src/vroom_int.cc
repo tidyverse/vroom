@@ -56,12 +56,6 @@ cpp11::integers read_int(vroom_vec_info* info) {
   return out;
 }
 
-#ifdef HAS_ALTREP
-
 R_altrep_class_t vroom_int::class_t;
 
 void init_vroom_int(DllInfo* dll) { vroom_int::Init(dll); }
-
-#else
-void init_vroom_int(DllInfo* dll) {}
-#endif

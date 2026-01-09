@@ -60,12 +60,6 @@ cpp11::doubles read_date(vroom_vec_info* info) {
   return out;
 }
 
-#ifdef HAS_ALTREP
-
 R_altrep_class_t vroom_date::class_t;
 
 void init_vroom_date(DllInfo* dll) { vroom_date::Init(dll); }
-
-#else
-void init_vroom_date(DllInfo* dll) {}
-#endif

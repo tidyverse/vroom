@@ -28,7 +28,6 @@ The only code path that is multi-threaded is normal files, connections are read 
 To compile with logging enabled you need to set `-DVROOM_LOG` in your `~/R/Makevars` and if you want to control the logging level you can set `-DSPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG`.
 You also need to create the `logs` directory for the logs to be written to. They will write a `logs/index.idx` and a `logs/index_connection.idx` file respectively.
 The file is appended to, not rewritten, so you would need to delete it if you want a new file after a run.
-There is also `-DVROOM_USE_CONNECTIONS_API` to use the CRAN forbidden connections API directly, but the performance difference is generally the same, so it isn't really needed.
 
 ## Known outstanding issues
 
@@ -93,6 +92,14 @@ https://github.com/r-lib/vroom/issues/357 tracks this issue
 
 The following projects have merit, but would require more maintainer bandwidth than is currently available.
 It is helpful to us to (a) record them explicitly for some possible future and (b) get them out of our open issues.
+
+### Using the Connections API directly
+
+Early in vroom's development, there was the notion that vroom might use the connections API directly.
+But instead of that API becoming more official/public, the opposite happened and it's considered forbidden for a CRAN package to use it.
+In January 2026 in #595, the remaining scaffolding around this was removed, as it had gone unexercised for years.
+
+### Other ideas
 
 * https://github.com/tidyverse/vroom/issues/186
 * https://github.com/tidyverse/vroom/issues/151

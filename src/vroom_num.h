@@ -19,8 +19,6 @@ double parse_num(
 
 cpp11::doubles read_num(vroom_vec_info* info);
 
-#ifdef HAS_ALTREP
-
 /* Vroom number */
 
 class vroom_num : public vroom_vec {
@@ -117,7 +115,6 @@ public:
     R_set_altreal_Elt_method(class_t, real_Elt);
   }
 };
-#endif
 
 // Called the package is loaded
 [[cpp11::init]] void init_vroom_num(DllInfo* dll);

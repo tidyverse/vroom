@@ -15,7 +15,6 @@
 #include <thread>
 
 [[cpp11::register]] void force_materialization(SEXP x) {
-#ifdef HAS_ALTREP
   // Note: vroom_lgl has no ALTREP implementation, so not included
   if (R_altrep_inherits(x, vroom_chr::class_t)) {
     vroom_chr::Materialize(x);
@@ -36,11 +35,9 @@
   } else if (R_altrep_inherits(x, vroom_big_int::class_t)) {
     vroom_big_int::Materialize(x);
   }
-#endif
 }
 
 bool vroom_altrep(SEXP x) {
-#ifdef HAS_ALTREP
   return R_altrep_inherits(x, vroom_chr::class_t) ||
          R_altrep_inherits(x, vroom_date::class_t) ||
          R_altrep_inherits(x, vroom_dbl::class_t) ||
@@ -51,13 +48,9 @@ bool vroom_altrep(SEXP x) {
          R_altrep_inherits(x, vroom_num::class_t) ||
          R_altrep_inherits(x, vroom_time::class_t) ||
          R_altrep_inherits(x, vroom_big_int::class_t);
-#else
-  return false;
-#endif
 }
 
 [[cpp11::register]] SEXP vroom_materialize(SEXP x, bool replace) {
-#ifdef HAS_ALTREP
   for (R_xlen_t col = 0; col < Rf_xlength(x); ++col) {
     SEXP elt = VECTOR_ELT(x, col);
     if (vroom_altrep(elt)) {
@@ -78,13 +71,10 @@ bool vroom_altrep(SEXP x) {
     }
   }
 
-#endif
-
   return x;
 }
 
 [[cpp11::register]] SEXP vroom_convert(SEXP x) {
-#ifdef HAS_ALTREP
   SEXP out = PROTECT(Rf_allocVector(VECSXP, Rf_xlength(x)));
   SHALLOW_DUPLICATE_ATTRIB(out, x);
 
@@ -137,15 +127,11 @@ bool vroom_altrep(SEXP x) {
   }
   UNPROTECT(1);
   return out;
-#else
-  return x;
-#endif
 }
 
 [[cpp11::register]] std::string vroom_str_(const cpp11::sexp& x) {
   std::stringstream ss;
 
-#ifdef HAS_ALTREP
   if (ALTREP(x)) {
 
     auto csym = CAR(ATTRIB(ALTREP_CLASS(x)));
@@ -160,12 +146,7 @@ bool vroom_altrep(SEXP x) {
       ss << '\t' << "length:" << LENGTH(x);
     }
     ss << '\t' << "materialized:" << materialzied << '\n';
-  }
-#else
-  if (false) {
-  }
-#endif
-  else {
+  } else {
     ss << std::boolalpha << "altrep:" << false << '\t'
        << "type: " << Rf_type2char(TYPEOF(x));
     if (!Rf_isObject(x)) {

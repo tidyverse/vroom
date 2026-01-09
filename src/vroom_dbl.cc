@@ -238,12 +238,6 @@ cpp11::doubles read_dbl(vroom_vec_info* info) {
   return out;
 }
 
-#ifdef HAS_ALTREP
-
 R_altrep_class_t vroom_dbl::class_t;
 
 void init_vroom_dbl(DllInfo* dll) { vroom_dbl::Init(dll); }
-
-#else
-void init_vroom_dbl(DllInfo* dll) {}
-#endif

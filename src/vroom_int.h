@@ -9,8 +9,6 @@ int strtoi(const char* begin, const char* end);
 
 cpp11::integers read_int(vroom_vec_info* info);
 
-#ifdef HAS_ALTREP
-
 class vroom_int : public vroom_vec {
 
 public:
@@ -96,7 +94,6 @@ public:
     R_set_altinteger_Elt_method(class_t, int_Elt);
   }
 };
-#endif
 
 // Called the package is loaded
 [[cpp11::init]] void init_vroom_int(DllInfo* dll);

@@ -479,9 +479,7 @@ vroom_tempfile <- function() {
 #'
 #' Alternatively there is also a family of environment variables to control use of
 #' the Altrep framework. These can then be set in your `.Renviron` file, e.g.
-#' with `usethis::edit_r_environ()`. For versions of R where the Altrep
-#' framework is unavailable (R < 3.5.0) they are automatically turned off and
-#' the variables have no effect. The variables can take one of `true`, `false`,
+#' with `usethis::edit_r_environ()`. The variables can take one of `true`, `false`,
 #' `TRUE`, `FALSE`, `1`, or `0`.
 #'
 #' - `VROOM_USE_ALTREP_NUMERICS` - If set use Altrep for _all_ numeric types
@@ -526,16 +524,16 @@ vroom_altrep <- function(which = NULL) {
   }
 
   args <- list(
-    getRversion() >= "3.5.0" && which$chr %||% vroom_use_altrep_chr(),
-    getRversion() >= "3.5.0" && which$fct %||% vroom_use_altrep_fct(),
-    getRversion() >= "3.5.0" && which$int %||% vroom_use_altrep_int(),
-    getRversion() >= "3.5.0" && which$dbl %||% vroom_use_altrep_dbl(),
-    getRversion() >= "3.5.0" && which$num %||% vroom_use_altrep_num(),
-    getRversion() >= "3.6.0" && which$lgl %||% vroom_use_altrep_lgl(), # logicals only supported in R 3.6.0+
-    getRversion() >= "3.5.0" && which$dttm %||% vroom_use_altrep_dttm(),
-    getRversion() >= "3.5.0" && which$date %||% vroom_use_altrep_date(),
-    getRversion() >= "3.5.0" && which$time %||% vroom_use_altrep_time(),
-    getRversion() >= "3.5.0" && which$big_int %||% vroom_use_altrep_big_int()
+    which$chr %||% vroom_use_altrep_chr(),
+    which$fct %||% vroom_use_altrep_fct(),
+    which$int %||% vroom_use_altrep_int(),
+    which$dbl %||% vroom_use_altrep_dbl(),
+    which$num %||% vroom_use_altrep_num(),
+    which$lgl %||% vroom_use_altrep_lgl(),
+    which$dttm %||% vroom_use_altrep_dttm(),
+    which$date %||% vroom_use_altrep_date(),
+    which$time %||% vroom_use_altrep_time(),
+    which$big_int %||% vroom_use_altrep_big_int()
   )
 
   out <- 0L

@@ -28,8 +28,6 @@ union vroom_big_int_t {
   double dbl;
 };
 
-#ifdef HAS_ALTREP
-
 class vroom_big_int : public vroom_vec {
 
 public:
@@ -120,7 +118,6 @@ public:
     R_set_altreal_Elt_method(class_t, real_Elt);
   }
 };
-#endif
 
 // Called the package is loaded
 [[cpp11::init]] void init_vroom_big_int(DllInfo* dll);

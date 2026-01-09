@@ -66,15 +66,9 @@ cpp11::doubles read_dttm(vroom_vec_info* info) {
   return out;
 }
 
-#ifdef HAS_ALTREP
-
 R_altrep_class_t vroom_dttm::class_t;
 
 void init_vroom_dttm(DllInfo* dll) { vroom_dttm::Init(dll); }
-
-#else
-void init_vroom_dttm(DllInfo* dll) {}
-#endif
 
 [[cpp11::register]] cpp11::writable::doubles utctime_(
     const cpp11::integers& year,
