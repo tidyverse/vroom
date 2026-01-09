@@ -32,7 +32,7 @@ reencode_file <- function(file, encoding, call = caller_env()) {
   } else {
     in_con <- file(file[[1]])
   }
-  out_file <- vroom_tempfile()
+  out_file <- vroom_tempfile(pattern = "vroom-reencode-file-")
   out_con <- file(out_file)
   convert_connection(in_con, out_con, encoding, "UTF-8")
   withr::defer(unlink(out_file), envir = parent.frame())
@@ -357,7 +357,7 @@ zipfile <- function(path, open = "r") {
 utils::globalVariables("con")
 
 chr_to_file <- function(x, envir = parent.frame()) {
-  out <- vroom_tempfile()
+  out <- vroom_tempfile(pattern = "vroom-chr-to-file-")
   con <- file(out, "wb")
   writeLines(sub("\n$", "", x), con, useBytes = TRUE)
   close(con)
