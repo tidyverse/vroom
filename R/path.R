@@ -1,3 +1,11 @@
+vroom_tempfile <- function(fileext = "", pattern = "vroom-") {
+  dir <- Sys.getenv("VROOM_TEMP_PATH")
+  if (!nzchar(dir)) {
+    dir <- tempdir()
+  }
+  tempfile(pattern = pattern, tmpdir = dir, fileext = fileext)
+}
+
 is_ascii_compatible <- function(encoding) {
   identical(
     iconv(list(charToRaw("\n")), from = "ASCII", to = encoding, toRaw = TRUE)[[

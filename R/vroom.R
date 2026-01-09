@@ -464,14 +464,6 @@ vroom_threads <- function() {
   res
 }
 
-vroom_tempfile <- function(fileext = "", pattern = "vroom-") {
-  dir <- Sys.getenv("VROOM_TEMP_PATH")
-  if (!nzchar(dir)) {
-    dir <- tempdir()
-  }
-  tempfile(pattern = pattern, tmpdir = dir, fileext = fileext)
-}
-
 #' Show which column types are using Altrep
 #'
 #' `vroom_altrep()` can be used directly as input to the `altrep`
