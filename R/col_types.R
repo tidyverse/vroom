@@ -626,12 +626,12 @@ collector_value.collector_factor <- function(x, ...) {
 
 #' @export
 collector_value.collector_datetime <- function(x, ...) {
-  vctrs::vec_ptype(Sys.time())
+  vctrs::new_datetime()
 }
 
 #' @export
 collector_value.collector_date <- function(x, ...) {
-  vctrs::vec_ptype(Sys.Date())
+  vctrs::new_date()
 }
 
 #' @export
