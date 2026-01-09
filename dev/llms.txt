@@ -204,13 +204,11 @@ variables. Generally these will not need to be set by most users.
 - `VROOM_WRITE_BUFFER_LINES` - The number of lines to use for each
   buffer when writing files (default: 1000).
 
-There are also a family of variables to control use of the Altrep
-framework. For versions of R where the Altrep framework is unavailable
-(R \< 3.5.0) they are automatically turned off and the variables have no
-effect. The variables can take one of `true`, `false`, `TRUE`, `FALSE`,
-`1`, or `0`.
+There is also a family of variables to control use of the Altrep
+framework. These variables can take one of these values: `true`,
+`false`, `TRUE`, `FALSE`, `1`, or `0`.
 
-- `VROOM_USE_ALTREP_NUMERICS` - If set use Altrep for *all* numeric
+- `VROOM_USE_ALTREP_NUMERICS` - If true, use Altrep for *all* numeric
   types (default `false`).
 
 There are also individual variables for each type. Currently only
@@ -226,16 +224,6 @@ There are also individual variables for each type. Currently only
 - `VROOM_USE_ALTREP_DTTM`
 - `VROOM_USE_ALTREP_DATE`
 - `VROOM_USE_ALTREP_TIME`
-
-## RStudio caveats
-
-RStudio’s environment pane calls
-[`object.size()`](https://rdrr.io/r/utils/object.size.html) when it
-refreshes the pane, which for Altrep objects can be extremely slow.
-RStudio 1.2.1335+ includes the fixes
-([RStudio#4210](https://github.com/rstudio/rstudio/pull/4210),
-[RStudio#4292](https://github.com/rstudio/rstudio/pull/4292)) for this
-issue, so it is recommended you use at least that version.
 
 ## Thanks
 

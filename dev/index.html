@@ -271,10 +271,10 @@
 <li>
 <code>VROOM_WRITE_BUFFER_LINES</code> - The number of lines to use for each buffer when writing files (default: 1000).</li>
 </ul>
-<p>There are also a family of variables to control use of the Altrep framework. For versions of R where the Altrep framework is unavailable (R &lt; 3.5.0) they are automatically turned off and the variables have no effect. The variables can take one of <code>true</code>, <code>false</code>, <code>TRUE</code>, <code>FALSE</code>, <code>1</code>, or <code>0</code>.</p>
+<p>There is also a family of variables to control use of the Altrep framework. These variables can take one of these values: <code>true</code>, <code>false</code>, <code>TRUE</code>, <code>FALSE</code>, <code>1</code>, or <code>0</code>.</p>
 <ul>
 <li>
-<code>VROOM_USE_ALTREP_NUMERICS</code> - If set use Altrep for <em>all</em> numeric types (default <code>false</code>).</li>
+<code>VROOM_USE_ALTREP_NUMERICS</code> - If true, use Altrep for <em>all</em> numeric types (default <code>false</code>).</li>
 </ul>
 <p>There are also individual variables for each type. Currently only <code>VROOM_USE_ALTREP_CHR</code> defaults to <code>true</code>.</p>
 <ul>
@@ -289,11 +289,6 @@
 <li><code>VROOM_USE_ALTREP_DATE</code></li>
 <li><code>VROOM_USE_ALTREP_TIME</code></li>
 </ul>
-<div class="section level2">
-<h2 id="rstudio-caveats">RStudio caveats<a class="anchor" aria-label="anchor" href="#rstudio-caveats"></a>
-</h2>
-<p>RStudio’s environment pane calls <code><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size()</a></code> when it refreshes the pane, which for Altrep objects can be extremely slow. RStudio 1.2.1335+ includes the fixes (<a href="https://github.com/rstudio/rstudio/pull/4210" class="external-link">RStudio#4210</a>, <a href="https://github.com/rstudio/rstudio/pull/4292" class="external-link">RStudio#4292</a>) for this issue, so it is recommended you use at least that version.</p>
-</div>
 <div class="section level2">
 <h2 id="thanks">Thanks<a class="anchor" aria-label="anchor" href="#thanks"></a>
 </h2>

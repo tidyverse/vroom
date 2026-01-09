@@ -90,8 +90,8 @@ from disk and finding the delimiters is generally not the main bottle
 neck. Instead (re)-allocating memory and parsing the values into R data
 types (particularly for characters) takes the bulk of the time.</p>
 <p>Therefore you can obtain very rapid input by first performing a fast
-indexing step and then using the Altrep framework available in R
-versions 3.5+ to access the values in a lazy / delayed fashion.</p>
+indexing step and then using the Altrep framework to access the values
+in a lazy / delayed fashion.</p>
 <div class="section level3">
 <h3 id="how-it-works">How it works<a class="anchor" aria-label="anchor" href="#how-it-works"></a>
 </h3>

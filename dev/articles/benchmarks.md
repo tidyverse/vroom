@@ -9,8 +9,8 @@ Instead (re)-allocating memory and parsing the values into R data types
 (particularly for characters) takes the bulk of the time.
 
 Therefore you can obtain very rapid input by first performing a fast
-indexing step and then using the Altrep framework available in R
-versions 3.5+ to access the values in a lazy / delayed fashion.
+indexing step and then using the Altrep framework to access the values
+in a lazy / delayed fashion.
 
 ### How it works
 
