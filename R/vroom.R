@@ -464,12 +464,12 @@ vroom_threads <- function() {
   res
 }
 
-vroom_tempfile <- function() {
+vroom_tempfile <- function(fileext = "", pattern = "vroom-") {
   dir <- Sys.getenv("VROOM_TEMP_PATH")
   if (!nzchar(dir)) {
     dir <- tempdir()
   }
-  tempfile(pattern = "vroom-", tmpdir = dir)
+  tempfile(pattern = pattern, tmpdir = dir, fileext = fileext)
 }
 
 #' Show which column types are using Altrep
