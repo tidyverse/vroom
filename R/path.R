@@ -3,6 +3,9 @@ vroom_tempfile <- function(fileext = "", pattern = "vroom-") {
   if (!nzchar(dir)) {
     dir <- tempdir()
   }
+  if (nzchar(fileext) && !startsWith(fileext, ".")) {
+    fileext <- paste0(".", fileext)
+  }
   tempfile(pattern = pattern, tmpdir = dir, fileext = fileext)
 }
 
