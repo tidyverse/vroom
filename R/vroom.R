@@ -176,7 +176,7 @@
 #' vroom(I("a|b\n1.0|2.0\n"), delim = "|")
 #'
 #' # Read datasets across multiple files ---------------------------------------
-#' mtcars_by_cyl <- vroom_example(vroom_examples("mtcars-"))
+#' mtcars_by_cyl <- vroom_example(vroom_examples("mtcars-[468]"))
 #' mtcars_by_cyl
 #'
 #' # Pass the filenames directly to vroom, they are efficiently combined
