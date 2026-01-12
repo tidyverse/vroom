@@ -19,12 +19,10 @@ mt_large <- mt[rep(seq_len(nrow(mt)), 200), ]
 target <- "mtcars-large-comment.csv.gz"
 
 con <- gzfile(target, "wb")
+# Use a comment line with commas (the delimiter), mimicking the EPSS format
+# that originally revealed this bug
 writeLines(
-  c(
-    "# This is a comment line",
-    "# Another comment line",
-    "# Yet another comment"
-  ),
+  "#model_version:v2022.01.01,score_date:2022-02-04T00:00:00+0000",
   con
 )
 vroom_write(mt_large, con, delim = ",")
