@@ -135,32 +135,35 @@ connection_or_filepath <- function(path, write = FALSE, call = caller_env()) {
   }
 
   if (is_url(path)) {
+    ext <- tolower(tools::file_ext(path))
+
+    # Download remote compressed files to a temporary local file. This gives
+    # consistent handling across formats and avoids bugs / undesirable behaviour
+    # of base::gzcon().
+    # https://github.com/tidyverse/vroom/issues/400
+    # https://github.com/tidyverse/vroom/issues/553
+    if (ext %in% c("gz", "bz2", "xz", "zip")) {
+      local_path <- download_url(path, ext, call = call)
+      withr::defer(unlink(local_path), envir = parent.frame())
+      return(
+        switch(
+          ext,
+          gz = gzfile(local_path, ""),
+          bz2 = bzfile(local_path, ""),
+          xz = xzfile(local_path, ""),
+          zip = zipfile(local_path, "")
+        )
+      )
+    }
+
+    # Non-compressed URLs: return connection directly
     if (requireNamespace("curl", quietly = TRUE)) {
       con <- curl::curl(path)
     } else {
       inform("`curl` package not installed, falling back to using `url()`")
       con <- url(path)
     }
-    ext <- tolower(tools::file_ext(path))
-    return(
-      switch(
-        ext,
-        zip = ,
-        bz2 = ,
-        xz = {
-          close(con)
-          cli::cli_abort(
-            c(
-              "Reading from remote {.val .{ext}} compressed files is not supported.",
-              "i" = "Download the file locally first."
-            ),
-            call = call
-          )
-        },
-        gz = gzcon(con),
-        con
-      )
-    )
+    return(con)
   }
 
   path <- enc2utf8(path)
@@ -320,6 +323,32 @@ archive_formats <- function(ext) {
 
 is_url <- function(path) {
   grepl("^((http|ftp)s?|sftp)://", path)
+}
+
+download_url <- function(url, ext, call = caller_env()) {
+  local_path <- vroom_tempfile(fileext = ext, pattern = "vroom-download-url-")
+
+  try_fetch(
+    if (requireNamespace("curl", quietly = TRUE)) {
+      curl::curl_download(url, local_path)
+    } else {
+      utils::download.file(url, local_path, mode = "wb", quiet = TRUE)
+    },
+    error = function(cnd) {
+      unlink(local_path)
+      cli::cli_abort(
+        c(
+          "Failed to download {.url {url}}.",
+          "x" = conditionMessage(cnd)
+        ),
+        parent = NA,
+        error = cnd,
+        call = call
+      )
+    }
+  )
+
+  local_path
 }
 
 check_path <- function(path, call = caller_env()) {

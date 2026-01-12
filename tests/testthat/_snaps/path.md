@@ -14,15 +14,6 @@
       Error:
       ! 'does-not-exist.csv' does not exist in current working directory: '<workdir>'.
 
-# vroom errors via https on non-gz file
-
-    Code
-      vroom(url, col_types = list())
-    Condition
-      Error:
-      ! Reading from remote ".bz2" compressed files is not supported.
-      i Download the file locally first.
-
 # vroom() informs user to use I() for literal data (or not)
 
     Code
