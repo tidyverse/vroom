@@ -327,12 +327,13 @@ is_url <- function(path) {
 
 download_url <- function(url, ext, call = caller_env()) {
   local_path <- vroom_tempfile(fileext = ext, pattern = "vroom-download-url-")
+  show_progress <- vroom_progress()
 
   try_fetch(
     if (requireNamespace("curl", quietly = TRUE)) {
-      curl::curl_download(url, local_path)
+      curl::curl_download(url, local_path, quiet = !show_progress)
     } else {
-      utils::download.file(url, local_path, mode = "wb", quiet = TRUE)
+      utils::download.file(url, local_path, mode = "wb", quiet = !show_progress)
     },
     error = function(cnd) {
       unlink(local_path)
