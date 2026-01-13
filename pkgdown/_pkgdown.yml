@@ -14,9 +14,9 @@ development:
 news:
   releases:
   - text: "vroom 1.1.0"
-    href: https://www.tidyverse.org/blog/2020/01/vroom-1-1-0/
+    href: https://tidyverse.org/blog/2020/01/vroom-1-1-0/
   - text: "vroom 1.0.0"
-    href: https://www.tidyverse.org/articles/2019/05/vroom-1-0-0/
+    href: https://tidyverse.org/blog/2019/05/vroom-1-0-0/
 
 reference:
 - title: Read rectangular files
