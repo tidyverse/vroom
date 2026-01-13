@@ -78,6 +78,7 @@ test_that("vroom works via https on concatenated gz file", {
   skip_on_cran()
 
   mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
+  # FIXME: switch the branch to main or HEAD here
   url <- "https://raw.githubusercontent.com/tidyverse/vroom/download-remote-compressed-files/inst/extdata/mtcars.csv.gz"
   expect_equal(vroom(url, comment = "#", col_types = list()), mt)
 })
