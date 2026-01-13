@@ -56,6 +56,7 @@ stopifnot(length(lines_gzfile) == 5) # gzfile sees all members
 message("gzfile() sees ", length(lines_gzfile), " lines")
 
 # Verify the file can be read back correctly with vroom
+mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
 result <- vroom(target, comment = "#", show_col_types = FALSE)
 stopifnot(nrow(result) == nrow(mt))
 stopifnot(identical(names(result), names(mt)))
