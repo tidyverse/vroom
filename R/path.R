@@ -111,6 +111,37 @@ standardise_path <- function(
     return(list(chr_to_file(path, envir = parent.frame())))
   }
 
+  # Handle remote compressed files from R, before heading to C++, so we can
+  # associate cleanup with the desired environment.
+  is_remote_compressed <- vapply(
+    path,
+    function(p) {
+      is_url(p) && tolower(tools::file_ext(p)) %in% c("gz", "bz2", "xz", "zip")
+    },
+    logical(1)
+  )
+  if (all(is_remote_compressed)) {
+    return(lapply(path, function(p) {
+      ext <- tolower(tools::file_ext(p))
+      local_path <- download_file(p, ext, call = call)
+      withr::defer(unlink(local_path), envir = call)
+      switch(
+        ext,
+        gz = gzfile(local_path),
+        bz2 = bzfile(local_path),
+        xz = xzfile(local_path),
+        zip = zipfile(local_path)
+      )
+    }))
+  }
+
+  if (any(is_remote_compressed)) {
+    cli::cli_abort(
+      "{.arg {arg}} cannot be a mix of remote compressed and other inputs.",
+      call = call
+    )
+  }
+
   as.list(enc2utf8(path))
 }
 
@@ -136,27 +167,12 @@ connection_or_filepath <- function(path, write = FALSE, call = caller_env()) {
 
   if (is_url(path)) {
     ext <- tolower(tools::file_ext(path))
-
-    # Download remote compressed files to a temporary local file. This gives
-    # consistent handling across formats and avoids bugs / undesirable behaviour
-    # of base::gzcon().
-    # https://github.com/tidyverse/vroom/issues/400
-    # https://github.com/tidyverse/vroom/issues/553
     if (ext %in% c("gz", "bz2", "xz", "zip")) {
-      local_path <- download_url(path, ext, call = call)
-      withr::defer(unlink(local_path), envir = parent.frame())
-      return(
-        switch(
-          ext,
-          gz = gzfile(local_path, ""),
-          bz2 = bzfile(local_path, ""),
-          xz = xzfile(local_path, ""),
-          zip = zipfile(local_path, "")
-        )
+      cli::cli_abort(
+        "Remote compressed files must be handled upstream of this function.",
+        .internal = TRUE
       )
     }
-
-    # Non-compressed URLs: return connection directly
     if (requireNamespace("curl", quietly = TRUE)) {
       con <- curl::curl(path)
     } else {
@@ -228,10 +244,10 @@ connection_or_filepath <- function(path, write = FALSE, call = caller_env()) {
 
   switch(
     compression,
-    gz = gzfile(path, ""),
-    bz2 = bzfile(path, ""),
-    xz = xzfile(path, ""),
-    zip = zipfile(path, ""),
+    gz = gzfile(path),
+    bz2 = bzfile(path),
+    xz = xzfile(path),
+    zip = zipfile(path),
     if (!has_trailing_newline(path)) {
       file(path)
     } else {
@@ -325,7 +341,7 @@ is_url <- function(path) {
   grepl("^((http|ftp)s?|sftp)://", path)
 }
 
-download_url <- function(url, ext, call = caller_env()) {
+download_file <- function(url, ext, call = caller_env()) {
   local_path <- vroom_tempfile(fileext = ext, pattern = "vroom-download-url-")
   show_progress <- vroom_progress()
 
@@ -376,7 +392,7 @@ is_absolute_path <- function(path) {
   grepl("^(/|[A-Za-z]:|\\\\|~)", path)
 }
 
-zipfile <- function(path, open = "r") {
+zipfile <- function(path, open = "") {
   files <- utils::unzip(path, list = TRUE)
   file <- files$Name[[1]]
 
