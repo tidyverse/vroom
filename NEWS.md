@@ -33,6 +33,8 @@
 
 * `vroom_fwf(..., n_max = 0)` with a connection no longer segfaults (#590).
 
+* `vroom()` now supports reading from a remote file that uses any of the supported compression formats, by downloading to a temporary (compressed) file. This is a new feature for `.bz2`, `.xz`, and `.zip` and fixes `.gz` bugs arising from problematic behaviour of `base::gzcon()` (#400, #553).
+
 # vroom 1.6.7
 
 * `locale(encoding =)` now warns, instead of errors, when the encoding cannot be found in `iconvlist()` return value. This removes an unnecessary blocker on platforms like Alpine Linux where the output doesn't reflect actual capabilities.
