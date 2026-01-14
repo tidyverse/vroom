@@ -246,6 +246,17 @@ delimited_index_connection::delimited_index_connection(
     write_fut.wait();
   }
 
+  // If we finish indexing a connection and we're in QUOTED_FIELD, warn about
+  // an unclosed quote
+  if (state == QUOTED_FIELD) {
+    errors->add_parse_error(total_read, cols, "closing quote", "end of file");
+    // Finalize the current record so we don't lose all data
+    if (columns_ > 0) {
+      resolve_columns(total_read, cols, columns_, idx_[1], errors);
+    }
+    idx_[1].push_back(total_read);
+  }
+
   if (should_close) {
     cpp11::package("base")["close"](in);
   }

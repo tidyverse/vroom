@@ -179,7 +179,7 @@ start_indexing:
 
     std::vector<std::future<void>> threads;
 
-    if (nmax_set) {
+    if (num_threads == 1) {
       threads.emplace_back(std::async(std::launch::async, [&] {
         n_max = n_max > lines_read ? n_max - lines_read : 0;
         index_region(
@@ -200,7 +200,8 @@ start_indexing:
             errors,
             pb,
             num_threads,
-            file_size / 100);
+            file_size / 100,
+            true);
       }));
     } else {
       threads = parallel_for(
