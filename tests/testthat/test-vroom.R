@@ -1233,6 +1233,47 @@ test_that("vroom works with quotes in comments", {
   )
 })
 
+# https://github.com/tidyverse/vroom/issues/484
+test_that("unclosed quote is not a silent failure (file)", {
+  f <- withr::local_tempfile(lines = c("A,B,C", "a,b,\"c", "d,e,f"))
+
+  expect_warning(
+    res <- vroom(f, show_col_types = FALSE, altrep = FALSE),
+    class = "vroom_parse_issue"
+  )
+  # we don't currently expect to recover and find two rows
+  # but we should find 1 row of data
+  expect_equal(dim(res), c(1, 3))
+})
+
+# https://github.com/tidyverse/vroom/issues/484
+test_that("unclosed quote is not a silent failure (connection)", {
+  f <- withr::local_tempfile(lines = c("A,B,C", "a,b,\"c", "d,e,f"))
+
+  expect_warning(
+    res <- vroom(file(f), show_col_types = FALSE, altrep = FALSE),
+    class = "vroom_parse_issue"
+  )
+  expect_equal(dim(res), c(1, 3))
+})
+
+# https://github.com/tidyverse/vroom/issues/484
+test_that("unclosed quote is not a silent failure (multi-threaded attempt)", {
+  # goal is to create enough rows that vroom attempts multi-threaded indexing
+  # empirically confirmed that this is sufficient with some (temporary) print
+  # statements
+  lines <- c("A,B,C", rep("a,b,c", 100), "d,e,\"f", rep("g,h,i", 100))
+  f <- withr::local_tempfile(lines = lines)
+
+  expect_warning(
+    res <- vroom(f, show_col_types = FALSE, altrep = FALSE, num_threads = 2),
+    class = "vroom_parse_issue"
+  )
+  # 100 rows before the unclosed quote, plus 1 row where the unclosed quote
+  # consumes everything after it (including the 100 "g,h,i" lines)
+  expect_equal(dim(res), c(101, 3))
+})
+
 test_that("vroom works with comments at end of lines (https://github.com/tidyverse/readr/issues/1309)", {
   test_vroom(
     I("foo,bar#\n1,#\n2#\n#\n3\n"),
