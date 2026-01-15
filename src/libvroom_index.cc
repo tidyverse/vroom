@@ -1,6 +1,23 @@
 #include "libvroom_index.h"
 
+#include <chrono>
+#include <R.h>
+
 namespace vroom {
+
+// Timing helper
+static bool timing_enabled = false;
+
+#define TIME_BLOCK(name, code) \
+  do { \
+    auto t0 = std::chrono::high_resolution_clock::now(); \
+    code; \
+    auto t1 = std::chrono::high_resolution_clock::now(); \
+    if (timing_enabled) { \
+      auto ms = std::chrono::duration<double, std::milli>(t1 - t0).count(); \
+      Rprintf("  %s: %.2f ms\n", name, ms); \
+    } \
+  } while(0)
 
 libvroom_index::libvroom_index(
     const char* filename,
@@ -24,8 +41,12 @@ libvroom_index::libvroom_index(
       escape_double_(escape_double),
       escape_backslash_(escape_backslash) {
 
+  // Enable timing for debugging
+  timing_enabled = (getenv("VROOM_TIMING") != nullptr);
+  if (timing_enabled) Rprintf("libvroom_index construction:\n");
+
   // Load file using libvroom
-  buffer_ = libvroom::load_file(filename);
+  TIME_BLOCK("load_file", buffer_ = libvroom::load_file(filename));
   if (!buffer_.valid()) {
     throw std::runtime_error("Failed to load file: " + std::string(filename));
   }
@@ -59,7 +80,7 @@ libvroom_index::libvroom_index(
   (void)progress;
 
   // Parse - this creates the index but doesn't build ValueExtractor yet
-  result_ = parser.parse(buffer_.data(), buffer_.size(), opts);
+  TIME_BLOCK("parser.parse", result_ = parser.parse(buffer_.data(), buffer_.size(), opts));
 
   if (!result_.successful) {
     if (errors && result_.has_errors()) {
@@ -79,13 +100,15 @@ libvroom_index::libvroom_index(
   result_.set_has_header(has_header);
 
   // Get dimensions from libvroom (this triggers lazy ValueExtractor creation once)
-  columns_ = result_.num_columns();
-  rows_ = result_.num_rows();
+  TIME_BLOCK("num_columns", columns_ = result_.num_columns());
+  TIME_BLOCK("num_rows", rows_ = result_.num_rows());
 
   // Cache headers
   if (has_header_ && columns_ > 0) {
-    headers_ = result_.header();
+    TIME_BLOCK("header", headers_ = result_.header());
   }
+
+  if (timing_enabled) Rprintf("  rows: %zu, columns: %zu\n", rows_, columns_);
 }
 
 std::pair<size_t, size_t> libvroom_index::get_field_bounds(size_t row, size_t col) const {
