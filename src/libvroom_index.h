@@ -1,16 +1,5 @@
 #pragma once
 
-// clang-format off
-#ifdef __clang__
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Wsign-compare"
-#include <mio/shared_mmap.hpp>
-# pragma clang diagnostic pop
-#else
-#include <mio/shared_mmap.hpp>
-#endif
-// clang-format on
-
 #include "index.h"
 #include "vroom_errors.h"
 
@@ -66,33 +55,41 @@ public:
 
   /**
    * @brief Column iterator for ALTREP vector access.
+   * Optimized to use linear index like delimited_index for fast iteration.
    */
   class column_iterator : public base_iterator {
     std::shared_ptr<const libvroom_index> idx_;
     size_t column_;
-    size_t row_;  // Current row (0-based, data rows only)
+    bool is_last_;   // Is this the last column? (for CRLF handling)
+    size_t i_;       // Linear index (file_row * columns + col)
 
   public:
     column_iterator(std::shared_ptr<const libvroom_index> idx, size_t column)
-        : idx_(idx), column_(column), row_(0) {}
+        : idx_(idx),
+          column_(column),
+          is_last_(column == (idx_->columns_ - 1)),
+          // Start at first data row (accounting for header)
+          i_((idx_->has_header_ * idx_->columns_) + column_) {}
 
-    void next() override { ++row_; }
-    void advance(ptrdiff_t n) override { row_ += n; }
+    void next() override { i_ += idx_->columns_; }
+    void advance(ptrdiff_t n) override { i_ += idx_->columns_ * n; }
 
     bool equal_to(const base_iterator& it) const override {
-      return row_ == static_cast<const column_iterator*>(&it)->row_;
+      return i_ == static_cast<const column_iterator*>(&it)->i_;
     }
 
     ptrdiff_t distance_to(const base_iterator& it) const override {
-      return static_cast<ptrdiff_t>(static_cast<const column_iterator*>(&it)->row_) -
-             static_cast<ptrdiff_t>(row_);
+      ptrdiff_t i = i_;
+      ptrdiff_t j = static_cast<const column_iterator*>(&it)->i_;
+      ptrdiff_t columns = idx_->columns_;
+      return (j - i) / columns;
     }
 
     string value() const override;
     column_iterator* clone() const override { return new column_iterator(*this); }
     string at(ptrdiff_t n) const override;
     std::string filename() const override { return idx_->filename_; }
-    size_t index() const override { return row_; }
+    size_t index() const override { return i_ / idx_->columns_; }
     size_t position() const override;
 
     virtual ~column_iterator() = default;
@@ -166,7 +163,6 @@ private:
   // File data
   std::string filename_;
   libvroom::FileBuffer buffer_;
-  mio::mmap_source mmap_;  // For direct memory access to field data
 
   // Parsed result
   libvroom::Parser::Result result_;
@@ -184,7 +180,25 @@ private:
   // Cached header values for efficient header access
   std::vector<std::string> headers_;
 
-  // Helper to get string view for a cell
+  // Cached linear index for O(1) field access
+  // Stores byte positions of field separators in row-major order
+  // Field (row, col) ends at linear_idx_[row * columns_ + col]
+  // This avoids the overhead of libvroom's ValueExtractor (sorting, abstraction layers)
+  std::vector<uint64_t> linear_idx_;
+
+  // Fast field accessor using linear index directly
+  // i = file_row * columns + col (includes header row if present)
+  // is_last = whether this is the last column (for CRLF handling)
+  string get_trimmed_val(size_t i, bool is_last) const;
+
+  // Helper to get field bounds directly from cached linear index
+  // Returns {start, end} byte positions for field (row, col)
+  std::pair<size_t, size_t> get_field_bounds(size_t row, size_t col) const;
+
+  // Get cell bounds by linear index
+  std::pair<size_t, size_t> get_cell(size_t i) const;
+
+  // Helper to get string view for a cell using cached linear index
   std::string_view get_field(size_t row, size_t col) const;
 
   // Helper to get header value
@@ -192,6 +206,9 @@ private:
 
   // Helper to get field with quote/escape processing
   string get_processed_field(size_t row, size_t col) const;
+
+  // Build the cached linear index from libvroom's interleaved ParseIndex
+  void build_linear_index();
 };
 
 } // namespace vroom
