@@ -28,8 +28,8 @@ convert_connection <- function(in_con, out_con, from, to) {
   .Call(`_vroom_convert_connection`, in_con, out_con, from, to)
 }
 
-vroom_ <- function(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip_empty_rows, skip, n_max, progress, col_names, col_types, col_select, name_repair, id, na, locale, guess_max, num_threads, altrep) {
-  .Call(`_vroom_vroom_`, inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip_empty_rows, skip, n_max, progress, col_names, col_types, col_select, name_repair, id, na, locale, guess_max, num_threads, altrep)
+vroom_ <- function(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip_empty_rows, skip, n_max, progress, col_names, col_types, col_select, name_repair, id, na, locale, guess_max, num_threads, altrep, use_libvroom) {
+  .Call(`_vroom_vroom_`, inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip_empty_rows, skip, n_max, progress, col_names, col_types, col_select, name_repair, id, na, locale, guess_max, num_threads, altrep, use_libvroom)
 }
 
 has_trailing_newline <- function(filename) {

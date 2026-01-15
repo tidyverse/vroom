@@ -32,7 +32,8 @@ public:
       const bool skip_empty_rows,
       const std::shared_ptr<vroom_errors>& errors,
       const size_t num_threads,
-      const bool progress);
+      const bool progress,
+      const bool use_libvroom = false);
 
   // For fixed width files
   index_collection(

@@ -209,7 +209,8 @@ vroom <- function(
   num_threads = vroom_threads(),
   progress = vroom_progress(),
   show_col_types = NULL,
-  .name_repair = "unique"
+  .name_repair = "unique",
+  use_libvroom = FALSE
 ) {
   # vroom does not support newlines as the delimiter, just as the EOL, so just
   # assign a value that should never appear in CSV text as the delimiter,
@@ -275,7 +276,8 @@ vroom <- function(
     n_max = n_max,
     altrep = vroom_altrep(altrep),
     num_threads = num_threads,
-    progress = progress
+    progress = progress,
+    use_libvroom = use_libvroom
   )
 
   # If no rows, expand columns to be the same length and names as the spec

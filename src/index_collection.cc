@@ -5,6 +5,7 @@
 #include "fixed_width_index_connection.h"
 #include "index.h"
 #include "index_collection.h"
+#include "libvroom_index.h"
 #include <memory>
 #include <utility>
 
@@ -130,7 +131,8 @@ std::shared_ptr<vroom::index> make_delimited_index(
     const bool skip_empty_rows,
     const std::shared_ptr<vroom_errors>& errors,
     const size_t num_threads,
-    const bool progress) {
+    const bool progress,
+    const bool use_libvroom = false) {
 
   auto connection_or_filepath = cpp11::package("vroom")["connection_or_filepath"];
 
@@ -139,6 +141,7 @@ std::shared_ptr<vroom::index> make_delimited_index(
   bool is_connection = TYPEOF(x) != STRSXP;
 
   if (is_connection) {
+    // libvroom doesn't support connections, fall back to original implementation
     return std::make_shared<vroom::delimited_index_connection>(
         x,
         delim,
@@ -157,6 +160,26 @@ std::shared_ptr<vroom::index> make_delimited_index(
   }
 
   auto filename = cpp11::as_cpp<std::string>(x);
+
+  // Use libvroom_index if requested and we have a file (not connection)
+  if (use_libvroom) {
+    return std::make_shared<vroom::libvroom_index>(
+        filename.c_str(),
+        delim,
+        quote,
+        trim_ws,
+        escape_double,
+        escape_backslash,
+        has_header,
+        skip,
+        n_max,
+        comment,
+        skip_empty_rows,
+        errors,
+        num_threads,
+        progress);
+  }
+
   return std::make_shared<vroom::delimited_index>(
       filename.c_str(),
       delim,
@@ -232,7 +255,8 @@ index_collection::index_collection(
     const bool skip_empty_rows,
     const std::shared_ptr<vroom_errors>& errors,
     const size_t num_threads,
-    const bool progress)
+    const bool progress,
+    const bool use_libvroom)
     : rows_(0), columns_(0) {
 
   std::shared_ptr<vroom::index> first = make_delimited_index(
@@ -249,7 +273,8 @@ index_collection::index_collection(
       skip_empty_rows,
       errors,
       num_threads,
-      progress);
+      progress,
+      use_libvroom);
 
   indexes_.push_back(first);
   columns_ = first->num_columns();
@@ -271,7 +296,8 @@ index_collection::index_collection(
         skip_empty_rows,
         errors,
         num_threads,
-        progress);
+        progress,
+        use_libvroom);
 
     check_column_consistency(first, idx, has_header, i);
 
