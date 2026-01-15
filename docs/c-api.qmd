@@ -1,0 +1,594 @@
+---
+title: "C API Reference"
+---
+
+## Overview
+
+libvroom provides a C API wrapper for integration with C projects and FFI bindings to other languages (Python, Rust, Go, etc.). The C API mirrors the C++ functionality with opaque handles and explicit memory management.
+
+Include the header:
+
+```c
+#include <libvroom_c.h>
+```
+
+## Quick Start
+
+```c
+#include <libvroom_c.h>
+#include <stdio.h>
+
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <file.csv>\n", argv[0]);
+        return 1;
+    }
+
+    // Load file
+    libvroom_buffer_t* buffer = libvroom_buffer_load_file(argv[1]);
+    if (!buffer) {
+        fprintf(stderr, "Failed to load file\n");
+        return 1;
+    }
+
+    // Create components
+    libvroom_parser_t* parser = libvroom_parser_create();
+    libvroom_error_collector_t* errors = libvroom_error_collector_create(
+        LIBVROOM_MODE_PERMISSIVE, 100);
+    libvroom_index_t* index = libvroom_index_create(
+        libvroom_buffer_length(buffer),
+        libvroom_recommended_threads());
+
+    // Parse with auto-detection
+    libvroom_detection_result_t* detection = NULL;
+    libvroom_error_t err = libvroom_parse_auto(
+        parser, buffer, index, errors, &detection);
+
+    if (err == LIBVROOM_OK && detection) {
+        printf("Parsed successfully!\n");
+        printf("Columns: %zu\n", libvroom_detection_result_columns(detection));
+        printf("Has header: %s\n",
+               libvroom_detection_result_has_header(detection) ? "yes" : "no");
+        printf("Confidence: %.2f\n", libvroom_detection_result_confidence(detection));
+    } else {
+        fprintf(stderr, "Parse failed: %s\n", libvroom_error_string(err));
+    }
+
+    // Check for errors
+    if (libvroom_error_collector_has_errors(errors)) {
+        size_t count = libvroom_error_collector_count(errors);
+        printf("Warnings/errors: %zu\n", count);
+
+        for (size_t i = 0; i < count; i++) {
+            libvroom_parse_error_t error;
+            if (libvroom_error_collector_get(errors, i, &error) == LIBVROOM_OK) {
+                printf("Line %zu: %s\n", error.line, error.message);
+            }
+        }
+    }
+
+    // Cleanup
+    libvroom_detection_result_destroy(detection);
+    libvroom_index_destroy(index);
+    libvroom_error_collector_destroy(errors);
+    libvroom_parser_destroy(parser);
+    libvroom_buffer_destroy(buffer);
+
+    return (err == LIBVROOM_OK) ? 0 : 1;
+}
+```
+
+## Version Information
+
+```c
+// Get version string (e.g., "0.1.0")
+const char* version = libvroom_version();
+
+// Version macros
+#define LIBVROOM_VERSION_MAJOR 0
+#define LIBVROOM_VERSION_MINOR 1
+#define LIBVROOM_VERSION_PATCH 0
+```
+
+## Error Handling
+
+### Error Codes
+
+```c
+typedef enum libvroom_error {
+    LIBVROOM_OK = 0,
+    LIBVROOM_ERROR_UNCLOSED_QUOTE = 1,
+    LIBVROOM_ERROR_INVALID_QUOTE_ESCAPE = 2,
+    LIBVROOM_ERROR_QUOTE_IN_UNQUOTED = 3,
+    LIBVROOM_ERROR_INCONSISTENT_FIELDS = 4,
+    LIBVROOM_ERROR_FIELD_TOO_LARGE = 5,
+    LIBVROOM_ERROR_MIXED_LINE_ENDINGS = 6,
+    LIBVROOM_ERROR_INVALID_UTF8 = 8,
+    LIBVROOM_ERROR_NULL_BYTE = 9,
+    LIBVROOM_ERROR_EMPTY_HEADER = 10,
+    LIBVROOM_ERROR_DUPLICATE_COLUMNS = 11,
+    LIBVROOM_ERROR_AMBIGUOUS_SEPARATOR = 12,
+    LIBVROOM_ERROR_FILE_TOO_LARGE = 13,
+    LIBVROOM_ERROR_IO = 14,
+    LIBVROOM_ERROR_INTERNAL = 15,
+    LIBVROOM_ERROR_NULL_POINTER = 100,
+    LIBVROOM_ERROR_INVALID_ARGUMENT = 101,
+    LIBVROOM_ERROR_OUT_OF_MEMORY = 102,
+    LIBVROOM_ERROR_INVALID_HANDLE = 103
+} libvroom_error_t;
+
+// Get human-readable error message
+const char* libvroom_error_string(libvroom_error_t error);
+```
+
+### Severity Levels
+
+```c
+typedef enum libvroom_severity {
+    LIBVROOM_SEVERITY_WARNING = 0,  // Non-fatal, parser continues
+    LIBVROOM_SEVERITY_ERROR = 1,    // Recoverable, can skip row
+    LIBVROOM_SEVERITY_FATAL = 2     // Unrecoverable, parsing must stop
+} libvroom_severity_t;
+```
+
+### Error Modes
+
+```c
+typedef enum libvroom_error_mode {
+    LIBVROOM_MODE_STRICT = 0,      // Stop on first error
+    LIBVROOM_MODE_PERMISSIVE = 1,  // Collect all errors, try to recover
+    LIBVROOM_MODE_BEST_EFFORT = 2  // Ignore errors, parse what's possible
+} libvroom_error_mode_t;
+```
+
+## Buffer Management
+
+### Loading Data
+
+```c
+// Load from file
+libvroom_buffer_t* buffer = libvroom_buffer_load_file("data.csv");
+
+// Create from memory
+const uint8_t* data = ...;
+size_t length = ...;
+libvroom_buffer_t* buffer = libvroom_buffer_create(data, length);
+```
+
+### Accessing Buffer Data
+
+```c
+// Get data pointer
+const uint8_t* data = libvroom_buffer_data(buffer);
+
+// Get length
+size_t length = libvroom_buffer_length(buffer);
+```
+
+### Cleanup
+
+```c
+libvroom_buffer_destroy(buffer);
+```
+
+## Encoding Detection and Transcoding
+
+libvroom automatically detects and handles different file encodings.
+
+### Supported Encodings
+
+```c
+typedef enum libvroom_encoding {
+    LIBVROOM_ENCODING_UTF8 = 0,     // UTF-8 (default)
+    LIBVROOM_ENCODING_UTF8_BOM = 1, // UTF-8 with BOM
+    LIBVROOM_ENCODING_UTF16_LE = 2, // UTF-16 Little Endian
+    LIBVROOM_ENCODING_UTF16_BE = 3, // UTF-16 Big Endian
+    LIBVROOM_ENCODING_UTF32_LE = 4, // UTF-32 Little Endian
+    LIBVROOM_ENCODING_UTF32_BE = 5, // UTF-32 Big Endian
+    LIBVROOM_ENCODING_LATIN1 = 6,   // Latin-1 (ISO-8859-1)
+    LIBVROOM_ENCODING_UNKNOWN = 7   // Unknown encoding
+} libvroom_encoding_t;
+
+// Get encoding name
+const char* name = libvroom_encoding_string(encoding);
+```
+
+### Loading with Auto-Transcoding
+
+```c
+// Load file with automatic encoding detection and transcoding
+libvroom_load_result_t* result = libvroom_load_file_with_encoding("data.csv");
+
+if (result) {
+    // Get the UTF-8 data
+    const uint8_t* data = libvroom_load_result_data(result);
+    size_t length = libvroom_load_result_length(result);
+
+    // Get encoding info
+    libvroom_encoding_t encoding = libvroom_load_result_encoding(result);
+    double confidence = libvroom_load_result_confidence(result);
+    bool transcoded = libvroom_load_result_was_transcoded(result);
+
+    printf("Encoding: %s\n", libvroom_encoding_string(encoding));
+    printf("Confidence: %.2f\n", confidence);
+    printf("Was transcoded: %s\n", transcoded ? "yes" : "no");
+
+    // Create buffer for parsing
+    libvroom_buffer_t* buffer = libvroom_load_result_to_buffer(result);
+
+    // Parse...
+
+    libvroom_buffer_destroy(buffer);
+    libvroom_load_result_destroy(result);
+}
+```
+
+### Manual Encoding Detection
+
+```c
+libvroom_encoding_result_t encoding_result;
+libvroom_error_t err = libvroom_detect_encoding(data, length, &encoding_result);
+
+if (err == LIBVROOM_OK) {
+    printf("Encoding: %s\n", libvroom_encoding_string(encoding_result.encoding));
+    printf("BOM length: %zu\n", encoding_result.bom_length);
+    printf("Confidence: %.2f\n", encoding_result.confidence);
+    printf("Needs transcoding: %s\n", encoding_result.needs_transcoding ? "yes" : "no");
+}
+```
+
+## Dialect Configuration
+
+### Creating a Dialect
+
+```c
+// Create custom dialect
+libvroom_dialect_t* dialect = libvroom_dialect_create(
+    ';',    // delimiter
+    '"',    // quote_char
+    '\0',   // escape_char (unused with double_quote=true)
+    true    // double_quote (escape quotes as "")
+);
+```
+
+### Accessing Dialect Properties
+
+```c
+char delim = libvroom_dialect_delimiter(dialect);
+char quote = libvroom_dialect_quote_char(dialect);
+char escape = libvroom_dialect_escape_char(dialect);
+bool dbl_quote = libvroom_dialect_double_quote(dialect);
+```
+
+### Cleanup
+
+```c
+libvroom_dialect_destroy(dialect);
+```
+
+## Error Collector
+
+### Creating an Error Collector
+
+```c
+// Create collector with mode and max error limit
+libvroom_error_collector_t* errors = libvroom_error_collector_create(
+    LIBVROOM_MODE_PERMISSIVE,  // error mode
+    1000                        // max errors to collect
+);
+```
+
+### Checking Errors
+
+```c
+// Check if any errors occurred
+if (libvroom_error_collector_has_errors(errors)) {
+    // Check for fatal errors
+    if (libvroom_error_collector_has_fatal(errors)) {
+        fprintf(stderr, "Fatal error occurred\n");
+    }
+
+    // Get error count
+    size_t count = libvroom_error_collector_count(errors);
+
+    // Get each error
+    for (size_t i = 0; i < count; i++) {
+        libvroom_parse_error_t error;
+        if (libvroom_error_collector_get(errors, i, &error) == LIBVROOM_OK) {
+            printf("Error at line %zu, column %zu: %s\n",
+                   error.line, error.column, error.message);
+        }
+    }
+}
+```
+
+### Error Structure
+
+```c
+typedef struct libvroom_parse_error {
+    libvroom_error_t code;       // Error code
+    libvroom_severity_t severity; // Warning, error, or fatal
+    size_t line;                  // 1-based line number
+    size_t column;                // 1-based column number
+    size_t byte_offset;           // Byte position in file
+    const char* message;          // Error message
+    const char* context;          // Context around error
+} libvroom_parse_error_t;
+```
+
+**Important**: The `message` and `context` pointers are valid only until the error collector is destroyed or cleared. Copy strings if you need to persist them.
+
+### Cleanup
+
+```c
+libvroom_error_collector_clear(errors);   // Clear errors
+libvroom_error_collector_destroy(errors); // Free collector
+```
+
+## Index Structure
+
+The index stores field boundary positions from parsing.
+
+### Creating an Index
+
+```c
+libvroom_index_t* index = libvroom_index_create(
+    buffer_length,                   // Size of data
+    libvroom_recommended_threads()   // Number of threads
+);
+```
+
+### Accessing Index Data
+
+```c
+// Number of threads used
+size_t threads = libvroom_index_num_threads(index);
+
+// Number of columns detected
+size_t columns = libvroom_index_columns(index);
+
+// Index count per thread
+uint64_t count_t0 = libvroom_index_count(index, 0);
+
+// Total index count
+uint64_t total = libvroom_index_total_count(index);
+
+// Raw positions array
+const uint64_t* positions = libvroom_index_positions(index);
+```
+
+### Cleanup
+
+```c
+libvroom_index_destroy(index);
+```
+
+## Parser
+
+### Creating a Parser
+
+```c
+libvroom_parser_t* parser = libvroom_parser_create();
+```
+
+### Parsing with Known Dialect
+
+```c
+libvroom_dialect_t* dialect = libvroom_dialect_create(',', '"', '\0', true);
+
+libvroom_error_t err = libvroom_parse(
+    parser,
+    buffer,
+    index,
+    errors,
+    dialect    // Can be NULL for auto-detection
+);
+
+libvroom_dialect_destroy(dialect);
+```
+
+### Parsing with Auto-Detection
+
+```c
+libvroom_detection_result_t* detection = NULL;
+
+libvroom_error_t err = libvroom_parse_auto(
+    parser,
+    buffer,
+    index,
+    errors,
+    &detection  // Receives detection result
+);
+
+if (detection) {
+    // Use detection results...
+    libvroom_detection_result_destroy(detection);
+}
+```
+
+### Cleanup
+
+```c
+libvroom_parser_destroy(parser);
+```
+
+## Dialect Detection
+
+### Detecting Without Parsing
+
+```c
+libvroom_detection_result_t* detection = libvroom_detect_dialect(buffer);
+
+if (detection && libvroom_detection_result_success(detection)) {
+    // Get detected dialect
+    libvroom_dialect_t* dialect = libvroom_detection_result_dialect(detection);
+
+    // Get detection info
+    size_t columns = libvroom_detection_result_columns(detection);
+    size_t rows_analyzed = libvroom_detection_result_rows_analyzed(detection);
+    bool has_header = libvroom_detection_result_has_header(detection);
+    double confidence = libvroom_detection_result_confidence(detection);
+
+    // Check for warnings
+    const char* warning = libvroom_detection_result_warning(detection);
+    if (warning) {
+        printf("Warning: %s\n", warning);
+    }
+
+    libvroom_dialect_destroy(dialect);
+}
+
+libvroom_detection_result_destroy(detection);
+```
+
+## Utility Functions
+
+```c
+// Get recommended thread count for this system
+size_t threads = libvroom_recommended_threads();
+
+// Get required SIMD padding size
+size_t padding = libvroom_simd_padding();
+```
+
+## Complete Example: Parse and Iterate
+
+```c
+#include <libvroom_c.h>
+#include <stdio.h>
+#include <string.h>
+
+void process_csv(const char* filename) {
+    // Load with encoding detection
+    libvroom_load_result_t* load_result = libvroom_load_file_with_encoding(filename);
+    if (!load_result) {
+        fprintf(stderr, "Failed to load file\n");
+        return;
+    }
+
+    // Create buffer from load result
+    libvroom_buffer_t* buffer = libvroom_load_result_to_buffer(load_result);
+    const uint8_t* data = libvroom_buffer_data(buffer);
+    size_t length = libvroom_buffer_length(buffer);
+
+    // Create parser components
+    libvroom_parser_t* parser = libvroom_parser_create();
+    libvroom_error_collector_t* errors = libvroom_error_collector_create(
+        LIBVROOM_MODE_PERMISSIVE, 100);
+    libvroom_index_t* index = libvroom_index_create(
+        length, libvroom_recommended_threads());
+
+    // Parse with auto-detection
+    libvroom_detection_result_t* detection = NULL;
+    libvroom_error_t err = libvroom_parse_auto(parser, buffer, index, errors, &detection);
+
+    if (err == LIBVROOM_OK) {
+        size_t num_columns = libvroom_detection_result_columns(detection);
+        uint64_t total_fields = libvroom_index_total_count(index);
+        size_t num_rows = total_fields / num_columns;
+
+        printf("File: %s\n", filename);
+        printf("Encoding: %s\n",
+               libvroom_encoding_string(libvroom_load_result_encoding(load_result)));
+        printf("Columns: %zu\n", num_columns);
+        printf("Rows: %zu (including header)\n", num_rows);
+        printf("Confidence: %.2f%%\n",
+               libvroom_detection_result_confidence(detection) * 100);
+
+        // Access field positions
+        const uint64_t* positions = libvroom_index_positions(index);
+        size_t threads = libvroom_index_num_threads(index);
+
+        // Print first few field offsets
+        printf("First 10 field offsets: ");
+        for (size_t i = 0; i < 10 && i < total_fields; i++) {
+            // Interleaved by thread
+            size_t thread = i % threads;
+            size_t local_idx = i / threads;
+            size_t actual_idx = thread * (total_fields / threads + 1) + local_idx;
+            if (actual_idx < total_fields) {
+                printf("%llu ", (unsigned long long)positions[actual_idx]);
+            }
+        }
+        printf("\n");
+    }
+
+    // Check for errors
+    if (libvroom_error_collector_has_errors(errors)) {
+        printf("Parse errors:\n");
+        size_t count = libvroom_error_collector_count(errors);
+        for (size_t i = 0; i < count && i < 5; i++) {
+            libvroom_parse_error_t error;
+            libvroom_error_collector_get(errors, i, &error);
+            printf("  Line %zu: %s\n", error.line, error.message);
+        }
+        if (count > 5) {
+            printf("  ... and %zu more\n", count - 5);
+        }
+    }
+
+    // Cleanup
+    libvroom_detection_result_destroy(detection);
+    libvroom_index_destroy(index);
+    libvroom_error_collector_destroy(errors);
+    libvroom_parser_destroy(parser);
+    libvroom_buffer_destroy(buffer);
+    libvroom_load_result_destroy(load_result);
+}
+
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <file.csv>\n", argv[0]);
+        return 1;
+    }
+
+    printf("libvroom version: %s\n\n", libvroom_version());
+    process_csv(argv[1]);
+    return 0;
+}
+```
+
+## Building with the C API
+
+### CMake
+
+```cmake
+# Using FetchContent
+include(FetchContent)
+FetchContent_Declare(libvroom
+    GIT_REPOSITORY https://github.com/jimhester/libvroom.git
+    GIT_TAG main
+)
+set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
+set(BUILD_BENCHMARKS OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(libvroom)
+
+add_executable(my_c_app main.c)
+target_link_libraries(my_c_app PRIVATE libvroom_lib)
+```
+
+### Manual Compilation
+
+```bash
+gcc -std=c11 main.c -I/path/to/include -L/path/to/lib -lvroom -lstdc++ -lm -o my_app
+```
+
+## Thread Safety
+
+- Parser objects are NOT thread-safe. Create one parser per thread.
+- Buffer objects can be shared for reading across threads.
+- Index objects should not be shared during parsing.
+- Error collectors are NOT thread-safe.
+
+## Memory Management Rules
+
+1. Every `*_create()` or `*_load*()` function returns an allocated object that must be freed with the corresponding `*_destroy()` function.
+2. Never free pointers returned by accessor functions (e.g., `libvroom_buffer_data()`).
+3. Strings in `libvroom_parse_error_t` are valid only until the error collector is modified or destroyed.
+4. Detection result dialect must be freed separately with `libvroom_dialect_destroy()`.
+
+## See Also
+
+- [Getting Started](getting-started.qmd) - Basic usage with C++ API
+- [Integration Guide](integration-guide.qmd) - CMake integration options
+- [Error Handling](error-handling.qmd) - Error modes and recovery

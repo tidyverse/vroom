@@ -1,0 +1,367 @@
+---
+title: "Integration Guide"
+---
+
+This guide covers how to integrate libvroom into your own projects using various build systems and configurations.
+
+## CMake FetchContent (Recommended)
+
+The simplest way to integrate libvroom is using CMake's FetchContent module. This automatically downloads and builds libvroom and its dependencies.
+
+```cmake
+cmake_minimum_required(VERSION 3.14)
+project(my_project)
+
+include(FetchContent)
+
+FetchContent_Declare(
+  libvroom
+  GIT_REPOSITORY https://github.com/jimhester/libvroom.git
+  GIT_TAG main  # Or use a specific version tag
+)
+
+# Optional: Disable tests and benchmarks for faster builds
+set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
+set(BUILD_BENCHMARKS OFF CACHE BOOL "" FORCE)
+
+FetchContent_MakeAvailable(libvroom)
+
+add_executable(my_app main.cpp)
+target_link_libraries(my_app PRIVATE libvroom_lib)
+```
+
+This approach handles all dependencies (Google Highway for SIMD) automatically.
+
+## Pre-built Static Library
+
+To use libvroom as a pre-built static library:
+
+### 1. Build the Static Library
+
+```bash
+git clone https://github.com/jimhester/libvroom.git
+cd libvroom
+
+# Build static library only (no tests/benchmarks)
+cmake -B build -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_TESTING=OFF \
+      -DBUILD_BENCHMARKS=OFF
+cmake --build build
+```
+
+This produces `build/liblibvroom_lib.a` (or `libvroom_lib.lib` on Windows).
+
+### 2. Install Headers and Library
+
+```bash
+# Create installation directories
+mkdir -p /usr/local/include/libvroom
+mkdir -p /usr/local/lib
+
+# Copy headers
+cp include/*.h /usr/local/include/libvroom/
+
+# Copy library
+cp build/liblibvroom_lib.a /usr/local/lib/
+```
+
+### 3. Link in Your Project
+
+**CMake:**
+
+```cmake
+find_library(LIBVROOM_LIB libvroom_lib PATHS /usr/local/lib)
+find_package(hwy REQUIRED)  # Highway must also be installed
+
+add_executable(my_app main.cpp)
+target_include_directories(my_app PRIVATE /usr/local/include/libvroom)
+target_link_libraries(my_app PRIVATE ${LIBVROOM_LIB} hwy pthread)
+```
+
+**Manual compilation:**
+
+```bash
+g++ -std=c++17 -O3 -I/usr/local/include/libvroom \
+    main.cpp -o my_app \
+    -L/usr/local/lib -llibvroom_lib -lhwy -lpthread
+```
+
+## Shared Library Build
+
+To build libvroom as a shared library (`.so`/`.dylib`/`.dll`):
+
+### 1. Build the Shared Library
+
+```bash
+cmake -B build -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_SHARED_LIBS=ON \
+      -DBUILD_TESTING=OFF \
+      -DBUILD_BENCHMARKS=OFF
+cmake --build build
+```
+
+This produces `build/liblibvroom_lib.so` (Linux), `build/liblibvroom_lib.dylib` (macOS), or `build/libvroom_lib.dll` (Windows).
+
+### 2. Install and Link
+
+```bash
+# Install (adjust path as needed)
+cp build/liblibvroom_lib.so /usr/local/lib/
+ldconfig  # Linux only: update library cache
+```
+
+**CMake:**
+
+```cmake
+find_library(LIBVROOM_LIB libvroom_lib PATHS /usr/local/lib)
+
+add_executable(my_app main.cpp)
+target_include_directories(my_app PRIVATE /usr/local/include/libvroom)
+target_link_libraries(my_app PRIVATE ${LIBVROOM_LIB})
+```
+
+## Embedding as a Subdirectory
+
+If you want to include libvroom directly in your project's source tree:
+
+```
+my_project/
+├── CMakeLists.txt
+├── src/
+│   └── main.cpp
+└── third_party/
+    └── libvroom/    # Clone or copy libvroom here
+```
+
+```cmake
+cmake_minimum_required(VERSION 3.14)
+project(my_project)
+
+# Disable libvroom extras
+set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
+set(BUILD_BENCHMARKS OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(third_party/libvroom)
+
+add_executable(my_app src/main.cpp)
+target_link_libraries(my_app PRIVATE libvroom_lib)
+```
+
+## Minimal Example Project
+
+Here's a complete minimal example that parses a CSV file:
+
+**CMakeLists.txt:**
+
+```cmake
+cmake_minimum_required(VERSION 3.14)
+project(csv_example CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include(FetchContent)
+
+FetchContent_Declare(
+  libvroom
+  GIT_REPOSITORY https://github.com/jimhester/libvroom.git
+  GIT_TAG main
+)
+set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
+set(BUILD_BENCHMARKS OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(libvroom)
+
+add_executable(csv_example main.cpp)
+target_link_libraries(csv_example PRIVATE libvroom_lib pthread)
+```
+
+**main.cpp:**
+
+```cpp
+#include <libvroom.h>
+#include <iostream>
+
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " <file.csv>\n";
+        return 1;
+    }
+
+    // Load CSV file with SIMD-aligned memory
+    libvroom::FileBuffer buffer = libvroom::load_file(argv[1]);
+    if (!buffer.valid()) {
+        std::cerr << "Failed to load file\n";
+        return 1;
+    }
+
+    // Create parser and error collector
+    libvroom::Parser parser(4);  // Use 4 threads
+    libvroom::ErrorCollector errors(libvroom::ErrorMode::PERMISSIVE);
+
+    // Parse with automatic dialect detection
+    auto result = parser.parse(buffer.data(), buffer.size(), {.errors = &errors});
+
+    if (result.success()) {
+        std::cout << "Parsed successfully!\n";
+        std::cout << "Columns: " << result.num_columns() << "\n";
+        std::cout << "Delimiter: '" << result.dialect.delimiter << "'\n";
+        std::cout << "Total field indexes: " << result.total_indexes() << "\n";
+    } else {
+        std::cerr << "Parse failed\n";
+    }
+
+    if (errors.has_errors()) {
+        std::cerr << errors.summary() << "\n";
+    }
+
+    return result.success() ? 0 : 1;
+}
+```
+
+**Build and run:**
+
+```bash
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+./build/csv_example data.csv
+```
+
+## C API Usage
+
+libvroom also provides a C API for integration with C projects or other languages via FFI:
+
+**c_example.c:**
+
+```c
+#include <libvroom_c.h>
+#include <stdio.h>
+
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <file.csv>\n", argv[0]);
+        return 1;
+    }
+
+    // Load file
+    libvroom_buffer_t* buffer = libvroom_buffer_load_file(argv[1]);
+    if (!buffer) {
+        fprintf(stderr, "Failed to load file\n");
+        return 1;
+    }
+
+    // Create parser components
+    libvroom_parser_t* parser = libvroom_parser_create();
+    libvroom_error_collector_t* errors = libvroom_error_collector_create(
+        LIBVROOM_MODE_PERMISSIVE, 100);
+    libvroom_index_t* index = libvroom_index_create(
+        libvroom_buffer_length(buffer),
+        libvroom_recommended_threads());
+
+    // Auto-detect dialect and parse
+    libvroom_detection_result_t* detection = NULL;
+    libvroom_error_t err = libvroom_parse_auto(
+        parser, buffer, index, errors, &detection);
+
+    if (err == LIBVROOM_OK && detection) {
+        printf("Parsed successfully!\n");
+        printf("Columns: %zu\n", libvroom_detection_result_columns(detection));
+        printf("Confidence: %.2f\n", libvroom_detection_result_confidence(detection));
+        printf("Has header: %s\n",
+               libvroom_detection_result_has_header(detection) ? "yes" : "no");
+    } else {
+        fprintf(stderr, "Parse failed: %s\n", libvroom_error_string(err));
+    }
+
+    // Cleanup
+    libvroom_detection_result_destroy(detection);
+    libvroom_index_destroy(index);
+    libvroom_error_collector_destroy(errors);
+    libvroom_parser_destroy(parser);
+    libvroom_buffer_destroy(buffer);
+
+    return (err == LIBVROOM_OK) ? 0 : 1;
+}
+```
+
+## Linking Requirements
+
+libvroom requires the following when linking:
+
+| Dependency | Notes |
+|------------|-------|
+| `pthread` | Required for multi-threading support (Linux/macOS) |
+| `hwy` (Highway) | SIMD abstraction library (automatically included via FetchContent) |
+
+When using FetchContent or add_subdirectory, these are handled automatically. For manual linking, ensure both libraries are available.
+
+## Build Options Reference
+
+libvroom provides several CMake options to customize your build:
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `BUILD_TESTING` | `ON` | Build test executables |
+| `BUILD_BENCHMARKS` | `ON` | Build benchmark executables |
+| `BUILD_SHARED_LIBS` | `OFF` | Build shared library instead of static |
+| `ENABLE_COVERAGE` | `OFF` | Enable code coverage reporting (gcov) |
+| `ENABLE_LLVM_COVERAGE` | `OFF` | Enable LLVM source-based coverage (requires Clang) |
+| `LIBVROOM_ENABLE_ARROW` | `OFF` | Enable Apache Arrow output integration |
+| `ENABLE_FUZZING` | `OFF` | Enable fuzz testing targets (requires Clang) |
+
+For production use, disable tests and benchmarks for faster builds:
+
+```bash
+cmake -B build \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_TESTING=OFF \
+      -DBUILD_BENCHMARKS=OFF
+```
+
+## Platform Support
+
+libvroom supports the following platforms and SIMD instruction sets:
+
+| Platform | Architecture | SIMD Support | CI Tested |
+|----------|--------------|--------------|-----------|
+| Linux | x86-64 | SSE4.2, AVX2 | Yes |
+| Linux | ARM64 | NEON | Yes |
+| macOS | x86-64 | SSE4.2, AVX2 | Yes |
+| macOS | ARM64 (Apple Silicon) | NEON | Yes |
+
+Windows is not currently tested in CI but may work with appropriate compiler setup.
+
+The library uses [Google Highway](https://github.com/google/highway) for portable SIMD abstraction, which automatically selects the best available instruction set at runtime.
+
+## Compiler Requirements
+
+- **C++ Standard:** C++17 or later
+- **Compilers:** GCC 8+, Clang 7+, Apple Clang 11+
+- **CMake:** 3.14 or later
+
+## Troubleshooting
+
+### "Highway not found" error
+
+Ensure Highway is being built along with libvroom. When using FetchContent, this happens automatically. For manual builds, install Highway first:
+
+```bash
+git clone https://github.com/google/highway.git
+cd highway
+cmake -B build -DCMAKE_BUILD_TYPE=Release \
+      -DHWY_ENABLE_TESTS=OFF \
+      -DHWY_ENABLE_EXAMPLES=OFF
+cmake --build build
+sudo cmake --install build
+```
+
+### Linker errors with threading
+
+Add `-lpthread` to your linker flags or `target_link_libraries(... pthread)` in CMake.
+
+### SIMD instruction errors at runtime
+
+This may indicate a CPU that doesn't support the compiled SIMD instructions. Highway handles this via runtime dispatch, but ensure you're using a Release build which enables proper optimization.
+
+### Undefined symbols
+
+Ensure all headers from `include/` are accessible and that you're linking against `libvroom_lib` (not just `libvroom`).

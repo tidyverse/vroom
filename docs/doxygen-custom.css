@@ -1,0 +1,247 @@
+/* Custom overrides to match Quarto cosmo theme */
+
+:root {
+    /* Match cosmo theme primary color */
+    --primary-color: #2780e3;
+    --primary-dark-color: #1967be;
+    --primary-light-color: #4a9ae8;
+
+    /* Fragment (code) colors */
+    --fragment-background: #f8f9fa;
+    --fragment-foreground: #212529;
+
+    /* Page background */
+    --page-background-color: #ffffff;
+    --page-foreground-color: #212529;
+
+    /* Sidebar */
+    --side-nav-background: #f8f9fa;
+
+    /* Links */
+    --link-color: #2780e3;
+}
+
+/* Navigation header styling */
+#titlearea {
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Match font stack */
+body, table, div, p, dl {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+code, pre, tt {
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Softer shadows */
+#nav-tree, .sm-dox {
+    box-shadow: none;
+    border-right: 1px solid #dee2e6;
+}
+
+/* ============================================
+   Quarto-style navbar integration
+   ============================================ */
+
+.quarto-navbar {
+    background-color: #fff !important;
+    padding: 0.5rem 1rem !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1030 !important;
+    border-bottom: 1px solid #dee2e6 !important;
+    font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+.quarto-navbar-container {
+    display: flex !important;
+    align-items: center !important;
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+    gap: 0 !important;
+}
+
+.quarto-navbar .quarto-navbar-brand,
+.quarto-navbar-brand {
+    color: rgb(84, 85, 85) !important;
+    font-size: 1.25rem !important;
+    font-weight: 400 !important;
+    text-decoration: none !important;
+    margin-right: 1rem !important;
+    padding: 0.3125rem 0 !important;
+    background: none !important;
+}
+
+.quarto-navbar .quarto-navbar-brand:hover,
+.quarto-navbar-brand:hover {
+    color: rgb(31, 78, 182) !important;
+    text-decoration: none !important;
+}
+
+.quarto-navbar-nav {
+    display: flex !important;
+    gap: 0 !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+}
+
+.quarto-navbar .quarto-navbar-nav a,
+.quarto-navbar-nav a {
+    color: rgb(84, 85, 85) !important;
+    text-decoration: none !important;
+    padding: 0.5rem 0.6rem !important;
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+    border-radius: 0 !important;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out !important;
+    background: none !important;
+    border: 0 !important;
+}
+
+.quarto-navbar .quarto-navbar-nav a:hover,
+.quarto-navbar-nav a:hover {
+    color: rgba(31, 78, 182, 0.8) !important;
+    background: none !important;
+}
+
+.quarto-navbar .quarto-navbar-nav a.active,
+.quarto-navbar-nav a.active {
+    color: rgb(31, 78, 182) !important;
+    background: none !important;
+}
+
+.quarto-navbar-right {
+    margin-left: auto !important;
+}
+
+.quarto-navbar .quarto-navbar-icon,
+.quarto-navbar-icon {
+    color: #545555 !important;
+    padding: 0.5rem !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.quarto-navbar .quarto-navbar-icon:hover,
+.quarto-navbar-icon:hover {
+    color: #2780e3 !important;
+}
+
+/* Adjust main content to account for navbar */
+#top {
+    margin-top: 0;
+}
+
+/* Hide the default Doxygen title area since we have our navbar */
+#titlearea {
+    display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .quarto-navbar-nav {
+        flex-wrap: wrap;
+    }
+
+    .quarto-navbar-nav a {
+        padding: 0.4rem 0.5rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* ============================================
+   Force Source Sans Pro font on navbar
+   ============================================ */
+
+html .quarto-navbar,
+html .quarto-navbar *,
+html .quarto-navbar a,
+html .quarto-navbar-brand,
+html .quarto-navbar-nav,
+html .quarto-navbar-nav a {
+    font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+/* ============================================
+   Move sidebar to right side (Quarto-style)
+   ============================================ */
+
+/* Reverse the layout: content left, sidebar right */
+#side-nav {
+    order: 2 !important;
+    left: auto !important;
+    right: 0 !important;
+    border-left: 1px solid #dee2e6 !important;
+    border-right: none !important;
+}
+
+#doc-content {
+    order: 1 !important;
+    margin-left: 0 !important;
+    margin-right: 250px !important;
+}
+
+/* Container uses flexbox for ordering */
+#container {
+    display: flex !important;
+    flex-direction: row !important;
+}
+
+/* Adjust splitbar for right-side nav */
+#splitbar {
+    right: 250px !important;
+    left: auto !important;
+}
+
+/* Fix nav-tree border */
+#nav-tree {
+    border-right: none !important;
+    border-left: 1px solid #dee2e6 !important;
+}
+
+/* ============================================
+   Search bar styling
+   ============================================ */
+
+/* Show search in the top navbar area */
+#MSearchBox {
+    display: inline-block !important;
+    margin-right: 1rem !important;
+}
+
+#main-nav {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    padding: 0.5rem 1rem !important;
+    background: #f8f9fa !important;
+    border-bottom: 1px solid #dee2e6 !important;
+}
+
+/* Style search input to match Quarto */
+#MSearchBox .left,
+#MSearchBox .right {
+    background: transparent !important;
+}
+
+#MSearchField {
+    font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-size: 0.875rem !important;
+    padding: 0.375rem 0.75rem !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 0.25rem !important;
+    background-color: #fff !important;
+}
+
+#MSearchField:focus {
+    border-color: #2780e3 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 0.2rem rgba(39, 128, 227, 0.25) !important;
+}
+
+/* Search results dropdown */
+#MSearchResultsWindow {
+    font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}

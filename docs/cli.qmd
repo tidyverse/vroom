@@ -1,0 +1,508 @@
+---
+title: "CLI Reference"
+---
+
+```{bash}
+#| include: false
+# Set up PATH to include the vroom binary for examples
+export PATH="../build:$PATH"
+```
+
+## Overview
+
+The `vroom` command line tool provides a user-friendly way to work with CSV files using the high-performance libvroom parser. It supports common operations like counting rows, displaying data, selecting columns, and detecting file formats.
+
+## Installation
+
+After building libvroom (see [Getting Started](getting-started.qmd)), the `vroom` binary is located in your build directory. To use it conveniently:
+
+### Option 1: Add Build Directory to PATH (Temporary)
+
+Add the build directory to your PATH for the current session:
+
+```bash
+export PATH="/path/to/libvroom/build:$PATH"
+```
+
+For example, if you built in the default location:
+
+```bash
+export PATH="$(pwd)/build:$PATH"
+```
+
+### Option 2: Install to System Location (Permanent)
+
+Copy the binary to a system location that's already in your PATH:
+
+```bash
+# Install for all users (requires sudo)
+sudo cp build/vroom /usr/local/bin/
+
+# Or install for current user only
+mkdir -p ~/.local/bin
+cp build/vroom ~/.local/bin/
+# Ensure ~/.local/bin is in your PATH (add to .bashrc or .zshrc if needed)
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+Verify the installation:
+
+```bash
+vroom -v
+```
+
+## Basic Usage
+
+```bash
+vroom <command> [options] [csvfile]
+```
+
+If `csvfile` is omitted or `-` is specified, vroom reads from standard input.
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `count` | Count the number of rows |
+| `head` | Display the first N rows (default: 10) |
+| `tail` | Display the last N rows (default: 10) |
+| `sample` | Display N random rows from throughout the file |
+| `select` | Select specific columns by name or index |
+| `info` | Display information about the CSV file |
+| `schema` | Display inferred schema (column names, types, nullable) |
+| `stats` | Display statistical summary for each column |
+| `pretty` | Pretty-print the CSV with aligned columns |
+| `dialect` | Detect and display the CSV dialect (delimiter, quoting, etc.) |
+
+## Options
+
+### General Options
+
+| Option | Description |
+|--------|-------------|
+| `-h` | Show help message |
+| `-v` | Show version information |
+
+### Data Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-n <num>` | Number of rows (for head/tail/sample/pretty) | 10 |
+| `-c <cols>` | Comma-separated column names or indices (for select) | - |
+| `-H` | No header row in input | (header assumed) |
+| `-m <size>` | Sample size for schema/stats (0=all rows) | 0 |
+
+### Performance Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-t <threads>` | Number of threads (1-1024) | auto (hardware concurrency) |
+
+### Caching Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--cache` | Enable index caching (stores `.vidx` file next to source) | disabled |
+| `--cache-dir <dir>` | Store cache files in specified directory (implies `--cache`) | - |
+| `--no-cache` | Disable index caching | (default) |
+
+See [Index Caching](caching.qmd) for detailed documentation on how caching works.
+
+### Dialect Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-d <delim>` | Field delimiter: `comma`, `tab`, `semicolon`, `pipe`, or any single character. Disables auto-detection when specified. | auto-detect |
+| `-q <char>` | Quote character | `"` |
+
+### Encoding Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-e <enc>` | Override encoding detection with specified encoding | auto-detect |
+
+Supported encoding values: `utf-8`, `utf-16le`, `utf-16be`, `utf-32le`, `utf-32be`, `latin1`, `windows-1252`
+
+### Output Options
+
+| Option | Description | Commands |
+|--------|-------------|----------|
+| `-j` | Output in JSON format | dialect, schema, stats |
+| `-S, --strict` | Exit with code 1 on any parse error | all |
+
+### Sampling Options
+
+| Option | Description | Commands |
+|--------|-------------|----------|
+| `-s <seed>` | Random seed for reproducible sampling | sample |
+
+## Input and Output Formats
+
+### Input Sources
+
+vroom can read CSV data from multiple sources:
+
+- **Files**: Provide the path to a CSV file
+- **stdin**: Omit the filename or use `-` to read from standard input
+
+### Output Formats
+
+- **CSV output** (head, tail, sample, select): Valid CSV maintaining the input delimiter
+- **Plain text** (count): Single number
+- **Structured text** (info, pretty, schema, stats): Human-readable formatted output
+- **JSON** (dialect -j, schema -j, stats -j): Machine-readable format for scripting
+
+### Supported Delimiters
+
+| Name | Character | Example Usage |
+|------|-----------|---------------|
+| comma | `,` | `-d comma` or `-d ,` |
+| tab | `\t` | `-d tab` |
+| semicolon | `;` | `-d semicolon` or `-d ";"` |
+| pipe | `\|` | `-d pipe` or `-d "\|"` |
+| any character | varies | `-d :` |
+
+## Command Details
+
+### count
+
+Count the number of data rows in a CSV file. Uses an optimized SIMD algorithm that doesn't build a full index, making it significantly faster than other commands.
+
+```{bash}
+vroom count ../test/data/real_world/contacts.csv
+```
+
+### head
+
+Display the first N rows of a CSV file (default: 10).
+
+```{bash}
+vroom head -n 2 ../test/data/real_world/contacts.csv
+```
+
+### tail
+
+Display the last N rows of a CSV file (default: 10). Uses a memory-efficient streaming approach that only keeps the last N rows in memory.
+
+```{bash}
+vroom tail -n 2 ../test/data/real_world/contacts.csv
+```
+
+### sample
+
+Display N random rows from the file. Uses reservoir sampling for memory efficiency.
+
+```{bash}
+vroom sample -n 3 ../test/data/real_world/contacts.csv
+```
+
+Use `-s` for reproducible sampling:
+
+```{bash}
+vroom sample -n 3 -s 42 ../test/data/real_world/contacts.csv
+```
+
+### select
+
+Select specific columns by name or index.
+
+By name:
+
+```{bash}
+vroom select -c Name,Email ../test/data/real_world/contacts.csv
+```
+
+By index (0-based):
+
+```{bash}
+vroom select -c 0,2 ../test/data/real_world/contacts.csv
+```
+
+### info
+
+Display metadata about a CSV file:
+
+```{bash}
+vroom info ../test/data/real_world/contacts.csv
+```
+
+### schema
+
+Infer and display the schema (column types) of a CSV file:
+
+```{bash}
+vroom schema ../test/data/real_world/contacts.csv
+```
+
+JSON output for scripting:
+
+```{bash}
+vroom schema -j ../test/data/real_world/contacts.csv
+```
+
+Use `-m` to sample a subset of rows for large files:
+
+```bash
+vroom schema -m 1000 large_file.csv
+```
+
+### stats
+
+Display statistical summary for each column (count, nulls, min, max, mean for numeric columns):
+
+```{bash}
+vroom stats ../test/data/real_world/contacts.csv
+```
+
+JSON output:
+
+```{bash}
+vroom stats -j ../test/data/real_world/contacts.csv
+```
+
+### pretty
+
+Pretty-print the CSV with aligned columns:
+
+```{bash}
+vroom pretty -n 3 ../test/data/real_world/contacts.csv
+```
+
+### dialect
+
+Detect and display the CSV dialect (delimiter, quoting style, line endings):
+
+```{bash}
+vroom dialect ../test/data/separators/semicolon.csv
+```
+
+JSON output for scripting:
+
+```{bash}
+vroom dialect -j ../test/data/separators/tab.csv
+```
+
+## Working with Different Delimiters
+
+By default, vroom auto-detects the delimiter. You can also specify it explicitly.
+
+Tab-separated:
+
+```{bash}
+vroom count -d tab ../test/data/separators/tab.csv
+```
+
+Semicolon-separated (common in European locales):
+
+```{bash}
+vroom head -d semicolon ../test/data/separators/semicolon.csv
+```
+
+Pipe-separated:
+
+```{bash}
+vroom select -d pipe -c 0,1 ../test/data/separators/pipe.csv
+```
+
+## Working with Quoted Fields
+
+CSV files often contain fields with special characters that require quoting:
+
+```{bash}
+vroom pretty ../test/data/quoted/embedded_separators.csv
+```
+
+Fields containing embedded quotes (escaped as `""`):
+
+```{bash}
+vroom pretty ../test/data/quoted/escaped_quotes.csv
+```
+
+## Multi-threaded Parsing
+
+By default, vroom uses all available CPU cores for parallel parsing. You can limit the thread count if needed:
+
+```{bash}
+vroom count -t 4 ../test/data/real_world/contacts.csv
+```
+
+## Files Without Headers
+
+When the CSV has no header row, use `-H`:
+
+```{bash}
+vroom count -H ../test/data/basic/simple_no_header.csv
+```
+
+```{bash}
+vroom select -H -c 0,1,2 ../test/data/basic/simple_no_header.csv
+```
+
+## Reading from stdin
+
+Pipe data directly to vroom:
+
+```{bash}
+cat ../test/data/basic/simple.csv | vroom count
+```
+
+Use `-` to explicitly read from stdin:
+
+```{bash}
+vroom head - < ../test/data/basic/simple.csv
+```
+
+## Strict Mode
+
+Use `-S` or `--strict` to exit with code 1 if any parse errors are encountered:
+
+```bash
+vroom head --strict data.csv
+```
+
+This is useful in scripts where you want to fail fast on malformed data.
+
+## Common Workflows
+
+### Inspecting an Unknown CSV File
+
+When working with a CSV file of unknown format:
+
+```bash
+# First, detect the dialect
+vroom dialect data.csv
+
+# Then view the structure and sample data
+vroom info data.csv
+vroom schema data.csv
+vroom pretty -n 5 data.csv
+```
+
+### Extracting Specific Columns
+
+Extract columns for further processing:
+
+```bash
+# By name (requires header row)
+vroom select -c id,email,status data.csv > extracted.csv
+
+# By index (works with or without header)
+vroom select -c 0,3,5 data.csv > extracted.csv
+```
+
+### Processing Large Files
+
+For large files, vroom automatically uses multiple threads:
+
+```bash
+# Count rows quickly (uses optimized SIMD row counter)
+vroom count large_file.csv
+
+# View last rows without loading entire file into memory
+vroom tail -n 20 large_file.csv
+
+# Random sample for quick inspection
+vroom sample -n 100 large_file.csv
+
+# Schema inference with sampling for very large files
+vroom schema -m 10000 huge_file.csv
+```
+
+### Pipeline Integration
+
+vroom works well in Unix pipelines:
+
+```bash
+# Filter and process
+cat data.csv | vroom select -c name,email | grep "@company.com"
+
+# Chain with other tools
+vroom head -n 100 huge.csv | vroom pretty
+
+# Extract stats in JSON for programmatic use
+vroom stats -j data.csv | jq '.columns[] | select(.type == "integer")'
+```
+
+### Working with Non-Standard Formats
+
+For files with non-standard delimiters:
+
+```bash
+# Colon-separated (e.g., /etc/passwd format)
+vroom count -d : passwords.txt
+
+# Custom single-character delimiter
+vroom head -d "^" caret_delimited.csv
+```
+
+### Working with Non-UTF-8 Files
+
+vroom auto-detects encoding and transcodes to UTF-8:
+
+```bash
+# Auto-detect encoding (default)
+vroom head utf16_file.csv
+
+# Force specific encoding
+vroom head -e utf-16le windows_export.csv
+```
+
+## Performance Tips
+
+1. **Thread count**: By default, vroom uses all available hardware threads. For large files (>1MB), this provides the best performance. Use `-t 1` to force single-threaded operation if needed.
+
+2. **Row counting**: The `count` command uses an optimized SIMD algorithm that doesn't build a full index, making it significantly faster than other commands for simply counting rows.
+
+3. **Tail command**: Uses a streaming approach with a circular buffer, so memory usage scales with output size rather than input file size.
+
+4. **Auto-detection overhead**: Auto-detection adds minimal overhead for the first few KB of data. If processing many files with known formats, specifying `-d` explicitly can provide a small performance improvement.
+
+5. **stdin vs files**: Reading from files allows memory mapping and parallel processing. When possible, prefer file arguments over stdin for large datasets.
+
+6. **Schema/stats sampling**: For very large files, use `-m` to sample a subset of rows for type inference, which can be much faster while still providing accurate results.
+
+5. **Index caching**: For files you access repeatedly, enable caching with `--cache`. The first parse creates a `.vidx` cache file; subsequent reads are 2-3x faster by loading the pre-computed index directly. See [Index Caching](caching.qmd) for details.
+
+## Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| 0 | Success |
+| 1 | Error (invalid arguments, file not found, parse error, or dialect detection failure) |
+
+## Dialect Detection Details
+
+The `dialect` command analyzes the CSV structure and reports:
+
+- **Delimiter**: The field separator character
+- **Quote**: The character used for quoting fields (typically `"`)
+- **Escape**: How quotes are escaped within fields (`double-quote` for `""` or `backslash` for `\"`)
+- **Line ending**: LF (Unix), CRLF (Windows), CR (old Mac), or mixed
+- **Encoding**: Detected character encoding (UTF-8, UTF-16, etc.)
+- **Has header**: Whether the first row appears to be a header
+- **Columns**: Number of columns detected
+- **Confidence**: Detection confidence level (0-100%)
+
+The command also outputs suggested CLI flags for use with other vroom commands.
+
+### JSON Output Format
+
+When using the `-j` flag, the dialect command outputs machine-readable JSON:
+
+```json
+{
+  "delimiter": ",",
+  "quote": "\"",
+  "escape": "double",
+  "line_ending": "LF",
+  "has_header": true,
+  "columns": 3,
+  "confidence": 1
+}
+```
+
+This format is useful for scripting and automation. For example, you can extract the delimiter for use in other tools:
+
+```bash
+delimiter=$(vroom dialect -j data.csv | jq -r '.delimiter')
+```
