@@ -33,7 +33,7 @@ VROOM_SOURCES = \
 	Iconv.cpp LocaleInfo.cpp altrep.cc cpp11.cpp \
 	delimited_index.cc delimited_index_connection.cc \
 	fixed_width_index_connection.cc gen.cc grisu3.c guess_type.cc \
-	iconv_file.cc index_collection.cc vroom.cc vroom_big_int.cc \
+	iconv_file.cc index_collection.cc libvroom_index.cc vroom.cc vroom_big_int.cc \
 	vroom_chr.cc vroom_date.cc vroom_dbl.cc vroom_dttm.cc \
 	vroom_errors.cpp vroom_fct.cc vroom_fwf.cc vroom_int.cc \
 	vroom_num.cc vroom_rle.cc vroom_time.cc vroom_write.cc
