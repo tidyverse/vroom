@@ -1,0 +1,135 @@
+name: Python Wheels
+
+# Build wheels on main (fast builds) and releases (full builds)
+# PRs are tested by python.yml workflow - no wheel builds needed
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-14, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Only set up QEMU for release builds (slow emulation)
+      - name: Set up QEMU (Linux ARM64)
+        if: runner.os == 'Linux' && startsWith(github.ref, 'refs/tags/v')
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.22
+        with:
+          package-dir: python
+          output-dir: wheelhouse
+        env:
+          # Build for Python 3.9-3.12
+          CIBW_BUILD: cp39-* cp310-* cp311-* cp312-*
+          # Skip 32-bit builds and musllinux
+          CIBW_SKIP: "*-win32 *-manylinux_i686 *-musllinux*"
+          # Linux: x86_64 only on main (fast), add aarch64 on releases (slow QEMU)
+          CIBW_ARCHS_LINUX: ${{ startsWith(github.ref, 'refs/tags/v') && 'x86_64 aarch64' || 'x86_64' }}
+          # Build both Intel and ARM on macOS (native, fast)
+          CIBW_ARCHS_MACOS: x86_64 arm64
+          # Build x64 on Windows (ARM64 support requires additional work)
+          CIBW_ARCHS_WINDOWS: AMD64
+          # macOS: require 10.15+ for std::filesystem support
+          CIBW_ENVIRONMENT_MACOS: MACOSX_DEPLOYMENT_TARGET=10.15
+          # Test requirements - use pytest only, skip Arrow tests in wheel build
+          # Full Arrow tests run in the main Python CI workflow
+          CIBW_TEST_REQUIRES: pytest>=7.0
+          # Run only basic tests (exclude Arrow tests which require pyarrow)
+          CIBW_TEST_COMMAND: pytest {package}/tests/test_basic.py -v --tb=short
+          # Skip testing on emulated architectures (slow) and cross-compiled x86_64 on ARM (Rosetta issues)
+          CIBW_TEST_SKIP: "*-*linux_aarch64 *-macosx_x86_64"
+          # Repair wheels to bundle dependencies
+          CIBW_REPAIR_WHEEL_COMMAND_LINUX: auditwheel repair -w {dest_dir} {wheel}
+          CIBW_REPAIR_WHEEL_COMMAND_MACOS: delocate-wheel -w {dest_dir} -v {wheel}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}
+          path: ./wheelhouse/*.whl
+
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build sdist
+        run: |
+          cd python
+          pip install build
+          python -m build --sdist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: python/dist/*.tar.gz
+
+  publish:
+    name: Publish to PyPI
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    environment:
+      name: pypi
+      url: https://pypi.org/p/vroom-csv
+    permissions:
+      id-token: write
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: wheels-*
+          path: dist
+          merge-multiple: true
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdist
+          path: dist
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  publish-testpypi:
+    name: Publish to TestPyPI
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/vroom-csv
+    permissions:
+      id-token: write
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: wheels-*
+          path: dist
+          merge-multiple: true
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdist
+          path: dist
+
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+

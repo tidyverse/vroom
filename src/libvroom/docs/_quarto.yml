@@ -1,0 +1,50 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "*.qmd"
+    - "api-reference/**/*.qmd"
+
+website:
+  title: "libvroom"
+  description: "High-performance CSV parser using SIMD instructions"
+  repo-url: https://github.com/jimhester/libvroom
+  repo-actions: [issue]
+
+  navbar:
+    left:
+      - text: "Home"
+        href: index.qmd
+      - text: "Getting Started"
+        href: getting-started.qmd
+      - text: "Integration Guide"
+        href: integration-guide.qmd
+      - text: "CLI"
+        href: cli.qmd
+      - text: "Streaming Parser"
+        href: streaming.qmd
+      - text: "Caching"
+        href: caching.qmd
+      - text: "C API"
+        href: c-api.qmd
+      - text: "Architecture"
+        href: architecture.qmd
+      - text: "Error Handling"
+        href: error-handling.qmd
+      - text: "Benchmarks"
+        href: benchmarks.qmd
+      - text: "API Reference"
+        href: api-reference/index.qmd
+    right:
+      - icon: github
+        href: https://github.com/jimhester/libvroom
+
+  page-footer:
+    center: "Built with [Quarto](https://quarto.org/) and [Doxygen](https://doxygen.nl/)"
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-copy: true
+    code-overflow: wrap

@@ -1,0 +1,313 @@
+---
+title: "Index Caching"
+---
+
+Index caching allows libvroom to store parsed CSV field indexes on disk, enabling near-instant access on subsequent reads of the same file. This feature is particularly valuable for large CSV files that are read repeatedly.
+
+## Overview
+
+When you parse a CSV file, libvroom builds an in-memory index of all field boundaries. This index enables fast random access to any row or column. With index caching enabled:
+
+1. **First read**: libvroom parses the file normally and writes a `.vidx` cache file
+2. **Subsequent reads**: libvroom memory-maps the cache file for instant index access
+
+### Performance Benefits
+
+- **2-3x faster** parsing on cache hits for typical files
+- **94% reduction** in memory usage for large files (via memory mapping)
+- **Zero parsing overhead** on cache hits (the index is loaded directly)
+
+### Cache Invalidation
+
+The cache automatically invalidates when the source file changes. libvroom stores the source file's modification time and size in the cache header, and validates these on every read. If either has changed, the cache is regenerated.
+
+## CLI Usage
+
+### Enable Caching
+
+Use the `--cache` flag to enable index caching:
+
+```bash
+# Enable caching (stores .vidx file next to source)
+vroom head --cache data.csv
+
+# First run: parses file, writes data.csv.vidx
+# Subsequent runs: loads from cache (much faster)
+```
+
+### Custom Cache Directory
+
+Use `--cache-dir` to store cache files in a specific directory:
+
+```bash
+# Store cache files in /tmp/csv-cache
+vroom head --cache-dir /tmp/csv-cache data.csv
+
+# Cache file created at: /tmp/csv-cache/<hash>.vidx
+```
+
+This is useful when:
+
+- The source directory is read-only
+- You want to centralize cache files
+- You're using a fast temporary filesystem
+
+### Force Cache Refresh
+
+Use `--no-cache` to disable caching and force a fresh parse:
+
+```bash
+# Force re-parse even if cache exists
+vroom head --no-cache data.csv
+```
+
+### CLI Options Summary
+
+| Option | Description |
+|--------|-------------|
+| `--cache` | Enable index caching (stores `.vidx` next to source) |
+| `--cache-dir <path>` | Store cache files in specified directory |
+| `--no-cache` | Disable caching (default behavior) |
+
+::: {.callout-note}
+## Stdin Not Supported
+Index caching only works with file inputs. When reading from stdin, caching is automatically disabled since there's no file path to associate with the cache.
+:::
+
+## C++ API Usage
+
+### Basic Caching
+
+```cpp
+#include <libvroom.h>
+
+int main() {
+    // Load file
+    libvroom::FileBuffer buffer = libvroom::load_file("data.csv");
+
+    // Create parser
+    libvroom::Parser parser;
+
+    // Parse with caching enabled
+    auto result = parser.parse(buffer.data(), buffer.size(),
+        libvroom::ParseOptions::with_cache("data.csv"));
+
+    // Check if cache was used
+    if (result.used_cache) {
+        std::cout << "Loaded from cache: " << result.cache_path << "\n";
+    } else {
+        std::cout << "Parsed fresh, cache written to: " << result.cache_path << "\n";
+    }
+
+    return 0;
+}
+```
+
+### Custom Cache Directory
+
+```cpp
+#include <libvroom.h>
+
+int main() {
+    libvroom::FileBuffer buffer = libvroom::load_file("data.csv");
+    libvroom::Parser parser;
+
+    // Parse with caching to a custom directory
+    auto result = parser.parse(buffer.data(), buffer.size(),
+        libvroom::ParseOptions::with_cache_dir("data.csv", "/tmp/csv-cache"));
+
+    return 0;
+}
+```
+
+### Manual Cache Configuration
+
+For full control over caching behavior:
+
+```cpp
+#include <libvroom.h>
+
+int main() {
+    libvroom::FileBuffer buffer = libvroom::load_file("data.csv");
+    libvroom::Parser parser;
+
+    // Build options manually
+    libvroom::ParseOptions options;
+    options.cache = libvroom::CacheConfig::defaults();  // or CacheConfig::custom("/path")
+    options.source_path = "data.csv";
+    options.force_cache_refresh = false;  // Set true to ignore existing cache
+
+    auto result = parser.parse(buffer.data(), buffer.size(), options);
+
+    return 0;
+}
+```
+
+### API Reference
+
+#### CacheConfig
+
+Controls where cache files are stored:
+
+```cpp
+struct CacheConfig {
+    enum Location {
+        SAME_DIR,    // Adjacent to source file (default)
+        XDG_CACHE,   // ~/.cache/libvroom/
+        CUSTOM       // User-specified directory
+    };
+
+    Location location = SAME_DIR;
+    std::string custom_path;  // Only used when location == CUSTOM
+    bool resolve_symlinks = true;  // Resolve symlinks before computing cache path
+
+    // Factory methods
+    static CacheConfig defaults();              // SAME_DIR mode
+    static CacheConfig xdg_cache();             // XDG_CACHE mode
+    static CacheConfig custom(const std::string& path);  // CUSTOM mode
+};
+```
+
+The `resolve_symlinks` option (default: `true`) ensures that files accessed through different symlink paths share a single cache file. When enabled, symlinks are resolved to their canonical paths before computing cache locations. This provides:
+
+- **Single cache per unique file** instead of duplicates for each symlink
+- **Consistent behavior** regardless of how the file is accessed
+- **More efficient storage utilization**
+
+Set to `false` if you need separate caches for different symlink paths pointing to the same file.
+
+#### ParseOptions (Cache-related fields)
+
+```cpp
+struct ParseOptions {
+    // ... other fields ...
+
+    std::optional<CacheConfig> cache = std::nullopt;  // nullopt = disabled
+    std::string source_path;                          // Required for caching
+    bool force_cache_refresh = false;                 // Force re-parse
+
+    // Convenience factories
+    static ParseOptions with_cache(const std::string& file_path);
+    static ParseOptions with_cache_dir(const std::string& file_path,
+                                       const std::string& cache_dir);
+};
+```
+
+#### Parser::Result (Cache-related fields)
+
+```cpp
+struct Result {
+    // ... other fields ...
+
+    bool used_cache{false};    // True if index was loaded from cache
+    std::string cache_path;    // Path to cache file (empty if disabled)
+};
+```
+
+## Cache File Format
+
+Cache files use the `.vidx` extension and contain:
+
+| Field | Size | Description |
+|-------|------|-------------|
+| Version | 1 byte | Cache format version (currently 1) |
+| Modification time | 8 bytes | Source file mtime (seconds since epoch) |
+| File size | 8 bytes | Source file size in bytes |
+| Columns | 8 bytes | Number of columns in CSV |
+| Thread count | 2 bytes | Number of parsing threads |
+| Index counts | 8 × threads bytes | Field count per thread |
+| Indexes | 8 × total bytes | Field boundary positions |
+
+### Cache Locations
+
+Depending on configuration, cache files are stored in different locations:
+
+| Mode | Location | Example |
+|------|----------|---------|
+| SAME_DIR (default) | Adjacent to source | `data.csv.vidx` |
+| XDG_CACHE | `~/.cache/libvroom/` | `~/.cache/libvroom/a1b2c3d4.vidx` |
+| CUSTOM | User-specified | `/tmp/cache/a1b2c3d4.vidx` |
+
+For XDG_CACHE and CUSTOM modes, filenames are generated using a hash of the absolute source file path to avoid collisions.
+
+### Symlink Handling
+
+When `resolve_symlinks` is enabled (default), symlinks are resolved to their canonical paths before computing cache locations:
+
+- **XDG_CACHE mode**: Multiple symlinks to the same file share a single cache entry
+- **CUSTOM mode**: Uses the resolved filename for cache file naming
+- **SAME_DIR mode**: Cache is placed adjacent to the accessed path (not the resolved target)
+
+This ensures efficient cache utilization when the same file is accessed via different symlinks, while SAME_DIR mode keeps cache files where you expect them.
+
+### Automatic Fallback
+
+When using SAME_DIR mode, if the source directory is not writable (e.g., read-only filesystem), libvroom automatically falls back to XDG_CACHE mode. This ensures caching works even for files in protected directories.
+
+## Performance Considerations
+
+### When to Use Caching
+
+Caching is most beneficial when:
+
+- **Reading the same file multiple times** in different sessions
+- **Working with large files** (>100MB) where parsing takes noticeable time
+- **Interactive applications** that need fast startup times
+- **Data analysis workflows** that repeatedly access the same datasets
+
+### When Not to Use Caching
+
+Caching may not be beneficial when:
+
+- **Processing files once** (streaming pipelines)
+- **Working with frequently changing files** (cache invalidation overhead)
+- **Limited disk space** (cache files are roughly proportional to file size)
+- **Reading from stdin** (not supported)
+
+### Cache File Size
+
+Cache file size depends on the CSV structure:
+
+- **Simple CSVs** (few columns, many rows): Small cache files
+- **Complex CSVs** (many columns, many embedded delimiters): Larger cache files
+
+As a rough estimate, cache files are typically 5-20% of the source file size.
+
+## Troubleshooting
+
+### Cache Not Being Used
+
+If caching appears to not be working:
+
+1. **Check source_path is set**: Caching requires a file path
+2. **Verify file accessibility**: The cache directory must be writable
+3. **Check file modification**: Cache invalidates when source changes
+4. **Confirm not using stdin**: Caching doesn't work with pipe input
+
+### Cache Corruption
+
+If you suspect a corrupted cache file:
+
+```bash
+# Remove the cache file
+rm data.csv.vidx
+
+# Or force refresh
+vroom head --no-cache data.csv
+vroom head --cache data.csv  # Creates fresh cache
+```
+
+### Permission Errors
+
+If you can't write cache files next to the source:
+
+```bash
+# Use a custom writable directory
+vroom head --cache-dir /tmp/csv-cache data.csv
+```
+
+Or in C++:
+
+```cpp
+options.cache = libvroom::CacheConfig::xdg_cache();  // Uses ~/.cache/libvroom/
+```

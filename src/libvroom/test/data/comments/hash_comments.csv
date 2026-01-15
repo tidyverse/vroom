@@ -1,0 +1,7 @@
+# This is a comment
+# Another comment
+name,value
+Alice,100
+# Comment in middle of data
+Bob,200
+Charlie,300

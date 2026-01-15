@@ -1,0 +1,119 @@
+# .work.toml - Work agent configuration
+# See: https://github.com/jimhester/dotfiles/blob/main/genai/work
+
+# Additional instructions appended to the worker prompt.
+# Customize for your project's specific conventions.
+worker_guidelines = """
+## Project-Specific Guidelines
+
+# Examples (uncomment and modify as needed):
+# - Run `make lint` before committing
+# - Use conventional commit messages (feat:, fix:, docs:, etc.)
+# - Update CHANGELOG.md for user-facing changes
+"""
+
+# Custom review guidelines for self-review.
+# If empty, uses sensible defaults.
+review_guidelines = """
+# libvroom Code Review Guidelines
+
+## IMPORTANT: Use Tools to Verify
+Before finalizing your review, use your available tools to verify concerns:
+- Use `Read` to examine full file contents (not just the diff)
+- Use `Grep` to search for related code patterns
+- Use `Bash(git show:*)` to see full commit details
+- Use `Bash(git blame:*)` to understand code history
+
+Don't just review the diff - read the actual files to check for integration bugs.
+
+## Project Context
+libvroom is a high-performance CSV parser using portable SIMD (Google Highway).
+Key architecture: two-pass speculative parsing with multi-threaded support.
+
+## REQUIREMENTS COMPLIANCE (check CLAUDE.md)
+
+The repository has a CLAUDE.md file with project guidelines. Check that changes:
+- Follow the Git workflow (no force pushing, merge not rebase)
+- Use proper commit message format
+- Don't introduce security vulnerabilities (OWASP top 10)
+- Avoid over-engineering - only make changes directly requested
+
+## BUG DETECTION (HIGH PRIORITY)
+
+Focus on bugs actually introduced by this commit:
+
+### Integer/Arithmetic Issues
+- Integer overflow in size calculations (especially when summing across threads)
+- Division by zero (check denominators before dividing)
+- Off-by-one errors in indexing, especially at chunk boundaries
+
+### Unicode/Character Handling
+CRITICAL: Always use WebSearch to verify Unicode ranges when code mentions them.
+
+For any code with comments like "Variation selectors (VS1-VS16)" or "Combining marks":
+1. Search for "Unicode variation selectors VS1 VS16 range" to find the actual codepoints
+2. Compare the actual range against the code's if-statement
+3. Example: If code says `0xFE20-0xFE2F` are "Variation selectors", search to verify
+   - VS1-VS16 are actually at 0xFE00-0xFE0F (not 0xFE20-0xFE2F!)
+   - 0xFE20-0xFE2F are "Combining Half Marks" - completely different!
+4. This is a HIGH severity bug if the ranges don't match
+
+Also check:
+- All codepoints mentioned in code are handled in relevant functions
+- If code defines VARIATION_SELECTOR_15 = 0xFE0E, verify codepoint_width() checks for 0xFE0E
+
+### Memory Safety
+- Buffer overflows in SIMD operations (64-byte chunk handling)
+- Use-after-free or double-free
+- Null pointer dereference
+- Resource leaks (file descriptors, memory)
+
+### CSV Parsing Specific
+- Quote handling edge cases (embedded delimiters, newlines in quoted fields)
+- Field boundary detection at SIMD chunk boundaries
+- State machine correctness (quote parity tracking)
+- RFC 4180 compliance
+
+### Concurrency
+- Race conditions in multi-threaded parsing
+- Thread safety of shared data structures
+- Proper synchronization
+
+### Arrow Integration
+- Type conversion correctness (especially string/binary with large sizes)
+- Offset array overflow (Arrow uses int32 offsets)
+- Memory alignment requirements
+
+## HISTORICAL CONTEXT
+
+Consider if the change:
+- Breaks patterns intentionally established in the codebase
+- Removes safety checks that were added for a reason
+- Changes behavior that other code depends on
+
+## IGNORE
+
+- Style/formatting issues (clang-format handles this)
+- Pre-existing issues not introduced by this commit
+- Missing tests unless CLAUDE.md specifically requires them
+- Minor nitpicks a senior engineer wouldn't flag
+
+## OUTPUT FORMAT
+
+For each real issue found:
+- State severity: HIGH (will cause bugs), MEDIUM (potential issue), LOW (minor)
+- Reference the specific file and line
+- Explain WHY it's a problem
+- Suggest a fix if obvious
+
+If no issues: State "No issues found." and briefly summarize what the commit does.
+"""
+
+# Review strictness: "strict", "normal", or "lenient"
+# - strict: Flag anything that could potentially be an issue
+# - normal: Balanced (default)
+# - lenient: Only flag clear, obvious bugs
+review_strictness = "normal"
+
+# Whether to require review before merge (in addition to before PR)
+require_pre_merge_review = true

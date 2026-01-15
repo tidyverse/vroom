@@ -1,0 +1,522 @@
+---
+title: "Getting Started"
+---
+
+## Requirements
+
+### Minimum Requirements
+
+| Component | Minimum Version | Notes |
+|-----------|-----------------|-------|
+| CMake | 3.14+ | Required for FetchContent |
+| C++ Standard | C++17 | `-std=c++17` |
+| Git | Any recent | For fetching dependencies |
+
+### Supported Compilers
+
+| Platform | Compiler | Minimum Version |
+|----------|----------|-----------------|
+| Linux | GCC | 8+ |
+| Linux | Clang | 7+ |
+| macOS | Apple Clang | 11+ (Xcode 11+) |
+| macOS | Clang (Homebrew) | 7+ |
+
+### Supported SIMD Architectures
+
+libvroom uses [Google Highway](https://github.com/google/highway) for portable SIMD acceleration:
+
+- **x86-64**: SSE4.2, AVX2
+- **ARM64**: NEON
+
+The library automatically detects and uses the best available SIMD instruction set at runtime.
+
+## Installation Methods
+
+### Method 1: Build from Source
+
+```bash
+# Clone the repository
+git clone https://github.com/jimhester/libvroom.git
+cd libvroom
+
+# Configure and build (Release mode)
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+```
+
+The build produces:
+
+- `build/liblibvroom_lib.a` - Static library
+- `build/vroom` - Command-line tool
+
+### Method 2: CMake FetchContent (Recommended for Projects)
+
+Add libvroom as a dependency in your CMakeLists.txt:
+
+```cmake
+include(FetchContent)
+FetchContent_Declare(libvroom
+  GIT_REPOSITORY https://github.com/jimhester/libvroom.git
+  GIT_TAG v0.1.0  # Pin to a specific version for reproducibility
+)
+FetchContent_MakeAvailable(libvroom)
+
+target_link_libraries(your_target PRIVATE libvroom_lib)
+```
+
+::: {.callout-tip}
+## Pin to Specific Versions
+For reproducible builds, always pin to a specific version tag (e.g., `v0.1.0`) rather than `main`. This ensures your project builds consistently even as libvroom is updated.
+:::
+
+### Method 3: Add as Git Submodule
+
+```bash
+git submodule add https://github.com/jimhester/libvroom.git external/libvroom
+```
+
+Then in your CMakeLists.txt:
+
+```cmake
+add_subdirectory(external/libvroom)
+target_link_libraries(your_target PRIVATE libvroom_lib)
+```
+
+## Build Options
+
+### CMake Configuration Options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `BUILD_TESTING` | ON | Build test executables |
+| `BUILD_BENCHMARKS` | ON | Build benchmark executables |
+| `BUILD_SHARED_LIBS` | OFF | Build shared library instead of static |
+| `ENABLE_COVERAGE` | OFF | Enable code coverage reporting |
+| `LIBVROOM_ENABLE_ARROW` | OFF | Enable Apache Arrow output integration |
+
+### Build Configurations
+
+#### Release Build (Recommended for Production)
+
+```bash
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+```
+
+#### Debug Build (For Development)
+
+```bash
+cmake -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build
+```
+
+#### Minimal Release Build (Library and CLI Only)
+
+For the smallest build without tests or benchmarks:
+
+```bash
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DBUILD_BENCHMARKS=OFF
+cmake --build build
+```
+
+#### Shared Library Build
+
+```bash
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON
+cmake --build build
+```
+
+#### Build with Code Coverage
+
+```bash
+cmake -B build -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON
+cmake --build build
+```
+
+## Platform-Specific Instructions
+
+### Linux (Ubuntu/Debian)
+
+```bash
+# Install build dependencies
+sudo apt-get update
+sudo apt-get install -y cmake build-essential git
+
+# Clone and build
+git clone https://github.com/jimhester/libvroom.git
+cd libvroom
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+```
+
+### macOS
+
+```bash
+# Install Xcode Command Line Tools (if not already installed)
+xcode-select --install
+
+# Or install CMake via Homebrew
+brew install cmake
+
+# Clone and build
+git clone https://github.com/jimhester/libvroom.git
+cd libvroom
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+```
+
+## Running Tests
+
+The test suite includes comprehensive coverage across multiple test executables:
+
+```bash
+# Run all tests with CTest
+cd build && ctest --output-on-failure
+
+# Run specific test executables
+./build/libvroom_test           # Well-formed CSV parsing tests
+./build/error_handling_test    # Error handling tests
+./build/csv_parsing_test       # Integration tests
+./build/dialect_detection_test # Dialect auto-detection tests
+./build/streaming_test         # Streaming parser tests
+./build/c_api_test             # C API tests
+./build/cli_test               # CLI integration tests
+```
+
+## Running Benchmarks
+
+To benchmark parser performance:
+
+```bash
+./build/libvroom_benchmark
+```
+
+### Optional External Parser Benchmarks
+
+Compare libvroom against other CSV parsers:
+
+```bash
+# Enable zsv comparison
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DENABLE_ZSV_BENCHMARK=ON
+cmake --build build
+
+# Enable DuckDB comparison (longer build time)
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DENABLE_DUCKDB_BENCHMARK=ON
+cmake --build build
+```
+
+## Command Line Tool
+
+The build produces an `vroom` command line tool for working with CSV files:
+
+```bash
+# Count rows in a CSV file
+./build/vroom count data.csv
+
+# Display first 10 rows
+./build/vroom head data.csv
+
+# Select specific columns by name or index
+./build/vroom select -c name,age data.csv
+
+# Pretty-print with aligned columns
+./build/vroom pretty data.csv
+
+# Get file info (rows, columns, detected dialect)
+./build/vroom info data.csv
+
+# Detect CSV dialect (delimiter, quoting, line endings)
+./build/vroom dialect data.csv
+```
+
+See the [CLI Documentation](cli.qmd) for complete usage information.
+
+## Dependencies
+
+All dependencies are automatically fetched via CMake's FetchContent:
+
+| Dependency | Version | Purpose |
+|------------|---------|---------|
+| [Google Highway](https://github.com/google/highway) | 1.3.0 | Portable SIMD abstraction |
+| [Google Test](https://github.com/google/googletest) | 1.14.0 | Unit testing (optional) |
+| [Google Benchmark](https://github.com/google/benchmark) | 1.8.3 | Performance benchmarking (optional) |
+| [Apache Arrow](https://github.com/apache/arrow) | Latest | Arrow output integration (if `LIBVROOM_ENABLE_ARROW=ON`) |
+
+## C++ Library Usage
+
+### Including the Library
+
+Include the main header to access all public functionality:
+
+```cpp
+#include <libvroom.h>
+```
+
+### Basic Parsing Example
+
+```cpp
+#include <libvroom.h>
+#include <iostream>
+
+int main() {
+    // Load CSV file into SIMD-aligned buffer
+    libvroom::FileBuffer buffer = libvroom::load_file("data.csv");
+    if (!buffer.valid()) {
+        std::cerr << "Failed to load file\n";
+        return 1;
+    }
+
+    // Create parser (optionally specify thread count)
+    libvroom::Parser parser(4);  // Use 4 threads
+
+    // Parse with automatic dialect detection
+    auto result = parser.parse(buffer.data(), buffer.size());
+
+    if (result.success()) {
+        std::cout << "Columns: " << result.num_columns() << "\n";
+        std::cout << "Rows: " << result.num_rows() << "\n";
+        std::cout << "Delimiter: '" << result.dialect.delimiter << "'\n";
+    }
+
+    // Check for errors (unified API)
+    if (result.has_errors()) {
+        std::cerr << result.error_summary() << "\n";
+    }
+
+    return 0;
+}
+```
+
+### Row and Column Iteration
+
+Access parsed data with type-safe extraction:
+
+```cpp
+#include <libvroom.h>
+#include <iostream>
+
+int main() {
+    libvroom::FileBuffer buffer = libvroom::load_file("data.csv");
+    libvroom::Parser parser;
+    auto result = parser.parse(buffer.data(), buffer.size());
+
+    // Iterate over rows
+    for (auto row : result.rows()) {
+        // Access by column name
+        auto name = row.get<std::string>("name");
+        auto age = row.get<int>("age");
+
+        if (name.ok() && age.ok()) {
+            std::cout << name.get() << " is " << age.get() << " years old\n";
+        }
+    }
+
+    // Or extract entire columns
+    auto names = result.column<std::string>("name");
+    auto ages = result.column<int64_t>("age");
+
+    // With default values for missing data
+    auto scores = result.column_or<double>("score", 0.0);
+
+    return 0;
+}
+```
+
+### Parsing with Known Dialect
+
+If you know the CSV dialect in advance:
+
+```cpp
+#include <libvroom.h>
+
+int main() {
+    libvroom::FileBuffer buffer = libvroom::load_file("data.csv");
+    libvroom::Parser parser;
+
+    // Predefined dialects
+    auto result = parser.parse(buffer.data(), buffer.size(),
+        {.dialect = libvroom::Dialect::csv()});  // Standard CSV
+
+    // Other predefined dialects:
+    // libvroom::Dialect::tsv()       - Tab-separated
+    // libvroom::Dialect::semicolon() - Semicolon-separated
+    // libvroom::Dialect::pipe()      - Pipe-separated
+
+    return result.success() ? 0 : 1;
+}
+```
+
+### Dialect Detection
+
+Detect the dialect of a CSV file without parsing:
+
+```cpp
+#include <libvroom.h>
+#include <iostream>
+
+int main() {
+    auto detection = libvroom::detect_dialect_file("data.csv");
+
+    if (detection.success()) {
+        std::cout << "Delimiter: '" << detection.dialect.delimiter << "'\n";
+        std::cout << "Quote char: '" << detection.dialect.quote_char << "'\n";
+        std::cout << "Has header: " << (detection.has_header ? "yes" : "no") << "\n";
+        std::cout << "Columns: " << detection.detected_columns << "\n";
+        std::cout << "Confidence: " << (detection.confidence * 100) << "%\n";
+    }
+
+    return 0;
+}
+```
+
+### Streaming Parser (Large Files)
+
+For files that don't fit in memory, use the streaming parser:
+
+```cpp
+#include <streaming.h>
+#include <iostream>
+
+int main() {
+    // Range-based iteration (simplest)
+    libvroom::StreamReader reader("large_file.csv");
+
+    for (const auto& row : reader) {
+        std::cout << row[0].str() << "\n";
+    }
+
+    // Or explicit iteration with more control
+    libvroom::StreamReader reader2("large_file.csv");
+
+    while (reader2.next_row()) {
+        const auto& row = reader2.row();
+        std::cout << row[0].str() << ", " << row[1].str() << "\n";
+    }
+
+    return 0;
+}
+```
+
+See [Streaming Parser](streaming.qmd) for detailed documentation.
+
+## Error Handling
+
+libvroom provides three error handling modes for different use cases:
+
+```cpp
+#include <libvroom.h>
+
+// Method 1: Use Result's built-in error collector (recommended)
+auto result = parser.parse(buffer.data(), buffer.size());
+if (result.has_errors()) {
+    for (const auto& err : result.errors()) {
+        std::cerr << err.to_string() << "\n";
+    }
+}
+
+// Method 2: External error collector with specific mode
+libvroom::ErrorCollector errors(libvroom::ErrorMode::FAIL_FAST);
+auto result2 = parser.parse(buffer.data(), buffer.size(), {.errors = &errors});
+
+// Error modes:
+// STRICT     - Stop on first error
+// PERMISSIVE - Collect all errors, try to recover
+// BEST_EFFORT - Ignore errors, parse what's possible
+```
+
+See [Error Handling](error-handling.qmd) for detailed documentation.
+
+## CMake Integration Guide
+
+### Full Example CMakeLists.txt
+
+```cmake
+cmake_minimum_required(VERSION 3.14)
+project(my_csv_app LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Fetch libvroom
+include(FetchContent)
+FetchContent_Declare(libvroom
+  GIT_REPOSITORY https://github.com/jimhester/libvroom.git
+  GIT_TAG v0.1.0  # Pin to a specific version for reproducibility
+)
+
+# Optionally disable tests/benchmarks to speed up build
+set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
+set(BUILD_BENCHMARKS OFF CACHE BOOL "" FORCE)
+
+FetchContent_MakeAvailable(libvroom)
+
+# Your application
+add_executable(my_app main.cpp)
+target_link_libraries(my_app PRIVATE libvroom_lib)
+```
+
+### Linking to the Library
+
+The library target is `libvroom_lib`. It exports the include directories automatically:
+
+```cmake
+target_link_libraries(your_target PRIVATE libvroom_lib)
+```
+
+### Available Headers
+
+After linking, you can include:
+
+#### Primary Headers
+
+| Header | Description |
+|--------|-------------|
+| `<libvroom.h>` | Main header - includes everything |
+| `<libvroom_c.h>` | C API header for FFI bindings |
+| `<error.h>` | Error types and ErrorCollector |
+| `<dialect.h>` | Dialect detection and types |
+| `<streaming.h>` | Streaming parser for large files |
+| `<io_util.h>` | File loading utilities |
+
+#### Advanced/Internal Headers
+
+These headers expose lower-level functionality for advanced use cases:
+
+| Header | Description |
+|--------|-------------|
+| `<two_pass.h>` | Low-level two-pass parser implementation |
+| `<mem_util.h>` | Memory allocation utilities |
+
+## Troubleshooting
+
+### Build Fails with "CMake version too old"
+
+Ensure you have CMake 3.14 or newer:
+
+```bash
+cmake --version
+# If too old, update CMake
+```
+
+### Compiler Doesn't Support C++17
+
+Update your compiler or specify a newer version:
+
+```bash
+# Ubuntu: Install newer GCC
+sudo apt-get install g++-10
+cmake -B build -DCMAKE_CXX_COMPILER=g++-10
+```
+
+### SIMD Not Available
+
+The library will automatically fall back to scalar implementations if SIMD instructions aren't available. Performance will be reduced but functionality is preserved.
+
+### Tests Fail with "Test data not found"
+
+Ensure the test data directory exists:
+
+```bash
+ls test/data/
+# Should contain subdirectories: basic, quoted, separators, etc.
+```
