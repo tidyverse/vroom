@@ -122,9 +122,13 @@
 #'     for names in the style of base R).
 #'   * A purrr-style anonymous function, see [rlang::as_function()].
 #'
+#'
 #'   This argument is passed on as `repair` to [vctrs::vec_as_names()].
 #'   See there for more details on these terms and the strategies used
 #'   to enforce them.
+#' @param use_libvroom Use the experimental libvroom SIMD-accelerated CSV
+#'   parsing backend. This backend can be significantly faster for large files
+#'   but may not support all features. Defaults to `FALSE`.
 #' @export
 #' @examples
 #' # get path to example file
