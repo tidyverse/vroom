@@ -214,18 +214,30 @@ cpp11::doubles read_dbl(vroom_vec_info* info) {
     parallel_for(
         n,
         [&](size_t start, size_t end, size_t) {
-          R_xlen_t i = start;
+          // Use bulk extraction for better performance
           auto col = info->column->slice(start, end);
-          for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-            out[i++] = parse_value<double>(
-                b,
-                col,
-                [&](const char* begin, const char* end) -> double {
-                  return bsd_strtod(begin, end, decimalMark);
-                },
-                info->errors,
-                "a double",
-                *info->na);
+          auto strings = col->extract_all();
+
+          for (size_t j = 0; j < strings.size(); ++j) {
+            R_xlen_t i = start + j;
+            auto& str = strings[j];
+
+            if (vroom::is_explicit_na(*info->na, str.begin(), str.end())) {
+              out[i] = NA_REAL;
+              continue;
+            }
+
+            double val = bsd_strtod(str.begin(), str.end(), decimalMark);
+            if (cpp11::is_na(val)) {
+              auto b = col->begin() + j;
+              info->errors->add_error(
+                  b.index(),
+                  col->get_index(),
+                  "a double",
+                  std::string(str.begin(), str.end() - str.begin()),
+                  b.filename());
+            }
+            out[i] = val;
           }
         },
         info->num_threads);

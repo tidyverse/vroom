@@ -41,6 +41,62 @@ public:
   }
   string(const char* begin, const char* end) : begin_(begin), end_(end) {}
 
+  // Copy constructor - handle owned string case correctly
+  string(const string& other) : str_(other.str_) {
+    if (str_.size() > 0) {
+      // If we own the data, update pointers to our copy
+      begin_ = str_.c_str();
+      end_ = begin_ + str_.length();
+    } else {
+      // Otherwise copy the external pointers
+      begin_ = other.begin_;
+      end_ = other.end_;
+    }
+  }
+
+  // Move constructor - handle owned string case correctly
+  string(string&& other) noexcept : str_(std::move(other.str_)) {
+    if (str_.size() > 0) {
+      // If we own the data, update pointers to our data
+      begin_ = str_.c_str();
+      end_ = begin_ + str_.length();
+    } else {
+      // Otherwise copy the external pointers
+      begin_ = other.begin_;
+      end_ = other.end_;
+    }
+  }
+
+  // Copy assignment
+  string& operator=(const string& other) {
+    if (this != &other) {
+      str_ = other.str_;
+      if (str_.size() > 0) {
+        begin_ = str_.c_str();
+        end_ = begin_ + str_.length();
+      } else {
+        begin_ = other.begin_;
+        end_ = other.end_;
+      }
+    }
+    return *this;
+  }
+
+  // Move assignment
+  string& operator=(string&& other) noexcept {
+    if (this != &other) {
+      str_ = std::move(other.str_);
+      if (str_.size() > 0) {
+        begin_ = str_.c_str();
+        end_ = begin_ + str_.length();
+      } else {
+        begin_ = other.begin_;
+        end_ = other.end_;
+      }
+    }
+    return *this;
+  }
+
   const char* begin() const { return begin_; }
 
   const char* end() const { return end_; }
@@ -70,7 +126,7 @@ public:
 private:
   const char* begin_;
   const char* end_;
-  const std::string str_;
+  std::string str_;
 };
 
 template <typename T> inline T na();

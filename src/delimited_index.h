@@ -140,6 +140,42 @@ public:
 
   string get(size_t row, size_t col) const override;
 
+  /**
+   * @brief Bulk extraction of all cells for a column range.
+   *
+   * This method extracts all cells (begin/end byte pointers) for a given column
+   * in a single pass, providing significant performance benefits over individual
+   * get() calls in non-ALTREP mode:
+   * - Pre-allocation of output vector
+   * - Sequential memory access pattern
+   * - Reduced function call overhead
+   *
+   * @param column Column index (0-based)
+   * @param start_row First row to extract (0-based, default 0)
+   * @param end_row One past the last row to extract (default: num_rows())
+   * @return Vector of cell structs with begin/end pointers into the mmap
+   */
+  std::vector<cell> extract_column_cells(
+      size_t column,
+      size_t start_row = 0,
+      size_t end_row = static_cast<size_t>(-1)) const;
+
+  /**
+   * @brief Bulk extraction of trimmed strings for a column range.
+   *
+   * Similar to extract_column_cells() but returns fully processed strings
+   * with quote trimming, whitespace trimming, and escape handling applied.
+   *
+   * @param column Column index (0-based)
+   * @param start_row First row to extract (0-based, default 0)
+   * @param end_row One past the last row to extract (default: num_rows())
+   * @return Vector of vroom::string objects
+   */
+  std::vector<string> extract_column_strings(
+      size_t column,
+      size_t start_row = 0,
+      size_t end_row = static_cast<size_t>(-1)) const;
+
   size_t num_columns() const override { return columns_; }
 
   size_t num_rows() const override { return rows_; }

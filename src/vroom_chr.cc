@@ -21,18 +21,20 @@ cpp11::strings read_chr(vroom_vec_info* info) {
   SEXP nas = *info->na;
 
   cpp11::unwind_protect([&] {
-    auto i = 0;
+    // Use bulk extraction for better performance
     auto col = info->column;
-    for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-      auto str = *b;
+    auto strings = col->extract_all();
+    for (size_t i = 0; i < strings.size(); ++i) {
+      auto& str = strings[i];
       auto val = info->locale->encoder_.makeSEXP(str.begin(), str.end(), true);
       PROTECT(val);
       if (Rf_xlength(val) < str.end() - str.begin()) {
+        auto b = col->begin() + i;
         info->errors->add_error(
             b.index(), col->get_index(), "", "embedded null", b.filename());
       }
 
-      SET_STRING_ELT(out, i++, check_na(nas, val));
+      SET_STRING_ELT(out, i, check_na(nas, val));
       UNPROTECT(1);
     }
   });

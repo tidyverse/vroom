@@ -89,6 +89,49 @@ public:
           begin_ + start, begin_ + end, index_);
     }
     size_t get_index() { return index_; }
+
+    /**
+     * @brief Bulk extraction of all strings in the range.
+     *
+     * Pre-allocates output vector and iterates through all elements once.
+     * This provides better performance than individual element access
+     * in non-ALTREP mode by reducing function call overhead and enabling
+     * sequential memory access patterns.
+     *
+     * @return Vector of vroom::string objects for all elements in range
+     */
+    std::vector<string> extract_all() const {
+      std::vector<string> result;
+      result.reserve(size());
+      for (auto it = begin_; it != end_; ++it) {
+        result.push_back(*it);
+      }
+      return result;
+    }
+
+    /**
+     * @brief Bulk extraction of a sub-range of strings.
+     *
+     * @param start Starting index within the range
+     * @param end One past the ending index (default: size())
+     * @return Vector of vroom::string objects for elements [start, end)
+     */
+    std::vector<string> extract_range(size_t start, size_t end) const {
+      if (end > size()) {
+        end = size();
+      }
+      if (start >= end) {
+        return {};
+      }
+      std::vector<string> result;
+      result.reserve(end - start);
+      auto it = begin_ + start;
+      auto end_it = begin_ + end;
+      for (; it != end_it; ++it) {
+        result.push_back(*it);
+      }
+      return result;
+    }
   };
 
   using column = range;

@@ -430,3 +430,70 @@ string delimited_index::get(size_t row, size_t col) const {
 
   return get_trimmed_val(i, col == 0, col == (columns_ - 1));
 }
+
+std::vector<cell> delimited_index::extract_column_cells(
+    size_t column, size_t start_row, size_t end_row) const {
+
+  // Clamp end_row to actual number of rows
+  if (end_row > rows_) {
+    end_row = rows_;
+  }
+
+  if (start_row >= end_row || column >= columns_) {
+    return {};
+  }
+
+  const size_t num_rows = end_row - start_row;
+  std::vector<cell> result;
+  result.reserve(num_rows);
+
+  const bool is_first = (column == 0);
+  const bool is_last = (column == columns_ - 1);
+  const char* data = mmap_.data();
+
+  for (size_t row = start_row; row < end_row; ++row) {
+    size_t i = (row + has_header_) * columns_ + column;
+
+    size_t begin_p, end_p;
+    std::tie(begin_p, end_p) = get_cell(i, is_first);
+
+    const char* begin = data + begin_p;
+    const char* end = data + end_p;
+
+    // Handle windows newlines if the last column
+    if (is_last && begin < end && *(end - 1) == '\r') {
+      --end;
+    }
+
+    result.push_back({begin, end});
+  }
+
+  return result;
+}
+
+std::vector<string> delimited_index::extract_column_strings(
+    size_t column, size_t start_row, size_t end_row) const {
+
+  // Clamp end_row to actual number of rows
+  if (end_row > rows_) {
+    end_row = rows_;
+  }
+
+  if (start_row >= end_row || column >= columns_) {
+    return {};
+  }
+
+  const size_t num_rows = end_row - start_row;
+  std::vector<string> result;
+  result.reserve(num_rows);
+
+  const bool is_first = (column == 0);
+  const bool is_last = (column == columns_ - 1);
+
+  for (size_t row = start_row; row < end_row; ++row) {
+    size_t i = (row + has_header_) * columns_ + column;
+    result.push_back(get_trimmed_val(i, is_first, is_last));
+  }
+
+  return result;
+}

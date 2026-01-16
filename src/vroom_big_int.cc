@@ -43,13 +43,32 @@ cpp11::doubles read_big_int(vroom_vec_info* info) {
   parallel_for(
       n,
       [&](size_t start, size_t end, size_t) {
-        R_xlen_t i = start;
+        // Use bulk extraction for better performance
         auto col = info->column->slice(start, end);
-        for (auto b = col->begin(), e = col->end(); b != e; ++b) {
+        auto strings = col->extract_all();
+
+        for (size_t j = 0; j < strings.size(); ++j) {
+          R_xlen_t i = start + j;
+          auto& str = strings[j];
           vroom_big_int_t res;
-          res.ll = parse_value<long long>(
-              b, col, vroom_strtoll, info->errors, "a big integer", *info->na);
-          out[i++] = res.dbl;
+
+          if (vroom::is_explicit_na(*info->na, str.begin(), str.end())) {
+            res.ll = NA_INTEGER64;
+            out[i] = res.dbl;
+            continue;
+          }
+
+          res.ll = vroom_strtoll(str.begin(), str.end());
+          if (res.ll == NA_INTEGER64) {
+            auto b = col->begin() + j;
+            info->errors->add_error(
+                b.index(),
+                col->get_index(),
+                "a big integer",
+                std::string(str.begin(), str.end() - str.begin()),
+                b.filename());
+          }
+          out[i] = res.dbl;
         }
       },
       info->num_threads);

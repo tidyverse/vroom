@@ -27,12 +27,30 @@ cpp11::integers read_fct_explicit(
     }
   }
 
+  // Use bulk extraction for better performance
   auto col = info->column;
-  R_xlen_t i = 0;
-  for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-    auto str = *b;
-    out[i++] =
-        parse_factor(b, col, level_map, *info->locale, info->errors, *info->na);
+  auto strings = col->extract_all();
+  for (size_t i = 0; i < strings.size(); ++i) {
+    auto& str = strings[i];
+    auto val = info->locale->encoder_.makeSEXP(str.begin(), str.end(), false);
+    PROTECT(val);
+
+    auto search = level_map.find(val);
+    if (search != level_map.end()) {
+      out[i] = search->second;
+    } else if (vroom::is_explicit_na(*info->na, str.begin(), str.end())) {
+      out[i] = NA_INTEGER;
+    } else {
+      auto b = col->begin() + i;
+      info->errors->add_error(
+          b.index(),
+          col->get_index(),
+          "value in level set",
+          std::string(str.begin(), str.end() - str.begin()),
+          b.filename());
+      out[i] = NA_INTEGER;
+    }
+    UNPROTECT(1);
   }
 
   info->errors->warn_for_errors();
@@ -58,15 +76,15 @@ cpp11::integers read_fct_implicit(vroom_vec_info* info, bool include_na) {
 
   size_t max_level = 1;
 
-  auto start = 0;
-  auto end = n;
-  auto i = start;
-  auto col = info->column->slice(start, end);
+  // Use bulk extraction for better performance
+  auto col = info->column;
+  auto strings = col->extract_all();
   int na_level = NA_INTEGER;
-  for (const auto& str : *col) {
+  for (size_t i = 0; i < strings.size(); ++i) {
+    const auto& str = strings[i];
     auto val = level_map.find(str.str());
     if (val != level_map.end()) {
-      out[i++] = val->second;
+      out[i] = val->second;
     } else {
       if (matches(str, nas)) {
         if (include_na) {
@@ -75,12 +93,12 @@ cpp11::integers read_fct_implicit(vroom_vec_info* info, bool include_na) {
             levels.push_back(NA_STRING);
           }
           level_map[str.str()] = na_level;
-          out[i++] = na_level;
+          out[i] = na_level;
         } else {
-          out[i++] = NA_INTEGER;
+          out[i] = NA_INTEGER;
         }
       } else {
-        out[i++] = max_level;
+        out[i] = max_level;
         level_map[str.str()] = max_level++;
         levels.push_back(
             info->locale->encoder_.makeSEXP(str.begin(), str.end(), false));
