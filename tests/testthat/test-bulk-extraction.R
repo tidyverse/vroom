@@ -106,7 +106,10 @@ test_that("bulk extraction works for time columns", {
         delim = ",",
         col_types = cols(time = col_time())
       )
-      expect_equal(as.numeric(data$time), c(10 * 3600 + 30 * 60, 14 * 3600 + 45 * 60 + 30))
+      expect_equal(
+        as.numeric(data$time),
+        c(10 * 3600 + 30 * 60, 14 * 3600 + 45 * 60 + 30)
+      )
     }
   )
 })
@@ -120,7 +123,10 @@ test_that("bulk extraction works for factor columns with explicit levels", {
         delim = ",",
         col_types = cols(x = col_factor(levels = c("a", "b", "c")))
       )
-      expect_equal(data$x, factor(c("a", "b", "a", "c"), levels = c("a", "b", "c")))
+      expect_equal(
+        data$x,
+        factor(c("a", "b", "a", "c"), levels = c("a", "b", "c"))
+      )
     }
   )
 })
@@ -183,7 +189,10 @@ test_that("bulk extraction works with quoted fields", {
   withr::with_envvar(
     c("VROOM_USE_ALTREP_CHR" = "false"),
     {
-      data <- vroom(I('a,b\n"foo, bar","baz"\n"qux","quux, corge"\n'), delim = ",")
+      data <- vroom(
+        I('a,b\n"foo, bar","baz"\n"qux","quux, corge"\n'),
+        delim = ","
+      )
       expect_equal(data$a, c("foo, bar", "qux"))
       expect_equal(data$b, c("baz", "quux, corge"))
     }
@@ -208,8 +217,12 @@ test_that("bulk extraction with multi-threaded parsing", {
       n <- 1000
       content <- paste0(
         "a,b,c\n",
-        paste(seq_len(n), seq_len(n) + 0.5, letters[(seq_len(n) - 1) %% 26 + 1],
-          sep = ",", collapse = "\n"
+        paste(
+          seq_len(n),
+          seq_len(n) + 0.5,
+          letters[(seq_len(n) - 1) %% 26 + 1],
+          sep = ",",
+          collapse = "\n"
         ),
         "\n"
       )
