@@ -35,9 +35,10 @@ single string or a raw vector). \code{file} can also be a character vector
 containing multiple filepaths or a list containing multiple connections.
 
 Files ending in \code{.gz}, \code{.bz2}, \code{.xz}, or \code{.zip} will be automatically
-uncompressed. Files starting with \verb{http://}, \verb{https://}, \verb{ftp://}, or
-\verb{ftps://} will be automatically downloaded. Remote \code{.gz} files can also be
-automatically downloaded and decompressed.
+decompressed. Files starting with \verb{http://}, \verb{https://}, \verb{ftp://}, or
+\verb{ftps://} will be automatically downloaded. Remote compressed files
+(\code{.gz}, \code{.bz2}, \code{.xz}, \code{.zip}) will be automatically downloaded and
+decompressed.
 
 Literal data is most useful for examples and tests. To be recognised as
 literal data, wrap the input with \code{I()}.}
@@ -233,7 +234,7 @@ vroom(I("a\tb\n1.0\t2.0\n"))
 vroom(I("a|b\n1.0|2.0\n"), delim = "|")
 
 # Read datasets across multiple files ---------------------------------------
-mtcars_by_cyl <- vroom_example(vroom_examples("mtcars-"))
+mtcars_by_cyl <- vroom_example(vroom_examples("mtcars-[468]"))
 mtcars_by_cyl
 
 # Pass the filenames directly to vroom, they are efficiently combined

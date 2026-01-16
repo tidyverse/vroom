@@ -5,9 +5,10 @@
 #'   containing multiple filepaths or a list containing multiple connections.
 #'
 #'   Files ending in `.gz`, `.bz2`, `.xz`, or `.zip` will be automatically
-#'   uncompressed. Files starting with `http://`, `https://`, `ftp://`, or
-#'   `ftps://` will be automatically downloaded. Remote `.gz` files can also be
-#'   automatically downloaded and decompressed.
+#'   decompressed. Files starting with `http://`, `https://`, `ftp://`, or
+#'   `ftps://` will be automatically downloaded. Remote compressed files
+#'   (`.gz`, `.bz2`, `.xz`, `.zip`) will be automatically downloaded and
+#'   decompressed.
 #'
 #'   Literal data is most useful for examples and tests. To be recognised as
 #'   literal data, wrap the input with `I()`.
@@ -176,7 +177,7 @@
 #' vroom(I("a|b\n1.0|2.0\n"), delim = "|")
 #'
 #' # Read datasets across multiple files ---------------------------------------
-#' mtcars_by_cyl <- vroom_example(vroom_examples("mtcars-"))
+#' mtcars_by_cyl <- vroom_example(vroom_examples("mtcars-[468]"))
 #' mtcars_by_cyl
 #'
 #' # Pass the filenames directly to vroom, they are efficiently combined
