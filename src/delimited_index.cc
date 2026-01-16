@@ -152,7 +152,7 @@ start_indexing:
     idx_ = std::vector<idx_t>(num_threads + 1);
 
     // Index the first row
-    size_t cols = 0;
+    size_t num_delims = 0;
     csv_state state = RECORD_START;
     size_t lines_read = index_region(
         mmap_,
@@ -167,7 +167,7 @@ start_indexing:
         first_nl + 1,
         0,
         n_max,
-        cols,
+        num_delims,
         0,
         errors,
         pb,
@@ -179,7 +179,7 @@ start_indexing:
 
     std::vector<std::future<void>> threads;
 
-    if (nmax_set) {
+    if (num_threads == 1) {
       threads.emplace_back(std::async(std::launch::async, [&] {
         n_max = n_max > lines_read ? n_max - lines_read : 0;
         index_region(
@@ -195,12 +195,13 @@ start_indexing:
             file_size,
             0,
             n_max,
-            cols,
+            num_delims,
             columns_,
             errors,
             pb,
             num_threads,
-            file_size / 100);
+            file_size / 100,
+            true);
       }));
     } else {
       threads = parallel_for(
@@ -224,7 +225,7 @@ start_indexing:
                 /* has_quote */ false,
                 quote);
             ++end;
-            size_t cols = 0;
+            size_t num_delims = 0;
             csv_state state = RECORD_START;
             index_region(
                 mmap_,
@@ -239,7 +240,7 @@ start_indexing:
                 end,
                 0,
                 n_max,
-                cols,
+                num_delims,
                 columns_,
                 errors,
                 pb,

@@ -16,7 +16,10 @@ class vroom_errors {
   struct parse_error {
     size_t position;
     size_t column;
-    parse_error(size_t pos, size_t col) : position(pos), column(col) {}
+    std::string expected;
+    std::string actual;
+    parse_error(size_t pos, size_t col, std::string exp, std::string act)
+        : position(pos), column(col), expected(exp), actual(act) {}
   };
 
 public:
@@ -36,9 +39,13 @@ public:
     filenames_.emplace_back(filename);
   }
 
-  void add_parse_error(size_t position, size_t column) {
+  void add_parse_error(
+      size_t position,
+      size_t column,
+      std::string expected,
+      std::string actual) {
     std::lock_guard<std::mutex> guard(mutex_);
-    parse_errors_.emplace_back(position, column);
+    parse_errors_.emplace_back(position, column, expected, actual);
   }
 
   void resolve_parse_errors(const vroom::index& idx) {
@@ -59,14 +66,11 @@ public:
       while (row != row_end && e.position > row.position()) {
         ++row;
       }
-      std::stringstream ss_expected, ss_actual;
-      ss_expected << idx.num_columns() << " columns";
-      ss_actual << e.column + 1 << " columns";
       add_error(
           row.index() - 1,
           e.column,
-          ss_expected.str(),
-          ss_actual.str(),
+          e.expected,
+          e.actual,
           row.filename());
     }
   }
