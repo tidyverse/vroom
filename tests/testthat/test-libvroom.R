@@ -2,7 +2,13 @@
 # These tests verify the optimized code paths work correctly
 
 # Helper function to test with libvroom backend
-test_libvroom <- function(content, delim = ",", col_types = list(), ..., equals) {
+test_libvroom <- function(
+  content,
+  delim = ",",
+  col_types = list(),
+  ...,
+  equals
+) {
   # Create a temp file since libvroom only supports files, not connections or I()
   tf <- tempfile(fileext = ".csv")
   on.exit(unlink(tf))
@@ -13,7 +19,13 @@ test_libvroom <- function(content, delim = ",", col_types = list(), ..., equals)
 
   suppressWarnings({
     # Test with libvroom
-    result <- vroom(tf, delim = delim, col_types = col_types, use_libvroom = TRUE, ...)
+    result <- vroom(
+      tf,
+      delim = delim,
+      col_types = col_types,
+      use_libvroom = TRUE,
+      ...
+    )
     expect_equal(result, equals)
 
     # Force materialization and check again (important for ALTREP)
@@ -193,8 +205,18 @@ test_that("libvroom result equals standard vroom result", {
   close(out_con)
 
   suppressWarnings({
-    standard_result <- vroom(tf, delim = ",", col_types = list(), use_libvroom = FALSE)
-    libvroom_result <- vroom(tf, delim = ",", col_types = list(), use_libvroom = TRUE)
+    standard_result <- vroom(
+      tf,
+      delim = ",",
+      col_types = list(),
+      use_libvroom = FALSE
+    )
+    libvroom_result <- vroom(
+      tf,
+      delim = ",",
+      col_types = list(),
+      use_libvroom = TRUE
+    )
 
     expect_equal(libvroom_result, standard_result)
 
