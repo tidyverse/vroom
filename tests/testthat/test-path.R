@@ -37,7 +37,7 @@ test_that("read_file works via https", {
   skip_on_cran()
 
   mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
-  url <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv"
+  url <- "https://raw.githubusercontent.com/tidyverse/vroom/HEAD/inst/extdata/mtcars.csv"
   expect_equal(vroom(url, col_types = list()), mt)
 })
 
@@ -45,7 +45,7 @@ test_that("vroom works via https on gz file", {
   skip_on_cran()
 
   mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
-  url <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv.gz"
+  url <- "https://raw.githubusercontent.com/tidyverse/vroom/HEAD/inst/extdata/mtcars.csv.gz"
   expect_equal(vroom(url, col_types = list()), mt)
 })
 
@@ -53,7 +53,7 @@ test_that("vroom works via https on bz2 file", {
   skip_on_cran()
 
   mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
-  url <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv.bz2"
+  url <- "https://raw.githubusercontent.com/tidyverse/vroom/HEAD/inst/extdata/mtcars.csv.bz2"
   expect_equal(vroom(url, col_types = list()), mt)
 })
 
@@ -61,7 +61,7 @@ test_that("vroom works via https on xz file", {
   skip_on_cran()
 
   mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
-  url <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv.xz"
+  url <- "https://raw.githubusercontent.com/tidyverse/vroom/HEAD/inst/extdata/mtcars.csv.xz"
   expect_equal(vroom(url, col_types = list()), mt)
 })
 
@@ -69,7 +69,7 @@ test_that("vroom works via https on zip file", {
   skip_on_cran()
 
   mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
-  url <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv.zip"
+  url <- "https://raw.githubusercontent.com/tidyverse/vroom/HEAD/inst/extdata/mtcars.csv.zip"
   expect_equal(vroom(url, col_types = list()), mt)
 })
 
