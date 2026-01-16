@@ -430,3 +430,44 @@ string delimited_index::get(size_t row, size_t col) const {
 
   return get_trimmed_val(i, col == 0, col == (columns_ - 1));
 }
+
+field_span delimited_index::get_field_span(size_t row, size_t col) const {
+  auto i = (row + has_header_) * columns_ + col;
+  bool is_first = col == 0;
+  bool is_last = col == (columns_ - 1);
+
+  size_t begin_p;
+  size_t end_p;
+
+  std::tie(begin_p, end_p) = get_cell(i, is_first);
+
+  // Check for windows newlines if the last column
+  if (is_last) {
+    if (begin_p < end_p) {
+      if (mmap_.data()[end_p - 1] == '\r') {
+        --end_p;
+      }
+    }
+  }
+
+  const char* begin = mmap_.data() + begin_p;
+  const char* end = mmap_.data() + end_p;
+
+  if (trim_ws_) {
+    trim_whitespace(begin, end);
+  }
+
+  if (quote_ != '\0' && begin < end) {
+    if (*begin == quote_) {
+      ++begin;
+      if (end > begin && *(end - 1) == quote_) {
+        --end;
+      }
+      if (trim_ws_) {
+        trim_whitespace(begin, end);
+      }
+    }
+  }
+
+  return field_span(begin - mmap_.data(), end - mmap_.data());
+}

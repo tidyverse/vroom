@@ -175,7 +175,8 @@ public:
         inf->info->na,
         inf->info->locale,
         inf->info->errors,
-        inf->info->format};
+        inf->info->format,
+        inf->info->idx};
 
     return T::Make(info);
   }
@@ -203,7 +204,8 @@ public:
         inf->info->na,
         inf->info->locale,
         inf->info->errors,
-        inf->info->format};
+        inf->info->format,
+        inf->info->idx};
     return Make(info);
   }
 

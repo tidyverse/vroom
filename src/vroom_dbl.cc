@@ -210,25 +210,54 @@ cpp11::doubles read_dbl(vroom_vec_info* info) {
   cpp11::writable::doubles out(n);
   const char decimalMark = info->locale->decimalMark_[0];
 
+  // Check if direct buffer parsing is available
+  const char* buffer = info->idx ? info->idx->get_buffer() : nullptr;
+  size_t col_idx = info->column->get_index();
+
   try {
-    parallel_for(
-        n,
-        [&](size_t start, size_t end, size_t) {
-          R_xlen_t i = start;
-          auto col = info->column->slice(start, end);
-          for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-            out[i++] = parse_value<double>(
-                b,
-                col,
-                [&](const char* begin, const char* end) -> double {
-                  return bsd_strtod(begin, end, decimalMark);
-                },
-                info->errors,
-                "a double",
-                *info->na);
-          }
-        },
-        info->num_threads);
+    if (buffer != nullptr) {
+      // Direct parsing path - bypasses string allocation
+      parallel_for(
+          n,
+          [&](size_t start, size_t end, size_t) {
+            for (size_t i = start; i < end; ++i) {
+              field_span span = info->idx->get_field_span(i, col_idx);
+              out[i] = parse_value_direct<double>(
+                  span,
+                  buffer,
+                  [&](const char* begin, const char* end) -> double {
+                    return bsd_strtod(begin, end, decimalMark);
+                  },
+                  info->errors,
+                  "a double",
+                  *info->na,
+                  i,
+                  col_idx,
+                  "");
+            }
+          },
+          info->num_threads);
+    } else {
+      // Fall back to string-based parsing
+      parallel_for(
+          n,
+          [&](size_t start, size_t end, size_t) {
+            R_xlen_t i = start;
+            auto col = info->column->slice(start, end);
+            for (auto b = col->begin(), e = col->end(); b != e; ++b) {
+              out[i++] = parse_value<double>(
+                  b,
+                  col,
+                  [&](const char* begin, const char* end) -> double {
+                    return bsd_strtod(begin, end, decimalMark);
+                  },
+                  info->errors,
+                  "a double",
+                  *info->na);
+            }
+          },
+          info->num_threads);
+    }
   } catch (const std::runtime_error& e) {
     Rf_errorcall(R_NilValue, "%s", e.what());
   }

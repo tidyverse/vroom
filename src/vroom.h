@@ -9,9 +9,38 @@
 #endif
 
 #include <cstring>
+#include <limits>
 #include <string>
 
 namespace vroom {
+
+/// Sentinel value indicating an invalid or unset position.
+constexpr static size_t null_pos = std::numeric_limits<size_t>::max();
+
+/**
+ * @brief Represents a field's byte boundaries in the source buffer.
+ *
+ * field_span provides the byte range for a single CSV field, enabling
+ * efficient direct type parsing without intermediate string allocation.
+ * This is particularly useful for numeric parsing where we can parse
+ * directly from the memory-mapped buffer.
+ */
+struct field_span {
+  size_t start; ///< Byte offset of field start (inclusive)
+  size_t end;   ///< Byte offset of field end (exclusive)
+
+  /// Default constructor, creates an invalid span.
+  field_span() : start(null_pos), end(null_pos) {}
+
+  /// Construct with explicit start and end positions.
+  field_span(size_t start, size_t end) : start(start), end(end) {}
+
+  /// Check if this span is valid.
+  bool is_valid() const { return start != null_pos && end != null_pos; }
+
+  /// Get the length of the field in bytes.
+  size_t length() const { return is_valid() ? end - start : 0; }
+};
 
 enum column_type {
   Chr = 1,

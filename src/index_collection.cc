@@ -383,3 +383,14 @@ string index_collection::get(size_t row, size_t column) const {
   /* should never get here */
   return std::string("");
 }
+
+field_span index_collection::get_field_span(size_t row, size_t column) const {
+  for (const auto& idx : indexes_) {
+    if (row < idx->num_rows()) {
+      return idx->get_field_span(row, column);
+    }
+    row -= idx->num_rows();
+  }
+  /* should never get here */
+  return field_span();
+}

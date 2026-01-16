@@ -65,6 +65,20 @@ public:
     }
 
     auto& info = vroom_vec::Info(vec);
+
+    // Use direct buffer parsing when available (bypasses string allocation)
+    const char* buffer = info.idx ? info.idx->get_buffer() : nullptr;
+    if (buffer != nullptr) {
+      size_t col_idx = info.column->get_index();
+      field_span span = info.idx->get_field_span(i, col_idx);
+      int out = parse_value_direct<int>(
+          span, buffer, strtoi, info.errors, "an integer", *info.na, i, col_idx,
+          "");
+      info.errors->warn_for_errors();
+      return out;
+    }
+
+    // Fall back to string-based parsing
     int out = parse_value<int>(
         i, info.column, strtoi, info.errors, "an integer", *info.na);
 

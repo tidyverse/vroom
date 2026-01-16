@@ -245,7 +245,8 @@ public:
         inf.info->na,
         inf.info->locale,
         inf.info->errors,
-        inf.info->format};
+        inf.info->format,
+        inf.info->idx};
 
     bool is_ordered = Rf_inherits(x_, "ordered");
     return Make(info, cpp11::strings(x_.attr("levels")), is_ordered);

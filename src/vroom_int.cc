@@ -39,17 +39,37 @@ cpp11::integers read_int(vroom_vec_info* info) {
 
   cpp11::writable::integers out(n);
 
-  parallel_for(
-      n,
-      [&](size_t start, size_t end, size_t) {
-        R_xlen_t i = start;
-        auto col = info->column->slice(start, end);
-        for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-          out[i++] = parse_value<int>(
-              b, col, strtoi, info->errors, "an integer", *info->na);
-        }
-      },
-      info->num_threads);
+  // Check if direct buffer parsing is available
+  const char* buffer = info->idx ? info->idx->get_buffer() : nullptr;
+  size_t col_idx = info->column->get_index();
+
+  if (buffer != nullptr) {
+    // Direct parsing path - bypasses string allocation
+    parallel_for(
+        n,
+        [&](size_t start, size_t end, size_t) {
+          for (size_t i = start; i < end; ++i) {
+            field_span span = info->idx->get_field_span(i, col_idx);
+            out[i] = parse_value_direct<int>(
+                span, buffer, strtoi, info->errors, "an integer", *info->na, i,
+                col_idx, "");
+          }
+        },
+        info->num_threads);
+  } else {
+    // Fall back to string-based parsing
+    parallel_for(
+        n,
+        [&](size_t start, size_t end, size_t) {
+          R_xlen_t i = start;
+          auto col = info->column->slice(start, end);
+          for (auto b = col->begin(), e = col->end(); b != e; ++b) {
+            out[i++] = parse_value<int>(
+                b, col, strtoi, info->errors, "an integer", *info->na);
+          }
+        },
+        info->num_threads);
+  }
 
   info->errors->warn_for_errors();
 

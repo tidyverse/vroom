@@ -187,6 +187,32 @@ public:
     return {begin, end};
   }
 
+  field_span get_field_span(size_t row, size_t col) const override {
+    auto begin = mmap_.data() + (newlines_[row] + 1 + col_starts_[col]);
+    auto line_end = mmap_.data() + (newlines_[row + 1]);
+    if (line_end > begin && *(line_end - 1) == '\r') {
+      --line_end;
+    }
+    const char* end;
+    if (col_ends_[col] == NA_INTEGER) {
+      end = mmap_.data() + newlines_[row + 1];
+    } else {
+      end = mmap_.data() + (newlines_[row] + 1 + col_ends_[col]);
+    }
+    if (begin > line_end) {
+      begin = line_end;
+    }
+    if (end > line_end) {
+      end = line_end;
+    }
+    if (trim_ws_) {
+      trim_whitespace(begin, end);
+    }
+    return field_span(begin - mmap_.data(), end - mmap_.data());
+  }
+
+  const char* get_buffer() const override { return mmap_.data(); }
+
   class column_iterator : public base_iterator {
     std::shared_ptr<const fixed_width_index> idx_;
     size_t column_;

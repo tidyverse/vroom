@@ -104,6 +104,30 @@ public:
 
   virtual string get(size_t row, size_t col) const = 0;
   virtual std::string get_delim() const = 0;
+
+  /**
+   * @brief Get raw byte span for a field without string allocation.
+   *
+   * This method returns the raw byte boundaries for direct type parsing,
+   * bypassing any string construction. It's more efficient for numeric
+   * parsing where we can parse directly from the buffer.
+   *
+   * @param row Zero-based row index (excludes header)
+   * @param col Zero-based column index
+   * @return field_span with byte boundaries in the buffer
+   */
+  virtual field_span get_field_span(size_t row, size_t col) const = 0;
+
+  /**
+   * @brief Get pointer to the underlying data buffer.
+   *
+   * Used together with get_field_span() to enable direct buffer access
+   * for numeric parsing without intermediate allocations.
+   *
+   * @return Pointer to the start of the data buffer
+   */
+  virtual const char* get_buffer() const = 0;
+
   virtual ~index() {}
 };
 

@@ -140,6 +140,10 @@ public:
 
   string get(size_t row, size_t col) const override;
 
+  field_span get_field_span(size_t row, size_t col) const override;
+
+  const char* get_buffer() const override { return mmap_.data(); }
+
   size_t num_columns() const override { return columns_; }
 
   size_t num_rows() const override { return rows_; }

@@ -48,6 +48,12 @@ public:
 
   string get(size_t row, size_t col) const override;
 
+  field_span get_field_span(size_t row, size_t col) const override;
+
+  // Returns nullptr since index_collection can span multiple files with different buffers.
+  // Direct parsing should check if buffer is available before using.
+  const char* get_buffer() const override { return nullptr; }
+
   size_t num_columns() const override { return columns_; }
 
   size_t num_rows() const override { return rows_; }

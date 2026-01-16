@@ -17,6 +17,9 @@ struct vroom_vec_info {
   std::shared_ptr<LocaleInfo> locale;
   std::shared_ptr<vroom_errors> errors;
   std::string format;
+  // Optional: pointer to the source index for direct buffer access
+  // When available, enables direct parsing without string allocation
+  std::shared_ptr<const vroom::index> idx;
 };
 
 namespace vroom {
@@ -96,6 +99,60 @@ static auto parse_value(
 
   return out;
 }
+
+/**
+ * @brief Parse a value directly from a field_span without string allocation.
+ *
+ * This function enables direct type parsing from the memory-mapped buffer,
+ * bypassing the vroom::string intermediate allocation. It's more efficient
+ * for numeric parsing where escape handling is not needed.
+ *
+ * @tparam V The value type to return (e.g., double, int)
+ * @tparam F The parser function type: (const char*, const char*) -> V
+ * @param span The field_span indicating byte boundaries in the buffer
+ * @param buffer Pointer to the start of the data buffer
+ * @param f The parser function that converts bytes to the value type
+ * @param errors Error collector for recording parse errors
+ * @param expected Description of the expected type for error messages
+ * @param na SEXP vector of NA string representations
+ * @param row Row index for error reporting
+ * @param col Column index for error reporting
+ * @param filename Filename for error reporting
+ * @return The parsed value, or NA if parsing fails or the field matches an NA value
+ */
+template <typename V, typename F>
+static auto parse_value_direct(
+    const field_span& span,
+    const char* buffer,
+    F f,
+    std::shared_ptr<vroom_errors>& errors,
+    const char* expected,
+    SEXP na,
+    size_t row,
+    size_t col,
+    const std::string& filename) -> V {
+
+  if (!span.is_valid()) {
+    return vroom::na<V>();
+  }
+
+  const char* begin = buffer + span.start;
+  const char* end = buffer + span.end;
+
+  if (is_explicit_na(na, begin, end)) {
+    return vroom::na<V>();
+  }
+
+  V out = f(begin, end);
+
+  if (cpp11::is_na(out)) {
+    errors->add_error(
+        row, col, expected, std::string(begin, end - begin), filename);
+  }
+
+  return out;
+}
+
 } // namespace vroom
 
 class vroom_vec {
@@ -207,7 +264,8 @@ public:
           inf.na,
           inf.locale,
           inf.errors,
-          inf.format};
+          inf.format,
+          inf.idx};
     }
 
     return T::Make(info);

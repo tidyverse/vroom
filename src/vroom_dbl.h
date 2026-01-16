@@ -52,6 +52,29 @@ public:
     }
 
     auto& info = vroom_vec::Info(vec);
+
+    // Use direct buffer parsing when available (bypasses string allocation)
+    const char* buffer = info.idx ? info.idx->get_buffer() : nullptr;
+    if (buffer != nullptr) {
+      size_t col_idx = info.column->get_index();
+      field_span span = info.idx->get_field_span(i, col_idx);
+      double out = parse_value_direct<double>(
+          span,
+          buffer,
+          [&](const char* begin, const char* end) -> double {
+            return bsd_strtod(begin, end, info.locale->decimalMark_[0]);
+          },
+          info.errors,
+          "a double",
+          *info.na,
+          i,
+          col_idx,
+          "");
+      info.errors->warn_for_errors();
+      return out;
+    }
+
+    // Fall back to string-based parsing
     double out = parse_value<double>(
         i,
         info.column,
