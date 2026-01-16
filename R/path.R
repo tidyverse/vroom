@@ -38,7 +38,7 @@ reencode_file <- function(file, encoding, call = caller_env()) {
   out_file <- vroom_tempfile(pattern = "vroom-reencode-file-")
   out_con <- file(out_file)
   convert_connection(in_con, out_con, encoding, "UTF-8")
-  withr::defer(unlink(out_file), envir = parent.frame())
+  withr::defer(unlink(out_file), envir = call)
   return(list(out_file))
 }
 
@@ -91,7 +91,7 @@ standardise_path <- function(
     if (length(path) > 1) {
       path <- paste(path, collapse = "\n")
     }
-    return(list(chr_to_file(path, envir = parent.frame())))
+    return(list(chr_to_file(path, call = call)))
   }
 
   if (any(grepl("\n", path))) {
@@ -108,7 +108,7 @@ standardise_path <- function(
       ),
       user_env = user_env
     )
-    return(list(chr_to_file(path, envir = parent.frame())))
+    return(list(chr_to_file(path, call = call)))
   }
 
   # Handle remote compressed files from R, before heading to C++, so we can
@@ -405,13 +405,13 @@ zipfile <- function(path, open = "") {
 
 utils::globalVariables("con")
 
-chr_to_file <- function(x, envir = parent.frame()) {
+chr_to_file <- function(x, call = caller_env()) {
   out <- vroom_tempfile(pattern = "vroom-chr-to-file-")
   con <- file(out, "wb")
   writeLines(sub("\n$", "", x), con, useBytes = TRUE)
   close(con)
 
-  withr::defer(unlink(out), envir = envir)
+  withr::defer(unlink(out), envir = call)
 
   normalizePath_utf8(out)
 }
