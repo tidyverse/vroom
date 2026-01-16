@@ -33,7 +33,7 @@
 
 * `vroom_fwf(..., n_max = 0)` with a connection no longer segfaults (#590).
 
-* `vroom()` now supports reading from a remote file that uses any of the supported compression formats, by downloading to a temporary (compressed) file. This is a new feature for `.bz2`, `.xz`, and `.zip` and fixes `.gz` bugs arising from problematic behaviour of `base::gzcon()` (#400, #553).
+* `vroom()` now supports reading from a remote file that uses any of the supported compression formats, by downloading to a temporary (compressed) file. This is a new feature for `.bz2`, `.xz`, and `.zip` and fixes `.gz` bugs arising from problematic behaviour of `base::gzcon()` (#400, #553, https://github.com/tidyverse/readr/issues/1555, https://github.com/tidyverse/readr/issues/1553).
 
 # vroom 1.6.7
 
