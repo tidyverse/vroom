@@ -1,1 +1,59 @@
-PKG_CPPFLAGS=-Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -DFMT_HEADER_ONLY
+PKG_CPPFLAGS=-Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -DFMT_HEADER_ONLY \
+	-Ilibvroom/include -Ilibvroom/third_party -Ilibvroom
+
+# vroom's own source files
+VROOM_SOURCES = Iconv.cpp LocaleInfo.cpp altrep.cc cpp11.cpp \
+	delimited_index.cc delimited_index_connection.cc \
+	fixed_width_index_connection.cc gen.cc grisu3.c guess_type.cc \
+	iconv_file.cc index_collection.cc libvroom_index.cc vroom.cc vroom_big_int.cc \
+	vroom_chr.cc vroom_date.cc vroom_dbl.cc vroom_dttm.cc \
+	vroom_errors.cpp vroom_fct.cc vroom_fwf.cc vroom_int.cc \
+	vroom_num.cc vroom_rle.cc vroom_time.cc vroom_write.cc \
+	r_abort.cc
+
+# libvroom source files (excluding cli.cpp, arrow_output.cpp, libvroom_c.cpp)
+LIBVROOM_SOURCES = libvroom/src/branchless_state_machine.cpp \
+	libvroom/src/dialect.cpp \
+	libvroom/src/encoding.cpp \
+	libvroom/src/error.cpp \
+	libvroom/src/index_cache.cpp \
+	libvroom/src/io_util.cpp \
+	libvroom/src/libvroom_types.cpp \
+	libvroom/src/mmap_util.cpp \
+	libvroom/src/simd_dispatch.cpp \
+	libvroom/src/simd_number_parsing.cpp \
+	libvroom/src/streaming.cpp \
+	libvroom/src/two_pass.cpp \
+	libvroom/src/utf8.cpp \
+	libvroom/src/value_extraction.cpp
+
+# Highway source files - excluding abort.cc (replaced by r_abort.cc)
+HIGHWAY_SOURCES = libvroom/third_party/hwy/aligned_allocator.cc \
+	libvroom/third_party/hwy/per_target.cc \
+	libvroom/third_party/hwy/targets.cc
+
+OBJECTS = Iconv.o LocaleInfo.o altrep.o cpp11.o \
+	delimited_index.o delimited_index_connection.o \
+	fixed_width_index_connection.o gen.o grisu3.o guess_type.o \
+	iconv_file.o index_collection.o libvroom_index.o vroom.o vroom_big_int.o \
+	vroom_chr.o vroom_date.o vroom_dbl.o vroom_dttm.o \
+	vroom_errors.o vroom_fct.o vroom_fwf.o vroom_int.o \
+	vroom_num.o vroom_rle.o vroom_time.o vroom_write.o \
+	r_abort.o \
+	libvroom/src/branchless_state_machine.o \
+	libvroom/src/dialect.o \
+	libvroom/src/encoding.o \
+	libvroom/src/error.o \
+	libvroom/src/index_cache.o \
+	libvroom/src/io_util.o \
+	libvroom/src/libvroom_types.o \
+	libvroom/src/mmap_util.o \
+	libvroom/src/simd_dispatch.o \
+	libvroom/src/simd_number_parsing.o \
+	libvroom/src/streaming.o \
+	libvroom/src/two_pass.o \
+	libvroom/src/utf8.o \
+	libvroom/src/value_extraction.o \
+	libvroom/third_party/hwy/aligned_allocator.o \
+	libvroom/third_party/hwy/per_target.o \
+	libvroom/third_party/hwy/targets.o

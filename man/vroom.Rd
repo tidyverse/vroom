@@ -26,7 +26,8 @@ vroom(
   num_threads = vroom_threads(),
   progress = vroom_progress(),
   show_col_types = NULL,
-  .name_repair = "unique"
+  .name_repair = "unique",
+  use_libvroom = FALSE
 )
 }
 \arguments{
@@ -179,6 +180,10 @@ for names in the style of base R).
 This argument is passed on as \code{repair} to \code{\link[vctrs:vec_as_names]{vctrs::vec_as_names()}}.
 See there for more details on these terms and the strategies used
 to enforce them.}
+
+\item{use_libvroom}{Use the experimental libvroom SIMD-accelerated CSV
+parsing backend. This backend can be significantly faster for large files
+but may not support all features. Defaults to \code{FALSE}.}
 }
 \description{
 Read a delimited file into a tibble

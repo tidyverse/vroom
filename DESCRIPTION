@@ -74,6 +74,7 @@ Config/Needs/website: nycflights13, tidyverse/tidytemplate
 Config/testthat/edition: 3
 Config/testthat/parallel: false
 Config/usethis/last-upkeep: 2025-11-25
+SystemRequirements: C++17
 Copyright: file COPYRIGHTS
 Encoding: UTF-8
 Language: en-US

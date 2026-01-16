@@ -65,7 +65,8 @@ vroom_lines <- function(
     n_max = n_max,
     altrep = vroom_altrep(altrep),
     num_threads = num_threads,
-    progress = progress
+    progress = progress,
+    use_libvroom = FALSE
   )
   if (length(out) == 0) {
     return(character())
