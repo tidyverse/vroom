@@ -36,9 +36,10 @@ vroom_lines(
   connections.
 
   Files ending in `.gz`, `.bz2`, `.xz`, or `.zip` will be automatically
-  uncompressed. Files starting with `http://`, `https://`, `ftp://`, or
-  `ftps://` will be automatically downloaded. Remote `.gz` files can
-  also be automatically downloaded and decompressed.
+  decompressed. Files starting with `http://`, `https://`, `ftp://`, or
+  `ftps://` will be automatically downloaded. Remote compressed files
+  (`.gz`, `.bz2`, `.xz`, `.zip`) will be automatically downloaded and
+  decompressed.
 
   Literal data is most useful for examples and tests. To be recognised
   as literal data, wrap the input with

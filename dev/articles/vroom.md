@@ -244,8 +244,7 @@ vroom(file)
 #> # ℹ 1 more variable: carb <dbl>
 ```
 
-It can even read gzipped files from the internet (although not the other
-compressed formats).
+It can even read compressed files from the internet.
 
 ``` r
 file <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv.gz"

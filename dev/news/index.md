@@ -57,6 +57,15 @@
 - `vroom_fwf(..., n_max = 0)` with a connection no longer segfaults
   ([\#590](https://github.com/tidyverse/vroom/issues/590)).
 
+- [`vroom()`](https://vroom.tidyverse.org/dev/reference/vroom.md) now
+  supports reading from a remote file that uses any of the supported
+  compression formats, by downloading to a temporary (compressed) file.
+  This is a new feature for `.bz2`, `.xz`, and `.zip` and fixes `.gz`
+  bugs arising from problematic behaviour of
+  [`base::gzcon()`](https://rdrr.io/r/base/gzcon.html)
+  ([\#400](https://github.com/tidyverse/vroom/issues/400),
+  [\#553](https://github.com/tidyverse/vroom/issues/553)).
+
 ## vroom 1.6.7
 
 CRAN release: 2025-11-28
