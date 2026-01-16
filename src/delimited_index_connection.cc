@@ -140,7 +140,7 @@ delimited_index_connection::delimited_index_connection(
   std::unique_ptr<multi_progress> empty_pb = nullptr;
 
   // Index the first row
-  size_t cols = 0;
+  size_t num_delims = 0;
   csv_state state = RECORD_START;
   size_t lines_read = index_region(
       buf[i],
@@ -155,7 +155,7 @@ delimited_index_connection::delimited_index_connection(
       first_nl + 1,
       0,
       n_max,
-      cols,
+      num_delims,
       0,
       errors,
       empty_pb,
@@ -200,7 +200,7 @@ delimited_index_connection::delimited_index_connection(
             sz,
             total_read,
             n_max,
-            cols,
+            num_delims,
             columns_,
             errors,
             empty_pb,
@@ -249,10 +249,10 @@ delimited_index_connection::delimited_index_connection(
   // If we finish indexing a connection and we're in QUOTED_FIELD, warn about
   // an unclosed quote
   if (state == QUOTED_FIELD) {
-    errors->add_parse_error(total_read, cols, "closing quote", "end of file");
+    errors->add_parse_error(total_read, num_delims, "closing quote", "end of file");
     // Finalize the current record so we don't lose all data
     if (columns_ > 0) {
-      resolve_columns(total_read, cols, columns_, idx_[1], errors);
+      resolve_columns(total_read, num_delims, columns_, idx_[1], errors);
     }
     idx_[1].push_back(total_read);
   }
