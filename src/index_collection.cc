@@ -400,6 +400,11 @@ index_collection::index_collection(
 }
 
 string index_collection::get(size_t row, size_t column) const {
+  // Optimization: For single-file reads, directly delegate to the underlying index
+  if (indexes_.size() == 1) {
+    return indexes_[0]->get(row, column);
+  }
+
   for (const auto& idx : indexes_) {
     if (row < idx->num_rows()) {
       return idx->get(row, column);

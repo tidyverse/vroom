@@ -160,19 +160,20 @@ private:
   std::vector<std::string> headers_;
 
   // Helper to get trimmed field value by row/col
+  // This is optimized for zero-copy access when no escape processing is needed
   string get_trimmed_val(size_t row, size_t col, bool is_last) const;
 
   // Helper to get field bounds from libvroom
   std::pair<size_t, size_t> get_field_bounds(size_t row, size_t col) const;
 
-  // Helper to get string view for a field
+  // Helper to get string view for a field (zero-copy)
   std::string_view get_field(size_t row, size_t col) const;
 
   // Helper to get header value
   std::string get_header_field(size_t col) const;
 
-  // Helper to get field with processing
-  string get_processed_field(size_t row, size_t col) const;
+  // Check if a field contains escaped quotes that need processing
+  bool needs_escape_processing(std::string_view sv) const;
 };
 
 } // namespace vroom

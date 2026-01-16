@@ -123,8 +123,30 @@ std::pair<size_t, size_t> libvroom_index::get_field_bounds(size_t row, size_t co
   return {start, end};
 }
 
+bool libvroom_index::needs_escape_processing(std::string_view sv) const {
+  // Check if the field contains escaped quotes (doubled quotes or backslash escapes)
+  // This determines whether we need to allocate for escape processing
+  if (sv.empty()) {
+    return false;
+  }
+
+  // Look for escape sequences that need processing
+  // For double-quote escaping: look for "" within the field
+  // For backslash escaping: look for \"
+  char escape_char = escape_double_ ? quote_ : '\\';
+
+  for (size_t i = 0; i + 1 < sv.size(); ++i) {
+    if (sv[i] == escape_char && sv[i + 1] == quote_) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 string libvroom_index::get_trimmed_val(size_t row, size_t col, bool is_last) const {
   // Use libvroom's Result API directly - it handles quote stripping
+  // This is the zero-copy fast path for most fields
   auto sv = result_.row(row).get_string_view(col);
 
   const char* begin = sv.data();
@@ -141,6 +163,28 @@ string libvroom_index::get_trimmed_val(size_t row, size_t col, bool is_last) con
     while (end > begin && (*(end - 1) == ' ' || *(end - 1) == '\t')) --end;
   }
 
+  // Check if escape processing is needed
+  // If so, we need to allocate and process escapes
+  std::string_view trimmed(begin, end - begin);
+  if (needs_escape_processing(trimmed)) {
+    // Slow path: allocate and process escapes
+    char escape_char = escape_double_ ? quote_ : '\\';
+    std::string result;
+    result.reserve(trimmed.size());
+
+    for (size_t i = 0; i < trimmed.size(); ++i) {
+      if (i + 1 < trimmed.size() && trimmed[i] == escape_char && trimmed[i + 1] == quote_) {
+        // Skip the escape character, output the quote
+        result += quote_;
+        ++i;
+      } else {
+        result += trimmed[i];
+      }
+    }
+    return string(std::move(result));
+  }
+
+  // Fast path: zero-copy return using pointer pair
   return string(begin, end);
 }
 
@@ -155,13 +199,10 @@ std::string libvroom_index::get_header_field(size_t col) const {
   return std::string();
 }
 
-string libvroom_index::get_processed_field(size_t row, size_t col) const {
-  auto sv = get_field(row, col);
-  return string(sv.data(), sv.data() + sv.size());
-}
-
 string libvroom_index::get(size_t row, size_t col) const {
-  return get_processed_field(row, col);
+  // Use the optimized get_trimmed_val for consistent behavior
+  bool is_last = (col == columns_ - 1);
+  return get_trimmed_val(row, col, is_last);
 }
 
 // Column iterator implementation
