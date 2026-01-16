@@ -29,6 +29,18 @@ namespace libvroom {
 
 enum class ColumnType { STRING, INT64, DOUBLE, BOOLEAN, DATE, TIMESTAMP, NULL_TYPE, AUTO };
 
+/**
+ * @brief Strategy for selecting rows during type inference.
+ *
+ * Different sampling strategies have different trade-offs:
+ * - SEQUENTIAL: Best for linear storage access (HDDs, network streams)
+ * - DISTRIBUTED: Best for random access storage (SSDs, memory-mapped files)
+ */
+enum class SamplingStrategy {
+  SEQUENTIAL, ///< Sample first N rows (legacy behavior, good for linear access)
+  DISTRIBUTED ///< Sample from equally-spaced locations throughout file (good for SSDs)
+};
+
 std::shared_ptr<arrow::DataType> column_type_to_arrow(ColumnType type);
 const char* column_type_to_string(ColumnType type);
 
@@ -47,6 +59,7 @@ struct ArrowConvertOptions {
   bool infer_types = true;
   // Number of rows to sample for type inference (0 = all rows).
   // Maximum allowed value is MAX_TYPE_INFERENCE_ROWS; exceeding it throws std::invalid_argument.
+  // Used by SEQUENTIAL strategy; for DISTRIBUTED, use num_sample_locations * rows_per_location.
   size_t type_inference_rows = 1000;
   bool empty_is_null = false;
   std::vector<std::string> null_values = {"", "NA", "N/A", "null", "NULL", "None", "NaN"};
@@ -61,6 +74,17 @@ struct ArrowConvertOptions {
   size_t max_rows = 0;                // Maximum number of rows allowed (0 = unlimited)
   size_t max_total_cells = 100000000; // Maximum total cells (rows * columns) allowed (100M default)
   static constexpr size_t MAX_TYPE_INFERENCE_ROWS = 100000; // Upper bound for type_inference_rows
+
+  /// Sampling strategy for type inference (default: DISTRIBUTED for better accuracy)
+  SamplingStrategy sampling_strategy = SamplingStrategy::DISTRIBUTED;
+
+  /// Number of equally-spaced sample locations for DISTRIBUTED strategy (default: 100)
+  /// First and last rows are always included as sample locations.
+  size_t num_sample_locations = 100;
+
+  /// Number of contiguous rows to sample at each location for DISTRIBUTED strategy (default: 100)
+  /// Total samples = num_sample_locations * rows_per_location (default: 10,000)
+  size_t rows_per_location = 100;
 };
 
 struct ArrowConvertResult {
@@ -92,6 +116,18 @@ private:
   ArrowConvertOptions options_;
   std::vector<ColumnSpec> columns_;
   bool has_user_schema_ = false;
+
+  /**
+   * @brief Compute which row indices to sample based on the sampling strategy.
+   *
+   * For SEQUENTIAL: Returns indices 0, 1, 2, ..., min(type_inference_rows, num_rows)-1
+   * For DISTRIBUTED: Returns indices from equally-spaced locations throughout the file,
+   *                  always including first and last rows as anchor points.
+   *
+   * @param num_rows Total number of rows in the data
+   * @return Vector of row indices to sample for type inference
+   */
+  std::vector<size_t> compute_sample_indices(size_t num_rows) const;
 
   struct FieldRange {
     size_t start;

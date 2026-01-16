@@ -74,8 +74,8 @@ void get_error_line_column(const uint8_t* buf, size_t buf_len, size_t offset, si
 
 uint64_t second_pass_simd_branchless_with_errors(const BranchlessStateMachine& sm,
                                                  const uint8_t* buf, size_t start, size_t end,
-                                                 uint64_t* indexes, size_t thread_id,
-                                                 size_t n_threads, ErrorCollector* errors,
+                                                 uint64_t* indexes, size_t /*thread_id*/,
+                                                 size_t /*n_threads*/, ErrorCollector* errors,
                                                  size_t total_len) {
   assert(end >= start && "Invalid range: end must be >= start");
   size_t len = end - start;
@@ -94,6 +94,7 @@ uint64_t second_pass_simd_branchless_with_errors(const BranchlessStateMachine& s
   char quote_char = sm.quote_char();
 
   // Process 64-byte blocks with SIMD
+  // Caller passes per-thread base pointer; writes are contiguous within each thread's region.
   for (; pos + 64 <= len; pos += 64) {
     libvroom_prefetch(data + pos + 128);
 
@@ -102,9 +103,9 @@ uint64_t second_pass_simd_branchless_with_errors(const BranchlessStateMachine& s
     uint64_t null_byte_mask = 0;
     uint64_t quote_error_mask = 0;
 
-    count += process_block_simd_branchless_with_errors(
-        sm, in, 64, prev_quote_state, prev_escape_carry, indexes + thread_id, start + pos, idx,
-        static_cast<int>(n_threads), null_byte_mask, quote_error_mask);
+    count += process_block_simd_branchless_with_errors(sm, in, 64, prev_quote_state,
+                                                       prev_escape_carry, indexes, start + pos, idx,
+                                                       1, null_byte_mask, quote_error_mask);
 
     // Report errors for this block (only if there are any)
     if ((null_byte_mask != 0 || quote_error_mask != 0) && errors) {
@@ -149,9 +150,9 @@ uint64_t second_pass_simd_branchless_with_errors(const BranchlessStateMachine& s
     uint64_t null_byte_mask = 0;
     uint64_t quote_error_mask = 0;
 
-    count += process_block_simd_branchless_with_errors(
-        sm, in, len - pos, prev_quote_state, prev_escape_carry, indexes + thread_id, start + pos,
-        idx, static_cast<int>(n_threads), null_byte_mask, quote_error_mask);
+    count += process_block_simd_branchless_with_errors(sm, in, len - pos, prev_quote_state,
+                                                       prev_escape_carry, indexes, start + pos, idx,
+                                                       1, null_byte_mask, quote_error_mask);
 
     // Report errors for this block
     if ((null_byte_mask != 0 || quote_error_mask != 0) && errors) {

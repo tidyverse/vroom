@@ -74,7 +74,7 @@ std::string ParseError::to_string() const {
 }
 
 std::string ErrorCollector::summary() const {
-  if (errors_.empty()) {
+  if (errors_.empty() && suppressed_count_ == 0) {
     return "No errors";
   }
 
@@ -107,9 +107,16 @@ std::string ErrorCollector::summary() const {
   if (warnings > 0 || errors > 0 || fatal > 0)
     ss << ")";
 
-  ss << "\n\nDetails:\n";
-  for (const auto& err : errors_) {
-    ss << err.to_string() << "\n";
+  if (suppressed_count_ > 0) {
+    ss << "\nError limit reached: " << suppressed_count_ << " additional error"
+       << (suppressed_count_ == 1 ? "" : "s") << " suppressed";
+  }
+
+  if (!errors_.empty()) {
+    ss << "\n\nDetails:\n";
+    for (const auto& err : errors_) {
+      ss << err.to_string() << "\n";
+    }
   }
 
   return ss.str();

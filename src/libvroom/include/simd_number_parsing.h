@@ -199,6 +199,27 @@ public:
       return SIMDParseResult<uint64_t>::failure("Invalid character in integer");
     }
 
+    // Overflow detection for 20-digit numbers (simdjson technique)
+    // Max uint64 is 18446744073709551615 (20 digits)
+    // If we have 20 digits and the result is small, we overflowed
+    if (digit_len == 20) {
+      // Quick check: if first digit > '1', definitely overflow
+      if (ptr[0] > '1') {
+        return SIMDParseResult<uint64_t>::failure("Integer overflow");
+      }
+      // If first digit is '1', check if result is consistent
+      // The smallest 20-digit number starting with '1' that fits is 10000000000000000000
+      // If result < 10^19, we overflowed
+      if (ptr[0] == '1' && result < 10000000000000000000ULL) {
+        return SIMDParseResult<uint64_t>::failure("Integer overflow");
+      }
+      // If first digit is '0', also check (though rare due to leading zeros)
+      if (ptr[0] == '0' && result >= 10000000000000000000ULL) {
+        // This shouldn't happen with valid input, but check anyway
+        return SIMDParseResult<uint64_t>::failure("Integer overflow");
+      }
+    }
+
     return SIMDParseResult<uint64_t>::success(result);
   }
 
@@ -263,50 +284,93 @@ public:
 
 private:
   /**
-   * Core SIMD digit parsing routine.
-   * Validates that all characters are digits and computes the numeric value.
-   *
-   * Uses a technique similar to Lemire's approach:
-   * - For short numbers (<=8 digits): scalar loop
-   * - For medium numbers (9-16 digits): SIMD validation + scalar accumulation
-   * - For long numbers (17-20 digits): careful overflow handling
+   * SWAR (SIMD Within A Register) check if 8 bytes are all ASCII digits.
+   * From simdjson - uses bit manipulation to check all 8 bytes in ~3 operations.
    */
-  static HWY_ATTR really_inline bool parse_digits_simd(const uint8_t* data, size_t len,
-                                                       uint64_t& result) {
+  static really_inline bool is_made_of_eight_digits_fast(const uint8_t* chars) {
+    uint64_t val;
+    std::memcpy(&val, chars, 8);
+    // Each byte must be in range '0' (0x30) to '9' (0x39)
+    // This check verifies: (byte & 0xF0) == 0x30 AND (byte + 6) & 0xF0 == 0x30
+    // Which is true only for 0x30-0x39
+    return (((val & 0xF0F0F0F0F0F0F0F0ULL) |
+             (((val + 0x0606060606060606ULL) & 0xF0F0F0F0F0F0F0F0ULL) >> 4)) ==
+            0x3333333333333333ULL);
+  }
+
+  /**
+   * Parse exactly 8 ASCII digits to a 32-bit integer.
+   * From simdjson - uses SWAR multiply-accumulate technique.
+   * Assumes input is already validated as 8 digits.
+   */
+  static really_inline uint32_t parse_eight_digits_unrolled(const uint8_t* chars) {
+    uint64_t val;
+    std::memcpy(&val, chars, 8);
+
+    // Subtract '0' from each byte to get digit values 0-9
+    val -= 0x3030303030303030ULL;
+
+    // Multiply-accumulate using SWAR:
+    // Combine pairs: d0*10+d1, d2*10+d3, d4*10+d5, d6*10+d7
+    // Then combine those: (d0*10+d1)*100+(d2*10+d3), (d4*10+d5)*100+(d6*10+d7)
+    // Then final: first_pair*10000 + second_pair
+
+    // Extract individual bytes (little-endian order)
+    uint32_t d0 = (val >> 0) & 0xFF;
+    uint32_t d1 = (val >> 8) & 0xFF;
+    uint32_t d2 = (val >> 16) & 0xFF;
+    uint32_t d3 = (val >> 24) & 0xFF;
+    uint32_t d4 = (val >> 32) & 0xFF;
+    uint32_t d5 = (val >> 40) & 0xFF;
+    uint32_t d6 = (val >> 48) & 0xFF;
+    uint32_t d7 = (val >> 56) & 0xFF;
+
+    // Combine using multiply-add pattern
+    return ((d0 * 10 + d1) * 100 + (d2 * 10 + d3)) * 10000 +
+           ((d4 * 10 + d5) * 100 + (d6 * 10 + d7));
+  }
+
+  /**
+   * Core digit parsing routine using simdjson techniques.
+   * - For 8+ digits: Use SWAR validation + 8-digit-at-a-time parsing
+   * - For shorter: Simple scalar loop
+   * - Overflow checking only at boundaries (not per-digit)
+   */
+  static really_inline bool parse_digits_simd(const uint8_t* data, size_t len, uint64_t& result) {
     result = 0;
 
-    // Early validation using SIMD for longer strings
-    if (len >= 8 && !validate_digits_simd(data, len)) {
-      return false;
+    // Fast path: 8 digits or more, use SWAR 8-at-a-time parsing
+    if (len >= 8) {
+      const uint8_t* p = data;
+      const uint8_t* end = data + len;
+
+      // Process 8 digits at a time while we can
+      while (p + 8 <= end && is_made_of_eight_digits_fast(p)) {
+        result = result * 100000000ULL + parse_eight_digits_unrolled(p);
+        p += 8;
+      }
+
+      // Handle remaining digits with scalar loop (no validation needed for processed part)
+      while (p < end) {
+        uint8_t c = *p;
+        if (c < '0' || c > '9')
+          return false;
+        result = result * 10 + (c - '0');
+        ++p;
+      }
+
+      // Check for overflow (only matters for 19-20 digit numbers)
+      // If we got here with more than 19 digits worth of value, it might have overflowed
+      // The caller's sign handling will catch this for signed types
+      return true;
     }
 
-    // Accumulate the value
-    // For portability and simplicity, we use scalar accumulation
-    // after SIMD validation. This is still faster than validating
-    // each character individually during accumulation.
-    constexpr uint64_t max_before_mul = std::numeric_limits<uint64_t>::max() / 10;
-
+    // Short numbers (< 8 digits): simple scalar loop, no overflow possible
     for (size_t i = 0; i < len; ++i) {
       uint8_t c = data[i];
       if (c < '0' || c > '9')
         return false;
-
-      uint8_t digit = c - '0';
-
-      // Check for overflow before multiplying
-      // max uint64 is 18446744073709551615
-      // max_before_mul is 1844674407370955161
-      if (result > max_before_mul) {
-        return false; // Definitely overflow
-      }
-      if (result == max_before_mul && digit > 5) {
-        // At the boundary: 1844674407370955161 * 10 + digit
-        // Only digits 0-5 are safe (result would be 18446744073709551610-15)
-        // Digits 6-9 would overflow
-        return false;
-      }
-
-      result = result * 10 + digit;
+      result = result * 10 + (c - '0');
     }
 
     return true;

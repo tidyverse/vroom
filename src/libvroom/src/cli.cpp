@@ -232,11 +232,26 @@ private:
     }
     merged_indexes_.reserve(total);
 
-    // Collect all indexes
+    // Collect all indexes handling three possible layouts:
+    // - region_offsets != nullptr: Right-sized per-thread regions (from init_counted_per_thread)
+    // - region_size > 0: Uniform per-thread regions at indexes[t * region_size]
+    // - region_size == 0 && region_offsets == nullptr: Contiguous from deserialization
     for (int t = 0; t < idx_.n_threads; ++t) {
+      uint64_t* thread_base;
+      if (idx_.region_offsets != nullptr) {
+        thread_base = idx_.indexes + idx_.region_offsets[t];
+      } else if (idx_.region_size > 0) {
+        thread_base = idx_.indexes + t * idx_.region_size;
+      } else {
+        // Contiguous layout: compute offset for this thread
+        size_t offset = 0;
+        for (int i = 0; i < t; ++i) {
+          offset += idx_.n_indexes[i];
+        }
+        thread_base = idx_.indexes + offset;
+      }
       for (uint64_t j = 0; j < idx_.n_indexes[t]; ++j) {
-        auto ii = t + (j * idx_.n_threads);
-        merged_indexes_.push_back(idx_.indexes[ii]);
+        merged_indexes_.push_back(thread_base[j]);
       }
     }
 
@@ -287,6 +302,12 @@ void printUsage(const char* prog) {
   cerr << "                        latin1, windows-1252\n";
   cerr << "  -j            Output in JSON format (for dialect/schema/stats)\n";
   cerr << "  -m <size>     Sample size for schema/stats (0=all rows, default: 0)\n";
+  cerr << "                Used with --sequential; ignored with distributed sampling\n";
+  cerr << "  --distributed Use distributed sampling for type inference (default)\n";
+  cerr << "                Samples from equally-spaced locations throughout the file\n";
+  cerr << "  --sequential  Use sequential sampling (first N rows only)\n";
+  cerr << "  --sample-locations <n>   Number of sample locations (default: 100)\n";
+  cerr << "  --rows-per-location <n>  Rows per location (default: 100)\n";
   cerr << "  -o <file>     Output file path (for convert command)\n";
   cerr << "  -F <format>   Output format: parquet, feather, auto (default: auto)\n";
   cerr << "  -C <codec>    Compression codec for Parquet: snappy, gzip, zstd, lz4, none\n";
@@ -297,6 +318,11 @@ void printUsage(const char* prog) {
   cerr << "  --no-cache    Disable index caching (default)\n";
   cerr << "  -p, --progress  Show progress bar during parsing (auto-enabled for TTY)\n";
   cerr << "  --no-progress   Disable progress bar\n";
+  cerr << "  --max-errors <n>  Maximum errors to collect (default: 10000)\n";
+  cerr << "  --skip <n>        Skip N data rows at the beginning\n";
+  cerr << "  --n-max <n>       Read at most N data rows (0 = unlimited)\n";
+  cerr << "  --comment <char>  Skip lines starting with this character\n";
+  cerr << "  --skip-empty      Skip rows containing only whitespace\n";
   cerr << "  -h            Show this help message\n";
   cerr << "  -v            Show version information\n";
   cerr << "\nDialect Detection:\n";
@@ -359,12 +385,22 @@ struct CliCacheConfig {
   std::string cache_dir; ///< Custom cache directory (empty = same dir)
 };
 
+/// Row filtering options for CLI
+struct CliRowFilterOptions {
+  size_t skip{0};              ///< Number of data rows to skip at the beginning
+  size_t n_max{0};             ///< Maximum rows to read (0 = unlimited)
+  char comment{'\0'};          ///< Comment character ('\0' = no comment handling)
+  bool skip_empty_rows{false}; ///< Whether to skip empty rows
+};
+
 // Parse a file or stdin - returns ParseResult with RAII-managed data
 // If detected_encoding is provided, the detected encoding will be stored there
 // If strict_mode is true, exits with error on any parse warning or error
 // If forced_encoding is not UNKNOWN, it overrides auto-detection
 // If cache_config is provided and enabled, enables index caching
 // If progress_callback is provided, it will be called during parsing
+// If max_errors > 0, limits the number of errors collected (0 = use default)
+// If row_filter is provided, applies row filtering options
 ParseResult parseFile(const char* filename, int n_threads,
                       const libvroom::Dialect& dialect = libvroom::Dialect::csv(),
                       bool auto_detect = false,
@@ -372,7 +408,8 @@ ParseResult parseFile(const char* filename, int n_threads,
                       bool strict_mode = false,
                       libvroom::Encoding forced_encoding = libvroom::Encoding::UNKNOWN,
                       const CliCacheConfig* cache_config = nullptr,
-                      libvroom::ProgressCallback progress_callback = nullptr) {
+                      libvroom::ProgressCallback progress_callback = nullptr, size_t max_errors = 0,
+                      const CliRowFilterOptions* row_filter = nullptr) {
   ParseResult result;
 
   try {
@@ -421,6 +458,11 @@ ParseResult parseFile(const char* filename, int n_threads,
     options.dialect = dialect;
   }
 
+  // Set max_errors limit if specified (0 = use default)
+  if (max_errors > 0) {
+    options.max_errors = max_errors;
+  }
+
   // In strict mode, collect errors using PERMISSIVE mode to gather all issues
   libvroom::ErrorCollector errors(libvroom::ErrorMode::PERMISSIVE);
   if (strict_mode) {
@@ -440,6 +482,14 @@ ParseResult parseFile(const char* filename, int n_threads,
   // Set up progress callback if provided
   if (progress_callback) {
     options.progress_callback = progress_callback;
+  }
+
+  // Apply row filtering options if provided
+  if (row_filter != nullptr) {
+    options.skip = row_filter->skip;
+    options.n_max = row_filter->n_max;
+    options.comment = row_filter->comment;
+    options.skip_empty_rows = row_filter->skip_empty_rows;
   }
 
   auto parse_result = parser.parse(result.load_result.data(), result.load_result.size, options);
@@ -745,9 +795,10 @@ int cmdHead(const char* filename, int n_threads, size_t num_rows, bool has_heade
             bool strict_mode = false,
             libvroom::Encoding forced_encoding = libvroom::Encoding::UNKNOWN,
             const CliCacheConfig* cache_config = nullptr,
-            libvroom::ProgressCallback progress_callback = nullptr) {
+            libvroom::ProgressCallback progress_callback = nullptr, size_t max_errors = 0,
+            const CliRowFilterOptions* row_filter = nullptr) {
   auto result = parseFile(filename, n_threads, dialect, auto_detect, nullptr, strict_mode,
-                          forced_encoding, cache_config, progress_callback);
+                          forced_encoding, cache_config, progress_callback, max_errors, row_filter);
   if (!result.success)
     return 1;
 
@@ -939,9 +990,10 @@ int cmdSample(const char* filename, int n_threads, size_t num_rows, bool has_hea
               unsigned int seed = 0, bool strict_mode = false,
               libvroom::Encoding forced_encoding = libvroom::Encoding::UNKNOWN,
               const CliCacheConfig* cache_config = nullptr,
-              libvroom::ProgressCallback progress_callback = nullptr) {
+              libvroom::ProgressCallback progress_callback = nullptr, size_t max_errors = 0,
+              const CliRowFilterOptions* row_filter = nullptr) {
   auto result = parseFile(filename, n_threads, dialect, auto_detect, nullptr, strict_mode,
-                          forced_encoding, cache_config, progress_callback);
+                          forced_encoding, cache_config, progress_callback, max_errors, row_filter);
   if (!result.success)
     return 1;
 
@@ -1008,9 +1060,10 @@ int cmdSelect(const char* filename, int n_threads, const string& columns, bool h
               bool strict_mode = false,
               libvroom::Encoding forced_encoding = libvroom::Encoding::UNKNOWN,
               const CliCacheConfig* cache_config = nullptr,
-              libvroom::ProgressCallback progress_callback = nullptr) {
+              libvroom::ProgressCallback progress_callback = nullptr, size_t max_errors = 0,
+              const CliRowFilterOptions* row_filter = nullptr) {
   auto result = parseFile(filename, n_threads, dialect, auto_detect, nullptr, strict_mode,
-                          forced_encoding, cache_config, progress_callback);
+                          forced_encoding, cache_config, progress_callback, max_errors, row_filter);
   if (!result.success)
     return 1;
 
@@ -1101,9 +1154,10 @@ int cmdInfo(const char* filename, int n_threads, bool has_header,
             bool strict_mode = false,
             libvroom::Encoding forced_encoding = libvroom::Encoding::UNKNOWN,
             const CliCacheConfig* cache_config = nullptr,
-            libvroom::ProgressCallback progress_callback = nullptr) {
+            libvroom::ProgressCallback progress_callback = nullptr, size_t max_errors = 0,
+            const CliRowFilterOptions* row_filter = nullptr) {
   auto result = parseFile(filename, n_threads, dialect, auto_detect, nullptr, strict_mode,
-                          forced_encoding, cache_config, progress_callback);
+                          forced_encoding, cache_config, progress_callback, max_errors, row_filter);
   if (!result.success)
     return 1;
 
@@ -1141,9 +1195,10 @@ int cmdPretty(const char* filename, int n_threads, size_t num_rows, bool has_hea
               bool strict_mode = false,
               libvroom::Encoding forced_encoding = libvroom::Encoding::UNKNOWN,
               const CliCacheConfig* cache_config = nullptr,
-              libvroom::ProgressCallback progress_callback = nullptr) {
+              libvroom::ProgressCallback progress_callback = nullptr, size_t max_errors = 0,
+              const CliRowFilterOptions* row_filter = nullptr) {
   auto result = parseFile(filename, n_threads, dialect, auto_detect, nullptr, strict_mode,
-                          forced_encoding, cache_config, progress_callback);
+                          forced_encoding, cache_config, progress_callback, max_errors, row_filter);
   if (!result.success)
     return 1;
 
@@ -1595,11 +1650,64 @@ struct ColumnStats {
   }
 };
 
+// Helper function to compute distributed sample indices for CLI
+// Matches the algorithm used in ArrowConverter::compute_sample_indices
+static std::vector<size_t> computeDistributedSampleIndices(size_t num_rows,
+                                                           size_t num_sample_locations,
+                                                           size_t rows_per_location) {
+  std::vector<size_t> indices;
+
+  if (num_rows == 0 || num_sample_locations == 0) {
+    return indices;
+  }
+
+  size_t total_samples = num_sample_locations * rows_per_location;
+
+  if (num_rows <= total_samples) {
+    // File smaller than total sample size: sample all rows
+    indices.reserve(num_rows);
+    for (size_t i = 0; i < num_rows; ++i) {
+      indices.push_back(i);
+    }
+  } else {
+    if (num_sample_locations == 1) {
+      // Single location: sample first rows_per_location rows
+      indices.reserve(rows_per_location);
+      for (size_t i = 0; i < rows_per_location && i < num_rows; ++i) {
+        indices.push_back(i);
+      }
+    } else {
+      // Multiple locations: calculate step and cap rows per location to avoid overlap
+      size_t last_start = num_rows - rows_per_location;
+      size_t step = last_start / (num_sample_locations - 1);
+
+      // Cap actual rows per location to avoid overlap between consecutive blocks
+      size_t actual_rows_per_loc = std::min(rows_per_location, step > 0 ? step : rows_per_location);
+
+      indices.reserve(num_sample_locations * actual_rows_per_loc);
+
+      for (size_t loc = 0; loc < num_sample_locations; ++loc) {
+        size_t start = (loc * last_start) / (num_sample_locations - 1);
+        size_t rows_this_loc =
+            (loc == num_sample_locations - 1) ? rows_per_location : actual_rows_per_loc;
+
+        for (size_t i = 0; i < rows_this_loc; ++i) {
+          indices.push_back(start + i);
+        }
+      }
+    }
+  }
+
+  return indices;
+}
+
 // Command: schema - display inferred schema with column names, types, and nullable
 int cmdSchema(const char* filename, int n_threads, bool has_header,
               const libvroom::Dialect& dialect, bool auto_detect, bool json_output,
-              bool strict_mode, size_t sample_size = 0) {
-  auto result = parseFile(filename, n_threads, dialect, auto_detect, nullptr, strict_mode);
+              bool strict_mode, size_t sample_size, bool use_distributed_sampling,
+              size_t num_sample_locations, size_t rows_per_location, size_t max_errors = 0) {
+  auto result = parseFile(filename, n_threads, dialect, auto_detect, nullptr, strict_mode,
+                          libvroom::Encoding::UNKNOWN, nullptr, nullptr, max_errors);
   if (!result.success)
     return 1;
 
@@ -1631,27 +1739,44 @@ int cmdSchema(const char* filename, int n_threads, bool has_header,
   libvroom::ColumnTypeInference type_inference(num_cols);
 
   // Process data rows (skip header if present)
-  // With sampling and early termination optimization
   size_t start_row = has_header ? 1 : 0;
   size_t total_data_rows = rows.size() > start_row ? rows.size() - start_row : 0;
-  size_t max_rows_to_process =
-      (sample_size > 0) ? std::min(sample_size, total_data_rows) : total_data_rows;
-  size_t rows_processed = 0;
   constexpr size_t EARLY_TERMINATION_CHECK_INTERVAL = 1000;
   constexpr size_t EARLY_TERMINATION_MIN_SAMPLES = 100;
 
-  for (size_t r = start_row; r < rows.size() && rows_processed < max_rows_to_process; ++r) {
-    const auto& row = rows[r];
-    for (size_t c = 0; c < std::min(row.size(), num_cols); ++c) {
-      const std::string& field = row[c];
-      type_inference.add_field(c, reinterpret_cast<const uint8_t*>(field.data()), field.size());
+  if (use_distributed_sampling) {
+    // Distributed sampling: sample from equally-spaced locations
+    auto sample_indices =
+        computeDistributedSampleIndices(total_data_rows, num_sample_locations, rows_per_location);
+    for (size_t idx : sample_indices) {
+      size_t r = start_row + idx;
+      if (r >= rows.size())
+        continue;
+      const auto& row = rows[r];
+      for (size_t c = 0; c < std::min(row.size(), num_cols); ++c) {
+        const std::string& field = row[c];
+        type_inference.add_field(c, reinterpret_cast<const uint8_t*>(field.data()), field.size());
+      }
     }
-    ++rows_processed;
+  } else {
+    // Sequential sampling: sample first N rows
+    size_t max_rows_to_process =
+        (sample_size > 0) ? std::min(sample_size, total_data_rows) : total_data_rows;
+    size_t rows_processed = 0;
 
-    // Check for early termination every N rows (only if not sampling)
-    if (sample_size == 0 && rows_processed % EARLY_TERMINATION_CHECK_INTERVAL == 0) {
-      if (type_inference.all_types_confirmed(EARLY_TERMINATION_MIN_SAMPLES)) {
-        break;
+    for (size_t r = start_row; r < rows.size() && rows_processed < max_rows_to_process; ++r) {
+      const auto& row = rows[r];
+      for (size_t c = 0; c < std::min(row.size(), num_cols); ++c) {
+        const std::string& field = row[c];
+        type_inference.add_field(c, reinterpret_cast<const uint8_t*>(field.data()), field.size());
+      }
+      ++rows_processed;
+
+      // Check for early termination every N rows (only if not sampling)
+      if (sample_size == 0 && rows_processed % EARLY_TERMINATION_CHECK_INTERVAL == 0) {
+        if (type_inference.all_types_confirmed(EARLY_TERMINATION_MIN_SAMPLES)) {
+          break;
+        }
       }
     }
   }
@@ -1824,8 +1949,11 @@ int cmdConvert(const char* filename, const std::string& output_path, int n_threa
 
 // Command: stats - display statistical summary for each column
 int cmdStats(const char* filename, int n_threads, bool has_header, const libvroom::Dialect& dialect,
-             bool auto_detect, bool json_output, bool strict_mode, size_t sample_size = 0) {
-  auto result = parseFile(filename, n_threads, dialect, auto_detect, nullptr, strict_mode);
+             bool auto_detect, bool json_output, bool strict_mode, size_t sample_size,
+             bool use_distributed_sampling, size_t num_sample_locations, size_t rows_per_location,
+             size_t max_errors = 0) {
+  auto result = parseFile(filename, n_threads, dialect, auto_detect, nullptr, strict_mode,
+                          libvroom::Encoding::UNKNOWN, nullptr, nullptr, max_errors);
   if (!result.success)
     return 1;
 
@@ -1863,14 +1991,14 @@ int cmdStats(const char* filename, int n_threads, bool has_header, const libvroo
   libvroom::ColumnTypeInference type_inference(num_cols);
 
   // Process data rows (skip header if present)
-  // With sampling optimization
   size_t start_row = has_header ? 1 : 0;
   size_t total_data_rows = rows.size() > start_row ? rows.size() - start_row : 0;
-  size_t max_rows_to_process =
-      (sample_size > 0) ? std::min(sample_size, total_data_rows) : total_data_rows;
   size_t rows_processed = 0;
 
-  for (size_t r = start_row; r < rows.size() && rows_processed < max_rows_to_process; ++r) {
+  // Helper lambda to process a single row
+  auto process_row = [&](size_t r) {
+    if (r >= rows.size())
+      return;
     const auto& row = rows[r];
     for (size_t c = 0; c < std::min(row.size(), num_cols); ++c) {
       const std::string& field = row[c];
@@ -1900,6 +2028,23 @@ int cmdStats(const char* filename, int n_threads, bool has_header, const libvroo
       stats[c].add_string_value(field);
     }
     ++rows_processed;
+  };
+
+  if (use_distributed_sampling) {
+    // Distributed sampling: sample from equally-spaced locations
+    auto sample_indices =
+        computeDistributedSampleIndices(total_data_rows, num_sample_locations, rows_per_location);
+    for (size_t idx : sample_indices) {
+      process_row(start_row + idx);
+    }
+  } else {
+    // Sequential sampling: sample first N rows
+    size_t max_rows_to_process =
+        (sample_size > 0) ? std::min(sample_size, total_data_rows) : total_data_rows;
+
+    for (size_t r = start_row; r < rows.size() && rows_processed < max_rows_to_process; ++r) {
+      process_row(r);
+    }
   }
 
   // Calculate data_row_count based on what we actually processed
@@ -2066,8 +2211,14 @@ int main(int argc, char* argv[]) {
   bool strict_mode = false;         // Strict mode: exit with code 1 on any parse error
   unsigned int random_seed = 0;     // Random seed for sample command (0 = use random_device)
   libvroom::Encoding forced_encoding = libvroom::Encoding::UNKNOWN; // User-specified encoding
-  size_t sample_size = 0;      // Sample size for schema/stats (0 = all rows)
-  CliCacheConfig cache_config; // Index caching configuration
+  size_t sample_size = 0; // Sample size for schema/stats (0 = all rows)
+  // Distributed sampling options for type inference (schema/stats commands)
+  bool use_distributed_sampling = true; // Use distributed sampling by default
+  size_t num_sample_locations = 100;    // Number of sample locations for distributed sampling
+  size_t rows_per_location = 100;       // Rows per location for distributed sampling
+  size_t max_errors = 0;                // Maximum errors to collect (0 = use default of 10000)
+  CliCacheConfig cache_config;          // Index caching configuration
+  CliRowFilterOptions row_filter;       // Row filtering options
   // Progress bar: auto-enabled for TTY by default, can be overridden by --progress/--no-progress
   bool progress_auto = true;     // Use automatic TTY detection
   bool progress_enabled = false; // Explicit override value
@@ -2150,6 +2301,193 @@ int main(int argc, char* argv[]) {
       }
       --argc;
       --i; // Recheck this position
+    } else if (strcmp(argv[i], "--sequential") == 0) {
+      use_distributed_sampling = false;
+      // Remove --sequential from argv by shifting remaining args
+      for (int j = i; j < argc - 1; ++j) {
+        argv[j] = argv[j + 1];
+      }
+      --argc;
+      --i; // Recheck this position
+    } else if (strcmp(argv[i], "--distributed") == 0) {
+      use_distributed_sampling = true;
+      // Remove --distributed from argv by shifting remaining args
+      for (int j = i; j < argc - 1; ++j) {
+        argv[j] = argv[j + 1];
+      }
+      --argc;
+      --i; // Recheck this position
+    } else if (strncmp(argv[i], "--sample-locations=", 19) == 0) {
+      char* endptr;
+      long val = strtol(argv[i] + 19, &endptr, 10);
+      if (*endptr != '\0' || val < 1) {
+        cerr << "Error: Invalid sample-locations value '" << (argv[i] + 19) << "'\n";
+        return 1;
+      }
+      num_sample_locations = static_cast<size_t>(val);
+      use_distributed_sampling = true;
+      // Remove from argv
+      for (int j = i; j < argc - 1; ++j) {
+        argv[j] = argv[j + 1];
+      }
+      --argc;
+      --i;
+    } else if (strcmp(argv[i], "--sample-locations") == 0 && i + 1 < argc) {
+      char* endptr;
+      long val = strtol(argv[i + 1], &endptr, 10);
+      if (*endptr != '\0' || val < 1) {
+        cerr << "Error: Invalid sample-locations value '" << argv[i + 1] << "'\n";
+        return 1;
+      }
+      num_sample_locations = static_cast<size_t>(val);
+      use_distributed_sampling = true;
+      // Remove both option and value from argv
+      for (int j = i; j < argc - 2; ++j) {
+        argv[j] = argv[j + 2];
+      }
+      argc -= 2;
+      --i;
+    } else if (strncmp(argv[i], "--rows-per-location=", 20) == 0) {
+      char* endptr;
+      long val = strtol(argv[i] + 20, &endptr, 10);
+      if (*endptr != '\0' || val < 1) {
+        cerr << "Error: Invalid rows-per-location value '" << (argv[i] + 20) << "'\n";
+        return 1;
+      }
+      rows_per_location = static_cast<size_t>(val);
+      use_distributed_sampling = true;
+      // Remove from argv
+      for (int j = i; j < argc - 1; ++j) {
+        argv[j] = argv[j + 1];
+      }
+      --argc;
+      --i;
+    } else if (strcmp(argv[i], "--rows-per-location") == 0 && i + 1 < argc) {
+      char* endptr;
+      long val = strtol(argv[i + 1], &endptr, 10);
+      if (*endptr != '\0' || val < 1) {
+        cerr << "Error: Invalid rows-per-location value '" << argv[i + 1] << "'\n";
+        return 1;
+      }
+      rows_per_location = static_cast<size_t>(val);
+      use_distributed_sampling = true;
+      // Remove both option and value from argv
+      for (int j = i; j < argc - 2; ++j) {
+        argv[j] = argv[j + 2];
+      }
+      argc -= 2;
+      --i;
+    } else if (strncmp(argv[i], "--max-errors=", 13) == 0) {
+      char* endptr;
+      long val = strtol(argv[i] + 13, &endptr, 10);
+      if (*endptr != '\0' || val < 0) {
+        cerr << "Error: Invalid max-errors value '" << (argv[i] + 13) << "'\n";
+        return 1;
+      }
+      max_errors = static_cast<size_t>(val);
+      // Remove --max-errors=... from argv by shifting remaining args
+      for (int j = i; j < argc - 1; ++j) {
+        argv[j] = argv[j + 1];
+      }
+      --argc;
+      --i;
+    } else if (strcmp(argv[i], "--max-errors") == 0 && i + 1 < argc) {
+      char* endptr;
+      long val = strtol(argv[i + 1], &endptr, 10);
+      if (*endptr != '\0' || val < 0) {
+        cerr << "Error: Invalid max-errors value '" << argv[i + 1] << "'\n";
+        return 1;
+      }
+      max_errors = static_cast<size_t>(val);
+      // Remove both --max-errors and its argument from argv
+      for (int j = i; j < argc - 2; ++j) {
+        argv[j] = argv[j + 2];
+      }
+      argc -= 2;
+      --i;
+    } else if (strncmp(argv[i], "--skip=", 7) == 0) {
+      char* endptr;
+      long val = strtol(argv[i] + 7, &endptr, 10);
+      if (*endptr != '\0' || val < 0) {
+        cerr << "Error: Invalid skip value '" << (argv[i] + 7) << "'\n";
+        return 1;
+      }
+      row_filter.skip = static_cast<size_t>(val);
+      for (int j = i; j < argc - 1; ++j) {
+        argv[j] = argv[j + 1];
+      }
+      --argc;
+      --i;
+    } else if (strcmp(argv[i], "--skip") == 0 && i + 1 < argc) {
+      char* endptr;
+      long val = strtol(argv[i + 1], &endptr, 10);
+      if (*endptr != '\0' || val < 0) {
+        cerr << "Error: Invalid skip value '" << argv[i + 1] << "'\n";
+        return 1;
+      }
+      row_filter.skip = static_cast<size_t>(val);
+      for (int j = i; j < argc - 2; ++j) {
+        argv[j] = argv[j + 2];
+      }
+      argc -= 2;
+      --i;
+    } else if (strncmp(argv[i], "--n-max=", 8) == 0) {
+      char* endptr;
+      long val = strtol(argv[i] + 8, &endptr, 10);
+      if (*endptr != '\0' || val < 0) {
+        cerr << "Error: Invalid n-max value '" << (argv[i] + 8) << "'\n";
+        return 1;
+      }
+      row_filter.n_max = static_cast<size_t>(val);
+      for (int j = i; j < argc - 1; ++j) {
+        argv[j] = argv[j + 1];
+      }
+      --argc;
+      --i;
+    } else if (strcmp(argv[i], "--n-max") == 0 && i + 1 < argc) {
+      char* endptr;
+      long val = strtol(argv[i + 1], &endptr, 10);
+      if (*endptr != '\0' || val < 0) {
+        cerr << "Error: Invalid n-max value '" << argv[i + 1] << "'\n";
+        return 1;
+      }
+      row_filter.n_max = static_cast<size_t>(val);
+      for (int j = i; j < argc - 2; ++j) {
+        argv[j] = argv[j + 2];
+      }
+      argc -= 2;
+      --i;
+    } else if (strncmp(argv[i], "--comment=", 10) == 0) {
+      const char* val = argv[i] + 10;
+      if (strlen(val) != 1) {
+        cerr << "Error: Comment must be a single character, got '" << val << "'\n";
+        return 1;
+      }
+      row_filter.comment = val[0];
+      for (int j = i; j < argc - 1; ++j) {
+        argv[j] = argv[j + 1];
+      }
+      --argc;
+      --i;
+    } else if (strcmp(argv[i], "--comment") == 0 && i + 1 < argc) {
+      const char* val = argv[i + 1];
+      if (strlen(val) != 1) {
+        cerr << "Error: Comment must be a single character, got '" << val << "'\n";
+        return 1;
+      }
+      row_filter.comment = val[0];
+      for (int j = i; j < argc - 2; ++j) {
+        argv[j] = argv[j + 2];
+      }
+      argc -= 2;
+      --i;
+    } else if (strcmp(argv[i], "--skip-empty") == 0) {
+      row_filter.skip_empty_rows = true;
+      for (int j = i; j < argc - 1; ++j) {
+        argv[j] = argv[j + 1];
+      }
+      --argc;
+      --i;
     }
   }
 
@@ -2234,6 +2572,8 @@ int main(int argc, char* argv[]) {
         return 1;
       }
       sample_size = static_cast<size_t>(val);
+      // Using -m implies sequential sampling (legacy behavior)
+      use_distributed_sampling = false;
       break;
     }
     case 'S':
@@ -2286,7 +2626,7 @@ int main(int argc, char* argv[]) {
     result = cmdCount(filename, n_threads, has_header, dialect, auto_detect);
   } else if (command == "head") {
     result = cmdHead(filename, n_threads, num_rows, has_header, dialect, auto_detect, strict_mode,
-                     forced_encoding, &cache_config, progress_cb);
+                     forced_encoding, &cache_config, progress_cb, max_errors, &row_filter);
     progress_bar.finish();
   } else if (command == "tail") {
     // Note: tail uses streaming API which doesn't support caching or progress yet
@@ -2294,7 +2634,8 @@ int main(int argc, char* argv[]) {
                      forced_encoding);
   } else if (command == "sample") {
     result = cmdSample(filename, n_threads, num_rows, has_header, dialect, auto_detect, random_seed,
-                       strict_mode, forced_encoding, &cache_config, progress_cb);
+                       strict_mode, forced_encoding, &cache_config, progress_cb, max_errors,
+                       &row_filter);
     progress_bar.finish();
   } else if (command == "select") {
     if (columns.empty()) {
@@ -2302,15 +2643,15 @@ int main(int argc, char* argv[]) {
       return 1;
     }
     result = cmdSelect(filename, n_threads, columns, has_header, dialect, auto_detect, strict_mode,
-                       forced_encoding, &cache_config, progress_cb);
+                       forced_encoding, &cache_config, progress_cb, max_errors, &row_filter);
     progress_bar.finish();
   } else if (command == "info") {
     result = cmdInfo(filename, n_threads, has_header, dialect, auto_detect, strict_mode,
-                     forced_encoding, &cache_config, progress_cb);
+                     forced_encoding, &cache_config, progress_cb, max_errors, &row_filter);
     progress_bar.finish();
   } else if (command == "pretty") {
     result = cmdPretty(filename, n_threads, num_rows, has_header, dialect, auto_detect, strict_mode,
-                       forced_encoding, &cache_config, progress_cb);
+                       forced_encoding, &cache_config, progress_cb, max_errors, &row_filter);
     progress_bar.finish();
   } else if (command == "dialect") {
     // Note: dialect command ignores -d, --strict, and -e flags since it's for detection
@@ -2318,10 +2659,12 @@ int main(int argc, char* argv[]) {
     result = cmdDialect(filename, json_output, force_output);
   } else if (command == "schema") {
     result = cmdSchema(filename, n_threads, has_header, dialect, auto_detect, json_output,
-                       strict_mode, sample_size);
+                       strict_mode, sample_size, use_distributed_sampling, num_sample_locations,
+                       rows_per_location, max_errors);
   } else if (command == "stats") {
     result = cmdStats(filename, n_threads, has_header, dialect, auto_detect, json_output,
-                      strict_mode, sample_size);
+                      strict_mode, sample_size, use_distributed_sampling, num_sample_locations,
+                      rows_per_location, max_errors);
 #ifdef LIBVROOM_ENABLE_ARROW
   } else if (command == "convert") {
     result = cmdConvert(filename, output_path, n_threads, dialect, auto_detect, output_format,

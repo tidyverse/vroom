@@ -499,6 +499,22 @@ struct ParseOptions {
   SizeLimits limits = SizeLimits::defaults();
 
   /**
+   * @brief Maximum number of errors to collect before suppressing.
+   *
+   * When parsing malformed files, error collection can consume significant
+   * memory if thousands of errors are generated (e.g., wrong delimiter causing
+   * field count errors on every row). This limit prevents memory exhaustion
+   * by stopping error collection after the limit is reached.
+   *
+   * Errors beyond the limit are counted but not stored. The count of suppressed
+   * errors is available via result.error_collector().suppressed_count() and
+   * is included in the error summary.
+   *
+   * Default: 10000 errors (ErrorCollector::DEFAULT_MAX_ERRORS)
+   */
+  size_t max_errors = ErrorCollector::DEFAULT_MAX_ERRORS;
+
+  /**
    * @brief Index caching configuration.
    *
    * When set (has_value()), the parser will attempt to load a cached index from
@@ -551,6 +567,134 @@ struct ParseOptions {
    * @see ProgressCallback for detailed documentation and examples.
    */
   ProgressCallback progress_callback = nullptr;
+
+  // =========================================================================
+  // Row Filtering Options
+  // =========================================================================
+
+  /**
+   * @brief Number of data rows to skip at the beginning.
+   *
+   * After reading any header row (if has_header is true), skip this many
+   * data rows before starting to index rows. This is applied during parsing
+   * to avoid indexing rows that will be discarded.
+   *
+   * Default: 0 (no rows skipped)
+   *
+   * @note Comment lines and empty lines (when skip_empty_rows is true) are
+   *       not counted towards skip - only actual data rows are counted.
+   *
+   * @example
+   * @code
+   * // Skip first 10 data rows
+   * auto result = parser.parse(buf, len, {.skip = 10});
+   * @endcode
+   */
+  size_t skip = 0;
+
+  /**
+   * @brief Maximum number of data rows to read.
+   *
+   * After skipping rows (if skip > 0), read at most this many data rows.
+   * Parsing stops early once n_max rows have been indexed. This is applied
+   * during parsing to avoid processing the entire file when only a subset
+   * is needed.
+   *
+   * A value of 0 means no limit (read all rows).
+   *
+   * Default: 0 (no limit)
+   *
+   * @note The header row (if present) is not counted towards n_max.
+   *
+   * @example
+   * @code
+   * // Read only the first 100 data rows
+   * auto result = parser.parse(buf, len, {.n_max = 100});
+   *
+   * // Skip 10 rows, then read 100
+   * auto result = parser.parse(buf, len, {.skip = 10, .n_max = 100});
+   * @endcode
+   */
+  size_t n_max = 0;
+
+  /**
+   * @brief Comment character for line skipping.
+   *
+   * Lines starting with this character (optionally preceded by whitespace)
+   * are treated as comments and excluded from parsing. Comment lines are
+   * not counted towards skip or n_max limits.
+   *
+   * A value of '\0' (null character) means no comment handling.
+   *
+   * Default: '\0' (no comment handling)
+   *
+   * @note This overrides the comment_char in the Dialect if both are set.
+   *       If only dialect.comment_char is set, that will be used.
+   *
+   * @example
+   * @code
+   * // Skip lines starting with #
+   * auto result = parser.parse(buf, len, {.comment = '#'});
+   * @endcode
+   */
+  char comment = '\0';
+
+  /**
+   * @brief Whether to skip empty rows during parsing.
+   *
+   * When true, rows that contain only whitespace or are completely empty
+   * are excluded from the index. Empty rows are not counted towards skip
+   * or n_max limits.
+   *
+   * Default: false (empty rows are preserved)
+   *
+   * @example
+   * @code
+   * // Skip blank lines in the CSV
+   * auto result = parser.parse(buf, len, {.skip_empty_rows = true});
+   * @endcode
+   */
+  bool skip_empty_rows = false;
+
+  /**
+   * @brief Per-column configuration overrides for value extraction.
+   *
+   * When set, these configurations are used during value extraction to
+   * override the global ExtractionConfig for specific columns. This enables:
+   * - Column-specific NA value definitions
+   * - Column-specific type hints (force integer, double, string, etc.)
+   * - Column-specific boolean true/false values
+   * - Skipping specific columns during extraction
+   *
+   * Columns can be specified by index (0-based) or by name (resolved using
+   * the header row). Name-based configurations are resolved after parsing
+   * when headers are available.
+   *
+   * @example
+   * @code
+   * ParseOptions opts;
+   * opts.column_configs.set("id", ColumnConfig::as_integer());
+   * opts.column_configs.set("price", ColumnConfig::as_double());
+   * opts.column_configs.set(5, ColumnConfig::skip());  // Skip column 5
+   *
+   * auto result = parser.parse(buf, len, opts);
+   * @endcode
+   *
+   * @see ColumnConfig for available per-column options
+   * @see ColumnConfigMap for managing column configurations
+   */
+  ColumnConfigMap column_configs;
+
+  /**
+   * @brief Global extraction configuration for value parsing.
+   *
+   * These settings apply to all columns that don't have specific overrides
+   * in column_configs. Controls NA value detection, boolean parsing,
+   * whitespace handling, and integer parsing options.
+   *
+   * @see ExtractionConfig for available options
+   */
+  ExtractionConfig extraction_config = ExtractionConfig::defaults();
 
   /**
    * @brief Factory for default options (auto-detect dialect, fast path).
@@ -696,6 +840,45 @@ struct ParseOptions {
   static ParseOptions with_progress(ProgressCallback callback) {
     ParseOptions opts;
     opts.progress_callback = std::move(callback);
+    return opts;
+  }
+
+  /**
+   * @brief Factory for options with per-column configuration.
+   *
+   * Creates options with per-column configuration overrides for value
+   * extraction. Use this to specify different parsing settings for
+   * specific columns.
+   *
+   * @param configs ColumnConfigMap with per-column settings
+   * @return ParseOptions configured with the column configs
+   *
+   * @example
+   * @code
+   * ColumnConfigMap configs;
+   * configs.set("id", ColumnConfig::as_integer());
+   * configs.set("price", ColumnConfig::as_double());
+   *
+   * auto result = parser.parse(buf, len, ParseOptions::with_column_configs(configs));
+   * @endcode
+   */
+  static ParseOptions with_column_configs(const ColumnConfigMap& configs) {
+    ParseOptions opts;
+    opts.column_configs = configs;
+    return opts;
+  }
+
+  /**
+   * @brief Factory for options with extraction configuration.
+   *
+   * Creates options with custom global extraction settings.
+   *
+   * @param config ExtractionConfig with parsing settings
+   * @return ParseOptions configured with the extraction config
+   */
+  static ParseOptions with_extraction_config(const ExtractionConfig& config) {
+    ParseOptions opts;
+    opts.extraction_config = config;
     return opts;
   }
 };
@@ -1351,6 +1534,196 @@ public:
     const std::unordered_map<std::string, size_t>* column_map_;
   };
 
+  // Forward declaration for FilteredRowView
+  class FilteredRowView;
+
+  /**
+   * @brief Iterator for filtered row view (supports skip/n_max/skip_empty_rows).
+   *
+   * This iterator is used internally by FilteredRowView to iterate over rows
+   * with filtering applied.
+   */
+  class FilteredRowIterator {
+  public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = Row;
+    using difference_type = std::ptrdiff_t;
+    using pointer = Row*;
+    using reference = Row;
+
+    FilteredRowIterator(const ValueExtractor* extractor, size_t idx, size_t total,
+                        const std::unordered_map<std::string, size_t>* column_map, size_t skip,
+                        size_t n_max, bool skip_empty_rows)
+        : extractor_(extractor), idx_(idx), total_(total), column_map_(column_map), skip_(skip),
+          n_max_(n_max), skip_empty_rows_(skip_empty_rows) {
+      advance_to_valid();
+    }
+
+    Row operator*() const { return Row(extractor_, current_actual_, column_map_); }
+
+    FilteredRowIterator& operator++() {
+      ++idx_;
+      advance_to_valid();
+      return *this;
+    }
+
+    FilteredRowIterator operator++(int) {
+      FilteredRowIterator tmp = *this;
+      ++(*this);
+      return tmp;
+    }
+
+    bool operator==(const FilteredRowIterator& other) const { return idx_ == other.idx_; }
+    bool operator!=(const FilteredRowIterator& other) const { return idx_ != other.idx_; }
+
+  private:
+    const ValueExtractor* extractor_;
+    size_t idx_;   // Filtered index (0..n_max_)
+    size_t total_; // Total rows available after skip
+    const std::unordered_map<std::string, size_t>* column_map_;
+    size_t skip_;
+    size_t n_max_;
+    bool skip_empty_rows_;
+    size_t current_actual_{0}; // Actual row index in extractor
+
+    bool is_row_empty(size_t actual_idx) const {
+      if (!extractor_)
+        return true;
+      size_t ncols = extractor_->num_columns();
+      for (size_t c = 0; c < ncols; ++c) {
+        std::string val = extractor_->get_string(actual_idx, c);
+        for (char ch : val) {
+          if (ch != ' ' && ch != '\t' && ch != '\r' && ch != '\n') {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    void advance_to_valid() {
+      // Reached end?
+      if (n_max_ > 0 && idx_ >= n_max_) {
+        idx_ = total_; // Mark as end
+        return;
+      }
+
+      if (!skip_empty_rows_) {
+        // Simple case: direct mapping
+        size_t actual = skip_ + idx_;
+        size_t extractor_total = extractor_ ? extractor_->num_rows() : 0;
+        if (actual >= extractor_total) {
+          idx_ = total_;
+          return;
+        }
+        current_actual_ = actual;
+        return;
+      }
+
+      // Complex case: skip empty rows
+      size_t extractor_total = extractor_ ? extractor_->num_rows() : 0;
+      size_t count = 0;
+      for (size_t i = skip_; i < extractor_total; ++i) {
+        if (!is_row_empty(i)) {
+          if (count == idx_) {
+            current_actual_ = i;
+            return;
+          }
+          ++count;
+        }
+      }
+      // No valid row found
+      idx_ = total_;
+    }
+  };
+
+  /**
+   * @brief Filtered iterable view over rows with skip/n_max/skip_empty_rows support.
+   *
+   * FilteredRowView applies row filtering before iteration, respecting:
+   * - skip: Number of data rows to skip from the beginning
+   * - n_max: Maximum number of rows to return (0 = unlimited)
+   * - skip_empty_rows: Whether to exclude rows containing only whitespace
+   */
+  class FilteredRowView {
+  public:
+    FilteredRowView(const ValueExtractor* extractor,
+                    const std::unordered_map<std::string, size_t>* column_map, size_t skip,
+                    size_t n_max, bool skip_empty_rows)
+        : extractor_(extractor), column_map_(column_map), skip_(skip), n_max_(n_max),
+          skip_empty_rows_(skip_empty_rows) {
+      compute_size();
+    }
+
+    FilteredRowIterator begin() const {
+      return FilteredRowIterator(extractor_, 0, size_, column_map_, skip_, n_max_,
+                                 skip_empty_rows_);
+    }
+
+    FilteredRowIterator end() const {
+      return FilteredRowIterator(extractor_, size_, size_, column_map_, skip_, n_max_,
+                                 skip_empty_rows_);
+    }
+
+    /// @return The number of rows after filtering.
+    size_t size() const { return size_; }
+
+    /// @return true if there are no rows after filtering.
+    bool empty() const { return size_ == 0; }
+
+  private:
+    const ValueExtractor* extractor_;
+    const std::unordered_map<std::string, size_t>* column_map_;
+    size_t skip_;
+    size_t n_max_;
+    bool skip_empty_rows_;
+    size_t size_{0};
+
+    bool is_row_empty(size_t actual_idx) const {
+      if (!extractor_)
+        return true;
+      size_t ncols = extractor_->num_columns();
+      for (size_t c = 0; c < ncols; ++c) {
+        std::string val = extractor_->get_string(actual_idx, c);
+        for (char ch : val) {
+          if (ch != ' ' && ch != '\t' && ch != '\r' && ch != '\n') {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    void compute_size() {
+      if (!extractor_) {
+        size_ = 0;
+        return;
+      }
+
+      size_t total = extractor_->num_rows();
+      if (skip_ >= total) {
+        size_ = 0;
+        return;
+      }
+      size_t available = total - skip_;
+
+      if (!skip_empty_rows_) {
+        size_ = (n_max_ > 0 && n_max_ < available) ? n_max_ : available;
+        return;
+      }
+
+      // Count non-empty rows
+      size_t count = 0;
+      size_t max_to_count = (n_max_ > 0) ? n_max_ : SIZE_MAX;
+      for (size_t i = skip_; i < total && count < max_to_count; ++i) {
+        if (!is_row_empty(i)) {
+          ++count;
+        }
+      }
+      size_ = count;
+    }
+  };
+
   /**
    * @brief Result of a parsing operation.
    *
@@ -1399,6 +1772,11 @@ public:
     bool used_cache{false};    ///< True if index was loaded from cache.
     std::string cache_path;    ///< Path to cache file (empty if caching disabled).
 
+    // Row filtering options (from ParseOptions, applied during iteration)
+    size_t skip_{0};              ///< Number of data rows to skip
+    size_t n_max_{0};             ///< Maximum rows to return (0 = unlimited)
+    bool skip_empty_rows_{false}; ///< Whether to skip empty rows
+
   private:
     const uint8_t* buf_{nullptr};                                ///< Pointer to the parsed buffer.
     size_t len_{0};                                              ///< Length of the parsed buffer.
@@ -1408,10 +1786,20 @@ public:
     /// Internal error collector for unified error handling.
     /// Uses PERMISSIVE mode by default to collect all errors without stopping.
     ErrorCollector error_collector_{ErrorMode::PERMISSIVE};
+    /// Global extraction configuration for value parsing.
+    ExtractionConfig extraction_config_;
+    /// Per-column configuration overrides.
+    ColumnConfigMap column_configs_;
 
     void ensure_extractor() const {
       if (!extractor_ && buf_ && len_ > 0) {
-        extractor_ = std::make_unique<ValueExtractor>(buf_, len_, idx, dialect);
+        if (!column_configs_.empty()) {
+          extractor_ = std::make_unique<ValueExtractor>(buf_, len_, idx, dialect,
+                                                        extraction_config_, column_configs_);
+        } else {
+          extractor_ =
+              std::make_unique<ValueExtractor>(buf_, len_, idx, dialect, extraction_config_);
+        }
       }
     }
 
@@ -1428,32 +1816,220 @@ public:
       }
     }
 
+    /// Check if a row (by actual index in extractor) is empty or whitespace-only
+    bool is_row_empty(size_t actual_row_idx) const {
+      if (!extractor_)
+        return true;
+      size_t ncols = extractor_->num_columns();
+      for (size_t c = 0; c < ncols; ++c) {
+        std::string val = extractor_->get_string(actual_row_idx, c);
+        // Check if any character is non-whitespace
+        for (char ch : val) {
+          if (ch != ' ' && ch != '\t' && ch != '\r' && ch != '\n') {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    /// Translate a filtered row index to actual extractor row index
+    /// Returns SIZE_MAX if the index is out of range
+    size_t translate_row_index(size_t filtered_idx) const {
+      if (!skip_empty_rows_) {
+        // Simple case: just add skip offset
+        size_t actual = skip_ + filtered_idx;
+        size_t total = extractor_ ? extractor_->num_rows() : 0;
+        if (actual >= total)
+          return SIZE_MAX;
+        if (n_max_ > 0 && filtered_idx >= n_max_)
+          return SIZE_MAX;
+        return actual;
+      }
+
+      // Complex case: need to skip empty rows
+      size_t total = extractor_ ? extractor_->num_rows() : 0;
+      size_t count = 0;
+      size_t limit = (n_max_ > 0) ? n_max_ : SIZE_MAX;
+      for (size_t i = skip_; i < total && count < limit; ++i) {
+        if (!is_row_empty(i)) {
+          if (count == filtered_idx) {
+            return i;
+          }
+          ++count;
+        }
+      }
+      return SIZE_MAX;
+    }
+
   public:
     Result() = default;
-    Result(Result&&) = default;
-    Result& operator=(Result&&) = default;
+
+    // Custom move operations to reset the extractor (its idx_ptr_ would become dangling)
+    Result(Result&& other) noexcept
+        : idx(std::move(other.idx)), successful(other.successful), dialect(other.dialect),
+          detection(std::move(other.detection)), used_cache(other.used_cache),
+          cache_path(std::move(other.cache_path)), skip_(other.skip_), n_max_(other.n_max_),
+          skip_empty_rows_(other.skip_empty_rows_), buf_(other.buf_), len_(other.len_),
+          extractor_(nullptr), // Reset - will be recreated lazily with correct pointer
+          column_map_(std::move(other.column_map_)),
+          column_map_initialized_(other.column_map_initialized_),
+          error_collector_(std::move(other.error_collector_)),
+          extraction_config_(other.extraction_config_),
+          column_configs_(std::move(other.column_configs_)) {
+      other.buf_ = nullptr;
+      other.len_ = 0;
+    }
+
+    Result& operator=(Result&& other) noexcept {
+      if (this != &other) {
+        idx = std::move(other.idx);
+        successful = other.successful;
+        dialect = other.dialect;
+        detection = std::move(other.detection);
+        used_cache = other.used_cache;
+        cache_path = std::move(other.cache_path);
+        skip_ = other.skip_;
+        n_max_ = other.n_max_;
+        skip_empty_rows_ = other.skip_empty_rows_;
+        buf_ = other.buf_;
+        len_ = other.len_;
+        extractor_ = nullptr; // Reset - will be recreated lazily with correct pointer
+        column_map_ = std::move(other.column_map_);
+        column_map_initialized_ = other.column_map_initialized_;
+        error_collector_ = std::move(other.error_collector_);
+        extraction_config_ = other.extraction_config_;
+        column_configs_ = std::move(other.column_configs_);
+        other.buf_ = nullptr;
+        other.len_ = 0;
+      }
+      return *this;
+    }
 
     // Prevent copying - index contains raw pointers
     Result(const Result&) = delete;
     Result& operator=(const Result&) = delete;
 
     /**
-     * @brief Store buffer reference for later iteration.
+     * @brief Store buffer reference and row filtering options for later iteration.
      *
      * This is called internally by Parser::parse() to enable row iteration.
      * Users should not call this directly.
      *
      * @param buf Pointer to the CSV data buffer.
      * @param len Length of the buffer.
+     * @param skip Number of data rows to skip (default: 0)
+     * @param n_max Maximum rows to return, 0 = unlimited (default: 0)
+     * @param skip_empty_rows Whether to skip empty rows (default: false)
      */
-    void set_buffer(const uint8_t* buf, size_t len) {
+    void set_buffer(const uint8_t* buf, size_t len, size_t skip = 0, size_t n_max = 0,
+                    bool skip_empty_rows = false) {
       buf_ = buf;
       len_ = len;
+      skip_ = skip;
+      n_max_ = n_max;
+      skip_empty_rows_ = skip_empty_rows;
       // Reset extractor and column map since buffer changed
       extractor_.reset();
       column_map_.clear();
       column_map_initialized_ = false;
     }
+
+    /**
+     * @brief Set extraction configuration options.
+     *
+     * This is called internally by Parser::parse() to pass configuration from
+     * ParseOptions. Users should set options on ParseOptions before parsing.
+     *
+     * @param config Global extraction configuration
+     * @param column_configs Per-column configuration overrides
+     */
+    void set_extraction_options(const ExtractionConfig& config,
+                                const ColumnConfigMap& column_configs) {
+      extraction_config_ = config;
+      column_configs_ = column_configs;
+      // Reset extractor since config changed
+      if (extractor_) {
+        extractor_.reset();
+      }
+    }
+
+    // =========================================================================
+    // Per-column configuration API
+    // =========================================================================
+
+    /**
+     * @brief Get the per-column configuration map.
+     * @return Reference to the ColumnConfigMap
+     */
+    const ColumnConfigMap& column_configs() const { return column_configs_; }
+
+    /**
+     * @brief Set per-column configuration after parsing.
+     *
+     * This allows modifying column configurations after parsing,
+     * which will affect subsequent value extraction.
+     *
+     * @param configs ColumnConfigMap with per-column settings
+     */
+    void set_column_configs(const ColumnConfigMap& configs) {
+      column_configs_ = configs;
+      // Reset extractor so new configs take effect
+      if (extractor_) {
+        extractor_.reset();
+      }
+    }
+
+    /**
+     * @brief Set configuration for a specific column by index.
+     * @param col_index 0-based column index
+     * @param config Configuration to apply
+     */
+    void set_column_config(size_t col_index, const ColumnConfig& config) {
+      column_configs_.set(col_index, config);
+      // Update extractor if it exists
+      if (extractor_) {
+        extractor_->set_column_config(col_index, config);
+      }
+    }
+
+    /**
+     * @brief Set configuration for a specific column by name.
+     * @param col_name Column name (case-sensitive)
+     * @param config Configuration to apply
+     */
+    void set_column_config(const std::string& col_name, const ColumnConfig& config) {
+      column_configs_.set(col_name, config);
+      // Update extractor if it exists
+      if (extractor_) {
+        extractor_->set_column_config(col_name, config);
+      }
+    }
+
+    /**
+     * @brief Get the type hint for a specific column.
+     * @param col_index 0-based column index
+     * @return The type hint, or TypeHint::AUTO if none is set
+     */
+    TypeHint get_type_hint(size_t col_index) const {
+      ensure_extractor();
+      return extractor_ ? extractor_->get_type_hint(col_index) : TypeHint::AUTO;
+    }
+
+    /**
+     * @brief Check if a column should be skipped during extraction.
+     * @param col_index 0-based column index
+     * @return true if the column has TypeHint::SKIP
+     */
+    bool should_skip_column(size_t col_index) const {
+      return get_type_hint(col_index) == TypeHint::SKIP;
+    }
+
+    /**
+     * @brief Get the global extraction configuration.
+     * @return Reference to ExtractionConfig
+     */
+    const ExtractionConfig& extraction_config() const { return extraction_config_; }
 
     /// @return true if parsing was successful.
     bool success() const { return successful; }
@@ -1478,25 +2054,127 @@ public:
       return total;
     }
 
+    /**
+     * @brief Compact the index for O(1) field access.
+     *
+     * After parsing, field separators are stored in per-thread regions which
+     * require O(n_threads) iteration to find a specific field. This method
+     * consolidates all separators into a single flat array sorted by file order,
+     * enabling O(1) random access.
+     *
+     * This is particularly beneficial for ALTREP-style lazy column access where
+     * fields are accessed randomly. For sequential column extraction, the
+     * performance improvement is less significant.
+     *
+     * @note This method is idempotent - calling it multiple times has no effect
+     *       after the first successful call.
+     *
+     * @note Results loaded from cache are automatically in flat format and
+     *       don't need explicit compaction.
+     *
+     * @example
+     * @code
+     * auto result = parser.parse(buf, len);
+     *
+     * // Compact for O(1) random access
+     * result.compact();
+     *
+     * // Now LazyColumn access is O(1) per field
+     * auto lazy_col = result.get_lazy_column(0);
+     * auto value = lazy_col[1000];  // O(1) instead of O(n_threads)
+     * @endcode
+     *
+     * @see is_flat() to check if the index is already compacted
+     */
+    void compact() { idx.compact(); }
+
+    /**
+     * @brief Check if the index has been compacted for O(1) access.
+     *
+     * Returns true if the index is in flat format (either from calling
+     * compact() or from loading a cached index).
+     *
+     * @return true if the index has O(1) field access, false otherwise.
+     *
+     * @see compact() to convert an index to flat format
+     */
+    bool is_flat() const { return idx.is_flat(); }
+
     // =====================================================================
     // Row/Column Iteration API
     // =====================================================================
 
     /**
-     * @brief Get the number of data rows (excluding header).
-     * @return Number of data rows.
+     * @brief Get the effective number of data rows after applying row filtering.
+     *
+     * The returned count reflects:
+     * - Rows after skipping `skip_` initial rows
+     * - Limited by `n_max_` if set
+     * - Empty rows excluded if `skip_empty_rows_` is true
+     *
+     * @note When skip_empty_rows_ is true, this requires scanning all rows
+     *       to count non-empty ones, which has O(n) cost.
+     *
+     * @return Number of data rows (excluding header and filtered rows).
      */
     size_t num_rows() const {
+      ensure_extractor();
+      if (!extractor_)
+        return 0;
+
+      size_t total = extractor_->num_rows();
+
+      // If no filtering, return total
+      if (skip_ == 0 && n_max_ == 0 && !skip_empty_rows_) {
+        return total;
+      }
+
+      // Apply skip
+      if (skip_ >= total) {
+        return 0;
+      }
+      size_t available = total - skip_;
+
+      // If we don't need to skip empty rows, just apply n_max
+      if (!skip_empty_rows_) {
+        if (n_max_ > 0 && n_max_ < available) {
+          return n_max_;
+        }
+        return available;
+      }
+
+      // With skip_empty_rows, we need to count non-empty rows
+      size_t count = 0;
+      size_t max_to_check = (n_max_ > 0) ? n_max_ : available;
+      for (size_t i = 0; i < available && count < max_to_check; ++i) {
+        size_t actual_idx = skip_ + i;
+        if (!is_row_empty(actual_idx)) {
+          ++count;
+        }
+      }
+      return count;
+    }
+
+    /**
+     * @brief Get the total number of rows before filtering.
+     *
+     * This returns the raw row count from parsing, before applying
+     * skip/n_max/skip_empty_rows filters.
+     *
+     * @return Total number of data rows in the parsed index.
+     */
+    size_t total_rows() const {
       ensure_extractor();
       return extractor_ ? extractor_->num_rows() : 0;
     }
 
     /**
-     * @brief Get an iterable view over all data rows.
+     * @brief Get an iterable view over all data rows (respects skip/n_max/skip_empty_rows).
      *
      * This enables range-based for loop iteration over the parsed CSV.
+     * When row filtering options are set, this returns a filtered view.
      *
-     * @return RowView for iteration.
+     * @return FilteredRowView for iteration (applies skip/n_max/skip_empty_rows).
      *
      * @example
      * @code
@@ -1505,26 +2183,42 @@ public:
      * }
      * @endcode
      */
-    RowView rows() const {
+    FilteredRowView rows() const {
+      ensure_extractor();
+      ensure_column_map();
+      return FilteredRowView(extractor_.get(), &column_map_, skip_, n_max_, skip_empty_rows_);
+    }
+
+    /**
+     * @brief Get an unfiltered iterable view over all data rows.
+     *
+     * This returns a view that ignores skip/n_max/skip_empty_rows settings,
+     * iterating over all parsed rows. Useful when you need to access the
+     * raw parsed data.
+     *
+     * @return RowView for iteration (no filtering applied).
+     */
+    RowView all_rows() const {
       ensure_extractor();
       ensure_column_map();
       return RowView(extractor_.get(), &column_map_);
     }
 
     /**
-     * @brief Get a specific row by index.
+     * @brief Get a specific row by index (respects skip/n_max/skip_empty_rows).
      *
-     * @param row_index 0-based row index (excluding header).
+     * @param row_index 0-based row index (excluding header and filtered rows).
      * @return Row object for accessing fields.
      * @throws std::out_of_range if row_index >= num_rows().
      */
     Row row(size_t row_index) const {
       ensure_extractor();
       ensure_column_map();
-      if (row_index >= num_rows()) {
+      size_t actual_idx = translate_row_index(row_index);
+      if (actual_idx == SIZE_MAX) {
         throw std::out_of_range("Row index out of range");
       }
-      return Row(extractor_.get(), row_index, &column_map_);
+      return Row(extractor_.get(), actual_idx, &column_map_);
     }
 
     /**
@@ -1663,6 +2357,49 @@ public:
         throw std::out_of_range("Column not found: " + name);
       }
       return column_string(it->second);
+    }
+
+    /**
+     * @brief Get a lazy column accessor for ALTREP-style deferred field access.
+     *
+     * Creates a LazyColumn that provides per-row access to a column without
+     * parsing the entire column upfront. Ideal for R's ALTREP pattern where
+     * columns are only parsed when accessed.
+     *
+     * @param col 0-based column index.
+     * @return LazyColumn accessor for the specified column.
+     *
+     * @example
+     * @code
+     * auto lazy_col = result.get_lazy_column(0);
+     * for (size_t i = 0; i < lazy_col.size(); ++i) {
+     *     // Access individual values on demand
+     *     std::string_view value = lazy_col[i];
+     * }
+     * @endcode
+     */
+    LazyColumn get_lazy_column(size_t col) const {
+      ensure_extractor();
+      if (!extractor_) {
+        throw std::runtime_error("Extractor not initialized");
+      }
+      return extractor_->get_lazy_column(col);
+    }
+
+    /**
+     * @brief Get a lazy column accessor by column name.
+     *
+     * @param name Column name (must match header exactly).
+     * @return LazyColumn accessor for the specified column.
+     * @throws std::out_of_range if column name is not found.
+     */
+    LazyColumn get_lazy_column(const std::string& name) const {
+      ensure_column_map();
+      auto it = column_map_.find(name);
+      if (it == column_map_.end()) {
+        throw std::out_of_range("Column not found: " + name);
+      }
+      return get_lazy_column(it->second);
     }
 
     /**
@@ -1808,6 +2545,64 @@ public:
      * @return Const reference to the internal ErrorCollector.
      */
     const ErrorCollector& error_collector() const { return error_collector_; }
+
+    // =====================================================================
+    // Byte Offset Lookup API
+    // =====================================================================
+
+    /**
+     * @brief Result of a byte offset to (row, column) lookup.
+     *
+     * Location represents the result of finding which CSV cell contains
+     * a given byte offset. This enables efficient error reporting by
+     * converting internal byte positions to human-readable row/column
+     * coordinates.
+     */
+    struct Location {
+      size_t row;    ///< 0-based row index (row 0 = header if present, else first data row)
+      size_t column; ///< 0-based column index
+      bool found;    ///< true if byte offset is within valid CSV data
+
+      /// @return true if the location is valid (found == true)
+      explicit operator bool() const { return found; }
+    };
+
+    /**
+     * @brief Convert a byte offset to (row, column) coordinates.
+     *
+     * Uses binary search on the internal index for O(log n) lookup instead of
+     * O(n) linear scan. This is useful for error reporting when you have a
+     * byte offset from parsing and need to display the location to users.
+     *
+     * The row number returned is 0-based and includes the header row (if present).
+     * So row 0 is the header (if has_header() is true), row 1 is the first data row.
+     * If has_header() is false, row 0 is the first data row.
+     *
+     * @param byte_offset Byte offset into the CSV buffer
+     * @return Location with row/column if found, or {0, 0, false} if offset is
+     *         out of range or no data exists
+     *
+     * @note Complexity: O(log n) where n is the number of fields in the CSV
+     *
+     * @example
+     * @code
+     * auto result = parser.parse(buf, len);
+     *
+     * // Convert byte offset 150 to row/column
+     * auto loc = result.byte_offset_to_location(150);
+     * if (loc) {
+     *     std::cout << "Row " << loc.row << ", Column " << loc.column << std::endl;
+     * }
+     * @endcode
+     */
+    Location byte_offset_to_location(size_t byte_offset) const {
+      ensure_extractor();
+      if (!extractor_) {
+        return {0, 0, false};
+      }
+      auto ve_loc = extractor_->byte_offset_to_location(byte_offset);
+      return {ve_loc.row, ve_loc.column, ve_loc.found};
+    }
   };
 
   /**
@@ -1872,6 +2667,9 @@ public:
    */
   Result parse(const uint8_t* buf, size_t len, const ParseOptions& options = ParseOptions{}) {
     Result result;
+
+    // Configure the internal error collector with the max_errors limit
+    result.error_collector().set_max_errors(options.max_errors);
 
     // Determine which error collector to use:
     // - If external collector provided, use it and copy errors to internal
@@ -1947,8 +2745,10 @@ public:
             result.dialect = result.detection.success() ? result.detection.dialect : Dialect::csv();
           }
 
-          // Store buffer reference to enable row/column iteration
-          result.set_buffer(buf, len);
+          // Store buffer reference and row filtering options to enable row/column iteration
+          result.set_buffer(buf, len, options.skip, options.n_max, options.skip_empty_rows);
+          // Pass extraction options from ParseOptions to Result
+          result.set_extraction_options(options.extraction_config, options.column_configs);
 
           return result;
         }
@@ -1977,6 +2777,12 @@ public:
       result.dialect = result.detection.success() ? result.detection.dialect : Dialect::csv();
     }
 
+    // Apply comment character from ParseOptions if specified
+    // This overrides any comment_char in the dialect
+    if (options.comment != '\0') {
+      result.dialect.comment_char = options.comment;
+    }
+
     // =======================================================================
     // Progress Tracking Setup
     // =======================================================================
@@ -1988,6 +2794,80 @@ public:
     if (progress_tracker.has_callback()) {
       if (!options.progress_callback(0, len)) {
         result.successful = false;
+        return result;
+      }
+    }
+
+    // Create second-pass progress callback that wraps the progress tracker
+    SecondPassProgressCallback second_pass_progress = nullptr;
+    if (progress_tracker.has_callback()) {
+      second_pass_progress = [&progress_tracker](size_t bytes_processed) {
+        return progress_tracker.add_second_pass_progress(bytes_processed);
+      };
+    }
+
+    // =======================================================================
+    // Fast Path Detection
+    // =======================================================================
+    // Performance optimization (issue #443, #591): Use fast path when:
+    // 1. Explicit dialect is provided (skips detection overhead)
+    // 2. No external error collector requested (options.errors == nullptr)
+    //
+    // For multi-threaded fast path (issue #591), use optimized per-thread
+    // allocation that dramatically reduces memory usage and improves scaling.
+    bool use_fast_path = options.errors == nullptr && options.dialect.has_value() &&
+                         (options.algorithm == ParseAlgorithm::AUTO ||
+                          options.algorithm == ParseAlgorithm::SPECULATIVE);
+
+    // =======================================================================
+    // Multi-threaded Fast Path (Issue #591 optimization)
+    // =======================================================================
+    // For multi-threaded parsing with explicit dialect and no error collection,
+    // use the optimized parse_optimized() method which:
+    // 1. Finds chunk boundaries in parallel
+    // 2. Counts separators per-chunk (not total file)
+    // 3. Allocates right-sized per-thread regions (~N total vs T*N)
+    // 4. Parses chunks in parallel
+    //
+    // This avoids the redundant first pass and dramatically reduces memory.
+    if (use_fast_path && num_threads_ > 1) {
+      try {
+        result.idx =
+            parser_.parse_optimized(buf, len, num_threads_, result.dialect, second_pass_progress);
+        result.successful = result.idx.indexes != nullptr;
+      } catch (const std::exception& e) {
+        collector->add_error(ErrorCode::INTERNAL_ERROR, ErrorSeverity::FATAL, 0, 0, 0, e.what());
+        result.successful = false;
+      }
+
+      // Skip the normal allocation and parsing paths below
+      if (result.successful || !result.idx.indexes) {
+        // Store buffer reference and row filtering options
+        result.set_buffer(buf, len, options.skip, options.n_max, options.skip_empty_rows);
+        result.set_extraction_options(options.extraction_config, options.column_configs);
+
+        // Set column count in index
+        if (result.successful && result.idx.columns == 0) {
+          result.idx.columns = result.num_columns();
+        }
+
+        // Compact index for O(1) field access
+        if (result.successful) {
+          result.idx.compact();
+        }
+
+        // Report completion
+        if (options.progress_callback && result.successful) {
+          options.progress_callback(len, len);
+        }
+
+        // Handle caching for optimized path
+        if (can_use_cache && result.successful && !result.cache_path.empty()) {
+          IndexCache::write_atomic(result.cache_path, result.idx, options.source_path);
+          // Note: Cache write failures are silently ignored in optimized path
+          // (consistent with how they're handled elsewhere)
+        }
+
         return result;
       }
     }
@@ -2052,31 +2932,16 @@ public:
       return result;
     }
 
-    // Parse with error collection - never throw for parse errors
-    //
+    // =======================================================================
+    // Parse with the appropriate algorithm
+    // =======================================================================
     // Design principle: The error-collecting variants (_with_errors) do
     // comprehensive validation (field counts, quote checking, etc.), while
     // the fast-path variants only check for fatal quote errors.
     //
-    // Performance optimization (issue #443): Use the fast path (parse_speculate)
-    // by default when:
-    // 1. Explicit dialect is provided (skips detection overhead)
-    // 2. No external error collector requested (options.errors == nullptr)
-    //
     // When an external error collector is explicitly provided, we use the
     // comprehensive validation path to detect issues like inconsistent field
     // counts and duplicate column names.
-    bool use_fast_path = options.errors == nullptr && options.dialect.has_value() &&
-                         (options.algorithm == ParseAlgorithm::AUTO ||
-                          options.algorithm == ParseAlgorithm::SPECULATIVE);
-
-    // Create second-pass progress callback that wraps the progress tracker
-    SecondPassProgressCallback second_pass_progress = nullptr;
-    if (progress_tracker.has_callback()) {
-      second_pass_progress = [&progress_tracker](size_t bytes_processed) {
-        return progress_tracker.add_second_pass_progress(bytes_processed);
-      };
-    }
 
     try {
       if (!options.dialect.has_value()) {
@@ -2086,7 +2951,7 @@ public:
                                                options.detection_options);
         result.dialect = result.detection.dialect;
       } else if (use_fast_path) {
-        // Fast path: speculative parsing without comprehensive validation
+        // Single-threaded fast path: speculative parsing without comprehensive validation
         // This path achieves ~370 MB/s vs ~205 MB/s with validation (issue #443)
         // Note: This path does NOT detect inconsistent field counts or
         // duplicate column names - use an explicit error collector if needed
@@ -2134,13 +2999,30 @@ public:
       options.progress_callback(len, len);
     }
 
+    // Store buffer reference and row filtering options to enable row/column iteration
+    // (must be done before num_columns() which needs the buffer for ValueExtractor)
+    result.set_buffer(buf, len, options.skip, options.n_max, options.skip_empty_rows);
+    // Pass extraction options from ParseOptions to Result
+    result.set_extraction_options(options.extraction_config, options.column_configs);
+
+    // =======================================================================
+    // Set Column Count in Index (needed for ParseIndex::get_field_span)
+    // =======================================================================
+    if (result.successful && result.idx.columns == 0) {
+      result.idx.columns = result.num_columns();
+    }
+
+    // =======================================================================
+    // Compact Index for O(1) Field Access
+    // =======================================================================
+    if (result.successful) {
+      result.idx.compact();
+    }
+
     // =======================================================================
     // Write Cache on Miss (if caching enabled and parse successful)
     // =======================================================================
     if (can_use_cache && result.successful && !result.cache_path.empty()) {
-      // Store column count in idx for caching (idx.columns may be 0 because
-      // num_columns() typically uses the ValueExtractor)
-      result.idx.columns = result.num_columns();
       // Write cache file - emit warning on failure
       bool write_success =
           IndexCache::write_atomic(result.cache_path, result.idx, options.source_path);
@@ -2149,9 +3031,6 @@ public:
                    "'; caching disabled for this parse");
       }
     }
-
-    // Store buffer reference to enable row/column iteration
-    result.set_buffer(buf, len);
 
     return result;
   }
