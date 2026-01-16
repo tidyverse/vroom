@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+We are working on a fork of the upstream project. PRs should be opened against jimhester/vroom, _not_ tidyverse/vroom.
+
 ## Package Overview
 
 vroom reads and writes rectangular text data (CSV, TSV, fixed-width files). It uses R's Altrep framework for lazy evaluation - indexing file structure quickly, then parsing values on-demand as they're accessed. Multi-threading is used for indexing, materializing non-character columns, and writing. vroom powers readr's Edition 2 and is part of the tidyverse ecosystem.
@@ -10,7 +12,7 @@ vroom reads and writes rectangular text data (CSV, TSV, fixed-width files). It u
 
 General advice:
 * When running R from the console, prefer `Rscript`.
-* Always run `air format .` after generating or modifying R code. The binary of air is probably not on the PATH but is typically found inside the Air extension used by Positron, e.g. something like `~/.positron/extensions/posit.air-vscode-0.18.0/bundled/bin/air`.
+* Always run `air format .` after generating or modifying R code. The binary of air is on the path.
 
 ### Testing
 
