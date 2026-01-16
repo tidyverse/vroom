@@ -64,7 +64,9 @@
   bugs arising from problematic behaviour of
   [`base::gzcon()`](https://rdrr.io/r/base/gzcon.html)
   ([\#400](https://github.com/tidyverse/vroom/issues/400),
-  [\#553](https://github.com/tidyverse/vroom/issues/553)).
+  [\#553](https://github.com/tidyverse/vroom/issues/553),
+  <https://github.com/tidyverse/readr/issues/1555>,
+  <https://github.com/tidyverse/readr/issues/1553>).
 
 ## vroom 1.6.7
 
