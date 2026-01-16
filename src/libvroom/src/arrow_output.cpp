@@ -4,6 +4,7 @@
 
 #include "io_util.h"
 #include "mem_util.h"
+#include "two_pass.h"
 
 #include <algorithm>
 #include <arrow/builder.h>
@@ -279,20 +280,113 @@ ArrowConverter::extract_field_ranges_with_headers(const uint8_t* buf, size_t len
   return result;
 }
 
+std::vector<size_t> ArrowConverter::compute_sample_indices(size_t num_rows) const {
+  std::vector<size_t> indices;
+
+  if (num_rows == 0) {
+    return indices;
+  }
+
+  if (options_.sampling_strategy == SamplingStrategy::SEQUENTIAL) {
+    // Legacy behavior: sample first N rows sequentially
+    size_t limit = options_.type_inference_rows > 0
+                       ? std::min(options_.type_inference_rows, num_rows)
+                       : num_rows;
+    indices.reserve(limit);
+    for (size_t i = 0; i < limit; ++i) {
+      indices.push_back(i);
+    }
+  } else {
+    // Distributed sampling: sample from equally-spaced locations
+    size_t num_locations = options_.num_sample_locations;
+    size_t rows_per_loc = options_.rows_per_location;
+
+    if (num_locations == 0) {
+      return indices;
+    }
+
+    size_t total_samples = num_locations * rows_per_loc;
+
+    if (num_rows <= total_samples) {
+      // File smaller than total sample size: sample all rows
+      indices.reserve(num_rows);
+      for (size_t i = 0; i < num_rows; ++i) {
+        indices.push_back(i);
+      }
+    } else {
+      // Distribute sample locations evenly across the file.
+      // - Location 0 starts at row 0
+      // - Location N-1 ends at row num_rows-1 (starts at num_rows - rows_per_loc)
+      // - Intermediate locations are evenly distributed between these endpoints
+      //
+      // To avoid duplicates, we cap actual_rows_per_loc to the step size between locations.
+      // This ensures non-overlapping sample blocks.
+
+      if (num_locations == 1) {
+        // Single location: sample first rows_per_loc rows
+        indices.reserve(rows_per_loc);
+        for (size_t i = 0; i < rows_per_loc && i < num_rows; ++i) {
+          indices.push_back(i);
+        }
+      } else {
+        // Multiple locations: calculate step and cap rows per location to avoid overlap
+        // step = (num_rows - rows_per_loc) / (num_locations - 1)
+        // But if rows_per_loc > step, blocks would overlap, so we cap it
+        size_t last_start = num_rows - rows_per_loc;
+        size_t step = last_start / (num_locations - 1);
+
+        // Cap actual rows per location to avoid overlap between consecutive blocks
+        // Each block can take at most 'step' rows (except the last block)
+        size_t actual_rows_per_loc = std::min(rows_per_loc, step > 0 ? step : rows_per_loc);
+
+        // For the last location, we can always sample the full rows_per_loc
+        // since there's no next block to overlap with
+        indices.reserve(num_locations * actual_rows_per_loc);
+
+        for (size_t loc = 0; loc < num_locations; ++loc) {
+          // Calculate start position for this location
+          // Linear interpolation: start = loc * last_start / (num_locations - 1)
+          size_t start = (loc * last_start) / (num_locations - 1);
+
+          // For the last location, sample full rows_per_loc; otherwise use capped value
+          size_t rows_this_loc = (loc == num_locations - 1) ? rows_per_loc : actual_rows_per_loc;
+
+          // Sample contiguous rows starting at this location
+          for (size_t i = 0; i < rows_this_loc; ++i) {
+            indices.push_back(start + i);
+          }
+        }
+      }
+    }
+  }
+
+  return indices;
+}
+
 std::vector<ColumnType>
 ArrowConverter::infer_types_from_ranges(const uint8_t* buf,
                                         const std::vector<std::vector<FieldRange>>& field_ranges,
                                         const Dialect& dialect) {
   std::vector<ColumnType> types(field_ranges.size(), ColumnType::NULL_TYPE);
+
+  if (field_ranges.empty()) {
+    return types;
+  }
+
+  // Compute which rows to sample based on the sampling strategy
+  size_t num_rows = field_ranges[0].size();
+  auto sample_indices = compute_sample_indices(num_rows);
+
   for (size_t col = 0; col < field_ranges.size(); ++col) {
     const auto& ranges = field_ranges[col];
-    size_t samples = options_.type_inference_rows > 0
-                         ? std::min(options_.type_inference_rows, ranges.size())
-                         : ranges.size();
     ColumnType strongest = ColumnType::NULL_TYPE;
-    for (size_t row = 0; row < samples; ++row) {
+
+    for (size_t idx : sample_indices) {
+      if (idx >= ranges.size())
+        continue;
+
       ColumnType ct =
-          infer_cell_type(extract_field(buf, ranges[row].start, ranges[row].end, dialect));
+          infer_cell_type(extract_field(buf, ranges[idx].start, ranges[idx].end, dialect));
       if (ct == ColumnType::NULL_TYPE)
         continue;
       if (strongest == ColumnType::NULL_TYPE)
@@ -496,8 +590,8 @@ ArrowConvertResult csv_to_arrow(const std::string& filename, const ArrowConvertO
   try {
     auto [buffer, size] = read_file(filename, 64);
 
-    two_pass parser;
-    index idx = parser.init(size, 1);
+    TwoPass parser;
+    ParseIndex idx = parser.init(size, 1);
     parser.parse(buffer.get(), idx, size, dialect);
     ArrowConverter converter(options);
     result = converter.convert(buffer.get(), size, idx, dialect);
@@ -522,8 +616,8 @@ ArrowConvertResult csv_to_arrow_from_memory(const uint8_t* data, size_t len,
 
   try {
     std::memcpy(buf, data, len);
-    two_pass parser;
-    index idx = parser.init(len, 1);
+    TwoPass parser;
+    ParseIndex idx = parser.init(len, 1);
     parser.parse(buf, idx, len, dialect);
     ArrowConverter converter(options);
     result = converter.convert(buf, len, idx, dialect);

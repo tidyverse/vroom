@@ -61,6 +61,7 @@
 #include <functional>
 #include <future>
 #include <limits>
+#include <memory>
 #include <sstream>
 #include <unordered_set>
 #include <vector>
@@ -82,15 +83,89 @@ using SecondPassProgressCallback = std::function<bool(size_t bytes_processed)>;
 constexpr static uint64_t null_pos = std::numeric_limits<uint64_t>::max();
 
 /**
+ * @brief Represents a field's byte boundaries in the source buffer.
+ *
+ * FieldSpan provides the byte range for a single CSV field, enabling
+ * efficient value extraction without re-parsing the entire file.
+ *
+ * @note The `start` offset points to the first byte of the field content.
+ *       The `end` offset points to the delimiter/newline byte (exclusive),
+ *       so the field content is buf[start..end).
+ *
+ * @example
+ * @code
+ * // For CSV: "hello,world\n"
+ * //          ^     ^
+ * //          0     6
+ * // Field 0: FieldSpan{0, 5}   -> "hello"
+ * // Field 1: FieldSpan{6, 11}  -> "world"
+ * @endcode
+ */
+struct FieldSpan {
+  uint64_t start; ///< Byte offset of field start (inclusive)
+  uint64_t end;   ///< Byte offset of field end (exclusive, at delimiter/newline)
+
+  /// Default constructor, creates an invalid span.
+  FieldSpan() : start(null_pos), end(null_pos) {}
+
+  /// Construct with explicit start and end positions.
+  FieldSpan(uint64_t start, uint64_t end) : start(start), end(end) {}
+
+  /// Check if this span is valid.
+  bool is_valid() const { return start != null_pos && end != null_pos; }
+
+  /// Get the length of the field in bytes.
+  uint64_t length() const { return is_valid() ? end - start : 0; }
+};
+
+/**
+ * @brief Read-only view into a contiguous array of uint64_t values.
+ *
+ * This is a lightweight, non-owning view similar to std::span<const uint64_t>
+ * but available in C++17. Used to provide O(1) access to per-thread index
+ * regions without copying.
+ *
+ * @note This view does not own the data it points to. The caller must ensure
+ *       the underlying data remains valid for the lifetime of the view.
+ */
+struct IndexView {
+  const uint64_t* data_; ///< Pointer to the first element
+  size_t size_;          ///< Number of elements
+
+  /// Default constructor, creates an empty view.
+  IndexView() : data_(nullptr), size_(0) {}
+
+  /// Construct a view over [data, data + size).
+  IndexView(const uint64_t* data, size_t size) : data_(data), size_(size) {}
+
+  /// Get pointer to the first element.
+  const uint64_t* data() const { return data_; }
+
+  /// Get the number of elements.
+  size_t size() const { return size_; }
+
+  /// Check if the view is empty.
+  bool empty() const { return size_ == 0; }
+
+  /// Access element at index i (no bounds checking).
+  const uint64_t& operator[](size_t i) const { return data_[i]; }
+
+  /// Iterator support for range-based for loops.
+  const uint64_t* begin() const { return data_; }
+  const uint64_t* end() const { return data_ + size_; }
+};
+
+/**
  * @brief Result structure containing parsed CSV field positions.
  *
  * The ParseIndex class stores the byte offsets of field separators (commas and
  * newlines) found during CSV parsing. These positions enable efficient random
  * access to individual fields without re-parsing the entire file.
  *
- * When using multi-threaded parsing, field positions are interleaved across
- * threads. For example, with 4 threads: thread 0 stores positions at indices 0,
- * 4, 8, ...; thread 1 stores at indices 1, 5, 9, ...; and so on.
+ * When using multi-threaded parsing, field positions are stored in contiguous
+ * per-thread regions to avoid false sharing. Each thread writes to its own
+ * region: indexes[thread_id * region_size ... thread_id * region_size + count - 1].
+ * Use n_indexes[thread_id] to get the count for each thread.
  *
  * @note This class is move-only. Copy operations are deleted to prevent
  * accidental expensive copies of large index arrays.
@@ -111,9 +186,9 @@ constexpr static uint64_t null_pos = std::numeric_limits<uint64_t>::max();
  * auto result = parser.parse(buffer, length);
  *
  * // Access field positions from result.idx
- * // For single-threaded: positions are at result.idx.indexes[0],
- * result.idx.indexes[1], ...
- * // For multi-threaded: use stride of result.idx.n_threads
+ * // For single-threaded: positions are at result.idx.indexes[0..n_indexes[0]-1]
+ * // For multi-threaded: thread t's positions are at
+ * //   indexes[t * region_size .. t * region_size + n_indexes[t] - 1]
  * @endcode
  */
 class ParseIndex {
@@ -125,16 +200,59 @@ public:
   /// Changed from uint8_t to uint16_t to support systems with >255 cores.
   uint16_t n_threads{0};
 
+  /// Size of each thread's contiguous index region. Used for per-thread
+  /// storage to avoid false sharing. Each thread writes to:
+  ///   indexes[thread_id * region_size .. thread_id * region_size + n_indexes[thread_id] - 1]
+  uint64_t region_size{0};
+
   /// Array of size n_threads containing the count of indexes found by each
   /// thread.
   /// @note This is a raw pointer accessor for compatibility; memory is managed
   /// by n_indexes_ptr_.
   uint64_t* n_indexes{nullptr};
 
-  /// Array of field separator positions (byte offsets). Interleaved by thread.
+  /// Array of field separator positions (byte offsets). Stored in contiguous
+  /// per-thread regions: thread t's data is at indexes[t * region_size].
   /// @note This is a raw pointer accessor for compatibility; memory is managed
   /// by indexes_ptr_.
   uint64_t* indexes{nullptr};
+
+  /// Array of size n_threads containing the starting byte offset of each
+  /// thread's chunk in the source file. Used for computing field start
+  /// positions across thread boundaries.
+  /// @note This is a raw pointer accessor for compatibility; memory is managed
+  /// by chunk_starts_ptr_.
+  uint64_t* chunk_starts{nullptr};
+
+  /// Array of size n_threads containing the starting offset within the indexes
+  /// array for each thread's region. Used for right-sized per-thread allocation
+  /// where each thread gets a region sized for its actual separator count.
+  /// When nullptr, uniform region_size is used (thread t starts at t * region_size).
+  /// @note This is a raw pointer accessor for compatibility; memory is managed
+  /// by region_offsets_ptr_.
+  uint64_t* region_offsets{nullptr};
+
+  /// Flat index array containing all separator positions in file order.
+  /// When populated (via compact()), enables O(1) field access instead of
+  /// O(n_threads) iteration. Each entry stores the byte position of a field
+  /// separator (delimiter or newline).
+  /// @note This is a raw pointer accessor for compatibility; memory is managed
+  /// by flat_indexes_ptr_.
+  uint64_t* flat_indexes{nullptr};
+
+  /// Total number of fields in the flat index (sum of all n_indexes[]).
+  /// Set when flat_indexes is populated.
+  uint64_t flat_indexes_count{0};
+
+  /// Column-major index array for efficient column-oriented access (ALTREP, Arrow).
+  /// When populated (via compact_column_major()), enables O(1) column access:
+  /// col_indexes[col * num_rows() + row] gives the byte position of field (row, col).
+  /// @note This is a raw pointer accessor; memory is managed by col_indexes_ptr_.
+  uint64_t* col_indexes{nullptr};
+
+  /// Total number of fields in the column-major index.
+  /// Should equal flat_indexes_count when both are populated.
+  uint64_t col_indexes_count{0};
 
   /// Default constructor. Creates an empty, uninitialized index.
   ParseIndex() = default;
@@ -148,11 +266,30 @@ public:
    * state.
    */
   ParseIndex(ParseIndex&& other) noexcept
-      : columns(other.columns), n_threads(other.n_threads), n_indexes(other.n_indexes),
-        indexes(other.indexes), n_indexes_ptr_(std::move(other.n_indexes_ptr_)),
-        indexes_ptr_(std::move(other.indexes_ptr_)), mmap_buffer_(std::move(other.mmap_buffer_)) {
+      : columns(other.columns), n_threads(other.n_threads), region_size(other.region_size),
+        n_indexes(other.n_indexes), indexes(other.indexes), chunk_starts(other.chunk_starts),
+        region_offsets(other.region_offsets), flat_indexes(other.flat_indexes),
+        flat_indexes_count(other.flat_indexes_count), col_indexes(other.col_indexes),
+        col_indexes_count(other.col_indexes_count), n_indexes_ptr_(std::move(other.n_indexes_ptr_)),
+        indexes_ptr_(std::move(other.indexes_ptr_)),
+        chunk_starts_ptr_(std::move(other.chunk_starts_ptr_)),
+        region_offsets_ptr_(std::move(other.region_offsets_ptr_)),
+        flat_indexes_ptr_(std::move(other.flat_indexes_ptr_)),
+        col_indexes_ptr_(std::move(other.col_indexes_ptr_)),
+        mmap_buffer_(std::move(other.mmap_buffer_)), buffer_(std::move(other.buffer_)),
+        n_indexes_shared_(std::move(other.n_indexes_shared_)),
+        indexes_shared_(std::move(other.indexes_shared_)),
+        flat_indexes_shared_(std::move(other.flat_indexes_shared_)),
+        col_indexes_shared_(std::move(other.col_indexes_shared_)),
+        mmap_buffer_shared_(std::move(other.mmap_buffer_shared_)) {
     other.n_indexes = nullptr;
     other.indexes = nullptr;
+    other.chunk_starts = nullptr;
+    other.region_offsets = nullptr;
+    other.flat_indexes = nullptr;
+    other.flat_indexes_count = 0;
+    other.col_indexes = nullptr;
+    other.col_indexes_count = 0;
   }
 
   /**
@@ -168,13 +305,36 @@ public:
     if (this != &other) {
       columns = other.columns;
       n_threads = other.n_threads;
+      region_size = other.region_size;
       n_indexes = other.n_indexes;
       indexes = other.indexes;
+      chunk_starts = other.chunk_starts;
+      region_offsets = other.region_offsets;
+      flat_indexes = other.flat_indexes;
+      flat_indexes_count = other.flat_indexes_count;
+      col_indexes = other.col_indexes;
+      col_indexes_count = other.col_indexes_count;
       n_indexes_ptr_ = std::move(other.n_indexes_ptr_);
       indexes_ptr_ = std::move(other.indexes_ptr_);
+      chunk_starts_ptr_ = std::move(other.chunk_starts_ptr_);
+      region_offsets_ptr_ = std::move(other.region_offsets_ptr_);
+      flat_indexes_ptr_ = std::move(other.flat_indexes_ptr_);
+      col_indexes_ptr_ = std::move(other.col_indexes_ptr_);
       mmap_buffer_ = std::move(other.mmap_buffer_);
+      buffer_ = std::move(other.buffer_);
+      n_indexes_shared_ = std::move(other.n_indexes_shared_);
+      indexes_shared_ = std::move(other.indexes_shared_);
+      flat_indexes_shared_ = std::move(other.flat_indexes_shared_);
+      col_indexes_shared_ = std::move(other.col_indexes_shared_);
+      mmap_buffer_shared_ = std::move(other.mmap_buffer_shared_);
       other.n_indexes = nullptr;
       other.indexes = nullptr;
+      other.chunk_starts = nullptr;
+      other.region_offsets = nullptr;
+      other.flat_indexes = nullptr;
+      other.flat_indexes_count = 0;
+      other.col_indexes = nullptr;
+      other.col_indexes_count = 0;
     }
     return *this;
   }
@@ -251,6 +411,269 @@ public:
   bool is_mmap_backed() const { return mmap_buffer_ != nullptr; }
 
   /**
+   * @brief Check if this index has a flat index for O(1) field access.
+   *
+   * @return true if the flat index has been built (via compact()).
+   */
+  bool is_flat() const { return flat_indexes != nullptr && flat_indexes_count > 0; }
+
+  /**
+   * @brief Compact the per-thread index regions into a flat array for O(1) access.
+   *
+   * After parsing, field separators are stored in per-thread regions which
+   * require O(n_threads) iteration to find a specific field. This method
+   * consolidates all separators into a single flat array sorted by file order,
+   * enabling O(1) random access via `flat_indexes[row * columns + col]`.
+   *
+   * Memory usage: 8 bytes per field separator (same as before, just reorganized).
+   *
+   * @note This method is idempotent - calling it multiple times has no effect
+   *       after the first successful call.
+   *
+   * @note The original per-thread indexes are retained for backward compatibility
+   *       and serialization. The flat index is a derived view.
+   *
+   * @example
+   * @code
+   * auto result = parser.parse(buf, len);
+   *
+   * // Before compact(): O(n_threads) per field access
+   * FieldSpan slow = result.idx.get_field_span(1000);
+   *
+   * // After compact(): O(1) per field access
+   * result.idx.compact();
+   * FieldSpan fast = result.idx.get_field_span(1000);
+   * @endcode
+   */
+  void compact();
+
+  /**
+   * @brief Compact and transpose to column-major layout for ALTREP/Arrow access.
+   *
+   * Consolidates per-thread separator positions into a column-major array
+   * optimized for column-at-a-time access patterns (R ALTREP, Arrow conversion).
+   *
+   * Layout: col_indexes[col * num_rows() + row] = byte position of field (row, col)
+   *
+   * This method uses multi-threaded row-first transpose for optimal cache
+   * performance based on benchmarking (see issue #599).
+   *
+   * Memory usage: 8 bytes per field separator (same as compact(), different layout).
+   *
+   * @param n_threads Number of threads for parallel transpose (0 = use parsing threads).
+   *
+   * @note This method is idempotent - calling it multiple times has no effect
+   *       after the first successful call.
+   *
+   * @note Unlike compact(), this method does NOT preserve the row-major flat_indexes.
+   *       Use compact() if you need row-major access, or compact_column_major() for
+   *       column-major access. The two layouts use the same memory (not additive).
+   *
+   * @example
+   * @code
+   * auto result = parser.parse(buf, len);
+   * result.idx.compact_column_major();  // Enable O(1) column access
+   *
+   * // Get column 5's data for all rows
+   * const uint64_t* col5 = result.idx.column(5);
+   * for (size_t row = 0; row < result.idx.num_rows(); ++row) {
+   *   uint64_t field_end = col5[row];
+   *   // ...
+   * }
+   * @endcode
+   */
+  void compact_column_major(size_t n_threads = 0);
+
+  /**
+   * @brief Check if column-major index is available.
+   *
+   * @return true if compact_column_major() has been called successfully.
+   */
+  bool is_column_major() const { return col_indexes != nullptr && col_indexes_count > 0; }
+
+  /**
+   * @brief Get the number of rows in the parsed CSV.
+   *
+   * @return Number of rows (total_indexes / columns), or 0 if columns is 0.
+   */
+  uint64_t num_rows() const {
+    if (columns == 0)
+      return 0;
+    return total_indexes() / columns;
+  }
+
+  /**
+   * @brief Get O(1) access to a column's field positions.
+   *
+   * Returns a pointer to the start of the column's data in the column-major index.
+   * The returned pointer is valid for num_rows() consecutive uint64_t values.
+   *
+   * @param col Column index (0 to columns - 1).
+   * @return Pointer to column data, or nullptr if column-major index not available
+   *         or col is out of bounds.
+   *
+   * @note Requires compact_column_major() to have been called first.
+   *
+   * @example
+   * @code
+   * result.idx.compact_column_major();
+   * const uint64_t* col0 = result.idx.column(0);
+   * for (size_t r = 0; r < result.idx.num_rows(); ++r) {
+   *   uint64_t end_pos = col0[r];
+   *   uint64_t start_pos = (r == 0 && 0 == 0) ? 0 : col0[r-1] + 1;
+   *   // Field bytes are at buf[start_pos..end_pos)
+   * }
+   * @endcode
+   */
+  const uint64_t* column(size_t col) const {
+    if (!is_column_major() || col >= columns)
+      return nullptr;
+    return &col_indexes[col * num_rows()];
+  }
+
+  /**
+   * @brief Get field positions for a single row (O(cols) operation).
+   *
+   * Extracts field positions for all columns in a row from the column-major index.
+   * This is an O(columns) operation with strided memory access, suitable for
+   * occasional row access (CLI head/tail, type detection) but not for bulk row
+   * iteration.
+   *
+   * @param row Row index (0 to num_rows() - 1).
+   * @param[out] out Vector to receive field positions. Will be resized to columns.
+   * @return true if successful, false if row is out of bounds or index not available.
+   *
+   * @note Requires compact_column_major() to have been called first.
+   *
+   * @example
+   * @code
+   * result.idx.compact_column_major();
+   * std::vector<uint64_t> row_fields;
+   * if (result.idx.get_row_fields(0, row_fields)) {
+   *   for (size_t col = 0; col < row_fields.size(); ++col) {
+   *     // row_fields[col] is the end position of field (0, col)
+   *   }
+   * }
+   * @endcode
+   */
+  bool get_row_fields(size_t row, std::vector<uint64_t>& out) const {
+    if (!is_column_major() || row >= num_rows())
+      return false;
+    out.resize(columns);
+    uint64_t nrows = num_rows();
+    for (size_t col = 0; col < columns; ++col) {
+      out[col] = col_indexes[col * nrows + row];
+    }
+    return true;
+  }
+
+  /**
+   * @brief Get O(1) read-only access to a thread's index region.
+   *
+   * Returns a view into the contiguous region of field separator positions
+   * written by the specified thread. Each thread's indexes are in sorted
+   * order within that thread's region (file order within its chunk).
+   *
+   * @param t Thread ID (0 to n_threads - 1).
+   * @return IndexView of the thread's field separator positions.
+   *
+   * @note For region_size == 0 (contiguous/deserialized layout), this computes
+   *       the offset by summing n_indexes[0..t-1].
+   *
+   * @example
+   * @code
+   * for (uint16_t t = 0; t < idx.n_threads; ++t) {
+   *   auto view = idx.thread_data(t);
+   *   for (size_t i = 0; i < view.size(); ++i) {
+   *     std::cout << "Thread " << t << " separator at " << view[i] << "\n";
+   *   }
+   * }
+   * @endcode
+   */
+  IndexView thread_data(uint16_t t) const {
+    if (t >= n_threads || indexes == nullptr || n_indexes == nullptr) {
+      return IndexView(); // Empty view
+    }
+    if (region_offsets != nullptr) {
+      // Right-sized per-thread regions: O(1) access via offset array
+      return IndexView(indexes + region_offsets[t], n_indexes[t]);
+    } else if (region_size > 0) {
+      // Uniform per-thread regions: direct O(1) access
+      return IndexView(indexes + t * region_size, n_indexes[t]);
+    } else {
+      // Contiguous layout (deserialized): compute offset by summing prior counts
+      size_t offset = 0;
+      for (uint16_t i = 0; i < t; ++i) {
+        offset += n_indexes[i];
+      }
+      return IndexView(indexes + offset, n_indexes[t]);
+    }
+  }
+
+  /**
+   * @brief Get total number of field separators across all threads.
+   *
+   * @return Sum of n_indexes[0..n_threads-1].
+   */
+  uint64_t total_indexes() const {
+    if (n_indexes == nullptr || n_threads == 0)
+      return 0;
+    uint64_t total = 0;
+    for (uint16_t t = 0; t < n_threads; ++t) {
+      total += n_indexes[t];
+    }
+    return total;
+  }
+
+  /**
+   * @brief Get field span by global field index without sorting.
+   *
+   * Iterates through threads in file order to find the field at the given
+   * global index. This is O(n_threads) in the worst case but avoids the
+   * O(n log n) sorting required by ValueExtractor.
+   *
+   * @param global_field_idx Zero-based index of the field across the entire file.
+   * @return FieldSpan with byte boundaries, or invalid span if out of bounds.
+   *
+   * @note For the first field (global_field_idx == 0), the start position is
+   *       always 0 (beginning of file).
+   *
+   * @example
+   * @code
+   * // Get the 100th field in the file
+   * FieldSpan span = idx.get_field_span(100);
+   * if (span.is_valid()) {
+   *   std::string_view field(buf + span.start, span.length());
+   * }
+   * @endcode
+   */
+  FieldSpan get_field_span(uint64_t global_field_idx) const;
+
+  /**
+   * @brief Get field span by row and column without sorting.
+   *
+   * Converts (row, col) to a global field index and delegates to the
+   * global field index overload. The number of columns must be set
+   * (idx.columns > 0) for this method to work.
+   *
+   * @param row Zero-based row index.
+   * @param col Zero-based column index.
+   * @return FieldSpan with byte boundaries, or invalid span if out of bounds.
+   *
+   * @note Row 0 is the first data row (or header if has_header is false).
+   *
+   * @example
+   * @code
+   * // Get the field at row 5, column 2
+   * FieldSpan span = idx.get_field_span(5, 2);
+   * if (span.is_valid()) {
+   *   std::string_view field(buf + span.start, span.length());
+   * }
+   * @endcode
+   */
+  FieldSpan get_field_span(uint64_t row, uint64_t col) const;
+
+  /**
    * @brief Destructor. Releases allocated index arrays via RAII.
    *
    * Memory is automatically freed when the unique_ptr members are destroyed.
@@ -260,18 +683,165 @@ public:
 
   void fill_double_array(ParseIndex* idx, uint64_t column, double* out) {}
 
+  // =========================================================================
+  // Shared ownership API for buffer lifetime safety
+  // =========================================================================
+
+  /**
+   * @brief Set the shared buffer reference.
+   *
+   * Associates this ParseIndex with a shared buffer. This enables safe sharing
+   * of the underlying CSV data buffer between multiple consumers (e.g.,
+   * ValueExtractor, lazy columns) that may outlive the original ParseIndex.
+   *
+   * @param buffer Shared pointer to the CSV data buffer.
+   *
+   * @note The buffer should contain the same data that was used during parsing.
+   *       The ParseIndex stores byte offsets into this buffer.
+   *
+   * @example
+   * @code
+   * // Create a shared buffer
+   * auto buffer = std::make_shared<std::vector<uint8_t>>(data, data + len);
+   *
+   * // Parse and associate the buffer
+   * auto result = parser.parse(buffer->data(), buffer->size());
+   * result.idx.set_buffer(buffer);
+   *
+   * // Now ValueExtractor and lazy columns can safely share the buffer
+   * @endcode
+   */
+  void set_buffer(std::shared_ptr<const std::vector<uint8_t>> buffer) {
+    buffer_ = std::move(buffer);
+  }
+
+  /**
+   * @brief Get the shared buffer reference.
+   *
+   * @return Shared pointer to the CSV data buffer, or nullptr if not set.
+   */
+  std::shared_ptr<const std::vector<uint8_t>> buffer() const { return buffer_; }
+
+  /**
+   * @brief Check if this index has a shared buffer reference.
+   *
+   * @return true if a shared buffer has been set via set_buffer().
+   */
+  bool has_buffer() const { return buffer_ != nullptr; }
+
+  /**
+   * @brief Get a pointer to the buffer data.
+   *
+   * Returns a pointer to the underlying buffer data if a shared buffer is set.
+   * This is a convenience method for accessing the data without manually
+   * checking has_buffer() and dereferencing.
+   *
+   * @return Pointer to the buffer data, or nullptr if no buffer is set.
+   */
+  const uint8_t* buffer_data() const { return buffer_ ? buffer_->data() : nullptr; }
+
+  /**
+   * @brief Get the size of the buffer.
+   *
+   * @return Size of the buffer in bytes, or 0 if no buffer is set.
+   */
+  size_t buffer_size() const { return buffer_ ? buffer_->size() : 0; }
+
+  /**
+   * @brief Create a shared reference to this ParseIndex.
+   *
+   * This factory method creates a shared_ptr that shares ownership of this
+   * ParseIndex's internal data. Multiple shared ParseIndex instances can
+   * coexist, and the underlying data is freed only when all references are
+   * released.
+   *
+   * This is the recommended way to share ParseIndex data between components
+   * that may have independent lifetimes (e.g., lazy columns in R's ALTREP).
+   *
+   * @return A new shared_ptr<const ParseIndex> that shares this index's data.
+   *
+   * @note The returned ParseIndex shares the same underlying index arrays.
+   *       Modifications to the original ParseIndex after calling share()
+   *       may affect the shared copy, so the original should not be modified.
+   *
+   * @warning After calling share(), the original ParseIndex should be
+   *          considered immutable. Moving or modifying it may invalidate
+   *          the shared copy.
+   *
+   * @example
+   * @code
+   * // Parse a CSV file
+   * auto result = parser.parse(buf, len);
+   *
+   * // Create a shared reference for a lazy column
+   * auto shared_idx = result.idx.share();
+   *
+   * // The original can now be moved/destroyed without affecting shared_idx
+   * ParseIndex temp = std::move(result.idx);
+   *
+   * // shared_idx still has valid data
+   * @endcode
+   */
+  std::shared_ptr<const ParseIndex> share();
+
+  /**
+   * @brief Check if this index is using shared ownership.
+   *
+   * @return true if this index was created via share() and uses shared
+   *         ownership semantics for its internal data.
+   */
+  bool is_shared() const { return n_indexes_shared_ != nullptr || indexes_shared_ != nullptr; }
+
 private:
   /// RAII owner for n_indexes array. Memory freed automatically on destruction.
-  /// Null when using mmap-backed data.
+  /// Null when using mmap-backed data or shared ownership.
   std::unique_ptr<uint64_t[]> n_indexes_ptr_;
 
   /// RAII owner for indexes array. Memory freed automatically on destruction.
-  /// Null when using mmap-backed data.
+  /// Null when using mmap-backed data or shared ownership.
   std::unique_ptr<uint64_t[]> indexes_ptr_;
+
+  /// RAII owner for chunk_starts array. Memory freed automatically on destruction.
+  std::unique_ptr<uint64_t[]> chunk_starts_ptr_;
+
+  /// RAII owner for region_offsets array. Memory freed automatically on destruction.
+  std::unique_ptr<uint64_t[]> region_offsets_ptr_;
+
+  /// RAII owner for flat_indexes array. Memory freed automatically on destruction.
+  /// Null when using mmap-backed data or shared ownership.
+  std::unique_ptr<uint64_t[]> flat_indexes_ptr_;
+
+  /// RAII owner for col_indexes array (column-major layout).
+  /// Memory freed automatically on destruction.
+  std::unique_ptr<uint64_t[]> col_indexes_ptr_;
 
   /// Memory-mapped buffer for mmap-backed indexes.
   /// When set, n_indexes and indexes point directly into this buffer's data.
   std::unique_ptr<MmapBuffer> mmap_buffer_;
+
+  /// Shared reference to the CSV data buffer.
+  /// When set, the buffer's lifetime is managed by reference counting,
+  /// allowing safe sharing between ParseIndex and consumers like ValueExtractor.
+  std::shared_ptr<const std::vector<uint8_t>> buffer_;
+
+  /// Shared owner for n_indexes array (used when share() is called).
+  /// When set, n_indexes_ptr_ is null and this manages the memory.
+  std::shared_ptr<uint64_t[]> n_indexes_shared_;
+
+  /// Shared owner for indexes array (used when share() is called).
+  /// When set, indexes_ptr_ is null and this manages the memory.
+  std::shared_ptr<uint64_t[]> indexes_shared_;
+
+  /// Shared owner for flat_indexes array (used when share() is called).
+  /// When set, flat_indexes_ptr_ is null and this manages the memory.
+  std::shared_ptr<uint64_t[]> flat_indexes_shared_;
+
+  /// Shared owner for col_indexes array (used when share() is called).
+  /// When set, col_indexes_ptr_ is null and this manages the memory.
+  std::shared_ptr<uint64_t[]> col_indexes_shared_;
+
+  /// Shared reference to mmap buffer for shared ParseIndex instances.
+  std::shared_ptr<MmapBuffer> mmap_buffer_shared_;
 
   // Allow TwoPass::init() to set the private members
   friend class TwoPass;
@@ -517,6 +1087,14 @@ public:
     uint64_t base = 0;
     const uint8_t* data = buf + start;
 
+    // Calculate per-thread base pointer for contiguous storage.
+    // Each thread writes to its own region to avoid false sharing.
+    // Use region_offsets if available (per-thread right-sized allocation),
+    // otherwise fall back to uniform region_size.
+    uint64_t* thread_base = out->region_offsets != nullptr
+                                ? out->indexes + out->region_offsets[thread_id]
+                                : out->indexes + thread_id * out->region_size;
+
     for (; idx < len; idx += 64) {
       libvroom_prefetch(data + idx + 128);
       size_t remaining = len - idx;
@@ -536,7 +1114,7 @@ public:
       uint64_t end_mask = compute_line_ending_mask_simple(in, mask);
       uint64_t field_sep = (end_mask | sep) & ~quote_mask;
 
-      n_indexes += write(out->indexes + thread_id, base, start + idx, out->n_threads, field_sep);
+      n_indexes += write(thread_base, base, start + idx, out->n_threads, field_sep);
     }
 
     // Check if we ended at a record boundary:
@@ -570,13 +1148,18 @@ public:
    * @param start Start position in buffer
    * @param end End position in buffer
    * @param out Index structure to store results
-   * @param thread_id Thread ID for interleaved storage
+   * @param thread_id Thread ID for contiguous per-thread storage
    * @return Number of field separators found
    */
   static uint64_t second_pass_simd_branchless(const BranchlessStateMachine& sm, const uint8_t* buf,
                                               size_t start, size_t end, ParseIndex* out,
                                               size_t thread_id) {
-    return libvroom::second_pass_simd_branchless(sm, buf, start, end, out->indexes, thread_id,
+    // Calculate per-thread base pointer for contiguous storage
+    // Use region_offsets if available (per-thread right-sized allocation)
+    uint64_t* thread_base = out->region_offsets != nullptr
+                                ? out->indexes + out->region_offsets[thread_id]
+                                : out->indexes + thread_id * out->region_size;
+    return libvroom::second_pass_simd_branchless(sm, buf, start, end, thread_base, thread_id,
                                                  out->n_threads);
   }
 
@@ -593,15 +1176,20 @@ public:
    * @param start Start position in buffer
    * @param end End position in buffer
    * @param out Index structure to store results
-   * @param thread_id Thread ID for interleaved storage
+   * @param thread_id Thread ID for contiguous per-thread storage
    * @return SecondPassResult with count and boundary status
    */
   static SecondPassResult second_pass_simd_branchless_with_state(const BranchlessStateMachine& sm,
                                                                  const uint8_t* buf, size_t start,
                                                                  size_t end, ParseIndex* out,
                                                                  size_t thread_id) {
-    auto result = libvroom::second_pass_simd_branchless_with_state(
-        sm, buf, start, end, out->indexes, thread_id, out->n_threads);
+    // Calculate per-thread base pointer for contiguous storage
+    // Use region_offsets if available (per-thread right-sized allocation)
+    uint64_t* thread_base = out->region_offsets != nullptr
+                                ? out->indexes + out->region_offsets[thread_id]
+                                : out->indexes + thread_id * out->region_size;
+    auto result = libvroom::second_pass_simd_branchless_with_state(sm, buf, start, end, thread_base,
+                                                                   thread_id, out->n_threads);
     return {result.n_indexes, result.at_record_boundary};
   }
 
@@ -715,9 +1303,12 @@ public:
     return {in, ErrorCode::INTERNAL_ERROR}; // LCOV_EXCL_LINE - unreachable
   }
 
+  // Add a position to the index array using contiguous per-thread storage.
+  // The caller must initialize i to thread_id * region_size, then this function
+  // increments by 1 for each call.
   really_inline static size_t add_position(ParseIndex* out, size_t i, size_t pos) {
     out->indexes[i] = pos;
-    return i + out->n_threads;
+    return i + 1; // Contiguous: increment by 1, not n_threads
   }
 
   // Default context size for error messages (characters before/after error
@@ -817,6 +1408,29 @@ public:
   bool parse(const uint8_t* buf, ParseIndex& out, size_t len,
              const Dialect& dialect = Dialect::csv(),
              const SecondPassProgressCallback& progress = nullptr);
+
+  /**
+   * @brief Parse a CSV buffer with optimized per-thread memory allocation.
+   *
+   * This method combines chunk boundary detection, per-chunk separator counting,
+   * and parsing into a single operation that allocates only the memory needed
+   * for each thread's actual separator count. This dramatically reduces memory
+   * usage for multi-threaded parsing compared to the default worst-case allocation.
+   *
+   * Memory savings: For N separators evenly distributed across T threads:
+   * - Default: T * N (each thread gets space for all separators)
+   * - Optimized: ~N (each thread gets space for its ~N/T separators)
+   *
+   * @param buf Input buffer
+   * @param len Buffer length
+   * @param n_threads Number of threads to use for parsing
+   * @param dialect CSV dialect settings
+   * @param progress Optional progress callback (called after each chunk completes)
+   * @return ParseIndex with parsed data and optimized memory allocation
+   */
+  ParseIndex parse_optimized(const uint8_t* buf, size_t len, size_t n_threads,
+                             const Dialect& dialect = Dialect::csv(),
+                             const SecondPassProgressCallback& progress = nullptr);
 
   // Result from multi-threaded branchless parsing with error collection
   struct branchless_chunk_result {
@@ -958,6 +1572,52 @@ public:
   ParseIndex init_counted_safe(uint64_t total_separators, size_t n_threads,
                                ErrorCollector* errors = nullptr, uint64_t n_quotes = 0,
                                size_t len = 0);
+
+  /**
+   * @brief Initialize an index structure with per-thread right-sized allocation.
+   *
+   * This method uses per-thread separator counts from a first pass to allocate
+   * exactly the right amount of memory for each thread's region. This provides
+   * optimal memory usage by avoiding the worst-case assumption that all
+   * separators could end up in any single thread's chunk.
+   *
+   * Memory savings: For a file with N separators evenly distributed across T
+   * threads, this allocates ~N entries instead of ~N*T entries.
+   *
+   * @param thread_separator_counts Vector of separator counts per thread.
+   *        Size must match n_threads parameter.
+   * @param n_threads Number of threads for parsing.
+   * @param padding_per_thread Extra slots per thread for safety (default: 8).
+   * @return ParseIndex with right-sized per-thread allocation.
+   *
+   * @example
+   * @code
+   * // After first pass that collected per-thread stats:
+   * std::vector<uint64_t> counts = {1000, 1200, 800, 1100}; // 4 threads
+   * auto idx = parser.init_counted_per_thread(counts, 4);
+   * // Total allocation: (1000+8) + (1200+8) + (800+8) + (1100+8) = 4132 slots
+   * // vs init_counted: 4*4100 = 16400 slots with uniform regions
+   * @endcode
+   */
+  ParseIndex init_counted_per_thread(const std::vector<uint64_t>& thread_separator_counts,
+                                     size_t n_threads, size_t padding_per_thread = 8);
+
+  /**
+   * @brief Initialize an index structure with per-thread right-sized allocation
+   *        and overflow validation.
+   *
+   * Same as init_counted_per_thread but with overflow checking and error
+   * reporting.
+   *
+   * @param thread_separator_counts Vector of separator counts per thread.
+   * @param n_threads Number of threads for parsing.
+   * @param errors Optional error collector for overflow errors.
+   * @param padding_per_thread Extra slots per thread for safety (default: 8).
+   * @return ParseIndex with right-sized allocation, or empty on error.
+   */
+  ParseIndex init_counted_per_thread_safe(const std::vector<uint64_t>& thread_separator_counts,
+                                          size_t n_threads, ErrorCollector* errors = nullptr,
+                                          size_t padding_per_thread = 8);
 };
 
 } // namespace libvroom

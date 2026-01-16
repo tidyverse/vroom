@@ -37,6 +37,10 @@ FieldType TypeDetector::detect_field(const uint8_t* data, size_t length,
   assert(end >= start && "Invalid range: end must be >= start");
   size_t len = end - start;
 
+  // Check for NA values early (before type-specific checks)
+  if (options.detect_na && is_na(field, len))
+    return FieldType::NA;
+
   // Check date first for compact format (8 digits like YYYYMMDD)
   // to avoid misdetecting as integer
   if (is_date(field, len, options))
@@ -301,6 +305,43 @@ bool TypeDetector::is_special_float(const uint8_t* data, size_t length) {
   return false;
 }
 
+bool TypeDetector::is_na(const uint8_t* data, size_t length) {
+  // Single character NA representations
+  if (length == 1) {
+    return data[0] == '-' || data[0] == '.';
+  }
+
+  // Two character: "NA"
+  if (length == 2) {
+    uint8_t c0 = to_lower(data[0]);
+    uint8_t c1 = to_lower(data[1]);
+    return c0 == 'n' && c1 == 'a';
+  }
+
+  // Three character: "N/A"
+  if (length == 3) {
+    uint8_t c0 = to_lower(data[0]);
+    uint8_t c2 = to_lower(data[2]);
+    return c0 == 'n' && data[1] == '/' && c2 == 'a';
+  }
+
+  // Four characters: "null", "none"
+  if (length == 4) {
+    uint8_t c0 = to_lower(data[0]);
+    uint8_t c1 = to_lower(data[1]);
+    uint8_t c2 = to_lower(data[2]);
+    uint8_t c3 = to_lower(data[3]);
+    // "null"
+    if (c0 == 'n' && c1 == 'u' && c2 == 'l' && c3 == 'l')
+      return true;
+    // "none"
+    if (c0 == 'n' && c1 == 'o' && c2 == 'n' && c3 == 'e')
+      return true;
+  }
+
+  return false;
+}
+
 bool TypeDetector::is_date_iso(const uint8_t* data, size_t length) {
   if (length != 10)
     return false;
@@ -485,6 +526,7 @@ void ColumnTypeInference::merge(const ColumnTypeInference& other) {
   for (size_t i = 0; i < other.stats_.size(); ++i) {
     stats_[i].total_count += other.stats_[i].total_count;
     stats_[i].empty_count += other.stats_[i].empty_count;
+    stats_[i].na_count += other.stats_[i].na_count;
     stats_[i].boolean_count += other.stats_[i].boolean_count;
     stats_[i].integer_count += other.stats_[i].integer_count;
     stats_[i].float_count += other.stats_[i].float_count;
@@ -498,7 +540,8 @@ bool ColumnTypeInference::is_column_type_confirmed(size_t column, size_t min_sam
     return false;
 
   const auto& s = stats_[column];
-  size_t non_empty = s.total_count - s.empty_count;
+  // Exclude both empty and NA values from the denominator (consistent with dominant_type())
+  size_t non_empty = s.total_count - s.empty_count - s.na_count;
 
   // Need enough samples to be confident
   if (non_empty < min_samples)

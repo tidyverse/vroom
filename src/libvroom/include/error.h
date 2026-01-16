@@ -222,23 +222,30 @@ public:
    */
   explicit ErrorCollector(ErrorMode mode = ErrorMode::FAIL_FAST,
                           size_t max_errors = DEFAULT_MAX_ERRORS)
-      : mode_(mode), max_errors_(max_errors), has_fatal_(false) {}
+      : mode_(mode), max_errors_(max_errors), has_fatal_(false), suppressed_count_(0) {}
 
   /**
    * @brief Add an error to the collection.
    *
    * Errors are only added if the collection has not reached max_errors_.
-   * If a FATAL error is added, has_fatal_ is set to true.
+   * If the limit is reached, the error is not stored but suppressed_count_
+   * is incremented to track how many errors were dropped.
+   * If a FATAL error is encountered, has_fatal_ is set to true regardless
+   * of whether the error is stored or suppressed (to ensure should_stop()
+   * works correctly even when fatal errors are suppressed).
    *
    * @param error The ParseError to add
    */
   void add_error(const ParseError& error) {
-    if (errors_.size() >= max_errors_)
-      return;
-    errors_.push_back(error);
+    // Always track fatal errors, even if suppressed, so should_stop() works correctly
     if (error.severity == ErrorSeverity::FATAL) {
       has_fatal_ = true;
     }
+    if (errors_.size() >= max_errors_) {
+      ++suppressed_count_;
+      return;
+    }
+    errors_.push_back(error);
   }
 
   /**
@@ -312,11 +319,12 @@ public:
   std::string summary() const;
 
   /**
-   * @brief Clear all recorded errors and reset fatal flag.
+   * @brief Clear all recorded errors and reset flags.
    */
   void clear() {
     errors_.clear();
     has_fatal_ = false;
+    suppressed_count_ = 0;
   }
 
   /**
@@ -332,20 +340,45 @@ public:
   void set_mode(ErrorMode mode) { mode_ = mode; }
 
   /**
+   * @brief Change the maximum number of errors to collect.
+   *
+   * This can be called before parsing begins to configure the error limit.
+   * If called after errors have been collected, the new limit takes effect
+   * for subsequent add_error() calls.
+   *
+   * @param max_errors New maximum errors limit
+   */
+  void set_max_errors(size_t max_errors) { max_errors_ = max_errors; }
+
+  /**
    * @brief Merge errors from another collector.
    *
    * Used for multi-threaded parsing where each thread has its own collector.
-   * Respects max_errors_ limit when merging.
+   * Respects max_errors_ limit when merging. Suppressed counts from both
+   * collectors are combined, plus any errors that couldn't be copied due
+   * to the limit.
    *
    * @param other The ErrorCollector to merge from
    */
   void merge_from(const ErrorCollector& other) {
-    if (other.errors_.empty())
+    // Always merge suppressed counts first
+    suppressed_count_ += other.suppressed_count_;
+
+    if (other.errors_.empty()) {
+      if (other.has_fatal_) {
+        has_fatal_ = true;
+      }
       return;
+    }
 
     // Respect max_errors_ limit when merging
     size_t available = max_errors_ > errors_.size() ? max_errors_ - errors_.size() : 0;
     size_t to_copy = std::min(available, other.errors_.size());
+
+    // Track errors we couldn't copy as suppressed
+    if (to_copy < other.errors_.size()) {
+      suppressed_count_ += other.errors_.size() - to_copy;
+    }
 
     errors_.reserve(errors_.size() + to_copy);
     for (size_t i = 0; i < to_copy; ++i) {
@@ -383,11 +416,29 @@ public:
     sort_by_offset();
   }
 
+  /**
+   * @brief Get the number of suppressed errors.
+   *
+   * Returns the count of errors that were dropped after the max_errors
+   * limit was reached. This helps users understand the full scope of
+   * issues even when only a subset is collected.
+   *
+   * @return Number of errors suppressed due to hitting the limit
+   */
+  size_t suppressed_count() const { return suppressed_count_; }
+
+  /**
+   * @brief Get the configured maximum number of errors.
+   * @return The max_errors limit
+   */
+  size_t max_errors() const { return max_errors_; }
+
 private:
   ErrorMode mode_;
   size_t max_errors_;
   std::vector<ParseError> errors_;
   bool has_fatal_;
+  size_t suppressed_count_;
 };
 
 /**

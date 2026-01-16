@@ -336,29 +336,31 @@ really_inline uint64_t compute_escaped_mask(uint64_t escape_mask, uint64_t& prev
 #endif
 }
 
-// Write indexes to output array
-really_inline int write(uint64_t* base_ptr, uint64_t& base, uint64_t idx, int stride,
+// Write indexes to output array using contiguous access.
+// Each thread writes to its own contiguous region to avoid false sharing.
+// The stride parameter is kept for API compatibility but is ignored.
+really_inline int write(uint64_t* base_ptr, uint64_t& base, uint64_t idx, int /*stride*/,
                         uint64_t bits) {
   if (bits == 0)
     return 0;
   int cnt = static_cast<int>(count_ones(bits));
 
   for (int i = 0; i < 8; i++) {
-    base_ptr[(base + i) * stride] = idx + trailing_zeroes(bits);
+    base_ptr[base + i] = idx + trailing_zeroes(bits);
     bits = clear_lowest_bit(bits);
   }
 
   // LCOV_EXCL_BR_START - unlikely branches for high separator density
   if (unlikely(cnt > 8)) {
     for (int i = 8; i < 16; i++) {
-      base_ptr[(base + i) * stride] = idx + trailing_zeroes(bits);
+      base_ptr[base + i] = idx + trailing_zeroes(bits);
       bits = clear_lowest_bit(bits);
     }
 
     if (unlikely(cnt > 16)) {
       int i = 16;
       do {
-        base_ptr[(base + i) * stride] = idx + trailing_zeroes(bits);
+        base_ptr[base + i] = idx + trailing_zeroes(bits);
         bits = clear_lowest_bit(bits);
         i++;
       } while (i < cnt);

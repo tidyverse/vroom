@@ -7,10 +7,11 @@
  * logic and can be disabled via CMake option LIBVROOM_ENABLE_TYPE_DETECTION=OFF.
  *
  * Features:
- * - Field type enumeration (BOOLEAN, INTEGER, FLOAT, DATE, STRING, EMPTY)
+ * - Field type enumeration (BOOLEAN, INTEGER, FLOAT, DATE, STRING, EMPTY, NA)
  * - Multi-format date detection (ISO, US, EU, compact formats)
  * - Configurable date format preference for ambiguous dates
  * - Boolean variant recognition (true/false, yes/no, on/off, 0/1)
+ * - NA/missing value detection (NA, N/A, null, NULL, None, -, .)
  * - SIMD-accelerated digit classification
  * - Column type inference with configurable confidence thresholds
  * - Type hint system for overriding auto-detected types
@@ -42,7 +43,8 @@ enum class FieldType : uint8_t {
   FLOAT = 2,
   DATE = 3,
   STRING = 4,
-  EMPTY = 5
+  EMPTY = 5,
+  NA = 6
 };
 
 inline const char* field_type_to_string(FieldType type) {
@@ -59,6 +61,8 @@ inline const char* field_type_to_string(FieldType type) {
     return "string";
   case FieldType::EMPTY:
     return "empty";
+  case FieldType::NA:
+    return "na";
   }
   return "unknown";
 }
@@ -84,6 +88,7 @@ struct TypeDetectionOptions {
   bool trim_whitespace = true;
   bool allow_exponential = true;
   bool allow_thousands_sep = false;
+  bool detect_na = true; // Detect NA/missing value representations
   char thousands_sep = ',';
   char decimal_point = '.';
   double confidence_threshold = 0.9;
@@ -95,6 +100,7 @@ struct TypeDetectionOptions {
 struct ColumnTypeStats {
   size_t total_count = 0;
   size_t empty_count = 0;
+  size_t na_count = 0;
   size_t boolean_count = 0;
   size_t integer_count = 0;
   size_t float_count = 0;
@@ -102,7 +108,8 @@ struct ColumnTypeStats {
   size_t string_count = 0;
 
   FieldType dominant_type(double threshold = 0.9) const {
-    size_t non_empty = total_count - empty_count;
+    // NA values are treated like EMPTY for type inference (excluded from denominator)
+    size_t non_empty = total_count - empty_count - na_count;
     if (non_empty == 0)
       return FieldType::EMPTY;
 
@@ -136,6 +143,9 @@ struct ColumnTypeStats {
     switch (type) {
     case FieldType::EMPTY:
       ++empty_count;
+      break;
+    case FieldType::NA:
+      ++na_count;
       break;
     case FieldType::BOOLEAN:
       ++boolean_count;
@@ -195,6 +205,20 @@ public:
    */
   static bool is_date(const uint8_t* data, size_t length,
                       const TypeDetectionOptions& options = TypeDetectionOptions());
+
+  /**
+   * Detect if a field contains a common NA/missing value representation.
+   *
+   * Recognizes the following patterns (case-insensitive):
+   * - "NA", "N/A" (R-style)
+   * - "null", "NULL" (programming)
+   * - "None" (Python-style)
+   * - "-", "." (common placeholders)
+   *
+   * Note: "NaN" is intentionally NOT recognized as NA because it is a valid
+   * floating-point special value. Use is_float() or detect_field() to handle NaN.
+   */
+  static bool is_na(const uint8_t* data, size_t length);
 
 private:
   // Performance-critical inline helpers

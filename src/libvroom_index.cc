@@ -82,6 +82,9 @@ libvroom_index::libvroom_index(
   // Parse - this creates the index but doesn't build ValueExtractor yet
   TIME_BLOCK("parser.parse", result_ = parser.parse(buffer_.data(), buffer_.size(), opts));
 
+  // Compact the index to enable O(1) field access (vs O(num_threads) chunked)
+  TIME_BLOCK("compact", result_.compact());
+
   if (!result_.successful) {
     if (errors && result_.has_errors()) {
       for (const auto& err : result_.errors()) {

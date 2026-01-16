@@ -522,40 +522,38 @@ really_inline size_t process_block_simd_branchless(const BranchlessStateMachine&
  * @param buf Input buffer
  * @param start Start position
  * @param end End position
- * @param indexes Output array
- * @param thread_id Thread ID for interleaved storage
- * @param n_threads Total number of threads
+ * @param indexes Output array (pre-offset per-thread base pointer)
+ * @param thread_id Thread ID (kept for API compatibility, unused)
+ * @param n_threads Total number of threads (kept for API compatibility, unused)
  * @return Number of field separators found
  */
 inline uint64_t second_pass_simd_branchless(const BranchlessStateMachine& sm, const uint8_t* buf,
                                             size_t start, size_t end, uint64_t* indexes,
-                                            size_t thread_id, int n_threads) {
+                                            size_t /*thread_id*/, int /*n_threads*/) {
   assert(end >= start && "Invalid range: end must be >= start");
   size_t len = end - start;
   size_t pos = 0;
-  uint64_t idx = 0; // Start at 0; thread offset handled by base pointer
+  uint64_t idx = 0; // Start at 0; thread offset handled by caller
   uint64_t prev_quote_state = 0ULL;
   uint64_t prev_escape_carry = 0ULL; // For escape char mode
   uint64_t count = 0;
   const uint8_t* data = buf + start;
 
   // Process 64-byte blocks
-  // Pass indexes + thread_id so each thread writes to its own interleaved slots:
-  // thread 0 -> indexes[0], indexes[n_threads], indexes[2*n_threads], ...
-  // thread 1 -> indexes[1], indexes[n_threads+1], indexes[2*n_threads+1], ...
+  // Caller passes per-thread base pointer; writes are contiguous within each thread's region.
   for (; pos + 64 <= len; pos += 64) {
     libvroom_prefetch(data + pos + 128);
 
     simd_input in = fill_input(data + pos);
-    count += process_block_simd_branchless(sm, in, 64, prev_quote_state, prev_escape_carry,
-                                           indexes + thread_id, start + pos, idx, n_threads);
+    count += process_block_simd_branchless(sm, in, 64, prev_quote_state, prev_escape_carry, indexes,
+                                           start + pos, idx, 1);
   }
 
   // Handle remaining bytes (< 64)
   if (pos < len) {
     simd_input in = fill_input_safe(data + pos, len - pos);
     count += process_block_simd_branchless(sm, in, len - pos, prev_quote_state, prev_escape_carry,
-                                           indexes + thread_id, start + pos, idx, n_threads);
+                                           indexes, start + pos, idx, 1);
   }
 
   return count;
@@ -590,38 +588,39 @@ struct BranchlessSecondPassResult {
  * @param buf Input buffer
  * @param start Start position
  * @param end End position
- * @param indexes Output array
- * @param thread_id Thread ID for interleaved storage
- * @param n_threads Total number of threads
+ * @param indexes Output array (pre-offset per-thread base pointer)
+ * @param thread_id Thread ID (kept for API compatibility, unused)
+ * @param n_threads Total number of threads (kept for API compatibility, unused)
  * @return BranchlessSecondPassResult with count and boundary status
  */
 inline BranchlessSecondPassResult
 second_pass_simd_branchless_with_state(const BranchlessStateMachine& sm, const uint8_t* buf,
                                        size_t start, size_t end, uint64_t* indexes,
-                                       size_t thread_id, int n_threads) {
+                                       size_t /*thread_id*/, int /*n_threads*/) {
   assert(end >= start && "Invalid range: end must be >= start");
   size_t len = end - start;
   size_t pos = 0;
-  uint64_t idx = 0; // Start at 0; thread offset handled by base pointer
+  uint64_t idx = 0; // Start at 0; thread offset handled by caller
   uint64_t prev_quote_state = 0ULL;
   uint64_t prev_escape_carry = 0ULL; // For escape char mode
   uint64_t count = 0;
   const uint8_t* data = buf + start;
 
   // Process 64-byte blocks
+  // Caller passes per-thread base pointer; writes are contiguous within each thread's region.
   for (; pos + 64 <= len; pos += 64) {
-    __builtin_prefetch(data + pos + 128);
+    libvroom_prefetch(data + pos + 128);
 
     simd_input in = fill_input(data + pos);
-    count += process_block_simd_branchless(sm, in, 64, prev_quote_state, prev_escape_carry,
-                                           indexes + thread_id, start + pos, idx, n_threads);
+    count += process_block_simd_branchless(sm, in, 64, prev_quote_state, prev_escape_carry, indexes,
+                                           start + pos, idx, 1);
   }
 
   // Handle remaining bytes (< 64)
   if (pos < len) {
     simd_input in = fill_input_safe(data + pos, len - pos);
     count += process_block_simd_branchless(sm, in, len - pos, prev_quote_state, prev_escape_carry,
-                                           indexes + thread_id, start + pos, idx, n_threads);
+                                           indexes, start + pos, idx, 1);
   }
 
   // Check if we ended at a record boundary:
