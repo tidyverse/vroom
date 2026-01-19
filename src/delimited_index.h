@@ -307,8 +307,6 @@ public:
    *   reading blocks from a connection).
    * @param pb the progress bar to use
    * @param update_size how often to update the progress bar
-   * @param includes_eof whether this region is known to contain the end of the
-       file/stream
    */
   template <typename T, typename P>
   size_t index_region(
@@ -329,8 +327,7 @@ public:
       std::shared_ptr<vroom_errors> errors,
       P& pb,
       const size_t num_threads,
-      const size_t update_size,
-      const bool includes_eof = false) {
+      const size_t update_size) {
 
     const char newline = nlt == CR ? '\r' : '\n';
 
@@ -465,19 +462,6 @@ public:
       //: state == QUOTED_END ? 'E' : 'X');
 
       ++pos;
-    }
-
-    // If we finish indexing a file and we're in QUOTED_FIELD, warn about an
-    // unclosed quote
-    if (includes_eof && state == QUOTED_FIELD) {
-      errors->add_parse_error(
-          end + file_offset, num_delims, "closing quote", "end of file");
-      // Finalize the current record so we don't lose all data
-      if (num_cols > 0) {
-        resolve_columns(end + file_offset, num_delims, num_cols, destination, errors);
-      }
-      destination.push_back(end + file_offset);
-      ++lines_read;
     }
 
     if (progress_ && pb) {

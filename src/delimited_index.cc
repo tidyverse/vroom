@@ -200,8 +200,7 @@ start_indexing:
             errors,
             pb,
             num_threads,
-            file_size / 100,
-            true);
+            file_size / 100);
       }));
     } else {
       threads = parallel_for(
@@ -260,6 +259,20 @@ start_indexing:
 
     for (auto& t : threads) {
       t.get();
+    }
+
+    // If we finish indexing a file and we're in QUOTED_FIELD, warn about an
+    // unclosed quote. This only applies to single-threaded indexing, where
+    // state flows through the entire file. Multi-threaded indexing throws
+    // newline_error as soon as a newline is seen inside QUOTED_FIELD.
+    if (num_threads == 1 && state == QUOTED_FIELD) {
+      errors->add_parse_error(
+          file_size, num_delims, "closing quote", "end of file");
+      // Finalize the current record so we don't lose all data
+      if (columns_ > 0) {
+        resolve_columns(file_size, num_delims, columns_, idx_[1], errors);
+      }
+      idx_[1].push_back(file_size);
     }
 
   } catch (newline_error& e) {
