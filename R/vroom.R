@@ -213,6 +213,9 @@ vroom <- function(
   show_col_types = NULL,
   .name_repair = "unique"
 ) {
+  check_number_decimal(n_max)
+  check_number_decimal(guess_max)
+
   # vroom does not support newlines as the delimiter, just as the EOL, so just
   # assign a value that should never appear in CSV text as the delimiter,
   # 001, start of heading.
