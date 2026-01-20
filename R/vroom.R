@@ -46,6 +46,7 @@
 #'   character represents one column:
 #' - c = character
 #' - i = integer
+#' - I = big integer
 #' - n = number
 #' - d = double
 #' - l = logical

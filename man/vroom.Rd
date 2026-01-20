@@ -79,6 +79,7 @@ character represents one column:
 \itemize{
 \item c = character
 \item i = integer
+\item I = big integer
 \item n = number
 \item d = double
 \item l = logical
