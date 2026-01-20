@@ -51,6 +51,8 @@ gen_tbl(
 
   - i = integer
 
+  - I = big integer
+
   - n = number
 
   - d = double

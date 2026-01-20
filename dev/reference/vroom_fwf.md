@@ -111,6 +111,8 @@ fwf_cols(...)
 
   - i = integer
 
+  - I = big integer
+
   - n = number
 
   - d = double
