@@ -330,16 +330,19 @@ public:
       const size_t update_size) {
 
     const char newline = nlt == CR ? '\r' : '\n';
+    const bool has_quote = quote != '\0';
 
-    // If there are no quotes quote will be '\0', so will just work
+    // query holds "stop characters" used later for strcspn()
     std::array<char, 6> query = {delim[0], newline, '\\', '\0', '\0', '\0'};
     auto query_i = 3;
-    if (quote != '\0') {
+    if (has_quote) {
       query[query_i++] = quote;
     }
     if (!comment.empty()) {
       query[query_i] = comment[0];
     }
+    // the final '\0' ensures query includes a null byte, even in the maximal
+    // case where we've got a quote character and a comment string
 
     auto last_tick = start;
 
@@ -432,7 +435,7 @@ public:
         }
       }
 
-      else if (c == quote) {
+      else if (has_quote && c == quote) {
         state = quoted_state(state);
       }
 
