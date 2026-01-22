@@ -152,7 +152,7 @@ start_indexing:
     idx_ = std::vector<idx_t>(num_threads + 1);
 
     // Index the first row
-    size_t cols = 0;
+    size_t num_delims = 0;
     csv_state state = RECORD_START;
     size_t lines_read = index_region(
         mmap_,
@@ -167,7 +167,7 @@ start_indexing:
         first_nl + 1,
         0,
         n_max,
-        cols,
+        num_delims,
         0,
         errors,
         pb,
@@ -179,7 +179,7 @@ start_indexing:
 
     std::vector<std::future<void>> threads;
 
-    if (nmax_set) {
+    if (num_threads == 1) {
       threads.emplace_back(std::async(std::launch::async, [&] {
         n_max = n_max > lines_read ? n_max - lines_read : 0;
         index_region(
@@ -195,7 +195,7 @@ start_indexing:
             file_size,
             0,
             n_max,
-            cols,
+            num_delims,
             columns_,
             errors,
             pb,
@@ -224,7 +224,7 @@ start_indexing:
                 /* has_quote */ false,
                 quote);
             ++end;
-            size_t cols = 0;
+            size_t num_delims = 0;
             csv_state state = RECORD_START;
             index_region(
                 mmap_,
@@ -239,7 +239,7 @@ start_indexing:
                 end,
                 0,
                 n_max,
-                cols,
+                num_delims,
                 columns_,
                 errors,
                 pb,
@@ -259,6 +259,20 @@ start_indexing:
 
     for (auto& t : threads) {
       t.get();
+    }
+
+    // If we finish indexing a file and we're in QUOTED_FIELD, warn about an
+    // unclosed quote. This only applies to single-threaded indexing, where
+    // state flows through the entire file. Multi-threaded indexing throws
+    // newline_error as soon as a newline is seen inside QUOTED_FIELD.
+    if (num_threads == 1 && state == QUOTED_FIELD) {
+      errors->add_parse_error(
+          file_size, num_delims, "closing quote", "end of file");
+      // Finalize the current record so we don't lose all data
+      if (columns_ > 0) {
+        resolve_columns(file_size, num_delims, columns_, idx_[1], errors);
+      }
+      idx_[1].push_back(file_size);
     }
 
   } catch (newline_error& e) {

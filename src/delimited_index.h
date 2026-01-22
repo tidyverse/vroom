@@ -272,24 +272,27 @@ public:
   }
   void resolve_columns(
       size_t pos,
-      size_t& cols,
+      size_t& num_delims,
       size_t num_cols,
       idx_t& destination,
       std::shared_ptr<vroom_errors> errors) {
-    // Remove extra columns if there are too many
-    if (cols >= num_cols) {
-      errors->add_parse_error(pos, cols);
-      while (cols > 0 && cols >= num_cols) {
-        destination.pop_back();
-        --cols;
-      }
-    } else if (cols < num_cols - 1) {
-      errors->add_parse_error(pos, cols);
-      // Add additional columns if there are too few
-      while (cols < num_cols - 1) {
-        destination.push_back(pos);
-        ++cols;
-      }
+    if (num_delims != num_cols - 1) {
+      std::string expected = std::to_string(num_cols) + " columns";
+      std::string actual = std::to_string(num_delims + 1) + " columns";
+      errors->add_parse_error(pos, num_delims, expected, actual);
+    }
+    // If we found too many delimiters, remove the extra field start positions
+    // from the index.
+    while (num_delims > 0 && num_delims >= num_cols) {
+      destination.pop_back();
+      --num_delims;
+    }
+    // If we didn't find enough delimiters, fall back to recording the end of
+    // row as the field start position. These artificial fields will have zero
+    // length.
+    while (num_delims < num_cols - 1) {
+      destination.push_back(pos);
+      ++num_delims;
     }
   }
 
@@ -301,9 +304,9 @@ public:
    * @param start the start of the region to index
    * @param end the end of the region to index
    * @param offset an offset to add to the destination (this is needed when
+   *   reading blocks from a connection).
    * @param pb the progress bar to use
    * @param update_size how often to update the progress bar
-   * reading blocks from a connection).
    */
   template <typename T, typename P>
   size_t index_region(
@@ -319,7 +322,7 @@ public:
       const size_t end,
       const size_t file_offset,
       const size_t n_max,
-      size_t& cols,
+      size_t& num_delims,
       const size_t num_cols,
       std::shared_ptr<vroom_errors> errors,
       P& pb,
@@ -327,16 +330,19 @@ public:
       const size_t update_size) {
 
     const char newline = nlt == CR ? '\r' : '\n';
+    const bool has_quote = quote != '\0';
 
-    // If there are no quotes quote will be '\0', so will just work
+    // query holds "stop characters" used later for strcspn()
     std::array<char, 6> query = {delim[0], newline, '\\', '\0', '\0', '\0'};
     auto query_i = 3;
-    if (quote != '\0') {
+    if (has_quote) {
       query[query_i++] = quote;
     }
     if (!comment.empty()) {
       query[query_i] = comment[0];
     }
+    // the final '\0' ensures query includes a null byte, even in the maximal
+    // case where we've got a quote character and a comment string
 
     auto last_tick = start;
 
@@ -366,11 +372,11 @@ public:
 
           if (num_cols > 0 && pos > start) {
             resolve_columns(
-                pos + file_offset, cols, num_cols, destination, errors);
+                pos + file_offset, num_delims, num_cols, destination, errors);
           }
           destination.push_back(pos + file_offset);
         }
-        cols = 0;
+        num_delims = 0;
         pos = skip_rest_of_line(source, pos);
         ++pos;
         state = newline_state(state);
@@ -390,7 +396,7 @@ public:
       if (state != QUOTED_FIELD && strncmp(delim, buf + pos, delim_len_) == 0) {
         state = comma_state(state);
         destination.push_back(pos + file_offset);
-        ++cols;
+        ++num_delims;
       }
 
       else if (c == newline) {
@@ -407,11 +413,11 @@ public:
         }
         if (num_cols > 0 && pos > start) {
           resolve_columns(
-              pos + file_offset, cols, num_cols, destination, errors);
+              pos + file_offset, num_delims, num_cols, destination, errors);
         }
 
         state = newline_state(state);
-        cols = 0;
+        num_delims = 0;
         destination.push_back(pos + file_offset);
         ++lines_read;
         if (lines_read >= n_max) {
@@ -429,7 +435,7 @@ public:
         }
       }
 
-      else if (c == quote) {
+      else if (has_quote && c == quote) {
         state = quoted_state(state);
       }
 
