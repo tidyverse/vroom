@@ -2,6 +2,14 @@
 
 ## vroom (development version)
 
+- Unclosed quotes (e.g., `a,b,"c` with no closing `"`) now trigger a
+  warning, instead of silent data truncation. The affected row is also
+  newly included in the returned data, which should facilitate
+  troubleshooting
+  ([\#484](https://github.com/tidyverse/vroom/issues/484),
+  <https://github.com/tidyverse/readr/issues/1539>,
+  <https://github.com/tidyverse/readr/issues/1491>).
+
 - [vroom.tidyverse.org](https://vroom.tidyverse.org/) is the new home of
   vroom’s website, catching up to the much earlier move (April 2022) of
   vroom’s GitHub repository from the r-lib organization to the
