@@ -24,8 +24,6 @@ Preprocess
 README
 ROR
 RStudio
-RStudio's
-RStudio’s
 Rcpp
 Rdatatable
 Romain
@@ -33,6 +31,7 @@ TSV
 Tierney
 UBSAN
 UNK
+Unclosed
 UseR
 YMD
 Zstandard
@@ -59,7 +58,6 @@ github
 grisu
 gz
 gzip
-gzipped
 https
 lbzip
 libc
