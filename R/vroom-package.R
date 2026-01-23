@@ -17,3 +17,5 @@
 #' @importFrom lifecycle deprecated
 ## usethis namespace: end
 NULL
+
+release_extra_revdeps <- function() "readr"
