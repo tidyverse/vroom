@@ -184,42 +184,46 @@ connection_or_filepath <- function(path, write = FALSE, call = caller_env()) {
 
   path <- enc2utf8(path)
 
-  p <- split_path_ext(basename_utf8(path))
-
   if (write) {
     path <- normalizePath_utf8(path, mustWork = FALSE)
   } else {
     path <- check_path(path)
   }
 
-  if (is_installed("archive")) {
-    formats <- archive_formats(p$extension)
-    extension <- p$extension
-    while (is.null(formats) && nzchar(extension)) {
-      extension <- split_path_ext(extension)$extension
-      formats <- archive_formats(extension)
-    }
-    if (!is.null(formats)) {
-      if (write) {
-        if (is.null(formats[[1]])) {
-          return(archive::file_write(path, filter = formats[[2]]))
-        }
-        return(archive::archive_write(
-          path,
-          p$path,
-          format = formats[[1]],
-          filter = formats[[2]]
-        ))
-      }
+  p <- split_path_ext(basename_utf8(path))
+  extension <- p$extension
+  formats <- archive_formats(extension)
+  while (is.null(formats) && nzchar(extension)) {
+    extension <- split_path_ext(extension)$extension
+    formats <- archive_formats(extension)
+  }
+  needs_archive <- !is.null(formats) && (write || extension != "zip")
+
+  if (needs_archive) {
+    reason <- glue(
+      "to {if (write) 'write' else 'read'} `.{p$extension}` files."
+    )
+    rlang::check_installed("archive", reason = reason, call = call)
+
+    if (write) {
       if (is.null(formats[[1]])) {
-        return(archive::file_read(path, filter = formats[[2]]))
+        return(archive::file_write(path, filter = formats[[2]]))
       }
-      return(archive::archive_read(
+      return(archive::archive_write(
         path,
+        p$path,
         format = formats[[1]],
         filter = formats[[2]]
       ))
     }
+    if (is.null(formats[[1]])) {
+      return(archive::file_read(path, filter = formats[[2]]))
+    }
+    return(archive::archive_read(
+      path,
+      format = formats[[1]],
+      filter = formats[[2]]
+    ))
   }
 
   if (!write) {
