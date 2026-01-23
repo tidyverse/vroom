@@ -63,6 +63,13 @@
       vroom_write(mtcars, tempfile(fileext = ".zip"))
     Condition
       Error in `vroom_write()`:
-      ! Can only read from, not write to, ".zip" files.
-      i Install the archive package to write ".zip" files.
+      ! The package "archive" is required to write `.zip` files.
+
+# reading archive-only formats without archive package fails informatively
+
+    Code
+      vroom(vroom_example("mtcars.csv.tar.gz"), col_types = list())
+    Condition
+      Error:
+      ! The package "archive" is required to read `.csv.tar.gz` files.
 

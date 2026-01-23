@@ -265,10 +265,19 @@ test_that("multiple files with non-ASCII encoding fails informatively", {
 })
 
 test_that("writing to .zip without archive package fails informatively", {
-  local_mocked_bindings(is_installed = function(pkg) FALSE)
+  skip_if(is_installed("archive"))
 
   expect_snapshot(
     vroom_write(mtcars, tempfile(fileext = ".zip")),
+    error = TRUE
+  )
+})
+
+test_that("reading archive-only formats without archive package fails informatively", {
+  skip_if(is_installed("archive"))
+
+  expect_snapshot(
+    vroom(vroom_example("mtcars.csv.tar.gz"), col_types = list()),
     error = TRUE
   )
 })
