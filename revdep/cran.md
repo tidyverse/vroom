@@ -1,8 +1,8 @@
 ## revdepcheck results
 
-We checked 48 reverse dependencies (47 from CRAN + 1 from Bioconductor), comparing R CMD check results across CRAN and dev versions of this package.
+We checked 929 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
 
- * We saw 1 new problems
+ * We saw 4 new problems
  * We failed to check 0 packages
 
 Issues with CRAN packages are summarised below.
@@ -11,5 +11,14 @@ Issues with CRAN packages are summarised below.
 (This reports the first line of each new failure)
 
 * arkdb
+  checking tests ... ERROR
+
+* FORTLS
+  checking re-building of vignette outputs ... ERROR
+
+* readr
+  checking tests ... ERROR
+
+* seekr
   checking tests ... ERROR
 
