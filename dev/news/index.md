@@ -2,6 +2,10 @@
 
 ## vroom (development version)
 
+- vroom now offers to install the archive package if it’s needed to
+  complete the user’s request
+  (<https://github.com/tidyverse/readr/issues/1334>).
+
 - Unclosed quotes (e.g., `a,b,"c` with no closing `"`) now trigger a
   warning, instead of silent data truncation. The affected row is also
   newly included in the returned data, which should facilitate
