@@ -1,43 +1,30 @@
 # vroom (development version)
 
+* [vroom.tidyverse.org](https://vroom.tidyverse.org/) is the new home of vroom's website, catching up to the much earlier move (April 2022) of vroom's GitHub repository from the r-lib organization to the tidyverse. The motivation for that was to make it easier to transfer issues between these two closely connected packages.
+
+* The `path` parameter has been removed from `vroom_write()`. This parameter was deprecated in vroom 1.5.0 (2021-06-14) in favor of the `file` parameter (#575).
+
+* The function `vroom_altrep_opts()` and the argument `vroom(altrep_opts =)` have been removed. They were deprecated in favor of `vroom_altrep()` and `altrep =`, respectively, in v1.2.0 (2020-01-13). Also applies to `vroom_fwf(altrep_opts =)` and `vroom_lines(altrep_opts =)` (#575).
+
+* `vroom()` now supports reading from a remote file that uses any of the supported compression formats, by downloading to a temporary (compressed) file. This is a new feature for `.bz2`, `.xz`, and `.zip` and fixes `.gz` bugs arising from problematic behaviour of `base::gzcon()` (#400, #553, https://github.com/tidyverse/readr/issues/1555, https://github.com/tidyverse/readr/issues/1553).
+
+* `mtcars.csv.tar.gz` and `mtcars-concatenated.csv.gz` are 2 new example files that are handy internally, at least, for exercising code related to reading compressed files.
+
 * vroom now offers to install the archive package if it's needed to complete the user's request (https://github.com/tidyverse/readr/issues/1334).
+
+* vroom takes the recommended approach for phasing out usage of the non-API entry points `SETLENGTH`, `SET_TRUELENGTH`, and `ATTRIB` (#582, #596).
 
 * Unclosed quotes (e.g., `a,b,"c` with no closing `"`) now trigger a warning, instead of silent data truncation. The affected row is also newly included in the returned data, which should facilitate troubleshooting (#484, https://github.com/tidyverse/readr/issues/1539, https://github.com/tidyverse/readr/issues/1491).
 
-* [vroom.tidyverse.org](https://vroom.tidyverse.org/) is the new home of
-  vroom's website, catching up to the much earlier move (April 2022) of vroom's
-  GitHub repository from the r-lib organization to the tidyverse. The motivation
-  for that was to make it easier to transfer issues between these two closely
-  connected packages.
-
-* The `path` parameter has been removed from `vroom_write()`. This parameter was
-  deprecated in vroom 1.5.0 (2021-06-14) in favor of the `file` parameter (#575).
-
-* The function `vroom_altrep_opts()` and the argument `vroom(altrep_opts =)`
-  have been removed. They were deprecated in favor of `vroom_altrep()` and
-  `altrep =`, respectively, in v1.2.0 (2020-01-13). Also applies to
-  `vroom_fwf(altrep_opts =)` and `vroom_lines(altrep_opts =)` (#575).
-
 * Columns specified as having type "number" (requested via `col_number()` or `"number"` or `'n'`) or "skip" (requested via `col_skip()` or `"skip"` or `_` or `-`) now work in the case where 0 rows of data are parsed (#427, #540, #548).
 
-* `vroom()`, `vroom_lines()`, and `vroom_fwf()` now close and destroy (instead
-  of leak) the connection in the case where opening the connection fails due to,
-  e.g., a nonexistent URL (#488).
+* `vroom()`, `vroom_lines()`, and `vroom_fwf()` now close and destroy (instead of leak) the connection in the case where opening the connection fails due to, e.g., a nonexistent URL (#488).
 
-* vroom takes the recommended approach for phasing out usage of the non-API
-  entry points `SETLENGTH` and `SET_TRUELENGTH` (#582).
+* If there is insufficient space for the tempfile used when reading from a connection (affects delimited and fixed width parsing, from compressed files and URLs), that is now reported as an error and no longer segfaults (#544).
 
-* If there is insufficient space for the tempfile used when reading from a
-  connection (affects delimited and fixed width parsing, from compressed files
-  and URLs), that is now reported as an error and no longer segfaults (#544).
-
-* `vroom(..., n_max = 0, col_names = c(...))` with a connection (compressed
-  file, URL, raw connection) no longer produces a "negative length vectors are
-  not allowed" error or crashes R (#539).
+* `vroom(..., n_max = 0, col_names = c(...))` with a connection (compressed file, URL, raw connection) no longer produces a "negative length vectors are not allowed" error or crashes R (#539).
 
 * `vroom_fwf(..., n_max = 0)` with a connection no longer segfaults (#590).
-
-* `vroom()` now supports reading from a remote file that uses any of the supported compression formats, by downloading to a temporary (compressed) file. This is a new feature for `.bz2`, `.xz`, and `.zip` and fixes `.gz` bugs arising from problematic behaviour of `base::gzcon()` (#400, #553, https://github.com/tidyverse/readr/issues/1555, https://github.com/tidyverse/readr/issues/1553).
 
 # vroom 1.6.7
 
