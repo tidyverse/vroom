@@ -1,4 +1,4 @@
-# vroom (development version)
+# vroom 1.7.0
 
 * [vroom.tidyverse.org](https://vroom.tidyverse.org/) is the new home of vroom's website, catching up to the much earlier move (April 2022) of vroom's GitHub repository from the r-lib organization to the tidyverse. The motivation for that was to make it easier to transfer issues between these two closely connected packages.
 
