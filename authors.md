@@ -29,7 +29,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/tidyverse/vroom/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/tidyverse/vroom/blob/v1.7.0/DESCRIPTION)
 
 Hester J, Wickham H, Bryan J (2026). *vroom: Read and Write Rectangular
 Text Data Quickly*. R package version 1.7.0,
