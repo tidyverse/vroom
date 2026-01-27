@@ -21,7 +21,6 @@ vroom_lines(
   skip_empty_rows = FALSE,
   locale = default_locale(),
   altrep = TRUE,
-  altrep_opts = deprecated(),
   num_threads = vroom_threads(),
   progress = vroom_progress()
 )
@@ -37,9 +36,10 @@ vroom_lines(
   connections.
 
   Files ending in `.gz`, `.bz2`, `.xz`, or `.zip` will be automatically
-  uncompressed. Files starting with `http://`, `https://`, `ftp://`, or
-  `ftps://` will be automatically downloaded. Remote gz files can also
-  be automatically downloaded and decompressed.
+  decompressed. Files starting with `http://`, `https://`, `ftp://`, or
+  `ftps://` will be automatically downloaded. Remote compressed files
+  (`.gz`, `.bz2`, `.xz`, `.zip`) will be automatically downloaded and
+  decompressed.
 
   Literal data is most useful for examples and tests. To be recognised
   as literal data, wrap the input with
@@ -81,10 +81,6 @@ vroom_lines(
   [`vroom_altrep()`](https://vroom.tidyverse.org/reference/vroom_altrep.md)
   for for full details.
 
-- altrep_opts:
-
-  **\[deprecated\]**
-
 - num_threads:
 
   Number of threads to use when reading and materializing vectors. If
@@ -94,9 +90,9 @@ vroom_lines(
 - progress:
 
   Display a progress bar? By default it will only display in an
-  interactive session and not while knitting a document. The automatic
-  progress bar can be disabled by setting option `readr.show_progress`
-  to `FALSE`.
+  interactive session and not while executing in an RStudio notebook
+  chunk. The display of the progress bar can be disabled by setting the
+  environment variable `VROOM_SHOW_PROGRESS` to `"false"`.
 
 ## Examples
 

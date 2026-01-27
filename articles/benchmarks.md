@@ -9,8 +9,8 @@ Instead (re)-allocating memory and parsing the values into R data types
 (particularly for characters) takes the bulk of the time.
 
 Therefore you can obtain very rapid input by first performing a fast
-indexing step and then using the Altrep framework available in R
-versions 3.5+ to access the values in a lazy / delayed fashion.
+indexing step and then using the Altrep framework to access the values
+in a lazy / delayed fashion.
 
 ### How it works
 
@@ -105,7 +105,12 @@ The following operations are performed.
 - Filtering for “UNK” payment, this is 6434 rows (0.0435% of total).
 - Aggregation of mean fare amount per payment type.
 
-![](benchmarks_files/figure-html/unnamed-chunk-2-1.png)
+![Horizontal bar chart comparing time and memory usage across different
+R packages (vroom, data.table, readr) for analyzing taxi trip data. The
+chart shows operation breakdowns including read, print, head, tail,
+sample, filter, and aggregate operations. Consult the associated table
+for detailed timing and memory usage
+statistics.](benchmarks_files/figure-html/unnamed-chunk-2-1.png)
 
 | reading package | manipulating package | altrep | memory |     read | print | head | tail | sample | filter | aggregate |    total |
 |----------------:|---------------------:|-------:|-------:|---------:|------:|-----:|-----:|-------:|-------:|----------:|---------:|
@@ -141,7 +146,11 @@ and read.delim for this type of data.
 code:
 [bench/all_numeric-long](https://github.com/tidyverse/vroom/tree/main/inst/bench/all_numeric-long)
 
-![](benchmarks_files/figure-html/unnamed-chunk-3-1.png)
+![Horizontal bar chart comparing time and memory usage for reading and
+analyzing long all-numeric data across different R packages. Shows
+performance breakdown by operation type, with data.table performing
+slightly faster than vroom for this numeric-heavy
+workload.](benchmarks_files/figure-html/unnamed-chunk-3-1.png)
 
 | reading package | manipulating package | altrep | memory |     read | print | head | tail | sample | filter | aggregate |    total |
 |----------------:|---------------------:|-------:|-------:|---------:|------:|-----:|-----:|-------:|-------:|----------:|---------:|
@@ -158,7 +167,11 @@ code:
 code:
 [bench/all_numeric-wide](https://github.com/tidyverse/vroom/tree/main/inst/bench/all_numeric-wide)
 
-![](benchmarks_files/figure-html/unnamed-chunk-4-1.png)
+![Horizontal bar chart comparing time and memory usage for reading and
+analyzing wide all-numeric data across different R packages. Shows
+performance breakdown by operation type, with data.table performing
+slightly faster than vroom for this wide numeric
+dataset.](benchmarks_files/figure-html/unnamed-chunk-4-1.png)
 
 | reading package | manipulating package | altrep |  memory |   read | print | head | tail | sample | filter | aggregate |    total |
 |----------------:|---------------------:|-------:|--------:|-------:|------:|-----:|-----:|-------:|-------:|----------:|---------:|
@@ -180,7 +193,11 @@ as it takes full advantage of the lazy reading.
 
 #### Long
 
-![](benchmarks_files/figure-html/unnamed-chunk-5-1.png)
+![Horizontal bar chart comparing time and memory usage for reading and
+analyzing long all-character data across different R packages. Shows
+vroom with Altrep significantly outperforming other packages due to lazy
+character vector
+evaluation.](benchmarks_files/figure-html/unnamed-chunk-5-1.png)
 
 | reading package | manipulating package | altrep | memory |     read | print | head | tail | sample | filter | aggregate |    total |
 |----------------:|---------------------:|-------:|-------:|---------:|------:|-----:|-----:|-------:|-------:|----------:|---------:|
@@ -196,7 +213,11 @@ as it takes full advantage of the lazy reading.
 code:
 [bench/all_character-wide](https://github.com/tidyverse/vroom/tree/main/inst/bench/all_character-wide)
 
-![](benchmarks_files/figure-html/unnamed-chunk-6-1.png)
+![Horizontal bar chart comparing time and memory usage for reading and
+analyzing wide all-character data across different R packages. Shows
+vroom with Altrep significantly outperforming other packages due to lazy
+character vector
+evaluation.](benchmarks_files/figure-html/unnamed-chunk-6-1.png)
 
 | reading package | manipulating package | altrep |  memory |     read | print | head | tail | sample | filter | aggregate |    total |
 |----------------:|---------------------:|-------:|--------:|---------:|------:|-----:|-----:|-------:|-------:|----------:|---------:|
@@ -215,7 +236,11 @@ code:
 The benchmark reads all 12 files in the taxi trip fare data, totaling
 173,179,759 rows and 11 columns for a total file size of 18.4G.
 
-![](benchmarks_files/figure-html/unnamed-chunk-8-1.png)
+![Horizontal bar chart comparing time and memory usage for reading and
+analyzing data from multiple taxi trip files across different R
+packages. Shows vroom's performance advantage when reading multiple
+files
+simultaneously.](benchmarks_files/figure-html/unnamed-chunk-8-1.png)
 
 | reading package | manipulating package | altrep | memory |     read | print | head | tail | sample | filter | aggregate |    total |
 |----------------:|---------------------:|-------:|-------:|---------:|------:|-----:|-----:|-------:|-------:|----------:|---------:|
@@ -244,7 +269,10 @@ The data totals 2,342,339 rows and 37 columns with a total file size of
 code:
 [bench/fwf](https://github.com/tidyverse/vroom/tree/main/inst/bench/fwf)
 
-![](benchmarks_files/figure-html/unnamed-chunk-10-1.png)
+![Horizontal bar chart comparing time and memory usage for reading and
+analyzing fixed-width format data (US Census data) across different R
+packages. Shows vroom's performance with fixed-width
+files.](benchmarks_files/figure-html/unnamed-chunk-10-1.png)
 
 | reading package | manipulating package | altrep | memory |     read | print | head | tail | sample | filter | aggregate |     total |
 |----------------:|---------------------:|-------:|-------:|---------:|------:|-----:|-----:|-------:|-------:|----------:|----------:|
@@ -272,7 +300,11 @@ The benchmarks write out the taxi trip dataset in a few different ways.
 - A [Zstandard](https://facebook.github.io/zstd/) compressed file
   (data.table does not support this format).
 
-![](benchmarks_files/figure-html/unnamed-chunk-11-1.png)
+![Grouped horizontal bar chart comparing file writing performance across
+R packages (base, readr, data.table, vroom) with different compression
+methods (uncompressed, gzip, multithreaded gzip, and Zstandard). Shows
+vroom's competitive writing performance, especially with
+compression.](benchmarks_files/figure-html/unnamed-chunk-11-1.png)
 
 |        compression |     base | data.table |   readr |    vroom |
 |-------------------:|---------:|-----------:|--------:|---------:|

@@ -1,5 +1,92 @@
 # Changelog
 
+## vroom 1.7.0
+
+CRAN release: 2026-01-27
+
+- [vroom.tidyverse.org](https://vroom.tidyverse.org/) is the new home of
+  vroom’s website, catching up to the much earlier move (April 2022) of
+  vroom’s GitHub repository from the r-lib organization to the
+  tidyverse. The motivation for that was to make it easier to transfer
+  issues between these two closely connected packages.
+
+- The `path` parameter has been removed from
+  [`vroom_write()`](https://vroom.tidyverse.org/reference/vroom_write.md).
+  This parameter was deprecated in vroom 1.5.0 (2021-06-14) in favor of
+  the `file` parameter
+  ([\#575](https://github.com/tidyverse/vroom/issues/575)).
+
+- The function `vroom_altrep_opts()` and the argument
+  `vroom(altrep_opts =)` have been removed. They were deprecated in
+  favor of
+  [`vroom_altrep()`](https://vroom.tidyverse.org/reference/vroom_altrep.md)
+  and `altrep =`, respectively, in v1.2.0 (2020-01-13). Also applies to
+  `vroom_fwf(altrep_opts =)` and `vroom_lines(altrep_opts =)`
+  ([\#575](https://github.com/tidyverse/vroom/issues/575)).
+
+- [`vroom()`](https://vroom.tidyverse.org/reference/vroom.md) now
+  supports reading from a remote file that uses any of the supported
+  compression formats, by downloading to a temporary (compressed) file.
+  This is a new feature for `.bz2`, `.xz`, and `.zip` and fixes `.gz`
+  bugs arising from problematic behaviour of
+  [`base::gzcon()`](https://rdrr.io/r/base/gzcon.html)
+  ([\#400](https://github.com/tidyverse/vroom/issues/400),
+  [\#553](https://github.com/tidyverse/vroom/issues/553),
+  <https://github.com/tidyverse/readr/issues/1555>,
+  <https://github.com/tidyverse/readr/issues/1553>).
+
+- `mtcars.csv.tar.gz` and `mtcars-concatenated.csv.gz` are 2 new example
+  files that are handy internally, at least, for exercising code related
+  to reading compressed files.
+
+- vroom now offers to install the archive package if it’s needed to
+  complete the user’s request
+  (<https://github.com/tidyverse/readr/issues/1334>).
+
+- vroom takes the recommended approach for phasing out usage of the
+  non-API entry points `SETLENGTH`, `SET_TRUELENGTH`, and `ATTRIB`
+  ([\#582](https://github.com/tidyverse/vroom/issues/582),
+  [\#596](https://github.com/tidyverse/vroom/issues/596)).
+
+- Unclosed quotes (e.g., `a,b,"c` with no closing `"`) now trigger a
+  warning, instead of silent data truncation. The affected row is also
+  newly included in the returned data, which should facilitate
+  troubleshooting
+  ([\#484](https://github.com/tidyverse/vroom/issues/484),
+  <https://github.com/tidyverse/readr/issues/1539>,
+  <https://github.com/tidyverse/readr/issues/1491>).
+
+- Columns specified as having type “number” (requested via
+  [`col_number()`](https://vroom.tidyverse.org/reference/cols.md) or
+  `"number"` or `'n'`) or “skip” (requested via
+  [`col_skip()`](https://vroom.tidyverse.org/reference/cols.md) or
+  `"skip"` or `_` or `-`) now work in the case where 0 rows of data are
+  parsed ([\#427](https://github.com/tidyverse/vroom/issues/427),
+  [\#540](https://github.com/tidyverse/vroom/issues/540),
+  [\#548](https://github.com/tidyverse/vroom/issues/548)).
+
+- [`vroom()`](https://vroom.tidyverse.org/reference/vroom.md),
+  [`vroom_lines()`](https://vroom.tidyverse.org/reference/vroom_lines.md),
+  and
+  [`vroom_fwf()`](https://vroom.tidyverse.org/reference/vroom_fwf.md)
+  now close and destroy (instead of leak) the connection in the case
+  where opening the connection fails due to, e.g., a nonexistent URL
+  ([\#488](https://github.com/tidyverse/vroom/issues/488)).
+
+- If there is insufficient space for the tempfile used when reading from
+  a connection (affects delimited and fixed width parsing, from
+  compressed files and URLs), that is now reported as an error and no
+  longer segfaults
+  ([\#544](https://github.com/tidyverse/vroom/issues/544)).
+
+- `vroom(..., n_max = 0, col_names = c(...))` with a connection
+  (compressed file, URL, raw connection) no longer produces a “negative
+  length vectors are not allowed” error or crashes R
+  ([\#539](https://github.com/tidyverse/vroom/issues/539)).
+
+- `vroom_fwf(..., n_max = 0)` with a connection no longer segfaults
+  ([\#590](https://github.com/tidyverse/vroom/issues/590)).
+
 ## vroom 1.6.7
 
 CRAN release: 2025-11-28
@@ -650,8 +737,8 @@ CRAN release: 2020-01-13
 
 ### Breaking changes
 
-- [`vroom_altrep_opts()`](https://vroom.tidyverse.org/reference/vroom_altrep_opts.md)
-  and the argument `vroom(altrep_opts =)` have been renamed to
+- `vroom_altrep_opts()` and the argument `vroom(altrep_opts =)` have
+  been renamed to
   [`vroom_altrep()`](https://vroom.tidyverse.org/reference/vroom_altrep.md)
   and `altrep` respectively. The prior names have been deprecated.
 

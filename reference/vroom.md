@@ -24,7 +24,6 @@ vroom(
   locale = default_locale(),
   guess_max = 100,
   altrep = TRUE,
-  altrep_opts = deprecated(),
   num_threads = vroom_threads(),
   progress = vroom_progress(),
   show_col_types = NULL,
@@ -42,9 +41,10 @@ vroom(
   connections.
 
   Files ending in `.gz`, `.bz2`, `.xz`, or `.zip` will be automatically
-  uncompressed. Files starting with `http://`, `https://`, `ftp://`, or
-  `ftps://` will be automatically downloaded. Remote gz files can also
-  be automatically downloaded and decompressed.
+  decompressed. Files starting with `http://`, `https://`, `ftp://`, or
+  `ftps://` will be automatically downloaded. Remote compressed files
+  (`.gz`, `.bz2`, `.xz`, `.zip`) will be automatically downloaded and
+  decompressed.
 
   Literal data is most useful for examples and tests. To be recognised
   as literal data, wrap the input with
@@ -79,10 +79,10 @@ vroom(
   [`cols()`](https://vroom.tidyverse.org/reference/cols.md)
   specification, or a string.
 
-  If `NULL`, all column types will be imputed from `guess_max` rows on
-  the input interspersed throughout the file. This is convenient (and
-  fast), but not robust. If the imputation fails, you'll need to
-  increase the `guess_max` or supply the correct types yourself.
+  If `NULL`, all column types will be inferred from `guess_max` rows of
+  the input, interspersed throughout the file. This is convenient (and
+  fast), but not robust. If the guessed types are wrong, you'll need to
+  increase `guess_max` or supply the correct types yourself.
 
   Column specifications created by
   [`list()`](https://rdrr.io/r/base/list.html) or
@@ -97,6 +97,8 @@ vroom(
   - c = character
 
   - i = integer
+
+  - I = big integer
 
   - n = number
 
@@ -116,10 +118,9 @@ vroom(
 
   - \_ or - = skip
 
-    By default, reading a file without a column specification will print
-    a message showing what `readr` guessed they were. To remove this
-    message, set `show_col_types = FALSE` or set
-    `options(readr.show_col_types = FALSE)`.
+  By default, reading a file without a column specification will print a
+  message showing the guessed types. To suppress this message, set
+  `show_col_types = FALSE`.
 
 - col_select:
 
@@ -136,8 +137,9 @@ vroom(
 - id:
 
   Either a string or 'NULL'. If a string, the output will contain a
-  variable with that name with the filename(s) as the value. If 'NULL',
-  the default, no variable will be created.
+  column with that name with the filename(s) as the value, i.e. this
+  column effectively tells you the source of each row. If 'NULL' (the
+  default), no such column will be created.
 
 - skip:
 
@@ -207,10 +209,6 @@ vroom(
   [`vroom_altrep()`](https://vroom.tidyverse.org/reference/vroom_altrep.md)
   for for full details.
 
-- altrep_opts:
-
-  **\[deprecated\]**
-
 - num_threads:
 
   Number of threads to use when reading and materializing vectors. If
@@ -220,16 +218,16 @@ vroom(
 - progress:
 
   Display a progress bar? By default it will only display in an
-  interactive session and not while knitting a document. The automatic
-  progress bar can be disabled by setting option `readr.show_progress`
-  to `FALSE`.
+  interactive session and not while executing in an RStudio notebook
+  chunk. The display of the progress bar can be disabled by setting the
+  environment variable `VROOM_SHOW_PROGRESS` to `"false"`.
 
 - show_col_types:
 
   Control showing the column specifications. If `TRUE` column
-  specifications are always show, if `FALSE` they are never shown. If
-  `NULL` (the default) they are shown only if an explicit specification
-  is not given to `col_types`.
+  specifications are always shown, if `FALSE` they are never shown. If
+  `NULL` (the default), they are shown only if an explicit specification
+  is not given in `col_types`, i.e. if the types have been guessed.
 
 - .name_repair:
 
@@ -242,11 +240,15 @@ vroom(
   - `"unique"` (default value): Make sure names are unique and not
     empty.
 
-  - `"check_unique"`: no name repair, but check they are `unique`.
+  - `"check_unique"`: No name repair, but check they are `unique`.
+
+  - `"unique_quiet"`: Repair with the `unique` strategy, quietly.
 
   - `"universal"`: Make the names `unique` and syntactic.
 
-  - A function: apply custom name repair (e.g.,
+  - `"universal_quiet"`: Repair with the `universal` strategy, quietly.
+
+  - A function: Apply custom name repair (e.g.,
     `name_repair = make.names` for names in the style of base R).
 
   - A purrr-style anonymous function, see
@@ -476,16 +478,15 @@ vroom(I("a|b\n1.0|2.0\n"), delim = "|")
 #> 1     1     2
 
 # Read datasets across multiple files ---------------------------------------
-mtcars_by_cyl <- vroom_example(vroom_examples("mtcars-"))
+mtcars_by_cyl <- vroom_example(vroom_examples("mtcars-[468]"))
 mtcars_by_cyl
-#> [1] "/home/runner/work/_temp/Library/vroom/extdata/mtcars-4.csv"        
-#> [2] "/home/runner/work/_temp/Library/vroom/extdata/mtcars-6.csv"        
-#> [3] "/home/runner/work/_temp/Library/vroom/extdata/mtcars-8.csv"        
-#> [4] "/home/runner/work/_temp/Library/vroom/extdata/mtcars-multi-cyl.zip"
+#> [1] "/home/runner/work/_temp/Library/vroom/extdata/mtcars-4.csv"
+#> [2] "/home/runner/work/_temp/Library/vroom/extdata/mtcars-6.csv"
+#> [3] "/home/runner/work/_temp/Library/vroom/extdata/mtcars-8.csv"
 
 # Pass the filenames directly to vroom, they are efficiently combined
 vroom(mtcars_by_cyl)
-#> Rows: 43 Columns: 12
+#> Rows: 32 Columns: 12
 #> ── Column specification ───────────────────────────────────────────────
 #> Delimiter: ","
 #> chr  (1): model
@@ -493,7 +494,7 @@ vroom(mtcars_by_cyl)
 #> 
 #> ℹ Use `spec()` to retrieve the full column specification for this data.
 #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-#> # A tibble: 43 × 12
+#> # A tibble: 32 × 12
 #>    model      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
 #>    <chr>    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
 #>  1 Datsun …  22.8     4 108      93  3.85  2.32  18.6     1     1     4
@@ -506,13 +507,13 @@ vroom(mtcars_by_cyl)
 #>  8 Fiat X1…  27.3     4  79      66  4.08  1.94  18.9     1     1     4
 #>  9 Porsche…  26       4 120.     91  4.43  2.14  16.7     0     1     5
 #> 10 Lotus E…  30.4     4  95.1   113  3.77  1.51  16.9     1     1     5
-#> # ℹ 33 more rows
+#> # ℹ 22 more rows
 #> # ℹ 1 more variable: carb <dbl>
 
 # If you need to extract data from the filenames, use `id` to request a
 # column that reveals the underlying file path
 dat <- vroom(mtcars_by_cyl, id = "source")
-#> Rows: 43 Columns: 13
+#> Rows: 32 Columns: 13
 #> ── Column specification ───────────────────────────────────────────────
 #> Delimiter: ","
 #> chr  (1): model
@@ -522,7 +523,7 @@ dat <- vroom(mtcars_by_cyl, id = "source")
 #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 dat$source <- basename(dat$source)
 dat
-#> # A tibble: 43 × 13
+#> # A tibble: 32 × 13
 #>    source   model   mpg   cyl  disp    hp  drat    wt  qsec    vs    am
 #>    <chr>    <chr> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
 #>  1 mtcars-… Dats…  22.8     4 108      93  3.85  2.32  18.6     1     1
@@ -535,6 +536,6 @@ dat
 #>  8 mtcars-… Fiat…  27.3     4  79      66  4.08  1.94  18.9     1     1
 #>  9 mtcars-… Pors…  26       4 120.     91  4.43  2.14  16.7     0     1
 #> 10 mtcars-… Lotu…  30.4     4  95.1   113  3.77  1.51  16.9     1     1
-#> # ℹ 33 more rows
+#> # ℹ 22 more rows
 #> # ℹ 2 more variables: gear <dbl>, carb <dbl>
 ```

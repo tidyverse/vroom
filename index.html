@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Read and Write Rectangular Text Data Quickly • vroom</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
@@ -26,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="index.html">vroom</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.6.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,8 +52,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news">
 <li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://www.tidyverse.org/blog/2020/01/vroom-1-1-0/">vroom 1.1.0</a></li>
-    <li><a class="external-link dropdown-item" href="https://www.tidyverse.org/articles/2019/05/vroom-1-0-0/">vroom 1.0.0</a></li>
+    <li><a class="external-link dropdown-item" href="https://tidyverse.org/blog/2020/01/vroom-1-1-0/">vroom 1.1.0</a></li>
+    <li><a class="external-link dropdown-item" href="https://tidyverse.org/blog/2019/05/vroom-1-0-0/">vroom 1.0.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="news/index.html">Changelog</a></li>
   </ul>
@@ -75,7 +80,7 @@
 <!-- badges: start -->
 
 <p>The fastest delimited reader for R, <strong>1.23 GB/sec</strong>.</p>
-<p><img src="https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif" align="right"></p>
+<p><img src="https://raw.githubusercontent.com/tidyverse/vroom/main/img/taylor.gif" align="right" alt="Animated GIF of Taylor Swift in a car"></p>
 <p>But that’s impossible! How can it be <a href="https://vroom.tidyverse.org/articles/benchmarks.html">so fast</a>?</p>
 <p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html" class="external-link">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use. This lazy access is done automatically, so no changes to your R data-manipulation code are needed.</p>
 <p>vroom also uses multiple threads for indexing, materializing non-character columns, and when writing to further improve performance.</p>
@@ -265,10 +270,10 @@
 <li>
 <code>VROOM_WRITE_BUFFER_LINES</code> - The number of lines to use for each buffer when writing files (default: 1000).</li>
 </ul>
-<p>There are also a family of variables to control use of the Altrep framework. For versions of R where the Altrep framework is unavailable (R &lt; 3.5.0) they are automatically turned off and the variables have no effect. The variables can take one of <code>true</code>, <code>false</code>, <code>TRUE</code>, <code>FALSE</code>, <code>1</code>, or <code>0</code>.</p>
+<p>There is also a family of variables to control use of the Altrep framework. These variables can take one of these values: <code>true</code>, <code>false</code>, <code>TRUE</code>, <code>FALSE</code>, <code>1</code>, or <code>0</code>.</p>
 <ul>
 <li>
-<code>VROOM_USE_ALTREP_NUMERICS</code> - If set use Altrep for <em>all</em> numeric types (default <code>false</code>).</li>
+<code>VROOM_USE_ALTREP_NUMERICS</code> - If true, use Altrep for <em>all</em> numeric types (default <code>false</code>).</li>
 </ul>
 <p>There are also individual variables for each type. Currently only <code>VROOM_USE_ALTREP_CHR</code> defaults to <code>true</code>.</p>
 <ul>
@@ -283,11 +288,6 @@
 <li><code>VROOM_USE_ALTREP_DATE</code></li>
 <li><code>VROOM_USE_ALTREP_TIME</code></li>
 </ul>
-<div class="section level2">
-<h2 id="rstudio-caveats">RStudio caveats<a class="anchor" aria-label="anchor" href="#rstudio-caveats"></a>
-</h2>
-<p>RStudio’s environment pane calls <code><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size()</a></code> when it refreshes the pane, which for Altrep objects can be extremely slow. RStudio 1.2.1335+ includes the fixes (<a href="https://github.com/rstudio/rstudio/pull/4210" class="external-link">RStudio#4210</a>, <a href="https://github.com/rstudio/rstudio/pull/4292" class="external-link">RStudio#4292</a>) for this issue, so it is recommended you use at least that version.</p>
-</div>
 <div class="section level2">
 <h2 id="thanks">Thanks<a class="anchor" aria-label="anchor" href="#thanks"></a>
 </h2>

@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Vroom Benchmarks • vroom</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
@@ -23,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">vroom</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.6.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,8 +49,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news">
 <li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://www.tidyverse.org/blog/2020/01/vroom-1-1-0/">vroom 1.1.0</a></li>
-    <li><a class="external-link dropdown-item" href="https://www.tidyverse.org/articles/2019/05/vroom-1-0-0/">vroom 1.0.0</a></li>
+    <li><a class="external-link dropdown-item" href="https://tidyverse.org/blog/2020/01/vroom-1-1-0/">vroom 1.1.0</a></li>
+    <li><a class="external-link dropdown-item" href="https://tidyverse.org/blog/2019/05/vroom-1-0-0/">vroom 1.0.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul>
@@ -71,7 +76,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Vroom Benchmarks</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/tidyverse/vroom/blob/pkgdown-v1.6.7/vignettes/benchmarks.Rmd" class="external-link"><code>vignettes/benchmarks.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tidyverse/vroom/blob/main/vignettes/benchmarks.Rmd" class="external-link"><code>vignettes/benchmarks.Rmd</code></a></small>
       <div class="d-none name"><code>benchmarks.Rmd</code></div>
     </div>
 
@@ -84,8 +89,8 @@ from disk and finding the delimiters is generally not the main bottle
 neck. Instead (re)-allocating memory and parsing the values into R data
 types (particularly for characters) takes the bulk of the time.</p>
 <p>Therefore you can obtain very rapid input by first performing a fast
-indexing step and then using the Altrep framework available in R
-versions 3.5+ to access the values in a lazy / delayed fashion.</p>
+indexing step and then using the Altrep framework to access the values
+in a lazy / delayed fashion.</p>
 <div class="section level3">
 <h3 id="how-it-works">How it works<a class="anchor" aria-label="anchor" href="#how-it-works"></a>
 </h3>
@@ -175,7 +180,7 @@ entirely.</p>
 total).</li>
 <li>Aggregation of mean fare amount per payment type.</li>
 </ul>
-<img src="benchmarks_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="Horizontal bar chart comparing time and memory usage across different R packages (vroom, data.table, readr) for analyzing taxi trip data. The chart shows operation breakdowns including read, print, head, tail, sample, filter, and aggregate operations. Consult the associated table for detailed timing and memory usage statistics." width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 reading package
@@ -464,7 +469,7 @@ readr and read.delim for this type of data.</p>
 <h4 id="long">Long<a class="anchor" aria-label="anchor" href="#long"></a>
 </h4>
 <p>code: <a href="https://github.com/tidyverse/vroom/tree/main/inst/bench/all_numeric-long" class="external-link">bench/all_numeric-long</a></p>
-<img src="benchmarks_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="Horizontal bar chart comparing time and memory usage for reading and analyzing long all-numeric data across different R packages. Shows performance breakdown by operation type, with data.table performing slightly faster than vroom for this numeric-heavy workload." width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 reading package
@@ -774,7 +779,7 @@ data.table
 <h4 id="wide">Wide<a class="anchor" aria-label="anchor" href="#wide"></a>
 </h4>
 <p>code: <a href="https://github.com/tidyverse/vroom/tree/main/inst/bench/all_numeric-wide" class="external-link">bench/all_numeric-wide</a></p>
-<img src="benchmarks_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="Horizontal bar chart comparing time and memory usage for reading and analyzing wide all-numeric data across different R packages. Shows performance breakdown by operation type, with data.table performing slightly faster than vroom for this wide numeric dataset." width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 reading package
@@ -1090,7 +1095,7 @@ Altrep, as it takes full advantage of the lazy reading.</p>
 <div class="section level4">
 <h4 id="long-1">Long<a class="anchor" aria-label="anchor" href="#long-1"></a>
 </h4>
-<img src="benchmarks_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="Horizontal bar chart comparing time and memory usage for reading and analyzing long all-character data across different R packages. Shows vroom with Altrep significantly outperforming other packages due to lazy character vector evaluation." width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 reading package
@@ -1362,7 +1367,7 @@ TRUE
 <h4 id="wide-1">Wide<a class="anchor" aria-label="anchor" href="#wide-1"></a>
 </h4>
 <p>code: <a href="https://github.com/tidyverse/vroom/tree/main/inst/bench/all_character-wide" class="external-link">bench/all_character-wide</a></p>
-<img src="benchmarks_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Horizontal bar chart comparing time and memory usage for reading and analyzing wide all-character data across different R packages. Shows vroom with Altrep significantly outperforming other packages due to lazy character vector evaluation." width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 reading package
@@ -1638,7 +1643,7 @@ TRUE
 <p>code: <a href="https://github.com/tidyverse/vroom/tree/main/inst/bench/taxi_multiple" class="external-link">bench/taxi_multiple</a></p>
 <p>The benchmark reads all 12 files in the taxi trip fare data, totaling
 173,179,759 rows and 11 columns for a total file size of 18.4G.</p>
-<img src="benchmarks_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Horizontal bar chart comparing time and memory usage for reading and analyzing data from multiple taxi trip files across different R packages. Shows vroom's performance advantage when reading multiple files simultaneously." width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 reading package
@@ -1888,7 +1893,7 @@ of 677M.</p>
 <h3 id="census-data-benchmarks">Census data benchmarks<a class="anchor" aria-label="anchor" href="#census-data-benchmarks"></a>
 </h3>
 <p>code: <a href="https://github.com/tidyverse/vroom/tree/main/inst/bench/fwf" class="external-link">bench/fwf</a></p>
-<img src="benchmarks_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="Horizontal bar chart comparing time and memory usage for reading and analyzing fixed-width format data (US Census data) across different R packages. Shows vroom's performance with fixed-width files." width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 reading package
@@ -2137,7 +2142,7 @@ for data.table and using a <code><a href="https://rdrr.io/r/base/connections.htm
 <li>A <a href="https://facebook.github.io/zstd/" class="external-link">Zstandard</a>
 compressed file (data.table does not support this format).</li>
 </ul>
-<img src="benchmarks_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" width="960"><table class="table">
+<img src="benchmarks_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="Grouped horizontal bar chart comparing file writing performance across R packages (base, readr, data.table, vroom) with different compression methods (uncompressed, gzip, multithreaded gzip, and Zstandard). Shows vroom's competitive writing performance, especially with compression." width="960"><table class="table">
 <thead><tr>
 <th style="text-align:right;">
 compression

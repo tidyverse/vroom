@@ -28,11 +28,12 @@ vroom_examples(pattern = NULL)
 ``` r
 # List all available examples
 vroom_examples()
-#>  [1] "fwf-sample.txt"       "mtcars-4.csv"        
-#>  [3] "mtcars-6.csv"         "mtcars-8.csv"        
-#>  [5] "mtcars-multi-cyl.zip" "mtcars.csv"          
-#>  [7] "mtcars.csv.bz2"       "mtcars.csv.gz"       
-#>  [9] "mtcars.csv.xz"        "mtcars.csv.zip"      
+#>  [1] "fwf-sample.txt"             "mtcars-4.csv"              
+#>  [3] "mtcars-6.csv"               "mtcars-8.csv"              
+#>  [5] "mtcars-concatenated.csv.gz" "mtcars-multi-cyl.zip"      
+#>  [7] "mtcars.csv"                 "mtcars.csv.bz2"            
+#>  [9] "mtcars.csv.gz"              "mtcars.csv.tar.gz"         
+#> [11] "mtcars.csv.xz"              "mtcars.csv.zip"            
 
 # Get path to one example
 vroom_example("mtcars.csv")

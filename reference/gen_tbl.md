@@ -32,10 +32,10 @@ gen_tbl(
   [`cols()`](https://vroom.tidyverse.org/reference/cols.md)
   specification, or a string.
 
-  If `NULL`, all column types will be imputed from `guess_max` rows on
-  the input interspersed throughout the file. This is convenient (and
-  fast), but not robust. If the imputation fails, you'll need to
-  increase the `guess_max` or supply the correct types yourself.
+  If `NULL`, all column types will be inferred from `guess_max` rows of
+  the input, interspersed throughout the file. This is convenient (and
+  fast), but not robust. If the guessed types are wrong, you'll need to
+  increase `guess_max` or supply the correct types yourself.
 
   Column specifications created by
   [`list()`](https://rdrr.io/r/base/list.html) or
@@ -50,6 +50,8 @@ gen_tbl(
   - c = character
 
   - i = integer
+
+  - I = big integer
 
   - n = number
 
@@ -69,10 +71,9 @@ gen_tbl(
 
   - \_ or - = skip
 
-    By default, reading a file without a column specification will print
-    a message showing what `readr` guessed they were. To remove this
-    message, set `show_col_types = FALSE` or set
-    `options(readr.show_col_types = FALSE)`.
+  By default, reading a file without a column specification will print a
+  message showing the guessed types. To suppress this message, set
+  `show_col_types = FALSE`.
 
 - locale:
 

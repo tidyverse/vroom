@@ -13,7 +13,7 @@ each line is divided up into fields.
   [`fwf_widths()`](https://vroom.tidyverse.org/reference/vroom_fwf.md)
   [`fwf_positions()`](https://vroom.tidyverse.org/reference/vroom_fwf.md)
   [`fwf_cols()`](https://vroom.tidyverse.org/reference/vroom_fwf.md) :
-  Read a fixed width file into a tibble
+  Read a fixed-width file into a tibble
 - [`problems()`](https://vroom.tidyverse.org/reference/problems.md) :
   Retrieve parsing problems
 
@@ -104,8 +104,6 @@ objects.
 
 - [`vroom_lines()`](https://vroom.tidyverse.org/reference/vroom_lines.md)
   : Read lines from a file
-- [`vroom_altrep_opts()`](https://vroom.tidyverse.org/reference/vroom_altrep_opts.md)
-  : Show which column types are using Altrep
 - [`vroom_altrep()`](https://vroom.tidyverse.org/reference/vroom_altrep.md)
   : Show which column types are using Altrep
 - [`vroom_example()`](https://vroom.tidyverse.org/reference/vroom_example.md)

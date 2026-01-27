@@ -11,7 +11,7 @@ list is derived from ICU (`https://site.icu-project.org`) via the
 ``` r
 date_names(mon, mon_ab = mon, day, day_ab = day, am_pm = c("AM", "PM"))
 
-date_names_lang(language)
+date_names_lang(language, call = caller_env())
 
 date_names_langs()
 ```
@@ -35,6 +35,14 @@ date_names_langs()
   A BCP 47 locale, made up of a language and a region, e.g. `"en_US"`
   for American English. See `date_names_langs()` for a complete list of
   available locales.
+
+- call:
+
+  The execution environment of a currently running function, e.g.
+  `caller_env()`. The function will be mentioned in error messages as
+  the source of the error. See the `call` argument of
+  [`abort()`](https://rlang.r-lib.org/reference/abort.html) for more
+  information.
 
 ## Examples
 

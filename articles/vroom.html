@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Get started with vroom • vroom</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
@@ -23,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">vroom</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.6.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,8 +49,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news">
 <li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://www.tidyverse.org/blog/2020/01/vroom-1-1-0/">vroom 1.1.0</a></li>
-    <li><a class="external-link dropdown-item" href="https://www.tidyverse.org/articles/2019/05/vroom-1-0-0/">vroom 1.0.0</a></li>
+    <li><a class="external-link dropdown-item" href="https://tidyverse.org/blog/2020/01/vroom-1-1-0/">vroom 1.1.0</a></li>
+    <li><a class="external-link dropdown-item" href="https://tidyverse.org/blog/2019/05/vroom-1-0-0/">vroom 1.0.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul>
@@ -71,7 +76,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Get started with vroom</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/tidyverse/vroom/blob/pkgdown-v1.6.7/vignettes/vroom.Rmd" class="external-link"><code>vignettes/vroom.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tidyverse/vroom/blob/main/vignettes/vroom.Rmd" class="external-link"><code>vignettes/vroom.Rmd</code></a></small>
       <div class="d-none name"><code>vroom.Rmd</code></div>
     </div>
 
@@ -306,8 +311,7 @@ the URL of the file to vroom.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Datsun 7…  22.8     4   108    93  3.85  2.32  18.6     1     1     4</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 29 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: carb &lt;dbl&gt;</span></span></span></code></pre></div>
-<p>It can even read gzipped files from the internet (although not the
-other compressed formats).</p>
+<p>It can even read compressed files from the internet.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv.gz"</span></span>
 <span><span class="fu"><a href="../reference/vroom.html">vroom</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span>

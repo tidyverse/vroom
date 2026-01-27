@@ -6,7 +6,7 @@ or coercing from a list.
 ## Usage
 
 ``` r
-as.col_spec(x)
+as.col_spec(x, call = caller_env())
 ```
 
 ## Arguments

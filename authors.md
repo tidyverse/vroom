@@ -29,16 +29,16 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/tidyverse/vroom/blob/pkgdown-v1.6.7/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/tidyverse/vroom/blob/main/DESCRIPTION)
 
-Hester J, Wickham H, Bryan J (2025). *vroom: Read and Write Rectangular
-Text Data Quickly*. R package version 1.6.7,
+Hester J, Wickham H, Bryan J (2026). *vroom: Read and Write Rectangular
+Text Data Quickly*. R package version 1.7.0,
 <https://vroom.tidyverse.org>.
 
     @Manual{,
       title = {vroom: Read and Write Rectangular Text Data Quickly},
       author = {Jim Hester and Hadley Wickham and Jennifer Bryan},
-      year = {2025},
-      note = {R package version 1.6.7},
+      year = {2026},
+      note = {R package version 1.7.0},
       url = {https://vroom.tidyverse.org},
     }

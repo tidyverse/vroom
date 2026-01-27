@@ -5,7 +5,7 @@ setting the default column type to the most frequent type and only
 listing columns with a different type.
 
 `spec()` extracts the full column specification from a tibble created by
-readr.
+vroom.
 
 ## Usage
 
