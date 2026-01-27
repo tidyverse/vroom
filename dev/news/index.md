@@ -2,6 +2,10 @@
 
 ## vroom (development version)
 
+## vroom 1.7.0
+
+CRAN release: 2026-01-27
+
 - [vroom.tidyverse.org](https://vroom.tidyverse.org/) is the new home of
   vroom’s website, catching up to the much earlier move (April 2022) of
   vroom’s GitHub repository from the r-lib organization to the
