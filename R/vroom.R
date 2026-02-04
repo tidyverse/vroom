@@ -233,7 +233,7 @@ vroom <- function(
 
   # Use libvroom SIMD backend for single file paths with default settings
   use_libvroom <- can_use_libvroom(
-    file, col_names, col_types, n_max, skip,
+    file, col_names, col_types, id, n_max, skip,
     escape_double, escape_backslash, locale
   )
 
@@ -355,17 +355,27 @@ vroom <- function(
 }
 
 # Check if we can use the libvroom SIMD backend for this read
-can_use_libvroom <- function(file, col_names, col_types, n_max, skip,
+can_use_libvroom <- function(file, col_names, col_types, id, n_max, skip,
                              escape_double, escape_backslash, locale) {
   # Must be a single file path (not connection)
   if (length(file) != 1) return(FALSE)
   if (!is.character(file[[1]])) return(FALSE)
+
+  # Must be a local file path, not a URL
+  path <- file[[1]]
+  if (grepl("^(https?|ftp|ftps)://", path)) return(FALSE)
+
+  # Must be an existing file
+  if (!file.exists(path)) return(FALSE)
 
   # col_names must be TRUE (libvroom handles headers internally)
   if (!isTRUE(col_names)) return(FALSE)
 
   # No explicit col_types (let libvroom infer)
   if (!is.null(col_types)) return(FALSE)
+
+  # No id column (would need file path prepended)
+  if (!is.null(id)) return(FALSE)
 
   # No row limits
   if (!is.infinite(n_max) && n_max >= 0) return(FALSE)
@@ -379,6 +389,9 @@ can_use_libvroom <- function(file, col_names, col_types, n_max, skip,
 
   # Must use UTF-8 or default encoding
   if (!is_ascii_compatible(locale$encoding)) return(FALSE)
+
+  # Check file is not empty
+  if (file.size(path) == 0) return(FALSE)
 
   TRUE
 }
