@@ -9,7 +9,7 @@
 // 4. Count valid row endings
 
 #undef HWY_TARGET_INCLUDE
-#define HWY_TARGET_INCLUDE "src/parser/simd_chunk_finder.cpp"
+#define HWY_TARGET_INCLUDE "parser/simd_chunk_finder.cpp"
 #include "libvroom/quote_parity.h"
 
 #include "hwy/foreach_target.h"

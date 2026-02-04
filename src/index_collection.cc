@@ -5,7 +5,6 @@
 #include "fixed_width_index_connection.h"
 #include "index.h"
 #include "index_collection.h"
-#include "libvroom_index.h"
 #include <memory>
 #include <utility>
 
@@ -161,24 +160,8 @@ std::shared_ptr<vroom::index> make_delimited_index(
 
   auto filename = cpp11::as_cpp<std::string>(x);
 
-  // Use libvroom_index if requested and we have a file (not connection)
-  if (use_libvroom) {
-    return std::make_shared<vroom::libvroom_index>(
-        filename.c_str(),
-        delim,
-        quote,
-        trim_ws,
-        escape_double,
-        escape_backslash,
-        has_header,
-        skip,
-        n_max,
-        comment,
-        skip_empty_rows,
-        errors,
-        num_threads,
-        progress);
-  }
+  // Old libvroom_index path removed - replaced by arrow_to_r in vroom_new.cpp
+  (void)use_libvroom;
 
   return std::make_shared<vroom::delimited_index>(
       filename.c_str(),
