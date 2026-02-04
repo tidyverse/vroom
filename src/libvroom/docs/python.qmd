@@ -1,0 +1,233 @@
+---
+title: "Python Package"
+subtitle: "vroom-csv: High-performance CSV parsing for Python"
+---
+
+## Overview
+
+The `vroom-csv` Python package provides Python bindings for the libvroom CSV parser, featuring:
+
+- **SIMD-accelerated parsing** using Google Highway
+- **Multi-threaded parsing** for large files
+- **Automatic dialect detection** (delimiter, quoting, line endings)
+- **Arrow PyCapsule interface** for zero-copy interoperability with PyArrow, Polars, DuckDB
+
+## Installation
+
+```bash
+pip install vroom-csv
+```
+
+### Optional Dependencies
+
+Install with Arrow support for zero-copy DataFrame interoperability:
+
+```bash
+pip install vroom-csv[arrow]    # PyArrow integration
+pip install vroom-csv[polars]   # Polars integration
+pip install vroom-csv[all]      # All optional dependencies
+```
+
+## Quick Start
+
+### Basic Usage
+
+```python
+import vroom_csv
+
+# Read a CSV file
+table = vroom_csv.read_csv("data.csv")
+print(f"Loaded {table.num_rows} rows, {table.num_columns} columns")
+
+# Access column names
+print(table.column_names)
+
+# Get a column by name or index
+col = table.column("name")
+col = table.column(0)
+
+# Get a row by index
+row = table.row(0)
+```
+
+### Dialect Detection
+
+```python
+# Detect CSV dialect (delimiter, quoting, etc.)
+dialect = vroom_csv.detect_dialect("data.csv")
+print(f"Delimiter: {dialect.delimiter!r}")
+print(f"Quote char: {dialect.quote_char!r}")
+print(f"Has header: {dialect.has_header}")
+print(f"Line ending: {dialect.line_ending!r}")
+print(f"Confidence: {dialect.confidence:.2f}")
+```
+
+### Progress Reporting
+
+```python
+# Show progress for large files
+table = vroom_csv.read_csv("large.csv", progress=vroom_csv.default_progress)
+```
+
+## Arrow Interoperability
+
+The `vroom-csv` package implements the [Arrow PyCapsule interface](https://arrow.apache.org/docs/format/CDataInterface/PyCapsuleInterface.html) for zero-copy data sharing with other Arrow-compatible libraries.
+
+### PyArrow
+
+```python
+import pyarrow as pa
+import vroom_csv
+
+# Zero-copy conversion to PyArrow Table
+table = vroom_csv.read_csv("data.csv")
+arrow_table = pa.table(table)
+
+# Export to Parquet
+import pyarrow.parquet as pq
+pq.write_table(arrow_table, "data.parquet")
+```
+
+### Polars
+
+```python
+import polars as pl
+import vroom_csv
+
+# Zero-copy conversion to Polars DataFrame
+table = vroom_csv.read_csv("data.csv")
+df = pl.from_arrow(table)
+
+# Use Polars operations
+result = df.select(["name", "value"]).filter(pl.col("value") > 100)
+```
+
+### DuckDB
+
+```python
+import duckdb
+import vroom_csv
+
+# Query CSV data with DuckDB
+table = vroom_csv.read_csv("data.csv")
+result = duckdb.query("SELECT * FROM table WHERE value > 100")
+```
+
+## Memory-Efficient Processing
+
+### Batched Reading
+
+For files too large to fit in memory, use batched reading:
+
+```python
+import vroom_csv
+
+# Process in batches of 10,000 rows
+for batch in vroom_csv.read_csv_batched("huge.csv", batch_size=10000):
+    print(f"Processing batch with {batch.num_rows} rows")
+    # Each batch supports Arrow interface
+    # df = pl.from_arrow(batch)
+```
+
+### Row-by-Row Streaming
+
+For minimal memory usage, iterate row by row:
+
+```python
+import vroom_csv
+
+# Stream rows one at a time
+for row in vroom_csv.read_csv_rows("huge.csv"):
+    # row is a dict: {"col1": "value1", "col2": "value2", ...}
+    print(row)
+```
+
+## Common Options
+
+### Column Selection
+
+```python
+# Read only specific columns (by name or index)
+table = vroom_csv.read_csv("data.csv", usecols=["name", "value"])
+table = vroom_csv.read_csv("data.csv", usecols=[0, 2, 5])
+```
+
+### Row Limits
+
+```python
+# Skip header rows and limit row count
+table = vroom_csv.read_csv("data.csv", skip_rows=2, n_rows=1000)
+```
+
+### Null Value Handling
+
+```python
+# Custom null value strings
+table = vroom_csv.read_csv(
+    "data.csv",
+    null_values=["NA", "NULL", "N/A", ""],
+    empty_is_null=True
+)
+```
+
+### Multi-threaded Parsing
+
+```python
+# Use multiple threads for faster parsing
+table = vroom_csv.read_csv("large.csv", num_threads=4)
+```
+
+### Memory Mapping
+
+```python
+# Force memory mapping for large files
+table = vroom_csv.read_csv("huge.csv", memory_map=True)
+
+# Disable memory mapping (loads entire file into memory)
+table = vroom_csv.read_csv("data.csv", memory_map=False)
+```
+
+## Error Handling
+
+```python
+import vroom_csv
+
+try:
+    table = vroom_csv.read_csv("data.csv")
+except vroom_csv.ParseError as e:
+    print(f"Parse error: {e}")
+except vroom_csv.IOError as e:
+    print(f"I/O error: {e}")
+except vroom_csv.VroomError as e:
+    print(f"General error: {e}")
+
+# Check for non-fatal parse errors
+if table.has_errors():
+    print(table.error_summary())
+    for error in table.errors():
+        print(f"  - {error}")
+```
+
+## API Reference
+
+See the [Python API Reference](python-reference/index.qmd) for complete documentation of all functions and classes.
+
+## Performance
+
+The `vroom-csv` package achieves high performance through:
+
+- **SIMD acceleration**: Uses AVX2/NEON instructions for parallel processing
+- **Multi-threaded parsing**: Divides large files across CPU cores
+- **Memory mapping**: Avoids copying file data when possible
+- **Zero-copy Arrow**: Shares data with other libraries without copying
+
+Typical throughput on modern hardware:
+
+| File Size | Single-threaded | Multi-threaded (4 cores) |
+|-----------|-----------------|--------------------------|
+| 10 MB | 3+ GB/s | 5+ GB/s |
+| 100 MB | 4+ GB/s | 6+ GB/s |
+
+## Source Code
+
+The Python package source is in the [`python/`](https://github.com/jimhester/libvroom/tree/main/python) directory of the libvroom repository.

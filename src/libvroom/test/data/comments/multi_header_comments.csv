@@ -1,0 +1,8 @@
+# new format
+# column 1: Requirement DOC ID
+# column 2: Title
+# column 3: Scope
+ID,Title,Scope,Type
+1,Feature A,Global,REQ
+2,Feature B,Local,REQ
+3,Bug Fix C,Global,BUG

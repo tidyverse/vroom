@@ -1,0 +1,22 @@
+BasedOnStyle: LLVM
+IndentWidth: 2
+ColumnLimit: 100
+PointerAlignment: Left
+ReferenceAlignment: Left
+SpaceAfterCStyleCast: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+BreakBeforeBraces: Attach
+IndentCaseLabels: false
+SortIncludes: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^"libvroom'
+    Priority: 1
+  - Regex: '^"'
+    Priority: 2
+  - Regex: '^<hwy/'
+    Priority: 3
+  - Regex: '^<'
+    Priority: 4
