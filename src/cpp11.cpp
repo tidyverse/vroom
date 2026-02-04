@@ -76,6 +76,13 @@ extern "C" SEXP _vroom_vroom_rle(SEXP input) {
     return cpp11::as_sexp(vroom_rle(cpp11::as_cpp<cpp11::decay_t<const cpp11::integers&>>(input)));
   END_CPP11
 }
+// vroom_arrow.cpp
+cpp11::sexp vroom_arrow_(const std::string& path, const std::string& delim, char quote, bool has_header, int skip, const std::string& comment, bool skip_empty_rows, const std::string& na_values, int num_threads);
+extern "C" SEXP _vroom_vroom_arrow_(SEXP path, SEXP delim, SEXP quote, SEXP has_header, SEXP skip, SEXP comment, SEXP skip_empty_rows, SEXP na_values, SEXP num_threads) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(vroom_arrow_(cpp11::as_cpp<cpp11::decay_t<const std::string&>>(path), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(delim), cpp11::as_cpp<cpp11::decay_t<char>>(quote), cpp11::as_cpp<cpp11::decay_t<bool>>(has_header), cpp11::as_cpp<cpp11::decay_t<int>>(skip), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(comment), cpp11::as_cpp<cpp11::decay_t<bool>>(skip_empty_rows), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(na_values), cpp11::as_cpp<cpp11::decay_t<int>>(num_threads)));
+  END_CPP11
+}
 // vroom_dttm.cc
 cpp11::writable::doubles utctime_(const cpp11::integers& year, const cpp11::integers& month, const cpp11::integers& day, const cpp11::integers& hour, const cpp11::integers& min, const cpp11::integers& sec, const cpp11::doubles& psec);
 extern "C" SEXP _vroom_utctime_(SEXP year, SEXP month, SEXP day, SEXP hour, SEXP min, SEXP sec, SEXP psec) {
@@ -144,6 +151,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_has_trailing_newline",    (DL_FUNC) &_vroom_has_trailing_newline,     1},
     {"_vroom_utctime_",                (DL_FUNC) &_vroom_utctime_,                 7},
     {"_vroom_vroom_",                  (DL_FUNC) &_vroom_vroom_,                  22},
+    {"_vroom_vroom_arrow_",            (DL_FUNC) &_vroom_vroom_arrow_,             9},
     {"_vroom_vroom_convert",           (DL_FUNC) &_vroom_vroom_convert,            1},
     {"_vroom_vroom_errors_",           (DL_FUNC) &_vroom_vroom_errors_,            1},
     {"_vroom_vroom_format_",           (DL_FUNC) &_vroom_vroom_format_,           10},

@@ -40,6 +40,10 @@ vroom_rle <- function(input) {
   .Call(`_vroom_vroom_rle`, input)
 }
 
+vroom_arrow_ <- function(path, delim, quote, has_header, skip, comment, skip_empty_rows, na_values, num_threads) {
+  .Call(`_vroom_vroom_arrow_`, path, delim, quote, has_header, skip, comment, skip_empty_rows, na_values, num_threads)
+}
+
 utctime_ <- function(year, month, day, hour, min, sec, psec) {
   .Call(`_vroom_utctime_`, year, month, day, hour, min, sec, psec)
 }

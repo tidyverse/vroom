@@ -52,7 +52,7 @@ HIGHWAY_SOURCES = libvroom/third_party/hwy/aligned_allocator.cc \
 	libvroom/third_party/hwy/per_target.cc \
 	libvroom/third_party/hwy/targets.cc
 
-OBJECTS = arrow_to_r.o vroom_new.o \
+OBJECTS = arrow_to_r.o vroom_new.o vroom_arrow.o \
 	Iconv.o LocaleInfo.o altrep.o cpp11.o \
 	delimited_index.o delimited_index_connection.o \
 	fixed_width_index_connection.o gen.o grisu3.o guess_type.o \

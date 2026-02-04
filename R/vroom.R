@@ -365,8 +365,10 @@ can_use_libvroom <- function(file, col_names, col_types, id, n_max, skip,
   path <- file[[1]]
   if (grepl("^(https?|ftp|ftps)://", path)) return(FALSE)
 
-  # Must be an existing file
+  # Must be an existing, uncompressed file
   if (!file.exists(path)) return(FALSE)
+  ext <- tolower(tools::file_ext(path))
+  if (ext %in% c("gz", "bz2", "xz", "zip", "zst")) return(FALSE)
 
   # col_names must be TRUE (libvroom handles headers internally)
   if (!isTRUE(col_names)) return(FALSE)
