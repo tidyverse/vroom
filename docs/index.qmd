@@ -1,0 +1,151 @@
+---
+title: "libvroom"
+subtitle: "High-performance CSV parser using SIMD instructions"
+---
+
+[![CI](https://github.com/jimhester/libvroom/workflows/CI/badge.svg)](https://github.com/jimhester/libvroom/actions)
+[![codecov](https://codecov.io/gh/jimhester/libvroom/branch/main/graph/badge.svg)](https://codecov.io/gh/jimhester/libvroom)
+
+## Overview
+
+libvroom is a high-performance CSV parser library using portable SIMD instructions via [Google Highway](https://github.com/google/highway), designed for future integration with R's [vroom](https://github.com/tidyverse/vroom) package.
+
+The parser achieves **4+ GB/s throughput** on modern hardware using a speculative multi-threaded two-pass algorithm based on research by Chang et al. (SIGMOD 2019) and SIMD techniques from Langdale & Lemire (simdjson).
+
+## Key Features
+
+::: {.grid}
+
+::: {.g-col-6}
+### Parsing
+- **SIMD-accelerated** parsing using Google Highway
+- **Multi-threaded** speculative parsing for large files
+- **Streaming parser** for memory-constrained environments
+- **Index caching** for instant re-reads of parsed files
+:::
+
+::: {.g-col-6}
+### Detection & Handling
+- **Automatic dialect detection** (delimiter, quotes, line endings)
+- **Encoding detection** with UTF-16/UTF-32 transcoding
+- **Schema inference** with type detection
+- **Three error modes**: strict, permissive, best-effort
+:::
+
+:::
+
+## Quick Start
+
+### Python
+
+```bash
+pip install vroom-csv
+```
+
+```python
+import vroom_csv
+
+table = vroom_csv.read_csv("data.csv")
+print(f"Loaded {table.num_rows} rows, {table.num_columns} columns")
+
+# Zero-copy export to PyArrow, Polars, DuckDB
+import polars as pl
+df = pl.from_arrow(table)
+```
+
+See the [Python Package](python.qmd) documentation for complete usage.
+
+### C++ / CLI
+
+```bash
+# Clone and build
+git clone https://github.com/jimhester/libvroom.git
+cd libvroom
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j$(nproc)
+
+# Try the CLI
+./build/vroom info your_data.csv
+./build/vroom head -n 5 your_data.csv
+./build/vroom schema your_data.csv
+```
+
+See the [Getting Started](getting-started.qmd) guide for detailed build instructions.
+
+## CLI Tool
+
+The `vroom` command-line tool provides fast CSV processing:
+
+| Command | Description |
+|---------|-------------|
+| `count` | Count rows in a CSV file |
+| `head` | Display first N rows |
+| `tail` | Display last N rows |
+| `sample` | Random sample of N rows |
+| `select` | Select columns by name or index |
+| `pretty` | Pretty-print with aligned columns |
+| `info` | Display file metadata |
+| `dialect` | Detect CSV dialect |
+| `schema` | Infer column types |
+| `stats` | Column statistics (min, max, mean) |
+
+See the [CLI Reference](cli.qmd) for complete documentation.
+
+## C++ Library
+
+```cpp
+#include <libvroom.h>
+
+libvroom::FileBuffer buffer = libvroom::load_file("data.csv");
+libvroom::Parser parser(4);  // 4 threads
+
+auto result = parser.parse(buffer.data(), buffer.size());
+
+// Iterate over rows with type-safe access
+for (auto row : result.rows()) {
+    auto name = row.get<std::string>("name");
+    auto value = row.get<double>("value");
+}
+```
+
+## Performance
+
+Single-threaded throughput on Apple Silicon (M3 Max):
+
+| File Size | Throughput | vs zsv |
+|-----------|------------|--------|
+| 10 MB | 3.1 GB/s | 4.0x faster |
+| 100 MB | 4.4 GB/s | 4.6x faster |
+| 200 MB | 4.7 GB/s | 4.9x faster |
+
+Multi-threaded parsing reaches **6+ GB/s** on large files. See [Benchmarks](benchmarks.qmd) for detailed comparisons.
+
+## Architecture
+
+The parser implements a two-pass algorithm optimized for parallel processing:
+
+1. **First Pass**: Scans for line boundaries while tracking quote parity to find safe chunk split points
+2. **Second Pass**: SIMD-based field indexing using a state machine, processing 64 bytes per iteration
+
+Learn more in the [Architecture](architecture.qmd) documentation.
+
+## Documentation
+
+| Topic | Description |
+|-------|-------------|
+| [Getting Started](getting-started.qmd) | Build instructions and basic usage |
+| [CLI Reference](cli.qmd) | Command-line tool documentation |
+| [Streaming Parser](streaming.qmd) | Memory-efficient parsing for large files |
+| [Index Caching](caching.qmd) | Speed up repeated file reads |
+| [C API Reference](c-api.qmd) | C bindings for FFI integration |
+| [Python Package](python.qmd) | Python bindings with Arrow support |
+| [Architecture](architecture.qmd) | Two-pass algorithm details |
+| [Error Handling](error-handling.qmd) | Error modes and recovery |
+| [Integration Guide](integration-guide.qmd) | CMake integration and build options |
+| [Benchmarks](benchmarks.qmd) | Performance comparisons |
+
+## References
+
+- Ge, Chang and Li, Yinan and Eilebrecht, Eric and Chandramouli, Badrish and Kossmann, Donald. [Speculative Distributed CSV Data Parsing for Big Data Analytics](https://www.microsoft.com/en-us/research/uploads/prod/2019/04/chunker-sigmod19.pdf). SIGMOD 2019.
+
+- Geoff Langdale, Daniel Lemire. [Parsing Gigabytes of JSON per Second](https://arxiv.org/abs/1902.08318). VLDB Journal 28 (6), 2019.

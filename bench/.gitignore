@@ -1,0 +1,8 @@
+# Benchmark data files (large, generated)
+data/
+
+# Benchmark results (generated)
+results/
+
+# Python virtual environment
+scripts/.venv/

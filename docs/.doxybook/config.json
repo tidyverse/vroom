@@ -1,0 +1,16 @@
+{
+  "baseUrl": "/api-reference/",
+  "fileExt": "qmd",
+  "linkSuffix": ".qmd",
+  "linkLowercase": false,
+  "indexInFolders": false,
+  "mainPageInRoot": false,
+  "mainPageName": "indexpage",
+  "copyImages": true,
+  "sort": true,
+  "filesFilter": [
+    ".h",
+    ".hpp",
+    ".cpp"
+  ]
+}

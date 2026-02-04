@@ -1,0 +1,95 @@
+name: Fuzz Testing
+
+on:
+  # Weekly scheduled fuzzing (Sundays at 2:00 UTC)
+  schedule:
+    - cron: '0 2 * * 0'
+  # Manual dispatch for on-demand fuzzing
+  workflow_dispatch:
+    inputs:
+      duration:
+        description: 'Fuzzing duration in seconds (max 1800)'
+        default: '300'
+      target:
+        description: 'Fuzz target'
+        default: 'all'
+        type: choice
+        options: [all, fuzz_csv_parser, fuzz_dialect_detection, fuzz_parse_auto]
+
+env:
+  # Default duration for scheduled runs (10 minutes per target)
+  DEFAULT_DURATION: 600
+
+jobs:
+  fuzz:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y cmake clang llvm
+
+    - name: Build fuzzers
+      run: |
+        cmake -B build -DENABLE_FUZZING=ON -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+        cmake --build build --target fuzz_csv_parser fuzz_dialect_detection fuzz_parse_auto
+
+    - name: Setup RAM disk for fuzzing
+      run: |
+        sudo mkdir -p /mnt/ramdisk
+        sudo mount -t tmpfs -o size=512M tmpfs /mnt/ramdisk
+        cp -r build/fuzz_corpus /mnt/ramdisk/corpus
+        mkdir -p /mnt/ramdisk/artifacts
+
+    - name: Run fuzzers
+      run: |
+        # Use input duration for manual dispatch, default for scheduled runs
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          DUR="${{ github.event.inputs.duration }}"
+          TARGET="${{ github.event.inputs.target }}"
+        else
+          DUR="${DEFAULT_DURATION}"
+          TARGET="all"
+        fi
+
+        # Cap duration at 30 minutes
+        [ "$DUR" -gt 1800 ] && DUR=1800
+
+        echo "Fuzzing duration: ${DUR}s per target"
+        echo "Target: ${TARGET}"
+
+        for t in fuzz_csv_parser fuzz_dialect_detection fuzz_parse_auto; do
+          if [ "$TARGET" = "all" ] || [ "$TARGET" = "$t" ]; then
+            echo "::group::Running $t"
+            timeout ${DUR}s ./build/$t /mnt/ramdisk/corpus \
+              -artifact_prefix=/mnt/ramdisk/artifacts/ \
+              -max_len=65536 \
+              -timeout=5 \
+              -print_final_stats=1 || true
+            echo "::endgroup::"
+          fi
+        done
+
+    - name: Check for crashes
+      id: check
+      run: |
+        CRASHES=$(find /mnt/ramdisk/artifacts -name 'crash-*' -o -name 'oom-*' 2>/dev/null | wc -l)
+        echo "count=$CRASHES" >> $GITHUB_OUTPUT
+        if [ "$CRASHES" -gt 0 ]; then
+          echo "::warning::Found $CRASHES crash/OOM artifacts"
+          ls -la /mnt/ramdisk/artifacts/
+        fi
+
+    - name: Upload crash artifacts
+      if: steps.check.outputs.count != '0'
+      uses: actions/upload-artifact@v4
+      with:
+        name: fuzz-crashes-${{ github.run_id }}
+        path: /mnt/ramdisk/artifacts
+        retention-days: 30
+
+    - name: Fail on crashes
+      if: steps.check.outputs.count != '0'
+      run: |
+        echo "::error::Fuzzing found ${{ steps.check.outputs.count }} crash(es). See uploaded artifacts."
+        exit 1
