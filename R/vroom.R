@@ -225,13 +225,53 @@ vroom <- function(
 
   file <- standardise_path(file)
 
+  if (length(file) == 0 || (n_max == 0 & identical(col_names, FALSE))) {
+    return(tibble::tibble())
+  }
+
+  col_select <- vroom_enquo(enquo(col_select))
+
+  # Use libvroom SIMD backend for single file paths with default settings
+  use_libvroom <- can_use_libvroom(
+    file, col_names, col_types, n_max, skip,
+    escape_double, escape_backslash, locale
+  )
+
+  if (use_libvroom) {
+    na_str <- paste(na, collapse = ",")
+    out <- vroom_libvroom_(
+      path = file[[1]],
+      delim = delim %||% "",
+      quote = quote,
+      has_header = isTRUE(col_names),
+      skip = as.integer(skip),
+      comment = comment,
+      skip_empty_rows = skip_empty_rows,
+      na_values = na_str,
+      num_threads = as.integer(num_threads)
+    )
+
+    out <- tibble::as_tibble(out, .name_repair = .name_repair)
+
+    # Apply column selection using names directly (no spec attribute)
+    if (inherits(col_select, "quosures") || !quo_is_null(col_select)) {
+      all_names <- c(names(out), id)
+      if (inherits(col_select, "quosures")) {
+        vars <- tidyselect::vars_select(all_names, !!!col_select)
+      } else {
+        vars <- tidyselect::vars_select(all_names, !!col_select)
+      }
+      out <- out[vars]
+      names(out) <- names(vars)
+    }
+
+    return(out)
+  }
+
+  # Fall back to old vroom_ parser for connections, multiple files, etc.
   if (!is_ascii_compatible(locale$encoding)) {
     file <- reencode_file(file, locale$encoding)
     locale$encoding <- "UTF-8"
-  }
-
-  if (length(file) == 0 || (n_max == 0 & identical(col_names, FALSE))) {
-    return(tibble::tibble())
   }
 
   if (n_max < 0 || is.infinite(n_max)) {
@@ -250,8 +290,6 @@ vroom <- function(
   ) {
     Sys.setenv("RSTUDIO" = "1")
   }
-
-  col_select <- vroom_enquo(enquo(col_select))
 
   has_col_types <- !is.null(col_types)
 
@@ -281,7 +319,7 @@ vroom <- function(
     altrep = vroom_altrep(altrep),
     num_threads = num_threads,
     progress = progress,
-    use_libvroom = use_libvroom
+    use_libvroom = FALSE
   )
 
   # If no rows, expand columns to be the same length and names as the spec
@@ -314,6 +352,35 @@ vroom <- function(
   }
 
   out
+}
+
+# Check if we can use the libvroom SIMD backend for this read
+can_use_libvroom <- function(file, col_names, col_types, n_max, skip,
+                             escape_double, escape_backslash, locale) {
+  # Must be a single file path (not connection)
+  if (length(file) != 1) return(FALSE)
+  if (!is.character(file[[1]])) return(FALSE)
+
+  # col_names must be TRUE (libvroom handles headers internally)
+  if (!isTRUE(col_names)) return(FALSE)
+
+  # No explicit col_types (let libvroom infer)
+  if (!is.null(col_types)) return(FALSE)
+
+  # No row limits
+  if (!is.infinite(n_max) && n_max >= 0) return(FALSE)
+
+  # No skip
+  if (skip > 0) return(FALSE)
+
+  # Must use default escape behavior
+  if (!isTRUE(escape_double)) return(FALSE)
+  if (isTRUE(escape_backslash)) return(FALSE)
+
+  # Must use UTF-8 or default encoding
+  if (!is_ascii_compatible(locale$encoding)) return(FALSE)
+
+  TRUE
 }
 
 should_show_col_types <- function(has_col_types, show_col_types) {
