@@ -248,7 +248,8 @@ vroom <- function(
       comment = comment,
       skip_empty_rows = skip_empty_rows,
       na_values = na_str,
-      num_threads = as.integer(num_threads)
+      num_threads = as.integer(num_threads),
+      strings_as_factors = FALSE
     )
 
     out <- tibble::as_tibble(out, .name_repair = .name_repair)

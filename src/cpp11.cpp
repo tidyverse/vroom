@@ -112,10 +112,10 @@ extern "C" SEXP _vroom_whitespace_columns_(SEXP filename, SEXP skip, SEXP n, SEX
   END_CPP11
 }
 // vroom_new.cpp
-cpp11::sexp vroom_libvroom_(const std::string& path, const std::string& delim, char quote, bool has_header, int skip, const std::string& comment, bool skip_empty_rows, const std::string& na_values, int num_threads);
-extern "C" SEXP _vroom_vroom_libvroom_(SEXP path, SEXP delim, SEXP quote, SEXP has_header, SEXP skip, SEXP comment, SEXP skip_empty_rows, SEXP na_values, SEXP num_threads) {
+cpp11::sexp vroom_libvroom_(const std::string& path, const std::string& delim, char quote, bool has_header, int skip, const std::string& comment, bool skip_empty_rows, const std::string& na_values, int num_threads, bool strings_as_factors, bool use_altrep);
+extern "C" SEXP _vroom_vroom_libvroom_(SEXP path, SEXP delim, SEXP quote, SEXP has_header, SEXP skip, SEXP comment, SEXP skip_empty_rows, SEXP na_values, SEXP num_threads, SEXP strings_as_factors, SEXP use_altrep) {
   BEGIN_CPP11
-    return cpp11::as_sexp(vroom_libvroom_(cpp11::as_cpp<cpp11::decay_t<const std::string&>>(path), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(delim), cpp11::as_cpp<cpp11::decay_t<char>>(quote), cpp11::as_cpp<cpp11::decay_t<bool>>(has_header), cpp11::as_cpp<cpp11::decay_t<int>>(skip), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(comment), cpp11::as_cpp<cpp11::decay_t<bool>>(skip_empty_rows), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(na_values), cpp11::as_cpp<cpp11::decay_t<int>>(num_threads)));
+    return cpp11::as_sexp(vroom_libvroom_(cpp11::as_cpp<cpp11::decay_t<const std::string&>>(path), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(delim), cpp11::as_cpp<cpp11::decay_t<char>>(quote), cpp11::as_cpp<cpp11::decay_t<bool>>(has_header), cpp11::as_cpp<cpp11::decay_t<int>>(skip), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(comment), cpp11::as_cpp<cpp11::decay_t<bool>>(skip_empty_rows), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(na_values), cpp11::as_cpp<cpp11::decay_t<int>>(num_threads), cpp11::as_cpp<cpp11::decay_t<bool>>(strings_as_factors), cpp11::as_cpp<cpp11::decay_t<bool>>(use_altrep)));
   END_CPP11
 }
 // vroom_write.cc
@@ -156,7 +156,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_vroom_errors_",           (DL_FUNC) &_vroom_vroom_errors_,            1},
     {"_vroom_vroom_format_",           (DL_FUNC) &_vroom_vroom_format_,           10},
     {"_vroom_vroom_fwf_",              (DL_FUNC) &_vroom_vroom_fwf_,              19},
-    {"_vroom_vroom_libvroom_",         (DL_FUNC) &_vroom_vroom_libvroom_,          9},
+    {"_vroom_vroom_libvroom_",         (DL_FUNC) &_vroom_vroom_libvroom_,         11},
     {"_vroom_vroom_materialize",       (DL_FUNC) &_vroom_vroom_materialize,        2},
     {"_vroom_vroom_rle",               (DL_FUNC) &_vroom_vroom_rle,                1},
     {"_vroom_vroom_str_",              (DL_FUNC) &_vroom_vroom_str_,               1},
@@ -167,10 +167,12 @@ static const R_CallMethodDef CallEntries[] = {
 };
 }
 
+void init_vroom_arrow_chr(DllInfo* dll);
 void init_vroom_big_int(DllInfo* dll);
 void init_vroom_chr(DllInfo* dll);
 void init_vroom_date(DllInfo* dll);
 void init_vroom_dbl(DllInfo* dll);
+void init_vroom_dict_chr(DllInfo* dll);
 void init_vroom_dttm(DllInfo* dll);
 void init_vroom_fct(DllInfo* dll);
 void init_vroom_int(DllInfo* dll);
@@ -181,10 +183,12 @@ void init_vroom_time(DllInfo* dll);
 extern "C" attribute_visible void R_init_vroom(DllInfo* dll){
   R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
+  init_vroom_arrow_chr(dll);
   init_vroom_big_int(dll);
   init_vroom_chr(dll);
   init_vroom_date(dll);
   init_vroom_dbl(dll);
+  init_vroom_dict_chr(dll);
   init_vroom_dttm(dll);
   init_vroom_fct(dll);
   init_vroom_int(dll);

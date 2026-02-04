@@ -12,7 +12,9 @@
     const std::string& comment,
     bool skip_empty_rows,
     const std::string& na_values,
-    int num_threads) {
+    int num_threads,
+    bool strings_as_factors,
+    bool use_altrep) {
 
   libvroom::CsvOptions opts;
   if (!delim.empty())
@@ -74,7 +76,14 @@
     return result;
   }
 
-  // Merge chunks if needed
+  // ALTREP path: skip chunk merging entirely.
+  // String columns wrapped in multi-chunk ALTREP (zero-copy).
+  // Numeric columns copied directly from chunks into R vectors.
+  if (use_altrep && !strings_as_factors) {
+    return columns_to_r_chunked(chunks, schema, total_rows);
+  }
+
+  // Non-ALTREP paths: merge chunks first
   std::vector<std::unique_ptr<libvroom::ArrowColumnBuilder>>& merged =
       chunks[0];
   for (size_t c = 1; c < chunks.size(); c++) {
@@ -83,5 +92,6 @@
     }
   }
 
-  return columns_to_r(merged, schema, total_rows);
+  return columns_to_r(merged, schema, total_rows, strings_as_factors,
+                      use_altrep);
 }
