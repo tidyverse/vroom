@@ -119,18 +119,10 @@ vroom_fwf <- function(
     col_ends_int <- as.integer(col_positions$end)
     col_ends_int[is.na(col_ends_int)] <- -1L
 
-    # Resolve col_types for libvroom
-    col_types_int <- integer(0)
-    col_type_names <- character(0)
-    resolved_spec <- NULL
-    if (!is.null(col_types) && !identical(col_types, list())) {
-      resolved_spec <- as.col_spec(col_types)
-      col_types_int <- col_types_to_libvroom(resolved_spec)
-      spec_names <- names(resolved_spec$cols)
-      if (!is.null(spec_names) && !all(spec_names == "")) {
-        col_type_names <- spec_names
-      }
-    }
+    ct <- resolve_libvroom_col_types(col_types)
+    col_types_int <- ct$col_types_int
+    col_type_names <- ct$col_type_names
+    resolved_spec <- ct$resolved_spec
 
     out <- vroom_libvroom_fwf_(
       input = input,
@@ -148,29 +140,12 @@ vroom_fwf <- function(
       col_type_names = col_type_names
     )
 
-    # For cols_only(), drop columns not in the spec
-    if (
-      !is.null(resolved_spec) &&
-        inherits(resolved_spec$default, "collector_skip")
-    ) {
-      spec_names <- names(resolved_spec$cols)
-      keep_cols <- names(out) %in% spec_names
-      out <- out[, keep_cols, drop = FALSE]
-    }
-
-    # Drop skipped columns from output (positional skip notation)
-    if (length(col_types_int) > 0) {
-      skip_mask <- col_types_int == -1L
-      already_handled_by_cols_only <- !is.null(resolved_spec) &&
-        inherits(resolved_spec$default, "collector_skip")
-      if (any(skip_mask) && !already_handled_by_cols_only) {
-        keep <- !skip_mask[seq_len(min(length(skip_mask), ncol(out)))]
-        if (length(keep) < ncol(out)) {
-          keep <- c(keep, rep(TRUE, ncol(out) - length(keep)))
-        }
-        out <- out[, keep, drop = FALSE]
-      }
-    }
+    out <- filter_cols_only_and_skip(
+      out,
+      resolved_spec,
+      col_types_int,
+      col_type_names
+    )
 
     # Apply R-side post-processing
     out <- apply_col_postprocessing(
@@ -190,17 +165,7 @@ vroom_fwf <- function(
       )
     }
 
-    # Apply column selection using names directly (no spec attribute)
-    if (inherits(col_select, "quosures") || !quo_is_null(col_select)) {
-      all_names <- c(names(out), id)
-      if (inherits(col_select, "quosures")) {
-        vars <- tidyselect::vars_select(all_names, !!!col_select)
-      } else {
-        vars <- tidyselect::vars_select(all_names, !!col_select)
-      }
-      out <- out[vars]
-      names(out) <- names(vars)
-    }
+    out <- apply_libvroom_col_select(out, col_select, id)
 
     # Build and attach spec attribute
     all_col_names <- as.character(col_positions$col_names)
@@ -212,16 +177,7 @@ vroom_fwf <- function(
       delim = ""
     )
 
-    # Add empty problems attribute (libvroom doesn't track parse errors yet)
-    attr(out, "problems") <- tibble::tibble(
-      row = integer(),
-      col = integer(),
-      expected = character(),
-      actual = character(),
-      file = character()
-    )
-
-    class(out) <- c("spec_tbl_df", class(out))
+    out <- finalize_libvroom_result(out)
 
     has_col_types <- !is.null(col_types) && !identical(col_types, list())
     if (should_show_col_types(has_col_types, show_col_types)) {
@@ -279,16 +235,15 @@ vroom_fwf <- function(
     progress = progress
   )
 
-  out <- tibble::as_tibble(out, .name_repair = .name_repair)
-
-  out <- vroom_select(out, col_select, id)
-  class(out) <- c("spec_tbl_df", class(out))
-
-  if (should_show_col_types(has_col_types, show_col_types)) {
-    show_col_types(out, locale)
-  }
-
-  out
+  postprocess_result(
+    out,
+    col_select,
+    id,
+    .name_repair,
+    has_col_types,
+    show_col_types,
+    locale
+  )
 }
 
 

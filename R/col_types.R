@@ -431,6 +431,99 @@ vroom_select <- function(x, col_select, id) {
   x
 }
 
+apply_libvroom_col_select <- function(out, col_select, id = NULL) {
+  if (inherits(col_select, "quosures") || !quo_is_null(col_select)) {
+    all_names <- c(names(out), id)
+    if (inherits(col_select, "quosures")) {
+      vars <- tidyselect::vars_select(all_names, !!!col_select)
+    } else {
+      vars <- tidyselect::vars_select(all_names, !!col_select)
+    }
+    out <- out[vars]
+    names(out) <- names(vars)
+  }
+  out
+}
+
+resolve_libvroom_col_types <- function(col_types) {
+  col_types_int <- integer(0)
+  col_type_names <- character(0)
+  resolved_spec <- NULL
+  if (!is.null(col_types) && !identical(col_types, list())) {
+    resolved_spec <- as.col_spec(col_types)
+    col_types_int <- col_types_to_libvroom(resolved_spec)
+    spec_names <- names(resolved_spec$cols)
+    if (!is.null(spec_names) && !all(spec_names == "")) {
+      col_type_names <- spec_names
+    }
+  }
+  list(
+    col_types_int = col_types_int,
+    col_type_names = col_type_names,
+    resolved_spec = resolved_spec
+  )
+}
+
+filter_cols_only_and_skip <- function(
+  out,
+  resolved_spec,
+  col_types_int,
+  col_type_names
+) {
+  is_cols_only <- !is.null(resolved_spec) &&
+    inherits(resolved_spec$default, "collector_skip")
+
+  if (is_cols_only) {
+    # cols_only(): keep only named columns
+    keep_cols <- names(out) %in% col_type_names
+    out <- out[, keep_cols, drop = FALSE]
+  } else if (length(col_types_int) > 0 && !is_cols_only) {
+    # Positional skip (compact notation like "i_d"): drop skip columns
+    skip_mask <- col_types_int == -1L
+    if (any(skip_mask)) {
+      keep <- !skip_mask[seq_len(min(length(skip_mask), ncol(out)))]
+      if (length(keep) < ncol(out)) {
+        keep <- c(keep, rep(TRUE, ncol(out) - length(keep)))
+      }
+      out <- out[, keep, drop = FALSE]
+    }
+  }
+
+  out
+}
+
+finalize_libvroom_result <- function(out) {
+  attr(out, "problems") <- tibble::tibble(
+    row = integer(),
+    col = integer(),
+    expected = character(),
+    actual = character(),
+    file = character()
+  )
+  class(out) <- c("spec_tbl_df", class(out))
+  out
+}
+
+postprocess_result <- function(
+  out,
+  col_select,
+  id,
+  .name_repair,
+  has_col_types,
+  show_col_types,
+  locale
+) {
+  out <- tibble::as_tibble(out, .name_repair = .name_repair)
+  out <- vroom_select(out, col_select, id)
+  class(out) <- c("spec_tbl_df", class(out))
+
+  if (should_show_col_types(has_col_types, show_col_types)) {
+    show_col_types(out, locale)
+  }
+
+  out
+}
+
 col_types_standardise <- function(
   spec,
   num_cols,
