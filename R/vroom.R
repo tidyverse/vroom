@@ -233,8 +233,16 @@ vroom <- function(
 
   # Use libvroom SIMD backend for single file paths with default settings
   use_libvroom <- can_use_libvroom(
-    file, delim, col_names, col_types, id, n_max, skip,
-    escape_double, escape_backslash, locale
+    file,
+    delim,
+    col_names,
+    col_types,
+    id,
+    n_max,
+    skip,
+    escape_double,
+    escape_backslash,
+    locale
   )
 
   if (use_libvroom) {
@@ -250,7 +258,11 @@ vroom <- function(
       na_values = na_str,
       num_threads = as.integer(num_threads),
       strings_as_factors = FALSE,
-      use_altrep = if (is.character(altrep)) "chr" %in% altrep else isTRUE(altrep)
+      use_altrep = if (is.character(altrep)) {
+        "chr" %in% altrep
+      } else {
+        isTRUE(altrep)
+      }
     )
 
     out <- tibble::as_tibble(out, .name_repair = .name_repair)
@@ -357,48 +369,88 @@ vroom <- function(
 }
 
 # Check if we can use the libvroom SIMD backend for this read
-can_use_libvroom <- function(file, delim, col_names, col_types, id, n_max, skip,
-                             escape_double, escape_backslash, locale) {
+can_use_libvroom <- function(
+  file,
+  delim,
+  col_names,
+  col_types,
+  id,
+  n_max,
+  skip,
+  escape_double,
+  escape_backslash,
+  locale
+) {
   # Must have an explicit delimiter (libvroom doesn't auto-detect)
-  if (is.null(delim)) return(FALSE)
+  if (is.null(delim)) {
+    return(FALSE)
+  }
 
   # Must be a single file path (not connection)
-  if (length(file) != 1) return(FALSE)
-  if (!is.character(file[[1]])) return(FALSE)
+  if (length(file) != 1) {
+    return(FALSE)
+  }
+  if (!is.character(file[[1]])) {
+    return(FALSE)
+  }
 
   # Must be a local file path, not a URL
   path <- file[[1]]
-  if (grepl("^(https?|ftp|ftps)://", path)) return(FALSE)
+  if (grepl("^(https?|ftp|ftps)://", path)) {
+    return(FALSE)
+  }
 
   # Must be an existing, uncompressed file
-  if (!file.exists(path)) return(FALSE)
+  if (!file.exists(path)) {
+    return(FALSE)
+  }
   ext <- tolower(tools::file_ext(path))
-  if (ext %in% c("gz", "bz2", "xz", "zip", "zst")) return(FALSE)
+  if (ext %in% c("gz", "bz2", "xz", "zip", "zst")) {
+    return(FALSE)
+  }
 
   # col_names must be TRUE (libvroom handles headers internally)
-  if (!isTRUE(col_names)) return(FALSE)
+  if (!isTRUE(col_names)) {
+    return(FALSE)
+  }
 
   # No explicit col_types (let libvroom infer)
-  if (!is.null(col_types)) return(FALSE)
+  if (!is.null(col_types)) {
+    return(FALSE)
+  }
 
   # No id column (would need file path prepended)
-  if (!is.null(id)) return(FALSE)
+  if (!is.null(id)) {
+    return(FALSE)
+  }
 
   # No row limits
-  if (!is.infinite(n_max) && n_max >= 0) return(FALSE)
+  if (!is.infinite(n_max) && n_max >= 0) {
+    return(FALSE)
+  }
 
   # No skip
-  if (skip > 0) return(FALSE)
+  if (skip > 0) {
+    return(FALSE)
+  }
 
   # Must use default escape behavior
-  if (!isTRUE(escape_double)) return(FALSE)
-  if (isTRUE(escape_backslash)) return(FALSE)
+  if (!isTRUE(escape_double)) {
+    return(FALSE)
+  }
+  if (isTRUE(escape_backslash)) {
+    return(FALSE)
+  }
 
   # Must use UTF-8 or default encoding
-  if (!is_ascii_compatible(locale$encoding)) return(FALSE)
+  if (!is_ascii_compatible(locale$encoding)) {
+    return(FALSE)
+  }
 
   # Check file is not empty
-  if (file.size(path) == 0) return(FALSE)
+  if (file.size(path) == 0) {
+    return(FALSE)
+  }
 
   TRUE
 }

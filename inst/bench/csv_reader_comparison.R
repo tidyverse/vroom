@@ -21,21 +21,42 @@ parse_args <- function() {
     rows = 5e6,
     iterations = 5,
     warmup = 1,
-    python = NULL,    # auto-detect
-    output = NULL,    # optional CSV output path
+    python = NULL, # auto-detect
+    output = NULL, # optional CSV output path
     skip_python = FALSE
   )
 
   i <- 1
   while (i <= length(args)) {
-    switch(args[i],
-      "--rows" = { opts$rows <- as.numeric(args[i + 1]); i <- i + 2 },
-      "--iterations" = { opts$iterations <- as.integer(args[i + 1]); i <- i + 2 },
-      "--warmup" = { opts$warmup <- as.integer(args[i + 1]); i <- i + 2 },
-      "--python" = { opts$python <- args[i + 1]; i <- i + 2 },
-      "--output" = { opts$output <- args[i + 1]; i <- i + 2 },
-      "--skip-python" = { opts$skip_python <- TRUE; i <- i + 1 },
-      { i <- i + 1 }
+    switch(
+      args[i],
+      "--rows" = {
+        opts$rows <- as.numeric(args[i + 1])
+        i <- i + 2
+      },
+      "--iterations" = {
+        opts$iterations <- as.integer(args[i + 1])
+        i <- i + 2
+      },
+      "--warmup" = {
+        opts$warmup <- as.integer(args[i + 1])
+        i <- i + 2
+      },
+      "--python" = {
+        opts$python <- args[i + 1]
+        i <- i + 2
+      },
+      "--output" = {
+        opts$output <- args[i + 1]
+        i <- i + 2
+      },
+      "--skip-python" = {
+        opts$skip_python <- TRUE
+        i <- i + 1
+      },
+      {
+        i <- i + 1
+      }
     )
   }
   opts
@@ -52,9 +73,19 @@ generate_test_files <- function(n, dir) {
     set.seed(42)
     df <- data.frame(
       id = 1:n,
-      x = rnorm(n), y = rnorm(n), z = rnorm(n),
-      name = sample(c("alice", "bob", "charlie", "diana", "eve"), n, replace = TRUE),
-      city = sample(c("new york", "london", "tokyo", "paris", "sydney"), n, replace = TRUE),
+      x = rnorm(n),
+      y = rnorm(n),
+      z = rnorm(n),
+      name = sample(
+        c("alice", "bob", "charlie", "diana", "eve"),
+        n,
+        replace = TRUE
+      ),
+      city = sample(
+        c("new york", "london", "tokyo", "paris", "sydney"),
+        n,
+        replace = TRUE
+      ),
       active = sample(c(TRUE, FALSE), n, replace = TRUE),
       score = runif(n, 0, 100)
     )
@@ -67,9 +98,16 @@ generate_test_files <- function(n, dir) {
   if (!file.exists(f)) {
     set.seed(123)
     make_words <- function(k) {
-      vapply(seq_len(k), function(i) {
-        paste0(sample(letters, sample(4:12, 1), replace = TRUE), collapse = "")
-      }, character(1))
+      vapply(
+        seq_len(k),
+        function(i) {
+          paste0(
+            sample(letters, sample(4:12, 1), replace = TRUE),
+            collapse = ""
+          )
+        },
+        character(1)
+      )
     }
     words <- make_words(5000)
     df <- data.frame(
@@ -88,8 +126,16 @@ generate_test_files <- function(n, dir) {
   if (!file.exists(f)) {
     set.seed(456)
     df <- data.frame(
-      a = rnorm(n), b = rnorm(n), c = rnorm(n), d = rnorm(n), e = rnorm(n),
-      f = rnorm(n), g = rnorm(n), h = rnorm(n), i = rnorm(n), j = rnorm(n)
+      a = rnorm(n),
+      b = rnorm(n),
+      c = rnorm(n),
+      d = rnorm(n),
+      e = rnorm(n),
+      f = rnorm(n),
+      g = rnorm(n),
+      h = rnorm(n),
+      i = rnorm(n),
+      j = rnorm(n)
     )
     data.table::fwrite(df, f)
   }
@@ -101,7 +147,9 @@ generate_test_files <- function(n, dir) {
 # -- Benchmark helpers -------------------------------------------------------
 
 bench_median <- function(fn, warmup = 1, iterations = 5) {
-  for (i in seq_len(warmup)) fn()
+  for (i in seq_len(warmup)) {
+    fn()
+  }
   times <- numeric(iterations)
   for (i in seq_len(iterations)) {
     times[i] <- system.time(fn())[["elapsed"]]
@@ -126,11 +174,20 @@ run_r_benchmarks <- function(files, opts) {
     if (has_arrow) {
       ms <- bench_median(
         function() vroom::vroom_arrow(path),
-        warmup = opts$warmup, iterations = opts$iterations
-      ) * 1000
-      cat(sprintf("    vroom_arrow:       %7.1f ms  (%5.1f GB/s)\n", ms, size_mb / ms))
+        warmup = opts$warmup,
+        iterations = opts$iterations
+      ) *
+        1000
+      cat(sprintf(
+        "    vroom_arrow:       %7.1f ms  (%5.1f GB/s)\n",
+        ms,
+        size_mb / ms
+      ))
       results[[length(results) + 1]] <- list(
-        file = name, engine = "vroom_arrow", ms = ms, size_mb = size_mb
+        file = name,
+        engine = "vroom_arrow",
+        ms = ms,
+        size_mb = size_mb
       )
     }
 
@@ -138,32 +195,59 @@ run_r_benchmarks <- function(files, opts) {
     if (has_arrow) {
       ms <- bench_median(
         function() arrow::read_csv_arrow(path),
-        warmup = opts$warmup, iterations = opts$iterations
-      ) * 1000
-      cat(sprintf("    arrow::read_csv:   %7.1f ms  (%5.1f GB/s)\n", ms, size_mb / ms))
+        warmup = opts$warmup,
+        iterations = opts$iterations
+      ) *
+        1000
+      cat(sprintf(
+        "    arrow::read_csv:   %7.1f ms  (%5.1f GB/s)\n",
+        ms,
+        size_mb / ms
+      ))
       results[[length(results) + 1]] <- list(
-        file = name, engine = "arrow_read_csv", ms = ms, size_mb = size_mb
+        file = name,
+        engine = "arrow_read_csv",
+        ms = ms,
+        size_mb = size_mb
       )
     }
 
     # vroom with libvroom backend -> tibble
     ms <- bench_median(
       function() vroom::vroom(path, show_col_types = FALSE),
-      warmup = opts$warmup, iterations = opts$iterations
-    ) * 1000
-    cat(sprintf("    vroom (libvroom):  %7.1f ms  (%5.1f GB/s)\n", ms, size_mb / ms))
+      warmup = opts$warmup,
+      iterations = opts$iterations
+    ) *
+      1000
+    cat(sprintf(
+      "    vroom (libvroom):  %7.1f ms  (%5.1f GB/s)\n",
+      ms,
+      size_mb / ms
+    ))
     results[[length(results) + 1]] <- list(
-      file = name, engine = "vroom_libvroom", ms = ms, size_mb = size_mb
+      file = name,
+      engine = "vroom_libvroom",
+      ms = ms,
+      size_mb = size_mb
     )
 
     # vroom with old parser -> tibble (altrep=FALSE for fair materialized comparison)
     ms <- bench_median(
       function() vroom::vroom(path, show_col_types = FALSE, altrep = FALSE),
-      warmup = opts$warmup, iterations = opts$iterations
-    ) * 1000
-    cat(sprintf("    vroom (old):       %7.1f ms  (%5.1f GB/s)\n", ms, size_mb / ms))
+      warmup = opts$warmup,
+      iterations = opts$iterations
+    ) *
+      1000
+    cat(sprintf(
+      "    vroom (old):       %7.1f ms  (%5.1f GB/s)\n",
+      ms,
+      size_mb / ms
+    ))
     results[[length(results) + 1]] <- list(
-      file = name, engine = "vroom_old", ms = ms, size_mb = size_mb
+      file = name,
+      engine = "vroom_old",
+      ms = ms,
+      size_mb = size_mb
     )
   }
 
@@ -185,12 +269,26 @@ run_python_benchmarks <- function(files, opts) {
     for (p in candidates) {
       if (nchar(p) > 0 && file.exists(p)) {
         # Check if at least one engine is available
-        rc <- system2(p, c("-c", shQuote("import polars")),
-                       stdout = FALSE, stderr = FALSE)
-        if (rc == 0) { python <- p; break }
-        rc <- system2(p, c("-c", shQuote("import vroom_csv")),
-                       stdout = FALSE, stderr = FALSE)
-        if (rc == 0) { python <- p; break }
+        rc <- system2(
+          p,
+          c("-c", shQuote("import polars")),
+          stdout = FALSE,
+          stderr = FALSE
+        )
+        if (rc == 0) {
+          python <- p
+          break
+        }
+        rc <- system2(
+          p,
+          c("-c", shQuote("import vroom_csv")),
+          stdout = FALSE,
+          stderr = FALSE
+        )
+        if (rc == 0) {
+          python <- p
+          break
+        }
       }
     }
   }
@@ -200,13 +298,23 @@ run_python_benchmarks <- function(files, opts) {
     return(list())
   }
 
-  py_script <- system.file("bench", "csv_reader_comparison.py", package = "vroom")
+  py_script <- system.file(
+    "bench",
+    "csv_reader_comparison.py",
+    package = "vroom"
+  )
   if (!nzchar(py_script) || !file.exists(py_script)) {
     # Fallback: look relative to this script via commandArgs
-    script_path <- sub("--file=", "", grep("--file=", commandArgs(FALSE), value = TRUE))
+    script_path <- sub(
+      "--file=",
+      "",
+      grep("--file=", commandArgs(FALSE), value = TRUE)
+    )
     if (length(script_path) == 1 && nzchar(script_path)) {
-      py_script <- file.path(dirname(normalizePath(script_path)),
-                             "csv_reader_comparison.py")
+      py_script <- file.path(
+        dirname(normalizePath(script_path)),
+        "csv_reader_comparison.py"
+      )
     }
   }
 
@@ -246,12 +354,25 @@ run_python_benchmarks <- function(files, opts) {
     size_mb <- row$size_bytes / 1e6
 
     for (eng_col in names(engine_map)) {
-      if (eng_col %in% names(row) && !is.null(row[[eng_col]]) && !is.na(row[[eng_col]])) {
+      if (
+        eng_col %in%
+          names(row) &&
+          !is.null(row[[eng_col]]) &&
+          !is.na(row[[eng_col]])
+      ) {
         ms <- row[[eng_col]]
-        cat(sprintf("    %-18s %7.1f ms  (%5.1f GB/s)  [%s]\n",
-                    paste0(engine_map[eng_col], ":"), ms, size_mb / ms, file_label))
+        cat(sprintf(
+          "    %-18s %7.1f ms  (%5.1f GB/s)  [%s]\n",
+          paste0(engine_map[eng_col], ":"),
+          ms,
+          size_mb / ms,
+          file_label
+        ))
         results[[length(results) + 1]] <- list(
-          file = file_label, engine = engine_map[eng_col], ms = ms, size_mb = size_mb
+          file = file_label,
+          engine = engine_map[eng_col],
+          ms = ms,
+          size_mb = size_mb
         )
       }
     }
@@ -263,15 +384,26 @@ run_python_benchmarks <- function(files, opts) {
 # -- Output formatting -------------------------------------------------------
 
 format_results <- function(all_results, files) {
-  df <- do.call(rbind, lapply(all_results, as.data.frame, stringsAsFactors = FALSE))
+  df <- do.call(
+    rbind,
+    lapply(all_results, as.data.frame, stringsAsFactors = FALSE)
+  )
 
   # Pivot: one row per engine, columns per file type
   engines <- unique(df$engine)
   file_labels <- names(files)
 
   # Display order
-  engine_order <- c("libvroom_py", "polars", "vroom_arrow", "pyarrow",
-                     "duckdb", "arrow_read_csv", "vroom_libvroom", "vroom_old")
+  engine_order <- c(
+    "libvroom_py",
+    "polars",
+    "vroom_arrow",
+    "pyarrow",
+    "duckdb",
+    "arrow_read_csv",
+    "vroom_libvroom",
+    "vroom_old"
+  )
   engine_names <- c(
     libvroom_py = "libvroom (Python)",
     polars = "polars (Python)",
@@ -329,8 +461,11 @@ format_results <- function(all_results, files) {
 main <- function() {
   opts <- parse_args()
 
-  cat(sprintf("CSV Reader Benchmark (%s rows, %d iterations)\n",
-              format(opts$rows, big.mark = ","), opts$iterations))
+  cat(sprintf(
+    "CSV Reader Benchmark (%s rows, %d iterations)\n",
+    format(opts$rows, big.mark = ","),
+    opts$iterations
+  ))
   cat(strrep("-", 50), "\n")
 
   # Generate test data

@@ -17,14 +17,15 @@
 #' @return An Arrow Table.
 #' @export
 vroom_arrow <- function(
-    file,
-    delim = NULL,
-    quote = '"',
-    col_names = TRUE,
-    comment = "",
-    skip_empty_rows = TRUE,
-    na = c("", "NA"),
-    num_threads = vroom_threads()) {
+  file,
+  delim = NULL,
+  quote = '"',
+  col_names = TRUE,
+  comment = "",
+  skip_empty_rows = TRUE,
+  na = c("", "NA"),
+  num_threads = vroom_threads()
+) {
   rlang::check_installed("arrow", reason = "to use vroom_arrow()")
 
   file <- standardise_path(file)
