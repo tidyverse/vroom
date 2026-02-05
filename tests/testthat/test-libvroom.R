@@ -24,6 +24,7 @@ test_libvroom <- function(
       delim = delim,
       col_types = col_types,
       use_libvroom = TRUE,
+      show_col_types = FALSE,
       ...
     )
     expect_equal(result, equals)

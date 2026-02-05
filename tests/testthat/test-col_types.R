@@ -77,3 +77,5 @@ test_that("as.col_spec() errors for unhandled input type", {
 test_that("as.col_spec() errors for unrecognized single-letter spec", {
   expect_snapshot(vroom(I("whatever"), col_types = "dz"), error = TRUE)
 })
+
+

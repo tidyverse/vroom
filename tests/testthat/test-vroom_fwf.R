@@ -935,3 +935,47 @@ test_that("libvroom FWF handles cols_only()", {
   expect_equal(result$a, c(12L, 56L))
   expect_equal(result$c, c("hello", "world"))
 })
+
+test_that("libvroom FWF path shows col_types by default", {
+  tf <- tempfile()
+  on.exit(unlink(tf))
+  writeLines(c("JohnSmith 42", "JaneDoe   28"), tf)
+
+  expect_message(
+    vroom_fwf(
+      tf,
+      fwf_widths(c(10, 2), c("name", "age")),
+      show_col_types = NULL
+    ),
+    "Column specification"
+  )
+})
+
+test_that("libvroom FWF path suppresses col_types when show_col_types = FALSE", {
+  tf <- tempfile()
+  on.exit(unlink(tf))
+  writeLines(c("JohnSmith 42", "JaneDoe   28"), tf)
+
+  expect_no_message(
+    vroom_fwf(
+      tf,
+      fwf_widths(c(10, 2), c("name", "age")),
+      show_col_types = FALSE
+    )
+  )
+})
+
+test_that("libvroom FWF path attaches spec attribute", {
+  tf <- tempfile()
+  on.exit(unlink(tf))
+  writeLines(c("JohnSmith 42", "JaneDoe   28"), tf)
+
+  res <- vroom_fwf(
+    tf,
+    fwf_widths(c(10, 2), c("name", "age")),
+    show_col_types = FALSE
+  )
+  s <- spec(res)
+  expect_s3_class(s, "col_spec")
+  expect_equal(length(s$cols), 2L)
+})

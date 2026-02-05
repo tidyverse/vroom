@@ -48,8 +48,7 @@ test_that("reading from a file() connection uses libvroom when eligible", {
     show_col_types = FALSE
   )
   expect_equal(actual, expected)
-  # Verify libvroom backend was used (libvroom now also sets spec_tbl_df class)
-  expect_true("spec_tbl_df" %in% class(actual))
+  expect_s3_class(actual, "spec_tbl_df")
 })
 
 test_that("reading from a gzfile() connection works via libvroom", {
@@ -64,7 +63,7 @@ test_that("reading from a gzfile() connection works via libvroom", {
     show_col_types = FALSE
   )
   expect_equal(actual, expected)
-  expect_true("spec_tbl_df" %in% class(actual))
+  expect_s3_class(actual, "spec_tbl_df")
 })
 
 test_that("reading from a rawConnection works via libvroom", {
@@ -72,7 +71,7 @@ test_that("reading from a rawConnection works via libvroom", {
   actual <- vroom(rawConnection(raw_data), delim = ",", show_col_types = FALSE)
   expect_equal(nrow(actual), 2)
   expect_equal(ncol(actual), 3)
-  expect_true("spec_tbl_df" %in% class(actual))
+  expect_s3_class(actual, "spec_tbl_df")
 })
 
 test_that("connection reads work with small VROOM_CONNECTION_SIZE via libvroom", {
@@ -89,7 +88,7 @@ test_that("connection reads work with small VROOM_CONNECTION_SIZE via libvroom",
     )
   })
   expect_equal(actual, expected)
-  expect_true("spec_tbl_df" %in% class(actual))
+  expect_s3_class(actual, "spec_tbl_df")
 })
 
 test_that("vroom errors when the connection buffer is too small", {

@@ -1420,3 +1420,35 @@ test_that("use_libvroom = FALSE forces old parser", {
   res <- vroom(tf, delim = ",", use_libvroom = FALSE, show_col_types = FALSE)
   expect_s3_class(res, "spec_tbl_df")
 })
+
+test_that("libvroom path shows col_types by default", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+  writeLines("x,y\n1,hello\n2,world", tf)
+
+  expect_message(
+    vroom(tf, delim = ",", use_libvroom = TRUE, show_col_types = NULL),
+    "Column specification"
+  )
+})
+
+test_that("libvroom path suppresses col_types when show_col_types = FALSE", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+  writeLines("x,y\n1,hello\n2,world", tf)
+
+  expect_no_message(
+    vroom(tf, delim = ",", use_libvroom = TRUE, show_col_types = FALSE)
+  )
+})
+
+test_that("libvroom path attaches spec attribute", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+  writeLines("x,y\n1,hello\n2,world", tf)
+
+  res <- vroom(tf, delim = ",", use_libvroom = TRUE, show_col_types = FALSE)
+  s <- spec(res)
+  expect_s3_class(s, "col_spec")
+  expect_equal(length(s$cols), 2L)
+})
