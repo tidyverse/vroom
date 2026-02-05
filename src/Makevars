@@ -1,5 +1,5 @@
 PKG_CPPFLAGS=-Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -DFMT_HEADER_ONLY \
-	-Ilibvroom/include -Ilibvroom/third_party -Ilibvroom/third_party/simdutf -Ilibvroom/src
+	-Ilibvroom -Ilibvroom/include -Ilibvroom/third_party -Ilibvroom/third_party/simdutf -Ilibvroom/src
 PKG_LIBS=-lz
 
 # vroom's own source files (old + new)
