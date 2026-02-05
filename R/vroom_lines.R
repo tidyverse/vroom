@@ -23,8 +23,6 @@ vroom_lines <- function(
   num_threads = vroom_threads(),
   progress = vroom_progress()
 ) {
-  check_number_decimal(n_max)
-
   file <- standardise_path(file)
 
   if (!is_ascii_compatible(locale$encoding)) {
@@ -67,7 +65,8 @@ vroom_lines <- function(
     n_max = n_max,
     altrep = vroom_altrep(altrep),
     num_threads = num_threads,
-    progress = progress
+    progress = progress,
+    use_libvroom = FALSE
   )
   if (length(out) == 0) {
     return(character())

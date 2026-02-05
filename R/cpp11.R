@@ -28,8 +28,8 @@ convert_connection <- function(in_con, out_con, from, to) {
   .Call(`_vroom_convert_connection`, in_con, out_con, from, to)
 }
 
-vroom_ <- function(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip_empty_rows, skip, n_max, progress, col_names, col_types, col_select, name_repair, id, na, locale, guess_max, num_threads, altrep) {
-  .Call(`_vroom_vroom_`, inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip_empty_rows, skip, n_max, progress, col_names, col_types, col_select, name_repair, id, na, locale, guess_max, num_threads, altrep)
+vroom_ <- function(inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip_empty_rows, skip, n_max, progress, col_names, col_types, col_select, name_repair, id, na, locale, guess_max, num_threads, altrep, use_libvroom) {
+  .Call(`_vroom_vroom_`, inputs, delim, quote, trim_ws, escape_double, escape_backslash, comment, skip_empty_rows, skip, n_max, progress, col_names, col_types, col_select, name_repair, id, na, locale, guess_max, num_threads, altrep, use_libvroom)
 }
 
 has_trailing_newline <- function(filename) {
@@ -38,6 +38,10 @@ has_trailing_newline <- function(filename) {
 
 vroom_rle <- function(input) {
   .Call(`_vroom_vroom_rle`, input)
+}
+
+vroom_arrow_ <- function(path, delim, quote, has_header, skip, comment, skip_empty_rows, na_values, num_threads) {
+  .Call(`_vroom_vroom_arrow_`, path, delim, quote, has_header, skip, comment, skip_empty_rows, na_values, num_threads)
 }
 
 utctime_ <- function(year, month, day, hour, min, sec, psec) {
@@ -54,6 +58,10 @@ vroom_fwf_ <- function(inputs, col_starts, col_ends, trim_ws, col_names, col_typ
 
 whitespace_columns_ <- function(filename, skip, n, comment) {
   .Call(`_vroom_whitespace_columns_`, filename, skip, n, comment)
+}
+
+vroom_libvroom_ <- function(path, delim, quote, has_header, skip, comment, skip_empty_rows, na_values, num_threads, strings_as_factors, use_altrep) {
+  .Call(`_vroom_vroom_libvroom_`, path, delim, quote, has_header, skip, comment, skip_empty_rows, na_values, num_threads, strings_as_factors, use_altrep)
 }
 
 vroom_write_ <- function(input, filename, delim, eol, na_str, col_names, append, options, num_threads, progress, buf_lines) {

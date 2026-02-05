@@ -26,6 +26,7 @@ reference:
     line is divided up into fields.
   contents:
   - vroom
+  - vroom_arrow
   - vroom_fwf
   - problems
 

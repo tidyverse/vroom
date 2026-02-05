@@ -5,10 +5,9 @@
 #'   containing multiple filepaths or a list containing multiple connections.
 #'
 #'   Files ending in `.gz`, `.bz2`, `.xz`, or `.zip` will be automatically
-#'   decompressed. Files starting with `http://`, `https://`, `ftp://`, or
-#'   `ftps://` will be automatically downloaded. Remote compressed files
-#'   (`.gz`, `.bz2`, `.xz`, `.zip`) will be automatically downloaded and
-#'   decompressed.
+#'   uncompressed. Files starting with `http://`, `https://`, `ftp://`, or
+#'   `ftps://` will be automatically downloaded. Remote `.gz` files can also be
+#'   automatically downloaded and decompressed.
 #'
 #'   Literal data is most useful for examples and tests. To be recognised as
 #'   literal data, wrap the input with `I()`.
@@ -46,7 +45,6 @@
 #'   character represents one column:
 #' - c = character
 #' - i = integer
-#' - I = big integer
 #' - n = number
 #' - d = double
 #' - l = logical
@@ -124,9 +122,13 @@
 #'     for names in the style of base R).
 #'   * A purrr-style anonymous function, see [rlang::as_function()].
 #'
+#'
 #'   This argument is passed on as `repair` to [vctrs::vec_as_names()].
 #'   See there for more details on these terms and the strategies used
 #'   to enforce them.
+#' @param use_libvroom Use the experimental libvroom SIMD-accelerated CSV
+#'   parsing backend. This backend can be significantly faster for large files
+#'   but may not support all features. Defaults to `FALSE`.
 #' @export
 #' @examples
 #' # get path to example file
@@ -178,7 +180,7 @@
 #' vroom(I("a|b\n1.0|2.0\n"), delim = "|")
 #'
 #' # Read datasets across multiple files ---------------------------------------
-#' mtcars_by_cyl <- vroom_example(vroom_examples("mtcars-[468]"))
+#' mtcars_by_cyl <- vroom_example(vroom_examples("mtcars-"))
 #' mtcars_by_cyl
 #'
 #' # Pass the filenames directly to vroom, they are efficiently combined
@@ -211,11 +213,9 @@ vroom <- function(
   num_threads = vroom_threads(),
   progress = vroom_progress(),
   show_col_types = NULL,
-  .name_repair = "unique"
+  .name_repair = "unique",
+  use_libvroom = FALSE
 ) {
-  check_number_decimal(n_max)
-  check_number_decimal(guess_max)
-
   # vroom does not support newlines as the delimiter, just as the EOL, so just
   # assign a value that should never appear in CSV text as the delimiter,
   # 001, start of heading.
@@ -225,13 +225,67 @@ vroom <- function(
 
   file <- standardise_path(file)
 
+  if (length(file) == 0 || (n_max == 0 & identical(col_names, FALSE))) {
+    return(tibble::tibble())
+  }
+
+  col_select <- vroom_enquo(enquo(col_select))
+
+  # Use libvroom SIMD backend for single file paths with default settings
+  use_libvroom <- can_use_libvroom(
+    file,
+    delim,
+    col_names,
+    col_types,
+    id,
+    n_max,
+    skip,
+    escape_double,
+    escape_backslash,
+    locale
+  )
+
+  if (use_libvroom) {
+    na_str <- paste(na, collapse = ",")
+    out <- vroom_libvroom_(
+      path = file[[1]],
+      delim = delim %||% "",
+      quote = quote,
+      has_header = isTRUE(col_names),
+      skip = as.integer(skip),
+      comment = comment,
+      skip_empty_rows = skip_empty_rows,
+      na_values = na_str,
+      num_threads = as.integer(num_threads),
+      strings_as_factors = FALSE,
+      use_altrep = if (is.character(altrep)) {
+        "chr" %in% altrep
+      } else {
+        isTRUE(altrep)
+      }
+    )
+
+    out <- tibble::as_tibble(out, .name_repair = .name_repair)
+
+    # Apply column selection using names directly (no spec attribute)
+    if (inherits(col_select, "quosures") || !quo_is_null(col_select)) {
+      all_names <- c(names(out), id)
+      if (inherits(col_select, "quosures")) {
+        vars <- tidyselect::vars_select(all_names, !!!col_select)
+      } else {
+        vars <- tidyselect::vars_select(all_names, !!col_select)
+      }
+      out <- out[vars]
+      names(out) <- names(vars)
+    }
+
+    return(out)
+  }
+
+  # Fall back to old vroom_ parser for connections, multiple files, etc.
   if (!is_ascii_compatible(locale$encoding)) {
     file <- reencode_file(file, locale$encoding)
     locale$encoding <- "UTF-8"
-  }
-
-  if (length(file) == 0 || (n_max == 0 & identical(col_names, FALSE))) {
-    return(tibble::tibble())
   }
 
   if (n_max < 0 || is.infinite(n_max)) {
@@ -250,8 +304,6 @@ vroom <- function(
   ) {
     Sys.setenv("RSTUDIO" = "1")
   }
-
-  col_select <- vroom_enquo(enquo(col_select))
 
   has_col_types <- !is.null(col_types)
 
@@ -280,7 +332,8 @@ vroom <- function(
     n_max = n_max,
     altrep = vroom_altrep(altrep),
     num_threads = num_threads,
-    progress = progress
+    progress = progress,
+    use_libvroom = FALSE
   )
 
   # If no rows, expand columns to be the same length and names as the spec
@@ -313,6 +366,93 @@ vroom <- function(
   }
 
   out
+}
+
+# Check if we can use the libvroom SIMD backend for this read
+can_use_libvroom <- function(
+  file,
+  delim,
+  col_names,
+  col_types,
+  id,
+  n_max,
+  skip,
+  escape_double,
+  escape_backslash,
+  locale
+) {
+  # Must have an explicit delimiter (libvroom doesn't auto-detect)
+  if (is.null(delim)) {
+    return(FALSE)
+  }
+
+  # Must be a single file path (not connection)
+  if (length(file) != 1) {
+    return(FALSE)
+  }
+  if (!is.character(file[[1]])) {
+    return(FALSE)
+  }
+
+  # Must be a local file path, not a URL
+  path <- file[[1]]
+  if (grepl("^(https?|ftp|ftps)://", path)) {
+    return(FALSE)
+  }
+
+  # Must be an existing, uncompressed file
+  if (!file.exists(path)) {
+    return(FALSE)
+  }
+  ext <- tolower(tools::file_ext(path))
+  if (ext %in% c("gz", "bz2", "xz", "zip", "zst")) {
+    return(FALSE)
+  }
+
+  # col_names must be TRUE (libvroom handles headers internally)
+  if (!isTRUE(col_names)) {
+    return(FALSE)
+  }
+
+  # No explicit col_types (let libvroom infer)
+  if (!is.null(col_types)) {
+    return(FALSE)
+  }
+
+  # No id column (would need file path prepended)
+  if (!is.null(id)) {
+    return(FALSE)
+  }
+
+  # No row limits
+  if (!is.infinite(n_max) && n_max >= 0) {
+    return(FALSE)
+  }
+
+  # No skip
+  if (skip > 0) {
+    return(FALSE)
+  }
+
+  # Must use default escape behavior
+  if (!isTRUE(escape_double)) {
+    return(FALSE)
+  }
+  if (isTRUE(escape_backslash)) {
+    return(FALSE)
+  }
+
+  # Must use UTF-8 or default encoding
+  if (!is_ascii_compatible(locale$encoding)) {
+    return(FALSE)
+  }
+
+  # Check file is not empty
+  if (file.size(path) == 0) {
+    return(FALSE)
+  }
+
+  TRUE
 }
 
 should_show_col_types <- function(has_col_types, show_col_types) {

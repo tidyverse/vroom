@@ -14,6 +14,15 @@
       Error:
       ! 'does-not-exist.csv' does not exist in current working directory: '<workdir>'.
 
+# vroom errors via https on non-gz file
+
+    Code
+      vroom(url, col_types = list())
+    Condition
+      Error:
+      ! Reading from remote ".bz2" compressed files is not supported.
+      i Download the file locally first.
+
 # vroom() informs user to use I() for literal data (or not)
 
     Code
@@ -63,13 +72,6 @@
       vroom_write(mtcars, tempfile(fileext = ".zip"))
     Condition
       Error in `vroom_write()`:
-      ! The package "archive" is required to write `.zip` files.
-
-# reading archive-only formats without archive package fails informatively
-
-    Code
-      vroom(vroom_example("mtcars.csv.tar.gz"), col_types = list())
-    Condition
-      Error:
-      ! The package "archive" is required to read `.csv.tar.gz` files.
+      ! Can only read from, not write to, ".zip" files.
+      i Install the archive package to write ".zip" files.
 
