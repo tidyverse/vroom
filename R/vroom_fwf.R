@@ -97,6 +97,66 @@ vroom_fwf <- function(
 
   file <- standardise_path(file)
 
+  col_select <- vroom_enquo(enquo(col_select))
+
+  use_libvroom <- can_use_libvroom_fwf(file, col_types, locale)
+  if (use_libvroom) {
+    input <- connection_or_filepath(file[[1]])
+    # Non-ASCII paths need to go through R connection for proper encoding
+    # handling (libvroom expects UTF-8 paths but non-UTF-8 locales mangle them)
+    if (is.character(input) && !is_ascii_path(input)) {
+      input <- file(input)
+    }
+    if (inherits(input, "connection")) {
+      input <- read_connection_raw(input)
+      if (length(input) == 0L) {
+        return(tibble::tibble())
+      }
+    }
+
+    n_max_int <- if (is.infinite(n_max) || n_max < 0) -1L else as.integer(n_max)
+    na_str <- paste(na, collapse = ",")
+    col_ends_int <- as.integer(col_positions$end)
+    col_ends_int[is.na(col_ends_int)] <- -1L
+    out <- vroom_libvroom_fwf_(
+      input = input,
+      col_starts = as.integer(col_positions$begin),
+      col_ends = col_ends_int,
+      col_names = as.character(col_positions$col_names),
+      trim_ws = trim_ws,
+      comment = comment,
+      skip_empty_rows = skip_empty_rows,
+      na_values = na_str,
+      skip = as.integer(skip),
+      n_max = n_max_int,
+      num_threads = as.integer(num_threads)
+    )
+    out <- tibble::as_tibble(out, .name_repair = .name_repair)
+    if (!is.null(id)) {
+      path_value <- if (is.character(file[[1]])) file[[1]] else NA_character_
+      out <- tibble::add_column(
+        out,
+        !!id := rep(path_value, nrow(out)),
+        .before = 1
+      )
+    }
+
+    # Apply column selection using names directly (no spec attribute)
+    if (inherits(col_select, "quosures") || !quo_is_null(col_select)) {
+      all_names <- c(names(out), id)
+      if (inherits(col_select, "quosures")) {
+        vars <- tidyselect::vars_select(all_names, !!!col_select)
+      } else {
+        vars <- tidyselect::vars_select(all_names, !!col_select)
+      }
+      out <- out[vars]
+      names(out) <- names(vars)
+    }
+
+    class(out) <- c("spec_tbl_df", class(out))
+    return(out)
+  }
+
   if (!is_ascii_compatible(locale$encoding)) {
     file <- reencode_file(file, locale$encoding)
     locale$encoding <- "UTF-8"
@@ -118,8 +178,6 @@ vroom_fwf <- function(
   if (guess_max < 0 || is.infinite(guess_max)) {
     guess_max <- -1
   }
-
-  col_select <- vroom_enquo(enquo(col_select))
 
   has_col_types <- !is.null(col_types)
 
@@ -285,6 +343,20 @@ fwf_col_names <- function(nm, n) {
   nm_empty <- (nm == "")
   nm[nm_empty] <- paste0("X", seq_len(n))[nm_empty]
   nm
+}
+
+can_use_libvroom_fwf <- function(file, col_types, locale) {
+  if (length(file) != 1) {
+    return(FALSE)
+  }
+  # col_types = list() is equivalent to NULL — both mean "guess all"
+  if (!is.null(col_types) && !identical(col_types, list())) {
+    return(FALSE)
+  }
+  if (!is_ascii_compatible(locale$encoding)) {
+    return(FALSE)
+  }
+  TRUE
 }
 
 verify_fwf_positions <- function(col_positions) {

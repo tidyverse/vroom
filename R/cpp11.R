@@ -60,6 +60,10 @@ whitespace_columns_ <- function(filename, skip, n, comment) {
   .Call(`_vroom_whitespace_columns_`, filename, skip, n, comment)
 }
 
+vroom_libvroom_fwf_ <- function(input, col_starts, col_ends, col_names, trim_ws, comment, skip_empty_rows, na_values, skip, n_max, num_threads) {
+  .Call(`_vroom_vroom_libvroom_fwf_`, input, col_starts, col_ends, col_names, trim_ws, comment, skip_empty_rows, na_values, skip, n_max, num_threads)
+}
+
 vroom_libvroom_ <- function(input, delim, quote, has_header, skip, comment, skip_empty_rows, trim_ws, na_values, num_threads, strings_as_factors, use_altrep) {
   .Call(`_vroom_vroom_libvroom_`, input, delim, quote, has_header, skip, comment, skip_empty_rows, trim_ws, na_values, num_threads, strings_as_factors, use_altrep)
 }

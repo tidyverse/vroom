@@ -48,6 +48,27 @@ struct CsvOptions {
   bool force_cache_refresh = false;
 };
 
+// Fixed-width file parsing options
+struct FwfOptions {
+  std::vector<int> col_starts;        // 0-based byte offsets
+  std::vector<int> col_ends;          // Exclusive end offsets (-1 = to end of line)
+  std::vector<std::string> col_names; // Column names from R
+  bool trim_ws = true;
+  char comment = '\0';
+  bool skip_empty_rows = true;
+  std::string null_values = "NA,null,NULL,";
+  std::string true_values = "true,TRUE,True,yes,YES,Yes";
+  std::string false_values = "false,FALSE,False,no,NO,No";
+  size_t skip = 0;                    // Number of data lines to skip after comments
+  int64_t max_rows = -1;             // Max rows to read (-1 = unlimited)
+  size_t sample_rows = 1000;
+  size_t chunk_size = 0;
+  size_t num_threads = 0;
+  std::optional<CharEncoding> encoding;
+  ErrorMode error_mode = ErrorMode::DISABLED;
+  size_t max_errors = ErrorCollector::DEFAULT_MAX_ERRORS;
+};
+
 // Parquet writing options
 struct ParquetOptions {
 #ifdef VROOM_HAVE_ZSTD

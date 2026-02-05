@@ -458,6 +458,13 @@ basename_utf8 <- function(path) {
   enc2utf8(basename(path))
 }
 
+# Check if a path contains only ASCII characters
+# Non-ASCII paths need to go through R connections for proper encoding handling
+is_ascii_path <- function(path) {
+  bytes <- charToRaw(path)
+  all(bytes < 128L)
+}
+
 normalizePath_utf8 <- function(path, winslash = "/", mustWork = NA) {
   enc2utf8(normalizePath(path, winslash = winslash, mustWork = mustWork))
 }

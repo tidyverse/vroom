@@ -32,6 +32,7 @@ LIBVROOM_SOURCES = libvroom/src/cache/index_cache.cpp \
 	libvroom/src/parser/split_fields.cpp \
 	libvroom/src/parser/split_fields_iter.cpp \
 	libvroom/src/reader/csv_reader.cpp \
+	libvroom/src/reader/fwf_reader.cpp \
 	libvroom/src/reader/mmap_source.cpp \
 	libvroom/src/schema/type_inference.cpp \
 	libvroom/src/schema/type_parsers.cpp \
@@ -56,7 +57,7 @@ HIGHWAY_SOURCES = libvroom/third_party/hwy/aligned_allocator.cc \
 	libvroom/third_party/hwy/per_target.cc \
 	libvroom/third_party/hwy/targets.cc
 
-OBJECTS = arrow_to_r.o vroom_arrow_chr.o vroom_dict_chr.o vroom_new.o vroom_arrow.o \
+OBJECTS = arrow_to_r.o vroom_arrow_chr.o vroom_dict_chr.o vroom_new.o vroom_arrow.o vroom_fwf_libvroom.o \
 	Iconv.o LocaleInfo.o altrep.o cpp11.o \
 	delimited_index.o delimited_index_connection.o \
 	fixed_width_index_connection.o gen.o grisu3.o guess_type.o \
@@ -84,6 +85,7 @@ OBJECTS = arrow_to_r.o vroom_arrow_chr.o vroom_dict_chr.o vroom_new.o vroom_arro
 	libvroom/src/parser/split_fields.o \
 	libvroom/src/parser/split_fields_iter.o \
 	libvroom/src/reader/csv_reader.o \
+	libvroom/src/reader/fwf_reader.o \
 	libvroom/src/reader/mmap_source.o \
 	libvroom/src/schema/type_inference.o \
 	libvroom/src/schema/type_parsers.o \
