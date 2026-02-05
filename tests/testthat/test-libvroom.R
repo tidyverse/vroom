@@ -325,12 +325,127 @@ test_that("libvroom handles cols_only()", {
   )
 })
 
-test_that("vroom with use_libvroom=TRUE gracefully falls back for .default", {
+test_that("can_libvroom_handle_col_types accepts compatible .default types", {
+  expect_true(can_libvroom_handle_col_types(cols(.default = col_character())))
+  expect_true(can_libvroom_handle_col_types(cols(.default = col_double())))
+  expect_true(can_libvroom_handle_col_types(cols(.default = col_integer())))
+  expect_true(can_libvroom_handle_col_types(cols(.default = col_logical())))
+  expect_true(can_libvroom_handle_col_types(cols(.default = col_date())))
+  expect_true(can_libvroom_handle_col_types(cols(.default = col_datetime())))
+  expect_true(can_libvroom_handle_col_types(cols(.default = col_guess())))
+  expect_true(can_libvroom_handle_col_types(cols(.default = col_skip())))
+})
+
+test_that("can_libvroom_handle_col_types rejects incompatible .default types", {
+  expect_false(can_libvroom_handle_col_types(cols(.default = col_number())))
+  expect_false(can_libvroom_handle_col_types(cols(.default = col_time())))
+  expect_false(can_libvroom_handle_col_types(cols(.default = col_factor())))
+  expect_false(
+    can_libvroom_handle_col_types(cols(
+      .default = col_date(format = "%m/%d/%Y")
+    ))
+  )
+})
+
+test_that("libvroom handles cols(.default = col_character())", {
+  test_libvroom(
+    "a,b,c\n1,2.5,TRUE\n3,4.5,FALSE\n",
+    delim = ",",
+    col_types = cols(.default = col_character()),
+    equals = tibble::tibble(
+      a = c("1", "3"),
+      b = c("2.5", "4.5"),
+      c = c("TRUE", "FALSE")
+    )
+  )
+})
+
+test_that("libvroom handles cols(.default = col_double())", {
+  test_libvroom(
+    "a,b,c\n1,2,3\n4,5,6\n",
+    delim = ",",
+    col_types = cols(.default = col_double()),
+    equals = tibble::tibble(a = c(1, 4), b = c(2, 5), c = c(3, 6))
+  )
+})
+
+test_that("libvroom handles cols(.default = col_integer())", {
+  test_libvroom(
+    "a,b,c\n1,2,3\n4,5,6\n",
+    delim = ",",
+    col_types = cols(.default = col_integer()),
+    equals = tibble::tibble(a = c(1L, 4L), b = c(2L, 5L), c = c(3L, 6L))
+  )
+})
+
+test_that("libvroom handles list(.default = 'i') shorthand", {
   test_libvroom(
     "a,b,c\n1,2,3\n4,5,6\n",
     delim = ",",
     col_types = list(.default = "i"),
     equals = tibble::tibble(a = c(1L, 4L), b = c(2L, 5L), c = c(3L, 6L))
+  )
+})
+
+test_that("libvroom handles .default with named column overrides", {
+  test_libvroom(
+    "a,b,c\n1,2.5,hello\n3,4.5,world\n",
+    delim = ",",
+    col_types = cols(.default = col_character(), a = col_integer()),
+    equals = tibble::tibble(
+      a = c(1L, 3L),
+      b = c("2.5", "4.5"),
+      c = c("hello", "world")
+    )
+  )
+})
+
+test_that("libvroom handles .default = col_logical()", {
+  test_libvroom(
+    "a,b\nTRUE,FALSE\nFALSE,TRUE\n",
+    delim = ",",
+    col_types = cols(.default = col_logical()),
+    equals = tibble::tibble(a = c(TRUE, FALSE), b = c(FALSE, TRUE))
+  )
+})
+
+test_that("libvroom handles .default = col_date()", {
+  test_libvroom(
+    "a,b\n2023-01-20,2024-06-15\n2023-02-10,2024-07-20\n",
+    delim = ",",
+    col_types = cols(.default = col_date()),
+    equals = tibble::tibble(
+      a = as.Date(c("2023-01-20", "2023-02-10")),
+      b = as.Date(c("2024-06-15", "2024-07-20"))
+    )
+  )
+})
+
+test_that("libvroom handles .default = col_datetime()", {
+  test_libvroom(
+    "a,b\n2023-01-20T10:01:01,2024-06-15T12:30:00\n2023-02-10T08:00:00,2024-07-20T16:45:00\n",
+    delim = ",",
+    col_types = cols(.default = col_datetime()),
+    equals = tibble::tibble(
+      a = as.POSIXct(
+        c("2023-01-20 10:01:01", "2023-02-10 08:00:00"),
+        tz = "UTC"
+      ),
+      b = as.POSIXct(
+        c("2024-06-15 12:30:00", "2024-07-20 16:45:00"),
+        tz = "UTC"
+      )
+    )
+  )
+})
+
+test_that("libvroom falls back for unsupported .default types", {
+  # col_number needs R-side post-processing and can't be a native default
+  test_libvroom(
+    "a\n\"1,234.56\"\n\"7,890.12\"\n",
+    delim = "\t",
+    col_types = cols(.default = col_number()),
+    equals = tibble::tibble(a = c(1234.56, 7890.12))
   )
 })
 

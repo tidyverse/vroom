@@ -64,8 +64,8 @@ vroom_libvroom_fwf_ <- function(input, col_starts, col_ends, col_names, trim_ws,
   .Call(`_vroom_vroom_libvroom_fwf_`, input, col_starts, col_ends, col_names, trim_ws, comment, skip_empty_rows, na_values, skip, n_max, num_threads, col_types, col_type_names)
 }
 
-vroom_libvroom_ <- function(input, delim, quote, has_header, skip, comment, skip_empty_rows, trim_ws, na_values, num_threads, strings_as_factors, use_altrep, col_types, col_type_names) {
-  .Call(`_vroom_vroom_libvroom_`, input, delim, quote, has_header, skip, comment, skip_empty_rows, trim_ws, na_values, num_threads, strings_as_factors, use_altrep, col_types, col_type_names)
+vroom_libvroom_ <- function(input, delim, quote, has_header, skip, comment, skip_empty_rows, trim_ws, na_values, num_threads, strings_as_factors, use_altrep, col_types, col_type_names, default_col_type) {
+  .Call(`_vroom_vroom_libvroom_`, input, delim, quote, has_header, skip, comment, skip_empty_rows, trim_ws, na_values, num_threads, strings_as_factors, use_altrep, col_types, col_type_names, default_col_type)
 }
 
 vroom_write_ <- function(input, filename, delim, eol, na_str, col_names, append, options, num_threads, progress, buf_lines) {

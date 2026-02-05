@@ -272,6 +272,16 @@ vroom <- function(
     col_type_names <- ct$col_type_names
     resolved_spec <- ct$resolved_spec
 
+    # Convert .default to libvroom int for columns without explicit types
+    default_col_type <- 0L
+    if (
+      !is.null(resolved_spec) &&
+        !is.null(resolved_spec$default) &&
+        !inherits(resolved_spec$default, "collector_guess")
+    ) {
+      default_col_type <- collector_to_libvroom_int(resolved_spec$default)
+    }
+
     out <- vroom_libvroom_(
       input = input,
       delim = delim %||% "",
@@ -290,7 +300,8 @@ vroom <- function(
         isTRUE(altrep)
       },
       col_types = col_types_int,
-      col_type_names = col_type_names
+      col_type_names = col_type_names,
+      default_col_type = default_col_type
     )
 
     out <- filter_cols_only_and_skip(
@@ -512,48 +523,49 @@ can_use_libvroom <- function(
 # Mapping (matches libvroom::DataType enum):
 #   0 = UNKNOWN (guess), 1 = BOOL, 2 = INT32, 3 = INT64
 #   4 = FLOAT64, 5 = STRING, 6 = DATE, 7 = TIMESTAMP, -1 = skip
-col_types_to_libvroom <- function(spec) {
-  vapply(
-    spec$cols,
-    function(collector) {
-      cls <- class(collector)[[1]]
-      switch(
-        cls,
-        collector_skip = -1L,
-        collector_guess = 0L,
-        collector_logical = 1L,
-        collector_integer = 2L,
-        collector_big_integer = 5L,
-        collector_double = 4L,
-        collector_character = 5L,
-        collector_number = 5L,
-        collector_time = 5L,
-        collector_factor = 5L,
-        collector_date = {
-          if (
-            identical(collector$format, "") ||
-              identical(collector$format, "%AD")
-          ) {
-            6L
-          } else {
-            5L
-          }
-        },
-        collector_datetime = {
-          if (
-            identical(collector$format, "") ||
-              identical(collector$format, "%AD")
-          ) {
-            7L
-          } else {
-            5L
-          }
-        },
+# Convert a single collector to a libvroom DataType integer.
+# Returns: -1 (skip), 0 (guess), 1 (BOOL), 2 (INT32), 4 (FLOAT64),
+#          5 (STRING, needs R post-processing), 6 (DATE), 7 (TIMESTAMP)
+collector_to_libvroom_int <- function(collector) {
+  cls <- class(collector)[[1]]
+  switch(
+    cls,
+    collector_skip = -1L,
+    collector_guess = 0L,
+    collector_logical = 1L,
+    collector_integer = 2L,
+    collector_big_integer = 5L,
+    collector_double = 4L,
+    collector_character = 5L,
+    collector_number = 5L,
+    collector_time = 5L,
+    collector_factor = 5L,
+    collector_date = {
+      if (
+        identical(collector$format, "") ||
+          identical(collector$format, "%AD")
+      ) {
+        6L
+      } else {
         5L
-      )
+      }
     },
-    integer(1)
+    collector_datetime = {
+      if (
+        identical(collector$format, "") ||
+          identical(collector$format, "%AD")
+      ) {
+        7L
+      } else {
+        5L
+      }
+    },
+    5L
   )
+}
+
+col_types_to_libvroom <- function(spec) {
+  vapply(spec$cols, collector_to_libvroom_int, integer(1))
 }
 
 # Check if all col_types can be handled natively by libvroom.
@@ -597,12 +609,29 @@ can_libvroom_handle_col_types <- function(col_types) {
       return(FALSE)
     }
   }
-  # Check .default too — if it's anything other than guess/skip, fall back.
-  # We can't expand .default to all columns before the C++ call because we
-  # don't know column count yet, so libvroom would use inferred types instead.
+  # Check .default against the same type compatibility rules as explicit columns
   if (!is.null(spec$default)) {
     cls <- class(spec$default)[[1]]
-    if (!(cls %in% c("collector_guess", "collector_skip"))) {
+    if (cls %in% c("collector_guess", "collector_skip")) {
+      # Always OK
+    } else if (
+      cls %in%
+        c("collector_number", "collector_time", "collector_big_integer")
+    ) {
+      return(FALSE)
+    } else if (cls == "collector_factor") {
+      return(FALSE)
+    } else if (
+      cls == "collector_date" &&
+        !identical(spec$default$format, "") &&
+        !identical(spec$default$format, "%AD")
+    ) {
+      return(FALSE)
+    } else if (
+      cls == "collector_datetime" &&
+        !identical(spec$default$format, "") &&
+        !identical(spec$default$format, "%AD")
+    ) {
       return(FALSE)
     }
   }
@@ -620,7 +649,11 @@ build_libvroom_spec <- function(
 ) {
   if (!is.null(resolved_spec)) {
     spec_out <- resolved_spec
-    if (length(all_col_names) > 0 && length(spec_out$cols) > 0) {
+    if (length(spec_out$cols) == 0 && length(all_col_names) > 0) {
+      # Pure .default spec: expand to all columns
+      spec_out$cols <- rep(list(spec_out$default), length(all_col_names))
+      names(spec_out$cols) <- all_col_names
+    } else if (length(all_col_names) > 0 && length(spec_out$cols) > 0) {
       if (is.null(names(spec_out$cols)) || all(names(spec_out$cols) == "")) {
         # Positional spec: assign column names from the file
         if (length(spec_out$cols) <= length(all_col_names)) {
@@ -721,6 +754,25 @@ apply_col_postprocessing <- function(out, spec, col_types_int, col_type_names) {
       out[[out_col]] <- apply_collector(out[[out_col]], collector)
     }
   }
+
+  # Apply .default post-processing to columns not explicitly in spec$cols
+  if (
+    !is.null(spec$default) &&
+      !inherits(spec$default, "collector_guess") &&
+      !inherits(spec$default, "collector_skip") &&
+      !inherits(spec$default, "collector_character")
+  ) {
+    default_int <- collector_to_libvroom_int(spec$default)
+    if (default_int == 5L) {
+      spec_col_names <- names(spec$cols)
+      for (i in seq_along(out_names)) {
+        if (!(out_names[[i]] %in% spec_col_names)) {
+          out[[i]] <- apply_collector(out[[i]], spec$default)
+        }
+      }
+    }
+  }
+
   out
 }
 

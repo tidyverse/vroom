@@ -20,7 +20,8 @@
     bool strings_as_factors,
     bool use_altrep,
     const std::vector<int>& col_types,
-    const cpp11::strings& col_type_names) {
+    const cpp11::strings& col_type_names,
+    int default_col_type) {
 
   libvroom::CsvOptions opts;
   if (!delim.empty())
@@ -44,6 +45,32 @@
 
   open_input_source(reader, input);
   apply_schema_overrides(reader, col_types, col_type_names);
+
+  // Apply default column type to columns not explicitly typed
+  if (default_col_type > 0) {
+    auto schema_copy = reader.schema();
+    for (size_t i = 0; i < schema_copy.size(); ++i) {
+      bool has_explicit = false;
+      if (!col_types.empty()) {
+        if (col_type_names.size() > 0) {
+          // Named: check if this column was in the named list
+          for (R_xlen_t j = 0; j < col_type_names.size(); ++j) {
+            if (schema_copy[i].name == std::string(col_type_names[j])) {
+              has_explicit = true;
+              break;
+            }
+          }
+        } else {
+          // Positional: columns within col_types range are explicit
+          has_explicit = (i < col_types.size());
+        }
+      }
+      if (!has_explicit) {
+        schema_copy[i].type = static_cast<libvroom::DataType>(default_col_type);
+      }
+    }
+    reader.set_schema(schema_copy);
+  }
 
   const auto& schema = reader.schema();
 
