@@ -1,0 +1,234 @@
+---
+title: "Error Handling"
+---
+
+## Overview
+
+libvroom provides a comprehensive error handling framework with configurable behavior. The parser can detect 16 different error types with three severity levels, enabling applications to handle malformed CSV data gracefully.
+
+## Error Modes
+
+The parser supports three error handling modes:
+
+| Mode | Behavior | Use Case |
+|------|----------|----------|
+| `STRICT` | Stop on first error | Data validation, strict compliance |
+| `PERMISSIVE` | Collect all errors, try to recover | Production parsing with logging |
+| `BEST_EFFORT` | Ignore errors, parse what's possible | Exploratory analysis, tolerant parsing |
+
+### Example
+
+```cpp
+#include <libvroom.h>
+
+// Method 1: Use Parser result's built-in error handling (default: PERMISSIVE)
+libvroom::Parser parser;
+auto result = parser.parse(buffer.data(), buffer.size());
+
+if (result.has_errors()) {
+    std::cerr << result.error_summary() << "\n";
+}
+
+// Method 2: External error collector with specific mode
+libvroom::ErrorCollector strict(libvroom::ErrorMode::FAIL_FAST);
+auto result2 = parser.parse(buffer.data(), buffer.size(), {.errors = &strict});
+
+// Method 3: CLI with strict mode
+// vroom head --strict data.csv
+```
+
+## Error Types
+
+### Quote-Related Errors
+
+| Error Code | Description | Severity |
+|------------|-------------|----------|
+| `UNCLOSED_QUOTE` | Quoted field not closed before EOF | FATAL |
+| `INVALID_QUOTE_ESCAPE` | Invalid quote escape sequence | ERROR |
+| `QUOTE_IN_UNQUOTED_FIELD` | Quote appears in middle of unquoted field | ERROR |
+
+**Example - Unclosed quote:**
+```csv
+name,description
+Alice,"Hello World
+Bob,Hi
+```
+
+### Field Structure Errors
+
+| Error Code | Description | Severity |
+|------------|-------------|----------|
+| `INCONSISTENT_FIELD_COUNT` | Row has different number of fields than header | ERROR |
+| `FIELD_TOO_LARGE` | Field exceeds maximum size limit | ERROR |
+
+**Example - Inconsistent fields:**
+```csv
+name,age,city
+Alice,30
+Bob,25,NYC,USA
+```
+
+### Line Ending Errors
+
+| Error Code | Description | Severity |
+|------------|-------------|----------|
+| `MIXED_LINE_ENDINGS` | File uses inconsistent line endings | WARNING |
+| `INVALID_LINE_ENDING` | Invalid line ending sequence | ERROR |
+
+### Encoding Errors
+
+| Error Code | Description | Severity |
+|------------|-------------|----------|
+| `INVALID_UTF8` | Invalid UTF-8 sequence | ERROR |
+| `NULL_BYTE` | Unexpected null byte in data | ERROR |
+
+### Structure Errors
+
+| Error Code | Description | Severity |
+|------------|-------------|----------|
+| `EMPTY_HEADER` | Header row is empty | ERROR |
+| `DUPLICATE_COLUMN_NAMES` | Header contains duplicate column names | WARNING |
+
+## Severity Levels
+
+| Severity | Meaning |
+|----------|---------|
+| `WARNING` | Non-fatal, parser continues (e.g., mixed line endings) |
+| `ERROR` | Recoverable, can skip affected row |
+| `FATAL` | Unrecoverable, parsing must stop |
+
+## Using the ErrorCollector
+
+```cpp
+#include "error.h"
+#include "two_pass.h"
+
+void parse_with_errors(const uint8_t* buf, size_t len) {
+    // Create parser and error collector
+    libvroom::TwoPass parser;
+    auto idx = parser.init(len, 1);
+    libvroom::ErrorCollector errors(libvroom::ErrorMode::PERMISSIVE);
+
+    // Parse with error collection
+    bool success = parser.parse_with_errors(buf, idx, len, errors);
+
+    // Check for errors
+    if (errors.has_errors()) {
+        std::cout << "Found " << errors.error_count() << " errors\n";
+
+        // Iterate through errors
+        for (const auto& err : errors.errors()) {
+            std::cout << "Line " << err.line
+                      << ", Col " << err.column
+                      << ": " << err.message << "\n";
+        }
+    }
+
+    // Check specific conditions
+    if (errors.has_fatal_errors()) {
+        std::cerr << "Fatal error encountered!\n";
+    }
+
+    // Get summary
+    std::cout << errors.summary() << "\n";
+}
+```
+
+## Error Limits
+
+To prevent out-of-memory issues with malformed files containing many errors, ErrorCollector has a configurable maximum error limit:
+
+```cpp
+// Default limit is 10,000 errors
+libvroom::ErrorCollector errors(libvroom::ErrorMode::PERMISSIVE);
+
+// Custom limit
+libvroom::ErrorCollector errors(libvroom::ErrorMode::PERMISSIVE, 1000);
+
+// Check if limit reached
+if (errors.at_error_limit()) {
+    std::cerr << "Error limit reached, some errors may not be reported\n";
+}
+```
+
+## Multi-threaded Error Collection
+
+When parsing with multiple threads, each thread collects errors locally. After parsing, errors are merged and sorted by byte offset:
+
+```cpp
+libvroom::TwoPass parser;
+auto idx = parser.init(len, 4);  // 4 threads
+libvroom::ErrorCollector errors(libvroom::ErrorMode::PERMISSIVE);
+
+// Errors will be collected per-thread and merged
+parser.parse_two_pass_with_errors(buf, idx, len, errors);
+
+// Errors are sorted by byte offset for consistent ordering
+for (const auto& err : errors.errors()) {
+    // Process errors in file order
+}
+```
+
+## Streaming Parser Error Handling
+
+The streaming parser has its own error handling mechanism:
+
+```cpp
+#include <streaming.h>
+
+libvroom::StreamConfig config;
+config.error_mode = libvroom::ErrorMode::PERMISSIVE;
+
+libvroom::StreamReader reader("data.csv", config);
+
+// Process rows
+for (const auto& row : reader) {
+    process(row);
+}
+
+// Check for errors after processing
+if (reader.error_collector().has_errors()) {
+    std::cerr << reader.error_collector().summary() << "\n";
+}
+```
+
+## CLI Error Handling
+
+The CLI tool supports strict mode via the `-S` or `--strict` flag:
+
+```bash
+# Default: permissive mode (continues on errors)
+vroom head data.csv
+
+# Strict mode: exit with code 1 on any error
+vroom head --strict data.csv
+```
+
+This is useful for scripts and CI pipelines where you want to fail fast on malformed data.
+
+## Test Files
+
+The test suite includes 16+ malformed CSV files in `test/data/malformed/` covering all error types:
+
+- `unclosed_quote.csv` - Unclosed quote in middle of file
+- `unclosed_quote_eof.csv` - Unclosed quote at end of file
+- `invalid_quote_escape.csv` - Invalid escape sequences
+- `quote_in_unquoted_field.csv` - Quote in unquoted context
+- `inconsistent_columns.csv` - Varying field counts
+- `mixed_line_endings.csv` - LF and CRLF mixed
+- `null_byte.csv` - Embedded null characters
+- `empty_header.csv` - Missing header row
+- `duplicate_column_names.csv` - Repeated column names
+- And more...
+
+## Best Practices
+
+1. **For data validation**: Use `STRICT` mode to catch the first error and report it clearly to users.
+
+2. **For production parsing**: Use `PERMISSIVE` mode to collect all errors while parsing what you can, then log errors for later review.
+
+3. **For exploratory analysis**: Use `BEST_EFFORT` mode when you want to process as much data as possible, ignoring errors.
+
+4. **Set error limits**: In production, always set a reasonable error limit to prevent memory exhaustion from very malformed files.
+
+5. **Check for fatal errors**: Always check `has_fatal_errors()` even in permissive mode, as some errors (like unclosed quotes at EOF) may affect the validity of the entire parse.

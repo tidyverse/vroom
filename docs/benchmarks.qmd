@@ -1,0 +1,279 @@
+---
+title: "Benchmarks"
+---
+
+## Overview
+
+libvroom includes a comprehensive benchmark suite for measuring parsing performance across different dimensions: file sizes, column counts, thread scaling, and data types.
+
+## Comparative Performance: libvroom vs zsv
+
+The following benchmarks compare libvroom against [zsv](https://github.com/liquidaty/zsv), a high-performance CSV parser. Tests were run on Apple Silicon (M3 Max, 14 cores) using `hyperfine` for accurate measurements.
+
+### Single-Threaded Performance
+
+libvroom's SIMD-optimized parsing provides significant speedups over zsv in single-threaded mode:
+
+| File Size | libvroom Time | libvroom Throughput | zsv Time | zsv Throughput | Speedup |
+|-----------|--------------|-------------------|----------|----------------|---------|
+| 10 MB | 3.2 ms | 3.1 GB/s | 12.7 ms | 787 MB/s | **4.0x** |
+| 50 MB | 12.6 ms | 4.0 GB/s | 54.3 ms | 921 MB/s | **4.3x** |
+| 100 MB | 22.9 ms | 4.4 GB/s | 105.2 ms | 951 MB/s | **4.6x** |
+| 200 MB | 42.4 ms | 4.7 GB/s | 206.1 ms | 970 MB/s | **4.9x** |
+
+Key observations:
+
+- libvroom achieves **3-5 GB/s** single-threaded throughput on Apple Silicon
+- Performance advantage increases with file size (4.0x at 10MB to 4.9x at 200MB)
+- Larger files benefit more from SIMD vectorization as memory bandwidth becomes the bottleneck
+
+### Multi-Threaded Performance
+
+Both parsers support multi-threaded parsing. Here's how they compare at 100MB:
+
+| Parser | Configuration | Time | Throughput |
+|--------|---------------|------|------------|
+| libvroom | 1 thread | 22.9 ms | 4.4 GB/s |
+| libvroom | 4 threads | 18.2 ms | 5.5 GB/s |
+| libvroom | 8 threads | 18.0 ms | 5.6 GB/s |
+| zsv | 1 thread | 105.2 ms | 951 MB/s |
+| zsv | 4 threads | 31.3 ms | 3.2 GB/s |
+| zsv | --parallel (auto) | 16.1 ms | 6.2 GB/s |
+
+For multi-threaded workloads:
+
+- libvroom's single-threaded performance often matches or exceeds multi-threaded zsv
+- zsv's `--parallel` mode with auto-detection is highly optimized for its architecture
+- At 4 threads, libvroom is **1.7x faster** than zsv (18.2 ms vs 31.3 ms)
+
+## Performance Summary
+
+Based on benchmarks run on Apple Silicon (M3 Max, 14 cores):
+
+| Benchmark | Throughput | Notes |
+|-----------|------------|-------|
+| Simple CSV (1 thread) | ~734 MB/s | Small file baseline |
+| Many Rows (1 thread) | ~1.37 GB/s | Row-heavy workload |
+| Wide Columns (1 thread) | ~1.69 GB/s | Column-heavy workload |
+| 100KB file | ~1.84 GB/s | L2/L3 cache fits |
+| 1MB file | ~19.2 GB/s | Multi-threaded |
+
+## File Size Scaling
+
+Performance varies with file size due to cache hierarchy effects:
+
+| File Size | Throughput | Cache Level |
+|-----------|------------|-------------|
+| 1 KB | ~19 MB/s | L1 cache |
+| 10 KB | ~192 MB/s | L1/L2 cache |
+| 100 KB | ~1.84 GB/s | L2/L3 cache |
+| 1 MB | ~19.2 GB/s | L3/memory + threading |
+
+Larger files benefit significantly from multi-threaded parsing as data exceeds cache sizes.
+
+## Thread Scaling at Large File Sizes
+
+For large files (100MB+), multi-threading provides meaningful speedups:
+
+### 100MB File
+
+| Threads | libvroom Time | Throughput | Scaling |
+|---------|--------------|------------|---------|
+| 1 | 22.9 ms | 4.4 GB/s | 1.00x |
+| 2 | 19.9 ms | 5.0 GB/s | 1.15x |
+| 4 | 18.2 ms | 5.5 GB/s | 1.26x |
+| 8 | 18.0 ms | 5.6 GB/s | 1.27x |
+
+### 200MB File
+
+| Threads | libvroom Time | Throughput | Scaling |
+|---------|--------------|------------|---------|
+| 1 | 42.4 ms | 4.7 GB/s | 1.00x |
+| 4 | 33.5 ms | 6.0 GB/s | 1.27x |
+| 8 | 32.3 ms | 6.2 GB/s | 1.31x |
+| 14 | 32.4 ms | 6.2 GB/s | 1.31x |
+
+Thread scaling observations:
+
+- Diminishing returns after 4 threads on this workload
+- Single-threaded performance is already very high due to SIMD optimization
+- Memory bandwidth becomes the limiting factor for large files
+
+## Running Benchmarks
+
+### Build and Run
+
+```bash
+# Build with Release optimizations
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+
+# Run all benchmarks
+./build/libvroom_benchmark
+
+# Run specific benchmark categories
+./build/libvroom_benchmark --benchmark_filter="BM_Parse.*"
+./build/libvroom_benchmark --benchmark_filter="BM_FileSizes.*"
+```
+
+### Output Formats
+
+```bash
+# Console output (default)
+./build/libvroom_benchmark
+
+# JSON output for analysis
+./build/libvroom_benchmark --benchmark_format=json --benchmark_out=results.json
+
+# CSV output
+./build/libvroom_benchmark --benchmark_format=csv --benchmark_out=results.csv
+```
+
+### Automated Benchmarking
+
+Use the benchmark script for comprehensive testing:
+
+```bash
+./benchmark/run_benchmarks.sh ./build/libvroom_benchmark
+```
+
+This runs all benchmark categories and generates reports in `benchmark_results/`.
+
+## Benchmark Categories
+
+### Basic Benchmarks
+
+Tests fundamental parsing operations:
+
+- File parsing with different thread counts
+- Quoted field handling
+- Different separator types (comma, tab, semicolon, pipe)
+
+### Dimension Benchmarks
+
+Tests scaling across dimensions:
+
+- **File Sizes**: 1KB to 100MB
+- **Column Counts**: 2 to 500 columns
+- **Row Counts**: 100 to 1M rows
+- **Data Types**: integers, floats, strings, mixed
+
+### Real-World Benchmarks
+
+Tests with realistic data patterns:
+
+- NYC Taxi data (19 columns)
+- Financial time-series data
+- Server log files
+- Wide tables (100+ columns)
+
+#### Real-World Dataset Results (Apple Silicon)
+
+For realistic file I/O performance, see the comparative benchmarks above which show **3-5 GB/s** single-threaded throughput on actual files.
+
+The internal benchmark suite measures in-memory parsing performance:
+
+| Dataset | Rows | Size | Parsing Time |
+|---------|------|------|--------------|
+| Financial data | 1K | 68 KB | 0.08 ms |
+| Financial data | 10K | 684 KB | 0.11 ms |
+| Financial data | 100K | 6.8 MB | 0.33 ms |
+| Log data | 1K | 89 KB | 0.06 ms |
+| Log data | 10K | 900 KB | 0.10 ms |
+| Log data | 100K | 9.1 MB | 0.38 ms |
+
+These in-memory benchmarks demonstrate parsing efficiency but don't include file I/O overhead. For end-to-end performance with file I/O, use the CLI comparison benchmarks in `benchmark/cli_comparison.sh`.
+
+### SIMD Benchmarks
+
+Tests SIMD effectiveness:
+
+- SIMD vs scalar comparison
+- Quote detection with varying densities
+- Memory access patterns
+
+## Performance Targets
+
+Based on the production roadmap:
+
+| Metric | Target | Status |
+|--------|--------|--------|
+| Peak throughput (AVX2) | >5 GB/s | In progress |
+| Peak throughput (AVX-512) | >8 GB/s | Planned |
+| Thread scaling efficiency | >80% at 16 threads | Testing |
+| Memory overhead | <10% over file size | Achieved |
+
+## Comparison with Other Parsers
+
+The benchmark suite includes comparison benchmarks against:
+
+- Naive (non-SIMD) parser implementation
+- Raw memory bandwidth baseline
+
+To run comparison benchmarks:
+
+```bash
+./build/libvroom_benchmark --benchmark_filter="BM_Compare.*"
+```
+
+## CI Integration
+
+Benchmarks can be integrated into CI pipelines:
+
+```bash
+# Run with regression detection
+./benchmark/run_benchmarks.sh ./build/libvroom_benchmark results/ baseline.json 10.0
+
+# Exit code indicates regression if threshold exceeded
+if [ $? -ne 0 ]; then
+    echo "Performance regression detected!"
+    exit 1
+fi
+```
+
+## Platform Notes
+
+### x86-64 (Linux)
+
+- Full AVX2/AVX-512 support
+- RAPL energy measurements available
+- Best for comprehensive benchmarking
+- Expected throughput: 5+ GB/s (AVX2), 8+ GB/s (AVX-512)
+
+### ARM64 (macOS Apple Silicon)
+
+- NEON vectorization (128-bit vectors)
+- Excellent single-core performance: 3-5 GB/s typical
+- M-series chips benefit from high memory bandwidth and efficient caches
+- Energy measurements via power estimates
+- Tested on M3 Max (14 cores): 4.7 GB/s single-threaded, 6.2 GB/s multi-threaded
+
+### ARM64 (Linux)
+
+- NEON vectorization
+- Performance counters available
+- Expected throughput comparable to Apple Silicon with similar memory bandwidth
+
+## Reproducing These Benchmarks
+
+To reproduce the comparative benchmarks on your system:
+
+```bash
+# Install dependencies (macOS)
+brew install zsv hyperfine
+
+# Build libvroom
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+
+# Generate test files
+TEMP_DIR="/tmp/libvroom_benchmark"
+mkdir -p "$TEMP_DIR"
+
+# Run comparative benchmark (example: 100MB)
+hyperfine --warmup 2 \
+  "./build/vroom count -t 1 $TEMP_DIR/test_100mb.csv" \
+  "zsv count $TEMP_DIR/test_100mb.csv"
+```
+
+The `benchmark/cli_comparison.sh` script automates comprehensive comparisons.

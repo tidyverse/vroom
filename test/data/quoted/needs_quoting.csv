@@ -1,0 +1,4 @@
+Name,Description,Notes
+Simple,No special chars,OK
+"With,comma","Has comma inside","Should quote"
+"With""quote","Has quote inside","Should escape"
