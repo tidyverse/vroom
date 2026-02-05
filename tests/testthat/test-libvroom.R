@@ -523,6 +523,92 @@ test_that("libvroom spec reflects full file schema with col_select", {
   expect_true(all(c("a", "b", "c") %in% names(s$cols)))
 })
 
+test_that("libvroom handles comment character", {
+  test_libvroom(
+    "# this is a comment\na,b,c\n1,2,3\n4,5,6\n",
+    delim = ",",
+    comment = "#",
+    equals = tibble::tibble(a = c(1L, 4L), b = c(2L, 5L), c = c(3L, 6L))
+  )
+})
+
+test_that("libvroom auto-detects delimiter", {
+  # CSV auto-detection
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+
+  out_con <- file(tf, "wb", encoding = "UTF-8")
+  writeBin(charToRaw("a,b,c\n1,2,3\n4,5,6\n"), out_con)
+  close(out_con)
+
+  result <- vroom(
+    tf,
+    delim = NULL,
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+  expect_equal(
+    result,
+    tibble::tibble(a = c(1L, 4L), b = c(2L, 5L), c = c(3L, 6L))
+  )
+
+  # TSV auto-detection
+  tf2 <- tempfile(fileext = ".tsv")
+  on.exit(unlink(tf2), add = TRUE)
+
+  out_con2 <- file(tf2, "wb", encoding = "UTF-8")
+  writeBin(charToRaw("a\tb\tc\n1\t2\t3\n4\t5\t6\n"), out_con2)
+  close(out_con2)
+
+  result2 <- vroom(
+    tf2,
+    delim = NULL,
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+  expect_equal(
+    result2,
+    tibble::tibble(a = c(1L, 4L), b = c(2L, 5L), c = c(3L, 6L))
+  )
+})
+
+test_that("libvroom handles skip parameter", {
+  test_libvroom(
+    "metadata line 1\nmetadata line 2\na,b,c\n1,2,3\n4,5,6\n",
+    delim = ",",
+    skip = 2,
+    equals = tibble::tibble(a = c(1L, 4L), b = c(2L, 5L), c = c(3L, 6L))
+  )
+})
+
+test_that("libvroom handles skip with CRLF line endings", {
+  test_libvroom(
+    "skip me\r\na,b\r\n1,2\r\n3,4\r\n",
+    delim = ",",
+    skip = 1,
+    equals = tibble::tibble(a = c(1L, 3L), b = c(2L, 4L))
+  )
+})
+
+test_that("libvroom handles skip combined with comment", {
+  test_libvroom(
+    "metadata\n# comment\na,b\n1,2\n3,4\n",
+    delim = ",",
+    skip = 1,
+    comment = "#",
+    equals = tibble::tibble(a = c(1L, 3L), b = c(2L, 4L))
+  )
+})
+
+test_that("libvroom handles n_max parameter", {
+  test_libvroom(
+    "a,b,c\n1,2,3\n4,5,6\n7,8,9\n",
+    delim = ",",
+    n_max = 2,
+    equals = tibble::tibble(a = c(1L, 4L), b = c(2L, 5L), c = c(3L, 6L))
+  )
+})
+
 test_that("libvroom can read multiple files", {
   dir <- withr::local_tempdir()
 

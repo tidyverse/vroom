@@ -295,27 +295,43 @@ vroom <- function(
         }
       }
 
-      one <- vroom_libvroom_(
-        input = input,
-        delim = delim %||% "",
-        quote = quote,
-        has_header = isTRUE(col_names),
-        skip = as.integer(skip),
-        comment = comment,
-        skip_empty_rows = skip_empty_rows,
-        trim_ws = trim_ws,
-        na_values = na_str,
-        num_threads = as.integer(num_threads),
-        strings_as_factors = FALSE,
-        use_altrep = if (is.character(altrep)) {
-          "chr" %in% altrep
-        } else {
-          isTRUE(altrep)
-        },
-        col_types = col_types_int,
-        col_type_names = libvroom_col_type_names,
-        default_col_type = default_col_type
+      one <- tryCatch(
+        vroom_libvroom_(
+          input = input,
+          delim = delim %||% "",
+          quote = quote,
+          has_header = isTRUE(col_names),
+          skip = as.integer(skip),
+          comment = comment,
+          skip_empty_rows = skip_empty_rows,
+          trim_ws = trim_ws,
+          na_values = na_str,
+          num_threads = as.integer(num_threads),
+          strings_as_factors = FALSE,
+          use_altrep = if (is.character(altrep)) {
+            "chr" %in% altrep
+          } else {
+            isTRUE(altrep)
+          },
+          col_types = col_types_int,
+          col_type_names = libvroom_col_type_names,
+          default_col_type = default_col_type
+        ),
+        error = function(e) {
+          if (
+            grepl("All data was skipped", conditionMessage(e), fixed = TRUE)
+          ) {
+            NULL
+          } else {
+            stop(e)
+          }
+        }
       )
+
+      # If skip consumed all data, signal fallback to legacy parser
+      if (is.null(one)) {
+        return("FALLBACK_TO_LEGACY")
+      }
 
       # Apply col_names renaming for non-TRUE col_names
       if (is.character(col_names)) {
@@ -377,6 +393,13 @@ vroom <- function(
         next
       }
 
+      # If skip consumed all data, fall back to legacy parser which can
+      # infer column structure from col_types alone
+      if (identical(res, "FALLBACK_TO_LEGACY")) {
+        use_libvroom <- FALSE
+        break
+      }
+
       # Keep the first result for column name/type info even if 0 rows
       if (is.null(first_result)) {
         first_result <- res
@@ -401,54 +424,63 @@ vroom <- function(
       }
     }
 
-    # If no results at all, return empty tibble
-    if (is.null(first_result)) {
-      return(tibble::tibble())
-    }
-
-    # Combine results
-    if (length(results) == 0) {
-      # All files were empty (header-only); use first_result for structure
-      out <- first_result$data
-      if (!is.null(id)) {
-        out <- cbind(
-          stats::setNames(
-            data.frame(character(0), stringsAsFactors = FALSE),
-            id
-          ),
-          out
-        )
+    # If skip consumed all data, fall back to legacy parser which can
+    # infer column structure from col_types alone
+    if (use_libvroom) {
+      # If no results at all, return empty tibble
+      if (is.null(first_result)) {
+        return(tibble::tibble())
       }
-    } else if (length(results) == 1) {
-      out <- results[[1]]$data
-    } else {
-      out <- vctrs::vec_rbind(!!!lapply(results, function(r) r$data))
+
+      # Combine results
+      if (length(results) == 0) {
+        # All files were empty (header-only); use first_result for structure
+        out <- first_result$data
+        if (!is.null(id)) {
+          out <- cbind(
+            stats::setNames(
+              data.frame(character(0), stringsAsFactors = FALSE),
+              id
+            ),
+            out
+          )
+        }
+      } else if (length(results) == 1) {
+        out <- results[[1]]$data
+      } else {
+        out <- vctrs::vec_rbind(!!!lapply(results, function(r) r$data))
+      }
+
+      out <- tibble::as_tibble(out, .name_repair = .name_repair)
+
+      # Build and attach spec attribute BEFORE col_select so it reflects
+      # the full file schema, not just selected columns.
+      # Exclude the id column from the spec column names.
+      all_col_names <- setdiff(names(out), id)
+      attr(out, "spec") <- build_libvroom_spec(
+        out[all_col_names],
+        first_result$resolved_spec,
+        first_result$col_types_int,
+        all_col_names,
+        delim = delim %||% ""
+      )
+
+      out <- apply_libvroom_col_select(out, col_select, id)
+
+      # Apply n_max row limit (R-side truncation)
+      if (!is.infinite(n_max) && n_max >= 0 && nrow(out) > n_max) {
+        out <- out[seq_len(n_max), , drop = FALSE]
+      }
+
+      out <- finalize_libvroom_result(out)
+
+      has_col_types <- !is.null(col_types) && !identical(col_types, list())
+      if (should_show_col_types(has_col_types, show_col_types)) {
+        show_col_types(out, locale)
+      }
+
+      return(out)
     }
-
-    out <- tibble::as_tibble(out, .name_repair = .name_repair)
-
-    # Build and attach spec attribute BEFORE col_select so it reflects
-    # the full file schema, not just selected columns.
-    # Exclude the id column from the spec column names.
-    all_col_names <- setdiff(names(out), id)
-    attr(out, "spec") <- build_libvroom_spec(
-      out[all_col_names],
-      first_result$resolved_spec,
-      first_result$col_types_int,
-      all_col_names,
-      delim = delim %||% ""
-    )
-
-    out <- apply_libvroom_col_select(out, col_select, id)
-
-    out <- finalize_libvroom_result(out)
-
-    has_col_types <- !is.null(col_types) && !identical(col_types, list())
-    if (should_show_col_types(has_col_types, show_col_types)) {
-      show_col_types(out, locale)
-    }
-
-    return(out)
   }
 
   # Fall back to old vroom_ parser for connections, multiple files, etc.
@@ -549,7 +581,8 @@ can_use_libvroom <- function(
   locale,
   comment = ""
 ) {
-  # Must have an explicit delimiter (libvroom doesn't auto-detect)
+  # Must have an explicit delimiter (libvroom auto-detection doesn't yet
+  # match legacy parser behavior for problems(), spec(), and edge cases)
   if (is.null(delim)) {
     return(FALSE)
   }
@@ -577,16 +610,6 @@ can_use_libvroom <- function(
 
   # Only allow col_types that libvroom handles natively
   if (!can_libvroom_handle_col_types(col_types)) {
-    return(FALSE)
-  }
-
-  # No row limits
-  if (!is.infinite(n_max) && n_max >= 0) {
-    return(FALSE)
-  }
-
-  # No skip
-  if (skip > 0) {
     return(FALSE)
   }
 

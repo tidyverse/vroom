@@ -369,6 +369,33 @@ static size_t skip_leading_comment_lines(const char* data, size_t size, char com
   return offset;
 }
 
+// Skip N lines (for the skip option). Returns offset past skipped lines.
+static size_t skip_n_lines(const char* data, size_t size, size_t n) {
+  if (n == 0 || size == 0) {
+    return 0;
+  }
+
+  size_t offset = 0;
+  size_t lines_skipped = 0;
+  while (offset < size && lines_skipped < n) {
+    // Scan to end of line
+    while (offset < size && data[offset] != '\n' && data[offset] != '\r') {
+      offset++;
+    }
+    // Advance past line ending
+    if (offset < size && data[offset] == '\r') {
+      offset++;
+      if (offset < size && data[offset] == '\n') {
+        offset++; // CRLF
+      }
+    } else if (offset < size && data[offset] == '\n') {
+      offset++;
+    }
+    lines_skipped++;
+  }
+  return offset;
+}
+
 CsvReader::CsvReader(const CsvOptions& options) : impl_(std::make_unique<Impl>(options)) {}
 
 CsvReader::~CsvReader() = default;
@@ -421,6 +448,17 @@ Result<bool> CsvReader::open(const std::string& path) {
       // UTF-8 BOM: skip past BOM bytes (no allocation/copy)
       impl_->data_ptr += impl_->detected_encoding.bom_length;
       impl_->data_size -= impl_->detected_encoding.bom_length;
+    }
+  }
+
+  // Skip N initial lines before dialect detection so auto-detection
+  // analyzes the actual CSV data, not skipped metadata lines.
+  if (impl_->options.skip > 0) {
+    size_t line_skip = skip_n_lines(impl_->data_ptr, impl_->data_size, impl_->options.skip);
+    impl_->data_ptr += line_skip;
+    impl_->data_size -= line_skip;
+    if (impl_->data_size == 0) {
+      return Result<bool>::failure("All data was skipped");
     }
   }
 
@@ -577,6 +615,17 @@ Result<bool> CsvReader::open_from_buffer(AlignedBuffer buffer) {
     } else if (impl_->detected_encoding.bom_length > 0) {
       impl_->data_ptr += impl_->detected_encoding.bom_length;
       impl_->data_size -= impl_->detected_encoding.bom_length;
+    }
+  }
+
+  // Skip N initial lines before dialect detection so auto-detection
+  // analyzes the actual CSV data, not skipped metadata lines.
+  if (impl_->options.skip > 0) {
+    size_t line_skip = skip_n_lines(impl_->data_ptr, impl_->data_size, impl_->options.skip);
+    impl_->data_ptr += line_skip;
+    impl_->data_size -= line_skip;
+    if (impl_->data_size == 0) {
+      return Result<bool>::failure("All data was skipped");
     }
   }
 

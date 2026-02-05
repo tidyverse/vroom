@@ -20,6 +20,7 @@ struct CsvOptions {
   bool has_header = true;
   bool skip_empty_rows = true;
   bool trim_ws = true;  // Trim leading/trailing whitespace from fields
+  size_t skip = 0;      // Number of lines to skip at start of file (before header)
   std::string null_values = "NA,null,NULL,"; // Comma-separated
   std::string true_values = "true,TRUE,True,yes,YES,Yes";
   std::string false_values = "false,FALSE,False,no,NO,No";
