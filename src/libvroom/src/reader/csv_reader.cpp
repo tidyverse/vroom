@@ -160,6 +160,19 @@ std::pair<size_t, bool> parse_chunk_with_state(
         field_len--;
       }
 
+      // Trim whitespace if enabled.
+      // Runs before quote-stripping: in RFC 4180, whitespace before a quote
+      // char makes the field unquoted, so this ordering handles well-formed CSV.
+      if (options.trim_ws) {
+        while (field_len > 0 && (field_data[0] == ' ' || field_data[0] == '\t')) {
+          field_data++;
+          field_len--;
+        }
+        while (field_len > 0 && (field_data[field_len - 1] == ' ' || field_data[field_len - 1] == '\t')) {
+          field_len--;
+        }
+      }
+
       std::string_view field_view(field_data, field_len);
 
       // Error detection within fields
@@ -1242,6 +1255,19 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
       // Strip trailing \r if present
       if (field_len > 0 && field_data[field_len - 1] == '\r') {
         field_len--;
+      }
+
+      // Trim whitespace if enabled.
+      // Runs before quote-stripping: in RFC 4180, whitespace before a quote
+      // char makes the field unquoted, so this ordering handles well-formed CSV.
+      if (options.trim_ws) {
+        while (field_len > 0 && (field_data[0] == ' ' || field_data[0] == '\t')) {
+          field_data++;
+          field_len--;
+        }
+        while (field_len > 0 && (field_data[field_len - 1] == ' ' || field_data[field_len - 1] == '\t')) {
+          field_len--;
+        }
       }
 
       std::string_view field_view(field_data, field_len);

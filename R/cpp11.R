@@ -60,8 +60,8 @@ whitespace_columns_ <- function(filename, skip, n, comment) {
   .Call(`_vroom_whitespace_columns_`, filename, skip, n, comment)
 }
 
-vroom_libvroom_ <- function(input, delim, quote, has_header, skip, comment, skip_empty_rows, na_values, num_threads, strings_as_factors, use_altrep) {
-  .Call(`_vroom_vroom_libvroom_`, input, delim, quote, has_header, skip, comment, skip_empty_rows, na_values, num_threads, strings_as_factors, use_altrep)
+vroom_libvroom_ <- function(input, delim, quote, has_header, skip, comment, skip_empty_rows, trim_ws, na_values, num_threads, strings_as_factors, use_altrep) {
+  .Call(`_vroom_vroom_libvroom_`, input, delim, quote, has_header, skip, comment, skip_empty_rows, trim_ws, na_values, num_threads, strings_as_factors, use_altrep)
 }
 
 vroom_write_ <- function(input, filename, delim, eol, na_str, col_names, append, options, num_threads, progress, buf_lines) {

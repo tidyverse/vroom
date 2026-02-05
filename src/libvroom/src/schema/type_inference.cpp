@@ -71,6 +71,11 @@ DataType TypeInference::infer_field(std::string_view value) {
   }
 
   if (all_digits && has_digit) {
+    // When guess_integer is false (default, R parity), treat integer-like values as double
+    if (!options_.guess_integer) {
+      return DataType::FLOAT64;
+    }
+
     // Check if it fits in int32
     if (value.size() <= 10) { // Max int32 is 10 digits
       // Try to parse as int32
@@ -150,10 +155,7 @@ std::vector<DataType> TypeInference::infer_from_sample(const char* data, size_t 
   size_t offset = 0;
   size_t rows_sampled = 0;
 
-  // Skip header if present
-  if (options_.has_header && offset < size) {
-    offset = finder.find_row_end(data, size, offset);
-  }
+  // Note: callers already pass data + header_end_offset, so no header skip needed here.
 
   // Sample rows
   while (offset < size && rows_sampled < max_rows) {

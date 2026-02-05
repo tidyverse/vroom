@@ -19,9 +19,13 @@ struct CsvOptions {
   char comment = '\0'; // No comment char by default
   bool has_header = true;
   bool skip_empty_rows = true;
+  bool trim_ws = true;  // Trim leading/trailing whitespace from fields
   std::string null_values = "NA,null,NULL,"; // Comma-separated
   std::string true_values = "true,TRUE,True,yes,YES,Yes";
   std::string false_values = "false,FALSE,False,no,NO,No";
+
+  // Type inference options
+  bool guess_integer = false; // When false, integer-like values infer as FLOAT64 (R parity)
 
   // Performance tuning
   size_t sample_rows = 1000; // Rows to sample for type inference

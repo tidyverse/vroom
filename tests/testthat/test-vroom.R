@@ -320,6 +320,26 @@ test_that("vroom can read a file with only headers", {
   )
 })
 
+test_that("libvroom infers correct types for single-row files", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+  writeLines(c("x,y", "1,hello"), tf)
+
+  res <- vroom(tf, delim = ",", show_col_types = FALSE)
+  expect_type(res$x, "double")
+  expect_type(res$y, "character")
+})
+
+test_that("libvroom trims whitespace from fields", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+  writeLines(c("x,y", "  1  ,  hello  "), tf)
+
+  res <- vroom(tf, delim = ",", show_col_types = FALSE)
+  expect_equal(res$x, 1)
+  expect_equal(res$y, "hello")
+})
+
 test_that("vroom can read an empty file", {
   test_vroom("\n", equals = tibble::tibble())
 
@@ -507,13 +527,25 @@ test_that("vroom uses the number of rows when guess_max = Inf", {
 
   # The type should be guessed wrong, because the character comes at the end
   expect_warning(
-    res <- vroom(tf, delim = "\t", col_types = list(), altrep = FALSE)
+    res <- vroom(
+      tf,
+      delim = "\t",
+      col_types = list(),
+      altrep = FALSE,
+      use_libvroom = FALSE
+    )
   )
   expect_type(res[["x"]], "double")
   expect_true(is.na(res[["x"]][[NROW(res) - 1]]))
 
   # The value should exist with guess_max = Inf
-  res <- vroom(tf, delim = "\t", guess_max = Inf, col_types = list())
+  res <- vroom(
+    tf,
+    delim = "\t",
+    guess_max = Inf,
+    col_types = list(),
+    use_libvroom = FALSE
+  )
   expect_type(res[["x"]], "character")
   expect_equal(res[["x"]][[NROW(res) - 1]], "foo")
 })
@@ -970,7 +1002,8 @@ test_that("leading whitespace effects guessing", {
     delim = ",",
     trim_ws = FALSE,
     progress = FALSE,
-    col_types = list()
+    col_types = list(),
+    use_libvroom = FALSE
   )
   expect_type(out[[1]], "character")
 
@@ -979,7 +1012,8 @@ test_that("leading whitespace effects guessing", {
     delim = ",",
     trim_ws = TRUE,
     progress = FALSE,
-    col_types = list()
+    col_types = list(),
+    use_libvroom = FALSE
   )
   expect_type(out[[1]], "double")
 })
@@ -1268,7 +1302,7 @@ test_that("vroom does not erronously warn for problems when there are embedded n
 
   vroom_write(df, path, delim = ",")
 
-  x <- vroom(path, delim = ",", col_types = list())
+  x <- vroom(path, delim = ",", col_types = list(), use_libvroom = FALSE)
   y <- utils::read.csv(path, stringsAsFactors = FALSE)
 
   expect_warning(expect_equal(as.data.frame(x), y), NA)
@@ -1364,4 +1398,25 @@ test_that("vroom(col_select =) output has 'spec_tbl_df' class, spec, and problem
     expect_equal(probs$row, 3)
     expect_equal(probs$col, 1)
   }
+})
+
+test_that("libvroom is used with col_types = list()", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+  writeLines(c("x,y", "1,hello", "2,world"), tf)
+
+  # Both should produce identical results via libvroom
+  res_null <- vroom(tf, delim = ",", col_types = NULL, show_col_types = FALSE)
+  res_list <- vroom(tf, delim = ",", col_types = list(), show_col_types = FALSE)
+  expect_equal(res_null, res_list)
+})
+
+test_that("use_libvroom = FALSE forces old parser", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+  writeLines(c("x", "1", "2"), tf)
+
+  # use_libvroom = FALSE should force old parser (which returns spec_tbl_df)
+  res <- vroom(tf, delim = ",", use_libvroom = FALSE, show_col_types = FALSE)
+  expect_s3_class(res, "spec_tbl_df")
 })

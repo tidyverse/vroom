@@ -27,7 +27,7 @@ vroom(
   progress = vroom_progress(),
   show_col_types = NULL,
   .name_repair = "unique",
-  use_libvroom = FALSE
+  use_libvroom = NULL
 )
 }
 \arguments{
@@ -181,9 +181,10 @@ This argument is passed on as \code{repair} to \code{\link[vctrs:vec_as_names]{v
 See there for more details on these terms and the strategies used
 to enforce them.}
 
-\item{use_libvroom}{Use the experimental libvroom SIMD-accelerated CSV
-parsing backend. This backend can be significantly faster for large files
-but may not support all features. Defaults to \code{FALSE}.}
+\item{use_libvroom}{Control use of the experimental libvroom SIMD-accelerated
+CSV parsing backend. \code{NULL} (default) auto-detects whether the backend can
+handle the request, \code{TRUE} prefers libvroom, and \code{FALSE} forces the
+legacy parser.}
 }
 \description{
 Read a delimited file into a tibble

@@ -126,9 +126,10 @@
 #'   This argument is passed on as `repair` to [vctrs::vec_as_names()].
 #'   See there for more details on these terms and the strategies used
 #'   to enforce them.
-#' @param use_libvroom Use the experimental libvroom SIMD-accelerated CSV
-#'   parsing backend. This backend can be significantly faster for large files
-#'   but may not support all features. Defaults to `FALSE`.
+#' @param use_libvroom Control use of the experimental libvroom SIMD-accelerated
+#'   CSV parsing backend. `NULL` (default) auto-detects whether the backend can
+#'   handle the request, `TRUE` prefers libvroom, and `FALSE` forces the
+#'   legacy parser.
 #' @export
 #' @examples
 #' # get path to example file
@@ -214,7 +215,7 @@ vroom <- function(
   progress = vroom_progress(),
   show_col_types = NULL,
   .name_repair = "unique",
-  use_libvroom = FALSE
+  use_libvroom = NULL
 ) {
   # vroom does not support newlines as the delimiter, just as the EOL, so just
   # assign a value that should never appear in CSV text as the delimiter,
@@ -232,18 +233,27 @@ vroom <- function(
   col_select <- vroom_enquo(enquo(col_select))
 
   # Use libvroom SIMD backend for single file paths with default settings
-  use_libvroom <- can_use_libvroom(
-    file,
-    delim,
-    col_names,
-    col_types,
-    id,
-    n_max,
-    skip,
-    escape_double,
-    escape_backslash,
-    locale
-  )
+  # NULL (default) = auto-detect, TRUE = prefer libvroom, FALSE = force old parser
+  explicit_libvroom <- isTRUE(use_libvroom)
+  if (!isFALSE(use_libvroom)) {
+    use_libvroom <- can_use_libvroom(
+      file,
+      delim,
+      col_names,
+      col_types,
+      id,
+      n_max,
+      skip,
+      escape_double,
+      escape_backslash,
+      locale
+    )
+    if (explicit_libvroom && !use_libvroom) {
+      cli::cli_warn(
+        "{.arg use_libvroom} was {.val TRUE} but the libvroom backend cannot handle this request; falling back to the legacy parser."
+      )
+    }
+  }
 
   if (use_libvroom) {
     input <- file[[1]]
@@ -263,6 +273,7 @@ vroom <- function(
       skip = as.integer(skip),
       comment = comment,
       skip_empty_rows = skip_empty_rows,
+      trim_ws = trim_ws,
       na_values = na_str,
       num_threads = as.integer(num_threads),
       strings_as_factors = FALSE,
@@ -423,7 +434,8 @@ can_use_libvroom <- function(
   }
 
   # No explicit col_types (let libvroom infer)
-  if (!is.null(col_types)) {
+  # list() is equivalent to NULL — both mean "guess all"
+  if (!is.null(col_types) && !identical(col_types, list())) {
     return(FALSE)
   }
 
