@@ -112,17 +112,17 @@ extern "C" SEXP _vroom_whitespace_columns_(SEXP filename, SEXP skip, SEXP n, SEX
   END_CPP11
 }
 // vroom_fwf_libvroom.cpp
-cpp11::sexp vroom_libvroom_fwf_(SEXP input, const std::vector<int>& col_starts, const std::vector<int>& col_ends, const cpp11::strings& col_names, bool trim_ws, const std::string& comment, bool skip_empty_rows, const std::string& na_values, int skip, int n_max, int num_threads);
-extern "C" SEXP _vroom_vroom_libvroom_fwf_(SEXP input, SEXP col_starts, SEXP col_ends, SEXP col_names, SEXP trim_ws, SEXP comment, SEXP skip_empty_rows, SEXP na_values, SEXP skip, SEXP n_max, SEXP num_threads) {
+cpp11::sexp vroom_libvroom_fwf_(SEXP input, const std::vector<int>& col_starts, const std::vector<int>& col_ends, const cpp11::strings& col_names, bool trim_ws, const std::string& comment, bool skip_empty_rows, const std::string& na_values, int skip, int n_max, int num_threads, const std::vector<int>& col_types, const cpp11::strings& col_type_names);
+extern "C" SEXP _vroom_vroom_libvroom_fwf_(SEXP input, SEXP col_starts, SEXP col_ends, SEXP col_names, SEXP trim_ws, SEXP comment, SEXP skip_empty_rows, SEXP na_values, SEXP skip, SEXP n_max, SEXP num_threads, SEXP col_types, SEXP col_type_names) {
   BEGIN_CPP11
-    return cpp11::as_sexp(vroom_libvroom_fwf_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(input), cpp11::as_cpp<cpp11::decay_t<const std::vector<int>&>>(col_starts), cpp11::as_cpp<cpp11::decay_t<const std::vector<int>&>>(col_ends), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(col_names), cpp11::as_cpp<cpp11::decay_t<bool>>(trim_ws), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(comment), cpp11::as_cpp<cpp11::decay_t<bool>>(skip_empty_rows), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(na_values), cpp11::as_cpp<cpp11::decay_t<int>>(skip), cpp11::as_cpp<cpp11::decay_t<int>>(n_max), cpp11::as_cpp<cpp11::decay_t<int>>(num_threads)));
+    return cpp11::as_sexp(vroom_libvroom_fwf_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(input), cpp11::as_cpp<cpp11::decay_t<const std::vector<int>&>>(col_starts), cpp11::as_cpp<cpp11::decay_t<const std::vector<int>&>>(col_ends), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(col_names), cpp11::as_cpp<cpp11::decay_t<bool>>(trim_ws), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(comment), cpp11::as_cpp<cpp11::decay_t<bool>>(skip_empty_rows), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(na_values), cpp11::as_cpp<cpp11::decay_t<int>>(skip), cpp11::as_cpp<cpp11::decay_t<int>>(n_max), cpp11::as_cpp<cpp11::decay_t<int>>(num_threads), cpp11::as_cpp<cpp11::decay_t<const std::vector<int>&>>(col_types), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(col_type_names)));
   END_CPP11
 }
 // vroom_new.cpp
-cpp11::sexp vroom_libvroom_(SEXP input, const std::string& delim, char quote, bool has_header, int skip, const std::string& comment, bool skip_empty_rows, bool trim_ws, const std::string& na_values, int num_threads, bool strings_as_factors, bool use_altrep);
-extern "C" SEXP _vroom_vroom_libvroom_(SEXP input, SEXP delim, SEXP quote, SEXP has_header, SEXP skip, SEXP comment, SEXP skip_empty_rows, SEXP trim_ws, SEXP na_values, SEXP num_threads, SEXP strings_as_factors, SEXP use_altrep) {
+cpp11::sexp vroom_libvroom_(SEXP input, const std::string& delim, char quote, bool has_header, int skip, const std::string& comment, bool skip_empty_rows, bool trim_ws, const std::string& na_values, int num_threads, bool strings_as_factors, bool use_altrep, const std::vector<int>& col_types, const cpp11::strings& col_type_names);
+extern "C" SEXP _vroom_vroom_libvroom_(SEXP input, SEXP delim, SEXP quote, SEXP has_header, SEXP skip, SEXP comment, SEXP skip_empty_rows, SEXP trim_ws, SEXP na_values, SEXP num_threads, SEXP strings_as_factors, SEXP use_altrep, SEXP col_types, SEXP col_type_names) {
   BEGIN_CPP11
-    return cpp11::as_sexp(vroom_libvroom_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(input), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(delim), cpp11::as_cpp<cpp11::decay_t<char>>(quote), cpp11::as_cpp<cpp11::decay_t<bool>>(has_header), cpp11::as_cpp<cpp11::decay_t<int>>(skip), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(comment), cpp11::as_cpp<cpp11::decay_t<bool>>(skip_empty_rows), cpp11::as_cpp<cpp11::decay_t<bool>>(trim_ws), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(na_values), cpp11::as_cpp<cpp11::decay_t<int>>(num_threads), cpp11::as_cpp<cpp11::decay_t<bool>>(strings_as_factors), cpp11::as_cpp<cpp11::decay_t<bool>>(use_altrep)));
+    return cpp11::as_sexp(vroom_libvroom_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(input), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(delim), cpp11::as_cpp<cpp11::decay_t<char>>(quote), cpp11::as_cpp<cpp11::decay_t<bool>>(has_header), cpp11::as_cpp<cpp11::decay_t<int>>(skip), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(comment), cpp11::as_cpp<cpp11::decay_t<bool>>(skip_empty_rows), cpp11::as_cpp<cpp11::decay_t<bool>>(trim_ws), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(na_values), cpp11::as_cpp<cpp11::decay_t<int>>(num_threads), cpp11::as_cpp<cpp11::decay_t<bool>>(strings_as_factors), cpp11::as_cpp<cpp11::decay_t<bool>>(use_altrep), cpp11::as_cpp<cpp11::decay_t<const std::vector<int>&>>(col_types), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(col_type_names)));
   END_CPP11
 }
 // vroom_write.cc
@@ -163,8 +163,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_vroom_errors_",           (DL_FUNC) &_vroom_vroom_errors_,            1},
     {"_vroom_vroom_format_",           (DL_FUNC) &_vroom_vroom_format_,           10},
     {"_vroom_vroom_fwf_",              (DL_FUNC) &_vroom_vroom_fwf_,              19},
-    {"_vroom_vroom_libvroom_",         (DL_FUNC) &_vroom_vroom_libvroom_,         12},
-    {"_vroom_vroom_libvroom_fwf_",     (DL_FUNC) &_vroom_vroom_libvroom_fwf_,     11},
+    {"_vroom_vroom_libvroom_",         (DL_FUNC) &_vroom_vroom_libvroom_,         14},
+    {"_vroom_vroom_libvroom_fwf_",     (DL_FUNC) &_vroom_vroom_libvroom_fwf_,     13},
     {"_vroom_vroom_materialize",       (DL_FUNC) &_vroom_vroom_materialize,        2},
     {"_vroom_vroom_rle",               (DL_FUNC) &_vroom_vroom_rle,                1},
     {"_vroom_vroom_str_",              (DL_FUNC) &_vroom_vroom_str_,               1},

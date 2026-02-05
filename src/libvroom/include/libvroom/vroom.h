@@ -50,6 +50,11 @@ public:
   // Get detected schema after opening
   const std::vector<ColumnSchema>& schema() const;
 
+  // Override inferred schema with explicit types.
+  // Call after open()/open_from_buffer(). Only overrides types for columns
+  // where the provided schema has a non-UNKNOWN type.
+  void set_schema(const std::vector<ColumnSchema>& schema);
+
   // Parse the file into column builders
   // Returns ParsedChunks with one vector of ArrowColumnBuilders per chunk
   // Each chunk can be written as a separate Parquet row group
@@ -102,6 +107,11 @@ public:
 
   // Get detected schema after opening
   const std::vector<ColumnSchema>& schema() const;
+
+  // Override inferred schema with explicit types.
+  // Call after open()/open_from_buffer(). Only overrides types for columns
+  // where the provided schema has a non-UNKNOWN type.
+  void set_schema(const std::vector<ColumnSchema>& schema);
 
   // Streaming API: parse chunks on background threads, consume one at a time.
   Result<bool> start_streaming();

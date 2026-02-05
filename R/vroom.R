@@ -246,7 +246,8 @@ vroom <- function(
       skip,
       escape_double,
       escape_backslash,
-      locale
+      locale,
+      comment
     )
     if (explicit_libvroom && !use_libvroom) {
       cli::cli_warn(
@@ -265,6 +266,20 @@ vroom <- function(
     }
 
     na_str <- paste(na, collapse = ",")
+
+    # Resolve col_types for libvroom
+    col_types_int <- integer(0)
+    col_type_names <- character(0)
+    resolved_spec <- NULL
+    if (!is.null(col_types) && !identical(col_types, list())) {
+      resolved_spec <- as.col_spec(col_types)
+      col_types_int <- col_types_to_libvroom(resolved_spec)
+      spec_names <- names(resolved_spec$cols)
+      if (!is.null(spec_names) && !all(spec_names == "")) {
+        col_type_names <- spec_names
+      }
+    }
+
     out <- vroom_libvroom_(
       input = input,
       delim = delim %||% "",
@@ -281,12 +296,55 @@ vroom <- function(
         "chr" %in% altrep
       } else {
         isTRUE(altrep)
+      },
+      col_types = col_types_int,
+      col_type_names = col_type_names
+    )
+
+    # For cols_only(), drop columns not in the spec
+    if (
+      !is.null(resolved_spec) &&
+        inherits(resolved_spec$default, "collector_skip") &&
+        length(col_type_names) > 0
+    ) {
+      keep_cols <- names(out) %in% col_type_names
+      out <- out[, keep_cols, drop = FALSE]
+    }
+
+    # Drop skipped columns from output (compact notation like "i_d")
+    if (length(col_types_int) > 0 && length(col_type_names) == 0) {
+      skip_mask <- col_types_int == -1L
+      if (any(skip_mask)) {
+        keep <- !skip_mask[seq_len(min(length(skip_mask), ncol(out)))]
+        if (length(keep) < ncol(out)) {
+          keep <- c(keep, rep(TRUE, ncol(out) - length(keep)))
+        }
+        out <- out[, keep, drop = FALSE]
       }
+    }
+
+    # Apply R-side post-processing for types libvroom parsed as STRING
+    out <- apply_col_postprocessing(
+      out,
+      resolved_spec,
+      col_types_int,
+      col_type_names
     )
 
     out <- tibble::as_tibble(out, .name_repair = .name_repair)
 
-    # Apply column selection using names directly (no spec attribute)
+    # Build and attach spec attribute BEFORE col_select so it reflects
+    # the full file schema, not just selected columns
+    all_col_names <- names(out)
+    attr(out, "spec") <- build_libvroom_spec(
+      out,
+      resolved_spec,
+      col_types_int,
+      all_col_names,
+      delim = delim %||% ""
+    )
+
+    # Apply column selection using names directly
     if (inherits(col_select, "quosures") || !quo_is_null(col_select)) {
       all_names <- c(names(out), id)
       if (inherits(col_select, "quosures")) {
@@ -297,6 +355,17 @@ vroom <- function(
       out <- out[vars]
       names(out) <- names(vars)
     }
+
+    # Add empty problems attribute (libvroom doesn't track parse errors yet)
+    attr(out, "problems") <- tibble::tibble(
+      row = integer(),
+      col = integer(),
+      expected = character(),
+      actual = character(),
+      file = character()
+    )
+
+    class(out) <- c("spec_tbl_df", class(out))
 
     return(out)
   }
@@ -398,7 +467,8 @@ can_use_libvroom <- function(
   skip,
   escape_double,
   escape_backslash,
-  locale
+  locale,
+  comment = ""
 ) {
   # Must have an explicit delimiter (libvroom doesn't auto-detect)
   if (is.null(delim)) {
@@ -433,9 +503,8 @@ can_use_libvroom <- function(
     return(FALSE)
   }
 
-  # No explicit col_types (let libvroom infer)
-  # list() is equivalent to NULL — both mean "guess all"
-  if (!is.null(col_types) && !identical(col_types, list())) {
+  # Only allow col_types that libvroom handles natively
+  if (!can_libvroom_handle_col_types(col_types)) {
     return(FALSE)
   }
 
@@ -467,7 +536,256 @@ can_use_libvroom <- function(
     return(FALSE)
   }
 
+  # No comment character (libvroom handles mid-field comments differently)
+  if (nzchar(comment)) {
+    return(FALSE)
+  }
+
   TRUE
+}
+
+# Map an R col_spec to a vector of libvroom DataType integers.
+#
+# Mapping (matches libvroom::DataType enum):
+#   0 = UNKNOWN (guess), 1 = BOOL, 2 = INT32, 3 = INT64
+#   4 = FLOAT64, 5 = STRING, 6 = DATE, 7 = TIMESTAMP, -1 = skip
+col_types_to_libvroom <- function(spec) {
+  vapply(
+    spec$cols,
+    function(collector) {
+      cls <- class(collector)[[1]]
+      switch(
+        cls,
+        collector_skip = -1L,
+        collector_guess = 0L,
+        collector_logical = 1L,
+        collector_integer = 2L,
+        collector_big_integer = 5L,
+        collector_double = 4L,
+        collector_character = 5L,
+        collector_number = 5L,
+        collector_time = 5L,
+        collector_factor = 5L,
+        collector_date = {
+          if (
+            identical(collector$format, "") ||
+              identical(collector$format, "%AD")
+          ) {
+            6L
+          } else {
+            5L
+          }
+        },
+        collector_datetime = {
+          if (
+            identical(collector$format, "") ||
+              identical(collector$format, "%AD")
+          ) {
+            7L
+          } else {
+            5L
+          }
+        },
+        5L
+      )
+    },
+    integer(1)
+  )
+}
+
+# Check if all col_types can be handled natively by libvroom.
+# Returns FALSE if any type requires R-side post-processing (mapped to STRING).
+# This prevents regressions for tests that depend on legacy parser features.
+can_libvroom_handle_col_types <- function(col_types) {
+  if (is.null(col_types) || identical(col_types, list())) {
+    return(TRUE)
+  }
+  spec <- as.col_spec(col_types)
+  for (collector in spec$cols) {
+    cls <- class(collector)[[1]]
+    # These types need R-side post-processing or have different behavior
+    if (
+      cls %in%
+        c(
+          "collector_number",
+          "collector_time",
+          "collector_big_integer"
+        )
+    ) {
+      return(FALSE)
+    }
+    # Factor without explicit levels doesn't work with libvroom
+    if (cls == "collector_factor") {
+      return(FALSE)
+    }
+    # Custom date/datetime formats need post-processing
+    if (
+      cls == "collector_date" &&
+        !identical(collector$format, "") &&
+        !identical(collector$format, "%AD")
+    ) {
+      return(FALSE)
+    }
+    if (
+      cls == "collector_datetime" &&
+        !identical(collector$format, "") &&
+        !identical(collector$format, "%AD")
+    ) {
+      return(FALSE)
+    }
+  }
+  # Check .default too — if it's anything other than guess/skip, fall back.
+  # We can't expand .default to all columns before the C++ call because we
+  # don't know column count yet, so libvroom would use inferred types instead.
+  if (!is.null(spec$default)) {
+    cls <- class(spec$default)[[1]]
+    if (!(cls %in% c("collector_guess", "collector_skip"))) {
+      return(FALSE)
+    }
+  }
+  TRUE
+}
+
+# Build a col_spec from libvroom output for the spec attribute.
+# If resolved_spec is provided, use it. Otherwise infer from R column types.
+build_libvroom_spec <- function(
+  out,
+  resolved_spec,
+  col_types_int,
+  all_col_names,
+  delim
+) {
+  if (!is.null(resolved_spec)) {
+    spec_out <- resolved_spec
+    if (length(all_col_names) > 0 && length(spec_out$cols) > 0) {
+      if (is.null(names(spec_out$cols)) || all(names(spec_out$cols) == "")) {
+        # Positional spec: assign column names from the file
+        if (length(spec_out$cols) <= length(all_col_names)) {
+          names(spec_out$cols) <- all_col_names[seq_along(spec_out$cols)]
+        }
+      } else {
+        # Named spec: fill in defaults for unspecified columns
+        for (nm in all_col_names) {
+          if (!(nm %in% names(spec_out$cols))) {
+            spec_out$cols[[nm]] <- spec_out$default
+          }
+        }
+        # Reorder to match file column order
+        spec_out$cols <- spec_out$cols[intersect(
+          all_col_names,
+          names(spec_out$cols)
+        )]
+      }
+    }
+    spec_out$delim <- delim
+    return(spec_out)
+  }
+
+  # No spec provided: build from R output types
+  spec_cols <- lapply(out, function(col) {
+    if (is.integer(col)) {
+      col_integer()
+    } else if (is.double(col)) {
+      if (inherits(col, "Date")) {
+        col_date()
+      } else if (inherits(col, "POSIXct")) {
+        col_datetime()
+      } else {
+        col_double()
+      }
+    } else if (is.logical(col)) {
+      col_logical()
+    } else {
+      col_character()
+    }
+  })
+  names(spec_cols) <- names(out)
+  structure(
+    list(cols = spec_cols, default = col_guess(), delim = delim),
+    class = "col_spec"
+  )
+}
+
+# Apply R-side type coercion for types libvroom parsed as STRING
+apply_col_postprocessing <- function(out, spec, col_types_int, col_type_names) {
+  if (is.null(spec)) {
+    return(out)
+  }
+
+  out_names <- names(out)
+
+  if (length(col_type_names) > 0) {
+    # Named spec: match by name
+    for (i in seq_along(spec$cols)) {
+      col_name <- names(spec$cols)[[i]]
+      out_idx <- match(col_name, out_names)
+      if (is.na(out_idx)) {
+        next
+      }
+      type_int <- col_types_int[[i]]
+      if (type_int != 5L) {
+        next
+      }
+
+      collector <- spec$cols[[i]]
+      if (inherits(collector, "collector_character")) {
+        next
+      }
+
+      out[[out_idx]] <- apply_collector(out[[out_idx]], collector)
+    }
+  } else {
+    # Positional spec: match by position
+    out_col <- 0L
+    for (i in seq_along(spec$cols)) {
+      type_int <- col_types_int[[i]]
+      if (type_int == -1L) {
+        next
+      }
+      out_col <- out_col + 1L
+      if (out_col > ncol(out)) {
+        next
+      }
+      if (type_int != 5L) {
+        next
+      }
+
+      collector <- spec$cols[[i]]
+      if (inherits(collector, "collector_character")) {
+        next
+      }
+
+      out[[out_col]] <- apply_collector(out[[out_col]], collector)
+    }
+  }
+  out
+}
+
+apply_collector <- function(x, collector) {
+  cls <- class(collector)[[1]]
+  switch(
+    cls,
+    collector_number = {
+      x <- gsub("[^0-9.eE+-]", "", x)
+      as.double(x)
+    },
+    collector_big_integer = {
+      bit64::as.integer64(x)
+    },
+    collector_factor = {
+      factor(x, levels = collector$levels, ordered = collector$ordered)
+    },
+    collector_time = {
+      hms::parse_hms(x)
+    },
+    collector_date = {
+      as.Date(x, format = collector$format)
+    },
+    collector_datetime = {
+      as.POSIXct(x, format = collector$format, tz = "UTC")
+    },
+    x
+  )
 }
 
 should_show_col_types <- function(has_col_types, show_col_types) {

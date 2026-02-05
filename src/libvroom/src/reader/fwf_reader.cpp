@@ -478,6 +478,14 @@ const std::vector<ColumnSchema>& FwfReader::schema() const {
   return impl_->schema;
 }
 
+void FwfReader::set_schema(const std::vector<ColumnSchema>& schema) {
+  for (size_t i = 0; i < schema.size() && i < impl_->schema.size(); ++i) {
+    if (schema[i].type != DataType::UNKNOWN) {
+      impl_->schema[i].type = schema[i].type;
+    }
+  }
+}
+
 const EncodingResult& FwfReader::encoding() const {
   return impl_->detected_encoding;
 }

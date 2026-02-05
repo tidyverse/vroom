@@ -114,7 +114,8 @@ test_that("parsing problems are shown for all datatypes", {
       I("x\nxyz\n"),
       delim = ",",
       col_types = list(type),
-      altrep = TRUE
+      altrep = TRUE,
+      use_libvroom = FALSE
     )
 
     # This calls the type_Elt function
@@ -125,7 +126,8 @@ test_that("parsing problems are shown for all datatypes", {
       I("x\nxyz\n"),
       delim = ",",
       col_types = list(type),
-      altrep = TRUE
+      altrep = TRUE,
+      use_libvroom = FALSE
     )
 
     # This calls the read_type function
@@ -137,13 +139,23 @@ test_that("parsing problems are shown for all datatypes", {
   }
 
   expect_warning(
-    res <- vroom(I("x\nxyz\n"), delim = ",", col_types = list(col_logical())),
+    res <- vroom(
+      I("x\nxyz\n"),
+      delim = ",",
+      col_types = list(col_logical()),
+      use_libvroom = FALSE
+    ),
     class = "vroom_parse_issue"
   )
 })
 
 test_that("problems that are generated more than once are not duplicated", {
-  res <- vroom(I("x\n1\n2\n3\n4\n5\na"), col_types = "i", delim = ",")
+  res <- vroom(
+    I("x\n1\n2\n3\n4\n5\na"),
+    col_types = "i",
+    delim = ",",
+    use_libvroom = FALSE
+  )
 
   # generate first problem
   expect_warning(res[[1]][[6]], class = "vroom_parse_issue")
@@ -159,13 +171,23 @@ test_that("problems that are generated more than once are not duplicated", {
 
 test_that("problems return the proper row number", {
   expect_warning(
-    x <- vroom(I("a,b,c\nx,y,z,,"), altrep = FALSE, col_types = "ccc"),
+    x <- vroom(
+      I("a,b,c\nx,y,z,,"),
+      altrep = FALSE,
+      col_types = "ccc",
+      use_libvroom = FALSE
+    ),
     class = "vroom_parse_issue"
   )
   expect_equal(problems(x)$row, 2)
 
   expect_warning(
-    y <- vroom(I("a,b,c\nx,y,z\nx,y,z,,"), altrep = FALSE, col_types = "ccc"),
+    y <- vroom(
+      I("a,b,c\nx,y,z\nx,y,z,,"),
+      altrep = FALSE,
+      col_types = "ccc",
+      use_libvroom = FALSE
+    ),
     class = "vroom_parse_issue"
   )
   expect_equal(problems(y)$row, 3)
@@ -174,7 +196,8 @@ test_that("problems return the proper row number", {
     z <- vroom(
       I("a,b,c\nx,y,z,,\nx,y,z,,\n"),
       altrep = FALSE,
-      col_types = "ccc"
+      col_types = "ccc",
+      use_libvroom = FALSE
     ),
     class = "vroom_parse_issue"
   )
@@ -188,7 +211,8 @@ test_that("can promote vroom parse warning to error", {
       I("a\nx\n"),
       delim = ",",
       col_types = "d",
-      altrep = TRUE
+      altrep = TRUE,
+      use_libvroom = FALSE
     )
 
     # Trigger vroom parse warning while inside R's internal C code for `[` and ensure it doesn't crash R.
@@ -229,7 +253,8 @@ test_that("problems are correct even if print is first encounter", {
     I("a\n1\nz\n3\nF\n5"),
     delim = ",",
     col_types = "d",
-    show_col_types = FALSE
+    show_col_types = FALSE,
+    use_libvroom = FALSE
   )
 
   expect_output(expect_warning(print(foo), class = "vroom_parse_issue"))
@@ -243,7 +268,8 @@ test_that("problems are correct even if print is first encounter", {
     delim = ",",
     col_names = FALSE,
     col_types = "d",
-    show_col_types = FALSE
+    show_col_types = FALSE,
+    use_libvroom = FALSE
   )
 
   expect_output(expect_warning(print(foo), class = "vroom_parse_issue"))

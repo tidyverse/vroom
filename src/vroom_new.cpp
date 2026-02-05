@@ -19,7 +19,9 @@
     const std::string& na_values,
     int num_threads,
     bool strings_as_factors,
-    bool use_altrep) {
+    bool use_altrep,
+    const std::vector<int>& col_types,
+    const cpp11::strings& col_type_names) {
 
   libvroom::CsvOptions opts;
   if (!delim.empty())
@@ -57,6 +59,36 @@
     if (!open_result) {
       cpp11::stop("Failed to open file: %s", open_result.error.c_str());
     }
+  }
+
+  // Apply explicit column types if provided
+  if (!col_types.empty()) {
+    auto schema_copy = reader.schema();
+    if (col_type_names.size() > 0) {
+      // Named matching
+      for (size_t i = 0; i < schema_copy.size(); ++i) {
+        for (R_xlen_t j = 0; j < col_type_names.size(); ++j) {
+          if (schema_copy[i].name == std::string(col_type_names[j])) {
+            int type_int = col_types[static_cast<size_t>(j)];
+            if (type_int > 0) {
+              schema_copy[i].type = static_cast<libvroom::DataType>(type_int);
+            }
+            break;
+          }
+        }
+      }
+    } else {
+      // Positional matching
+      for (size_t i = 0; i < col_types.size() && i < schema_copy.size(); ++i) {
+        int type_int = col_types[i];
+        if (type_int > 0) {
+          schema_copy[i].type = static_cast<libvroom::DataType>(type_int);
+        }
+        // type_int == 0 means UNKNOWN/guess → keep inferred type
+        // type_int == -1 means skip → handled in R post-processing
+      }
+    }
+    reader.set_schema(schema_copy);
   }
 
   const auto& schema = reader.schema();

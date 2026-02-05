@@ -29,6 +29,10 @@ problems <- function(x = .Last.value, lazy = FALSE) {
   }
 
   probs <- attr(x, "problems")
+  if (is.data.frame(probs)) {
+    # libvroom backend stores problems as a tibble directly
+    return(tibble::as_tibble(probs))
+  }
   if (typeof(probs) != "externalptr") {
     cli::cli_abort(c(
       "The {.arg x} argument of {.fun vroom::problems} must be a data frame created by vroom:",

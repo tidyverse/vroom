@@ -199,6 +199,44 @@ test_that("libvroom handles different column types", {
   )
 })
 
+test_that("libvroom handles explicit col_types with compact string notation", {
+  # Integer + double + character
+  test_libvroom(
+    "a,b,c\n1,2.5,hello\n3,4.5,world\n",
+    delim = ",",
+    col_types = "idc",
+    equals = tibble::tibble(
+      a = c(1L, 3L),
+      b = c(2.5, 4.5),
+      c = c("hello", "world")
+    )
+  )
+})
+
+test_that("libvroom handles logical col_type", {
+  test_libvroom(
+    "a,b\nTRUE,1\nFALSE,2\n",
+    delim = ",",
+    col_types = "li",
+    equals = tibble::tibble(a = c(TRUE, FALSE), b = c(1L, 2L))
+  )
+})
+
+test_that("libvroom handles date and datetime col_types", {
+  test_libvroom(
+    "a,b\n2023-01-20,2018-01-01T10:01:01\n2024-06-15,2019-06-15T12:30:00\n",
+    delim = ",",
+    col_types = "DT",
+    equals = tibble::tibble(
+      a = as.Date(c("2023-01-20", "2024-06-15")),
+      b = as.POSIXct(
+        c("2018-01-01 10:01:01", "2019-06-15 12:30:00"),
+        tz = "UTC"
+      )
+    )
+  )
+})
+
 test_that("libvroom handles Windows line endings (CRLF)", {
   test_libvroom(
     "a,b\r\n1,2\r\n3,4\r\n",
@@ -240,4 +278,131 @@ test_that("libvroom result equals standard vroom result", {
     }
     expect_equal(libvroom_result, standard_result)
   })
+})
+
+test_that("libvroom handles col_skip in compact notation", {
+  test_libvroom(
+    "a,b,c\n1,2,3\n4,5,6\n",
+    delim = ",",
+    col_types = "i_d",
+    equals = tibble::tibble(a = c(1L, 4L), c = c(3, 6))
+  )
+})
+
+test_that("libvroom handles cols() with named columns", {
+  test_libvroom(
+    "a,b,c\n1,2.5,hello\n3,4.5,world\n",
+    delim = ",",
+    col_types = cols(a = col_integer(), b = col_double(), c = col_character()),
+    equals = tibble::tibble(
+      a = c(1L, 3L),
+      b = c(2.5, 4.5),
+      c = c("hello", "world")
+    )
+  )
+})
+
+test_that("libvroom handles cols() with partial specification", {
+  test_libvroom(
+    "a,b,c\n1,2.5,TRUE\n3,4.5,FALSE\n",
+    delim = ",",
+    col_types = cols(a = col_integer()),
+    equals = tibble::tibble(
+      a = c(1L, 3L),
+      b = c(2.5, 4.5),
+      c = c(TRUE, FALSE)
+    )
+  )
+})
+
+test_that("libvroom handles cols_only()", {
+  test_libvroom(
+    "a,b,c\n1,2.5,hello\n3,4.5,world\n",
+    delim = ",",
+    col_types = cols_only(a = col_integer(), c = col_character()),
+    equals = tibble::tibble(a = c(1L, 3L), c = c("hello", "world"))
+  )
+})
+
+test_that("vroom with use_libvroom=TRUE gracefully falls back for .default", {
+  test_libvroom(
+    "a,b,c\n1,2,3\n4,5,6\n",
+    delim = ",",
+    col_types = list(.default = "i"),
+    equals = tibble::tibble(a = c(1L, 4L), b = c(2L, 5L), c = c(3L, 6L))
+  )
+})
+
+test_that("vroom with use_libvroom=TRUE gracefully falls back for col_number()", {
+  test_libvroom(
+    "a\n\"1,234.56\"\n\"7,890.12\"\n",
+    delim = "\t",
+    col_types = cols(a = col_number()),
+    equals = tibble::tibble(a = c(1234.56, 7890.12))
+  )
+})
+
+test_that("vroom with use_libvroom=TRUE gracefully falls back for col_factor()", {
+  test_libvroom(
+    "a\napple\nbanana\napple\n",
+    delim = ",",
+    col_types = cols(a = col_factor(levels = c("apple", "banana"))),
+    equals = tibble::tibble(
+      a = factor(c("apple", "banana", "apple"), levels = c("apple", "banana"))
+    )
+  )
+})
+
+test_that("vroom with use_libvroom=TRUE gracefully falls back for col_time()", {
+  test_libvroom(
+    "a\n10:01:01\n12:30:00\n",
+    delim = ",",
+    col_types = cols(a = col_time()),
+    equals = tibble::tibble(a = hms::hms(c(36061, 45000)))
+  )
+})
+
+test_that("vroom with use_libvroom=TRUE gracefully falls back for col_date() with custom format", {
+  test_libvroom(
+    "a\n01/20/2023\n06/15/2024\n",
+    delim = ",",
+    col_types = cols(a = col_date(format = "%m/%d/%Y")),
+    equals = tibble::tibble(a = as.Date(c("2023-01-20", "2024-06-15")))
+  )
+})
+
+test_that("vroom with use_libvroom=TRUE gracefully falls back for col_big_integer()", {
+  test_libvroom(
+    "a\n1234567890123\n9876543210987\n",
+    delim = ",",
+    col_types = cols(a = col_big_integer()),
+    equals = tibble::tibble(
+      a = bit64::as.integer64(c("1234567890123", "9876543210987"))
+    )
+  )
+})
+
+test_that("libvroom spec reflects full file schema with col_select", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+
+  out_con <- file(tf, "wb", encoding = "UTF-8")
+  writeBin(charToRaw("a,b,c\n1,hello,3.5\n2,world,4.5\n"), out_con)
+  close(out_con)
+
+  result <- vroom(
+    tf,
+    delim = ",",
+    col_select = c(a, c),
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+
+  # Output should only have selected columns
+  expect_equal(names(result), c("a", "c"))
+
+  # But spec should reflect ALL columns in the file
+  s <- spec(result)
+  expect_equal(length(s$cols), 3)
+  expect_true(all(c("a", "b", "c") %in% names(s$cols)))
 })

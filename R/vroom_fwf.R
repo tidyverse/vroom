@@ -118,6 +118,20 @@ vroom_fwf <- function(
     na_str <- paste(na, collapse = ",")
     col_ends_int <- as.integer(col_positions$end)
     col_ends_int[is.na(col_ends_int)] <- -1L
+
+    # Resolve col_types for libvroom
+    col_types_int <- integer(0)
+    col_type_names <- character(0)
+    resolved_spec <- NULL
+    if (!is.null(col_types) && !identical(col_types, list())) {
+      resolved_spec <- as.col_spec(col_types)
+      col_types_int <- col_types_to_libvroom(resolved_spec)
+      spec_names <- names(resolved_spec$cols)
+      if (!is.null(spec_names) && !all(spec_names == "")) {
+        col_type_names <- spec_names
+      }
+    }
+
     out <- vroom_libvroom_fwf_(
       input = input,
       col_starts = as.integer(col_positions$begin),
@@ -129,8 +143,45 @@ vroom_fwf <- function(
       na_values = na_str,
       skip = as.integer(skip),
       n_max = n_max_int,
-      num_threads = as.integer(num_threads)
+      num_threads = as.integer(num_threads),
+      col_types = col_types_int,
+      col_type_names = col_type_names
     )
+
+    # For cols_only(), drop columns not in the spec
+    if (
+      !is.null(resolved_spec) &&
+        inherits(resolved_spec$default, "collector_skip")
+    ) {
+      spec_names <- names(resolved_spec$cols)
+      keep_cols <- names(out) %in% spec_names
+      out <- out[, keep_cols, drop = FALSE]
+    }
+
+    # Drop skipped columns from output (positional skip notation)
+    if (length(col_types_int) > 0) {
+      skip_mask <- col_types_int == -1L
+      if (
+        any(skip_mask) &&
+          !(!is.null(resolved_spec) &&
+            inherits(resolved_spec$default, "collector_skip"))
+      ) {
+        keep <- !skip_mask[seq_len(min(length(skip_mask), ncol(out)))]
+        if (length(keep) < ncol(out)) {
+          keep <- c(keep, rep(TRUE, ncol(out) - length(keep)))
+        }
+        out <- out[, keep, drop = FALSE]
+      }
+    }
+
+    # Apply R-side post-processing
+    out <- apply_col_postprocessing(
+      out,
+      resolved_spec,
+      col_types_int,
+      col_type_names
+    )
+
     out <- tibble::as_tibble(out, .name_repair = .name_repair)
     if (!is.null(id)) {
       path_value <- if (is.character(file[[1]])) file[[1]] else NA_character_
@@ -152,6 +203,25 @@ vroom_fwf <- function(
       out <- out[vars]
       names(out) <- names(vars)
     }
+
+    # Build and attach spec attribute
+    all_col_names <- as.character(col_positions$col_names)
+    attr(out, "spec") <- build_libvroom_spec(
+      out,
+      resolved_spec,
+      col_types_int,
+      all_col_names,
+      delim = ""
+    )
+
+    # Add empty problems attribute (libvroom doesn't track parse errors yet)
+    attr(out, "problems") <- tibble::tibble(
+      row = integer(),
+      col = integer(),
+      expected = character(),
+      actual = character(),
+      file = character()
+    )
 
     class(out) <- c("spec_tbl_df", class(out))
     return(out)
@@ -349,11 +419,10 @@ can_use_libvroom_fwf <- function(file, col_types, locale) {
   if (length(file) != 1) {
     return(FALSE)
   }
-  # col_types = list() is equivalent to NULL — both mean "guess all"
-  if (!is.null(col_types) && !identical(col_types, list())) {
+  if (!is_ascii_compatible(locale$encoding)) {
     return(FALSE)
   }
-  if (!is_ascii_compatible(locale$encoding)) {
+  if (!can_libvroom_handle_col_types(col_types)) {
     return(FALSE)
   }
   TRUE
