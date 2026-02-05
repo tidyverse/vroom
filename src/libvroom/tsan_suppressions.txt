@@ -1,0 +1,8 @@
+# ThreadSanitizer suppressions for libvroom
+# These suppress known issues in third-party libraries
+
+# BS::thread_pool v4.1.0 has a benign data race during pool destruction
+# The race is between wait() setting a flag and worker() reading it
+# This is a known issue in the library's shutdown sequence
+race:BS::thread_pool::wait
+race:BS::thread_pool::worker

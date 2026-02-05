@@ -1,0 +1,7 @@
+SKU,Name,Category,Price,Stock,Description
+A001,"Widget ""Pro""",Hardware,29.99,150,"High-quality widget with extended warranty"
+B002,Gadget Basic,Electronics,49.99,75,"Entry-level gadget, perfect for beginners"
+C003,"Premium Gizmo
+Special Edition",Electronics,199.99,25,"Limited edition gizmo with exclusive features"
+D004,Standard Doohickey,Tools,15.50,200,Basic tool for everyday use
+E005,"Deluxe Thingamajig, XL",Accessories,89.99,50,"Extra-large accessory, fits most models"

@@ -1,0 +1,146 @@
+name: Performance Regression Check
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  benchmark:
+    name: Performance Regression Detection
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        # Need full history to checkout base commit for comparison
+        fetch-depth: 0
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake build-essential ccache jq
+
+    - name: Cache ccache
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ccache
+        key: ccache-perf-${{ runner.os }}-${{ github.sha }}
+        restore-keys: |
+          ccache-perf-${{ runner.os }}-
+
+    - name: Configure ccache
+      run: |
+        ccache --set-config=max_size=500M
+        ccache --set-config=compression=true
+        ccache -z
+
+    - name: Get base commit SHA
+      id: base
+      run: |
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+        else
+          # For push to main, compare against parent commit
+          BASE_SHA=$(git rev-parse HEAD~1 2>/dev/null || echo "")
+        fi
+        echo "sha=$BASE_SHA" >> $GITHUB_OUTPUT
+        echo "Base commit: $BASE_SHA"
+
+    - name: Configure CMake (Release)
+      run: |
+        cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_BENCHMARKS=ON
+
+    - name: Build benchmark (HEAD)
+      run: |
+        cmake --build build --target libvroom_benchmark --config Release -j$(nproc)
+
+    - name: Show ccache stats
+      run: |
+        ccache -s
+
+    # Run HEAD benchmark first (current PR/commit)
+    # Multi-thread benchmarks (BM_CsvReaderMultiThread/1, /4, /8) are critical for detecting
+    # issue #591-type regressions where multi-threaded parsing gets slower with more threads.
+    - name: Run benchmark (HEAD)
+      timeout-minutes: 5
+      run: |
+        echo "=== Benchmarking HEAD commit ==="
+        # Use taskset for CPU affinity (pin to CPU 0) and nice for scheduling priority
+        # This reduces variance from CPU migration and context switching
+        sudo nice -n -5 taskset -c 0 ./build/libvroom_benchmark \
+          --benchmark_filter="BM_CountRows$|BM_CsvReaderExplicit$|BM_CsvReaderAutoDetect$|BM_CsvReaderMultiThread/1$|BM_CsvReaderMultiThread/4$|BM_CsvReaderMultiThread/8$" \
+          --benchmark_repetitions=5 \
+          --benchmark_min_time=0.5s \
+          --benchmark_out=build/head_results.json \
+          --benchmark_out_format=json
+
+    # Now checkout and build BASE for comparison (only for PRs or when base exists)
+    - name: Checkout BASE commit
+      if: steps.base.outputs.sha != ''
+      run: |
+        echo "=== Checking out BASE commit: ${{ steps.base.outputs.sha }} ==="
+        git checkout ${{ steps.base.outputs.sha }}
+
+    - name: Build benchmark (BASE)
+      id: base_build
+      if: steps.base.outputs.sha != ''
+      continue-on-error: true
+      run: |
+        # Clean and rebuild for BASE commit
+        cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_BENCHMARKS=ON
+        cmake --build build --target libvroom_benchmark --config Release -j$(nproc)
+
+    - name: Run benchmark (BASE)
+      if: steps.base.outputs.sha != '' && steps.base_build.outcome == 'success'
+      timeout-minutes: 5
+      run: |
+        echo "=== Benchmarking BASE commit ==="
+        # Use same CPU affinity and priority settings for fair comparison
+        sudo nice -n -5 taskset -c 0 ./build/libvroom_benchmark \
+          --benchmark_filter="BM_CountRows$|BM_CsvReaderExplicit$|BM_CsvReaderAutoDetect$|BM_CsvReaderMultiThread/1$|BM_CsvReaderMultiThread/4$|BM_CsvReaderMultiThread/8$" \
+          --benchmark_repetitions=5 \
+          --benchmark_min_time=0.5s \
+          --benchmark_out=build/base_results.json \
+          --benchmark_out_format=json
+
+    # Return to HEAD for the comparison script
+    - name: Checkout HEAD for comparison
+      if: steps.base.outputs.sha != ''
+      run: |
+        git checkout ${{ github.sha }}
+
+    - name: Compare benchmarks (same-job relative)
+      if: steps.base.outputs.sha != '' && steps.base_build.outcome == 'success'
+      id: compare
+      run: |
+        echo "=== Comparing HEAD vs BASE (same-job relative benchmarking) ==="
+        python3 benchmark/check_regression.py \
+          --head build/head_results.json \
+          --base build/base_results.json \
+          --threshold 0.15
+
+    - name: Report results (no baseline)
+      if: steps.base.outputs.sha == '' || steps.base_build.outcome != 'success'
+      run: |
+        echo "=== No baseline available for comparison ==="
+        if [ "${{ steps.base_build.outcome }}" = "failure" ]; then
+          echo "BASE commit benchmarks failed to build (expected during API transitions)."
+        fi
+        echo "HEAD benchmark completed successfully."
+        jq -r '.benchmarks[] | select(.aggregate_name == null) | "  \(.name): \(.real_time | tostring | .[0:10]) ns"' build/head_results.json
+
+    - name: Upload benchmark results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: benchmark-results
+        path: |
+          build/head_results.json
+          build/base_results.json
+        retention-days: 30

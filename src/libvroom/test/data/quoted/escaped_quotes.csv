@@ -1,0 +1,6 @@
+Text,Description
+"He said ""Hello""","A greeting"
+"She replied ""Hi there""","A response"
+"""Quote at start","Leading quote"
+"Quote at end""","Trailing quote"
+"""Multiple"" ""quotes""","Several escaped"
