@@ -31,13 +31,88 @@ General advice:
 - Don't define functions inside of functions unless they are very brief.
 - Error messages should use `cli::cli_abort()` and follow the tidyverse style guide (https://style.tidyverse.org/errors.html)
 
-## Key Technical Details
+## libvroom Architecture
 
-**Architecture**
-- Two-phase operation: (1) quick multi-threaded indexing to locate field boundaries and line positions, (2) lazy parsing via Altrep vectors that parse values on access
-- C++ code uses cpp11 interface (in `src/`) with memory mapping (mio library) for efficient file access
-- Main R code in `R/` provides user-facing API and column specification system (shared with readr)
-- Key C++ components: `delimited_index.cc/.h` (indexing), `altrep.cc/.h` (lazy vectors), `collectors.h` (type-specific parsing), `DateTimeParser.h` (temporal data)
+libvroom (`src/libvroom/`, vendored from `~/p/libvroom`) is a high-performance CSV parser using portable SIMD instructions (via Google Highway), based on a speculative multi-threaded two-pass algorithm from Chang et al. (SIGMOD 2019) and SIMD techniques from Langdale & Lemire (simdjson). It outputs parsed data in Arrow columnar format for zero-copy interop with R.
+
+### Parsing Pipeline
+
+Four-phase pipeline (Polars-inspired):
+
+1. **SIMD Analysis** — Memory-map the file, detect encoding (UTF-8/16/32/Latin1 via BOM + heuristics), detect CSV dialect (delimiter, quote char) via consistency scoring. Dual-state chunk analysis: single SIMD pass computes stats for both starting quote states, then resolves via forward propagation. Optionally caches chunk boundaries to disk (`~/.cache/libvroom/`).
+2. **Parallel Chunk Parsing** — Thread pool dispatches chunks to workers. Each thread uses `SplitFields` iterator (SIMD boundary caching, 64 bytes/iteration) and SIMD integer parsing (`simd_atoi`), appending directly to thread-local `ArrowColumnBuilder` instances.
+3. **Type Inference** — Sample first N rows; try parsing as BOOL → INT32 → INT64 → FLOAT64 → DATE → TIMESTAMP → STRING, promoting types as needed.
+4. **Column Building** — Workers build columns in Arrow format (packed null bitmap with lazy init, contiguous NumericBuffer/StringBuffer). Merge is O(1) for strings (move pointers), O(n) for numerics (copy+append).
+
+### Directory Layout
+
+```
+src/libvroom/
+├── include/libvroom/     # Public API headers
+│   ├── libvroom.h        # Umbrella header (version 2.0.0)
+│   ├── vroom.h           # CsvReader, MmapSource, ChunkFinder, TypeInference
+│   ├── types.h           # DataType enum, FieldView, ColumnSchema, Result<T>
+│   ├── options.h         # CsvOptions, ParquetOptions, ThreadOptions
+│   ├── arrow_column_builder.h  # Arrow-format column builders (int32/64, float64, bool, string, date, timestamp)
+│   ├── arrow_buffer.h    # NullBitmap, StringBuffer, NumericBuffer<T>
+│   ├── table.h           # Multi-chunk Arrow table with ArrowArrayStream export
+│   ├── error.h           # ErrorCode (17 types), ErrorMode (DISABLED/FAIL_FAST/PERMISSIVE/BEST_EFFORT)
+│   ├── dialect.h         # CSV dialect detection
+│   ├── streaming.h       # Streaming parser for large files
+│   └── ...               # ~28 headers total
+├── src/
+│   ├── parser/           # SIMD field splitting, quote parity (CLMUL), SIMD integer parsing, chunk finding
+│   ├── reader/           # CsvReader orchestration, memory-mapped source
+│   ├── schema/           # Type inference, type parsers (fast_float, Highway SIMD, ISO8601)
+│   ├── columns/          # Legacy ColumnBuilder (being replaced by ArrowColumnBuilder)
+│   ├── writer/           # Parquet writer (multi-threaded encoding, Thrift metadata), Arrow IPC writer
+│   ├── encoding/         # Parquet encodings: PLAIN, RLE, DELTA_BINARY_PACKED, DELTA_LENGTH_BYTE_ARRAY
+│   ├── cache/            # Persistent index cache (Elias-Fano compressed, atomic writes)
+│   └── simd/             # SIMD-accelerated statistics
+└── third_party/
+    ├── hwy/              # Google Highway — portable SIMD (x86 SSE4.2/AVX2, ARM NEON, scalar fallback)
+    ├── simdutf/          # SIMD UTF-8/16/32 validation and transcoding
+    ├── fast_float/       # Fast double parsing (~3x strtod)
+    └── BS_thread_pool.hpp  # Single-header thread pool
+```
+
+### R Integration (src/)
+
+The R package bridges libvroom's Arrow output to R data structures:
+
+| File | Purpose |
+|------|---------|
+| `vroom_new.cpp` | New libvroom-based `vroom()` entry point: streaming API (`start_streaming()` / `next_chunk()`) |
+| `arrow_to_r.cpp/.h` | Converts `ArrowColumnBuilder`s to R data frame; numeric cols copy to R vectors, string cols wrap in Altrep or materialize |
+| `altrep.cc/.h` | R Altrep (lazy) vectors backed by Arrow string buffers — near-instant for deferred materialization |
+| `vroom_arrow.cpp` | Arrow C Data Interface export (RecordBatch/Stream) |
+| `cpp11.cpp` | Generated cpp11 bindings registering C++ functions callable from R |
+| `delimited_index.cc/.h` | Legacy two-pass indexer (being replaced by libvroom) |
+| `vroom_*.cc/.h` | Legacy per-type column implementations (being replaced) |
+
+Integration flow:
+```
+R: vroom(path)
+  → cpp11: vroom_libvroom_()
+    → libvroom: CsvReader::open() + start_streaming()
+      → Parallel SIMD parsing → ParsedChunks
+    → arrow_to_r: columns_to_r() → R vectors
+    → altrep: Wrap strings in Altrep (deferred materialization)
+  → R: tibble returned to user
+```
+
+### Build (Makevars)
+
+Source categories compiled into `vroom.so`:
+- **VROOM_SOURCES** (13 files): Legacy vroom C++ implementation
+- **LIBVROOM_SOURCES** (30 files): All libvroom implementation
+- **SIMDUTF_SOURCES** (1 file): UTF transcoding
+- **HIGHWAY_SOURCES** (3 files): Google Highway SIMD
+- **Arrow integration** (5 files): arrow_to_r, vroom_arrow, vroom_new, etc.
+
+Include paths: `-Imio/include`, `-Ispdlog/include`, `-Ilibvroom`, `-Ilibvroom/include`, `-Ilibvroom/third_party`
+
+## R Package API
 
 **Core Functions**
 - Reading: `vroom()` (main delimited reader with delimiter guessing), `vroom_fwf()` (fixed-width files), `vroom_lines()` (lazy line reading)
@@ -57,16 +132,7 @@ General advice:
 - `locale()` object controls region-specific settings: decimal mark, grouping mark, date/time formats, encoding, timezone
 - Defaults to US-centric locale but fully customizable via `date_names()` and `date_names_langs()`
 
-**Performance & Parsing**
-- Multi-threaded indexing, materialization, and writing (controlled by `num_threads` parameter or `VROOM_THREADS` environment variable)
-- Altrep lazy evaluation enabled by default for character vectors (controlled by `VROOM_USE_ALTREP_*` environment variables)
-- Progress bars for long operations (controlled by `VROOM_SHOW_PROGRESS` environment variable)
-- Memory mapping via mio library for efficient file access
-- Support for reading from multiple files, connections, URLs, compressed files
-- Delimiter guessing, multi-byte delimiters, Unicode delimiters
-- Embedded newlines in fields (requires `num_threads = 1`)
-
-**Key Dependencies**
+**Key R Dependencies**
 - cli: Error messages and formatting
 - tibble: Output format
 - tzdb: Timezone database for datetime parsing
