@@ -353,10 +353,23 @@ vroom <- function(
       # Skip truly empty files (0 bytes, no header)
       if (
         is.character(input) &&
+          !is_url(input) &&
           file.exists(input) &&
           file.size(input) == 0
       ) {
         next
+      }
+
+      # Route URLs and compressed files through R connections for
+      # decompression/download; plain local files pass through as paths so
+      # libvroom can memory-map them directly.
+      if (is.character(input) && (is_url(input) || is_compressed_path(input))) {
+        input <- connection_or_filepath(input)
+      }
+      # Non-ASCII paths need to go through R connection for proper encoding
+      # handling (libvroom expects UTF-8 paths but non-UTF-8 locales mangle them)
+      if (is.character(input) && !is_ascii_path(input)) {
+        input <- file(input)
       }
 
       res <- read_one_libvroom(input)
@@ -548,15 +561,11 @@ can_use_libvroom <- function(
   # Validate each file in the input vector
   for (input in file) {
     if (is.character(input)) {
-      if (grepl("^(https?|ftp|ftps)://", input)) {
-        return(FALSE)
-      }
-      if (!file.exists(input)) {
-        return(FALSE)
-      }
-      ext <- tolower(tools::file_ext(input))
-      if (ext %in% c("gz", "bz2", "xz", "zip", "zst")) {
-        return(FALSE)
+      # URLs and compressed files are handled via connection_or_filepath() later
+      if (!is_url(input)) {
+        if (!file.exists(input)) {
+          return(FALSE)
+        }
       }
     } else if (!inherits(input, "connection")) {
       return(FALSE)

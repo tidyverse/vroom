@@ -319,6 +319,11 @@ is_url <- function(path) {
   grepl("^((http|ftp)s?|sftp)://", path)
 }
 
+is_compressed_path <- function(path) {
+  ext <- tolower(tools::file_ext(path))
+  ext %in% c("gz", "bz2", "xz", "zip", "zst")
+}
+
 check_path <- function(path, call = caller_env()) {
   if (file.exists(path)) {
     return(normalizePath_utf8(path, mustWork = FALSE))

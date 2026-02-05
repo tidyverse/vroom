@@ -852,3 +852,99 @@ test_that("libvroom handles cols_only() with custom col_names", {
     tibble::tibble(x = c(1L, 3L), z = c("hello", "world"))
   )
 })
+
+test_that("libvroom reads gzip-compressed CSV files", {
+  expected <- vroom(
+    vroom_example("mtcars.csv"),
+    delim = ",",
+    show_col_types = FALSE
+  )
+  actual <- vroom(
+    vroom_example("mtcars.csv.gz"),
+    delim = ",",
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+  expect_equal(actual, expected)
+  expect_s3_class(actual, "spec_tbl_df")
+})
+
+test_that("libvroom reads bz2-compressed CSV files", {
+  expected <- vroom(
+    vroom_example("mtcars.csv"),
+    delim = ",",
+    show_col_types = FALSE
+  )
+  actual <- vroom(
+    vroom_example("mtcars.csv.bz2"),
+    delim = ",",
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+  expect_equal(actual, expected)
+  expect_s3_class(actual, "spec_tbl_df")
+})
+
+test_that("libvroom reads xz-compressed CSV files", {
+  expected <- vroom(
+    vroom_example("mtcars.csv"),
+    delim = ",",
+    show_col_types = FALSE
+  )
+  actual <- vroom(
+    vroom_example("mtcars.csv.xz"),
+    delim = ",",
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+  expect_equal(actual, expected)
+  expect_s3_class(actual, "spec_tbl_df")
+})
+
+test_that("libvroom reads zip-compressed CSV files", {
+  expected <- vroom(
+    vroom_example("mtcars.csv"),
+    delim = ",",
+    show_col_types = FALSE
+  )
+  actual <- vroom(
+    vroom_example("mtcars.csv.zip"),
+    delim = ",",
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+  expect_equal(actual, expected)
+  expect_s3_class(actual, "spec_tbl_df")
+})
+
+test_that("libvroom reads I() literal data", {
+  actual <- vroom(
+    I("a,b,c\n1,2,3\n4,5,6\n"),
+    delim = ",",
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+  expect_equal(
+    actual,
+    tibble::tibble(a = c(1L, 4L), b = c(2L, 5L), c = c(3L, 6L))
+  )
+  expect_s3_class(actual, "spec_tbl_df")
+})
+
+test_that("libvroom reads remote CSV files", {
+  skip_if_offline()
+
+  actual <- vroom(
+    "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv",
+    delim = ",",
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+  expected <- vroom(
+    vroom_example("mtcars.csv"),
+    delim = ",",
+    show_col_types = FALSE
+  )
+  expect_equal(actual, expected)
+  expect_s3_class(actual, "spec_tbl_df")
+})
