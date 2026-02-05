@@ -522,3 +522,224 @@ test_that("libvroom spec reflects full file schema with col_select", {
   expect_equal(length(s$cols), 3)
   expect_true(all(c("a", "b", "c") %in% names(s$cols)))
 })
+
+test_that("libvroom handles col_names = FALSE", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+
+  out_con <- file(tf, "wb", encoding = "UTF-8")
+  writeBin(charToRaw("1,2,3\n4,5,6\n"), out_con)
+  close(out_con)
+
+  # Should NOT fall back to legacy parser (no warning)
+  expect_no_warning(
+    result <- vroom(
+      tf,
+      delim = ",",
+      col_names = FALSE,
+      use_libvroom = TRUE,
+      show_col_types = FALSE
+    )
+  )
+  expect_equal(
+    result,
+    tibble::tibble(X1 = c(1L, 4L), X2 = c(2L, 5L), X3 = c(3L, 6L))
+  )
+})
+
+test_that("libvroom handles col_names = FALSE with header-like first row", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+
+  out_con <- file(tf, "wb", encoding = "UTF-8")
+  writeBin(charToRaw("a,b,c\n1,2,3\n"), out_con)
+  close(out_con)
+
+  expect_no_warning(
+    result <- vroom(
+      tf,
+      delim = ",",
+      col_names = FALSE,
+      use_libvroom = TRUE,
+      show_col_types = FALSE
+    )
+  )
+  # First row is data, not header
+  expect_equal(
+    result,
+    tibble::tibble(X1 = c("a", "1"), X2 = c("b", "2"), X3 = c("c", "3"))
+  )
+})
+
+test_that("libvroom handles custom col_names as character vector", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+
+  out_con <- file(tf, "wb", encoding = "UTF-8")
+  writeBin(charToRaw("1,2,3\n4,5,6\n"), out_con)
+  close(out_con)
+
+  expect_no_warning(
+    result <- vroom(
+      tf,
+      delim = ",",
+      col_names = c("foo", "bar", "baz"),
+      use_libvroom = TRUE,
+      show_col_types = FALSE
+    )
+  )
+  expect_equal(
+    result,
+    tibble::tibble(foo = c(1L, 4L), bar = c(2L, 5L), baz = c(3L, 6L))
+  )
+})
+
+test_that("libvroom handles custom col_names with header row treated as data", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+
+  out_con <- file(tf, "wb", encoding = "UTF-8")
+  writeBin(charToRaw("a,b,c\n1,2,3\n"), out_con)
+  close(out_con)
+
+  # When col_names is a character vector, first row is data
+  expect_no_warning(
+    result <- vroom(
+      tf,
+      delim = ",",
+      col_names = c("x", "y", "z"),
+      use_libvroom = TRUE,
+      show_col_types = FALSE
+    )
+  )
+  expect_equal(
+    result,
+    tibble::tibble(x = c("a", "1"), y = c("b", "2"), z = c("c", "3"))
+  )
+})
+
+test_that("libvroom col_names results match legacy parser", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+
+  out_con <- file(tf, "wb", encoding = "UTF-8")
+  writeBin(charToRaw("a,b,c\n1,foo,3.5\n4,bar,6.5\n"), out_con)
+  close(out_con)
+
+  # col_names = FALSE parity
+  legacy <- vroom(
+    tf,
+    delim = ",",
+    col_names = FALSE,
+    use_libvroom = FALSE,
+    show_col_types = FALSE
+  )
+  expect_no_warning(
+    libvroom_res <- vroom(
+      tf,
+      delim = ",",
+      col_names = FALSE,
+      use_libvroom = TRUE,
+      show_col_types = FALSE
+    )
+  )
+  expect_equal(libvroom_res, legacy)
+
+  # col_names = character vector parity
+  legacy2 <- vroom(
+    tf,
+    delim = ",",
+    col_names = c("x", "y", "z"),
+    use_libvroom = FALSE,
+    show_col_types = FALSE
+  )
+  expect_no_warning(
+    libvroom_res2 <- vroom(
+      tf,
+      delim = ",",
+      col_names = c("x", "y", "z"),
+      use_libvroom = TRUE,
+      show_col_types = FALSE
+    )
+  )
+  expect_equal(libvroom_res2, legacy2)
+})
+
+test_that("libvroom handles named col_types with custom col_names", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+
+  # Use col_types that differ from what inference would produce:
+  # "1","3" would infer as INT32, but we force character
+  out_con <- file(tf, "wb", encoding = "UTF-8")
+  writeBin(charToRaw("1,2.5,hello\n3,4.5,world\n"), out_con)
+  close(out_con)
+
+  expect_no_warning(
+    result <- vroom(
+      tf,
+      delim = ",",
+      col_names = c("x", "y", "z"),
+      col_types = cols(x = col_character()),
+      use_libvroom = TRUE,
+      show_col_types = FALSE
+    )
+  )
+  # x forced to character (not integer from inference)
+  expect_equal(
+    result,
+    tibble::tibble(x = c("1", "3"), y = c(2.5, 4.5), z = c("hello", "world"))
+  )
+})
+
+test_that("libvroom handles positional col_types with col_names = FALSE", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+
+  out_con <- file(tf, "wb", encoding = "UTF-8")
+  writeBin(charToRaw("1,2.5,hello\n3,4.5,world\n"), out_con)
+  close(out_con)
+
+  expect_no_warning(
+    result <- vroom(
+      tf,
+      delim = ",",
+      col_names = FALSE,
+      col_types = "idc",
+      use_libvroom = TRUE,
+      show_col_types = FALSE
+    )
+  )
+  expect_equal(
+    result,
+    tibble::tibble(
+      X1 = c(1L, 3L),
+      X2 = c(2.5, 4.5),
+      X3 = c("hello", "world")
+    )
+  )
+})
+
+test_that("libvroom handles cols_only() with custom col_names", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+
+  out_con <- file(tf, "wb", encoding = "UTF-8")
+  writeBin(charToRaw("1,2.5,hello\n3,4.5,world\n"), out_con)
+  close(out_con)
+
+  expect_no_warning(
+    result <- vroom(
+      tf,
+      delim = ",",
+      col_names = c("x", "y", "z"),
+      col_types = cols_only(x = col_integer(), z = col_character()),
+      use_libvroom = TRUE,
+      show_col_types = FALSE
+    )
+  )
+  expect_equal(
+    result,
+    tibble::tibble(x = c(1L, 3L), z = c("hello", "world"))
+  )
+})
