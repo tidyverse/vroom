@@ -256,14 +256,6 @@ vroom <- function(
   }
 
   if (use_libvroom) {
-    input <- file[[1]]
-    if (inherits(input, "connection")) {
-      input <- read_connection_raw(input)
-      if (length(input) == 0L) {
-        return(tibble::tibble())
-      }
-    }
-
     na_str <- paste(na, collapse = ",")
 
     ct <- resolve_libvroom_col_types(col_types)
@@ -294,64 +286,146 @@ vroom <- function(
       default_col_type <- collector_to_libvroom_int(resolved_spec$default)
     }
 
-    out <- vroom_libvroom_(
-      input = input,
-      delim = delim %||% "",
-      quote = quote,
-      has_header = isTRUE(col_names),
-      skip = as.integer(skip),
-      comment = comment,
-      skip_empty_rows = skip_empty_rows,
-      trim_ws = trim_ws,
-      na_values = na_str,
-      num_threads = as.integer(num_threads),
-      strings_as_factors = FALSE,
-      use_altrep = if (is.character(altrep)) {
-        "chr" %in% altrep
-      } else {
-        isTRUE(altrep)
-      },
-      col_types = col_types_int,
-      col_type_names = libvroom_col_type_names,
-      default_col_type = default_col_type
-    )
+    # Helper to read a single file/connection through libvroom
+    read_one_libvroom <- function(input) {
+      if (inherits(input, "connection")) {
+        input <- read_connection_raw(input)
+        if (length(input) == 0L) {
+          return(NULL)
+        }
+      }
 
-    # Apply col_names renaming for non-TRUE col_names
-    if (is.character(col_names)) {
-      names(out) <- make_names(col_names, ncol(out))
-    } else if (isFALSE(col_names)) {
-      names(out) <- make_names(character(), ncol(out))
+      one <- vroom_libvroom_(
+        input = input,
+        delim = delim %||% "",
+        quote = quote,
+        has_header = isTRUE(col_names),
+        skip = as.integer(skip),
+        comment = comment,
+        skip_empty_rows = skip_empty_rows,
+        trim_ws = trim_ws,
+        na_values = na_str,
+        num_threads = as.integer(num_threads),
+        strings_as_factors = FALSE,
+        use_altrep = if (is.character(altrep)) {
+          "chr" %in% altrep
+        } else {
+          isTRUE(altrep)
+        },
+        col_types = col_types_int,
+        col_type_names = libvroom_col_type_names,
+        default_col_type = default_col_type
+      )
+
+      # Apply col_names renaming for non-TRUE col_names
+      if (is.character(col_names)) {
+        names(one) <- make_names(col_names, ncol(one))
+      } else if (isFALSE(col_names)) {
+        names(one) <- make_names(character(), ncol(one))
+      }
+
+      one <- filter_cols_only_and_skip(
+        one,
+        resolved_spec,
+        col_types_int,
+        col_type_names
+      )
+
+      # Apply R-side post-processing for types libvroom parsed as STRING
+      one <- apply_col_postprocessing(
+        one,
+        resolved_spec,
+        col_types_int,
+        col_type_names
+      )
+
+      list(
+        data = one,
+        resolved_spec = resolved_spec,
+        col_types_int = col_types_int
+      )
     }
 
-    out <- filter_cols_only_and_skip(
-      out,
-      resolved_spec,
-      col_types_int,
-      col_type_names
-    )
+    # Read each file and collect results
+    results <- list()
+    first_result <- NULL
+    for (input in file) {
+      # Skip truly empty files (0 bytes, no header)
+      if (
+        is.character(input) &&
+          file.exists(input) &&
+          file.size(input) == 0
+      ) {
+        next
+      }
 
-    # Apply R-side post-processing for types libvroom parsed as STRING
-    out <- apply_col_postprocessing(
-      out,
-      resolved_spec,
-      col_types_int,
-      col_type_names
-    )
+      res <- read_one_libvroom(input)
+      if (is.null(res)) {
+        next
+      }
+
+      # Keep the first result for column name/type info even if 0 rows
+      if (is.null(first_result)) {
+        first_result <- res
+      }
+
+      if (nrow(res$data) > 0) {
+        # Add id column if requested
+        if (!is.null(id)) {
+          file_path <- if (is.character(input)) input else "<connection>"
+          res$data <- cbind(
+            stats::setNames(
+              data.frame(
+                rep(file_path, nrow(res$data)),
+                stringsAsFactors = FALSE
+              ),
+              id
+            ),
+            res$data
+          )
+        }
+        results[[length(results) + 1L]] <- res
+      }
+    }
+
+    # If no results at all, return empty tibble
+    if (is.null(first_result)) {
+      return(tibble::tibble())
+    }
+
+    # Combine results
+    if (length(results) == 0) {
+      # All files were empty (header-only); use first_result for structure
+      out <- first_result$data
+      if (!is.null(id)) {
+        out <- cbind(
+          stats::setNames(
+            data.frame(character(0), stringsAsFactors = FALSE),
+            id
+          ),
+          out
+        )
+      }
+    } else if (length(results) == 1) {
+      out <- results[[1]]$data
+    } else {
+      out <- vctrs::vec_rbind(!!!lapply(results, function(r) r$data))
+    }
 
     out <- tibble::as_tibble(out, .name_repair = .name_repair)
 
     # Build and attach spec attribute BEFORE col_select so it reflects
-    # the full file schema, not just selected columns
-    all_col_names <- names(out)
+    # the full file schema, not just selected columns.
+    # Exclude the id column from the spec column names.
+    all_col_names <- setdiff(names(out), id)
     attr(out, "spec") <- build_libvroom_spec(
-      out,
-      resolved_spec,
-      col_types_int,
+      out[all_col_names],
+      first_result$resolved_spec,
+      first_result$col_types_int,
       all_col_names,
       delim = delim %||% ""
     )
 
-    # id is always NULL here (can_use_libvroom rejects non-null id)
     out <- apply_libvroom_col_select(out, col_select, id)
 
     out <- finalize_libvroom_result(out)
@@ -467,39 +541,33 @@ can_use_libvroom <- function(
     return(FALSE)
   }
 
-  if (length(file) != 1) {
+  if (length(file) == 0) {
     return(FALSE)
   }
 
-  input <- file[[1]]
-  if (is.character(input)) {
-    if (grepl("^(https?|ftp|ftps)://", input)) {
+  # Validate each file in the input vector
+  for (input in file) {
+    if (is.character(input)) {
+      if (grepl("^(https?|ftp|ftps)://", input)) {
+        return(FALSE)
+      }
+      if (!file.exists(input)) {
+        return(FALSE)
+      }
+      ext <- tolower(tools::file_ext(input))
+      if (ext %in% c("gz", "bz2", "xz", "zip", "zst")) {
+        return(FALSE)
+      }
+    } else if (!inherits(input, "connection")) {
+      return(FALSE)
+    } else if (inherits(input, "rawConnection")) {
+      # Raw byte inputs can contain arbitrary encodings
       return(FALSE)
     }
-    if (!file.exists(input)) {
-      return(FALSE)
-    }
-    ext <- tolower(tools::file_ext(input))
-    if (ext %in% c("gz", "bz2", "xz", "zip", "zst")) {
-      return(FALSE)
-    }
-    if (file.size(input) == 0) {
-      return(FALSE)
-    }
-  } else if (!inherits(input, "connection")) {
-    return(FALSE)
-  } else if (inherits(input, "rawConnection")) {
-    # Raw byte inputs can contain arbitrary encodings
-    return(FALSE)
   }
 
   # Only allow col_types that libvroom handles natively
   if (!can_libvroom_handle_col_types(col_types)) {
-    return(FALSE)
-  }
-
-  # No id column (would need file path prepended)
-  if (!is.null(id)) {
     return(FALSE)
   }
 

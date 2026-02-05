@@ -24,7 +24,13 @@ test_that("problems works for multiple files", {
   writeLines("x,y\n3.x,4\n1,2\n2,2", out2)
 
   expect_warning(
-    x <- vroom(c(out1, out2), delim = ",", col_types = "dd", altrep = F),
+    x <- vroom(
+      c(out1, out2),
+      delim = ",",
+      col_types = "dd",
+      altrep = F,
+      use_libvroom = FALSE
+    ),
     class = "vroom_parse_issue"
   )
   probs <- problems(x)

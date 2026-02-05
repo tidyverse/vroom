@@ -523,6 +523,115 @@ test_that("libvroom spec reflects full file schema with col_select", {
   expect_true(all(c("a", "b", "c") %in% names(s$cols)))
 })
 
+test_that("libvroom can read multiple files", {
+  dir <- withr::local_tempdir()
+
+  writeLines("a,b\n1,2\n3,4", file.path(dir, "f1.csv"))
+  writeLines("a,b\n5,6\n7,8", file.path(dir, "f2.csv"))
+
+  files <- file.path(dir, c("f1.csv", "f2.csv"))
+
+  result <- vroom(
+    files,
+    delim = ",",
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+
+  expect_equal(
+    result,
+    tibble::tibble(a = c(1L, 3L, 5L, 7L), b = c(2L, 4L, 6L, 8L))
+  )
+})
+
+test_that("libvroom adds id column from filename for one file", {
+  dir <- withr::local_tempdir()
+  writeLines("a,b\n1,2\n3,4", file.path(dir, "f1.csv"))
+
+  result <- vroom(
+    file.path(dir, "f1.csv"),
+    delim = ",",
+    id = "source",
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+
+  expect_true("source" %in% names(result))
+  expect_true(all(grepl("f1\\.csv$", result$source)))
+  expect_equal(result$a, c(1L, 3L))
+  expect_equal(result$b, c(2L, 4L))
+})
+
+test_that("libvroom adds id column from filename for multiple files", {
+  dir <- withr::local_tempdir()
+
+  writeLines("a,b\n1,2\n3,4", file.path(dir, "f1.csv"))
+  writeLines("a,b\n5,6\n7,8", file.path(dir, "f2.csv"))
+
+  files <- file.path(dir, c("f1.csv", "f2.csv"))
+
+  result <- vroom(
+    files,
+    delim = ",",
+    id = "source",
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+
+  expect_true("source" %in% names(result))
+  expect_equal(result$a, c(1L, 3L, 5L, 7L))
+  expect_equal(result$b, c(2L, 4L, 6L, 8L))
+  expect_true(all(grepl("f1\\.csv$", result$source[1:2])))
+  expect_true(all(grepl("f2\\.csv$", result$source[3:4])))
+})
+
+test_that("libvroom handles empty files in multi-file reading", {
+  dir <- withr::local_tempdir()
+
+  writeLines("a,b", file.path(dir, "empty.csv"))
+  writeLines("a,b\n1,2\n3,4", file.path(dir, "data.csv"))
+
+  files <- file.path(dir, c("empty.csv", "data.csv"))
+
+  result <- vroom(
+    files,
+    delim = ",",
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+
+  expect_equal(
+    result,
+    tibble::tibble(a = c(1L, 3L), b = c(2L, 4L))
+  )
+})
+
+test_that("libvroom multi-file matches legacy parser output", {
+  dir <- withr::local_tempdir()
+
+  writeLines("a,b,c\n1,foo,3.5\n4,bar,6.5", file.path(dir, "f1.csv"))
+  writeLines("a,b,c\nNA,baz,9.5\n7,qux,1.5", file.path(dir, "f2.csv"))
+
+  files <- file.path(dir, c("f1.csv", "f2.csv"))
+
+  suppressWarnings({
+    legacy <- vroom(
+      files,
+      delim = ",",
+      use_libvroom = FALSE,
+      show_col_types = FALSE
+    )
+    libvroom <- vroom(
+      files,
+      delim = ",",
+      use_libvroom = TRUE,
+      show_col_types = FALSE
+    )
+  })
+
+  expect_equal(libvroom, legacy)
+})
+
 test_that("libvroom handles col_names = FALSE", {
   tf <- tempfile(fileext = ".csv")
   on.exit(unlink(tf))

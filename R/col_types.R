@@ -439,6 +439,12 @@ apply_libvroom_col_select <- function(out, col_select, id = NULL) {
     } else {
       vars <- tidyselect::vars_select(all_names, !!col_select)
     }
+    # Match legacy vroom_select(): auto-include the id column even
+    # when the user's col_select expression doesn't mention it.
+    if (!is.null(id) && !id %in% vars) {
+      names(id) <- id
+      vars <- c(id, vars)
+    }
     out <- out[vars]
     names(out) <- names(vars)
   }
