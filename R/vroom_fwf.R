@@ -161,11 +161,9 @@ vroom_fwf <- function(
     # Drop skipped columns from output (positional skip notation)
     if (length(col_types_int) > 0) {
       skip_mask <- col_types_int == -1L
-      if (
-        any(skip_mask) &&
-          !(!is.null(resolved_spec) &&
-            inherits(resolved_spec$default, "collector_skip"))
-      ) {
+      already_handled_by_cols_only <- !is.null(resolved_spec) &&
+        inherits(resolved_spec$default, "collector_skip")
+      if (any(skip_mask) && !already_handled_by_cols_only) {
         keep <- !skip_mask[seq_len(min(length(skip_mask), ncol(out)))]
         if (length(keep) < ncol(out)) {
           keep <- c(keep, rep(TRUE, ncol(out) - length(keep)))
