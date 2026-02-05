@@ -367,6 +367,31 @@ chr_to_file <- function(x, envir = parent.frame()) {
   normalizePath_utf8(out)
 }
 
+read_connection_raw <- function(con) {
+  should_open <- !isOpen(con)
+  if (should_open) {
+    open_safely(con, "rb")
+  }
+  should_close <- should_open || inherits(con, "rawConnection")
+  on.exit(if (should_close) close(con))
+
+  chunk_size <- as.integer(Sys.getenv("VROOM_CONNECTION_SIZE", 2^17))
+  chunks <- list()
+
+  repeat {
+    chunk <- readBin(con, raw(), chunk_size)
+    if (length(chunk) == 0L) {
+      break
+    }
+    chunks[[length(chunks) + 1L]] <- chunk
+  }
+
+  if (length(chunks) == 0L) {
+    return(raw())
+  }
+  do.call(c, chunks)
+}
+
 detect_compression <- function(path) {
   bytes <- readBin(path, "raw", n = 6)
   if (length(bytes) >= 2 && bytes[[1]] == 0x1f && bytes[[2]] == 0x8b) {

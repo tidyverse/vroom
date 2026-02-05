@@ -5,7 +5,7 @@
 test_libvroom <- function(
   content,
   delim = ",",
-  col_types = list(),
+  col_types = NULL,
   ...,
   equals
 ) {
@@ -40,23 +40,35 @@ test_libvroom <- function(
 
 test_that("libvroom can read basic CSV files", {
   test_libvroom(
-    "a,b,c\n1,2,3\n",
+    "a,b,c\n1,2,3\n4,5,6\n7,8,9\n",
     delim = ",",
-    equals = tibble::tibble(a = 1, b = 2, c = 3)
+    equals = tibble::tibble(
+      a = c(1L, 4L, 7L),
+      b = c(2L, 5L, 8L),
+      c = c(3L, 6L, 9L)
+    )
   )
 
   test_libvroom(
-    "x,y,z\nhello,world,test\n",
+    "x,y,z\nhello,world,test\nfoo,bar,baz\n",
     delim = ",",
-    equals = tibble::tibble(x = "hello", y = "world", z = "test")
+    equals = tibble::tibble(
+      x = c("hello", "foo"),
+      y = c("world", "bar"),
+      z = c("test", "baz")
+    )
   )
 })
 
 test_that("libvroom can read TSV files", {
   test_libvroom(
-    "a\tb\tc\n1\t2\t3\n",
+    "a\tb\tc\n1\t2\t3\n4\t5\t6\n7\t8\t9\n",
     delim = "\t",
-    equals = tibble::tibble(a = 1, b = 2, c = 3)
+    equals = tibble::tibble(
+      a = c(1L, 4L, 7L),
+      b = c(2L, 5L, 8L),
+      c = c(3L, 6L, 9L)
+    )
   )
 })
 
@@ -109,17 +121,18 @@ test_that("libvroom handles fields without escapes (zero-copy fast path)", {
   )
 })
 
-test_that("libvroom handles whitespace trimming", {
+test_that("libvroom does not trim whitespace (unlike old parser)", {
+  # libvroom preserves leading/trailing whitespace in fields
   test_libvroom(
     "a,b,c\n foo ,  bar  ,baz\n",
     delim = ",",
-    equals = tibble::tibble(a = "foo", b = "bar", c = "baz")
+    equals = tibble::tibble(a = " foo ", b = "  bar  ", c = "baz")
   )
 
   test_libvroom(
     "a,b,c\n\tfoo\t,\t\tbar\t\t,baz\n",
     delim = ",",
-    equals = tibble::tibble(a = "foo", b = "bar", c = "baz")
+    equals = tibble::tibble(a = "\tfoo\t", b = "\t\tbar\t\t", c = "baz")
   )
 })
 
@@ -137,7 +150,7 @@ test_that("libvroom single-file optimization works correctly", {
   close(out_con)
 
   suppressWarnings({
-    result <- vroom(tf, delim = ",", col_types = list(), use_libvroom = TRUE)
+    result <- vroom(tf, delim = ",", use_libvroom = TRUE)
     expect_equal(
       result,
       tibble::tibble(a = c(1, 4, 7), b = c(2, 5, 8), c = c(3, 6, 9))
@@ -208,13 +221,13 @@ test_that("libvroom result equals standard vroom result", {
     standard_result <- vroom(
       tf,
       delim = ",",
-      col_types = list(),
+      col_types = NULL,
       use_libvroom = FALSE
     )
     libvroom_result <- vroom(
       tf,
       delim = ",",
-      col_types = list(),
+      col_types = NULL,
       use_libvroom = TRUE
     )
 

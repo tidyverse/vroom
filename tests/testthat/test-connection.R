@@ -36,6 +36,62 @@ test_that("reading from connection is consistent with reading directly from a fi
   expect_equal(actual, expected)
 })
 
+test_that("reading from a file() connection uses libvroom when eligible", {
+  expected <- vroom(
+    vroom_example("mtcars.csv"),
+    delim = ",",
+    show_col_types = FALSE
+  )
+  actual <- vroom(
+    file(vroom_example("mtcars.csv")),
+    delim = ",",
+    show_col_types = FALSE
+  )
+  expect_equal(actual, expected)
+  # Verify libvroom backend was used (old backend sets spec attribute)
+  expect_false("spec_tbl_df" %in% class(actual))
+})
+
+test_that("reading from a gzfile() connection works via libvroom", {
+  expected <- vroom(
+    vroom_example("mtcars.csv"),
+    delim = ",",
+    show_col_types = FALSE
+  )
+  actual <- vroom(
+    gzfile(vroom_example("mtcars.csv.gz")),
+    delim = ",",
+    show_col_types = FALSE
+  )
+  expect_equal(actual, expected)
+  expect_false("spec_tbl_df" %in% class(actual))
+})
+
+test_that("reading from a rawConnection works via libvroom", {
+  raw_data <- charToRaw("a,b,c\n1,2,3\n4,5,6\n")
+  actual <- vroom(rawConnection(raw_data), delim = ",", show_col_types = FALSE)
+  expect_equal(nrow(actual), 2)
+  expect_equal(ncol(actual), 3)
+  expect_false("spec_tbl_df" %in% class(actual))
+})
+
+test_that("connection reads work with small VROOM_CONNECTION_SIZE via libvroom", {
+  expected <- vroom(
+    vroom_example("mtcars.csv"),
+    delim = ",",
+    show_col_types = FALSE
+  )
+  withr::with_envvar(c("VROOM_CONNECTION_SIZE" = "100"), {
+    actual <- vroom(
+      file(vroom_example("mtcars.csv")),
+      delim = ",",
+      show_col_types = FALSE
+    )
+  })
+  expect_equal(actual, expected)
+  expect_false("spec_tbl_df" %in% class(actual))
+})
+
 test_that("vroom errors when the connection buffer is too small", {
   withr::local_envvar(c("VROOM_CONNECTION_SIZE" = 32))
   expect_snapshot(error = TRUE, {

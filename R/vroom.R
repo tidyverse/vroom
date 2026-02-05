@@ -246,9 +246,17 @@ vroom <- function(
   )
 
   if (use_libvroom) {
+    input <- file[[1]]
+    if (inherits(input, "connection")) {
+      input <- read_connection_raw(input)
+      if (length(input) == 0L) {
+        return(tibble::tibble())
+      }
+    }
+
     na_str <- paste(na, collapse = ",")
     out <- vroom_libvroom_(
-      path = file[[1]],
+      input = input,
       delim = delim %||% "",
       quote = quote,
       has_header = isTRUE(col_names),
@@ -386,26 +394,26 @@ can_use_libvroom <- function(
     return(FALSE)
   }
 
-  # Must be a single file path (not connection)
   if (length(file) != 1) {
     return(FALSE)
   }
-  if (!is.character(file[[1]])) {
-    return(FALSE)
-  }
 
-  # Must be a local file path, not a URL
-  path <- file[[1]]
-  if (grepl("^(https?|ftp|ftps)://", path)) {
-    return(FALSE)
-  }
-
-  # Must be an existing, uncompressed file
-  if (!file.exists(path)) {
-    return(FALSE)
-  }
-  ext <- tolower(tools::file_ext(path))
-  if (ext %in% c("gz", "bz2", "xz", "zip", "zst")) {
+  input <- file[[1]]
+  if (is.character(input)) {
+    if (grepl("^(https?|ftp|ftps)://", input)) {
+      return(FALSE)
+    }
+    if (!file.exists(input)) {
+      return(FALSE)
+    }
+    ext <- tolower(tools::file_ext(input))
+    if (ext %in% c("gz", "bz2", "xz", "zip", "zst")) {
+      return(FALSE)
+    }
+    if (file.size(input) == 0) {
+      return(FALSE)
+    }
+  } else if (!inherits(input, "connection")) {
     return(FALSE)
   }
 
@@ -444,11 +452,6 @@ can_use_libvroom <- function(
 
   # Must use UTF-8 or default encoding
   if (!is_ascii_compatible(locale$encoding)) {
-    return(FALSE)
-  }
-
-  # Check file is not empty
-  if (file.size(path) == 0) {
     return(FALSE)
   }
 

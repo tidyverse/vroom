@@ -8,7 +8,7 @@
 #include <cstring>
 
 [[cpp11::register]] cpp11::sexp vroom_libvroom_(
-    const std::string& path,
+    SEXP input,
     const std::string& delim,
     char quote,
     bool has_header,
@@ -39,9 +39,22 @@
 
   libvroom::CsvReader reader(opts);
 
-  auto open_result = reader.open(path);
-  if (!open_result) {
-    cpp11::stop("Failed to open file: %s", open_result.error.c_str());
+  if (TYPEOF(input) == RAWSXP) {
+    // Raw vector from connection - create aligned buffer
+    size_t data_size = Rf_xlength(input);
+    auto buffer = libvroom::AlignedBuffer::allocate(data_size);
+    std::memcpy(buffer.data(), RAW(input), data_size);
+    auto open_result = reader.open_from_buffer(std::move(buffer));
+    if (!open_result) {
+      cpp11::stop("Failed to open buffer: %s", open_result.error.c_str());
+    }
+  } else {
+    // File path
+    std::string path = cpp11::as_cpp<std::string>(input);
+    auto open_result = reader.open(path);
+    if (!open_result) {
+      cpp11::stop("Failed to open file: %s", open_result.error.c_str());
+    }
   }
 
   const auto& schema = reader.schema();
