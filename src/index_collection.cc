@@ -130,7 +130,8 @@ std::shared_ptr<vroom::index> make_delimited_index(
     const bool skip_empty_rows,
     const std::shared_ptr<vroom_errors>& errors,
     const size_t num_threads,
-    const bool progress) {
+    const bool progress,
+    const bool use_libvroom = false) {
 
   auto connection_or_filepath = cpp11::package("vroom")["connection_or_filepath"];
 
@@ -139,6 +140,7 @@ std::shared_ptr<vroom::index> make_delimited_index(
   bool is_connection = TYPEOF(x) != STRSXP;
 
   if (is_connection) {
+    // libvroom doesn't support connections, fall back to original implementation
     return std::make_shared<vroom::delimited_index_connection>(
         x,
         delim,
@@ -157,6 +159,10 @@ std::shared_ptr<vroom::index> make_delimited_index(
   }
 
   auto filename = cpp11::as_cpp<std::string>(x);
+
+  // Old libvroom_index path removed - replaced by arrow_to_r in vroom_new.cpp
+  (void)use_libvroom;
+
   return std::make_shared<vroom::delimited_index>(
       filename.c_str(),
       delim,
@@ -232,7 +238,8 @@ index_collection::index_collection(
     const bool skip_empty_rows,
     const std::shared_ptr<vroom_errors>& errors,
     const size_t num_threads,
-    const bool progress)
+    const bool progress,
+    const bool use_libvroom)
     : rows_(0), columns_(0) {
 
   std::shared_ptr<vroom::index> first = make_delimited_index(
@@ -249,7 +256,8 @@ index_collection::index_collection(
       skip_empty_rows,
       errors,
       num_threads,
-      progress);
+      progress,
+      use_libvroom);
 
   indexes_.push_back(first);
   columns_ = first->num_columns();
@@ -271,7 +279,8 @@ index_collection::index_collection(
         skip_empty_rows,
         errors,
         num_threads,
-        progress);
+        progress,
+        use_libvroom);
 
     check_column_consistency(first, idx, has_header, i);
 
@@ -374,6 +383,11 @@ index_collection::index_collection(
 }
 
 string index_collection::get(size_t row, size_t column) const {
+  // Optimization: For single-file reads, directly delegate to the underlying index
+  if (indexes_.size() == 1) {
+    return indexes_[0]->get(row, column);
+  }
+
   for (const auto& idx : indexes_) {
     if (row < idx->num_rows()) {
       return idx->get(row, column);

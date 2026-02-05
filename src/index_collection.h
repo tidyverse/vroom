@@ -32,7 +32,8 @@ public:
       const bool skip_empty_rows,
       const std::shared_ptr<vroom_errors>& errors,
       const size_t num_threads,
-      const bool progress);
+      const bool progress,
+      const bool use_libvroom = false);
 
   // For fixed width files
   index_collection(
@@ -92,6 +93,13 @@ public:
 
   std::shared_ptr<vroom::index::column>
   get_column(size_t column) const override {
+    // Optimization: For single-file reads, bypass index_collection indirection
+    // and use the underlying index's get_column directly. This avoids virtual
+    // dispatch overhead in full_iterator for the common single-file case.
+    if (indexes_.size() == 1) {
+      return indexes_[0]->get_column(column);
+    }
+
     auto begin = new full_iterator(shared_from_this(), column);
     auto end = new full_iterator(shared_from_this(), column);
     end->advance(rows_);
@@ -100,6 +108,10 @@ public:
   }
 
   std::shared_ptr<index::row> get_row(size_t row) const override {
+    // Optimization: For single-file reads, directly delegate to the underlying index
+    if (indexes_.size() == 1) {
+      return indexes_[0]->get_row(row);
+    }
 
     for (const auto& idx : indexes_) {
 

@@ -1,6 +1,6 @@
 Package: vroom
 Title: Read and Write Rectangular Text Data Quickly
-Version: 1.7.0.9000
+Version: 1.6.7.9000
 Authors@R: c(
     person("Jim", "Hester", role = "aut",
            comment = c(ORCID = "0000-0002-2739-7082")),
@@ -74,6 +74,7 @@ Config/Needs/website: nycflights13, tidyverse/tidytemplate
 Config/testthat/edition: 3
 Config/testthat/parallel: false
 Config/usethis/last-upkeep: 2025-11-25
+SystemRequirements: C++17
 Copyright: file COPYRIGHTS
 Encoding: UTF-8
 Language: en-US

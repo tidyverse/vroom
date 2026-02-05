@@ -41,7 +41,8 @@
     const cpp11::list& locale,
     ptrdiff_t guess_max,
     size_t num_threads,
-    size_t altrep) {
+    size_t altrep,
+    bool use_libvroom) {
 
   bool has_header =
       TYPEOF(col_names) == LGLSXP && cpp11::logicals(col_names)[0];
@@ -72,7 +73,8 @@
       skip_empty_rows,
       *errors,
       num_threads,
-      progress);
+      progress,
+      use_libvroom);
 
   (*errors)->resolve_parse_errors(*idx);
 

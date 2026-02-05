@@ -1,1 +1,105 @@
-PKG_CPPFLAGS=-Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -DFMT_HEADER_ONLY
+PKG_CPPFLAGS=-Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -DFMT_HEADER_ONLY \
+	-Ilibvroom/include -Ilibvroom/third_party -Ilibvroom/third_party/simdutf -Ilibvroom/src
+PKG_LIBS=-lz
+
+# vroom's own source files (old + new)
+VROOM_SOURCES = Iconv.cpp LocaleInfo.cpp altrep.cc cpp11.cpp \
+	delimited_index.cc delimited_index_connection.cc \
+	fixed_width_index_connection.cc gen.cc grisu3.c guess_type.cc \
+	iconv_file.cc index_collection.cc vroom.cc vroom_big_int.cc \
+	vroom_chr.cc vroom_date.cc vroom_dbl.cc vroom_dttm.cc \
+	vroom_errors.cpp vroom_fct.cc vroom_fwf.cc vroom_int.cc \
+	vroom_num.cc vroom_rle.cc vroom_time.cc vroom_write.cc \
+	r_abort.cc
+
+# All libvroom source files (excluding cli.cpp)
+LIBVROOM_SOURCES = libvroom/src/cache/index_cache.cpp \
+	libvroom/src/columns/column_builder.cpp \
+	libvroom/src/dialect.cpp \
+	libvroom/src/encoding.cpp \
+	libvroom/src/encoding/delta_bitpacked.cpp \
+	libvroom/src/encoding/delta_length.cpp \
+	libvroom/src/encoding/hybrid_rle.cpp \
+	libvroom/src/encoding/plain.cpp \
+	libvroom/src/encoding/rle.cpp \
+	libvroom/src/error.cpp \
+	libvroom/src/io_util.cpp \
+	libvroom/src/parser/chunk_finder.cpp \
+	libvroom/src/parser/line_parser.cpp \
+	libvroom/src/parser/quote_parity.cpp \
+	libvroom/src/parser/simd_atoi.cpp \
+	libvroom/src/parser/simd_chunk_finder.cpp \
+	libvroom/src/parser/split_fields.cpp \
+	libvroom/src/parser/split_fields_iter.cpp \
+	libvroom/src/reader/csv_reader.cpp \
+	libvroom/src/reader/mmap_source.cpp \
+	libvroom/src/schema/type_inference.cpp \
+	libvroom/src/schema/type_parsers.cpp \
+	libvroom/src/simd/statistics_simd.cpp \
+	libvroom/src/table.cpp \
+	libvroom/src/writer/arrow_ipc_writer.cpp \
+	libvroom/src/writer/column_writer.cpp \
+	libvroom/src/writer/compression.cpp \
+	libvroom/src/writer/dictionary.cpp \
+	libvroom/src/writer/page_writer.cpp \
+	libvroom/src/writer/parquet_file.cpp \
+	libvroom/src/writer/parquet_types.cpp \
+	libvroom/src/writer/row_group.cpp \
+	libvroom/src/writer/statistics.cpp \
+	libvroom/src/writer/thrift_compact.cpp
+
+# simdutf - SIMD UTF-8/UTF-16/UTF-32 validation and transcoding
+SIMDUTF_SOURCES = libvroom/third_party/simdutf/simdutf.cpp
+
+# Highway source files - excluding abort.cc (replaced by r_abort.cc)
+HIGHWAY_SOURCES = libvroom/third_party/hwy/aligned_allocator.cc \
+	libvroom/third_party/hwy/per_target.cc \
+	libvroom/third_party/hwy/targets.cc
+
+OBJECTS = arrow_to_r.o vroom_arrow_chr.o vroom_dict_chr.o vroom_new.o vroom_arrow.o \
+	Iconv.o LocaleInfo.o altrep.o cpp11.o \
+	delimited_index.o delimited_index_connection.o \
+	fixed_width_index_connection.o gen.o grisu3.o guess_type.o \
+	iconv_file.o index_collection.o vroom.o vroom_big_int.o \
+	vroom_chr.o vroom_date.o vroom_dbl.o vroom_dttm.o \
+	vroom_errors.o vroom_fct.o vroom_fwf.o vroom_int.o \
+	vroom_num.o vroom_rle.o vroom_time.o vroom_write.o \
+	r_abort.o \
+	libvroom/src/cache/index_cache.o \
+	libvroom/src/columns/column_builder.o \
+	libvroom/src/dialect.o \
+	libvroom/src/encoding.o \
+	libvroom/src/encoding/delta_bitpacked.o \
+	libvroom/src/encoding/delta_length.o \
+	libvroom/src/encoding/hybrid_rle.o \
+	libvroom/src/encoding/plain.o \
+	libvroom/src/encoding/rle.o \
+	libvroom/src/error.o \
+	libvroom/src/io_util.o \
+	libvroom/src/parser/chunk_finder.o \
+	libvroom/src/parser/line_parser.o \
+	libvroom/src/parser/quote_parity.o \
+	libvroom/src/parser/simd_atoi.o \
+	libvroom/src/parser/simd_chunk_finder.o \
+	libvroom/src/parser/split_fields.o \
+	libvroom/src/parser/split_fields_iter.o \
+	libvroom/src/reader/csv_reader.o \
+	libvroom/src/reader/mmap_source.o \
+	libvroom/src/schema/type_inference.o \
+	libvroom/src/schema/type_parsers.o \
+	libvroom/src/simd/statistics_simd.o \
+	libvroom/src/table.o \
+	libvroom/src/writer/arrow_ipc_writer.o \
+	libvroom/src/writer/column_writer.o \
+	libvroom/src/writer/compression.o \
+	libvroom/src/writer/dictionary.o \
+	libvroom/src/writer/page_writer.o \
+	libvroom/src/writer/parquet_file.o \
+	libvroom/src/writer/parquet_types.o \
+	libvroom/src/writer/row_group.o \
+	libvroom/src/writer/statistics.o \
+	libvroom/src/writer/thrift_compact.o \
+	libvroom/third_party/simdutf/simdutf.o \
+	libvroom/third_party/hwy/aligned_allocator.o \
+	libvroom/third_party/hwy/per_target.o \
+	libvroom/third_party/hwy/targets.o

@@ -93,9 +93,6 @@ vroom_fwf <- function(
   show_col_types = NULL,
   .name_repair = "unique"
 ) {
-  check_number_decimal(n_max)
-  check_number_decimal(guess_max)
-
   verify_fwf_positions(col_positions)
 
   file <- standardise_path(file)

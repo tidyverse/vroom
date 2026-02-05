@@ -116,16 +116,12 @@ test_that("vroom_fwf() doesn't leak a connection when opening fails (permission 
   Sys.chmod(tfile, mode = "000") # Remove all permissions
   connections_before <- showConnections(all = TRUE)
 
-  # It is conceivable that this vroom_fwf() will succeed if, for example, tests
-  # are being run by root?
-  # See https://github.com/tidyverse/vroom/issues/611
-  # Therefore, we don't state a hard expectation around error or warning.
-  # We just care that connections don't leak.
-  try(
-    suppressWarnings(
+  # Not using snapshots, because not our error or warning
+  expect_error(
+    expect_warning(
       vroom_fwf(file(tfile), fwf_widths(c(6, 6, 6)), show_col_types = FALSE)
     ),
-    silent = TRUE
+    "cannot open"
   )
 
   connections_after <- showConnections(all = TRUE)
