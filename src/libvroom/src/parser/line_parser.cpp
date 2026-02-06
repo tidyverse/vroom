@@ -8,6 +8,9 @@ LineParser::LineParser(const CsvOptions& options) : options_(options) {
 
 void LineParser::init_null_values() {
   std::string_view null_values = options_.null_values;
+  if (null_values.empty()) {
+    return;
+  }
   size_t start = 0;
 
   while (start <= null_values.size()) {

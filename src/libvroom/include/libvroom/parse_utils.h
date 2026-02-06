@@ -75,6 +75,12 @@ public:
 
 private:
   void init(std::string_view null_values_csv) {
+    // When null_values is explicitly empty, no values (including empty strings)
+    // should be treated as null
+    if (null_values_csv.empty()) {
+      empty_is_null_ = false;
+      return;
+    }
     size_t start = 0;
     while (start < null_values_csv.size()) {
       size_t end = null_values_csv.find(',', start);

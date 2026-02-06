@@ -82,3 +82,39 @@ test_that("vroom_lines works with files with mixed line endings", {
     c("foo", "", "bar", "", "baz")
   )
 })
+
+test_that("vroom_lines respects skip", {
+  infile <- vroom_example("mtcars.csv")
+  expected <- readLines(infile)
+  actual <- vroom_lines(infile, skip = 5)
+  expect_equal(actual, expected[-(1:5)])
+})
+
+test_that("vroom_lines works with compressed files", {
+  infile <- vroom_example("mtcars.csv")
+  expected <- readLines(infile)
+
+  gz_file <- tempfile(fileext = ".gz")
+  on.exit(unlink(gz_file))
+  con <- gzfile(gz_file, "wb")
+  writeLines(expected, con)
+  close(con)
+
+  actual <- vroom_lines(gz_file)
+  expect_equal(actual, expected)
+})
+
+test_that("vroom_lines works with literal data via I()", {
+  expect_equal(vroom_lines(I("hello\nworld")), c("hello", "world"))
+  expect_equal(vroom_lines(I("single")), "single")
+})
+
+test_that("vroom_lines returns Altrep vector by default", {
+  infile <- vroom_example("mtcars.csv")
+  result <- vroom_lines(infile)
+  expect_true(is.character(result))
+  expect_true(length(result) > 0)
+  # When altrep = FALSE, should return the same data
+  result2 <- vroom_lines(infile, altrep = FALSE)
+  expect_equal(result, result2)
+})

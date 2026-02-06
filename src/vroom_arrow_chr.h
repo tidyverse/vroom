@@ -157,12 +157,13 @@ struct vroom_arrow_chr {
 
     SEXP result = PROTECT(Rf_allocVector(STRSXP, n));
     R_xlen_t dest_idx = 0;
+    size_t rows_remaining = info.nrows;
 
-    for (size_t c = 0; c < info.chunks.size(); c++) {
+    for (size_t c = 0; c < info.chunks.size() && rows_remaining > 0; c++) {
       auto& chunk = *info.chunks[c];
       const libvroom::StringBuffer& buf = chunk.values();
       const libvroom::NullBitmap& nulls = chunk.null_bitmap();
-      size_t chunk_size = chunk.size();
+      size_t chunk_size = std::min(chunk.size(), rows_remaining);
       bool chunk_has_nulls = nulls.has_nulls();
 
       if (!chunk_has_nulls) {
@@ -185,6 +186,7 @@ struct vroom_arrow_chr {
           }
         }
       }
+      rows_remaining -= chunk_size;
     }
 
     R_set_altrep_data2(vec, result);
