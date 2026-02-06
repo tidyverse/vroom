@@ -42,31 +42,31 @@ struct Dialect {
   enum class LineEnding { LF, CRLF, CR, MIXED, UNKNOWN };
   LineEnding line_ending = LineEnding::UNKNOWN;
 
-  /// Comment character for line skipping ('\0' means no comment skipping)
-  /// Lines starting with this character (after optional whitespace) are ignored during parsing
-  char comment_char = '\0';
+  /// Comment string for line skipping (empty means no comment skipping)
+  /// Lines starting with this string (after optional whitespace) are ignored during parsing
+  std::string comment_str;
 
   /// Factory for standard CSV (comma-separated, double-quoted)
-  static Dialect csv() { return Dialect{',', '"', '"', true, LineEnding::UNKNOWN, '\0'}; }
+  static Dialect csv() { return Dialect{',', '"', '"', true, LineEnding::UNKNOWN, {}}; }
 
   /// Factory for TSV (tab-separated)
-  static Dialect tsv() { return Dialect{'\t', '"', '"', true, LineEnding::UNKNOWN, '\0'}; }
+  static Dialect tsv() { return Dialect{'\t', '"', '"', true, LineEnding::UNKNOWN, {}}; }
 
   /// Factory for semicolon-separated (European style)
-  static Dialect semicolon() { return Dialect{';', '"', '"', true, LineEnding::UNKNOWN, '\0'}; }
+  static Dialect semicolon() { return Dialect{';', '"', '"', true, LineEnding::UNKNOWN, {}}; }
 
   /// Factory for pipe-separated
-  static Dialect pipe() { return Dialect{'|', '"', '"', true, LineEnding::UNKNOWN, '\0'}; }
+  static Dialect pipe() { return Dialect{'|', '"', '"', true, LineEnding::UNKNOWN, {}}; }
 
   /// Factory for CSV with comment support (hash comments)
-  static Dialect csv_with_comments(char comment = '#') {
+  static Dialect csv_with_comments(const std::string& comment = "#") {
     return Dialect{',', '"', '"', true, LineEnding::UNKNOWN, comment};
   }
 
   bool operator==(const Dialect& other) const {
     return delimiter == other.delimiter && quote_char == other.quote_char &&
            escape_char == other.escape_char && double_quote == other.double_quote &&
-           comment_char == other.comment_char;
+           comment_str == other.comment_str;
   }
 
   bool operator!=(const Dialect& other) const { return !(*this == other); }
@@ -187,8 +187,8 @@ struct DetectionResult {
   size_t rows_analyzed = 0;    ///< Number of rows analyzed
   std::string warning;         ///< Any warnings during detection
 
-  /// Detected comment character ('\0' if none detected)
-  char comment_char = '\0';
+  /// Detected comment string (empty if none detected)
+  std::string comment_str;
 
   /// Number of comment lines skipped during detection
   size_t comment_lines_skipped = 0;

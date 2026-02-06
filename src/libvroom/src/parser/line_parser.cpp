@@ -52,12 +52,31 @@ std::vector<std::string> LineParser::parse_header(const char* data, size_t size)
   std::string current_field;
   current_field.reserve(64);
 
+  // Helper to check for inline comment at position
+  const auto& cmt = options_.comment;
+  auto matches_comment_at = [&](size_t pos) -> bool {
+    if (cmt.empty() || pos + cmt.size() > size) return false;
+    return std::memcmp(data + pos, cmt.data(), cmt.size()) == 0;
+  };
+
   for (size_t i = 0; i < size; ++i) {
     char c = data[i];
 
     // Check for end of line
     if (!in_quote && (c == '\n' || c == '\r')) {
       // Trim trailing whitespace from field
+      while (!current_field.empty() &&
+             (current_field.back() == ' ' || current_field.back() == '\t')) {
+        current_field.pop_back();
+      }
+      headers.push_back(std::move(current_field));
+      current_field.clear();
+      break;
+    }
+
+    // Check for inline comment (outside quotes) — truncate field and stop
+    if (!in_quote && matches_comment_at(i)) {
+      // Trim trailing whitespace from current field
       while (!current_field.empty() &&
              (current_field.back() == ' ' || current_field.back() == '\t')) {
         current_field.pop_back();

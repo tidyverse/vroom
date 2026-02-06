@@ -14,28 +14,43 @@
 
 namespace libvroom {
 
-// Skip leading comment lines. Returns offset past all leading comment lines.
-static size_t skip_leading_comment_lines_fwf(const char* data, size_t size, char comment_char) {
-  if (comment_char == '\0' || size == 0) {
+// Check if data at the given position starts with the comment string.
+static bool starts_with_comment(const char* data, size_t remaining, const std::string& comment) {
+  if (comment.empty() || remaining < comment.size()) return false;
+  return std::memcmp(data, comment.data(), comment.size()) == 0;
+}
+
+// Skip leading comment lines in FWF data.
+// Returns offset past all leading comment lines.
+// Unlike the CSV version, this does NOT skip blank/whitespace-only lines
+// because spaces are meaningful data in fixed-width files.
+static size_t skip_leading_comment_lines_fwf(const char* data, size_t size, const std::string& comment) {
+  if (size == 0 || comment.empty()) {
     return 0;
   }
 
   size_t offset = 0;
   while (offset < size) {
-    if (data[offset] != comment_char) {
-      break;
-    }
-    while (offset < size && data[offset] != '\n' && data[offset] != '\r') {
-      offset++;
-    }
-    if (offset < size && data[offset] == '\r') {
-      offset++;
-      if (offset < size && data[offset] == '\n') {
+    // Check if this line starts with the comment string
+    if (starts_with_comment(data + offset, size - offset, comment)) {
+      // Skip to end of this comment line
+      while (offset < size && data[offset] != '\n' && data[offset] != '\r') {
         offset++;
       }
-    } else if (offset < size && data[offset] == '\n') {
-      offset++;
+      // Skip past the line ending
+      if (offset < size && data[offset] == '\r') {
+        offset++;
+        if (offset < size && data[offset] == '\n') {
+          offset++;
+        }
+      } else if (offset < size && data[offset] == '\n') {
+        offset++;
+      }
+      continue;
     }
+
+    // Not a comment line — stop
+    return offset;
   }
   return offset;
 }
@@ -124,7 +139,7 @@ static size_t parse_fwf_chunk(
       break;
 
     // Skip comment lines
-    if (options.comment != '\0' && data[offset] == options.comment) {
+    if (starts_with_comment(data + offset, size - offset, options.comment)) {
       while (offset < size && data[offset] != '\n' && data[offset] != '\r') {
         offset++;
       }
@@ -249,7 +264,7 @@ static std::vector<DataType> infer_fwf_types(
           continue;
         }
       }
-      if (options.comment != '\0' && c == options.comment) {
+      if (starts_with_comment(data + offset, size - offset, options.comment)) {
         while (offset < size && data[offset] != '\n' && data[offset] != '\r') {
           offset++;
         }
