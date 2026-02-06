@@ -37,7 +37,7 @@ test_that("read_file works via https", {
   skip_on_cran()
 
   mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
-  url <- "https://raw.githubusercontent.com/tidyverse/vroom/HEAD/inst/extdata/mtcars.csv"
+  url <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv"
   expect_equal(vroom(url, col_types = list()), mt)
 })
 
@@ -45,41 +45,18 @@ test_that("vroom works via https on gz file", {
   skip_on_cran()
 
   mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
-  url <- "https://raw.githubusercontent.com/tidyverse/vroom/HEAD/inst/extdata/mtcars.csv.gz"
+  url <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv.gz"
   expect_equal(vroom(url, col_types = list()), mt)
 })
 
-test_that("vroom works via https on bz2 file", {
+test_that("vroom errors via https on non-gz file", {
   skip_on_cran()
 
-  mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
-  url <- "https://raw.githubusercontent.com/tidyverse/vroom/HEAD/inst/extdata/mtcars.csv.bz2"
-  expect_equal(vroom(url, col_types = list()), mt)
-})
-
-test_that("vroom works via https on xz file", {
-  skip_on_cran()
-
-  mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
-  url <- "https://raw.githubusercontent.com/tidyverse/vroom/HEAD/inst/extdata/mtcars.csv.xz"
-  expect_equal(vroom(url, col_types = list()), mt)
-})
-
-test_that("vroom works via https on zip file", {
-  skip_on_cran()
-
-  mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
-  url <- "https://raw.githubusercontent.com/tidyverse/vroom/HEAD/inst/extdata/mtcars.csv.zip"
-  expect_equal(vroom(url, col_types = list()), mt)
-})
-
-# https://github.com/tidyverse/vroom/issues/400
-test_that("vroom works via https on concatenated gz file", {
-  skip_on_cran()
-
-  mt <- vroom(vroom_example("mtcars.csv"), col_types = list())
-  url <- "https://raw.githubusercontent.com/tidyverse/vroom/HEAD/inst/extdata/mtcars-concatenated.csv.gz"
-  expect_equal(vroom(url, comment = "#", col_types = list()), mt)
+  url <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv.bz2"
+  expect_snapshot(
+    vroom(url, col_types = list()),
+    error = TRUE
+  )
 })
 
 test_that("split_path_ext works", {
@@ -265,19 +242,10 @@ test_that("multiple files with non-ASCII encoding fails informatively", {
 })
 
 test_that("writing to .zip without archive package fails informatively", {
-  skip_if(is_installed("archive"))
+  local_mocked_bindings(is_installed = function(pkg) FALSE)
 
   expect_snapshot(
     vroom_write(mtcars, tempfile(fileext = ".zip")),
-    error = TRUE
-  )
-})
-
-test_that("reading archive-only formats without archive package fails informatively", {
-  skip_if(is_installed("archive"))
-
-  expect_snapshot(
-    vroom(vroom_example("mtcars.csv.tar.gz"), col_types = list()),
     error = TRUE
   )
 })

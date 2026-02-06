@@ -5,7 +5,9 @@ test_that("col_number only takes first number", {
 
 test_that("col_number helps with currency", {
   test_parse_number("$1,000,000.00", 1e6)
+})
 
+test_that("col_number helps with currency and locale-specific decimal mark", {
   es_MX <- locale("es", decimal_mark = ",")
   test_parse_number("$1.000.000,00", locale = es_MX, 1e6)
 })

@@ -50,3 +50,5 @@
 ^scratch\.R$
 ^compile_commands\.json$
 ^maintenance$
+^src/\.clangd$
+^\.work-review-status$

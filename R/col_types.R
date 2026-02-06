@@ -411,24 +411,124 @@ vroom_enquo <- function(x) {
   x
 }
 
-vroom_select <- function(x, col_select, id) {
-  # reorder and rename columns
+apply_libvroom_col_select <- function(out, col_select, id = NULL) {
   if (inherits(col_select, "quosures") || !quo_is_null(col_select)) {
-    if (inherits(col_select, "quosures")) {
-      vars <- tidyselect::vars_select(c(names(spec(x)$cols), id), !!!col_select)
+    all_names <- names(out)
+
+    # For selection purposes, we need special handling when an id column
+    # is present. Positional indices should reference only the non-id
+    # (data) columns, but the id column should still be selectable by name.
+    if (!is.null(id) && id %in% all_names) {
+      # Build a selection namespace where positional indices map to data
+      # columns only (excluding the id column), but the id column is
+      # still available by name.
+      non_id_names <- setdiff(all_names, id)
+
+      if (inherits(col_select, "quosures")) {
+        vars <- tryCatch(
+          tidyselect::vars_select(non_id_names, !!!col_select),
+          error = function(e) {
+            # Fall back to using all names if column wasn't found
+            tidyselect::vars_select(all_names, !!!col_select)
+          }
+        )
+      } else {
+        vars <- tryCatch(
+          tidyselect::vars_select(non_id_names, !!col_select),
+          error = function(e) {
+            tidyselect::vars_select(all_names, !!col_select)
+          }
+        )
+      }
+
+      # Always include the id column
+      if (!id %in% vars) {
+        names(id) <- id
+        vars <- c(id, vars)
+      }
     } else {
-      vars <- tidyselect::vars_select(c(names(spec(x)$cols), id), !!col_select)
+      if (inherits(col_select, "quosures")) {
+        vars <- tidyselect::vars_select(all_names, !!!col_select)
+      } else {
+        vars <- tidyselect::vars_select(all_names, !!col_select)
+      }
     }
-    if (!is.null(id) && !id %in% vars) {
-      names(id) <- id
-      vars <- c(id, vars)
-    }
-    # This can't be just names(x) as we need to have skipped
-    # names as well to pass to vars_select()
-    x <- x[vars]
-    names(x) <- names(vars)
+
+    out <- out[vars]
+    names(out) <- names(vars)
   }
-  x
+  out
+}
+
+resolve_libvroom_col_types <- function(col_types) {
+  col_types_int <- integer(0)
+  col_type_names <- character(0)
+  resolved_spec <- NULL
+  if (!is.null(col_types) && !identical(col_types, list())) {
+    resolved_spec <- as.col_spec(col_types)
+    col_types_int <- col_types_to_libvroom(resolved_spec)
+    spec_names <- names(resolved_spec$cols)
+    if (!is.null(spec_names) && !all(spec_names == "")) {
+      col_type_names <- spec_names
+    }
+  }
+  list(
+    col_types_int = col_types_int,
+    col_type_names = col_type_names,
+    resolved_spec = resolved_spec
+  )
+}
+
+filter_cols_only_and_skip <- function(
+  out,
+  resolved_spec,
+  col_types_int,
+  col_type_names
+) {
+  is_cols_only <- !is.null(resolved_spec) &&
+    inherits(resolved_spec$default, "collector_skip")
+
+  if (is_cols_only) {
+    # cols_only(): keep only named columns that are not skipped
+    keep_names <- col_type_names[col_types_int != -1L]
+    keep_cols <- names(out) %in% keep_names
+    out <- out[, keep_cols, drop = FALSE]
+  } else if (length(col_types_int) > 0) {
+    skip_mask <- col_types_int == -1L
+    if (any(skip_mask)) {
+      if (length(col_type_names) > 0) {
+        # Named skip: drop columns by name
+        skip_names <- col_type_names[skip_mask]
+        keep <- !(names(out) %in% skip_names)
+        out <- out[, keep, drop = FALSE]
+      } else {
+        # Positional skip (compact notation like "i_d"): drop by position
+        keep <- !skip_mask[seq_len(min(length(skip_mask), ncol(out)))]
+        if (length(keep) < ncol(out)) {
+          keep <- c(keep, rep(TRUE, ncol(out) - length(keep)))
+        }
+        out <- out[, keep, drop = FALSE]
+      }
+    }
+  }
+
+  out
+}
+
+finalize_libvroom_result <- function(out, problems = NULL) {
+  if (is.null(problems) || nrow(problems) == 0) {
+    attr(out, "problems") <- tibble::tibble(
+      row = integer(),
+      col = integer(),
+      expected = character(),
+      actual = character(),
+      file = character()
+    )
+  } else {
+    attr(out, "problems") <- tibble::as_tibble(problems)
+  }
+  class(out) <- c("spec_tbl_df", class(out))
+  out
 }
 
 col_types_standardise <- function(

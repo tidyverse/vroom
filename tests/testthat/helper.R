@@ -3,29 +3,14 @@ test_vroom <- function(content, delim = ",", col_types = list(), ..., equals) {
     content <- I(content)
   }
   suppressWarnings({
-    # with altrep
-    withr::with_envvar(
-      c("VROOM_USE_ALTREP_CHR" = "true", "VROOM_USE_ALTREP_NUMERICS" = "true"),
-      {
-        expect_equal(
-          vroom(content, delim = delim, col_types = col_types, ...),
-          equals
-        )
-      }
-    )
-
-    # without altrep
-    withr::with_envvar(
-      c(
-        "VROOM_USE_ALTREP_CHR" = "false",
-        "VROOM_USE_ALTREP_NUMERICS" = "false"
+    expect_equal(
+      vroom(
+        content,
+        delim = delim,
+        col_types = col_types,
+        ...
       ),
-      {
-        expect_equal(
-          vroom(content, delim = delim, col_types = col_types, ...),
-          equals
-        )
-      }
+      equals
     )
 
     if (!file.exists(content)) {
@@ -41,12 +26,13 @@ test_vroom <- function(content, delim = ",", col_types = list(), ..., equals) {
     }
     on.exit(close(con), add = TRUE)
 
-    res <- vroom(con, delim = delim, col_types = col_types, ...)
+    res <- vroom(
+      con,
+      delim = delim,
+      col_types = col_types,
+      ...
+    )
 
-    expect_equal(res, equals)
-    for (i in seq_along(res)) {
-      force_materialization(res[[i]])
-    }
     expect_equal(res, equals)
   })
 

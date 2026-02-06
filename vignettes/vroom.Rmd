@@ -122,7 +122,7 @@ file <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtc
 vroom(file)
 ```
 
-It can even read compressed files from the internet.
+It can even read gzipped files from the internet (although not the other compressed formats).
 
 ```{r}
 #| eval: !expr as.logical(Sys.getenv("NOT_CRAN", "false"))

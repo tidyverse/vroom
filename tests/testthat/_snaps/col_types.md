@@ -4,17 +4,17 @@
       spec(dat)
     Output
       cols(
-        skip = col_skip(),
-        guess = [31mcol_character()[39m,
-        character = [31mcol_character()[39m,
-        factor = [31mcol_factor(levels = NULL, ordered = FALSE, include_na = FALSE)[39m,
-        logical = [33mcol_logical()[39m,
-        double = [32mcol_double()[39m,
-        integer = [32mcol_integer()[39m,
-        big_integer = [32mcol_big_integer()[39m,
-        number = [32mcol_number()[39m,
-        date = [34mcol_date(format = "")[39m,
-        datetime = [34mcol_datetime(format = "")[39m,
+        col_skip(),
+        col_guess(),
+        [31mcol_character()[39m,
+        [31mcol_factor(levels = NULL, ordered = FALSE, include_na = FALSE)[39m,
+        [33mcol_logical()[39m,
+        [32mcol_double()[39m,
+        [32mcol_integer()[39m,
+        [32mcol_big_integer()[39m,
+        [32mcol_number()[39m,
+        [34mcol_date(format = "")[39m,
+        [34mcol_datetime(format = "")[39m,
         .delim = ","
       )
 
@@ -57,7 +57,7 @@
     Code
       vroom(I("whatever"), col_types = data.frame())
     Condition
-      Error in `vroom()`:
+      Error in `resolve_libvroom_col_types()`:
       ! `col_types` must be `NULL`, a `cols()` specification, or a string, not a <data.frame> object.
 
 # as.col_spec() errors for unrecognized single-letter spec

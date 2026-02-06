@@ -36,11 +36,68 @@ test_that("reading from connection is consistent with reading directly from a fi
   expect_equal(actual, expected)
 })
 
-test_that("vroom errors when the connection buffer is too small", {
-  withr::local_envvar(c("VROOM_CONNECTION_SIZE" = 32))
-  expect_snapshot(error = TRUE, {
-    vroom(file(vroom_example("mtcars.csv")), col_types = list())
+test_that("reading from a file() connection uses libvroom when eligible", {
+  expected <- vroom(
+    vroom_example("mtcars.csv"),
+    delim = ",",
+    show_col_types = FALSE
+  )
+  actual <- vroom(
+    file(vroom_example("mtcars.csv")),
+    delim = ",",
+    show_col_types = FALSE
+  )
+  expect_equal(actual, expected)
+  expect_s3_class(actual, "spec_tbl_df")
+})
+
+test_that("reading from a gzfile() connection works via libvroom", {
+  expected <- vroom(
+    vroom_example("mtcars.csv"),
+    delim = ",",
+    show_col_types = FALSE
+  )
+  actual <- vroom(
+    gzfile(vroom_example("mtcars.csv.gz")),
+    delim = ",",
+    show_col_types = FALSE
+  )
+  expect_equal(actual, expected)
+  expect_s3_class(actual, "spec_tbl_df")
+})
+
+test_that("reading from a rawConnection works via libvroom", {
+  raw_data <- charToRaw("a,b,c\n1,2,3\n4,5,6\n")
+  actual <- vroom(rawConnection(raw_data), delim = ",", show_col_types = FALSE)
+  expect_equal(nrow(actual), 2)
+  expect_equal(ncol(actual), 3)
+  expect_s3_class(actual, "spec_tbl_df")
+})
+
+test_that("connection reads work with small VROOM_CONNECTION_SIZE via libvroom", {
+  expected <- vroom(
+    vroom_example("mtcars.csv"),
+    delim = ",",
+    show_col_types = FALSE
+  )
+  withr::with_envvar(c("VROOM_CONNECTION_SIZE" = "100"), {
+    actual <- vroom(
+      file(vroom_example("mtcars.csv")),
+      delim = ",",
+      show_col_types = FALSE
+    )
   })
+  expect_equal(actual, expected)
+  expect_s3_class(actual, "spec_tbl_df")
+})
+
+test_that("vroom handles very small connection buffer sizes", {
+  # libvroom's connection reading handles small buffer sizes gracefully;
+  # it reads and concatenates all chunks before parsing.
+  withr::local_envvar(c("VROOM_CONNECTION_SIZE" = 32))
+  expected <- vroom(vroom_example("mtcars.csv"), col_types = list())
+  actual <- vroom(file(vroom_example("mtcars.csv")), col_types = list())
+  expect_equal(actual, expected)
 })
 
 test_that("vroom can read files with only a single line and no newlines", {
@@ -78,7 +135,7 @@ test_that("vroom works with windows newlines and a connection size that lies dir
   tf <- tempfile()
   on.exit(unlink(tf))
 
-  writeChar("1,2\r\na,bbb\r\ne,f\r\n", tf, eos = NULL)
+  writeChar("x,y\r\na,bbb\r\ne,f\r\n", tf, eos = NULL)
 
   withr::with_envvar(c("VROOM_CONNECTION_SIZE" = 12), {
     x <- vroom(file(tf), col_types = "cc")
@@ -116,16 +173,12 @@ test_that("vroom_fwf() doesn't leak a connection when opening fails (permission 
   Sys.chmod(tfile, mode = "000") # Remove all permissions
   connections_before <- showConnections(all = TRUE)
 
-  # It is conceivable that this vroom_fwf() will succeed if, for example, tests
-  # are being run by root?
-  # See https://github.com/tidyverse/vroom/issues/611
-  # Therefore, we don't state a hard expectation around error or warning.
-  # We just care that connections don't leak.
-  try(
-    suppressWarnings(
+  # Not using snapshots, because not our error or warning
+  expect_error(
+    expect_warning(
       vroom_fwf(file(tfile), fwf_widths(c(6, 6, 6)), show_col_types = FALSE)
     ),
-    silent = TRUE
+    "cannot open"
   )
 
   connections_after <- showConnections(all = TRUE)

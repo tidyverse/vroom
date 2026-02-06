@@ -11,7 +11,7 @@
       # A tibble: 1 x 3
         a     b     c    
         <chr> <chr> <chr>
-      1 x     y     z,,  
+      1 x     y     z    
 
 # can promote vroom parse warning to error
 

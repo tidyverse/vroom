@@ -3,9 +3,6 @@ vroom_tempfile <- function(fileext = "", pattern = "vroom-") {
   if (!nzchar(dir)) {
     dir <- tempdir()
   }
-  if (nzchar(fileext) && !startsWith(fileext, ".")) {
-    fileext <- paste0(".", fileext)
-  }
   tempfile(pattern = pattern, tmpdir = dir, fileext = fileext)
 }
 
@@ -38,8 +35,29 @@ reencode_file <- function(file, encoding, call = caller_env()) {
   out_file <- vroom_tempfile(pattern = "vroom-reencode-file-")
   out_con <- file(out_file)
   convert_connection(in_con, out_con, encoding, "UTF-8")
-  withr::defer(unlink(out_file), envir = call)
+  withr::defer(unlink(out_file), envir = parent.frame())
   return(list(out_file))
+}
+
+# Transcode a single file from `encoding` to UTF-8, returning the temp file path.
+# The temp file is cleaned up when `cleanup_env` exits.
+reencode_one_file <- function(path, encoding, cleanup_env) {
+  in_con <- file(path)
+  out_file <- vroom_tempfile(pattern = "vroom-reencode-file-")
+  out_con <- file(out_file)
+  convert_connection(in_con, out_con, encoding, "UTF-8")
+  withr::defer(unlink(out_file), envir = cleanup_env)
+  out_file
+}
+
+# Transcode a connection from `encoding` to UTF-8, returning the temp file path.
+# The temp file is cleaned up when `cleanup_env` exits.
+reencode_one_connection <- function(con, encoding, cleanup_env) {
+  out_file <- vroom_tempfile(pattern = "vroom-reencode-file-")
+  out_con <- file(out_file)
+  convert_connection(con, out_con, encoding, "UTF-8")
+  withr::defer(unlink(out_file), envir = cleanup_env)
+  out_file
 }
 
 # These functions adapted from https://github.com/tidyverse/readr/blob/192cb1ca5c445e359f153d2259391e6d324fd0a2/R/source.R
@@ -91,7 +109,7 @@ standardise_path <- function(
     if (length(path) > 1) {
       path <- paste(path, collapse = "\n")
     }
-    return(list(chr_to_file(path, call = call)))
+    return(list(chr_to_file(path, envir = parent.frame())))
   }
 
   if (any(grepl("\n", path))) {
@@ -108,38 +126,7 @@ standardise_path <- function(
       ),
       user_env = user_env
     )
-    return(list(chr_to_file(path, call = call)))
-  }
-
-  # Handle remote compressed files from R, before heading to C++, so we can
-  # associate cleanup with the desired environment.
-  is_remote_compressed <- vapply(
-    path,
-    function(p) {
-      is_url(p) && tolower(tools::file_ext(p)) %in% c("gz", "bz2", "xz", "zip")
-    },
-    logical(1)
-  )
-  if (all(is_remote_compressed)) {
-    return(lapply(path, function(p) {
-      ext <- tolower(tools::file_ext(p))
-      local_path <- download_file(p, ext, call = call)
-      withr::defer(unlink(local_path), envir = call)
-      switch(
-        ext,
-        gz = gzfile(local_path),
-        bz2 = bzfile(local_path),
-        xz = xzfile(local_path),
-        zip = zipfile(local_path)
-      )
-    }))
-  }
-
-  if (any(is_remote_compressed)) {
-    cli::cli_abort(
-      "{.arg {arg}} cannot be a mix of remote compressed and other inputs.",
-      call = call
-    )
+    return(list(chr_to_file(path, envir = parent.frame())))
   }
 
   as.list(enc2utf8(path))
@@ -166,23 +153,37 @@ connection_or_filepath <- function(path, write = FALSE, call = caller_env()) {
   }
 
   if (is_url(path)) {
-    ext <- tolower(tools::file_ext(path))
-    if (ext %in% c("gz", "bz2", "xz", "zip")) {
-      cli::cli_abort(
-        "Remote compressed files must be handled upstream of this function.",
-        .internal = TRUE
-      )
-    }
     if (requireNamespace("curl", quietly = TRUE)) {
       con <- curl::curl(path)
     } else {
       inform("`curl` package not installed, falling back to using `url()`")
       con <- url(path)
     }
-    return(con)
+    ext <- tolower(tools::file_ext(path))
+    return(
+      switch(
+        ext,
+        zip = ,
+        bz2 = ,
+        xz = {
+          close(con)
+          cli::cli_abort(
+            c(
+              "Reading from remote {.val .{ext}} compressed files is not supported.",
+              "i" = "Download the file locally first."
+            ),
+            call = call
+          )
+        },
+        gz = gzcon(con),
+        con
+      )
+    )
   }
 
   path <- enc2utf8(path)
+
+  p <- split_path_ext(basename_utf8(path))
 
   if (write) {
     path <- normalizePath_utf8(path, mustWork = FALSE)
@@ -190,40 +191,34 @@ connection_or_filepath <- function(path, write = FALSE, call = caller_env()) {
     path <- check_path(path)
   }
 
-  p <- split_path_ext(basename_utf8(path))
-  extension <- p$extension
-  formats <- archive_formats(extension)
-  while (is.null(formats) && nzchar(extension)) {
-    extension <- split_path_ext(extension)$extension
-    formats <- archive_formats(extension)
-  }
-  needs_archive <- !is.null(formats) && (write || extension != "zip")
-
-  if (needs_archive) {
-    reason <- glue(
-      "to {if (write) 'write' else 'read'} `.{p$extension}` files."
-    )
-    rlang::check_installed("archive", reason = reason, call = call)
-
-    if (write) {
-      if (is.null(formats[[1]])) {
-        return(archive::file_write(path, filter = formats[[2]]))
+  if (is_installed("archive")) {
+    formats <- archive_formats(p$extension)
+    extension <- p$extension
+    while (is.null(formats) && nzchar(extension)) {
+      extension <- split_path_ext(extension)$extension
+      formats <- archive_formats(extension)
+    }
+    if (!is.null(formats)) {
+      if (write) {
+        if (is.null(formats[[1]])) {
+          return(archive::file_write(path, filter = formats[[2]]))
+        }
+        return(archive::archive_write(
+          path,
+          p$path,
+          format = formats[[1]],
+          filter = formats[[2]]
+        ))
       }
-      return(archive::archive_write(
+      if (is.null(formats[[1]])) {
+        return(archive::file_read(path, filter = formats[[2]]))
+      }
+      return(archive::archive_read(
         path,
-        p$path,
         format = formats[[1]],
         filter = formats[[2]]
       ))
     }
-    if (is.null(formats[[1]])) {
-      return(archive::file_read(path, filter = formats[[2]]))
-    }
-    return(archive::archive_read(
-      path,
-      format = formats[[1]],
-      filter = formats[[2]]
-    ))
   }
 
   if (!write) {
@@ -248,10 +243,10 @@ connection_or_filepath <- function(path, write = FALSE, call = caller_env()) {
 
   switch(
     compression,
-    gz = gzfile(path),
-    bz2 = bzfile(path),
-    xz = xzfile(path),
-    zip = zipfile(path),
+    gz = gzfile(path, ""),
+    bz2 = bzfile(path, ""),
+    xz = xzfile(path, ""),
+    zip = zipfile(path, ""),
     if (!has_trailing_newline(path)) {
       file(path)
     } else {
@@ -345,31 +340,9 @@ is_url <- function(path) {
   grepl("^((http|ftp)s?|sftp)://", path)
 }
 
-download_file <- function(url, ext, call = caller_env()) {
-  local_path <- vroom_tempfile(fileext = ext, pattern = "vroom-download-url-")
-  show_progress <- vroom_progress()
-
-  try_fetch(
-    if (requireNamespace("curl", quietly = TRUE)) {
-      curl::curl_download(url, local_path, quiet = !show_progress)
-    } else {
-      utils::download.file(url, local_path, mode = "wb", quiet = !show_progress)
-    },
-    error = function(cnd) {
-      unlink(local_path)
-      cli::cli_abort(
-        c(
-          "Failed to download {.url {url}}.",
-          "x" = conditionMessage(cnd)
-        ),
-        parent = NA,
-        error = cnd,
-        call = call
-      )
-    }
-  )
-
-  local_path
+is_compressed_path <- function(path) {
+  ext <- tolower(tools::file_ext(path))
+  ext %in% c("gz", "bz2", "xz", "zip", "zst")
 }
 
 check_path <- function(path, call = caller_env()) {
@@ -396,7 +369,7 @@ is_absolute_path <- function(path) {
   grepl("^(/|[A-Za-z]:|\\\\|~)", path)
 }
 
-zipfile <- function(path, open = "") {
+zipfile <- function(path, open = "r") {
   files <- utils::unzip(path, list = TRUE)
   file <- files$Name[[1]]
 
@@ -409,15 +382,40 @@ zipfile <- function(path, open = "") {
 
 utils::globalVariables("con")
 
-chr_to_file <- function(x, call = caller_env()) {
+chr_to_file <- function(x, envir = parent.frame()) {
   out <- vroom_tempfile(pattern = "vroom-chr-to-file-")
   con <- file(out, "wb")
   writeLines(sub("\n$", "", x), con, useBytes = TRUE)
   close(con)
 
-  withr::defer(unlink(out), envir = call)
+  withr::defer(unlink(out), envir = envir)
 
   normalizePath_utf8(out)
+}
+
+read_connection_raw <- function(con) {
+  should_open <- !isOpen(con)
+  if (should_open) {
+    open_safely(con, "rb")
+  }
+  should_close <- should_open || inherits(con, "rawConnection")
+  on.exit(if (should_close) close(con))
+
+  chunk_size <- as.integer(Sys.getenv("VROOM_CONNECTION_SIZE", 2^17))
+  chunks <- list()
+
+  repeat {
+    chunk <- readBin(con, raw(), chunk_size)
+    if (length(chunk) == 0L) {
+      break
+    }
+    chunks[[length(chunks) + 1L]] <- chunk
+  }
+
+  if (length(chunks) == 0L) {
+    return(raw())
+  }
+  do.call(c, chunks)
 }
 
 detect_compression <- function(path) {
@@ -484,6 +482,13 @@ detect_compression <- function(path) {
 
 basename_utf8 <- function(path) {
   enc2utf8(basename(path))
+}
+
+# Check if a path contains only ASCII characters
+# Non-ASCII paths need to go through R connections for proper encoding handling
+is_ascii_path <- function(path) {
+  bytes <- charToRaw(path)
+  all(bytes < 128L)
 }
 
 normalizePath_utf8 <- function(path, winslash = "/", mustWork = NA) {

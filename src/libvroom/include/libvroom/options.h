@@ -1,0 +1,150 @@
+#pragma once
+
+#include "cache.h"
+#include "encoding.h"
+#include "error.h"
+#include "types.h"
+
+#include <optional>
+#include <string>
+#include <vector>
+
+namespace libvroom {
+
+// CSV parsing options
+struct CsvOptions {
+  std::string separator; // empty = auto-detect via DialectDetector
+  char quote = '"';
+  bool escape_backslash = false; // Use backslash escaping instead of doubled quotes
+  std::string comment; // No comment by default (empty string)
+  bool has_header = true;
+  bool skip_empty_rows = true;
+  bool trim_ws = true;  // Trim leading/trailing whitespace from fields
+  size_t skip = 0;      // Number of lines to skip at start of file (before header)
+  std::string null_values = "NA,null,NULL,"; // Comma-separated
+  std::string true_values = "true,TRUE,True,T,t,yes,YES,Yes";
+  std::string false_values = "false,FALSE,False,F,f,no,NO,No";
+
+  // Locale options
+  char decimal_mark = '.'; // Decimal separator for FLOAT64 parsing (default: '.')
+
+  // Type inference options
+  bool guess_integer = false; // When false, integer-like values infer as FLOAT64 (R parity)
+
+  // Performance tuning
+  size_t sample_rows = 1000; // Rows to sample for type inference
+  size_t chunk_size = 0;     // 0 = auto-detect based on file size and width
+  size_t num_threads = 0;    // 0 = auto-detect (hardware_concurrency)
+
+  // Column selection (empty = all columns)
+  std::vector<std::string> columns;
+  std::vector<size_t> column_indices;
+
+  // Error handling (DISABLED = no collection for max performance)
+  ErrorMode error_mode = ErrorMode::DISABLED;
+  size_t max_errors = ErrorCollector::DEFAULT_MAX_ERRORS;
+
+  // Character encoding (nullopt = auto-detect)
+  std::optional<CharEncoding> encoding;
+
+  // Index caching (nullopt = disabled)
+  std::optional<CacheConfig> cache;
+  bool force_cache_refresh = false;
+};
+
+// Fixed-width file parsing options
+struct FwfOptions {
+  std::vector<int> col_starts;        // 0-based byte offsets
+  std::vector<int> col_ends;          // Exclusive end offsets (-1 = to end of line)
+  std::vector<std::string> col_names; // Column names from R
+  bool trim_ws = true;
+  std::string comment;
+  bool skip_empty_rows = true;
+  std::string null_values = "NA,null,NULL,";
+  std::string true_values = "true,TRUE,True,T,t,yes,YES,Yes";
+  std::string false_values = "false,FALSE,False,F,f,no,NO,No";
+  size_t skip = 0;                    // Number of data lines to skip after comments
+  int64_t max_rows = -1;             // Max rows to read (-1 = unlimited)
+  size_t sample_rows = 1000;
+  size_t chunk_size = 0;
+  size_t num_threads = 0;
+  std::optional<CharEncoding> encoding;
+  ErrorMode error_mode = ErrorMode::DISABLED;
+  size_t max_errors = ErrorCollector::DEFAULT_MAX_ERRORS;
+};
+
+// Parquet writing options
+struct ParquetOptions {
+#ifdef VROOM_HAVE_ZSTD
+  Compression compression = Compression::ZSTD;
+#else
+  Compression compression = Compression::GZIP;
+#endif
+  int compression_level = 3; // default level (zstd range: 1-22, gzip range: 1-9)
+
+  size_t row_group_size = 1'000'000; // Rows per row group
+  size_t page_size = 1'048'576;      // 1MB page size
+  size_t dictionary_page_size = 1'048'576;
+
+  bool write_statistics = true;
+  bool enable_dictionary = false; // Disabled by default until performance is optimized
+
+  // Dictionary heuristics (from Polars)
+  // Only create dictionary if cardinality < 75% of length
+  double dictionary_ratio_threshold = 0.75;
+};
+
+// Thread pool options
+struct ThreadOptions {
+  size_t num_threads = 0; // 0 = auto-detect
+
+  // Polars formula for chunk sizing
+  // n_chunks * n_cols <= ALLOCATION_BUDGET
+  static constexpr size_t ALLOCATION_BUDGET = 500'000;
+
+  // Chunk size bounds
+  // Smaller chunks improve parallelism for both CSV parsing and Parquet writing:
+  // - More chunks = better thread utilization during parsing
+  // - More row groups = more parallel column encoding opportunities
+  // For numeric data, row group batching combines chunks into ~262K row groups
+  // For string data, each chunk becomes a row group (merging is expensive)
+  static constexpr size_t MIN_CHUNK_SIZE = 1 * 1024 * 1024; // 1MB - optimal balance for parallelism
+  static constexpr size_t MAX_CHUNK_SIZE = 4 * 1024 * 1024; // 4MB
+};
+
+// Combined options for the entire conversion
+struct VroomOptions {
+  CsvOptions csv;
+  ParquetOptions parquet;
+  ThreadOptions threads;
+
+  std::string input_path;
+  std::string output_path;
+
+  bool verbose = false;
+  bool progress = false;
+};
+
+// Calculate optimal chunk size based on file size and column count
+inline size_t calculate_chunk_size(size_t file_size, size_t n_cols, size_t n_threads) {
+  // Polars formula: prevent memory explosion on wide files
+  size_t max_chunks = ThreadOptions::ALLOCATION_BUDGET / std::max(n_cols, size_t(1));
+  size_t n_parts = std::min(n_threads * 16, max_chunks);
+
+  if (n_parts == 0)
+    n_parts = 1;
+
+  size_t chunk_size = file_size / n_parts;
+
+  // Clamp to reasonable bounds
+  if (chunk_size < ThreadOptions::MIN_CHUNK_SIZE) {
+    chunk_size = ThreadOptions::MIN_CHUNK_SIZE;
+  }
+  if (chunk_size > ThreadOptions::MAX_CHUNK_SIZE) {
+    chunk_size = ThreadOptions::MAX_CHUNK_SIZE;
+  }
+
+  return chunk_size;
+}
+
+} // namespace libvroom

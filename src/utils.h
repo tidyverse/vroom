@@ -11,7 +11,7 @@ namespace vroom {
 
 inline bool
 is_comment(const char* begin, const char* end, const std::string& comment) {
-  if (comment.empty() || comment.size() > static_cast<size_t>(end - begin)) {
+  if (comment.empty() || comment.size() >= static_cast<size_t>(end - begin)) {
     return false;
   }
 

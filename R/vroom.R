@@ -5,10 +5,9 @@
 #'   containing multiple filepaths or a list containing multiple connections.
 #'
 #'   Files ending in `.gz`, `.bz2`, `.xz`, or `.zip` will be automatically
-#'   decompressed. Files starting with `http://`, `https://`, `ftp://`, or
-#'   `ftps://` will be automatically downloaded. Remote compressed files
-#'   (`.gz`, `.bz2`, `.xz`, `.zip`) will be automatically downloaded and
-#'   decompressed.
+#'   uncompressed. Files starting with `http://`, `https://`, `ftp://`, or
+#'   `ftps://` will be automatically downloaded. Remote `.gz` files can also be
+#'   automatically downloaded and decompressed.
 #'
 #'   Literal data is most useful for examples and tests. To be recognised as
 #'   literal data, wrap the input with `I()`.
@@ -46,7 +45,6 @@
 #'   character represents one column:
 #' - c = character
 #' - i = integer
-#' - I = big integer
 #' - n = number
 #' - d = double
 #' - l = logical
@@ -124,6 +122,7 @@
 #'     for names in the style of base R).
 #'   * A purrr-style anonymous function, see [rlang::as_function()].
 #'
+#'
 #'   This argument is passed on as `repair` to [vctrs::vec_as_names()].
 #'   See there for more details on these terms and the strategies used
 #'   to enforce them.
@@ -178,7 +177,7 @@
 #' vroom(I("a|b\n1.0|2.0\n"), delim = "|")
 #'
 #' # Read datasets across multiple files ---------------------------------------
-#' mtcars_by_cyl <- vroom_example(vroom_examples("mtcars-[468]"))
+#' mtcars_by_cyl <- vroom_example(vroom_examples("mtcars-"))
 #' mtcars_by_cyl
 #'
 #' # Pass the filenames directly to vroom, they are efficiently combined
@@ -213,9 +212,6 @@ vroom <- function(
   show_col_types = NULL,
   .name_repair = "unique"
 ) {
-  check_number_decimal(n_max)
-  check_number_decimal(guess_max)
-
   # vroom does not support newlines as the delimiter, just as the EOL, so just
   # assign a value that should never appear in CSV text as the delimiter,
   # 001, start of heading.
@@ -225,94 +221,880 @@ vroom <- function(
 
   file <- standardise_path(file)
 
-  if (!is_ascii_compatible(locale$encoding)) {
-    file <- reencode_file(file, locale$encoding)
-    locale$encoding <- "UTF-8"
-  }
-
-  if (length(file) == 0 || (n_max == 0 & identical(col_names, FALSE))) {
+  if (length(file) == 0 || (n_max == 0 && identical(col_names, FALSE))) {
     return(tibble::tibble())
   }
 
-  if (n_max < 0 || is.infinite(n_max)) {
-    n_max <- -1
-  }
-
-  if (guess_max < 0 || is.infinite(guess_max)) {
-    guess_max <- -1
-  }
-
-  # Workaround weird RStudio / Progress bug: https://github.com/r-lib/progress/issues/56#issuecomment-384232184
-  if (
-    isTRUE(progress) &&
-      is_windows() &&
-      identical(Sys.getenv("RSTUDIO"), "1")
-  ) {
-    Sys.setenv("RSTUDIO" = "1")
+  # When n_max = 0 with explicit col_names, return 0-row tibble with
+  # the requested column structure (no need to read the file at all).
+  if (n_max == 0 && is.character(col_names)) {
+    out <- tibble::as_tibble(
+      stats::setNames(
+        rep(list(character(0)), length(col_names)),
+        col_names
+      )
+    )
+    return(out)
   }
 
   col_select <- vroom_enquo(enquo(col_select))
 
-  has_col_types <- !is.null(col_types)
+  na_str <- encode_na_values(na)
 
-  col_types <- as.col_spec(col_types)
+  ct <- resolve_libvroom_col_types(col_types)
+  col_types_int <- ct$col_types_int
+  col_type_names <- ct$col_type_names
+  resolved_spec <- ct$resolved_spec
 
-  na <- enc2utf8(na)
+  # Extract .delim from col_spec when the user hasn't specified delim explicitly
+  if (
+    is.null(delim) &&
+      !is.null(resolved_spec) &&
+      !is.null(resolved_spec$delim) &&
+      nzchar(resolved_spec$delim)
+  ) {
+    delim <- resolved_spec$delim
+  }
 
-  out <- vroom_(
-    file,
-    delim = delim %||% col_types$delim,
-    col_names = col_names,
-    col_types = col_types,
-    id = id,
-    skip = skip,
-    col_select = col_select,
-    name_repair = .name_repair,
-    na = na,
-    quote = quote,
-    trim_ws = trim_ws,
-    escape_double = escape_double,
-    escape_backslash = escape_backslash,
-    comment = comment,
-    skip_empty_rows = skip_empty_rows,
-    locale = locale,
-    guess_max = guess_max,
-    n_max = n_max,
-    altrep = vroom_altrep(altrep),
-    num_threads = num_threads,
-    progress = progress
-  )
-
-  # If no rows, expand columns to be the same length and names as the spec
-  # Skipped columns present a bit of a wrinkle: they appear in the spec,
-  # but not in the result
-  if (NROW(out) == 0) {
-    cols <- attr(out, "spec")[["cols"]]
-    nms <- names(cols)
-
-    out_i <- 1
-    for (cols_i in seq_along(cols)) {
-      value <- collector_value(cols[[cols_i]])
-      if (is.null(value)) {
-        # this is a skipped column
-        next
+  # When col_names is not TRUE, libvroom uses V1, V2, ... internally.
+  # Translate user-provided col_type_names to match libvroom's V-names.
+  libvroom_col_type_names <- col_type_names
+  if (!isTRUE(col_names) && length(col_type_names) > 0) {
+    if (is.character(col_names)) {
+      r_to_v <- setNames(paste0("V", seq_along(col_names)), col_names)
+      matched <- r_to_v[col_type_names]
+      libvroom_col_type_names[!is.na(matched)] <- matched[!is.na(matched)]
+    } else if (isFALSE(col_names)) {
+      # col_names = FALSE: R uses X1, X2, ... but libvroom uses V1, V2, ...
+      x_pattern <- grepl("^X([0-9]+)$", col_type_names)
+      if (any(x_pattern)) {
+        libvroom_col_type_names[x_pattern] <- sub(
+          "^X",
+          "V",
+          col_type_names[x_pattern]
+        )
       }
-      out[[out_i]] <- value
-      names(out)[out_i] <- nms[cols_i]
-      out_i <- out_i + 1
     }
   }
 
-  out <- tibble::as_tibble(out, .name_repair = identity)
+  # Convert .default to libvroom int for columns without explicit types
+  default_col_type <- 0L
+  if (
+    !is.null(resolved_spec) &&
+      !is.null(resolved_spec$default) &&
+      !inherits(resolved_spec$default, "collector_guess")
+  ) {
+    default_col_type <- collector_to_libvroom_int(resolved_spec$default)
+  }
 
-  out <- vroom_select(out, col_select, id)
-  class(out) <- c("spec_tbl_df", class(out))
+  # Helper to read a single file/connection through libvroom
+  read_one_libvroom <- function(input) {
+    if (inherits(input, "connection")) {
+      input <- read_connection_raw(input)
+      if (length(input) == 0L) {
+        return(NULL)
+      }
+    }
 
+    one <- tryCatch(
+      vroom_libvroom_(
+        input = input,
+        delim = delim %||% "",
+        quote = quote,
+        has_header = isTRUE(col_names),
+        skip = as.integer(skip),
+        comment = comment,
+        skip_empty_rows = skip_empty_rows,
+        trim_ws = trim_ws,
+        na_values = na_str,
+        num_threads = as.integer(num_threads),
+        strings_as_factors = FALSE,
+        use_altrep = if (is.character(altrep)) {
+          "chr" %in% altrep
+        } else {
+          isTRUE(altrep)
+        },
+        col_types = col_types_int,
+        col_type_names = libvroom_col_type_names,
+        default_col_type = default_col_type,
+        escape_backslash = escape_backslash,
+        decimal_mark = locale$decimal_mark,
+        guess_max = if (is.infinite(guess_max)) -1L else as.integer(guess_max)
+      ),
+      error = function(e) {
+        msg <- conditionMessage(e)
+        if (
+          grepl("All data was skipped", msg, fixed = TRUE) ||
+            grepl("Header row is empty", msg, fixed = TRUE) ||
+            grepl("File contains only comment lines", msg, fixed = TRUE) ||
+            grepl("Empty file", msg, fixed = TRUE)
+        ) {
+          NULL
+        } else {
+          stop(e)
+        }
+      }
+    )
+
+    if (is.null(one)) {
+      return(NULL)
+    }
+
+    # For empty results with user-provided col_names, ensure correct structure
+    if (
+      nrow(one) == 0 &&
+        is.character(col_names) &&
+        length(col_names) > ncol(one)
+    ) {
+      one <- tibble::as_tibble(stats::setNames(
+        rep(list(character(0L)), length(col_names)),
+        col_names
+      ))
+    }
+
+    # Determine if col_names should be applied before or after skip filtering.
+    # When col_names has fewer entries than file columns and there are positional
+    # skips, col_names are intended for the *kept* columns only, so we defer.
+    has_positional_skips <- length(col_types_int) > 0 &&
+      length(col_type_names) == 0 &&
+      any(col_types_int == -1L)
+    defer_col_names <- is.character(col_names) &&
+      has_positional_skips &&
+      length(col_names) < ncol(one)
+
+    # Apply col_names renaming for non-TRUE col_names (unless deferred)
+    if (!defer_col_names) {
+      if (is.character(col_names)) {
+        names(one) <- make_names(col_names, ncol(one))
+      } else if (isFALSE(col_names)) {
+        names(one) <- make_names(character(), ncol(one))
+      }
+    }
+
+    # Warn about mismatched column names in named col_types
+    if (
+      length(col_type_names) > 0 &&
+        !is.null(resolved_spec) &&
+        !inherits(resolved_spec$default, "collector_skip")
+    ) {
+      bad_types <- !(col_type_names %in% names(one))
+      if (any(bad_types)) {
+        warn(
+          paste0(
+            "The following named parsers don't match the column names: ",
+            paste0(col_type_names[bad_types], collapse = ", ")
+          ),
+          class = "vroom_mismatched_column_name"
+        )
+      }
+    }
+
+    one <- filter_cols_only_and_skip(
+      one,
+      resolved_spec,
+      col_types_int,
+      col_type_names
+    )
+
+    # Apply deferred col_names after skip filtering
+    if (defer_col_names) {
+      names(one) <- make_names(col_names, ncol(one))
+    }
+
+    # Apply R-side post-processing for types libvroom parsed as STRING
+    one <- apply_col_postprocessing(
+      one,
+      resolved_spec,
+      col_types_int,
+      col_type_names,
+      locale,
+      has_header = isTRUE(col_names)
+    )
+
+    # Adjust timezone for TIMESTAMP columns if locale specifies non-UTC tz.
+    # libvroom always parses timestamps as UTC, so we need to re-interpret
+    # the wall-clock time in the target timezone.
+    locale_tz <- locale$tz %||% "UTC"
+    if (identical(locale_tz, "")) {
+      locale_tz <- Sys.timezone()
+    }
+    if (!identical(locale_tz, "UTC")) {
+      for (i in seq_along(one)) {
+        if (
+          inherits(one[[i]], "POSIXct") &&
+            identical(attr(one[[i]], "tzone"), "UTC")
+        ) {
+          # Re-interpret: the numeric value represents wall-clock time in UTC,
+          # but it should be wall-clock time in the target timezone.
+          utc_str <- format(
+            one[[i]],
+            format = "%Y-%m-%d %H:%M:%OS6",
+            tz = "UTC"
+          )
+          one[[i]] <- as.POSIXct(
+            utc_str,
+            format = "%Y-%m-%d %H:%M:%OS",
+            tz = locale_tz
+          )
+        }
+      }
+    }
+
+    # Extract problems from C++ result (attached by vroom_libvroom_)
+    probs <- attr(one, "problems")
+    file_path <- if (is.character(input)) input else "<connection>"
+    if (is.data.frame(probs) && nrow(probs) > 0) {
+      probs$file <- rep(file_path, nrow(probs))
+    } else {
+      probs <- NULL
+    }
+    # Remove C++-attached problems (will be re-attached by finalize)
+    attr(one, "problems") <- NULL
+
+    # Merge R-side problems from post-processing
+    r_probs <- attr(one, ".r_problems")
+    attr(one, ".r_problems") <- NULL
+    if (is.data.frame(r_probs) && nrow(r_probs) > 0) {
+      r_probs$file <- rep(file_path, nrow(r_probs))
+      probs <- if (is.null(probs)) r_probs else rbind(probs, r_probs)
+    }
+
+    list(
+      data = one,
+      problems = probs,
+      resolved_spec = resolved_spec,
+      col_types_int = col_types_int
+    )
+  }
+
+  # Transcode non-UTF-8 files to UTF-8 before libvroom processes them
+  file_encoding <- locale$encoding
+  if (
+    !identical(file_encoding, "UTF-8") &&
+      !is_ascii_compatible(file_encoding) &&
+      length(file) > 1
+  ) {
+    cli::cli_abort(c(
+      "!" = "Reading multiple files with encoding {.val {file_encoding}} is not supported.",
+      "i" = "Only ASCII-compatible encodings work with multiple files.",
+      "i" = "Try reading each file separately."
+    ))
+  }
+  if (!identical(file_encoding, "UTF-8")) {
+    vroom_env <- environment()
+    file <- lapply(file, function(input) {
+      if (is.character(input)) {
+        reencode_one_file(input, file_encoding, vroom_env)
+      } else if (inherits(input, "connection")) {
+        reencode_one_connection(input, file_encoding, vroom_env)
+      } else {
+        input
+      }
+    })
+  }
+
+  # Read each file and collect results
+  results <- list()
+  first_result <- NULL
+  for (input in file) {
+    # Skip truly empty files (0 bytes, no header)
+    if (
+      is.character(input) &&
+        !is_url(input) &&
+        file.exists(input) &&
+        file.size(input) == 0
+    ) {
+      next
+    }
+
+    # Preserve original path for id column before converting to connection
+    original_path <- if (is.character(input)) input else "<connection>"
+
+    # Route URLs and compressed files through R connections for
+    # decompression/download; plain local files pass through as paths so
+    # libvroom can memory-map them directly.
+    if (is.character(input) && (is_url(input) || is_compressed_path(input))) {
+      input <- connection_or_filepath(input)
+    }
+    # Non-ASCII paths need to go through R connection for proper encoding
+    # handling (libvroom expects UTF-8 paths but non-UTF-8 locales mangle them)
+    if (is.character(input) && !is_ascii_path(input)) {
+      input <- file(input)
+    }
+
+    res <- read_one_libvroom(input)
+    if (is.null(res)) {
+      next
+    }
+
+    # Keep the first result for column name/type info even if 0 rows
+    if (is.null(first_result)) {
+      first_result <- res
+    }
+
+    if (nrow(res$data) > 0) {
+      # Add id column if requested
+      if (!is.null(id)) {
+        file_path <- original_path
+        res$data <- cbind(
+          stats::setNames(
+            data.frame(
+              rep(file_path, nrow(res$data)),
+              stringsAsFactors = FALSE
+            ),
+            id
+          ),
+          res$data
+        )
+      }
+      results[[length(results) + 1L]] <- res
+    }
+  }
+
+  # If no results at all, build empty tibble with appropriate structure
+  if (is.null(first_result)) {
+    if (is.character(col_names) && length(col_names) > 0) {
+      # Build empty tibble with correct column names and types from col_types
+      empty_cols <- stats::setNames(
+        lapply(col_names, function(nm) character(0L)),
+        col_names
+      )
+      # Apply col_types if specified
+      if (!is.null(resolved_spec) && length(resolved_spec$cols) > 0) {
+        spec_names <- names(resolved_spec$cols)
+        for (i in seq_along(resolved_spec$cols)) {
+          col <- resolved_spec$cols[[i]]
+          # Match by position or name
+          target <- if (!is.null(spec_names) && nzchar(spec_names[[i]])) {
+            match(spec_names[[i]], col_names)
+          } else if (i <= length(col_names)) {
+            i
+          } else {
+            NA_integer_
+          }
+          if (!is.na(target) && target <= length(col_names)) {
+            empty_cols[[target]] <- collector_value(col)
+          }
+        }
+        # Remove skipped columns
+        keep <- vapply(empty_cols, Negate(is.null), logical(1))
+        empty_cols <- empty_cols[keep]
+      }
+      return(tibble::as_tibble(empty_cols))
+    } else if (!is.null(resolved_spec) && length(resolved_spec$cols) > 0) {
+      # col_types specified with no col_names: use positional names
+      spec_cols <- resolved_spec$cols
+      non_skip <- !vapply(spec_cols, inherits, logical(1), "collector_skip")
+      kept_cols <- spec_cols[non_skip]
+      if (sum(non_skip) == 0) {
+        return(tibble::tibble())
+      }
+      nms <- if (!is.null(names(kept_cols)) && any(nzchar(names(kept_cols)))) {
+        names(kept_cols)
+      } else {
+        # Use original positions for X-names (e.g., "c-d" -> X1, X3)
+        paste0("X", which(non_skip))
+      }
+      empty_cols <- stats::setNames(
+        lapply(kept_cols, collector_value),
+        nms
+      )
+      return(tibble::as_tibble(empty_cols))
+    }
+    return(tibble::tibble())
+  }
+
+  # Combine results
+  if (length(results) == 0) {
+    # All files were empty (header-only); use first_result for structure
+    out <- first_result$data
+    if (!is.null(id)) {
+      out <- cbind(
+        stats::setNames(
+          data.frame(character(0), stringsAsFactors = FALSE),
+          id
+        ),
+        out
+      )
+    }
+  } else if (length(results) == 1) {
+    out <- results[[1]]$data
+  } else {
+    out <- vctrs::vec_rbind(!!!lapply(results, function(r) r$data))
+  }
+
+  out <- tibble::as_tibble(out, .name_repair = .name_repair)
+
+  # Build and attach spec attribute BEFORE col_select so it reflects
+  # the full file schema, not just selected columns.
+  # Exclude the id column from the spec column names.
+  all_col_names <- setdiff(names(out), id)
+  # If delimiter was auto-detected (delim is still NULL), try to infer it
+  # from the column names for the spec attribute.
+  spec_delim <- delim %||% ""
+  if (!nzchar(spec_delim) && length(all_col_names) > 1) {
+    # Try to infer the delimiter from the first input file
+    spec_delim <- tryCatch(
+      {
+        first_input <- file[[1]]
+        if (is.character(first_input) && file.exists(first_input)) {
+          lines <- readLines(first_input, n = 5, warn = FALSE)
+        } else if (is.raw(first_input)) {
+          lines <- strsplit(
+            rawToChar(first_input[seq_len(min(
+              2000,
+              length(first_input)
+            ))]),
+            "\n",
+            fixed = TRUE
+          )[[1]]
+        } else {
+          lines <- character()
+        }
+        if (length(lines) > 0) {
+          guess_delim(lines)
+        } else {
+          ""
+        }
+      },
+      error = function(e) ""
+    )
+  }
+  attr(out, "spec") <- build_libvroom_spec(
+    out[all_col_names],
+    first_result$resolved_spec,
+    first_result$col_types_int,
+    all_col_names,
+    delim = spec_delim
+  )
+
+  out <- apply_libvroom_col_select(out, col_select, id)
+
+  # Apply n_max row limit (R-side truncation)
+  if (!is.infinite(n_max) && n_max >= 0 && nrow(out) > n_max) {
+    out <- out[seq_len(n_max), , drop = FALSE]
+  }
+
+  # Combine problems from all files
+  all_problems <- do.call(rbind, lapply(results, function(r) r$problems))
+  if (is.null(all_problems)) {
+    all_problems <- tibble::tibble(
+      row = integer(),
+      col = integer(),
+      expected = character(),
+      actual = character(),
+      file = character()
+    )
+  }
+
+  if (!is.null(all_problems) && nrow(all_problems) > 0) {
+    cli::cli_warn(
+      c(
+        "w" = "One or more parsing issues, call {.fun problems} on your data frame for details, e.g.:",
+        " " = "dat <- vroom(...)",
+        " " = "problems(dat)"
+      ),
+      class = "vroom_parse_issue"
+    )
+  }
+
+  out <- finalize_libvroom_result(out, all_problems)
+
+  has_col_types <- !is.null(col_types) && !identical(col_types, list())
   if (should_show_col_types(has_col_types, show_col_types)) {
     show_col_types(out, locale)
   }
 
   out
+}
+
+
+# Map an R col_spec to a vector of libvroom DataType integers.
+#
+# Mapping (matches libvroom::DataType enum):
+#   0 = UNKNOWN (guess), 1 = BOOL, 2 = INT32, 3 = INT64
+#   4 = FLOAT64, 5 = STRING, 6 = DATE, 7 = TIMESTAMP, -1 = skip
+# Convert a single collector to a libvroom DataType integer.
+# Returns: -1 (skip), 0 (guess), 1 (BOOL), 2 (INT32), 4 (FLOAT64),
+#          5 (STRING, needs R post-processing), 6 (DATE), 7 (TIMESTAMP)
+collector_to_libvroom_int <- function(collector) {
+  cls <- class(collector)[[1]]
+  switch(
+    cls,
+    collector_skip = -1L,
+    collector_guess = 0L,
+    collector_logical = 5L,
+    collector_integer = 2L,
+    collector_big_integer = 5L,
+    collector_double = 4L,
+    collector_character = 5L,
+    collector_number = 5L,
+    collector_time = 5L,
+    collector_factor = 5L,
+    collector_date = {
+      if (
+        identical(collector$format, "") ||
+          identical(collector$format, "%AD")
+      ) {
+        6L
+      } else {
+        5L
+      }
+    },
+    collector_datetime = {
+      if (
+        identical(collector$format, "") ||
+          identical(collector$format, "%AD")
+      ) {
+        7L
+      } else {
+        5L
+      }
+    },
+    5L
+  )
+}
+
+col_types_to_libvroom <- function(spec) {
+  vapply(spec$cols, collector_to_libvroom_int, integer(1))
+}
+
+
+# Build a col_spec from libvroom output for the spec attribute.
+# If resolved_spec is provided, use it. Otherwise infer from R column types.
+build_libvroom_spec <- function(
+  out,
+  resolved_spec,
+  col_types_int,
+  all_col_names,
+  delim
+) {
+  if (!is.null(resolved_spec)) {
+    spec_out <- resolved_spec
+    if (length(spec_out$cols) == 0 && length(all_col_names) > 0) {
+      # Pure .default spec: expand to all columns
+      spec_out$cols <- rep(list(spec_out$default), length(all_col_names))
+      names(spec_out$cols) <- all_col_names
+    } else if (length(all_col_names) > 0 && length(spec_out$cols) > 0) {
+      if (is.null(names(spec_out$cols)) || all(names(spec_out$cols) == "")) {
+        # Positional spec: assign column names from the file
+        if (length(spec_out$cols) <= length(all_col_names)) {
+          names(spec_out$cols) <- all_col_names[seq_along(spec_out$cols)]
+        }
+      } else {
+        # Named spec: fill in defaults for unspecified columns
+        for (nm in all_col_names) {
+          if (!(nm %in% names(spec_out$cols))) {
+            spec_out$cols[[nm]] <- spec_out$default
+          }
+        }
+        # Reorder to match file column order
+        spec_out$cols <- spec_out$cols[intersect(
+          all_col_names,
+          names(spec_out$cols)
+        )]
+      }
+    }
+    spec_out$delim <- delim
+    return(spec_out)
+  }
+
+  # No spec provided: build from R output types
+  spec_cols <- lapply(out, function(col) {
+    if (is.integer(col)) {
+      col_integer()
+    } else if (is.double(col)) {
+      if (inherits(col, "Date")) {
+        col_date()
+      } else if (inherits(col, "POSIXct")) {
+        col_datetime()
+      } else {
+        col_double()
+      }
+    } else if (is.logical(col)) {
+      col_logical()
+    } else {
+      col_character()
+    }
+  })
+  names(spec_cols) <- names(out)
+  structure(
+    list(cols = spec_cols, default = col_guess(), delim = delim),
+    class = "col_spec"
+  )
+}
+
+# Apply R-side type coercion for types libvroom parsed as STRING
+apply_col_postprocessing <- function(
+  out,
+  spec,
+  col_types_int,
+  col_type_names,
+  locale = default_locale(),
+  has_header = TRUE
+) {
+  out_names <- names(out)
+  # Accumulate R-side parse problems
+  r_problems <- list()
+  # Row offset: data rows are 1-indexed; with header, row 1 is header so data starts at row 2
+  row_offset <- if (has_header) 1L else 0L
+
+  # Helper: apply collector and collect any parse failures
+  apply_and_collect <- function(col_vec, collector, col_idx) {
+    result <- apply_collector(col_vec, collector, locale)
+    failures <- attr(result, ".parse_failures")
+    if (!is.null(failures)) {
+      attr(result, ".parse_failures") <- NULL
+      r_problems[[length(r_problems) + 1L]] <<- tibble::tibble(
+        row = as.integer(failures$rows + row_offset),
+        col = rep(as.integer(col_idx), length(failures$rows)),
+        expected = rep(failures$expected, length(failures$rows)),
+        actual = as.character(failures$actual)
+      )
+    }
+    result
+  }
+
+  if (!is.null(spec)) {
+    if (length(col_type_names) > 0) {
+      # Named spec: match by name
+      for (i in seq_along(spec$cols)) {
+        col_name <- names(spec$cols)[[i]]
+        out_idx <- match(col_name, out_names)
+        if (is.na(out_idx)) {
+          next
+        }
+        type_int <- col_types_int[[i]]
+        if (type_int != 5L) {
+          next
+        }
+
+        collector <- spec$cols[[i]]
+        if (inherits(collector, "collector_character")) {
+          next
+        }
+
+        out[[out_idx]] <- apply_and_collect(out[[out_idx]], collector, out_idx)
+      }
+    } else {
+      # Positional spec: match by position
+      out_col <- 0L
+      for (i in seq_along(spec$cols)) {
+        type_int <- col_types_int[[i]]
+        if (type_int == -1L) {
+          next
+        }
+        out_col <- out_col + 1L
+        if (out_col > ncol(out)) {
+          next
+        }
+        if (type_int != 5L) {
+          next
+        }
+
+        collector <- spec$cols[[i]]
+        if (inherits(collector, "collector_character")) {
+          next
+        }
+
+        out[[out_col]] <- apply_and_collect(out[[out_col]], collector, out_col)
+      }
+    }
+
+    # Apply .default post-processing to columns not explicitly in spec$cols
+    if (
+      !is.null(spec$default) &&
+        !inherits(spec$default, "collector_guess") &&
+        !inherits(spec$default, "collector_skip") &&
+        !inherits(spec$default, "collector_character")
+    ) {
+      default_int <- collector_to_libvroom_int(spec$default)
+      if (default_int == 5L) {
+        spec_col_names <- names(spec$cols)
+        for (i in seq_along(out_names)) {
+          if (!(out_names[[i]] %in% spec_col_names)) {
+            out[[i]] <- apply_and_collect(out[[i]], spec$default, i)
+          }
+        }
+      }
+    }
+  }
+
+  # Locale date_format guessing: when a non-default date_format is set,
+  # try parsing type-guessed character columns as dates.
+  date_format <- locale$date_format %||% ""
+  if (nzchar(date_format) && !identical(date_format, "%AD")) {
+    # Determine which columns were explicitly typed
+    explicit_cols <- character()
+    if (!is.null(spec) && length(spec$cols) > 0) {
+      explicit_cols <- names(spec$cols)
+    }
+
+    for (i in seq_along(out_names)) {
+      if (out_names[[i]] %in% explicit_cols) {
+        next
+      }
+      if (!is.character(out[[i]])) {
+        next
+      }
+      parsed <- tryCatch(
+        parse_date_(out[[i]], date_format, locale),
+        error = function(e) NULL
+      )
+      if (!is.null(parsed) && !all(is.na(parsed))) {
+        out[[i]] <- parsed
+      }
+    }
+  }
+
+  # Attach R-side problems if any
+  if (length(r_problems) > 0) {
+    attr(out, ".r_problems") <- do.call(rbind, r_problems)
+  }
+
+  out
+}
+
+apply_collector <- function(x, collector, locale = default_locale()) {
+  cls <- class(collector)[[1]]
+  was_na <- is.na(x)
+  result <- switch(
+    cls,
+    collector_logical = {
+      # libvroom only recognizes "TRUE"/"FALSE"; R/readr also accept
+      # "T"/"F", "true"/"false", and "1"/"0".
+      out <- rep(NA, length(x))
+      upper <- toupper(x)
+      out[upper %in% c("TRUE", "T", "1")] <- TRUE
+      out[upper %in% c("FALSE", "F", "0")] <- FALSE
+      as.logical(out)
+    },
+    collector_number = {
+      parse_number_value(
+        x,
+        grouping_mark = locale$grouping_mark,
+        decimal_mark = locale$decimal_mark
+      )
+    },
+    collector_big_integer = {
+      bit64::as.integer64(x)
+    },
+    collector_factor = {
+      lvls <- collector$levels
+      include_na <- isTRUE(collector$include_na)
+      if (is.null(lvls)) {
+        # Preserve first-appearance order (not alphabetical)
+        if (include_na) {
+          lvls <- unique(x)
+        } else {
+          lvls <- unique(x[!is.na(x)])
+        }
+        factor(x, levels = lvls, ordered = collector$ordered, exclude = NULL)
+      } else {
+        exclude <- if (include_na || anyNA(lvls)) NULL else NA
+        factor(x, levels = lvls, ordered = collector$ordered, exclude = exclude)
+      }
+    },
+    collector_time = {
+      tryCatch(
+        parse_time_(x, collector$format %||% "", locale),
+        error = function(e) hms::as_hms(rep(NA_real_, length(x)))
+      )
+    },
+    collector_date = {
+      tryCatch(
+        parse_date_(x, collector$format %||% "", locale),
+        error = function(e) {
+          as.Date(rep(NA_real_, length(x)), origin = "1970-01-01")
+        }
+      )
+    },
+    collector_datetime = {
+      fmt <- collector$format %||% ""
+      if (identical(fmt, "%s")) {
+        # Epoch seconds: not in DateTimeParser, handle directly
+        out <- .POSIXct(as.numeric(x), tz = "UTC")
+        out[is.na(x)] <- .POSIXct(NA_real_, tz = "UTC")
+        out
+      } else {
+        tryCatch(
+          parse_datetime_(x, fmt, locale),
+          error = function(e) .POSIXct(rep(NA_real_, length(x)), tz = "UTC")
+        )
+      }
+    },
+    x
+  )
+
+  # Detect new NAs introduced by type coercion (parse failures)
+  new_na <- is.na(result) & !was_na
+  if (any(new_na)) {
+    expected <- switch(
+      cls,
+      collector_logical = "a logical",
+      collector_big_integer = "a big integer",
+      collector_number = "a number",
+      collector_factor = "value in level set",
+      collector_date = "date in ISO8601",
+      collector_datetime = "date in ISO8601",
+      collector_time = "time in ISO8601",
+      cls
+    )
+    attr(result, ".parse_failures") <- list(
+      rows = which(new_na),
+      expected = expected,
+      actual = x[new_na]
+    )
+  }
+
+  result
+}
+
+# Encode na values as comma-separated string for C++.
+# character() → "" (empty string) means nothing is NA.
+# c("") → "," (single comma) means empty string is NA.
+# c("", "NA") → ",NA" means empty string and "NA" are NA.
+# The trailing/leading comma is how NullChecker sees the empty substring.
+encode_na_values <- function(na) {
+  if (length(na) == 0L) {
+    return("")
+  }
+  na_str <- paste(na, collapse = ",")
+  # When na includes "" but paste produces "", add a comma so
+  # NullChecker sees an empty element and sets empty_is_null = true.
+  if (any(!nzchar(na)) && !nzchar(na_str)) {
+    na_str <- ","
+  }
+  na_str
+}
+
+# Parse number values like readr's parse_number(): strip grouping marks,
+# then extract the first valid number from each string.
+parse_number_value <- function(x, grouping_mark = ",", decimal_mark = ".") {
+  # Preserve NAs
+  is_na <- is.na(x)
+
+  # Remove grouping marks
+  if (nzchar(grouping_mark)) {
+    x <- gsub(grouping_mark, "", x, fixed = TRUE)
+  }
+
+  # Normalize decimal mark to "." before regex extraction
+  if (!identical(decimal_mark, ".")) {
+    x <- gsub(decimal_mark, ".", x, fixed = TRUE)
+  }
+
+  # Extract the first valid number (integer, decimal, or scientific notation)
+  pattern <- "[+-]?[0-9]*\\.?[0-9]+([eE][+-]?[0-9]+)?"
+  m <- regmatches(x, regexpr(pattern, x))
+
+  # regmatches drops entries with no match; rebuild to original length
+  result <- rep(NA_real_, length(x))
+  has_match <- grepl(pattern, x)
+  result[has_match & !is_na] <- as.double(m)
+  result[is_na] <- NA_real_
+
+  result
 }
 
 should_show_col_types <- function(has_col_types, show_col_types) {
