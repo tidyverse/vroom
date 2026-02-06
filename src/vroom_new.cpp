@@ -1,10 +1,47 @@
 #include <cpp11.hpp>
 #include <libvroom/encoding.h>
+#include <libvroom/error.h>
 #include <libvroom/vroom.h>
 
 #include "arrow_to_r.h"
 #include "libvroom_helpers.h"
 #include "vroom_arrow_chr.h"
+
+namespace {
+
+// Convert libvroom ParseErrors to an R data frame (tibble-compatible).
+// Returns a list with vectors: row (integer), col (integer),
+// expected (character), actual (character).
+cpp11::writable::list
+errors_to_r_problems(const std::vector<libvroom::ParseError>& errors) {
+  R_xlen_t n = static_cast<R_xlen_t>(errors.size());
+  cpp11::writable::integers rows(n);
+  cpp11::writable::integers cols(n);
+  cpp11::writable::strings expected(n);
+  cpp11::writable::strings actual(n);
+
+  for (R_xlen_t i = 0; i < n; i++) {
+    const auto& err = errors[static_cast<size_t>(i)];
+    rows[i] = err.line > 0 ? static_cast<int>(err.line) : NA_INTEGER;
+    cols[i] = err.column > 0 ? static_cast<int>(err.column) : NA_INTEGER;
+    expected[i] = err.message;
+    actual[i] = err.context;
+  }
+
+  cpp11::writable::list df(
+      {cpp11::named_arg("row") = rows, cpp11::named_arg("col") = cols,
+       cpp11::named_arg("expected") = expected,
+       cpp11::named_arg("actual") = actual});
+
+  df.attr("class") =
+      cpp11::writable::strings({"tbl_df", "tbl", "data.frame"});
+  df.attr("row.names") =
+      cpp11::writable::integers({NA_INTEGER, -static_cast<int>(n)});
+
+  return df;
+}
+
+} // anonymous namespace
 
 [[cpp11::register]] cpp11::sexp vroom_libvroom_(
     SEXP input,
@@ -42,6 +79,8 @@
   // Skip full-file encoding detection (simdutf::validate_utf8 scans entire
   // file). R already handles encoding at the connection level.
   opts.encoding = libvroom::CharEncoding::UTF8;
+
+  opts.error_mode = libvroom::ErrorMode::PERMISSIVE;
 
   libvroom::CsvReader reader(opts);
 
@@ -82,6 +121,14 @@
     cpp11::stop("Failed to start streaming: %s", stream_result.error.c_str());
   }
 
+  auto attach_problems = [&reader](cpp11::sexp result) -> cpp11::sexp {
+    const auto& errors = reader.errors();
+    if (!errors.empty()) {
+      Rf_setAttrib(result, Rf_install("problems"), errors_to_r_problems(errors));
+    }
+    return result;
+  };
+
   size_t total_rows = reader.row_count();
   size_t ncols = schema.size();
 
@@ -89,7 +136,7 @@
     auto result = empty_tibble_from_schema(schema);
     // Drain any remaining chunks
     while (reader.next_chunk()) {}
-    return result;
+    return attach_problems(result);
   }
 
   // ALTREP path: stream chunks incrementally.
@@ -276,7 +323,7 @@
         cpp11::writable::strings({"tbl_df", "tbl", "data.frame"});
     result.attr("row.names") =
         cpp11::writable::integers({NA_INTEGER, -static_cast<int>(total_rows)});
-    return result;
+    return attach_problems(result);
   }
 
   // Non-ALTREP paths: collect all chunks, then use existing conversion.
@@ -299,7 +346,7 @@
         cpp11::writable::strings({"tbl_df", "tbl", "data.frame"});
     result.attr("row.names") =
         cpp11::writable::integers({NA_INTEGER, 0});
-    return result;
+    return attach_problems(result);
   }
 
   // Merge chunks and convert via existing path
@@ -310,6 +357,6 @@
     }
   }
 
-  return columns_to_r(merged, schema, total_rows, strings_as_factors,
-                      use_altrep);
+  return attach_problems(columns_to_r(merged, schema, total_rows, strings_as_factors,
+                                      use_altrep));
 }

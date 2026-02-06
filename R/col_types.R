@@ -498,14 +498,18 @@ filter_cols_only_and_skip <- function(
   out
 }
 
-finalize_libvroom_result <- function(out) {
-  attr(out, "problems") <- tibble::tibble(
-    row = integer(),
-    col = integer(),
-    expected = character(),
-    actual = character(),
-    file = character()
-  )
+finalize_libvroom_result <- function(out, problems = NULL) {
+  if (is.null(problems) || nrow(problems) == 0) {
+    attr(out, "problems") <- tibble::tibble(
+      row = integer(),
+      col = integer(),
+      expected = character(),
+      actual = character(),
+      file = character()
+    )
+  } else {
+    attr(out, "problems") <- tibble::as_tibble(problems)
+  }
   class(out) <- c("spec_tbl_df", class(out))
   out
 }

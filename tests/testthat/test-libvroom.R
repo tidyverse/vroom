@@ -1034,3 +1034,91 @@ test_that("libvroom reads remote CSV files", {
   expect_equal(actual, expected)
   expect_s3_class(actual, "spec_tbl_df")
 })
+
+test_that("libvroom reports problems for inconsistent field count", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+
+  # Row 2 has 2 fields instead of 3
+  out_con <- file(tf, "wb", encoding = "UTF-8")
+  writeBin(charToRaw("a,b,c\n1,2,3\n4,5\n7,8,9\n"), out_con)
+  close(out_con)
+
+  result <- vroom(
+    tf,
+    delim = ",",
+    col_types = "iii",
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+
+  probs <- problems(result)
+  expect_s3_class(probs, "tbl_df")
+  expect_true(nrow(probs) > 0)
+  expect_named(probs, c("row", "col", "expected", "actual", "file"))
+})
+
+test_that("libvroom problems() returns empty tibble for clean data", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+
+  out_con <- file(tf, "wb", encoding = "UTF-8")
+  writeBin(charToRaw("a,b,c\n1,2,3\n4,5,6\n"), out_con)
+  close(out_con)
+
+  result <- vroom(
+    tf,
+    delim = ",",
+    col_types = "iii",
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+
+  probs <- problems(result)
+  expect_s3_class(probs, "tbl_df")
+  expect_equal(nrow(probs), 0)
+})
+
+test_that("libvroom problems include file path", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+
+  out_con <- file(tf, "wb", encoding = "UTF-8")
+  writeBin(charToRaw("a,b,c\n1,2,3\n4,5\n"), out_con)
+  close(out_con)
+
+  result <- vroom(
+    tf,
+    delim = ",",
+    col_types = "iii",
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+
+  probs <- problems(result)
+  expect_true(nrow(probs) > 0)
+  expect_true(all(nzchar(probs$file)))
+})
+
+test_that("libvroom problems work across multiple files", {
+  dir <- withr::local_tempdir()
+
+  writeLines("a,b\n1,2\n3", file.path(dir, "f1.csv"))
+  writeLines("a,b\n5,6\n7", file.path(dir, "f2.csv"))
+
+  files <- file.path(dir, c("f1.csv", "f2.csv"))
+
+  result <- vroom(
+    files,
+    delim = ",",
+    col_types = "ii",
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+
+  probs <- problems(result)
+  expect_true(nrow(probs) >= 2)
+  # Both files should appear in problems
+  expect_true(any(grepl("f1\\.csv", probs$file)))
+  expect_true(any(grepl("f2\\.csv", probs$file)))
+})

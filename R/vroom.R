@@ -355,8 +355,20 @@ vroom <- function(
         col_type_names
       )
 
+      # Extract problems from C++ result (attached by vroom_libvroom_)
+      probs <- attr(one, "problems")
+      if (is.data.frame(probs) && nrow(probs) > 0) {
+        file_path <- if (is.character(input)) input else "<connection>"
+        probs$file <- rep(file_path, nrow(probs))
+      } else {
+        probs <- NULL
+      }
+      # Remove C++-attached problems (will be re-attached by finalize)
+      attr(one, "problems") <- NULL
+
       list(
         data = one,
+        problems = probs,
         resolved_spec = resolved_spec,
         col_types_int = col_types_int
       )
@@ -472,7 +484,30 @@ vroom <- function(
         out <- out[seq_len(n_max), , drop = FALSE]
       }
 
-      out <- finalize_libvroom_result(out)
+      # Combine problems from all files
+      all_problems <- do.call(rbind, lapply(results, function(r) r$problems))
+      if (is.null(all_problems)) {
+        all_problems <- tibble::tibble(
+          row = integer(),
+          col = integer(),
+          expected = character(),
+          actual = character(),
+          file = character()
+        )
+      }
+
+      if (!is.null(all_problems) && nrow(all_problems) > 0) {
+        cli::cli_warn(
+          c(
+            "w" = "One or more parsing issues, call {.fun problems} on your data frame for details, e.g.:",
+            " " = "dat <- vroom(...)",
+            " " = "problems(dat)"
+          ),
+          class = "vroom_parse_issue"
+        )
+      }
+
+      out <- finalize_libvroom_result(out, all_problems)
 
       has_col_types <- !is.null(col_types) && !identical(col_types, list())
       if (should_show_col_types(has_col_types, show_col_types)) {
