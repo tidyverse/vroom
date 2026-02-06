@@ -1,6 +1,8 @@
 #include <cpp11.hpp>
 #include <libvroom/encoding.h>
 #include <libvroom/error.h>
+#include <libvroom/format_locale.h>
+#include <libvroom/format_parser.h>
 #include <libvroom/vroom.h>
 
 #include "arrow_to_r.h"
@@ -58,13 +60,21 @@ errors_to_r_problems(const std::vector<libvroom::ParseError>& errors) {
     bool use_altrep,
     const std::vector<int>& col_types,
     const cpp11::strings& col_type_names,
+    const cpp11::strings& col_formats,
     int default_col_type,
     bool escape_backslash,
-    char decimal_mark,
+    const cpp11::strings& locale_mon_ab,
+    const cpp11::strings& locale_mon,
+    const cpp11::strings& locale_day_ab,
+    const cpp11::strings& locale_am_pm,
+    const std::string& locale_date_format,
+    const std::string& locale_time_format,
+    const std::string& locale_decimal_mark,
+    const std::string& locale_tz,
     int guess_max) {
 
   libvroom::CsvOptions opts;
-  opts.decimal_mark = decimal_mark;
+  opts.decimal_mark = locale_decimal_mark.empty() ? '.' : locale_decimal_mark[0];
   opts.escape_backslash = escape_backslash;
   if (!delim.empty())
     opts.separator = delim;
@@ -95,6 +105,66 @@ errors_to_r_problems(const std::vector<libvroom::ParseError>& errors) {
 
   open_input_source(reader, input);
   apply_schema_overrides(reader, col_types, col_type_names);
+
+  // Build FormatLocale from R locale parameters
+  libvroom::FormatLocale fmt_locale;
+  if (locale_mon_ab.size() >= 12) {
+    fmt_locale.month_abbr.clear();
+    for (R_xlen_t i = 0; i < 12; ++i)
+      fmt_locale.month_abbr.push_back(std::string(locale_mon_ab[i]));
+  }
+  if (locale_mon.size() >= 12) {
+    fmt_locale.month_full.clear();
+    for (R_xlen_t i = 0; i < 12; ++i)
+      fmt_locale.month_full.push_back(std::string(locale_mon[i]));
+  }
+  if (locale_day_ab.size() >= 7) {
+    fmt_locale.day_abbr.clear();
+    for (R_xlen_t i = 0; i < 7; ++i)
+      fmt_locale.day_abbr.push_back(std::string(locale_day_ab[i]));
+  }
+  if (locale_am_pm.size() >= 2) {
+    fmt_locale.am_pm.clear();
+    for (R_xlen_t i = 0; i < 2; ++i)
+      fmt_locale.am_pm.push_back(std::string(locale_am_pm[i]));
+  }
+  if (!locale_date_format.empty())
+    fmt_locale.date_format = locale_date_format;
+  if (!locale_time_format.empty())
+    fmt_locale.time_format = locale_time_format;
+  if (!locale_decimal_mark.empty())
+    fmt_locale.decimal_mark = locale_decimal_mark[0];
+  if (!locale_tz.empty())
+    fmt_locale.default_tz = locale_tz;
+
+  // Create FormatParser and attach to reader
+  auto format_parser = std::make_unique<libvroom::FormatParser>(fmt_locale);
+  reader.set_format_parser(std::move(format_parser));
+
+  // Apply format strings from R col_types to the schema
+  if (col_formats.size() > 0) {
+    auto schema_copy = reader.schema();
+    if (col_type_names.size() > 0) {
+      // Named matching
+      for (size_t i = 0; i < schema_copy.size(); ++i) {
+        for (R_xlen_t j = 0; j < col_type_names.size(); ++j) {
+          if (schema_copy[i].name == std::string(col_type_names[j])) {
+            if (j < col_formats.size()) {
+              schema_copy[i].format = std::string(col_formats[j]);
+            }
+            break;
+          }
+        }
+      }
+    } else {
+      // Positional matching
+      for (R_xlen_t j = 0; j < col_formats.size() &&
+                            static_cast<size_t>(j) < schema_copy.size(); ++j) {
+        schema_copy[static_cast<size_t>(j)].format = std::string(col_formats[j]);
+      }
+    }
+    reader.set_schema(schema_copy);
+  }
 
   // Apply default column type to columns not explicitly typed
   if (default_col_type > 0) {
@@ -171,7 +241,8 @@ errors_to_r_problems(const std::vector<libvroom::ParseError>& errors) {
       case libvroom::DataType::INT64:
       case libvroom::DataType::FLOAT64:
       case libvroom::DataType::DATE:
-      case libvroom::DataType::TIMESTAMP: {
+      case libvroom::DataType::TIMESTAMP:
+      case libvroom::DataType::TIME: {
         cpp11::writable::doubles v(total_rows);
         numeric_vecs[i] = v;
         result[static_cast<R_xlen_t>(i)] = v; // GC-protect
@@ -293,6 +364,19 @@ errors_to_r_problems(const std::vector<libvroom::ParseError>& errors) {
             }
           }
 
+        } else if (type == libvroom::DataType::TIME) {
+          auto& col = static_cast<libvroom::ArrowTimeColumnBuilder&>(*columns[i]);
+          double* dest = REAL(numeric_vecs[i]) + row_offset;
+          const double* src = col.values().data();
+          if (!col.null_bitmap().has_nulls()) {
+            std::memcpy(dest, src, chunk_rows * sizeof(double));
+          } else {
+            const auto& nulls = col.null_bitmap();
+            for (size_t r = 0; r < chunk_rows; r++) {
+              dest[r] = nulls.is_valid(r) ? src[r] : NA_REAL;
+            }
+          }
+
         } else {
           // Unknown type: try as string (same accumulator path)
           auto* str_col = dynamic_cast<libvroom::ArrowStringColumnBuilder*>(
@@ -308,7 +392,7 @@ errors_to_r_problems(const std::vector<libvroom::ParseError>& errors) {
       row_offset += chunk_rows;
     }
 
-    // Set Date/Timestamp class attributes on numeric vectors
+    // Set Date/Timestamp/Time class attributes on numeric vectors
     for (size_t i = 0; i < ncols; i++) {
       if (schema[i].type == libvroom::DataType::DATE) {
         Rf_setAttrib(numeric_vecs[i], R_ClassSymbol, Rf_mkString("Date"));
@@ -316,6 +400,10 @@ errors_to_r_problems(const std::vector<libvroom::ParseError>& errors) {
         cpp11::writable::strings cls({"POSIXct", "POSIXt"});
         Rf_setAttrib(numeric_vecs[i], R_ClassSymbol, cls);
         Rf_setAttrib(numeric_vecs[i], Rf_install("tzone"), Rf_mkString("UTC"));
+      } else if (schema[i].type == libvroom::DataType::TIME) {
+        cpp11::writable::strings cls({"hms", "difftime"});
+        Rf_setAttrib(numeric_vecs[i], R_ClassSymbol, cls);
+        Rf_setAttrib(numeric_vecs[i], Rf_install("units"), Rf_mkString("secs"));
       }
     }
 

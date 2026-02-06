@@ -10,21 +10,45 @@ cpp11::sexp empty_tibble_from_schema(
   cpp11::writable::strings names(ncols);
 
   for (size_t i = 0; i < ncols; i++) {
+    R_xlen_t ri = static_cast<R_xlen_t>(i);
     switch (schema[i].type) {
     case libvroom::DataType::INT32:
-      result[static_cast<R_xlen_t>(i)] = Rf_allocVector(INTSXP, 0);
+      result[ri] = Rf_allocVector(INTSXP, 0);
       break;
+    case libvroom::DataType::INT64:
     case libvroom::DataType::FLOAT64:
-      result[static_cast<R_xlen_t>(i)] = Rf_allocVector(REALSXP, 0);
+      result[ri] = Rf_allocVector(REALSXP, 0);
       break;
     case libvroom::DataType::BOOL:
-      result[static_cast<R_xlen_t>(i)] = Rf_allocVector(LGLSXP, 0);
+      result[ri] = Rf_allocVector(LGLSXP, 0);
       break;
-    default:
-      result[static_cast<R_xlen_t>(i)] = Rf_allocVector(STRSXP, 0);
+    case libvroom::DataType::DATE: {
+      SEXP v = Rf_allocVector(REALSXP, 0);
+      Rf_setAttrib(v, R_ClassSymbol, Rf_mkString("Date"));
+      result[ri] = v;
       break;
     }
-    names[static_cast<R_xlen_t>(i)] = schema[i].name;
+    case libvroom::DataType::TIMESTAMP: {
+      SEXP v = Rf_allocVector(REALSXP, 0);
+      cpp11::writable::strings cls({"POSIXct", "POSIXt"});
+      Rf_setAttrib(v, R_ClassSymbol, cls);
+      Rf_setAttrib(v, Rf_install("tzone"), Rf_mkString("UTC"));
+      result[ri] = v;
+      break;
+    }
+    case libvroom::DataType::TIME: {
+      SEXP v = Rf_allocVector(REALSXP, 0);
+      cpp11::writable::strings cls({"hms", "difftime"});
+      Rf_setAttrib(v, R_ClassSymbol, cls);
+      Rf_setAttrib(v, Rf_install("units"), Rf_mkString("secs"));
+      result[ri] = v;
+      break;
+    }
+    default:
+      result[ri] = Rf_allocVector(STRSXP, 0);
+      break;
+    }
+    names[ri] = schema[i].name;
   }
 
   result.attr("names") = names;

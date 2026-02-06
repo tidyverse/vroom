@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dialect.h"
+#include "format_parser.h"
 #include "io_util.h"
 #include "options.h"
 #include "types.h"
@@ -55,6 +56,13 @@ public:
   // Call after open()/open_from_buffer(). Only overrides types for columns
   // where the provided schema has a non-UNKNOWN type.
   void set_schema(const std::vector<ColumnSchema>& schema);
+
+  // Set a FormatParser for format-string-based datetime parsing.
+  // The parser is owned by the caller and must outlive the CsvReader.
+  void set_format_parser(std::unique_ptr<FormatParser> parser);
+
+  // Get the format parser (may be null)
+  const FormatParser* format_parser() const;
 
   // Parse the file into column builders
   // Returns ParsedChunks with one vector of ArrowColumnBuilders per chunk

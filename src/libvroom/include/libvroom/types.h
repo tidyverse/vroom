@@ -22,6 +22,7 @@ enum class DataType : uint8_t {
   STRING = 5,
   DATE = 6,      // ISO8601 date
   TIMESTAMP = 7, // ISO8601 timestamp
+  TIME = 8,      // Time of day (seconds since midnight)
   NA = 255       // Null/missing value
 };
 
@@ -31,6 +32,9 @@ inline bool can_promote(DataType from, DataType to) {
     return true;
   if (to == DataType::STRING)
     return true;
+  // TIME doesn't promote to/from numeric types
+  if (from == DataType::TIME || to == DataType::TIME)
+    return to == DataType::STRING;
   return static_cast<uint8_t>(from) <= static_cast<uint8_t>(to);
 }
 
@@ -43,12 +47,16 @@ inline DataType wider_type(DataType a, DataType b) {
   // STRING is the universal fallback
   if (a == DataType::STRING || b == DataType::STRING)
     return DataType::STRING;
-  // DATE/TIMESTAMP don't promote to numeric types
-  if ((a == DataType::DATE || a == DataType::TIMESTAMP) &&
+  // DATE/TIMESTAMP/TIME don't promote to numeric types
+  if ((a == DataType::DATE || a == DataType::TIMESTAMP || a == DataType::TIME) &&
       (b >= DataType::BOOL && b <= DataType::FLOAT64))
     return DataType::STRING;
-  if ((b == DataType::DATE || b == DataType::TIMESTAMP) &&
+  if ((b == DataType::DATE || b == DataType::TIMESTAMP || b == DataType::TIME) &&
       (a >= DataType::BOOL && a <= DataType::FLOAT64))
+    return DataType::STRING;
+  // TIME doesn't promote to DATE/TIMESTAMP or vice versa
+  if ((a == DataType::TIME && (b == DataType::DATE || b == DataType::TIMESTAMP)) ||
+      (b == DataType::TIME && (a == DataType::DATE || a == DataType::TIMESTAMP)))
     return DataType::STRING;
   return static_cast<uint8_t>(a) > static_cast<uint8_t>(b) ? a : b;
 }
@@ -72,6 +80,8 @@ inline const char* type_name(DataType type) {
     return "DATE";
   case DataType::TIMESTAMP:
     return "TIMESTAMP";
+  case DataType::TIME:
+    return "TIME";
   case DataType::NA:
     return "NA";
   default:
@@ -131,7 +141,8 @@ struct ColumnSchema {
   std::string name;
   DataType type = DataType::STRING;
   bool nullable = true;
-  size_t index = 0; // Original column index in CSV
+  size_t index = 0;        // Original column index in CSV
+  std::string format;      // Format string for date/time/datetime parsing (empty = auto)
 };
 
 // Result type for operations that can fail

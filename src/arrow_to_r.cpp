@@ -207,6 +207,25 @@ SEXP timestamp_column_to_r(const ArrowTimestampColumnBuilder& col, size_t nrows)
   return result;
 }
 
+SEXP time_column_to_r(const ArrowTimeColumnBuilder& col, size_t nrows) {
+  cpp11::writable::doubles result(nrows);
+  const double* src = col.values().data();
+  double* dest = REAL(result);
+
+  if (!col.null_bitmap().has_nulls()) {
+    std::memcpy(dest, src, nrows * sizeof(double));
+  } else {
+    const NullBitmap& nulls = col.null_bitmap();
+    for (size_t i = 0; i < nrows; i++) {
+      dest[i] = nulls.is_valid(i) ? src[i] : NA_REAL;
+    }
+  }
+
+  result.attr("class") = cpp11::writable::strings({"hms", "difftime"});
+  result.attr("units") = "secs";
+  return result;
+}
+
 } // anonymous namespace
 
 SEXP column_to_r(const ArrowColumnBuilder& column, size_t nrows,
@@ -237,6 +256,9 @@ SEXP column_to_r(const ArrowColumnBuilder& column, size_t nrows,
   case DataType::TIMESTAMP:
     return timestamp_column_to_r(
         static_cast<const ArrowTimestampColumnBuilder&>(column), nrows);
+  case DataType::TIME:
+    return time_column_to_r(
+        static_cast<const ArrowTimeColumnBuilder&>(column), nrows);
   default:
     // For UNKNOWN/NA types, return character column
     if (auto* str_col =
@@ -388,6 +410,15 @@ cpp11::writable::list columns_to_r_chunked(
       r_vec.attr("class") =
           cpp11::writable::strings({"POSIXct", "POSIXt"});
       r_vec.attr("tzone") = "UTC";
+      result[static_cast<R_xlen_t>(i)] = r_vec;
+
+    } else if (type == DataType::TIME) {
+      cpp11::writable::doubles r_vec(total_rows);
+      copy_numeric_chunks_direct<ArrowTimeColumnBuilder, double>(
+          chunks, i, REAL(r_vec), NA_REAL);
+      r_vec.attr("class") =
+          cpp11::writable::strings({"hms", "difftime"});
+      r_vec.attr("units") = "secs";
       result[static_cast<R_xlen_t>(i)] = r_vec;
 
     } else {

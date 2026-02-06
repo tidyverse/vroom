@@ -2,6 +2,7 @@
 
 #include "arrow_buffer.h"
 #include "error.h"
+#include "format_parser.h"
 #include "simd_atoi.h"
 
 #include <charconv>
@@ -31,6 +32,10 @@ public:
     NumericBuffer<uint8_t>* bool_buffer;
   };
   NullBitmap* null_bitmap;
+
+  // Format-aware parsing support
+  const FormatParser* format_parser = nullptr;
+  const std::string* format_string = nullptr;
 
   // Function pointers for type-specific operations
   using AppendFn = void (*)(FastArrowContext& ctx, std::string_view value);
@@ -283,6 +288,88 @@ public:
   static void append_null_timestamp(FastArrowContext& ctx) {
     ctx.int64_buffer->push_back(0);
     ctx.null_bitmap->push_back_null();
+  }
+
+  // Time (stored as double seconds since midnight)
+  static void append_time(FastArrowContext& ctx, std::string_view value) {
+    if (value.empty()) {
+      ctx.float64_buffer->push_back(0.0);
+      ctx.null_bitmap->push_back_null();
+      return;
+    }
+    if (ctx.format_parser) {
+      ParsedDateTime dt;
+      bool ok;
+      if (ctx.format_string && !ctx.format_string->empty()) {
+        ok = ctx.format_parser->parse(value, *ctx.format_string, dt);
+      } else {
+        ok = ctx.format_parser->parse_auto_time(value, dt);
+      }
+      if (ok) {
+        ctx.float64_buffer->push_back(dt.to_seconds_since_midnight());
+        ctx.null_bitmap->push_back_valid();
+      } else {
+        report_coercion_error(ctx, value);
+        ctx.float64_buffer->push_back(0.0);
+        ctx.null_bitmap->push_back_null();
+      }
+    } else {
+      report_coercion_error(ctx, value);
+      ctx.float64_buffer->push_back(0.0);
+      ctx.null_bitmap->push_back_null();
+    }
+  }
+  static void append_null_time(FastArrowContext& ctx) {
+    ctx.float64_buffer->push_back(0.0);
+    ctx.null_bitmap->push_back_null();
+  }
+
+  // Format-aware date (uses FormatParser + format string)
+  static void append_date_formatted(FastArrowContext& ctx, std::string_view value) {
+    if (value.empty()) {
+      ctx.int32_buffer->push_back(0);
+      ctx.null_bitmap->push_back_null();
+      return;
+    }
+    ParsedDateTime dt;
+    bool ok;
+    if (ctx.format_string && !ctx.format_string->empty()) {
+      ok = ctx.format_parser->parse(value, *ctx.format_string, dt);
+    } else {
+      ok = ctx.format_parser->parse_iso8601_date(value, dt);
+    }
+    if (ok && dt.is_valid_date()) {
+      ctx.int32_buffer->push_back(dt.to_days_since_epoch());
+      ctx.null_bitmap->push_back_valid();
+    } else {
+      report_coercion_error(ctx, value);
+      ctx.int32_buffer->push_back(0);
+      ctx.null_bitmap->push_back_null();
+    }
+  }
+
+  // Format-aware timestamp (uses FormatParser + format string)
+  static void append_timestamp_formatted(FastArrowContext& ctx, std::string_view value) {
+    if (value.empty()) {
+      ctx.int64_buffer->push_back(0);
+      ctx.null_bitmap->push_back_null();
+      return;
+    }
+    ParsedDateTime dt;
+    bool ok;
+    if (ctx.format_string && !ctx.format_string->empty()) {
+      ok = ctx.format_parser->parse(value, *ctx.format_string, dt);
+    } else {
+      ok = ctx.format_parser->parse_iso8601(value, dt);
+    }
+    if (ok && dt.is_valid_date()) {
+      ctx.int64_buffer->push_back(dt.to_micros_since_epoch());
+      ctx.null_bitmap->push_back_valid();
+    } else {
+      report_coercion_error(ctx, value);
+      ctx.int64_buffer->push_back(0);
+      ctx.null_bitmap->push_back_null();
+    }
   }
 
   // Dispatch methods

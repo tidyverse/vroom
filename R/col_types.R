@@ -460,13 +460,43 @@ apply_libvroom_col_select <- function(out, col_select, id = NULL) {
   out
 }
 
-resolve_libvroom_col_types <- function(col_types) {
+resolve_libvroom_col_types <- function(
+  col_types,
+  locale = default_locale(),
+  has_format_parser = FALSE
+) {
   col_types_int <- integer(0)
   col_type_names <- character(0)
+  col_formats <- character(0)
   resolved_spec <- NULL
   if (!is.null(col_types) && !identical(col_types, list())) {
     resolved_spec <- as.col_spec(col_types)
     col_types_int <- col_types_to_libvroom(resolved_spec)
+    if (has_format_parser) {
+      col_formats <- col_types_to_libvroom_formats(resolved_spec, locale)
+    } else {
+      # Without FormatParser, fall back to STRING for format-based types
+      # so R-side post-processing handles them
+      needs_fallback <- col_types_int %in%
+        c(6L, 7L, 8L) &
+        vapply(
+          resolved_spec$cols,
+          function(col) {
+            fmt <- col$format %||% ""
+            cls <- class(col)[[1]]
+            # DATE/TIMESTAMP with non-empty format, or any TIME
+            (cls == "collector_time") ||
+              (cls == "collector_date" &&
+                !identical(fmt, "") &&
+                !identical(fmt, "%AD")) ||
+              (cls == "collector_datetime" &&
+                !identical(fmt, "") &&
+                !identical(fmt, "%AD"))
+          },
+          logical(1)
+        )
+      col_types_int[needs_fallback] <- 5L
+    }
     spec_names <- names(resolved_spec$cols)
     if (!is.null(spec_names) && !all(spec_names == "")) {
       col_type_names <- spec_names
@@ -475,6 +505,7 @@ resolve_libvroom_col_types <- function(col_types) {
   list(
     col_types_int = col_types_int,
     col_type_names = col_type_names,
+    col_formats = col_formats,
     resolved_spec = resolved_spec
   )
 }

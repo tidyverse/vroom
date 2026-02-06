@@ -119,7 +119,6 @@ test_that("ISO8601 partial dates are not parsed", {
 })
 
 test_that("Year only gets parsed", {
-  skip("libvroom does not support partial date format %Y or %Y-%m")
   test_parse_datetime(
     "2010",
     "%Y",
@@ -178,7 +177,6 @@ test_that("%b and %B are case insensitive", {
 })
 
 test_that("%. requires a value", {
-  skip("libvroom does not support readr format extension %.")
   ref <- as.Date("2001-01-01")
 
   test_parse_date("2001?01?01", "%Y%.%m%.%d", expected = ref)
@@ -196,7 +194,6 @@ test_that("%Z detects named time zones", {
     expected = ref,
     locale = ct
   )
-  skip("libvroom does not support %Z for timezone input in format strings")
   test_parse_datetime(
     "2010-10-01 01:00 America/Chicago",
     "%Y-%m-%d %H:%M %Z",
@@ -206,7 +203,6 @@ test_that("%Z detects named time zones", {
 })
 
 test_that("%s parses unix timestamps", {
-  skip("libvroom does not support readr format extension %s (unix timestamp)")
   ref <- .POSIXct(1285912800, "UTC")
 
   test_parse_datetime("1285912800", "%s", expected = ref)
@@ -308,9 +304,6 @@ test_that("locale affects both guessing and parsing", {
 ## Time zones ------------------------------------------------------------------
 
 test_that("same times with different offsets parsed as same time", {
-  skip(
-    "libvroom does not parse compact ISO8601 timezone offsets like +04 or -0700"
-  )
   # From http://en.wikipedia.org/wiki/ISO_8601#Time_offsets_from_UTC
   same_time <- paste(
     "2010-02-03",
@@ -324,9 +317,6 @@ test_that("same times with different offsets parsed as same time", {
 })
 
 test_that("offsets can cross date boundaries", {
-  skip(
-    "libvroom does not parse compact ISO8601 datetime variants like T2000-0500"
-  )
   expected <- as.POSIXct("2015-02-01 01:00:00Z", tz = "UTC")
   test_parse_datetime("2015-01-31T2000-0500", expected = expected)
   test_parse_datetime("2015-02-01T0100Z", expected = expected)
@@ -530,9 +520,6 @@ test_that("single digit dates and hours are parsed correctly (https://github.com
 })
 
 test_that("durations", {
-  skip(
-    "libvroom does not support readr format extensions %h (unbounded hours) and duration parsing"
-  )
   parse_time <- function(x, format, ...) {
     vroom(
       I(x),
@@ -542,7 +529,7 @@ test_that("durations", {
       altrep = FALSE
     )[[1]]
   }
-  expect_warning(parse_time("25:00:00", format = "%H:%M:%S"))
+  expect_true(is.na(parse_time("25:00:00", format = "%H:%M:%S")))
   expect_equal(
     parse_time("25:00:00", format = "%h:%M:%S"),
     hms::hms(hours = 25)

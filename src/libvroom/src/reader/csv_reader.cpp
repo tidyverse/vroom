@@ -3,6 +3,7 @@
 #include "libvroom/dialect.h"
 #include "libvroom/encoding.h"
 #include "libvroom/error.h"
+#include "libvroom/format_parser.h"
 #include "libvroom/parse_utils.h"
 #include "libvroom/parsed_chunk_queue.h"
 #include "libvroom/split_fields.h"
@@ -27,6 +28,7 @@ static const char* type_label_for(DataType type) {
   case DataType::BOOL:      return "a logical";
   case DataType::DATE:      return "date in ISO8601";
   case DataType::TIMESTAMP: return "date in ISO8601";
+  case DataType::TIME:      return "time in ISO8601";
   default:                  return "";
   }
 }
@@ -311,6 +313,26 @@ done_chunk: // Early exit target for should_stop() (FAIL_FAST error mode)
   return {row_count, false};
 }
 
+// Create the appropriate builder for a column, using format-aware builders when
+// a FormatParser is available for date/time types. This ensures the FormatParser's
+// more flexible parsing (e.g. compact ISO8601) is used even with empty format strings.
+static std::unique_ptr<ArrowColumnBuilder> create_builder_for_schema(
+    const ColumnSchema& schema, const FormatParser* parser) {
+  if (parser) {
+    switch (schema.type) {
+    case DataType::DATE:
+      return ArrowColumnBuilder::create_date_formatted(parser, &schema.format);
+    case DataType::TIMESTAMP:
+      return ArrowColumnBuilder::create_timestamp_formatted(parser, &schema.format);
+    case DataType::TIME:
+      return ArrowColumnBuilder::create_time_formatted(parser, &schema.format);
+    default:
+      break;
+    }
+  }
+  return ArrowColumnBuilder::create(schema.type);
+}
+
 struct CsvReader::Impl {
   CsvOptions options;
   MmapSource source;              // For file-based reading
@@ -326,6 +348,7 @@ struct CsvReader::Impl {
   std::string file_path;                                  // Stored from open() for caching
   EncodingResult detected_encoding;                       // Character encoding detection result
   std::optional<DetectionResult> detected_dialect_result; // From DialectDetector
+  std::unique_ptr<FormatParser> format_parser;            // For format-string datetime parsing
 
   // Streaming state
   std::unique_ptr<ParsedChunkQueue> streaming_queue;
@@ -815,7 +838,18 @@ void CsvReader::set_schema(const std::vector<ColumnSchema>& schema) {
     if (schema[i].type != DataType::UNKNOWN) {
       impl_->schema[i].type = schema[i].type;
     }
+    if (!schema[i].format.empty()) {
+      impl_->schema[i].format = schema[i].format;
+    }
   }
+}
+
+void CsvReader::set_format_parser(std::unique_ptr<FormatParser> parser) {
+  impl_->format_parser = std::move(parser);
+}
+
+const FormatParser* CsvReader::format_parser() const {
+  return impl_->format_parser.get();
 }
 
 const EncodingResult& CsvReader::encoding() const {
@@ -930,9 +964,10 @@ Result<ParsedChunks> CsvReader::read_all() {
           ErrorCollector* chunk_error_collector =
               check_errors ? &thread_error_collectors[chunk_idx] : nullptr;
 
+          const FormatParser* fmt_parser = impl_->format_parser.get();
           futures.push_back(pool.submit_task([&chunk_results, data, size, chunk_idx, start_offset,
                                               end_offset, start_inside, expected_rows, options,
-                                              &schema, chunk_error_collector]() {
+                                              &schema, chunk_error_collector, fmt_parser]() {
             if (start_offset >= size || end_offset > size || start_offset >= end_offset)
               return;
 
@@ -940,7 +975,7 @@ Result<ParsedChunks> CsvReader::read_all() {
             NullChecker null_checker(options);
 
             for (const auto& col_schema : schema) {
-              auto builder = ArrowColumnBuilder::create(col_schema.type);
+              auto builder = create_builder_for_schema(col_schema, fmt_parser);
               builder->reserve(expected_rows);
               cr.columns.push_back(std::move(builder));
             }
@@ -1185,9 +1220,10 @@ Result<ParsedChunks> CsvReader::read_all() {
       ErrorCollector* chunk_error_collector =
           check_errors ? &thread_error_collectors[chunk_idx] : nullptr;
 
+      const FormatParser* fmt_parser = impl_->format_parser.get();
       futures.push_back(pool.submit_task([&chunk_results, data, size, chunk_idx, start_offset,
                                           end_offset, start_inside, expected_rows, options, &schema,
-                                          chunk_error_collector]() {
+                                          chunk_error_collector, fmt_parser]() {
         if (start_offset >= size || end_offset > size || start_offset >= end_offset) {
           return;
         }
@@ -1200,7 +1236,7 @@ Result<ParsedChunks> CsvReader::read_all() {
 
         // Create column builders with pre-allocated capacity
         for (const auto& col_schema : schema) {
-          auto builder = ArrowColumnBuilder::create(col_schema.type);
+          auto builder = create_builder_for_schema(col_schema, fmt_parser);
           builder->reserve(expected_rows);
           result.columns.push_back(std::move(builder));
         }
@@ -1298,7 +1334,7 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
   // For serial path (small files), we don't pre-compute row count to avoid extra pass
   // The builder will grow dynamically, which is fine for small data
   for (const auto& col_schema : impl_->schema) {
-    auto builder = ArrowColumnBuilder::create(col_schema.type);
+    auto builder = create_builder_for_schema(col_schema, impl_->format_parser.get());
     columns.push_back(std::move(builder));
   }
 
@@ -1668,8 +1704,9 @@ Result<bool> CsvReader::start_streaming() {
         check_errors ? &(*error_collectors_ptr)[chunk_idx] : nullptr;
     size_t base_line = chunk_base_lines[chunk_idx];
 
+    const FormatParser* fmt_parser = impl_->format_parser.get();
     pool.detach_task([queue_ptr, data, size, chunk_idx, start_offset, end_offset, start_inside,
-                      expected_rows, options, schema, chunk_error_collector, base_line]() {
+                      expected_rows, options, schema, chunk_error_collector, base_line, fmt_parser]() {
       if (start_offset >= size || end_offset > size || start_offset >= end_offset) {
         std::vector<std::unique_ptr<ArrowColumnBuilder>> empty;
         queue_ptr->push(chunk_idx, std::move(empty));
@@ -1679,7 +1716,7 @@ Result<bool> CsvReader::start_streaming() {
       NullChecker null_checker(options);
       std::vector<std::unique_ptr<ArrowColumnBuilder>> columns;
       for (const auto& col_schema : schema) {
-        auto builder = ArrowColumnBuilder::create(col_schema.type);
+        auto builder = create_builder_for_schema(col_schema, fmt_parser);
         builder->reserve(expected_rows);
         columns.push_back(std::move(builder));
       }

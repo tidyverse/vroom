@@ -241,9 +241,10 @@ vroom <- function(
 
   na_str <- encode_na_values(na)
 
-  ct <- resolve_libvroom_col_types(col_types)
+  ct <- resolve_libvroom_col_types(col_types, locale, has_format_parser = TRUE)
   col_types_int <- ct$col_types_int
   col_type_names <- ct$col_type_names
+  col_formats <- ct$col_formats
   resolved_spec <- ct$resolved_spec
 
   # Extract .delim from col_spec when the user hasn't specified delim explicitly
@@ -316,9 +317,17 @@ vroom <- function(
         },
         col_types = col_types_int,
         col_type_names = libvroom_col_type_names,
+        col_formats = col_formats,
         default_col_type = default_col_type,
         escape_backslash = escape_backslash,
-        decimal_mark = locale$decimal_mark,
+        locale_mon_ab = locale$date_names$mon_ab,
+        locale_mon = locale$date_names$mon,
+        locale_day_ab = locale$date_names$day_ab,
+        locale_am_pm = locale$date_names$am_pm,
+        locale_date_format = locale$date_format,
+        locale_time_format = locale$time_format,
+        locale_decimal_mark = locale$decimal_mark,
+        locale_tz = locale$tz,
         guess_max = if (is.infinite(guess_max)) -1L else as.integer(guess_max)
       ),
       error = function(e) {
@@ -729,34 +738,56 @@ collector_to_libvroom_int <- function(collector) {
     collector_double = 4L,
     collector_character = 5L,
     collector_number = 5L,
-    collector_time = 5L,
     collector_factor = 5L,
-    collector_date = {
-      if (
-        identical(collector$format, "") ||
-          identical(collector$format, "%AD")
-      ) {
-        6L
-      } else {
+    collector_date = 6L,
+    collector_datetime = {
+      fmt <- collector$format %||% ""
+      if (identical(fmt, "%s")) {
+        # Epoch seconds: handled in R post-processing
         5L
+      } else {
+        7L
       }
+    },
+    collector_time = 8L,
+    5L
+  )
+}
+
+# Extract format strings from a col_spec for libvroom.
+# Returns a character vector parallel to spec$cols with format strings.
+# Empty string means auto-detect (ISO8601 for datetime/date, HH:MM:SS for time).
+collector_to_libvroom_format <- function(collector, locale = default_locale()) {
+  cls <- class(collector)[[1]]
+  fmt <- collector$format %||% ""
+  switch(
+    cls,
+    collector_date = {
+      # %AD means "auto date" - use empty string for auto-detection
+      if (identical(fmt, "%AD")) "" else fmt
     },
     collector_datetime = {
-      if (
-        identical(collector$format, "") ||
-          identical(collector$format, "%AD")
-      ) {
-        7L
-      } else {
-        5L
-      }
+      # %AD means "auto date" - use empty string for auto-detection
+      if (identical(fmt, "%AD")) "" else fmt
     },
-    5L
+    collector_time = {
+      # %AT means "auto time" - use empty string for auto-detection
+      if (identical(fmt, "%AT")) "" else fmt
+    },
+    ""
   )
 }
 
 col_types_to_libvroom <- function(spec) {
   vapply(spec$cols, collector_to_libvroom_int, integer(1))
+}
+
+col_types_to_libvroom_formats <- function(spec, locale = default_locale()) {
+  vapply(
+    spec$cols,
+    function(col) collector_to_libvroom_format(col, locale),
+    character(1)
+  )
 }
 
 
@@ -808,6 +839,8 @@ build_libvroom_spec <- function(
         col_date()
       } else if (inherits(col, "POSIXct")) {
         col_datetime()
+      } else if (inherits(col, "hms")) {
+        col_time()
       } else {
         col_double()
       }
@@ -996,12 +1029,14 @@ apply_collector <- function(x, collector, locale = default_locale()) {
       }
     },
     collector_time = {
+      # Fallback when column was read as STRING (e.g., FWF without FormatParser)
       tryCatch(
         parse_time_(x, collector$format %||% "", locale),
         error = function(e) hms::as_hms(rep(NA_real_, length(x)))
       )
     },
     collector_date = {
+      # Fallback when column was read as STRING (e.g., FWF without FormatParser)
       tryCatch(
         parse_date_(x, collector$format %||% "", locale),
         error = function(e) {
@@ -1012,11 +1047,12 @@ apply_collector <- function(x, collector, locale = default_locale()) {
     collector_datetime = {
       fmt <- collector$format %||% ""
       if (identical(fmt, "%s")) {
-        # Epoch seconds: not in DateTimeParser, handle directly
+        # Epoch seconds: handled in R since it's a numeric conversion
         out <- .POSIXct(as.numeric(x), tz = "UTC")
         out[is.na(x)] <- .POSIXct(NA_real_, tz = "UTC")
         out
       } else {
+        # Fallback when column was read as STRING (e.g., FWF without FormatParser)
         tryCatch(
           parse_datetime_(x, fmt, locale),
           error = function(e) .POSIXct(rep(NA_real_, length(x)), tz = "UTC")

@@ -30,6 +30,8 @@ LIBVROOM_SOURCES = libvroom/src/cache/index_cache.cpp \
 	libvroom/src/reader/csv_reader.cpp \
 	libvroom/src/reader/fwf_reader.cpp \
 	libvroom/src/reader/mmap_source.cpp \
+	libvroom/src/schema/format_locale.cpp \
+	libvroom/src/schema/format_parser.cpp \
 	libvroom/src/schema/type_inference.cpp \
 	libvroom/src/schema/type_parsers.cpp \
 	libvroom/src/simd/statistics_simd.cpp \
@@ -79,6 +81,8 @@ OBJECTS = arrow_to_r.o libvroom_helpers.o vroom_arrow_chr.o vroom_dict_chr.o vro
 	libvroom/src/reader/csv_reader.o \
 	libvroom/src/reader/fwf_reader.o \
 	libvroom/src/reader/mmap_source.o \
+	libvroom/src/schema/format_locale.o \
+	libvroom/src/schema/format_parser.o \
 	libvroom/src/schema/type_inference.o \
 	libvroom/src/schema/type_parsers.o \
 	libvroom/src/simd/statistics_simd.o \
