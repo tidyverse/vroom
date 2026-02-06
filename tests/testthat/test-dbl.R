@@ -10,12 +10,6 @@ test_that("Large exponents can parse", {
 })
 
 test_that("Doubles parse correctly with comma as decimal separator", {
-  # libvroom does not yet support locale-specific decimal marks;
-
-  # it always uses '.' as the decimal separator.
-  skip(
-    "libvroom does not yet support locale-specific decimal marks (comma as decimal separator)"
-  )
   res <- vroom(
     I("23,4\n"),
     delim = '\t',

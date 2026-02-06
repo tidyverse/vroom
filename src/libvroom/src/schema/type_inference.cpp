@@ -99,7 +99,8 @@ DataType TypeInference::infer_field(std::string_view value) {
 
   // Try to parse as float
   double result;
-  auto [ptr, ec] = fast_float::from_chars(value.data(), value.data() + value.size(), result);
+  fast_float::parse_options float_opts{fast_float::chars_format::general, options_.decimal_mark};
+  auto [ptr, ec] = fast_float::from_chars_advanced(value.data(), value.data() + value.size(), result, float_opts);
   if (ec == std::errc() && ptr == value.data() + value.size()) {
     return DataType::FLOAT64;
   }

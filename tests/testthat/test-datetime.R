@@ -252,7 +252,6 @@ test_that("parses NA/empty correctly", {
 ## Locales -----------------------------------------------------------------
 
 test_that("locale affects months", {
-  skip("libvroom does not pass locale month names to R strptime")
   jan1 <- as.Date("2010-01-01")
 
   fr <- locale("fr")
@@ -261,7 +260,6 @@ test_that("locale affects months", {
 })
 
 test_that("locale affects day of week", {
-  skip("libvroom does not pass locale day/month names to R strptime")
   a <- as.POSIXct("2010-01-01", tz = "UTC")
   b <- .POSIXct(unclass(as.Date("2010-01-01")) * 86400, tz = "UTC")
   fr <- locale("fr")
@@ -288,7 +286,6 @@ test_that("locale affects am/pm", {
   expected <- hms::hms(hours = 13, minutes = 30)
   # With %H+%p translation, standard AM/PM works
   test_parse_time("01:30 PM", "%H:%M %p", expected = expected)
-  skip("libvroom does not support locale-specific AM/PM markers (e.g., Korean)")
   test_parse_time(
     "\UC624\UD6C4 01\UC2DC 30\UBD84",
     "%p %H\UC2DC %M\UBD84",
@@ -298,7 +295,6 @@ test_that("locale affects am/pm", {
 })
 
 test_that("locale affects both guessing and parsing", {
-  skip("libvroom does not use locale date_format for type guessing")
   out <- vroom(
     I("01/02/2013\n"),
     delim = ",",

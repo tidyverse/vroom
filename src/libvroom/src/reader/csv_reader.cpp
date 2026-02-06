@@ -50,7 +50,9 @@ std::pair<size_t, bool> parse_chunk_with_state(
   std::vector<FastArrowContext> fast_contexts;
   fast_contexts.reserve(columns.size());
   for (auto& col : columns) {
-    fast_contexts.push_back(col->create_context());
+    auto ctx = col->create_context();
+    ctx.decimal_mark = options.decimal_mark;
+    fast_contexts.push_back(ctx);
   }
 
   bool in_quote = start_inside_quote;
@@ -1257,7 +1259,9 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
   std::vector<FastArrowContext> fast_contexts;
   fast_contexts.reserve(columns.size());
   for (auto& col : columns) {
-    fast_contexts.push_back(col->create_context());
+    auto ctx = col->create_context();
+    ctx.decimal_mark = impl_->options.decimal_mark;
+    fast_contexts.push_back(ctx);
   }
 
   const char* data = impl_->data_ptr;

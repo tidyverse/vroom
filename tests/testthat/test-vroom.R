@@ -1099,13 +1099,6 @@ test_that("UTF-16LE encodings can be read", {
 })
 
 test_that("supports unicode grouping and decimal marks (https://github.com/tidyverse/readr/issues/796)", {
-  # libvroom's number type is parsed R-side via gsub which doesn't handle
-
-  # multi-byte Unicode grouping/decimal marks correctly. The locale parameters
-  # for grouping_mark and decimal_mark are not forwarded to the gsub pattern.
-  skip(
-    "libvroom R-side number parsing does not support multi-byte Unicode marks"
-  )
   test_vroom(
     I("1\u00A0234\u02D95"),
     locale = locale(grouping_mark = "\u00A0", decimal_mark = "\u02D9"),

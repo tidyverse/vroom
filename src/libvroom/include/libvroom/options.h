@@ -25,6 +25,9 @@ struct CsvOptions {
   std::string true_values = "true,TRUE,True,T,t,yes,YES,Yes";
   std::string false_values = "false,FALSE,False,F,f,no,NO,No";
 
+  // Locale options
+  char decimal_mark = '.'; // Decimal separator for FLOAT64 parsing (default: '.')
+
   // Type inference options
   bool guess_integer = false; // When false, integer-like values infer as FLOAT64 (R parity)
 

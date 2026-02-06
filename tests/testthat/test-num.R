@@ -8,10 +8,6 @@ test_that("col_number helps with currency", {
 })
 
 test_that("col_number helps with currency and locale-specific decimal mark", {
-  # libvroom does not yet support locale-specific decimal/grouping marks
-  skip(
-    "libvroom does not yet support locale-specific decimal marks for col_number()"
-  )
   es_MX <- locale("es", decimal_mark = ",")
   test_parse_number("$1.000.000,00", locale = es_MX, 1e6)
 })

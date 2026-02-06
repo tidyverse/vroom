@@ -38,6 +38,9 @@ public:
   AppendFn append_fn;
   AppendNullFn append_null_fn;
 
+  // Locale-specific settings
+  char decimal_mark = '.';
+
   // ============================================
   // Static append implementations
   // ============================================
@@ -169,7 +172,8 @@ public:
   // Float64
   static void append_float64(FastArrowContext& ctx, std::string_view value) {
     double result;
-    auto [ptr, ec] = fast_float::from_chars(value.data(), value.data() + value.size(), result);
+    fast_float::parse_options opts{fast_float::chars_format::general, ctx.decimal_mark};
+    auto [ptr, ec] = fast_float::from_chars_advanced(value.data(), value.data() + value.size(), result, opts);
     if (ec == std::errc() && ptr == value.data() + value.size()) {
       ctx.float64_buffer->push_back(result);
       ctx.null_bitmap->push_back_valid();

@@ -318,6 +318,7 @@ vroom <- function(
         col_type_names = libvroom_col_type_names,
         default_col_type = default_col_type,
         escape_backslash = escape_backslash,
+        decimal_mark = locale$decimal_mark,
         guess_max = if (is.infinite(guess_max)) -1L else as.integer(guess_max)
       ),
       error = function(e) {
@@ -822,71 +823,96 @@ apply_col_postprocessing <- function(
   col_type_names,
   locale = default_locale()
 ) {
-  if (is.null(spec)) {
-    return(out)
-  }
-
   out_names <- names(out)
 
-  if (length(col_type_names) > 0) {
-    # Named spec: match by name
-    for (i in seq_along(spec$cols)) {
-      col_name <- names(spec$cols)[[i]]
-      out_idx <- match(col_name, out_names)
-      if (is.na(out_idx)) {
-        next
-      }
-      type_int <- col_types_int[[i]]
-      if (type_int != 5L) {
-        next
-      }
+  if (!is.null(spec)) {
+    if (length(col_type_names) > 0) {
+      # Named spec: match by name
+      for (i in seq_along(spec$cols)) {
+        col_name <- names(spec$cols)[[i]]
+        out_idx <- match(col_name, out_names)
+        if (is.na(out_idx)) {
+          next
+        }
+        type_int <- col_types_int[[i]]
+        if (type_int != 5L) {
+          next
+        }
 
-      collector <- spec$cols[[i]]
-      if (inherits(collector, "collector_character")) {
-        next
-      }
+        collector <- spec$cols[[i]]
+        if (inherits(collector, "collector_character")) {
+          next
+        }
 
-      out[[out_idx]] <- apply_collector(out[[out_idx]], collector, locale)
+        out[[out_idx]] <- apply_collector(out[[out_idx]], collector, locale)
+      }
+    } else {
+      # Positional spec: match by position
+      out_col <- 0L
+      for (i in seq_along(spec$cols)) {
+        type_int <- col_types_int[[i]]
+        if (type_int == -1L) {
+          next
+        }
+        out_col <- out_col + 1L
+        if (out_col > ncol(out)) {
+          next
+        }
+        if (type_int != 5L) {
+          next
+        }
+
+        collector <- spec$cols[[i]]
+        if (inherits(collector, "collector_character")) {
+          next
+        }
+
+        out[[out_col]] <- apply_collector(out[[out_col]], collector, locale)
+      }
     }
-  } else {
-    # Positional spec: match by position
-    out_col <- 0L
-    for (i in seq_along(spec$cols)) {
-      type_int <- col_types_int[[i]]
-      if (type_int == -1L) {
-        next
-      }
-      out_col <- out_col + 1L
-      if (out_col > ncol(out)) {
-        next
-      }
-      if (type_int != 5L) {
-        next
-      }
 
-      collector <- spec$cols[[i]]
-      if (inherits(collector, "collector_character")) {
-        next
+    # Apply .default post-processing to columns not explicitly in spec$cols
+    if (
+      !is.null(spec$default) &&
+        !inherits(spec$default, "collector_guess") &&
+        !inherits(spec$default, "collector_skip") &&
+        !inherits(spec$default, "collector_character")
+    ) {
+      default_int <- collector_to_libvroom_int(spec$default)
+      if (default_int == 5L) {
+        spec_col_names <- names(spec$cols)
+        for (i in seq_along(out_names)) {
+          if (!(out_names[[i]] %in% spec_col_names)) {
+            out[[i]] <- apply_collector(out[[i]], spec$default, locale)
+          }
+        }
       }
-
-      out[[out_col]] <- apply_collector(out[[out_col]], collector, locale)
     }
   }
 
-  # Apply .default post-processing to columns not explicitly in spec$cols
-  if (
-    !is.null(spec$default) &&
-      !inherits(spec$default, "collector_guess") &&
-      !inherits(spec$default, "collector_skip") &&
-      !inherits(spec$default, "collector_character")
-  ) {
-    default_int <- collector_to_libvroom_int(spec$default)
-    if (default_int == 5L) {
-      spec_col_names <- names(spec$cols)
-      for (i in seq_along(out_names)) {
-        if (!(out_names[[i]] %in% spec_col_names)) {
-          out[[i]] <- apply_collector(out[[i]], spec$default, locale)
-        }
+  # Locale date_format guessing: when a non-default date_format is set,
+  # try parsing type-guessed character columns as dates.
+  date_format <- locale$date_format %||% ""
+  if (nzchar(date_format) && !identical(date_format, "%AD")) {
+    # Determine which columns were explicitly typed
+    explicit_cols <- character()
+    if (!is.null(spec) && length(spec$cols) > 0) {
+      explicit_cols <- names(spec$cols)
+    }
+
+    for (i in seq_along(out_names)) {
+      if (out_names[[i]] %in% explicit_cols) {
+        next
+      }
+      if (!is.character(out[[i]])) {
+        next
+      }
+      parsed <- tryCatch(
+        parse_date_(out[[i]], date_format, locale),
+        error = function(e) NULL
+      )
+      if (!is.null(parsed) && !all(is.na(parsed))) {
+        out[[i]] <- parsed
       }
     }
   }
@@ -908,7 +934,11 @@ apply_collector <- function(x, collector, locale = default_locale()) {
       as.logical(out)
     },
     collector_number = {
-      parse_number_value(x)
+      parse_number_value(
+        x,
+        grouping_mark = locale$grouping_mark,
+        decimal_mark = locale$decimal_mark
+      )
     },
     collector_big_integer = {
       bit64::as.integer64(x)
@@ -968,7 +998,14 @@ parse_number_value <- function(x, grouping_mark = ",", decimal_mark = ".") {
   is_na <- is.na(x)
 
   # Remove grouping marks
-  x <- gsub(grouping_mark, "", x, fixed = TRUE)
+  if (nzchar(grouping_mark)) {
+    x <- gsub(grouping_mark, "", x, fixed = TRUE)
+  }
+
+  # Normalize decimal mark to "." before regex extraction
+  if (!identical(decimal_mark, ".")) {
+    x <- gsub(decimal_mark, ".", x, fixed = TRUE)
+  }
 
   # Extract the first valid number (integer, decimal, or scientific notation)
   pattern <- "[+-]?[0-9]*\\.?[0-9]+([eE][+-]?[0-9]+)?"
