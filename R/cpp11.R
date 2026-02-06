@@ -36,8 +36,8 @@ vroom_lines_libvroom_ <- function(input, skip, n_max, na_values, skip_empty_rows
   .Call(`_vroom_vroom_lines_libvroom_`, input, skip, n_max, na_values, skip_empty_rows, num_threads, use_altrep)
 }
 
-vroom_libvroom_ <- function(input, delim, quote, has_header, skip, comment, skip_empty_rows, trim_ws, na_values, num_threads, strings_as_factors, use_altrep, col_types, col_type_names, default_col_type, escape_backslash) {
-  .Call(`_vroom_vroom_libvroom_`, input, delim, quote, has_header, skip, comment, skip_empty_rows, trim_ws, na_values, num_threads, strings_as_factors, use_altrep, col_types, col_type_names, default_col_type, escape_backslash)
+vroom_libvroom_ <- function(input, delim, quote, has_header, skip, comment, skip_empty_rows, trim_ws, na_values, num_threads, strings_as_factors, use_altrep, col_types, col_type_names, default_col_type, escape_backslash, guess_max) {
+  .Call(`_vroom_vroom_libvroom_`, input, delim, quote, has_header, skip, comment, skip_empty_rows, trim_ws, na_values, num_threads, strings_as_factors, use_altrep, col_types, col_type_names, default_col_type, escape_backslash, guess_max)
 }
 
 has_trailing_newline <- function(filename) {

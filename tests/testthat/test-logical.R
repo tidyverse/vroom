@@ -23,9 +23,6 @@ test_that("True and False parsed", {
 })
 
 test_that("T and F parsed", {
-  # libvroom does not recognize single-letter "T"/"F" as logical values
-  # when guessing types. It recognizes TRUE/FALSE, True/False, true/false, 1/0.
-  skip("libvroom does not recognize single-letter 'T'/'F' as logical values when guessing")
   test_vroom(
     "T\nF\n",
     col_names = FALSE,
@@ -34,9 +31,6 @@ test_that("T and F parsed", {
 })
 
 test_that("t and f parsed", {
-  # libvroom does not recognize single-letter "t"/"f" as logical values.
-  # It recognizes TRUE/FALSE, True/False, true/false, T/F, 1/0.
-  skip("libvroom does not recognize single-letter 't'/'f' as logical values")
   test_vroom(
     "t\nf\n",
     col_names = FALSE,

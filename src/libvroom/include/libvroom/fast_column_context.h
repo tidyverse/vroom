@@ -178,10 +178,20 @@ public:
     if (ec == std::errc() && ptr == value.data() + value.size()) {
       ctx.float64_values->push_back(result);
       ctx.null_bitmap->push_back(false);
-    } else {
-      ctx.float64_values->push_back(std::numeric_limits<double>::quiet_NaN());
-      ctx.null_bitmap->push_back(true);
+      return;
     }
+    // fast_float doesn't handle leading '+' — strip it and retry
+    if (!value.empty() && value[0] == '+') {
+      auto rest = std::string_view(value.data() + 1, value.size() - 1);
+      auto [ptr2, ec2] = fast_float::from_chars(rest.data(), rest.data() + rest.size(), result);
+      if (ec2 == std::errc() && ptr2 == rest.data() + rest.size()) {
+        ctx.float64_values->push_back(result);
+        ctx.null_bitmap->push_back(false);
+        return;
+      }
+    }
+    ctx.float64_values->push_back(std::numeric_limits<double>::quiet_NaN());
+    ctx.null_bitmap->push_back(true);
   }
   static void append_null_float64(FastColumnContext& ctx) {
     ctx.float64_values->push_back(std::numeric_limits<double>::quiet_NaN());
@@ -192,15 +202,15 @@ public:
   // Note: empty strings are handled as nulls by caller, so we don't check here
   static void append_bool(FastColumnContext& ctx, std::string_view value) {
     // Check for common true values
-    if (value == "true" || value == "TRUE" || value == "True" || value == "1" || value == "yes" ||
-        value == "YES") {
+    if (value == "true" || value == "TRUE" || value == "True" || value == "T" || value == "t" ||
+        value == "1" || value == "yes" || value == "YES" || value == "Yes") {
       ctx.bool_values->push_back(true);
       ctx.null_bitmap->push_back(false);
       return;
     }
     // Check for common false values
-    if (value == "false" || value == "FALSE" || value == "False" || value == "0" || value == "no" ||
-        value == "NO") {
+    if (value == "false" || value == "FALSE" || value == "False" || value == "F" || value == "f" ||
+        value == "0" || value == "no" || value == "NO" || value == "No") {
       ctx.bool_values->push_back(false);
       ctx.null_bitmap->push_back(false);
       return;

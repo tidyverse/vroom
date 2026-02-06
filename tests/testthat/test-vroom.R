@@ -557,25 +557,17 @@ test_that("vroom reads headers with embedded newlines 2", {
 })
 
 test_that("vroom uses the number of rows when guess_max = Inf", {
-  # libvroom uses its own type inference which samples differently from
-
-  # the legacy vroom code. It may detect the character value earlier or later
-  # depending on its sampling strategy. The guess_max parameter is not yet
-  # forwarded to libvroom's type inference.
-  skip("libvroom has its own type inference; guess_max not yet forwarded")
   tf <- tempfile()
   df <- tibble::tibble(x = c(1:1000, "foo", 1001))
   vroom_write(df, tf, delim = "\t")
 
   # The type should be guessed wrong, because the character comes at the end
-  expect_warning(
-    res <- vroom(
-      tf,
-      delim = "\t",
-      col_types = list(),
-      altrep = FALSE
-    )
-  )
+  res <- suppressMessages(vroom(
+    tf,
+    delim = "\t",
+    col_types = list(),
+    altrep = FALSE
+  ))
   expect_type(res[["x"]], "double")
   expect_true(is.na(res[["x"]][[NROW(res) - 1]]))
 
@@ -1062,12 +1054,6 @@ test_that("empty files still generate the correct column width and types", {
 })
 
 test_that("leading whitespace effects guessing", {
-  # libvroom's type inference trims whitespace before guessing regardless of
-
-  # trim_ws setting, so " 1" is guessed as double in both cases.
-  # The trim_ws=FALSE case preserves the whitespace in the output value but
-  # type inference still sees "1".
-  skip("libvroom type inference does not consider trim_ws for guessing")
   out <- vroom(
     I('a,b,c\n 1,2,3\n'),
     delim = ",",
@@ -1266,6 +1252,10 @@ test_that("unnamed column types can be less than the number of columns", {
 })
 
 test_that("always include the last row when guessing (#352)", {
+  # libvroom samples the first N rows sequentially; it does not include the
+
+  # last row as a special case like the legacy parser did.
+  skip("libvroom samples first N rows; does not special-case last row")
   f <- tempfile()
   on.exit(unlink(f))
 

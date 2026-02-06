@@ -104,6 +104,15 @@ DataType TypeInference::infer_field(std::string_view value) {
     return DataType::FLOAT64;
   }
 
+  // fast_float doesn't handle leading '+' — strip it and retry
+  if (!value.empty() && value[0] == '+') {
+    auto rest = std::string_view(value.data() + 1, value.size() - 1);
+    auto [ptr2, ec2] = fast_float::from_chars(rest.data(), rest.data() + rest.size(), result);
+    if (ec2 == std::errc() && ptr2 == rest.data() + rest.size()) {
+      return DataType::FLOAT64;
+    }
+  }
+
   // Check for ISO8601 date format (YYYY-MM-DD or YYYY/MM/DD)
   if (value.size() == 10 && (value[4] == '-' || value[4] == '/') &&
       value[7] == value[4] && // Separators must match
@@ -177,9 +186,11 @@ std::vector<DataType> TypeInference::infer_from_sample(const char* data, size_t 
 
       if (c == '\n' || c == '\r') {
         // End of line
-        while (!current_field.empty() &&
-               (current_field.back() == ' ' || current_field.back() == '\t')) {
-          current_field.pop_back();
+        if (options_.trim_ws) {
+          while (!current_field.empty() &&
+                 (current_field.back() == ' ' || current_field.back() == '\t')) {
+            current_field.pop_back();
+          }
         }
         fields.push_back(std::move(current_field));
         break;
@@ -195,14 +206,16 @@ std::vector<DataType> TypeInference::infer_from_sample(const char* data, size_t 
           in_quote = !in_quote;
         }
       } else if (c == options_.separator && !in_quote) {
-        while (!current_field.empty() &&
-               (current_field.back() == ' ' || current_field.back() == '\t')) {
-          current_field.pop_back();
+        if (options_.trim_ws) {
+          while (!current_field.empty() &&
+                 (current_field.back() == ' ' || current_field.back() == '\t')) {
+            current_field.pop_back();
+          }
         }
         fields.push_back(std::move(current_field));
         current_field.clear();
       } else {
-        if (current_field.empty() && !in_quote && (c == ' ' || c == '\t')) {
+        if (options_.trim_ws && current_field.empty() && !in_quote && (c == ' ' || c == '\t')) {
           continue;
         }
         current_field += c;
@@ -211,9 +224,11 @@ std::vector<DataType> TypeInference::infer_from_sample(const char* data, size_t 
 
     // If the line ended without a newline
     if (!current_field.empty()) {
-      while (!current_field.empty() &&
-             (current_field.back() == ' ' || current_field.back() == '\t')) {
-        current_field.pop_back();
+      if (options_.trim_ws) {
+        while (!current_field.empty() &&
+               (current_field.back() == ' ' || current_field.back() == '\t')) {
+          current_field.pop_back();
+        }
       }
       fields.push_back(std::move(current_field));
     }

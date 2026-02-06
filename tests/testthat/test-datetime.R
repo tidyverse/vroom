@@ -390,7 +390,11 @@ test_that("nonexistent times are handled consistently with R's format-based pars
   # Compute expected using the same format-based round-trip vroom uses internally
   utc_time <- as.POSIXct("1970-04-26 02:30:00", tz = "UTC")
   utc_str <- format(utc_time, format = "%Y-%m-%d %H:%M:%OS6", tz = "UTC")
-  expected <- as.POSIXct(utc_str, format = "%Y-%m-%d %H:%M:%OS", tz = "America/New_York")
+  expected <- as.POSIXct(
+    utc_str,
+    format = "%Y-%m-%d %H:%M:%OS",
+    tz = "America/New_York"
+  )
   expect_equal(result$X1, expected)
 })
 

@@ -317,7 +317,8 @@ vroom <- function(
         col_types = col_types_int,
         col_type_names = libvroom_col_type_names,
         default_col_type = default_col_type,
-        escape_backslash = escape_backslash
+        escape_backslash = escape_backslash,
+        guess_max = if (is.infinite(guess_max)) -1L else as.integer(guess_max)
       ),
       error = function(e) {
         msg <- conditionMessage(e)

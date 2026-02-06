@@ -126,7 +126,9 @@ test_that("vroom errors if numbers of columns are inconsistent", {
   # libvroom handles inconsistent column counts by padding with NAs rather
 
   # than erroring. This is a behavioral difference from the legacy parser.
-  skip("libvroom does not error on inconsistent column counts across files (pads with NA instead)")
+  skip(
+    "libvroom does not error on inconsistent column counts across files (pads with NA instead)"
+  )
   files <- test_path("multi-file", c("foo", "baz"))
   expect_snapshot(error = TRUE, {
     vroom::vroom(files, col_types = list())
