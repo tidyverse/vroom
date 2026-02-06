@@ -19,6 +19,12 @@
 
 namespace libvroom {
 
+// Check if data at the given position starts with the comment string.
+static bool starts_with_comment(const char* data, size_t remaining, const std::string& comment) {
+  if (comment.empty() || remaining < comment.size()) return false;
+  return std::memcmp(data, comment.data(), comment.size()) == 0;
+}
+
 // Map DataType to human-readable label for error messages
 static const char* type_label_for(DataType type) {
   switch (type) {
@@ -176,7 +182,7 @@ std::pair<size_t, bool> parse_chunk_with_state(
       break;
 
     // Skip comment lines (handle \n, \r\n, and bare \r)
-    if (options.comment != '\0' && data[offset] == options.comment) {
+    if (starts_with_comment(data + offset, size - offset, options.comment)) {
       while (offset < size && data[offset] != '\n' && data[offset] != '\r') {
         offset++;
       }
@@ -200,6 +206,7 @@ std::pair<size_t, bool> parse_chunk_with_state(
     size_t field_len;
     bool needs_escaping;
     size_t col_idx = 0;
+    bool inline_comment_found = false;
 
     while (iter.next(field_data, field_len, needs_escaping)) {
       // Strip trailing \r if present
@@ -215,6 +222,64 @@ std::pair<size_t, bool> parse_chunk_with_state(
         }
         while (field_len > 0 && (field_data[field_len - 1] == ' ' || field_data[field_len - 1] == '\t')) {
           field_len--;
+        }
+      }
+
+      // Inline comment detection: check for comment string in unquoted fields
+      // or after closing quote in quoted fields
+      if (!options.comment.empty()) {
+        const std::string& cmt = options.comment;
+        if (!needs_escaping) {
+          // Unquoted field: search for comment string within the raw field
+          // When escape_backslash is enabled, skip past backslash-escaped characters
+          for (size_t ci = 0; ci + cmt.size() <= field_len; ++ci) {
+            if (options.escape_backslash && field_data[ci] == '\\' && ci + 1 < field_len) {
+              ci++; // Skip past escaped character
+              continue;
+            }
+            if (std::memcmp(field_data + ci, cmt.data(), cmt.size()) == 0) {
+              // Truncate field at comment position
+              field_len = ci;
+              // Re-trim trailing whitespace after truncation
+              if (options.trim_ws) {
+                while (field_len > 0 && (field_data[field_len - 1] == ' ' || field_data[field_len - 1] == '\t')) {
+                  field_len--;
+                }
+              }
+              inline_comment_found = true;
+              break;
+            }
+          }
+        } else {
+          // Quoted field: check if comment appears right after closing quote
+          // The raw field includes quotes, e.g. "value"#comment
+          // Find the closing quote position
+          if (field_len >= 2 && field_data[0] == quote) {
+            // Find the actual closing quote (handle doubled quotes)
+            size_t pos = 1;
+            while (pos < field_len) {
+              if (options.escape_backslash && field_data[pos] == '\\' && pos + 1 < field_len) {
+                pos += 2; // Skip backslash-escaped character
+                continue;
+              }
+              if (field_data[pos] == quote) {
+                if (pos + 1 < field_len && field_data[pos + 1] == quote) {
+                  pos += 2; // Skip doubled quote
+                } else {
+                  // This is the closing quote
+                  if (pos + 1 + cmt.size() <= field_len &&
+                      std::memcmp(field_data + pos + 1, cmt.data(), cmt.size()) == 0) {
+                    // Truncate: keep only up to and including the closing quote
+                    field_len = pos + 1;
+                    inline_comment_found = true;
+                  }
+                  break;
+                }
+              } else {
+                pos++;
+              }
+            }
+          }
         }
       }
 
@@ -245,6 +310,7 @@ std::pair<size_t, bool> parse_chunk_with_state(
 
       if (col_idx >= num_cols) {
         col_idx++;
+        if (inline_comment_found) break;
         continue;
       }
 
@@ -285,6 +351,12 @@ std::pair<size_t, bool> parse_chunk_with_state(
         fast_contexts[col_idx].append(field_view);
       }
       col_idx++;
+
+      // If inline comment was found, drain remaining fields from iterator and stop
+      if (inline_comment_found) {
+        while (iter.next(field_data, field_len, needs_escaping)) {}
+        break;
+      }
     }
 
     // Error: inconsistent field count
@@ -397,8 +469,8 @@ struct CsvReader::Impl {
       if (options.has_header) {
         options.has_header = detected.has_header;
       }
-      if (detected.dialect.comment_char != '\0') {
-        options.comment = detected.dialect.comment_char;
+      if (!detected.dialect.comment_str.empty()) {
+        options.comment = detected.dialect.comment_str;
       }
       detected_dialect_result = detected;
     } else {
@@ -410,10 +482,10 @@ struct CsvReader::Impl {
 
 // Skip leading blank/whitespace-only lines and comment lines before the header.
 // A blank line contains only whitespace (space, tab) and a newline.
-// A comment line has optional leading whitespace followed by the comment character.
+// A comment line has optional leading whitespace followed by the comment string.
 // This matches the legacy vroom behavior in find_first_line() / is_blank_or_comment_line().
 static size_t skip_leading_blank_and_comment_lines(
-    const char* data, size_t size, char comment_char, bool skip_empty_rows) {
+    const char* data, size_t size, const std::string& comment, bool skip_empty_rows) {
   if (size == 0) return 0;
 
   size_t offset = 0;
@@ -432,7 +504,7 @@ static size_t skip_leading_blank_and_comment_lines(
     }
 
     bool is_blank = (data[offset] == '\n' || data[offset] == '\r');
-    bool is_comment = (comment_char != '\0' && data[offset] == comment_char);
+    bool is_comment = starts_with_comment(data + offset, size - offset, comment);
 
     if (is_blank && skip_empty_rows) {
       // Whitespace-only line — skip past line ending
@@ -1418,7 +1490,7 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
       break;
 
     // Skip comment lines (handle \n, \r\n, and bare \r)
-    if (impl_->options.comment != '\0' && data[offset] == impl_->options.comment) {
+    if (starts_with_comment(data + offset, size - offset, impl_->options.comment)) {
       while (offset < size && data[offset] != '\n' && data[offset] != '\r') {
         offset++;
       }
@@ -1442,6 +1514,7 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
     size_t field_len;
     bool needs_escaping;
     size_t col_idx = 0;
+    bool inline_comment_found = false;
 
     while (iter.next(field_data, field_len, needs_escaping)) {
       // Strip trailing \r if present
@@ -1457,6 +1530,59 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
         }
         while (field_len > 0 && (field_data[field_len - 1] == ' ' || field_data[field_len - 1] == '\t')) {
           field_len--;
+        }
+      }
+
+      // Inline comment detection: check for comment string in unquoted fields
+      // or after closing quote in quoted fields
+      if (!impl_->options.comment.empty()) {
+        const std::string& cmt = impl_->options.comment;
+        if (!needs_escaping) {
+          // Unquoted field: search for comment string within the raw field
+          // When escape_backslash is enabled, skip past backslash-escaped characters
+          for (size_t ci = 0; ci + cmt.size() <= field_len; ++ci) {
+            if (options.escape_backslash && field_data[ci] == '\\' && ci + 1 < field_len) {
+              ci++; // Skip past escaped character
+              continue;
+            }
+            if (std::memcmp(field_data + ci, cmt.data(), cmt.size()) == 0) {
+              // Truncate field at comment position
+              field_len = ci;
+              // Re-trim trailing whitespace after truncation
+              if (options.trim_ws) {
+                while (field_len > 0 && (field_data[field_len - 1] == ' ' || field_data[field_len - 1] == '\t')) {
+                  field_len--;
+                }
+              }
+              inline_comment_found = true;
+              break;
+            }
+          }
+        } else {
+          // Quoted field: check if comment appears right after closing quote
+          if (field_len >= 2 && field_data[0] == quote) {
+            size_t pos = 1;
+            while (pos < field_len) {
+              if (options.escape_backslash && field_data[pos] == '\\' && pos + 1 < field_len) {
+                pos += 2; // Skip backslash-escaped character
+                continue;
+              }
+              if (field_data[pos] == quote) {
+                if (pos + 1 < field_len && field_data[pos + 1] == quote) {
+                  pos += 2;
+                } else {
+                  if (pos + 1 + cmt.size() <= field_len &&
+                      std::memcmp(field_data + pos + 1, cmt.data(), cmt.size()) == 0) {
+                    field_len = pos + 1;
+                    inline_comment_found = true;
+                  }
+                  break;
+                }
+              } else {
+                pos++;
+              }
+            }
+          }
         }
       }
 
@@ -1489,6 +1615,7 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
 
       if (col_idx >= num_cols) {
         col_idx++;
+        if (inline_comment_found) break;
         continue;
       }
 
@@ -1529,6 +1656,12 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
         fast_contexts[col_idx].append(field_view);
       }
       col_idx++;
+
+      // If inline comment was found, drain remaining fields from iterator and stop
+      if (inline_comment_found) {
+        while (iter.next(field_data, field_len, needs_escaping)) {}
+        break;
+      }
     }
 
     // Error: inconsistent field count

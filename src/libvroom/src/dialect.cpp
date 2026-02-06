@@ -240,8 +240,8 @@ std::string Dialect::to_string() const {
     ss << "'" << escape_char << "'";
   }
 
-  if (comment_char != '\0') {
-    ss << ", comment='" << comment_char << "'";
+  if (!comment_str.empty()) {
+    ss << ", comment='" << comment_str << "'";
   }
 
   ss << "}";
@@ -268,7 +268,7 @@ DetectionResult DialectDetector::detect(const uint8_t* buf, size_t len) const {
   size_t comment_offset = skip_comment_lines(buf, len, comment_char, comment_lines_skipped);
 
   // Record detected comment info
-  result.comment_char = comment_char;
+  result.comment_str = (comment_char != '\0') ? std::string(1, comment_char) : std::string();
   result.comment_lines_skipped = comment_lines_skipped;
 
   // Adjust buffer to skip comment lines
@@ -336,7 +336,7 @@ DetectionResult DialectDetector::detect(const uint8_t* buf, size_t len) const {
     const auto& best = result.candidates[0];
     result.dialect = best.dialect;
     result.dialect.line_ending = detect_line_ending(data_buf, sample_len);
-    result.dialect.comment_char = comment_char; // Propagate detected comment char
+    result.dialect.comment_str = result.comment_str; // Propagate detected comment string
     result.confidence = best.consistency_score;
     result.detected_columns = best.num_columns;
 

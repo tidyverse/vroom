@@ -170,6 +170,34 @@ std::vector<DataType> TypeInference::infer_from_sample(const char* data, size_t 
 
   // Sample rows
   while (offset < size && rows_sampled < max_rows) {
+    // Skip empty lines
+    if (data[offset] == '\n') {
+      ++offset;
+      continue;
+    }
+    if (data[offset] == '\r') {
+      ++offset;
+      if (offset < size && data[offset] == '\n') ++offset;
+      continue;
+    }
+
+    // Skip comment lines BEFORE calling find_row_end, because find_row_end
+    // is quote-aware and may be confused by unmatched quotes in comment lines.
+    // Comment lines are skipped by scanning to EOL without quote tracking.
+    if (!options_.comment.empty() && offset + options_.comment.size() <= size &&
+        std::memcmp(data + offset, options_.comment.data(), options_.comment.size()) == 0) {
+      while (offset < size && data[offset] != '\n' && data[offset] != '\r') {
+        offset++;
+      }
+      if (offset < size && data[offset] == '\r') {
+        offset++;
+        if (offset < size && data[offset] == '\n') offset++;
+      } else if (offset < size && data[offset] == '\n') {
+        offset++;
+      }
+      continue;
+    }
+
     size_t row_end = finder.find_row_end(data, size, offset);
     size_t row_size = row_end - offset;
 
@@ -188,6 +216,13 @@ std::vector<DataType> TypeInference::infer_from_sample(const char* data, size_t 
     bool in_quote = false;
     std::string current_field;
 
+    // Helper to check for inline comment at position (outside quotes)
+    auto matches_comment_at = [&](size_t pos) -> bool {
+      if (options_.comment.empty() || pos + options_.comment.size() > row_end) return false;
+      return std::memcmp(data + pos, options_.comment.data(), options_.comment.size()) == 0;
+    };
+
+    bool inline_comment_hit = false;
     for (size_t i = offset; i < row_end; ++i) {
       char c = data[i];
 
@@ -200,6 +235,19 @@ std::vector<DataType> TypeInference::infer_from_sample(const char* data, size_t 
           }
         }
         fields.push_back(std::move(current_field));
+        break;
+      }
+
+      // Check for inline comment (outside quotes) — truncate field and stop row
+      if (!in_quote && matches_comment_at(i)) {
+        if (options_.trim_ws) {
+          while (!current_field.empty() &&
+                 (current_field.back() == ' ' || current_field.back() == '\t')) {
+            current_field.pop_back();
+          }
+        }
+        fields.push_back(std::move(current_field));
+        inline_comment_hit = true;
         break;
       }
 
@@ -230,8 +278,8 @@ std::vector<DataType> TypeInference::infer_from_sample(const char* data, size_t 
       }
     }
 
-    // If the line ended without a newline
-    if (!current_field.empty()) {
+    // If the line ended without a newline and without inline comment
+    if (!inline_comment_hit && !current_field.empty()) {
       if (options_.trim_ws) {
         while (!current_field.empty() &&
                (current_field.back() == ' ' || current_field.back() == '\t')) {

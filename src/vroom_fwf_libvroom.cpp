@@ -28,7 +28,7 @@
   }
   opts.trim_ws = trim_ws;
   if (!comment.empty())
-    opts.comment = comment[0];
+    opts.comment = comment;
   opts.skip_empty_rows = skip_empty_rows;
   opts.null_values = na_values;
   if (skip > 0)

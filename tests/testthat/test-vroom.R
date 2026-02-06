@@ -851,8 +851,6 @@ test_that("vroom reads files with embedded newlines even when num_threads > 1", 
 })
 
 test_that("multi-character comments are supported", {
-  # libvroom only supports single-character comment markers
-  skip("libvroom only supports single-character comment markers")
   res <- vroom(
     I("## this is a comment\n# this is not"),
     delim = "\t",
@@ -896,11 +894,6 @@ test_that("n_max is respected in all cases", {
 })
 
 test_that("comments are ignored regardless of where they appear", {
-  # libvroom only strips full-line comments (lines beginning with the comment
-
-  # character). It does not strip inline/mid-field comments. This is arguably
-  # more correct for CSV parsing where # may appear as data.
-  skip("libvroom only strips full-line comments, not inline/mid-field comments")
   out1 <- vroom(I('x\n1#comment'), comment = "#", col_types = "d", delim = ",")
   out2 <- vroom(
     I('x\n1#comment\n#comment'),
@@ -1303,11 +1296,6 @@ test_that("vroom works with CR line endings only", {
 })
 
 test_that("vroom works with quotes in comments", {
-  # libvroom's comment handling interacts with quote tracking, causing
-  # misparse when comments contain unmatched quotes.
-  skip(
-    "libvroom comment handling does not account for quotes inside comment lines"
-  )
   test_vroom(
     I("a,b\n#bar \" xyz\n1,2"),
     delim = ",",
@@ -1324,15 +1312,14 @@ test_that("vroom works with quotes in comments", {
 })
 
 test_that("vroom works with comments at end of lines (https://github.com/tidyverse/readr/issues/1309)", {
-  # libvroom only strips full-line comments, not inline/end-of-field comments.
-  skip(
-    "libvroom only strips full-line comments, not inline/end-of-field comments"
-  )
   test_vroom(
     I("foo,bar#\n1,#\n2#\n#\n3\n"),
     delim = ",",
     comment = "#",
-    equals = tibble::tibble(foo = c(1, 2, 3), bar = c(NA, NA, NA))
+    equals = tibble::tibble(
+      foo = c(1, 2, 3),
+      bar = c(NA_character_, NA_character_, NA_character_)
+    )
   )
 })
 

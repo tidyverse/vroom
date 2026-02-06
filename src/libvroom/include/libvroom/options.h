@@ -16,7 +16,7 @@ struct CsvOptions {
   std::string separator; // empty = auto-detect via DialectDetector
   char quote = '"';
   bool escape_backslash = false; // Use backslash escaping instead of doubled quotes
-  char comment = '\0'; // No comment char by default
+  std::string comment; // No comment by default (empty string)
   bool has_header = true;
   bool skip_empty_rows = true;
   bool trim_ws = true;  // Trim leading/trailing whitespace from fields
@@ -58,7 +58,7 @@ struct FwfOptions {
   std::vector<int> col_ends;          // Exclusive end offsets (-1 = to end of line)
   std::vector<std::string> col_names; // Column names from R
   bool trim_ws = true;
-  char comment = '\0';
+  std::string comment;
   bool skip_empty_rows = true;
   std::string null_values = "NA,null,NULL,";
   std::string true_values = "true,TRUE,True,T,t,yes,YES,Yes";
