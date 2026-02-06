@@ -1,5 +1,7 @@
 #include "libvroom/vroom.h"
 
+#include <cstring>
+
 namespace libvroom {
 
 LineParser::LineParser(const CsvOptions& options) : options_(options) {
@@ -40,6 +42,12 @@ std::vector<std::string> LineParser::parse_header(const char* data, size_t size)
     return headers;
   }
 
+  const auto& sep = options_.separator;
+  auto matches_sep = [&](size_t pos) -> bool {
+    if (pos + sep.size() > size) return false;
+    return std::memcmp(data + pos, sep.data(), sep.size()) == 0;
+  };
+
   bool in_quote = false;
   std::string current_field;
   current_field.reserve(64);
@@ -69,7 +77,7 @@ std::vector<std::string> LineParser::parse_header(const char* data, size_t size)
       } else {
         in_quote = !in_quote;
       }
-    } else if (c == options_.separator && !in_quote) {
+    } else if (!in_quote && matches_sep(i)) {
       // Trim trailing whitespace from field
       while (!current_field.empty() &&
              (current_field.back() == ' ' || current_field.back() == '\t')) {
@@ -77,6 +85,7 @@ std::vector<std::string> LineParser::parse_header(const char* data, size_t size)
       }
       headers.push_back(std::move(current_field));
       current_field.clear();
+      i += sep.size() - 1; // Loop will ++i
     } else {
       // Skip leading whitespace if field is empty and not in quote
       if (current_field.empty() && !in_quote && (c == ' ' || c == '\t')) {
@@ -103,6 +112,12 @@ size_t LineParser::parse_line(const char* data, size_t size,
   if (size == 0 || columns.empty()) {
     return 0;
   }
+
+  const auto& sep = options_.separator;
+  auto matches_sep = [&](size_t pos) -> bool {
+    if (pos + sep.size() > size) return false;
+    return std::memcmp(data + pos, sep.data(), sep.size()) == 0;
+  };
 
   bool in_quote = false;
   std::string current_field;
@@ -141,7 +156,7 @@ size_t LineParser::parse_line(const char* data, size_t size,
       } else {
         in_quote = !in_quote;
       }
-    } else if (c == options_.separator && !in_quote) {
+    } else if (!in_quote && matches_sep(i)) {
       // End of field - trim and append
       while (!current_field.empty() &&
              (current_field.back() == ' ' || current_field.back() == '\t')) {
@@ -156,6 +171,7 @@ size_t LineParser::parse_line(const char* data, size_t size,
 
       current_field.clear();
       ++field_index;
+      i += sep.size() - 1; // Loop will ++i
     } else {
       // Skip leading whitespace if field is empty and not in quote
       if (current_field.empty() && !in_quote && (c == ' ' || c == '\t')) {

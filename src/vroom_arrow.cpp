@@ -205,7 +205,7 @@ struct StreamGuard {
 
   libvroom::CsvOptions opts;
   if (!delim.empty())
-    opts.separator = delim[0];
+    opts.separator = delim;
   opts.quote = quote;
   opts.has_header = has_header;
   opts.skip_empty_rows = skip_empty_rows;

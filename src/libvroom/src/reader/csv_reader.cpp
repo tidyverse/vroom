@@ -112,7 +112,7 @@ std::pair<size_t, bool> parse_chunk_with_state(
   // Now parse complete rows using Polars-style SplitFields iterator
   // Key optimization: no separate find_row_end call - iterator handles EOL
   const char quote = options.quote;
-  const char sep = options.separator;
+  const std::string_view sep = options.separator;
   const size_t num_cols = columns.size();
 
   while (offset < size) {
@@ -323,10 +323,10 @@ struct CsvReader::Impl {
     }
   }
 
-  // Auto-detect dialect if separator is the sentinel value ('\0').
+  // Auto-detect dialect if separator is empty (sentinel for auto-detect).
   // Must be called after encoding detection/transcoding sets data_ptr/data_size.
   void auto_detect_dialect() {
-    if (options.separator != '\0')
+    if (!options.separator.empty())
       return;
 
     DialectDetector detector;
@@ -538,6 +538,11 @@ Result<bool> CsvReader::open(const std::string& path) {
     size_t first_row_end = finder.find_row_end(data, size, 0);
 
     // Count separators in first row
+    const auto& sep = impl_->options.separator;
+    auto matches_sep_at = [&](size_t pos) -> bool {
+      if (pos + sep.size() > first_row_end) return false;
+      return std::memcmp(data + pos, sep.data(), sep.size()) == 0;
+    };
     bool in_quote = false;
     size_t col_count = 1;
     for (size_t i = 0; i < first_row_end; ++i) {
@@ -552,8 +557,9 @@ Result<bool> CsvReader::open(const std::string& path) {
         } else {
           in_quote = !in_quote;
         }
-      } else if (c == impl_->options.separator && !in_quote) {
+      } else if (!in_quote && matches_sep_at(i)) {
         ++col_count;
+        i += sep.size() - 1; // Loop will ++i
       }
     }
 
@@ -710,6 +716,11 @@ Result<bool> CsvReader::open_from_buffer(AlignedBuffer buffer) {
     size_t first_row_end = finder.find_row_end(data, size, 0);
 
     // Count separators in first row
+    const auto& sep = impl_->options.separator;
+    auto matches_sep_at = [&](size_t pos) -> bool {
+      if (pos + sep.size() > first_row_end) return false;
+      return std::memcmp(data + pos, sep.data(), sep.size()) == 0;
+    };
     bool in_quote = false;
     size_t col_count = 1;
     for (size_t i = 0; i < first_row_end; ++i) {
@@ -724,8 +735,9 @@ Result<bool> CsvReader::open_from_buffer(AlignedBuffer buffer) {
         } else {
           in_quote = !in_quote;
         }
-      } else if (c == impl_->options.separator && !in_quote) {
+      } else if (!in_quote && matches_sep_at(i)) {
         ++col_count;
+        i += sep.size() - 1; // Loop will ++i
       }
     }
 
@@ -1275,7 +1287,7 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
   // Key optimization: no separate find_row_end call - iterator handles EOL
   size_t offset = impl_->header_end_offset;
   const char quote = options.quote;
-  const char sep = options.separator;
+  const std::string_view sep = options.separator;
   const size_t num_cols = columns.size();
   const bool check_errors = impl_->error_collector.is_enabled();
   // Row number is 1-indexed; row 1 is the header (if present)

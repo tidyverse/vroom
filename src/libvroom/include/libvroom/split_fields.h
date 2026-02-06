@@ -10,6 +10,9 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
+#include <string>
+#include <string_view>
 
 // Force inline macro for hot path functions
 #if defined(__GNUC__) || defined(__clang__)
@@ -127,15 +130,29 @@ VROOM_FORCE_INLINE uint64_t scan_for_three_chars(const char* data, size_t len, c
 // Direct port of Polars' SplitFields iterator
 class SplitFields {
 public:
+  // Single-byte separator constructor (SIMD fast path — unchanged)
   VROOM_FORCE_INLINE SplitFields(const char* slice, size_t size, char separator, char quote_char,
                                  char eol_char, bool escape_backslash = false)
-      : v_(slice), remaining_(size), separator_(separator), finished_(false),
+      : v_(slice), remaining_(size), separator_(separator), multi_byte_sep_(false), finished_(false),
+        finished_inside_quote_(false), quote_char_(quote_char), quoting_(quote_char != 0),
+        eol_char_(eol_char), previous_valid_ends_(0), escape_backslash_(escape_backslash) {}
+
+  // Multi-byte separator constructor (scalar slow path)
+  VROOM_FORCE_INLINE SplitFields(const char* slice, size_t size, std::string_view separator,
+                                 char quote_char, char eol_char, bool escape_backslash = false)
+      : v_(slice), remaining_(size), separator_(separator.size() == 1 ? separator[0] : '\0'),
+        multi_byte_sep_(separator.size() > 1), separator_str_(separator), finished_(false),
         finished_inside_quote_(false), quote_char_(quote_char), quoting_(quote_char != 0),
         eol_char_(eol_char), previous_valid_ends_(0), escape_backslash_(escape_backslash) {}
 
   VROOM_FORCE_INLINE bool next(const char*& field_data, size_t& field_len, bool& needs_escaping) {
     if (finished_) {
       return false;
+    }
+
+    // Multi-byte separator: use scalar-only path
+    if (multi_byte_sep_) {
+      return next_multi_byte(field_data, field_len, needs_escaping);
     }
 
     // HOT PATH: Check cache first
@@ -199,6 +216,8 @@ private:
   const char* v_;
   size_t remaining_;
   char separator_;
+  bool multi_byte_sep_;
+  std::string separator_str_; // Only used when multi_byte_sep_ == true
   bool finished_;
   bool finished_inside_quote_;
   char quote_char_;
@@ -209,6 +228,66 @@ private:
   EscapeState escape_state_;
 
   VROOM_FORCE_INLINE bool eof_eol(char c) const { return c == separator_ || c == eol_char_; }
+
+  // Check if separator matches at position pos in v_
+  VROOM_FORCE_INLINE bool matches_sep_at(size_t pos) const {
+    if (pos + separator_str_.size() > remaining_) return false;
+    return std::memcmp(v_ + pos, separator_str_.data(), separator_str_.size()) == 0;
+  }
+
+  // Scalar-only path for multi-byte separators
+  VROOM_FORCE_INLINE bool next_multi_byte(const char*& field_data, size_t& field_len, bool& needs_escaping) {
+    if (remaining_ == 0) {
+      return finish(field_data, field_len, false);
+    }
+
+    needs_escaping = (quoting_ && v_[0] == quote_char_);
+    bool in_quote = false;
+
+    for (size_t i = 0; i < remaining_; ++i) {
+      char c = v_[i];
+
+      if (escape_backslash_ && c == '\\' && i + 1 < remaining_) {
+        ++i;
+        continue;
+      }
+
+      if (c == quote_char_ && quoting_) {
+        in_quote = !in_quote;
+        continue;
+      }
+
+      if (in_quote) continue;
+
+      // Check for end-of-line
+      if (c == '\n' || c == '\r') {
+        finished_ = true;
+        field_data = v_;
+        field_len = i;
+        v_ += i + 1;
+        remaining_ -= i + 1;
+        // Handle CRLF
+        if (c == '\r' && remaining_ > 0 && v_[0] == '\n') {
+          v_++;
+          remaining_--;
+        }
+        return true;
+      }
+
+      // Check for multi-byte separator match
+      if (matches_sep_at(i)) {
+        field_data = v_;
+        field_len = i;
+        size_t advance = i + separator_str_.size();
+        v_ += advance;
+        remaining_ -= advance;
+        return true;
+      }
+    }
+
+    // Reached end of data with no separator or EOL found
+    return finish(field_data, field_len, needs_escaping);
+  }
 
   VROOM_FORCE_INLINE bool finish_eol(const char*& field_data, size_t& field_len,
                                      bool needs_escaping, size_t pos) {

@@ -1,6 +1,7 @@
 #include "libvroom/vroom.h"
 
 #include <cctype>
+#include <cstring>
 #include <fast_float/fast_float.h>
 
 namespace libvroom {
@@ -178,6 +179,11 @@ std::vector<DataType> TypeInference::infer_from_sample(const char* data, size_t 
     }
 
     // Parse this row's fields
+    const auto& sep = options_.separator;
+    auto matches_sep = [&](size_t pos) -> bool {
+      if (pos + sep.size() > row_end) return false;
+      return std::memcmp(data + pos, sep.data(), sep.size()) == 0;
+    };
     std::vector<std::string> fields;
     bool in_quote = false;
     std::string current_field;
@@ -206,7 +212,7 @@ std::vector<DataType> TypeInference::infer_from_sample(const char* data, size_t 
         } else {
           in_quote = !in_quote;
         }
-      } else if (c == options_.separator && !in_quote) {
+      } else if (!in_quote && matches_sep(i)) {
         if (options_.trim_ws) {
           while (!current_field.empty() &&
                  (current_field.back() == ' ' || current_field.back() == '\t')) {
@@ -215,6 +221,7 @@ std::vector<DataType> TypeInference::infer_from_sample(const char* data, size_t 
         }
         fields.push_back(std::move(current_field));
         current_field.clear();
+        i += sep.size() - 1; // Loop will ++i
       } else {
         if (options_.trim_ws && current_field.empty() && !in_quote && (c == ' ' || c == '\t')) {
           continue;

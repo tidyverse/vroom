@@ -7,7 +7,7 @@ namespace libvroom {
 // Threshold for using SIMD vs scalar - SIMD has setup overhead
 constexpr size_t kSimdThreshold = 64;
 
-ChunkFinder::ChunkFinder(char separator, char quote, bool escape_backslash)
+ChunkFinder::ChunkFinder(std::string_view separator, char quote, bool escape_backslash)
     : separator_(separator), quote_(quote), escape_backslash_(escape_backslash) {}
 
 size_t ChunkFinder::find_row_end(const char* data, size_t size, size_t start) {

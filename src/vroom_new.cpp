@@ -67,7 +67,7 @@ errors_to_r_problems(const std::vector<libvroom::ParseError>& errors) {
   opts.decimal_mark = decimal_mark;
   opts.escape_backslash = escape_backslash;
   if (!delim.empty())
-    opts.separator = delim[0];
+    opts.separator = delim;
   opts.quote = quote;
   opts.has_header = has_header;
   opts.skip_empty_rows = skip_empty_rows;

@@ -8,6 +8,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <tuple>
 #include <unordered_set>
 #include <utility>
@@ -264,7 +265,7 @@ private:
 // Chunk boundary finder
 class ChunkFinder {
 public:
-  explicit ChunkFinder(char separator = ',', char quote = '"', bool escape_backslash = false);
+  explicit ChunkFinder(std::string_view separator = ",", char quote = '"', bool escape_backslash = false);
 
   // Find all chunk boundaries in the data
   std::vector<ChunkBoundary> find_chunks(const char* data, size_t size, size_t target_chunk_size);
@@ -278,7 +279,7 @@ public:
   std::pair<size_t, size_t> count_rows(const char* data, size_t size);
 
 private:
-  char separator_;
+  std::string separator_;
   char quote_;
   bool escape_backslash_;
 };
