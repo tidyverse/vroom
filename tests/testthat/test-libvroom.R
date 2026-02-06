@@ -1017,6 +1017,93 @@ test_that("libvroom reads I() literal data", {
   expect_s3_class(actual, "spec_tbl_df")
 })
 
+test_that("libvroom handles Latin-1 encoding via transcoding", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+
+  # Write Latin-1 encoded file with e-acute (0xE9)
+  content_utf8 <- "a,b\ncaf\u00e9,1\n"
+  content_latin1 <- iconv(
+    content_utf8,
+    from = "UTF-8",
+    to = "latin1",
+    toRaw = TRUE
+  )[[1]]
+  writeBin(content_latin1, tf)
+
+  # Should NOT fall back (no warning)
+  expect_no_warning(
+    result <- vroom(
+      tf,
+      delim = ",",
+      locale = locale(encoding = "latin1"),
+      use_libvroom = TRUE,
+      show_col_types = FALSE
+    )
+  )
+
+  expect_equal(result$a, "caf\u00e9")
+  expect_equal(result$b, 1L)
+})
+
+test_that("libvroom Latin-1 encoding matches legacy parser", {
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+
+  content_utf8 <- "a,b\ncaf\u00e9,1\nna\u00efve,2\n"
+  content_latin1 <- iconv(
+    content_utf8,
+    from = "UTF-8",
+    to = "latin1",
+    toRaw = TRUE
+  )[[1]]
+  writeBin(content_latin1, tf)
+
+  legacy <- vroom(
+    tf,
+    delim = ",",
+    locale = locale(encoding = "latin1"),
+    use_libvroom = FALSE,
+    show_col_types = FALSE
+  )
+  libvroom_res <- vroom(
+    tf,
+    delim = ",",
+    locale = locale(encoding = "latin1"),
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  )
+
+  expect_equal(libvroom_res, legacy)
+})
+
+test_that("libvroom handles UTF-16 encoding via transcoding", {
+  bom <- as.raw(c(255, 254))
+  text <- "x,y\ncaf\u00e9,2\n"
+  text_utf16 <- iconv(text, from = "UTF-8", to = "UTF-16LE", toRaw = TRUE)[[1]]
+
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+  fd <- file(tf, "wb")
+  writeBin(bom, fd)
+  writeBin(text_utf16, fd)
+  close(fd)
+
+  expect_no_warning(
+    result <- vroom(
+      tf,
+      delim = ",",
+      locale = locale(encoding = "UTF-16"),
+      col_types = "ci",
+      use_libvroom = TRUE,
+      show_col_types = FALSE
+    )
+  )
+
+  expect_equal(result$x, "caf\u00e9")
+  expect_equal(result$y, 2L)
+})
+
 test_that("libvroom reads remote CSV files", {
   skip_if_offline()
 

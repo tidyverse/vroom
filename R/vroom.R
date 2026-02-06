@@ -374,6 +374,21 @@ vroom <- function(
       )
     }
 
+    # Transcode non-UTF-8 files to UTF-8 before libvroom processes them
+    file_encoding <- locale$encoding
+    if (!identical(file_encoding, "UTF-8")) {
+      vroom_env <- environment()
+      file <- lapply(file, function(input) {
+        if (is.character(input)) {
+          reencode_one_file(input, file_encoding, vroom_env)
+        } else if (inherits(input, "connection")) {
+          reencode_one_connection(input, file_encoding, vroom_env)
+        } else {
+          input
+        }
+      })
+    }
+
     # Read each file and collect results
     results <- list()
     first_result <- NULL
@@ -656,11 +671,8 @@ can_use_libvroom <- function(
     return(FALSE)
   }
 
-  # Must use default locale settings (libvroom doesn't handle transcoding,
-  # custom decimal marks, or custom date formats)
-  if (!identical(locale$encoding, "UTF-8")) {
-    return(FALSE)
-  }
+  # Must use default locale settings (libvroom doesn't handle custom
+  # decimal marks or custom date formats)
   if (!identical(locale$decimal_mark, ".")) {
     return(FALSE)
   }

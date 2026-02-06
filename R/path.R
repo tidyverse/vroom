@@ -39,6 +39,27 @@ reencode_file <- function(file, encoding, call = caller_env()) {
   return(list(out_file))
 }
 
+# Transcode a single file from `encoding` to UTF-8, returning the temp file path.
+# The temp file is cleaned up when `cleanup_env` exits.
+reencode_one_file <- function(path, encoding, cleanup_env) {
+  in_con <- file(path)
+  out_file <- vroom_tempfile(pattern = "vroom-reencode-file-")
+  out_con <- file(out_file)
+  convert_connection(in_con, out_con, encoding, "UTF-8")
+  withr::defer(unlink(out_file), envir = cleanup_env)
+  out_file
+}
+
+# Transcode a connection from `encoding` to UTF-8, returning the temp file path.
+# The temp file is cleaned up when `cleanup_env` exits.
+reencode_one_connection <- function(con, encoding, cleanup_env) {
+  out_file <- vroom_tempfile(pattern = "vroom-reencode-file-")
+  out_con <- file(out_file)
+  convert_connection(con, out_con, encoding, "UTF-8")
+  withr::defer(unlink(out_file), envir = cleanup_env)
+  out_file
+}
+
 # These functions adapted from https://github.com/tidyverse/readr/blob/192cb1ca5c445e359f153d2259391e6d324fd0a2/R/source.R
 standardise_path <- function(
   path,
