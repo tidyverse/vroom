@@ -16,6 +16,7 @@ namespace libvroom {
 // Export implementations for dynamic dispatch
 HWY_EXPORT(ScanForCharImpl);
 HWY_EXPORT(ScanForTwoCharsImpl);
+HWY_EXPORT(ScanForThreeCharsImpl);
 
 // Public API functions
 uint64_t scan_for_char_simd(const char* data, size_t len, char c) {
@@ -24,6 +25,10 @@ uint64_t scan_for_char_simd(const char* data, size_t len, char c) {
 
 uint64_t scan_for_two_chars_simd(const char* data, size_t len, char c1, char c2) {
   return HWY_DYNAMIC_DISPATCH(ScanForTwoCharsImpl)(data, len, c1, c2);
+}
+
+uint64_t scan_for_three_chars_simd(const char* data, size_t len, char c1, char c2, char c3) {
+  return HWY_DYNAMIC_DISPATCH(ScanForThreeCharsImpl)(data, len, c1, c2, c3);
 }
 
 } // namespace libvroom

@@ -15,7 +15,7 @@ namespace libvroom {
 struct CsvOptions {
   char separator = '\0'; // '\0' = auto-detect via DialectDetector
   char quote = '"';
-  char escape = '\\';
+  bool escape_backslash = false; // Use backslash escaping instead of doubled quotes
   char comment = '\0'; // No comment char by default
   bool has_header = true;
   bool skip_empty_rows = true;

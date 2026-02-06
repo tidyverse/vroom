@@ -59,7 +59,9 @@ std::vector<std::string> LineParser::parse_header(const char* data, size_t size)
       break;
     }
 
-    if (c == options_.quote) {
+    if (options_.escape_backslash && c == '\\' && i + 1 < size) {
+      current_field += data[++i];
+    } else if (c == options_.quote) {
       if (in_quote && i + 1 < size && data[i + 1] == options_.quote) {
         // Escaped quote (doubled)
         current_field += options_.quote;
@@ -129,7 +131,9 @@ size_t LineParser::parse_line(const char* data, size_t size,
       break;
     }
 
-    if (c == options_.quote) {
+    if (options_.escape_backslash && c == '\\' && i + 1 < size) {
+      current_field += data[++i];
+    } else if (c == options_.quote) {
       if (in_quote && i + 1 < size && data[i + 1] == options_.quote) {
         // Escaped quote (doubled)
         current_field += options_.quote;

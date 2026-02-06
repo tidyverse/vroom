@@ -7,16 +7,17 @@ namespace libvroom {
 // Threshold for using SIMD vs scalar - SIMD has setup overhead
 constexpr size_t kSimdThreshold = 64;
 
-ChunkFinder::ChunkFinder(char separator, char quote) : separator_(separator), quote_(quote) {}
+ChunkFinder::ChunkFinder(char separator, char quote, bool escape_backslash)
+    : separator_(separator), quote_(quote), escape_backslash_(escape_backslash) {}
 
 size_t ChunkFinder::find_row_end(const char* data, size_t size, size_t start) {
   // Use SIMD for large enough remaining data
   size_t remaining = size - start;
   if (remaining >= kSimdThreshold) {
-    return find_row_end_simd(data, size, start, quote_);
+    return find_row_end_simd(data, size, start, quote_, escape_backslash_);
   }
   // Fall back to scalar for small data
-  return find_row_end_scalar(data, size, start, quote_);
+  return find_row_end_scalar(data, size, start, quote_, escape_backslash_);
 }
 
 std::vector<ChunkBoundary> ChunkFinder::find_chunks(const char* data, size_t size,
@@ -81,9 +82,9 @@ std::vector<ChunkBoundary> ChunkFinder::find_chunks(const char* data, size_t siz
 
 std::pair<size_t, size_t> ChunkFinder::count_rows(const char* data, size_t size) {
   if (size < kSimdThreshold) {
-    return count_rows_scalar(data, size, quote_);
+    return count_rows_scalar(data, size, quote_, escape_backslash_);
   }
-  return count_rows_simd(data, size, quote_);
+  return count_rows_simd(data, size, quote_, escape_backslash_);
 }
 
 } // namespace libvroom

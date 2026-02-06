@@ -1209,3 +1209,167 @@ test_that("libvroom problems work across multiple files", {
   expect_true(any(grepl("f1\\.csv", probs$file)))
   expect_true(any(grepl("f2\\.csv", probs$file)))
 })
+
+# ========================================================================
+# Backslash escape support
+# ========================================================================
+
+test_that("libvroom handles escaped delimiter with backslash", {
+  test_libvroom(
+    "a,b\nfoo\\,bar,baz\n",
+    delim = ",",
+    escape_backslash = TRUE,
+    escape_double = FALSE,
+    col_types = "cc",
+    equals = tibble::tibble(
+      a = "foo,bar",
+      b = "baz"
+    )
+  )
+})
+
+test_that("libvroom handles escaped quote with backslash", {
+  test_libvroom(
+    "a,b\n\\\"hello\\\",world\n",
+    delim = ",",
+    escape_backslash = TRUE,
+    escape_double = FALSE,
+    col_types = "cc",
+    equals = tibble::tibble(
+      a = "\"hello\"",
+      b = "world"
+    )
+  )
+})
+
+test_that("libvroom handles escaped backslash (double backslash)", {
+  test_libvroom(
+    "a,b\nfoo\\\\bar,baz\n",
+    delim = ",",
+    escape_backslash = TRUE,
+    escape_double = FALSE,
+    col_types = "cc",
+    equals = tibble::tibble(
+      a = "foo\\bar",
+      b = "baz"
+    )
+  )
+})
+
+test_that("libvroom handles escaped newline with backslash", {
+  test_libvroom(
+    "a,b\nfoo\\\nbar,baz\n",
+    delim = ",",
+    escape_backslash = TRUE,
+    escape_double = FALSE,
+    col_types = "cc",
+    equals = tibble::tibble(
+      a = "foo\nbar",
+      b = "baz"
+    )
+  )
+})
+
+test_that("libvroom handles escaped backslash before real quote", {
+  # \\\" = escaped backslash + real quote
+  test_libvroom(
+    "a,b\n\"foo\\\\\",bar\n",
+    delim = ",",
+    escape_backslash = TRUE,
+    escape_double = FALSE,
+    col_types = "cc",
+    equals = tibble::tibble(
+      a = "foo\\",
+      b = "bar"
+    )
+  )
+})
+
+test_that("libvroom handles mixed backslash escapes in one row", {
+  test_libvroom(
+    "a,b,c\nfoo\\,bar,hello\\\\world,te\\\"st\n",
+    delim = ",",
+    escape_backslash = TRUE,
+    escape_double = FALSE,
+    col_types = "ccc",
+    equals = tibble::tibble(
+      a = "foo,bar",
+      b = "hello\\world",
+      c = "te\"st"
+    )
+  )
+})
+
+test_that("libvroom handles backslash with quoted fields", {
+  test_libvroom(
+    "a,b\n\"foo\\,bar\",baz\n",
+    delim = ",",
+    escape_backslash = TRUE,
+    escape_double = FALSE,
+    col_types = "cc",
+    equals = tibble::tibble(
+      a = "foo,bar",
+      b = "baz"
+    )
+  )
+})
+
+test_that("libvroom handles backslash in header column names", {
+  test_libvroom(
+    "col\\,1,col2\nfoo,bar\n",
+    delim = ",",
+    escape_backslash = TRUE,
+    escape_double = FALSE,
+    col_types = "cc",
+    equals = tibble::tibble(
+      `col,1` = "foo",
+      col2 = "bar"
+    )
+  )
+})
+
+test_that("libvroom backslash escape matches legacy parser", {
+  content <- "a,b,c\nfoo\\,bar,hello\\\\world,te\\\"st\n"
+
+  tf <- tempfile(fileext = ".csv")
+  on.exit(unlink(tf))
+  out_con <- file(tf, "wb", encoding = "UTF-8")
+  writeBin(charToRaw(content), out_con)
+  close(out_con)
+
+  result_libvroom <- suppressWarnings(vroom(
+    tf,
+    delim = ",",
+    escape_backslash = TRUE,
+    escape_double = FALSE,
+    col_types = "ccc",
+    use_libvroom = TRUE,
+    show_col_types = FALSE
+  ))
+
+  result_legacy <- suppressWarnings(vroom(
+    tf,
+    delim = ",",
+    escape_backslash = TRUE,
+    escape_double = FALSE,
+    col_types = "ccc",
+    use_libvroom = FALSE,
+    show_col_types = FALSE
+  ))
+
+  expect_equal(result_libvroom, result_legacy)
+})
+
+test_that("libvroom handles numeric types with backslash escaping", {
+  test_libvroom(
+    "a,b,c\n1,2.5,TRUE\n3,4.5,FALSE\n",
+    delim = ",",
+    escape_backslash = TRUE,
+    escape_double = FALSE,
+    equals = tibble::tibble(
+      a = c(1, 3),
+      b = c(2.5, 4.5),
+      c = c(TRUE, FALSE)
+    )
+  )
+})

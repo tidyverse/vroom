@@ -98,6 +98,49 @@ HWY_NOINLINE uint64_t ScanForTwoCharsImpl(const char* data, size_t len, char c1,
   return result;
 }
 
+// Scan 64 bytes for three characters, return combined bitmask
+HWY_NOINLINE uint64_t ScanForThreeCharsImpl(const char* data, size_t len, char c1, char c2, char c3) {
+  if (len < 64) {
+    // Scalar fallback
+    uint64_t mask = 0;
+    for (size_t i = 0; i < len && i < 64; ++i) {
+      if (data[i] == c1 || data[i] == c2 || data[i] == c3) {
+        mask |= (1ULL << i);
+      }
+    }
+    return mask;
+  }
+
+  const hn::ScalableTag<uint8_t> d;
+  const size_t N = hn::Lanes(d);
+  const auto target1 = hn::Set(d, static_cast<uint8_t>(c1));
+  const auto target2 = hn::Set(d, static_cast<uint8_t>(c2));
+  const auto target3 = hn::Set(d, static_cast<uint8_t>(c3));
+
+  uint64_t result = 0;
+
+  for (size_t chunk = 0; chunk < 64; chunk += N) {
+    auto block = hn::LoadU(d, reinterpret_cast<const uint8_t*>(data + chunk));
+    auto match1 = hn::Eq(block, target1);
+    auto match2 = hn::Eq(block, target2);
+    auto match3 = hn::Eq(block, target3);
+    auto match = hn::Or(hn::Or(match1, match2), match3);
+
+    alignas(64) uint8_t mask_bytes[HWY_MAX_BYTES / 8] = {0};
+    hn::StoreMaskBits(d, match, mask_bytes);
+
+    const size_t num_mask_bytes = (N + 7) / 8;
+    for (size_t b = 0; b < num_mask_bytes && chunk + b * 8 < 64; ++b) {
+      size_t bit_offset = chunk + b * 8;
+      if (bit_offset < 64) {
+        result |= static_cast<uint64_t>(mask_bytes[b]) << bit_offset;
+      }
+    }
+  }
+
+  return result;
+}
+
 } // namespace HWY_NAMESPACE
 } // namespace libvroom
 HWY_AFTER_NAMESPACE();

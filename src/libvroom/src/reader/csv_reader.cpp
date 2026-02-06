@@ -64,6 +64,10 @@ std::pair<size_t, bool> parse_chunk_with_state(
     // Find the closing quote
     while (offset < size) {
       char c = data[offset];
+      if (options.escape_backslash && c == '\\' && offset + 1 < size) {
+        offset += 2;
+        continue;
+      }
       if (c == options.quote) {
         // Check for escaped quote
         if (offset + 1 < size && data[offset + 1] == options.quote) {
@@ -81,6 +85,10 @@ std::pair<size_t, bool> parse_chunk_with_state(
     // Now skip to the end of this partial row (we can't use it)
     while (offset < size) {
       char c = data[offset];
+      if (options.escape_backslash && c == '\\' && offset + 1 < size) {
+        offset += 2;
+        continue;
+      }
       if (c == options.quote) {
         if (in_quote && offset + 1 < size && data[offset + 1] == options.quote) {
           offset += 2;
@@ -147,7 +155,7 @@ std::pair<size_t, bool> parse_chunk_with_state(
     // Create iterator for remaining data - it stops at EOL
     size_t row_start_offset = offset;
     size_t start_remaining = size - offset;
-    SplitFields iter(data + offset, start_remaining, sep, quote, '\n');
+    SplitFields iter(data + offset, start_remaining, sep, quote, '\n', options.escape_backslash);
 
     const char* field_data;
     size_t field_len;
@@ -161,8 +169,6 @@ std::pair<size_t, bool> parse_chunk_with_state(
       }
 
       // Trim whitespace if enabled.
-      // Runs before quote-stripping: in RFC 4180, whitespace before a quote
-      // char makes the field unquoted, so this ordering handles well-formed CSV.
       if (options.trim_ws) {
         while (field_len > 0 && (field_data[0] == ' ' || field_data[0] == '\t')) {
           field_data++;
@@ -176,11 +182,7 @@ std::pair<size_t, bool> parse_chunk_with_state(
       std::string_view field_view(field_data, field_len);
 
       // Error detection within fields
-      // Note: row number is 0 in multi-threaded path because computing absolute
-      // row offsets per chunk would require tracking the cumulative row count from
-      // all preceding chunks, which isn't available during parallel parsing.
       if (check_errors) [[unlikely]] {
-        // Null byte detection
         if (std::memchr(field_data, '\0', field_len)) {
           for (size_t i = 0; i < field_len; ++i) {
             if (field_data[i] == '\0') {
@@ -193,7 +195,6 @@ std::pair<size_t, bool> parse_chunk_with_state(
           }
         }
 
-        // Quote in unquoted field
         if (!needs_escaping && field_len > 0 && std::memchr(field_data, quote, field_len)) {
           size_t byte_off = base_byte_offset + static_cast<size_t>(field_data - data);
           error_collector->add_error(ErrorCode::QUOTE_IN_UNQUOTED_FIELD, ErrorSeverity::RECOVERABLE,
@@ -209,8 +210,20 @@ std::pair<size_t, bool> parse_chunk_with_state(
       }
 
       if (null_checker.is_null(field_view)) {
-        // Devirtualized append_null call
         fast_contexts[col_idx].append_null();
+      } else if (options.escape_backslash) {
+        // Backslash escape mode: strip outer quotes if needed, then unescape backslashes
+        if (needs_escaping && field_len >= 2 &&
+            field_data[0] == quote && field_data[field_len - 1] == quote) {
+          field_view = std::string_view(field_data + 1, field_len - 2);
+        }
+        // Fast path: only allocate if backslash is present
+        if (std::memchr(field_view.data(), '\\', field_view.size())) {
+          std::string unescaped = unescape_backslash(field_view);
+          fast_contexts[col_idx].append(unescaped);
+        } else {
+          fast_contexts[col_idx].append(field_view);
+        }
       } else if (needs_escaping) {
         // Strip outer quotes
         if (field_len >= 2 && field_data[0] == quote && field_data[field_len - 1] == quote) {
@@ -220,7 +233,6 @@ std::pair<size_t, bool> parse_chunk_with_state(
         std::string unescaped =
             unescape_quotes(field_view, quote, check_errors ? &has_invalid_escape : nullptr);
 
-        // Invalid quote escape detection
         if (has_invalid_escape) [[unlikely]] {
           size_t byte_off = base_byte_offset + static_cast<size_t>(field_data - data);
           error_collector->add_error(ErrorCode::INVALID_QUOTE_ESCAPE, ErrorSeverity::RECOVERABLE, 0,
@@ -229,10 +241,8 @@ std::pair<size_t, bool> parse_chunk_with_state(
             goto done_chunk;
         }
 
-        // Devirtualized append call
         fast_contexts[col_idx].append(unescaped);
       } else {
-        // Devirtualized append call
         fast_contexts[col_idx].append(field_view);
       }
       col_idx++;
@@ -467,7 +477,7 @@ Result<bool> CsvReader::open(const std::string& path) {
   const char* data = impl_->data_ptr;
   size_t size = impl_->data_size;
 
-  ChunkFinder finder(impl_->options.separator, impl_->options.quote);
+  ChunkFinder finder(impl_->options.separator, impl_->options.quote, impl_->options.escape_backslash);
   LineParser parser(impl_->options);
 
   // Skip leading comment lines before header
@@ -530,6 +540,10 @@ Result<bool> CsvReader::open(const std::string& path) {
     size_t col_count = 1;
     for (size_t i = 0; i < first_row_end; ++i) {
       char c = data[i];
+      if (impl_->options.escape_backslash && c == '\\' && i + 1 < first_row_end) {
+        ++i;
+        continue;
+      }
       if (c == impl_->options.quote) {
         if (in_quote && i + 1 < first_row_end && data[i + 1] == impl_->options.quote) {
           ++i;
@@ -635,7 +649,7 @@ Result<bool> CsvReader::open_from_buffer(AlignedBuffer buffer) {
   const char* data = impl_->data_ptr;
   size_t size = impl_->data_size;
 
-  ChunkFinder finder(impl_->options.separator, impl_->options.quote);
+  ChunkFinder finder(impl_->options.separator, impl_->options.quote, impl_->options.escape_backslash);
   LineParser parser(impl_->options);
 
   // Skip leading comment lines before header
@@ -698,6 +712,10 @@ Result<bool> CsvReader::open_from_buffer(AlignedBuffer buffer) {
     size_t col_count = 1;
     for (size_t i = 0; i < first_row_end; ++i) {
       char c = data[i];
+      if (impl_->options.escape_backslash && c == '\\' && i + 1 < first_row_end) {
+        ++i;
+        continue;
+      }
       if (c == impl_->options.quote) {
         if (in_quote && i + 1 < first_row_end && data[i + 1] == impl_->options.quote) {
           ++i;
@@ -957,7 +975,7 @@ Result<ParsedChunks> CsvReader::read_all() {
   std::vector<std::pair<size_t, size_t>> chunk_ranges; // (start_offset, end_offset)
   size_t offset = data_start;
 
-  ChunkFinder finder(impl_->options.separator, impl_->options.quote);
+  ChunkFinder finder(impl_->options.separator, impl_->options.quote, impl_->options.escape_backslash);
 
   while (offset < size) {
     size_t target_end = std::min(offset + chunk_size, size);
@@ -1045,7 +1063,7 @@ Result<ParsedChunks> CsvReader::read_all() {
             size_t chunk_size = end_offset - start_offset;
 
             // Single-pass dual-state analysis using SIMD
-            auto stats = analyze_chunk_dual_state_simd(chunk_data, chunk_size, options.quote);
+            auto stats = analyze_chunk_dual_state_simd(chunk_data, chunk_size, options.quote, options.escape_backslash);
 
             auto& result = analysis_results[chunk_idx];
             result.row_count_outside = stats.row_count_outside;
@@ -1301,7 +1319,7 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
     // Create iterator for remaining data - it stops at EOL
     size_t row_start_offset = offset;
     size_t start_remaining = size - offset;
-    SplitFields iter(data + offset, start_remaining, sep, quote, '\n');
+    SplitFields iter(data + offset, start_remaining, sep, quote, '\n', options.escape_backslash);
 
     const char* field_data;
     size_t field_len;
@@ -1315,8 +1333,6 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
       }
 
       // Trim whitespace if enabled.
-      // Runs before quote-stripping: in RFC 4180, whitespace before a quote
-      // char makes the field unquoted, so this ordering handles well-formed CSV.
       if (options.trim_ws) {
         while (field_len > 0 && (field_data[0] == ' ' || field_data[0] == '\t')) {
           field_data++;
@@ -1331,9 +1347,7 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
 
       // Error detection within fields (only when error collection is enabled)
       if (check_errors) [[unlikely]] {
-        // Null byte detection
         if (std::memchr(field_data, '\0', field_len)) {
-          // Count and report each null byte
           for (size_t i = 0; i < field_len; ++i) {
             if (field_data[i] == '\0') {
               size_t byte_off = static_cast<size_t>(field_data - data) + i;
@@ -1346,7 +1360,6 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
           }
         }
 
-        // Quote in unquoted field
         if (!needs_escaping && field_len > 0 && std::memchr(field_data, quote, field_len)) {
           size_t byte_off = static_cast<size_t>(field_data - data);
           impl_->error_collector.add_error(ErrorCode::QUOTE_IN_UNQUOTED_FIELD,
@@ -1363,8 +1376,19 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
       }
 
       if (null_checker.is_null(field_view)) {
-        // Devirtualized append_null call
         fast_contexts[col_idx].append_null();
+      } else if (options.escape_backslash) {
+        // Backslash escape mode
+        if (needs_escaping && field_len >= 2 &&
+            field_data[0] == quote && field_data[field_len - 1] == quote) {
+          field_view = std::string_view(field_data + 1, field_len - 2);
+        }
+        if (std::memchr(field_view.data(), '\\', field_view.size())) {
+          std::string unescaped = unescape_backslash(field_view);
+          fast_contexts[col_idx].append(unescaped);
+        } else {
+          fast_contexts[col_idx].append(field_view);
+        }
       } else if (needs_escaping) {
         // Strip outer quotes
         if (field_len >= 2 && field_data[0] == quote && field_data[field_len - 1] == quote) {
@@ -1374,7 +1398,6 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
         std::string unescaped =
             unescape_quotes(field_view, quote, check_errors ? &has_invalid_escape : nullptr);
 
-        // Invalid quote escape detection
         if (has_invalid_escape) [[unlikely]] {
           size_t byte_off = static_cast<size_t>(field_data - data);
           impl_->error_collector.add_error(ErrorCode::INVALID_QUOTE_ESCAPE,
@@ -1384,10 +1407,8 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
             goto done_serial;
         }
 
-        // Devirtualized append call
         fast_contexts[col_idx].append(unescaped);
       } else {
-        // Devirtualized append call
         fast_contexts[col_idx].append(field_view);
       }
       col_idx++;
@@ -1469,7 +1490,7 @@ Result<bool> CsvReader::start_streaming() {
   auto& chunk_ranges = impl_->streaming_chunk_ranges;
   chunk_ranges.clear();
   size_t offset = data_start;
-  ChunkFinder finder(impl_->options.separator, impl_->options.quote);
+  ChunkFinder finder(impl_->options.separator, impl_->options.quote, impl_->options.escape_backslash);
 
   while (offset < size) {
     size_t target_end = std::min(offset + chunk_size, size);
@@ -1521,7 +1542,7 @@ Result<bool> CsvReader::start_streaming() {
             if (start_offset >= size || end_offset > size || start_offset >= end_offset)
               return;
             auto stats = analyze_chunk_dual_state_simd(data + start_offset,
-                                                       end_offset - start_offset, options.quote);
+                                                       end_offset - start_offset, options.quote, options.escape_backslash);
             auto& result = analysis_results[chunk_idx];
             result.row_count_outside = stats.row_count_outside;
             result.row_count_inside = stats.row_count_inside;

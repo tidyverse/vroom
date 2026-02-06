@@ -315,7 +315,8 @@ vroom <- function(
           },
           col_types = col_types_int,
           col_type_names = libvroom_col_type_names,
-          default_col_type = default_col_type
+          default_col_type = default_col_type,
+          escape_backslash = escape_backslash
         ),
         error = function(e) {
           if (
@@ -663,11 +664,8 @@ can_use_libvroom <- function(
     return(FALSE)
   }
 
-  # Must use default escape behavior
-  if (!isTRUE(escape_double)) {
-    return(FALSE)
-  }
-  if (isTRUE(escape_backslash)) {
+  # Must use escape_double or escape_backslash (not neither)
+  if (!isTRUE(escape_double) && !isTRUE(escape_backslash)) {
     return(FALSE)
   }
 

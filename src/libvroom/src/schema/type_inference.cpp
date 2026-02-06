@@ -150,7 +150,7 @@ std::vector<DataType> TypeInference::infer_from_sample(const char* data, size_t 
   }
 
   LineParser parser(options_);
-  ChunkFinder finder(options_.separator, options_.quote);
+  ChunkFinder finder(options_.separator, options_.quote, options_.escape_backslash);
 
   size_t offset = 0;
   size_t rows_sampled = 0;
@@ -185,7 +185,9 @@ std::vector<DataType> TypeInference::infer_from_sample(const char* data, size_t 
         break;
       }
 
-      if (c == options_.quote) {
+      if (options_.escape_backslash && c == '\\' && i + 1 < row_end) {
+        current_field += data[++i];
+      } else if (c == options_.quote) {
         if (in_quote && i + 1 < row_end && data[i + 1] == options_.quote) {
           current_field += options_.quote;
           ++i;

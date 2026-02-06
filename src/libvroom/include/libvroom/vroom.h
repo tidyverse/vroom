@@ -264,7 +264,7 @@ private:
 // Chunk boundary finder
 class ChunkFinder {
 public:
-  explicit ChunkFinder(char separator = ',', char quote = '"');
+  explicit ChunkFinder(char separator = ',', char quote = '"', bool escape_backslash = false);
 
   // Find all chunk boundaries in the data
   std::vector<ChunkBoundary> find_chunks(const char* data, size_t size, size_t target_chunk_size);
@@ -280,20 +280,24 @@ public:
 private:
   char separator_;
   char quote_;
+  bool escape_backslash_;
 };
 
 // SIMD-accelerated row counting functions
 // Returns (row_count, offset_after_last_complete_row)
-std::pair<size_t, size_t> count_rows_simd(const char* data, size_t size, char quote_char = '"');
+std::pair<size_t, size_t> count_rows_simd(const char* data, size_t size, char quote_char = '"',
+                                          bool escape_backslash = false);
 
 // Scalar row counting (for verification and small data)
-std::pair<size_t, size_t> count_rows_scalar(const char* data, size_t size, char quote_char = '"');
+std::pair<size_t, size_t> count_rows_scalar(const char* data, size_t size, char quote_char = '"',
+                                            bool escape_backslash = false);
 
 // Analyze chunk with known starting quote state
 // Returns (row_count, last_row_end_offset, ends_inside_quote)
 std::tuple<size_t, size_t, bool> analyze_chunk_simd(const char* data, size_t size,
                                                     char quote_char = '"',
-                                                    bool start_inside_quote = false);
+                                                    bool start_inside_quote = false,
+                                                    bool escape_backslash = false);
 
 // Dual-state chunk analysis result (like Polars LineStats[2])
 struct DualStateChunkStats {
@@ -316,14 +320,17 @@ struct DualStateChunkStats {
 // Computes stats for BOTH starting states simultaneously using SIMD
 // This is the key optimization: one pass instead of two
 DualStateChunkStats analyze_chunk_dual_state_simd(const char* data, size_t size,
-                                                  char quote_char = '"');
+                                                  char quote_char = '"',
+                                                  bool escape_backslash = false);
 
 // SIMD-accelerated find_row_end
 // Returns offset of first byte after row terminator, starting from 'start'
-size_t find_row_end_simd(const char* data, size_t size, size_t start = 0, char quote_char = '"');
+size_t find_row_end_simd(const char* data, size_t size, size_t start = 0, char quote_char = '"',
+                         bool escape_backslash = false);
 
 // Scalar find_row_end (for verification and small data)
-size_t find_row_end_scalar(const char* data, size_t size, size_t start = 0, char quote_char = '"');
+size_t find_row_end_scalar(const char* data, size_t size, size_t start = 0, char quote_char = '"',
+                           bool escape_backslash = false);
 
 // Line parser - parses fields directly to column builders
 class LineParser {

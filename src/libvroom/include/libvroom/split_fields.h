@@ -49,6 +49,29 @@ namespace libvroom {
 // (defined in src/parser/split_fields_iter.cpp)
 uint64_t scan_for_char_simd(const char* data, size_t len, char c);
 uint64_t scan_for_two_chars_simd(const char* data, size_t len, char c1, char c2);
+uint64_t scan_for_three_chars_simd(const char* data, size_t len, char c1, char c2, char c3);
+
+// Backslash escape state for the simdjson odd/even technique.
+// Tracks whether the next byte is escaped by a trailing backslash from the
+// previous 64-byte block.
+struct EscapeState {
+  uint64_t next_is_escaped = 0;
+};
+
+// Compute which characters are escaped by an unescaped backslash.
+// Uses simdjson's odd/even backslash run technique (4 arithmetic ops per block).
+// Returns a bitmask where bit i is set if data[i] is preceded by an unescaped '\'.
+VROOM_FORCE_INLINE uint64_t compute_escaped_mask(uint64_t backslash, EscapeState& state) {
+  uint64_t potential_escape = backslash & ~state.next_is_escaped;
+  uint64_t maybe_escaped = potential_escape << 1;
+  constexpr uint64_t ODD_BITS = 0xAAAAAAAAAAAAAAAAULL;
+  uint64_t even_series_codes = (maybe_escaped | ODD_BITS) - potential_escape;
+  uint64_t escape_and_terminal = even_series_codes ^ ODD_BITS;
+  uint64_t escaped = escape_and_terminal ^ (backslash | state.next_is_escaped);
+  uint64_t escape = escape_and_terminal & backslash;
+  state.next_is_escaped = escape >> 63;
+  return escaped;
+}
 
 namespace detail {
 
@@ -84,16 +107,31 @@ VROOM_FORCE_INLINE uint64_t scan_for_two_chars(const char* data, size_t len, cha
   return mask;
 }
 
+// Scan for three characters using Highway SIMD
+VROOM_FORCE_INLINE uint64_t scan_for_three_chars(const char* data, size_t len, char c1, char c2, char c3) {
+  if (len >= SIMD_SIZE) {
+    return scan_for_three_chars_simd(data, len, c1, c2, c3);
+  }
+  // Scalar fallback
+  uint64_t mask = 0;
+  for (size_t i = 0; i < len && i < 64; ++i) {
+    if (data[i] == c1 || data[i] == c2 || data[i] == c3) {
+      mask |= (1ULL << i);
+    }
+  }
+  return mask;
+}
+
 } // namespace detail
 
 // Direct port of Polars' SplitFields iterator
 class SplitFields {
 public:
   VROOM_FORCE_INLINE SplitFields(const char* slice, size_t size, char separator, char quote_char,
-                                 char eol_char)
+                                 char eol_char, bool escape_backslash = false)
       : v_(slice), remaining_(size), separator_(separator), finished_(false),
         finished_inside_quote_(false), quote_char_(quote_char), quoting_(quote_char != 0),
-        eol_char_(eol_char), previous_valid_ends_(0) {}
+        eol_char_(eol_char), previous_valid_ends_(0), escape_backslash_(escape_backslash) {}
 
   VROOM_FORCE_INLINE bool next(const char*& field_data, size_t& field_len, bool& needs_escaping) {
     if (finished_) {
@@ -167,6 +205,8 @@ private:
   bool quoting_;
   char eol_char_;
   uint64_t previous_valid_ends_;
+  bool escape_backslash_;
+  EscapeState escape_state_;
 
   VROOM_FORCE_INLINE bool eof_eol(char c) const { return c == separator_ || c == eol_char_; }
 
@@ -209,6 +249,15 @@ private:
 
       uint64_t end_mask = sep_mask | eol_mask;
 
+      // When backslash escaping is enabled, filter out escaped characters.
+      // Always call compute_escaped_mask to consume carry bit from previous block.
+      if (escape_backslash_) {
+        uint64_t bs_mask = detail::scan_for_char(bytes, detail::SIMD_SIZE, '\\');
+        uint64_t escaped = compute_escaped_mask(bs_mask, escape_state_);
+        quote_mask &= ~escaped;
+        end_mask &= ~escaped;
+      }
+
       uint64_t not_in_quote_field = prefix_xorsum_inclusive(quote_mask);
 
       if (not_in_field_previous_iter) {
@@ -240,6 +289,10 @@ private:
 
     for (size_t i = 0; i < len; ++i) {
       char c = bytes[i];
+      if (escape_backslash_ && c == '\\' && i + 1 < len) {
+        ++i; // Skip escaped character
+        continue;
+      }
       if (c == quote_char_) {
         in_field = !in_field;
       }
@@ -259,6 +312,14 @@ private:
 
       uint64_t end_mask =
           detail::scan_for_two_chars(bytes, detail::SIMD_SIZE, separator_, eol_char_);
+
+      // When backslash escaping is enabled, filter out escaped characters.
+      // Always call compute_escaped_mask to consume carry bit from previous block.
+      if (escape_backslash_) {
+        uint64_t bs_mask = detail::scan_for_char(bytes, detail::SIMD_SIZE, '\\');
+        uint64_t escaped = compute_escaped_mask(bs_mask, escape_state_);
+        end_mask &= ~escaped;
+      }
 
       if (end_mask != 0) {
         size_t pos = VROOM_CTZ64(end_mask);
@@ -281,6 +342,10 @@ private:
     size_t len = remaining_ - total_idx;
 
     for (size_t i = 0; i < len; ++i) {
+      if (escape_backslash_ && bytes[i] == '\\' && i + 1 < len) {
+        ++i; // Skip escaped character
+        continue;
+      }
       if (eof_eol(bytes[i])) {
         return total_idx + i;
       }

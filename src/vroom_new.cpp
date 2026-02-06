@@ -58,9 +58,11 @@ errors_to_r_problems(const std::vector<libvroom::ParseError>& errors) {
     bool use_altrep,
     const std::vector<int>& col_types,
     const cpp11::strings& col_type_names,
-    int default_col_type) {
+    int default_col_type,
+    bool escape_backslash) {
 
   libvroom::CsvOptions opts;
+  opts.escape_backslash = escape_backslash;
   if (!delim.empty())
     opts.separator = delim[0];
   opts.quote = quote;

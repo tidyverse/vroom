@@ -42,6 +42,31 @@ inline std::string unescape_quotes(std::string_view value, char quote,
   return result;
 }
 
+// Helper function to unescape backslash-escaped characters in a field.
+// Strips each backslash and keeps the character after it (no C-style conversion).
+// E.g., \, -> ,   \" -> "   \\ -> \   \n -> n (literal, not newline)
+inline std::string unescape_backslash(std::string_view value) {
+  // Fast path: no backslash
+  if (value.find('\\') == std::string_view::npos) {
+    return std::string(value);
+  }
+
+  std::string result;
+  result.reserve(value.size());
+
+  for (size_t i = 0; i < value.size(); ++i) {
+    if (value[i] == '\\' && i + 1 < value.size()) {
+      // Skip the backslash, keep the next character
+      ++i;
+      result += value[i];
+    } else {
+      result += value[i];
+    }
+  }
+
+  return result;
+}
+
 // Helper class for fast null value checking
 // Pre-parses the null values string once. Uses simple linear search since
 // the number of null values is typically very small (3-5 items).
