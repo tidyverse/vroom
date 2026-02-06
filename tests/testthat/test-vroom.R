@@ -562,12 +562,12 @@ test_that("vroom uses the number of rows when guess_max = Inf", {
   vroom_write(df, tf, delim = "\t")
 
   # The type should be guessed wrong, because the character comes at the end
-  res <- suppressMessages(vroom(
+  res <- suppressWarnings(suppressMessages(vroom(
     tf,
     delim = "\t",
     col_types = list(),
     altrep = FALSE
-  ))
+  )))
   expect_type(res[["x"]], "double")
   expect_true(is.na(res[["x"]][[NROW(res) - 1]]))
 
@@ -1446,14 +1446,16 @@ test_that("vroom(col_select =) output has 'spec_tbl_df' class, spec, and problem
     registerS3method("[", "spec_tbl_df", function(x, ...) NextMethod(`[`))
   })
 
-  # libvroom's PERMISSIVE error mode silently converts unparseable values to NA
-  # without emitting a vroom_parse_issue warning, so we don't expect the warning.
-  dat <- vroom(
-    I("a,b\n1,2\nz,3\n4,5"),
-    col_types = "dc",
-    col_select = c(a, b),
-    show_col_types = FALSE,
-    altrep = FALSE
+  # libvroom's PERMISSIVE error mode reports type-coercion parse errors
+  expect_warning(
+    dat <- vroom(
+      I("a,b\n1,2\nz,3\n4,5"),
+      col_types = "dc",
+      col_select = c(a, b),
+      show_col_types = FALSE,
+      altrep = FALSE
+    ),
+    class = "vroom_parse_issue"
   )
 
   expect_s3_class(dat, "spec_tbl_df")

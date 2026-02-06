@@ -494,21 +494,27 @@ test_that("subsetting works with both double and integer indexes", {
 
 test_that("malformed date / datetime formats return NA (not error)", {
   # With libvroom, malformed format strings result in NA values rather than
-
   # errors, since R's as.Date/as.POSIXct handle them gracefully.
-  result_date <- vroom(
-    I("x\n6/28/2016"),
-    delim = ",",
-    col_types = list(x = col_date("%m/%/%Y")),
-    altrep = FALSE
+  # The parse failure does emit a vroom_parse_issue warning.
+  expect_warning(
+    result_date <- vroom(
+      I("x\n6/28/2016"),
+      delim = ",",
+      col_types = list(x = col_date("%m/%/%Y")),
+      altrep = FALSE
+    ),
+    class = "vroom_parse_issue"
   )
   expect_true(is.na(result_date$x[[1]]))
 
-  result_datetime <- vroom(
-    I("x\n6/28/2016"),
-    delim = ",",
-    col_types = list(x = col_datetime("%m/%/%Y")),
-    altrep = FALSE
+  expect_warning(
+    result_datetime <- vroom(
+      I("x\n6/28/2016"),
+      delim = ",",
+      col_types = list(x = col_datetime("%m/%/%Y")),
+      altrep = FALSE
+    ),
+    class = "vroom_parse_issue"
   )
   expect_true(is.na(result_datetime$x[[1]]))
 })

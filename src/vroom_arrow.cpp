@@ -211,8 +211,7 @@ struct StreamGuard {
   opts.skip_empty_rows = skip_empty_rows;
   if (!comment.empty())
     opts.comment = comment[0];
-  if (!na_values.empty())
-    opts.null_values = na_values;
+  opts.null_values = na_values;
   if (num_threads > 0)
     opts.num_threads = static_cast<size_t>(num_threads);
 

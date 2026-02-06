@@ -64,7 +64,8 @@ enum class ErrorCode {
   FILE_TOO_LARGE,            ///< File exceeds maximum size limit
   INDEX_ALLOCATION_OVERFLOW, ///< Index allocation would overflow
   IO_ERROR,                  ///< File I/O error (e.g., read failure)
-  INTERNAL_ERROR             ///< Internal parser error
+  INTERNAL_ERROR,            ///< Internal parser error
+  TYPE_COERCION_FAILURE      ///< Value could not be parsed as the expected type
 };
 
 /**

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "arrow_buffer.h"
+#include "error.h"
 #include "simd_atoi.h"
 
 #include <charconv>
@@ -40,6 +41,23 @@ public:
 
   // Locale-specific settings
   char decimal_mark = '.';
+
+  // Error reporting (optional — nullptr means no error collection)
+  ErrorCollector* error_collector = nullptr;
+  size_t* row_number_ptr = nullptr;  // Points to caller's row counter
+  size_t base_row = 0;               // Added to *row_number_ptr for absolute line
+  size_t col_index = 0;              // 1-indexed column number
+  const char* type_label = "";       // e.g. "a double", "an integer"
+
+  // Report a type coercion failure to the error collector (if present)
+  static void report_coercion_error(FastArrowContext& ctx, std::string_view value) {
+    if (ctx.error_collector) [[unlikely]] {
+      ctx.error_collector->add_error(
+          ErrorCode::TYPE_COERCION_FAILURE, ErrorSeverity::RECOVERABLE,
+          ctx.base_row + (ctx.row_number_ptr ? *ctx.row_number_ptr : 0),
+          ctx.col_index, 0, ctx.type_label, std::string(value));
+    }
+  }
 
   // ============================================
   // Static append implementations
@@ -103,6 +121,7 @@ public:
       ctx.int32_buffer->push_back(result);
       ctx.null_bitmap->push_back_valid();
     } else {
+      report_coercion_error(ctx, value);
       ctx.int32_buffer->push_back(0);
       ctx.null_bitmap->push_back_null();
     }
@@ -160,6 +179,7 @@ public:
       ctx.int64_buffer->push_back(result);
       ctx.null_bitmap->push_back_valid();
     } else {
+      report_coercion_error(ctx, value);
       ctx.int64_buffer->push_back(0);
       ctx.null_bitmap->push_back_null();
     }
@@ -189,6 +209,7 @@ public:
         return;
       }
     }
+    report_coercion_error(ctx, value);
     ctx.float64_buffer->push_back(std::numeric_limits<double>::quiet_NaN());
     ctx.null_bitmap->push_back_null();
   }
@@ -211,6 +232,7 @@ public:
       ctx.null_bitmap->push_back_valid();
       return;
     }
+    report_coercion_error(ctx, value);
     ctx.bool_buffer->push_back(0);
     ctx.null_bitmap->push_back_null();
   }
@@ -231,6 +253,7 @@ public:
       ctx.int32_buffer->push_back(days);
       ctx.null_bitmap->push_back_valid();
     } else {
+      report_coercion_error(ctx, value);
       ctx.int32_buffer->push_back(0);
       ctx.null_bitmap->push_back_null();
     }
@@ -252,6 +275,7 @@ public:
       ctx.int64_buffer->push_back(micros);
       ctx.null_bitmap->push_back_valid();
     } else {
+      report_coercion_error(ctx, value);
       ctx.int64_buffer->push_back(0);
       ctx.null_bitmap->push_back_null();
     }

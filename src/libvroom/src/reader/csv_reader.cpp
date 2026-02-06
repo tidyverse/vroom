@@ -18,6 +18,35 @@
 
 namespace libvroom {
 
+// Map DataType to human-readable label for error messages
+static const char* type_label_for(DataType type) {
+  switch (type) {
+  case DataType::INT32:     return "an integer";
+  case DataType::INT64:     return "an integer";
+  case DataType::FLOAT64:   return "a double";
+  case DataType::BOOL:      return "a logical";
+  case DataType::DATE:      return "date in ISO8601";
+  case DataType::TIMESTAMP: return "date in ISO8601";
+  default:                  return "";
+  }
+}
+
+// Configure error reporting fields on FastArrowContext vector
+static void configure_error_contexts(
+    std::vector<FastArrowContext>& fast_contexts,
+    const std::vector<std::unique_ptr<ArrowColumnBuilder>>& columns,
+    ErrorCollector* error_collector,
+    size_t* row_number_ptr,
+    size_t base_row) {
+  for (size_t i = 0; i < fast_contexts.size(); ++i) {
+    fast_contexts[i].error_collector = error_collector;
+    fast_contexts[i].row_number_ptr = row_number_ptr;
+    fast_contexts[i].base_row = base_row;
+    fast_contexts[i].col_index = i + 1;
+    fast_contexts[i].type_label = type_label_for(columns[i]->type());
+  }
+}
+
 // Structure to hold dual-state analysis results (lightweight, no parsing)
 struct ChunkAnalysisResult {
   // Row counts for each starting state (computed via SIMD in single pass)
@@ -41,7 +70,8 @@ struct ChunkParseResult {
 std::pair<size_t, bool> parse_chunk_with_state(
     const char* data, size_t size, const CsvOptions& options, const NullChecker& null_checker,
     std::vector<std::unique_ptr<ArrowColumnBuilder>>& columns, bool start_inside_quote,
-    ErrorCollector* error_collector = nullptr, size_t base_byte_offset = 0) {
+    ErrorCollector* error_collector = nullptr, size_t base_byte_offset = 0,
+    size_t base_line_number = 0) {
   if (size == 0 || columns.empty()) {
     return {0, start_inside_quote};
   }
@@ -59,6 +89,11 @@ std::pair<size_t, bool> parse_chunk_with_state(
   size_t offset = 0;
   size_t row_count = 0;
   const bool check_errors = error_collector != nullptr;
+
+  // Wire up error reporting in fast_contexts
+  if (check_errors) {
+    configure_error_contexts(fast_contexts, columns, error_collector, &row_count, base_line_number);
+  }
 
   // If we start inside a quote, we need to find where the quote ends
   // and skip the partial field
@@ -1285,6 +1320,8 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
 
   // Parse all rows using Polars-style SplitFields iterator
   // Key optimization: no separate find_row_end call - iterator handles EOL
+  // Note: row_number is declared below and used as absolute 1-indexed row,
+  // so base_row=0 and row_number_ptr points to row_number itself.
   size_t offset = impl_->header_end_offset;
   const char quote = options.quote;
   const std::string_view sep = options.separator;
@@ -1292,6 +1329,11 @@ Result<ParsedChunks> CsvReader::read_all_serial() {
   const bool check_errors = impl_->error_collector.is_enabled();
   // Row number is 1-indexed; row 1 is the header (if present)
   size_t row_number = impl_->options.has_header ? 2 : 1;
+
+  // Wire up type coercion error reporting
+  if (check_errors) {
+    configure_error_contexts(fast_contexts, columns, &impl_->error_collector, &row_number, 0);
+  }
 
   while (offset < size) {
     // Skip empty lines (when enabled)
@@ -1584,11 +1626,16 @@ Result<bool> CsvReader::start_streaming() {
     use_inside_state[i] = prev_ends_inside;
   }
 
-  // Compute total row count
+  // Compute total row count and per-chunk base line numbers
   size_t total_row_count = 0;
+  std::vector<size_t> chunk_base_lines(num_chunks);
+  size_t header_lines = impl_->options.has_header ? 1 : 0;
   for (size_t i = 0; i < num_chunks; ++i) {
-    total_row_count += use_inside_state[i] ? analysis_results[i].row_count_inside
-                                           : analysis_results[i].row_count_outside;
+    size_t chunk_rows = use_inside_state[i] ? analysis_results[i].row_count_inside
+                                            : analysis_results[i].row_count_outside;
+    // Base line number: 1-indexed, after header
+    chunk_base_lines[i] = total_row_count + 1 + header_lines;
+    total_row_count += chunk_rows;
   }
   impl_->row_count = total_row_count;
 
@@ -1619,9 +1666,10 @@ Result<bool> CsvReader::start_streaming() {
                                         : analysis_results[chunk_idx].row_count_outside;
     ErrorCollector* chunk_error_collector =
         check_errors ? &(*error_collectors_ptr)[chunk_idx] : nullptr;
+    size_t base_line = chunk_base_lines[chunk_idx];
 
     pool.detach_task([queue_ptr, data, size, chunk_idx, start_offset, end_offset, start_inside,
-                      expected_rows, options, schema, chunk_error_collector]() {
+                      expected_rows, options, schema, chunk_error_collector, base_line]() {
       if (start_offset >= size || end_offset > size || start_offset >= end_offset) {
         std::vector<std::unique_ptr<ArrowColumnBuilder>> empty;
         queue_ptr->push(chunk_idx, std::move(empty));
@@ -1638,7 +1686,7 @@ Result<bool> CsvReader::start_streaming() {
 
       auto [rows, ends_inside] = parse_chunk_with_state(
           data + start_offset, end_offset - start_offset, options, null_checker, columns,
-          start_inside, chunk_error_collector, start_offset);
+          start_inside, chunk_error_collector, start_offset, base_line);
       (void)ends_inside;
       (void)rows;
 

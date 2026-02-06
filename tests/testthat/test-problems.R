@@ -3,7 +3,6 @@ test_that("problems returns a detailed warning message", {
 })
 
 test_that("problems with data parsing works for single files", {
-  skip("libvroom does not report type-coercion parse errors (#31)")
   expect_warning(
     x <- vroom(I("x,y\n1,2\n1,1.x\n"), col_types = "dd", altrep = FALSE),
     class = "vroom_parse_issue"
@@ -17,7 +16,6 @@ test_that("problems with data parsing works for single files", {
 })
 
 test_that("problems works for multiple files", {
-  skip("libvroom does not report type-coercion parse errors (#31)")
   out1 <- file.path(tempdir(), "out1.txt")
   out2 <- file.path(tempdir(), "out2.txt")
   on.exit(unlink(c(out1, out2)))
@@ -58,9 +56,8 @@ test_that("problems with number of columns works for single files", {
   expect_equal(probs3$row, 2)
   expect_equal(probs3$expected, "Expected 3 fields, got 2")
 
-  # col_names=FALSE: libvroom only reports the column-count mismatch (row 2),
-
-  # not type-coercion failures for the header row parsed as data.
+  # col_names=FALSE: libvroom reports both type-coercion failures for the
+  # header row parsed as data AND the column-count mismatch on row 2.
   expect_warning(
     probs3 <- problems(vroom(
       I("x,y,z\n1,2\n"),
@@ -70,8 +67,6 @@ test_that("problems with number of columns works for single files", {
     )),
     class = "vroom_parse_issue"
   )
-  # With libvroom there's only 1 problem (column-count), not 4
-  # (the old test checked [[4]] because the first 3 were type-coercion errors)
   col_count_prob <- probs3[grepl("Expected.*fields", probs3$expected), ]
   expect_equal(col_count_prob$row, 2)
   expect_equal(col_count_prob$expected, "Expected 3 fields, got 2")
@@ -104,7 +99,6 @@ test_that("problems with number of columns works for single files", {
 })
 
 test_that("parsing problems are shown for all datatypes", {
-  skip("libvroom does not report type-coercion parse errors (#31)")
   types <- list(
     "an integer" = col_integer(),
     "a big integer" = col_big_integer(),
@@ -120,27 +114,14 @@ test_that("parsing problems are shown for all datatypes", {
     type <- types[[i]]
     expected <- names(types)[[i]]
 
-    res <- vroom(
-      I("x\nxyz\n"),
-      delim = ",",
-      col_types = list(type),
-      altrep = TRUE
-    )
-
-    # This calls the type_Elt function
-    expect_warning(res[[1]][[1]], class = "vroom_parse_issue")
-    expect_equal(problems(res)$expected, expected)
-
-    res <- vroom(
-      I("x\nxyz\n"),
-      delim = ",",
-      col_types = list(type),
-      altrep = TRUE
-    )
-
-    # Force full materialization of all columns
+    # libvroom parses eagerly, so warning fires at vroom() time
     expect_warning(
-      as.data.frame(res),
+      res <- vroom(
+        I("x\nxyz\n"),
+        delim = ",",
+        col_types = list(type),
+        altrep = FALSE
+      ),
       class = "vroom_parse_issue"
     )
     expect_equal(problems(res)$expected, expected)
@@ -157,18 +138,15 @@ test_that("parsing problems are shown for all datatypes", {
 })
 
 test_that("problems that are generated more than once are not duplicated", {
-  skip("libvroom does not report type-coercion parse errors (#31)")
-  res <- vroom(
-    I("x\n1\n2\n3\n4\n5\na"),
-    col_types = "i",
-    delim = ","
+  # libvroom parses eagerly: warning fires at vroom() time
+  expect_warning(
+    res <- vroom(
+      I("x\n1\n2\n3\n4\n5\na"),
+      col_types = "i",
+      delim = ","
+    ),
+    class = "vroom_parse_issue"
   )
-
-  # generate first problem
-  expect_warning(res[[1]][[6]], class = "vroom_parse_issue")
-
-  # generate the same problem again
-  res[[1]][[6]]
 
   probs <- problems(res)
   expect_equal(probs$row, 7)
@@ -210,27 +188,17 @@ test_that("problems return the proper row number", {
 
 # https://github.com/tidyverse/vroom/pull/441#discussion_r883611090
 test_that("can promote vroom parse warning to error", {
-  skip("libvroom does not report type-coercion parse errors (#31)")
+  # libvroom parses eagerly: warning fires at vroom() time
   make_warning <- function() {
-    x <- vroom(
+    vroom(
       I("a\nx\n"),
       delim = ",",
       col_types = "d",
-      altrep = TRUE
+      altrep = FALSE
     )
-
-    # Trigger vroom parse warning while inside R's internal C code for `[` and ensure it doesn't crash R.
-    # `[` -> R's C function `do_subset()` -> ALTREP calls `vroom::real_Elt()` -> `vroom::warn_for_errors()`
-    # To avoid calling `cpp11::unwind_protect()` (which throws on longjmp, i.e. on `abort()`) while inside
-    # R's internal C code (which doesn't catch C++ exceptions), `vroom::warn_for_errors()` warns
-    # with cli called from base R's machinery, rather than from `cpp11::package()`
-    # https://github.com/r-lib/cpp11/issues/274
-    # https://github.com/tidyverse/vroom/pull/441#discussion_r883611090
-    x$a[1]
   }
 
-  # This fails hard if we unwind protect the warning (aborts RStudio)
-  # - Try to throw error after catching the warning
+  # Try to throw error after catching the warning
   expect_snapshot(error = TRUE, {
     withCallingHandlers(
       expr = make_warning(),
@@ -253,29 +221,31 @@ test_that("emits an error message if provided incorrect input", {
 
 # https://github.com/tidyverse/vroom/issues/535
 test_that("problems are correct even if print is first encounter", {
-  skip("libvroom does not report type-coercion parse errors (#31)")
-  foo <- vroom(
-    I("a\n1\nz\n3\nF\n5"),
-    delim = ",",
-    col_types = "d",
-    show_col_types = FALSE
+  # libvroom parses eagerly: warning fires at vroom() time
+  expect_warning(
+    foo <- vroom(
+      I("a\n1\nz\n3\nF\n5"),
+      delim = ",",
+      col_types = "d",
+      show_col_types = FALSE
+    ),
+    class = "vroom_parse_issue"
   )
-
-  expect_output(expect_warning(print(foo), class = "vroom_parse_issue"))
 
   probs <- problems(foo)
   expect_equal(probs$row, c(3, 5))
   expect_equal(probs$actual, c("z", "F"))
 
-  foo <- vroom(
-    I("1\nz\n3\nF\n5"),
-    delim = ",",
-    col_names = FALSE,
-    col_types = "d",
-    show_col_types = FALSE
+  expect_warning(
+    foo <- vroom(
+      I("1\nz\n3\nF\n5"),
+      delim = ",",
+      col_names = FALSE,
+      col_types = "d",
+      show_col_types = FALSE
+    ),
+    class = "vroom_parse_issue"
   )
-
-  expect_output(expect_warning(print(foo), class = "vroom_parse_issue"))
 
   probs <- problems(foo)
   expect_equal(probs$row, c(2, 4))

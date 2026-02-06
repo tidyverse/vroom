@@ -76,8 +76,7 @@ errors_to_r_problems(const std::vector<libvroom::ParseError>& errors) {
     opts.skip = static_cast<size_t>(skip);
   if (!comment.empty())
     opts.comment = comment[0];
-  if (!na_values.empty())
-    opts.null_values = na_values;
+  opts.null_values = na_values;
   if (num_threads > 0)
     opts.num_threads = static_cast<size_t>(num_threads);
 

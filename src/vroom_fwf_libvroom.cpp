@@ -30,8 +30,7 @@
   if (!comment.empty())
     opts.comment = comment[0];
   opts.skip_empty_rows = skip_empty_rows;
-  if (!na_values.empty())
-    opts.null_values = na_values;
+  opts.null_values = na_values;
   if (skip > 0)
     opts.skip = static_cast<size_t>(skip);
   if (n_max >= 0)

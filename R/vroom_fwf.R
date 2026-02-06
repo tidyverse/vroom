@@ -113,7 +113,7 @@ vroom_fwf <- function(
   }
 
   n_max_int <- if (is.infinite(n_max) || n_max < 0) -1L else as.integer(n_max)
-  na_str <- paste(na, collapse = ",")
+  na_str <- encode_na_values(na)
   col_ends_int <- as.integer(col_positions$end)
   col_ends_int[is.na(col_ends_int)] <- -1L
 

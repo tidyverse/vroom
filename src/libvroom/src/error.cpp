@@ -39,6 +39,8 @@ const char* error_code_to_string(ErrorCode code) {
     return "IO_ERROR";
   case ErrorCode::INTERNAL_ERROR:
     return "INTERNAL_ERROR";
+  case ErrorCode::TYPE_COERCION_FAILURE:
+    return "TYPE_COERCION_FAILURE";
   default:
     return "UNKNOWN";
   }

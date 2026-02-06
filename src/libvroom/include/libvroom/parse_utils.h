@@ -125,7 +125,7 @@ private:
 
   std::vector<std::string> null_values_;
   size_t max_null_length_ = 0;
-  bool empty_is_null_ = true; // Default: empty strings are null
+  bool empty_is_null_ = false; // Default: empty strings are NOT null (overridden by trailing comma in null_values)
 };
 
 } // namespace libvroom

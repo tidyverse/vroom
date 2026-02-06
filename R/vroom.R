@@ -239,7 +239,7 @@ vroom <- function(
 
   col_select <- vroom_enquo(enquo(col_select))
 
-  na_str <- paste(na, collapse = ",")
+  na_str <- encode_na_values(na)
 
   ct <- resolve_libvroom_col_types(col_types)
   col_types_int <- ct$col_types_int
@@ -407,7 +407,8 @@ vroom <- function(
       resolved_spec,
       col_types_int,
       col_type_names,
-      locale
+      locale,
+      has_header = isTRUE(col_names)
     )
 
     # Adjust timezone for TIMESTAMP columns if locale specifies non-UTC tz.
@@ -441,14 +442,22 @@ vroom <- function(
 
     # Extract problems from C++ result (attached by vroom_libvroom_)
     probs <- attr(one, "problems")
+    file_path <- if (is.character(input)) input else "<connection>"
     if (is.data.frame(probs) && nrow(probs) > 0) {
-      file_path <- if (is.character(input)) input else "<connection>"
       probs$file <- rep(file_path, nrow(probs))
     } else {
       probs <- NULL
     }
     # Remove C++-attached problems (will be re-attached by finalize)
     attr(one, "problems") <- NULL
+
+    # Merge R-side problems from post-processing
+    r_probs <- attr(one, ".r_problems")
+    attr(one, ".r_problems") <- NULL
+    if (is.data.frame(r_probs) && nrow(r_probs) > 0) {
+      r_probs$file <- rep(file_path, nrow(r_probs))
+      probs <- if (is.null(probs)) r_probs else rbind(probs, r_probs)
+    }
 
     list(
       data = one,
@@ -821,9 +830,30 @@ apply_col_postprocessing <- function(
   spec,
   col_types_int,
   col_type_names,
-  locale = default_locale()
+  locale = default_locale(),
+  has_header = TRUE
 ) {
   out_names <- names(out)
+  # Accumulate R-side parse problems
+  r_problems <- list()
+  # Row offset: data rows are 1-indexed; with header, row 1 is header so data starts at row 2
+  row_offset <- if (has_header) 1L else 0L
+
+  # Helper: apply collector and collect any parse failures
+  apply_and_collect <- function(col_vec, collector, col_idx) {
+    result <- apply_collector(col_vec, collector, locale)
+    failures <- attr(result, ".parse_failures")
+    if (!is.null(failures)) {
+      attr(result, ".parse_failures") <- NULL
+      r_problems[[length(r_problems) + 1L]] <<- tibble::tibble(
+        row = as.integer(failures$rows + row_offset),
+        col = rep(as.integer(col_idx), length(failures$rows)),
+        expected = rep(failures$expected, length(failures$rows)),
+        actual = as.character(failures$actual)
+      )
+    }
+    result
+  }
 
   if (!is.null(spec)) {
     if (length(col_type_names) > 0) {
@@ -844,7 +874,7 @@ apply_col_postprocessing <- function(
           next
         }
 
-        out[[out_idx]] <- apply_collector(out[[out_idx]], collector, locale)
+        out[[out_idx]] <- apply_and_collect(out[[out_idx]], collector, out_idx)
       }
     } else {
       # Positional spec: match by position
@@ -867,7 +897,7 @@ apply_col_postprocessing <- function(
           next
         }
 
-        out[[out_col]] <- apply_collector(out[[out_col]], collector, locale)
+        out[[out_col]] <- apply_and_collect(out[[out_col]], collector, out_col)
       }
     }
 
@@ -883,7 +913,7 @@ apply_col_postprocessing <- function(
         spec_col_names <- names(spec$cols)
         for (i in seq_along(out_names)) {
           if (!(out_names[[i]] %in% spec_col_names)) {
-            out[[i]] <- apply_collector(out[[i]], spec$default, locale)
+            out[[i]] <- apply_and_collect(out[[i]], spec$default, i)
           }
         }
       }
@@ -917,12 +947,18 @@ apply_col_postprocessing <- function(
     }
   }
 
+  # Attach R-side problems if any
+  if (length(r_problems) > 0) {
+    attr(out, ".r_problems") <- do.call(rbind, r_problems)
+  }
+
   out
 }
 
 apply_collector <- function(x, collector, locale = default_locale()) {
   cls <- class(collector)[[1]]
-  switch(
+  was_na <- is.na(x)
+  result <- switch(
     cls,
     collector_logical = {
       # libvroom only recognizes "TRUE"/"FALSE"; R/readr also accept
@@ -989,6 +1025,47 @@ apply_collector <- function(x, collector, locale = default_locale()) {
     },
     x
   )
+
+  # Detect new NAs introduced by type coercion (parse failures)
+  new_na <- is.na(result) & !was_na
+  if (any(new_na)) {
+    expected <- switch(
+      cls,
+      collector_logical = "a logical",
+      collector_big_integer = "a big integer",
+      collector_number = "a number",
+      collector_factor = "value in level set",
+      collector_date = "date in ISO8601",
+      collector_datetime = "date in ISO8601",
+      collector_time = "time in ISO8601",
+      cls
+    )
+    attr(result, ".parse_failures") <- list(
+      rows = which(new_na),
+      expected = expected,
+      actual = x[new_na]
+    )
+  }
+
+  result
+}
+
+# Encode na values as comma-separated string for C++.
+# character() → "" (empty string) means nothing is NA.
+# c("") → "," (single comma) means empty string is NA.
+# c("", "NA") → ",NA" means empty string and "NA" are NA.
+# The trailing/leading comma is how NullChecker sees the empty substring.
+encode_na_values <- function(na) {
+  if (length(na) == 0L) {
+    return("")
+  }
+  na_str <- paste(na, collapse = ",")
+  # When na includes "" but paste produces "", add a comma so
+  # NullChecker sees an empty element and sets empty_is_null = true.
+  if (any(!nzchar(na)) && !nzchar(na_str)) {
+    na_str <- ","
+  }
+  na_str
 }
 
 # Parse number values like readr's parse_number(): strip grouping marks,

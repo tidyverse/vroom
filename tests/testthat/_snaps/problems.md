@@ -13,6 +13,16 @@
         <chr> <chr> <chr>
       1 x     y     z    
 
+# can promote vroom parse warning to error
+
+    Code
+      withCallingHandlers(expr = make_warning(), vroom_parse_issue = function(cnd) {
+        abort("oh no")
+      })
+    Condition
+      Error:
+      ! oh no
+
 # emits an error message if provided incorrect input
 
     Code
