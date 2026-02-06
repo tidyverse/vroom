@@ -91,11 +91,13 @@ test_that("connection reads work with small VROOM_CONNECTION_SIZE via libvroom",
   expect_s3_class(actual, "spec_tbl_df")
 })
 
-test_that("vroom errors when the connection buffer is too small", {
+test_that("vroom handles very small connection buffer sizes", {
+  # libvroom's connection reading handles small buffer sizes gracefully;
+  # it reads and concatenates all chunks before parsing.
   withr::local_envvar(c("VROOM_CONNECTION_SIZE" = 32))
-  expect_snapshot(error = TRUE, {
-    vroom(file(vroom_example("mtcars.csv")), col_types = list())
-  })
+  expected <- vroom(vroom_example("mtcars.csv"), col_types = list())
+  actual <- vroom(file(vroom_example("mtcars.csv")), col_types = list())
+  expect_equal(actual, expected)
 })
 
 test_that("vroom can read files with only a single line and no newlines", {
@@ -133,7 +135,7 @@ test_that("vroom works with windows newlines and a connection size that lies dir
   tf <- tempfile()
   on.exit(unlink(tf))
 
-  writeChar("1,2\r\na,bbb\r\ne,f\r\n", tf, eos = NULL)
+  writeChar("x,y\r\na,bbb\r\ne,f\r\n", tf, eos = NULL)
 
   withr::with_envvar(c("VROOM_CONNECTION_SIZE" = 12), {
     x <- vroom(file(tf), col_types = "cc")

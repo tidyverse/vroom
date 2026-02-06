@@ -99,151 +99,90 @@ vroom_fwf <- function(
 
   col_select <- vroom_enquo(enquo(col_select))
 
-  use_libvroom <- can_use_libvroom_fwf(file, col_types, locale)
-  if (use_libvroom) {
-    input <- connection_or_filepath(file[[1]])
-    # Non-ASCII paths need to go through R connection for proper encoding
-    # handling (libvroom expects UTF-8 paths but non-UTF-8 locales mangle them)
-    if (is.character(input) && !is_ascii_path(input)) {
-      input <- file(input)
+  input <- connection_or_filepath(file[[1]])
+  # Non-ASCII paths need to go through R connection for proper encoding
+  # handling (libvroom expects UTF-8 paths but non-UTF-8 locales mangle them)
+  if (is.character(input) && !is_ascii_path(input)) {
+    input <- file(input)
+  }
+  if (inherits(input, "connection")) {
+    input <- read_connection_raw(input)
+    if (length(input) == 0L) {
+      return(tibble::tibble())
     }
-    if (inherits(input, "connection")) {
-      input <- read_connection_raw(input)
-      if (length(input) == 0L) {
-        return(tibble::tibble())
-      }
-    }
-
-    n_max_int <- if (is.infinite(n_max) || n_max < 0) -1L else as.integer(n_max)
-    na_str <- paste(na, collapse = ",")
-    col_ends_int <- as.integer(col_positions$end)
-    col_ends_int[is.na(col_ends_int)] <- -1L
-
-    ct <- resolve_libvroom_col_types(col_types)
-    col_types_int <- ct$col_types_int
-    col_type_names <- ct$col_type_names
-    resolved_spec <- ct$resolved_spec
-
-    out <- vroom_libvroom_fwf_(
-      input = input,
-      col_starts = as.integer(col_positions$begin),
-      col_ends = col_ends_int,
-      col_names = as.character(col_positions$col_names),
-      trim_ws = trim_ws,
-      comment = comment,
-      skip_empty_rows = skip_empty_rows,
-      na_values = na_str,
-      skip = as.integer(skip),
-      n_max = n_max_int,
-      num_threads = as.integer(num_threads),
-      col_types = col_types_int,
-      col_type_names = col_type_names
-    )
-
-    out <- filter_cols_only_and_skip(
-      out,
-      resolved_spec,
-      col_types_int,
-      col_type_names
-    )
-
-    # Apply R-side post-processing
-    out <- apply_col_postprocessing(
-      out,
-      resolved_spec,
-      col_types_int,
-      col_type_names
-    )
-
-    out <- tibble::as_tibble(out, .name_repair = .name_repair)
-    if (!is.null(id)) {
-      path_value <- if (is.character(file[[1]])) file[[1]] else NA_character_
-      out <- tibble::add_column(
-        out,
-        !!id := rep(path_value, nrow(out)),
-        .before = 1
-      )
-    }
-
-    out <- apply_libvroom_col_select(out, col_select, id)
-
-    # Build and attach spec attribute
-    all_col_names <- as.character(col_positions$col_names)
-    attr(out, "spec") <- build_libvroom_spec(
-      out,
-      resolved_spec,
-      col_types_int,
-      all_col_names,
-      delim = ""
-    )
-
-    out <- finalize_libvroom_result(out)
-
-    has_col_types <- !is.null(col_types) && !identical(col_types, list())
-    if (should_show_col_types(has_col_types, show_col_types)) {
-      show_col_types(out, locale)
-    }
-
-    return(out)
   }
 
-  if (!is_ascii_compatible(locale$encoding)) {
-    file <- reencode_file(file, locale$encoding)
-    locale$encoding <- "UTF-8"
-  }
+  n_max_int <- if (is.infinite(n_max) || n_max < 0) -1L else as.integer(n_max)
+  na_str <- paste(na, collapse = ",")
+  col_ends_int <- as.integer(col_positions$end)
+  col_ends_int[is.na(col_ends_int)] <- -1L
 
-  if (
-    length(file) == 0 ||
-      (n_max == 0 & identical(col_positions$col_names, FALSE))
-  ) {
-    out <- tibble::tibble()
-    class(out) <- c("spec_tbl_df", class(out))
-    return(out)
-  }
+  ct <- resolve_libvroom_col_types(col_types)
+  col_types_int <- ct$col_types_int
+  col_type_names <- ct$col_type_names
+  resolved_spec <- ct$resolved_spec
 
-  if (n_max < 0 || is.infinite(n_max)) {
-    n_max <- -1
-  }
-
-  if (guess_max < 0 || is.infinite(guess_max)) {
-    guess_max <- -1
-  }
-
-  has_col_types <- !is.null(col_types)
-
-  col_types <- as.col_spec(col_types)
-
-  out <- vroom_fwf_(
-    file,
-    as.integer(col_positions$begin),
-    as.integer(col_positions$end),
+  out <- vroom_libvroom_fwf_(
+    input = input,
+    col_starts = as.integer(col_positions$begin),
+    col_ends = col_ends_int,
+    col_names = as.character(col_positions$col_names),
     trim_ws = trim_ws,
-    col_names = col_positions$col_names,
-    col_types = col_types,
-    col_select = col_select,
-    name_repair = .name_repair,
-    id = id,
-    na = na,
-    guess_max = guess_max,
-    skip = skip,
     comment = comment,
     skip_empty_rows = skip_empty_rows,
-    n_max = n_max,
-    num_threads = num_threads,
-    altrep = vroom_altrep(altrep),
-    locale = locale,
-    progress = progress
+    na_values = na_str,
+    skip = as.integer(skip),
+    n_max = n_max_int,
+    num_threads = as.integer(num_threads),
+    col_types = col_types_int,
+    col_type_names = col_type_names
   )
 
-  postprocess_result(
+  out <- filter_cols_only_and_skip(
     out,
-    col_select,
-    id,
-    .name_repair,
-    has_col_types,
-    show_col_types,
-    locale
+    resolved_spec,
+    col_types_int,
+    col_type_names
   )
+
+  # Apply R-side post-processing
+  out <- apply_col_postprocessing(
+    out,
+    resolved_spec,
+    col_types_int,
+    col_type_names
+  )
+
+  out <- tibble::as_tibble(out, .name_repair = .name_repair)
+  if (!is.null(id)) {
+    path_value <- if (is.character(file[[1]])) file[[1]] else NA_character_
+    out <- tibble::add_column(
+      out,
+      !!id := rep(path_value, nrow(out)),
+      .before = 1
+    )
+  }
+
+  out <- apply_libvroom_col_select(out, col_select, id)
+
+  # Build and attach spec attribute
+  all_col_names <- as.character(col_positions$col_names)
+  attr(out, "spec") <- build_libvroom_spec(
+    out,
+    resolved_spec,
+    col_types_int,
+    all_col_names,
+    delim = ""
+  )
+
+  out <- finalize_libvroom_result(out)
+
+  has_col_types <- !is.null(col_types) && !identical(col_types, list())
+  if (should_show_col_types(has_col_types, show_col_types)) {
+    show_col_types(out, locale)
+  }
+
+  out
 }
 
 
@@ -372,19 +311,6 @@ fwf_col_names <- function(nm, n) {
   nm_empty <- (nm == "")
   nm[nm_empty] <- paste0("X", seq_len(n))[nm_empty]
   nm
-}
-
-can_use_libvroom_fwf <- function(file, col_types, locale) {
-  if (length(file) != 1) {
-    return(FALSE)
-  }
-  if (!is_ascii_compatible(locale$encoding)) {
-    return(FALSE)
-  }
-  if (!can_libvroom_handle_col_types(col_types)) {
-    return(FALSE)
-  }
-  TRUE
 }
 
 verify_fwf_positions <- function(col_positions) {

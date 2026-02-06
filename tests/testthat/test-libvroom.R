@@ -18,21 +18,13 @@ test_libvroom <- function(
   close(out_con)
 
   suppressWarnings({
-    # Test with libvroom
     result <- vroom(
       tf,
       delim = delim,
       col_types = col_types,
-      use_libvroom = TRUE,
       show_col_types = FALSE,
       ...
     )
-    expect_equal(result, equals)
-
-    # Force materialization and check again (important for ALTREP)
-    for (i in seq_along(result)) {
-      force_materialization(result[[i]])
-    }
     expect_equal(result, equals)
   })
 
@@ -151,7 +143,7 @@ test_that("libvroom single-file optimization works correctly", {
   close(out_con)
 
   suppressWarnings({
-    result <- vroom(tf, delim = ",", use_libvroom = TRUE)
+    result <- vroom(tf, delim = ",")
     expect_equal(
       result,
       tibble::tibble(a = c(1, 4, 7), b = c(2, 5, 8), c = c(3, 6, 9))
@@ -246,8 +238,7 @@ test_that("libvroom handles Windows line endings (CRLF)", {
   )
 })
 
-test_that("libvroom result equals standard vroom result", {
-  # This is a key test: verify libvroom produces identical results to standard vroom
+test_that("libvroom reads mixed-type CSV correctly", {
   tf <- tempfile(fileext = ".csv")
   on.exit(unlink(tf))
 
@@ -256,29 +247,16 @@ test_that("libvroom result equals standard vroom result", {
   writeBin(charToRaw(content), out_con)
   close(out_con)
 
-  suppressWarnings({
-    standard_result <- vroom(
-      tf,
-      delim = ",",
-      col_types = NULL,
-      use_libvroom = FALSE
-    )
-    libvroom_result <- vroom(
-      tf,
-      delim = ",",
-      col_types = NULL,
-      use_libvroom = TRUE
-    )
+  result <- vroom(
+    tf,
+    delim = ",",
+    col_types = NULL,
+    show_col_types = FALSE
+  )
 
-    expect_equal(libvroom_result, standard_result)
-
-    # Force materialization and compare again
-    for (i in seq_along(standard_result)) {
-      force_materialization(standard_result[[i]])
-      force_materialization(libvroom_result[[i]])
-    }
-    expect_equal(libvroom_result, standard_result)
-  })
+  expect_equal(result$a, c(1, 4, NA))
+  expect_equal(result$b, c("foo", "bar", "baz"))
+  expect_equal(result$c, c(3.5, 6.5, 9.5))
 })
 
 test_that("libvroom handles col_skip in compact notation", {
@@ -322,28 +300,6 @@ test_that("libvroom handles cols_only()", {
     delim = ",",
     col_types = cols_only(a = col_integer(), c = col_character()),
     equals = tibble::tibble(a = c(1L, 3L), c = c("hello", "world"))
-  )
-})
-
-test_that("can_libvroom_handle_col_types accepts compatible .default types", {
-  expect_true(can_libvroom_handle_col_types(cols(.default = col_character())))
-  expect_true(can_libvroom_handle_col_types(cols(.default = col_double())))
-  expect_true(can_libvroom_handle_col_types(cols(.default = col_integer())))
-  expect_true(can_libvroom_handle_col_types(cols(.default = col_logical())))
-  expect_true(can_libvroom_handle_col_types(cols(.default = col_date())))
-  expect_true(can_libvroom_handle_col_types(cols(.default = col_datetime())))
-  expect_true(can_libvroom_handle_col_types(cols(.default = col_guess())))
-  expect_true(can_libvroom_handle_col_types(cols(.default = col_skip())))
-})
-
-test_that("can_libvroom_handle_col_types rejects incompatible .default types", {
-  expect_false(can_libvroom_handle_col_types(cols(.default = col_number())))
-  expect_false(can_libvroom_handle_col_types(cols(.default = col_time())))
-  expect_false(can_libvroom_handle_col_types(cols(.default = col_factor())))
-  expect_false(
-    can_libvroom_handle_col_types(cols(
-      .default = col_date(format = "%m/%d/%Y")
-    ))
   )
 })
 
@@ -449,55 +405,6 @@ test_that("libvroom falls back for unsupported .default types", {
   )
 })
 
-test_that("vroom with use_libvroom=TRUE gracefully falls back for col_number()", {
-  test_libvroom(
-    "a\n\"1,234.56\"\n\"7,890.12\"\n",
-    delim = "\t",
-    col_types = cols(a = col_number()),
-    equals = tibble::tibble(a = c(1234.56, 7890.12))
-  )
-})
-
-test_that("vroom with use_libvroom=TRUE gracefully falls back for col_factor()", {
-  test_libvroom(
-    "a\napple\nbanana\napple\n",
-    delim = ",",
-    col_types = cols(a = col_factor(levels = c("apple", "banana"))),
-    equals = tibble::tibble(
-      a = factor(c("apple", "banana", "apple"), levels = c("apple", "banana"))
-    )
-  )
-})
-
-test_that("vroom with use_libvroom=TRUE gracefully falls back for col_time()", {
-  test_libvroom(
-    "a\n10:01:01\n12:30:00\n",
-    delim = ",",
-    col_types = cols(a = col_time()),
-    equals = tibble::tibble(a = hms::hms(c(36061, 45000)))
-  )
-})
-
-test_that("vroom with use_libvroom=TRUE gracefully falls back for col_date() with custom format", {
-  test_libvroom(
-    "a\n01/20/2023\n06/15/2024\n",
-    delim = ",",
-    col_types = cols(a = col_date(format = "%m/%d/%Y")),
-    equals = tibble::tibble(a = as.Date(c("2023-01-20", "2024-06-15")))
-  )
-})
-
-test_that("vroom with use_libvroom=TRUE gracefully falls back for col_big_integer()", {
-  test_libvroom(
-    "a\n1234567890123\n9876543210987\n",
-    delim = ",",
-    col_types = cols(a = col_big_integer()),
-    equals = tibble::tibble(
-      a = bit64::as.integer64(c("1234567890123", "9876543210987"))
-    )
-  )
-})
-
 test_that("libvroom spec reflects full file schema with col_select", {
   tf <- tempfile(fileext = ".csv")
   on.exit(unlink(tf))
@@ -510,7 +417,6 @@ test_that("libvroom spec reflects full file schema with col_select", {
     tf,
     delim = ",",
     col_select = c(a, c),
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
 
@@ -544,7 +450,6 @@ test_that("libvroom auto-detects delimiter", {
   result <- vroom(
     tf,
     delim = NULL,
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
   expect_equal(
@@ -563,7 +468,6 @@ test_that("libvroom auto-detects delimiter", {
   result2 <- vroom(
     tf2,
     delim = NULL,
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
   expect_equal(
@@ -620,7 +524,6 @@ test_that("libvroom can read multiple files", {
   result <- vroom(
     files,
     delim = ",",
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
 
@@ -638,7 +541,6 @@ test_that("libvroom adds id column from filename for one file", {
     file.path(dir, "f1.csv"),
     delim = ",",
     id = "source",
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
 
@@ -660,7 +562,6 @@ test_that("libvroom adds id column from filename for multiple files", {
     files,
     delim = ",",
     id = "source",
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
 
@@ -682,7 +583,6 @@ test_that("libvroom handles empty files in multi-file reading", {
   result <- vroom(
     files,
     delim = ",",
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
 
@@ -692,7 +592,7 @@ test_that("libvroom handles empty files in multi-file reading", {
   )
 })
 
-test_that("libvroom multi-file matches legacy parser output", {
+test_that("libvroom multi-file reads correctly", {
   dir <- withr::local_tempdir()
 
   writeLines("a,b,c\n1,foo,3.5\n4,bar,6.5", file.path(dir, "f1.csv"))
@@ -700,22 +600,15 @@ test_that("libvroom multi-file matches legacy parser output", {
 
   files <- file.path(dir, c("f1.csv", "f2.csv"))
 
-  suppressWarnings({
-    legacy <- vroom(
-      files,
-      delim = ",",
-      use_libvroom = FALSE,
-      show_col_types = FALSE
-    )
-    libvroom <- vroom(
-      files,
-      delim = ",",
-      use_libvroom = TRUE,
-      show_col_types = FALSE
-    )
-  })
+  result <- vroom(
+    files,
+    delim = ",",
+    show_col_types = FALSE
+  )
 
-  expect_equal(libvroom, legacy)
+  expect_equal(result$a, c(1, 4, NA, 7))
+  expect_equal(result$b, c("foo", "bar", "baz", "qux"))
+  expect_equal(result$c, c(3.5, 6.5, 9.5, 1.5))
 })
 
 test_that("libvroom handles col_names = FALSE", {
@@ -732,7 +625,6 @@ test_that("libvroom handles col_names = FALSE", {
       tf,
       delim = ",",
       col_names = FALSE,
-      use_libvroom = TRUE,
       show_col_types = FALSE
     )
   )
@@ -755,7 +647,6 @@ test_that("libvroom handles col_names = FALSE with header-like first row", {
       tf,
       delim = ",",
       col_names = FALSE,
-      use_libvroom = TRUE,
       show_col_types = FALSE
     )
   )
@@ -779,7 +670,6 @@ test_that("libvroom handles custom col_names as character vector", {
       tf,
       delim = ",",
       col_names = c("foo", "bar", "baz"),
-      use_libvroom = TRUE,
       show_col_types = FALSE
     )
   )
@@ -803,7 +693,6 @@ test_that("libvroom handles custom col_names with header row treated as data", {
       tf,
       delim = ",",
       col_names = c("x", "y", "z"),
-      use_libvroom = TRUE,
       show_col_types = FALSE
     )
   )
@@ -813,7 +702,7 @@ test_that("libvroom handles custom col_names with header row treated as data", {
   )
 })
 
-test_that("libvroom col_names results match legacy parser", {
+test_that("libvroom col_names works correctly", {
   tf <- tempfile(fileext = ".csv")
   on.exit(unlink(tf))
 
@@ -821,43 +710,41 @@ test_that("libvroom col_names results match legacy parser", {
   writeBin(charToRaw("a,b,c\n1,foo,3.5\n4,bar,6.5\n"), out_con)
   close(out_con)
 
-  # col_names = FALSE parity
-  legacy <- vroom(
-    tf,
-    delim = ",",
-    col_names = FALSE,
-    use_libvroom = FALSE,
-    show_col_types = FALSE
-  )
+  # col_names = FALSE
   expect_no_warning(
-    libvroom_res <- vroom(
+    res <- vroom(
       tf,
       delim = ",",
       col_names = FALSE,
-      use_libvroom = TRUE,
       show_col_types = FALSE
     )
   )
-  expect_equal(libvroom_res, legacy)
-
-  # col_names = character vector parity
-  legacy2 <- vroom(
-    tf,
-    delim = ",",
-    col_names = c("x", "y", "z"),
-    use_libvroom = FALSE,
-    show_col_types = FALSE
+  expect_equal(
+    res,
+    tibble::tibble(
+      X1 = c("a", "1", "4"),
+      X2 = c("b", "foo", "bar"),
+      X3 = c("c", "3.5", "6.5")
+    )
   )
+
+  # col_names = character vector
   expect_no_warning(
-    libvroom_res2 <- vroom(
+    res2 <- vroom(
       tf,
       delim = ",",
       col_names = c("x", "y", "z"),
-      use_libvroom = TRUE,
       show_col_types = FALSE
     )
   )
-  expect_equal(libvroom_res2, legacy2)
+  expect_equal(
+    res2,
+    tibble::tibble(
+      x = c("a", "1", "4"),
+      y = c("b", "foo", "bar"),
+      z = c("c", "3.5", "6.5")
+    )
+  )
 })
 
 test_that("libvroom handles named col_types with custom col_names", {
@@ -876,7 +763,6 @@ test_that("libvroom handles named col_types with custom col_names", {
       delim = ",",
       col_names = c("x", "y", "z"),
       col_types = cols(x = col_character()),
-      use_libvroom = TRUE,
       show_col_types = FALSE
     )
   )
@@ -901,7 +787,6 @@ test_that("libvroom handles positional col_types with col_names = FALSE", {
       delim = ",",
       col_names = FALSE,
       col_types = "idc",
-      use_libvroom = TRUE,
       show_col_types = FALSE
     )
   )
@@ -929,7 +814,6 @@ test_that("libvroom handles cols_only() with custom col_names", {
       delim = ",",
       col_names = c("x", "y", "z"),
       col_types = cols_only(x = col_integer(), z = col_character()),
-      use_libvroom = TRUE,
       show_col_types = FALSE
     )
   )
@@ -948,7 +832,6 @@ test_that("libvroom reads gzip-compressed CSV files", {
   actual <- vroom(
     vroom_example("mtcars.csv.gz"),
     delim = ",",
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
   expect_equal(actual, expected)
@@ -964,7 +847,6 @@ test_that("libvroom reads bz2-compressed CSV files", {
   actual <- vroom(
     vroom_example("mtcars.csv.bz2"),
     delim = ",",
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
   expect_equal(actual, expected)
@@ -980,7 +862,6 @@ test_that("libvroom reads xz-compressed CSV files", {
   actual <- vroom(
     vroom_example("mtcars.csv.xz"),
     delim = ",",
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
   expect_equal(actual, expected)
@@ -996,7 +877,6 @@ test_that("libvroom reads zip-compressed CSV files", {
   actual <- vroom(
     vroom_example("mtcars.csv.zip"),
     delim = ",",
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
   expect_equal(actual, expected)
@@ -1007,7 +887,6 @@ test_that("libvroom reads I() literal data", {
   actual <- vroom(
     I("a,b,c\n1,2,3\n4,5,6\n"),
     delim = ",",
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
   expect_equal(
@@ -1037,7 +916,6 @@ test_that("libvroom handles Latin-1 encoding via transcoding", {
       tf,
       delim = ",",
       locale = locale(encoding = "latin1"),
-      use_libvroom = TRUE,
       show_col_types = FALSE
     )
   )
@@ -1046,7 +924,7 @@ test_that("libvroom handles Latin-1 encoding via transcoding", {
   expect_equal(result$b, 1L)
 })
 
-test_that("libvroom Latin-1 encoding matches legacy parser", {
+test_that("libvroom Latin-1 encoding reads correctly", {
   tf <- tempfile(fileext = ".csv")
   on.exit(unlink(tf))
 
@@ -1059,22 +937,15 @@ test_that("libvroom Latin-1 encoding matches legacy parser", {
   )[[1]]
   writeBin(content_latin1, tf)
 
-  legacy <- vroom(
+  result <- vroom(
     tf,
     delim = ",",
     locale = locale(encoding = "latin1"),
-    use_libvroom = FALSE,
-    show_col_types = FALSE
-  )
-  libvroom_res <- vroom(
-    tf,
-    delim = ",",
-    locale = locale(encoding = "latin1"),
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
 
-  expect_equal(libvroom_res, legacy)
+  expect_equal(result$a, c("caf\u00e9", "na\u00efve"))
+  expect_equal(result$b, c(1L, 2L))
 })
 
 test_that("libvroom handles UTF-16 encoding via transcoding", {
@@ -1095,7 +966,6 @@ test_that("libvroom handles UTF-16 encoding via transcoding", {
       delim = ",",
       locale = locale(encoding = "UTF-16"),
       col_types = "ci",
-      use_libvroom = TRUE,
       show_col_types = FALSE
     )
   )
@@ -1110,7 +980,6 @@ test_that("libvroom reads remote CSV files", {
   actual <- vroom(
     "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv",
     delim = ",",
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
   expected <- vroom(
@@ -1135,7 +1004,6 @@ test_that("libvroom reports problems for inconsistent field count", {
     tf,
     delim = ",",
     col_types = "iii",
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
 
@@ -1157,7 +1025,6 @@ test_that("libvroom problems() returns empty tibble for clean data", {
     tf,
     delim = ",",
     col_types = "iii",
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
 
@@ -1178,7 +1045,6 @@ test_that("libvroom problems include file path", {
     tf,
     delim = ",",
     col_types = "iii",
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
 
@@ -1199,7 +1065,6 @@ test_that("libvroom problems work across multiple files", {
     files,
     delim = ",",
     col_types = "ii",
-    use_libvroom = TRUE,
     show_col_types = FALSE
   )
 
@@ -1328,7 +1193,7 @@ test_that("libvroom handles backslash in header column names", {
   )
 })
 
-test_that("libvroom backslash escape matches legacy parser", {
+test_that("libvroom backslash escape reads correctly", {
   content <- "a,b,c\nfoo\\,bar,hello\\\\world,te\\\"st\n"
 
   tf <- tempfile(fileext = ".csv")
@@ -1337,27 +1202,18 @@ test_that("libvroom backslash escape matches legacy parser", {
   writeBin(charToRaw(content), out_con)
   close(out_con)
 
-  result_libvroom <- suppressWarnings(vroom(
+  result <- suppressWarnings(vroom(
     tf,
     delim = ",",
     escape_backslash = TRUE,
     escape_double = FALSE,
     col_types = "ccc",
-    use_libvroom = TRUE,
     show_col_types = FALSE
   ))
 
-  result_legacy <- suppressWarnings(vroom(
-    tf,
-    delim = ",",
-    escape_backslash = TRUE,
-    escape_double = FALSE,
-    col_types = "ccc",
-    use_libvroom = FALSE,
-    show_col_types = FALSE
-  ))
-
-  expect_equal(result_libvroom, result_legacy)
+  expect_equal(result$a, "foo,bar")
+  expect_equal(result$b, "hello\\world")
+  expect_equal(result$c, "te\"st")
 })
 
 test_that("libvroom handles numeric types with backslash escaping", {

@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-# Benchmark script for comparing libvroom vs original vroom parser
+# Benchmark script for vroom CSV parser performance
 # Usage: Rscript libvroom_benchmark.R [output_file]
 
 library(bench)
@@ -69,16 +69,8 @@ benchmark_construction <- function(
   filename <- basename(filepath)
 
   bench::mark(
-    original = vroom(
+    vroom = vroom(
       filepath,
-      use_libvroom = FALSE,
-      num_threads = threads,
-      show_col_types = FALSE,
-      altrep = FALSE
-    ),
-    libvroom = vroom(
-      filepath,
-      use_libvroom = TRUE,
       num_threads = threads,
       show_col_types = FALSE,
       altrep = FALSE
@@ -89,34 +81,9 @@ benchmark_construction <- function(
   )
 }
 
-# Benchmark column materialization
-benchmark_materialize <- function(filepath, threads) {
-  df_orig <- vroom(
-    filepath,
-    use_libvroom = FALSE,
-    num_threads = threads,
-    show_col_types = FALSE
-  )
-  df_lib <- vroom(
-    filepath,
-    use_libvroom = TRUE,
-    num_threads = threads,
-    show_col_types = FALSE
-  )
-
-  bench::mark(
-    original_str = as.character(df_orig[[2]]),
-    libvroom_str = as.character(df_lib[[2]]),
-    original_num = as.double(df_orig[[7]]),
-    libvroom_num = as.double(df_lib[[7]]),
-    check = FALSE,
-    iterations = 5
-  )
-}
-
 # Main benchmark runner
 run_benchmarks <- function() {
-  cat("=== libvroom Performance Benchmark ===\n\n")
+  cat("=== vroom Performance Benchmark ===\n\n")
 
   # Generate test files
   files <- list(
@@ -150,25 +117,16 @@ run_benchmarks <- function() {
         {
           bm <- benchmark_construction(filepath, threads)
 
-          # Extract median times
-          orig_time <- as.numeric(bm$median[1])
-          lib_time <- as.numeric(bm$median[2])
-          speedup <- orig_time / lib_time
+          # Extract median time
+          median_time <- as.numeric(bm$median[1])
 
-          cat(sprintf(
-            "orig=%.0fms, lib=%.0fms, speedup=%.2fx\n",
-            orig_time * 1000,
-            lib_time * 1000,
-            speedup
-          ))
+          cat(sprintf("%.0fms\n", median_time * 1000))
 
           list(
             file = name,
             threads = threads,
             test = "construction",
-            original_ms = orig_time * 1000,
-            libvroom_ms = lib_time * 1000,
-            speedup = speedup
+            median_ms = median_time * 1000
           )
         },
         error = function(e) {
@@ -206,13 +164,6 @@ quick_benchmark <- function() {
     # Warm up
     invisible(vroom(
       filepath,
-      use_libvroom = FALSE,
-      num_threads = threads,
-      show_col_types = FALSE
-    ))
-    invisible(vroom(
-      filepath,
-      use_libvroom = TRUE,
       num_threads = threads,
       show_col_types = FALSE
     ))
@@ -220,13 +171,9 @@ quick_benchmark <- function() {
     # Benchmark
     bm <- benchmark_construction(filepath, threads, iterations = 5)
 
-    orig_time <- as.numeric(bm$median[1])
-    lib_time <- as.numeric(bm$median[2])
-    speedup <- orig_time / lib_time
+    median_time <- as.numeric(bm$median[1])
 
-    cat(sprintf("  Original: %.0f ms\n", orig_time * 1000))
-    cat(sprintf("  Libvroom: %.0f ms\n", lib_time * 1000))
-    cat(sprintf("  Speedup:  %.2fx\n\n", speedup))
+    cat(sprintf("  Time: %.0f ms\n\n", median_time * 1000))
   }
 }
 

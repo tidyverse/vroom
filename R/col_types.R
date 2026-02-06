@@ -411,40 +411,49 @@ vroom_enquo <- function(x) {
   x
 }
 
-vroom_select <- function(x, col_select, id) {
-  # reorder and rename columns
-  if (inherits(col_select, "quosures") || !quo_is_null(col_select)) {
-    if (inherits(col_select, "quosures")) {
-      vars <- tidyselect::vars_select(c(names(spec(x)$cols), id), !!!col_select)
-    } else {
-      vars <- tidyselect::vars_select(c(names(spec(x)$cols), id), !!col_select)
-    }
-    if (!is.null(id) && !id %in% vars) {
-      names(id) <- id
-      vars <- c(id, vars)
-    }
-    # This can't be just names(x) as we need to have skipped
-    # names as well to pass to vars_select()
-    x <- x[vars]
-    names(x) <- names(vars)
-  }
-  x
-}
-
 apply_libvroom_col_select <- function(out, col_select, id = NULL) {
   if (inherits(col_select, "quosures") || !quo_is_null(col_select)) {
-    all_names <- c(names(out), id)
-    if (inherits(col_select, "quosures")) {
-      vars <- tidyselect::vars_select(all_names, !!!col_select)
+    all_names <- names(out)
+
+    # For selection purposes, we need special handling when an id column
+    # is present. Positional indices should reference only the non-id
+    # (data) columns, but the id column should still be selectable by name.
+    if (!is.null(id) && id %in% all_names) {
+      # Build a selection namespace where positional indices map to data
+      # columns only (excluding the id column), but the id column is
+      # still available by name.
+      non_id_names <- setdiff(all_names, id)
+
+      if (inherits(col_select, "quosures")) {
+        vars <- tryCatch(
+          tidyselect::vars_select(non_id_names, !!!col_select),
+          error = function(e) {
+            # Fall back to using all names if column wasn't found
+            tidyselect::vars_select(all_names, !!!col_select)
+          }
+        )
+      } else {
+        vars <- tryCatch(
+          tidyselect::vars_select(non_id_names, !!col_select),
+          error = function(e) {
+            tidyselect::vars_select(all_names, !!col_select)
+          }
+        )
+      }
+
+      # Always include the id column
+      if (!id %in% vars) {
+        names(id) <- id
+        vars <- c(id, vars)
+      }
     } else {
-      vars <- tidyselect::vars_select(all_names, !!col_select)
+      if (inherits(col_select, "quosures")) {
+        vars <- tidyselect::vars_select(all_names, !!!col_select)
+      } else {
+        vars <- tidyselect::vars_select(all_names, !!col_select)
+      }
     }
-    # Match legacy vroom_select(): auto-include the id column even
-    # when the user's col_select expression doesn't mention it.
-    if (!is.null(id) && !id %in% vars) {
-      names(id) <- id
-      vars <- c(id, vars)
-    }
+
     out <- out[vars]
     names(out) <- names(vars)
   }
@@ -480,18 +489,26 @@ filter_cols_only_and_skip <- function(
     inherits(resolved_spec$default, "collector_skip")
 
   if (is_cols_only) {
-    # cols_only(): keep only named columns
-    keep_cols <- names(out) %in% col_type_names
+    # cols_only(): keep only named columns that are not skipped
+    keep_names <- col_type_names[col_types_int != -1L]
+    keep_cols <- names(out) %in% keep_names
     out <- out[, keep_cols, drop = FALSE]
-  } else if (length(col_types_int) > 0 && !is_cols_only) {
-    # Positional skip (compact notation like "i_d"): drop skip columns
+  } else if (length(col_types_int) > 0) {
     skip_mask <- col_types_int == -1L
     if (any(skip_mask)) {
-      keep <- !skip_mask[seq_len(min(length(skip_mask), ncol(out)))]
-      if (length(keep) < ncol(out)) {
-        keep <- c(keep, rep(TRUE, ncol(out) - length(keep)))
+      if (length(col_type_names) > 0) {
+        # Named skip: drop columns by name
+        skip_names <- col_type_names[skip_mask]
+        keep <- !(names(out) %in% skip_names)
+        out <- out[, keep, drop = FALSE]
+      } else {
+        # Positional skip (compact notation like "i_d"): drop by position
+        keep <- !skip_mask[seq_len(min(length(skip_mask), ncol(out)))]
+        if (length(keep) < ncol(out)) {
+          keep <- c(keep, rep(TRUE, ncol(out) - length(keep)))
+        }
+        out <- out[, keep, drop = FALSE]
       }
-      out <- out[, keep, drop = FALSE]
     }
   }
 
@@ -511,26 +528,6 @@ finalize_libvroom_result <- function(out, problems = NULL) {
     attr(out, "problems") <- tibble::as_tibble(problems)
   }
   class(out) <- c("spec_tbl_df", class(out))
-  out
-}
-
-postprocess_result <- function(
-  out,
-  col_select,
-  id,
-  .name_repair,
-  has_col_types,
-  show_col_types,
-  locale
-) {
-  out <- tibble::as_tibble(out, .name_repair = .name_repair)
-  out <- vroom_select(out, col_select, id)
-  class(out) <- c("spec_tbl_df", class(out))
-
-  if (should_show_col_types(has_col_types, show_col_types)) {
-    show_col_types(out, locale)
-  }
-
   out
 }
 

@@ -1,9 +1,12 @@
 #pragma once
 
-#include <cpp11/logicals.hpp>
+#include <cpp11/R.hpp>
+#include <cstring>
+#include <string>
 
-#include "parallel.h"
-#include "vroom_vec.h"
+#include "LocaleInfo.h"
+
+// --- Logical parsing (from former vroom_lgl.h) ---
 
 const static char* const true_values[] = {
     "T", "t", "True", "TRUE", "true", (char*)NULL};
@@ -46,32 +49,14 @@ parse_logical(const char* start, const char* end, bool strict = true) {
   return NA_LOGICAL;
 }
 
-inline cpp11::logicals read_lgl(vroom_vec_info* info) {
+// --- Double parsing (from former vroom_dbl.cc) ---
 
-  R_xlen_t n = info->column->size();
+double bsd_strtod(const char* begin, const char* end, const char decimalMark);
 
-  cpp11::writable::logicals out(n);
+// --- Number parsing (from former vroom_num.cc) ---
 
-  parallel_for(
-      n,
-      [&](size_t start, size_t end, size_t) {
-        R_xlen_t i = start;
-        auto col = info->column->slice(start, end);
-        for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-          out[i++] = parse_value<int>(
-              b,
-              col,
-              [&](const char* begin, const char* end) -> int {
-                return parse_logical(begin, end, false);
-              },
-              info->errors,
-              "1/0/T/F/TRUE/FALSE",
-              *info->na);
-        }
-      },
-      info->num_threads);
-
-  info->errors->warn_for_errors();
-
-  return out;
-}
+double parse_num(
+    const char* start,
+    const char* end,
+    const LocaleInfo& loc,
+    bool strict = false);

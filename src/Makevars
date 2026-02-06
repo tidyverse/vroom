@@ -2,14 +2,10 @@ PKG_CPPFLAGS=-Imio/include -DWIN32_LEAN_AND_MEAN -Ispdlog/include -DFMT_HEADER_O
 	-Ilibvroom -Ilibvroom/include -Ilibvroom/third_party -Ilibvroom/third_party/simdutf -Ilibvroom/src
 PKG_LIBS=-lz
 
-# vroom's own source files (old + new)
+# vroom's own source files
 VROOM_SOURCES = Iconv.cpp LocaleInfo.cpp altrep.cc cpp11.cpp \
-	delimited_index.cc delimited_index_connection.cc \
-	fixed_width_index_connection.cc gen.cc grisu3.c guess_type.cc \
-	iconv_file.cc index_collection.cc vroom.cc vroom_big_int.cc \
-	vroom_chr.cc vroom_date.cc vroom_dbl.cc vroom_dttm.cc \
-	vroom_errors.cpp vroom_fct.cc vroom_fwf.cc vroom_int.cc \
-	vroom_num.cc vroom_rle.cc vroom_time.cc vroom_write.cc \
+	gen.cc grisu3.c guess_type.cc \
+	iconv_file.cc parse_helpers.cc vroom_utils.cpp vroom_write.cc \
 	r_abort.cc
 
 # All libvroom source files (excluding cli.cpp)
@@ -59,12 +55,8 @@ HIGHWAY_SOURCES = libvroom/third_party/hwy/aligned_allocator.cc \
 
 OBJECTS = arrow_to_r.o libvroom_helpers.o vroom_arrow_chr.o vroom_dict_chr.o vroom_new.o vroom_arrow.o vroom_fwf_libvroom.o vroom_lines_libvroom.o \
 	Iconv.o LocaleInfo.o altrep.o cpp11.o \
-	delimited_index.o delimited_index_connection.o \
-	fixed_width_index_connection.o gen.o grisu3.o guess_type.o \
-	iconv_file.o index_collection.o vroom.o vroom_big_int.o \
-	vroom_chr.o vroom_date.o vroom_dbl.o vroom_dttm.o \
-	vroom_errors.o vroom_fct.o vroom_fwf.o vroom_int.o \
-	vroom_num.o vroom_rle.o vroom_time.o vroom_write.o \
+	gen.o grisu3.o guess_type.o \
+	iconv_file.o parse_helpers.o vroom_utils.o vroom_write.o \
 	r_abort.o \
 	libvroom/src/cache/index_cache.o \
 	libvroom/src/columns/column_builder.o \

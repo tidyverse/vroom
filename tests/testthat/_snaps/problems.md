@@ -11,17 +11,7 @@
       # A tibble: 1 x 3
         a     b     c    
         <chr> <chr> <chr>
-      1 x     y     z,,  
-
-# can promote vroom parse warning to error
-
-    Code
-      withCallingHandlers(expr = make_warning(), vroom_parse_issue = function(cnd) {
-        abort("oh no")
-      })
-    Condition
-      Error:
-      ! oh no
+      1 x     y     z    
 
 # emits an error message if provided incorrect input
 

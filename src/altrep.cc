@@ -1,78 +1,7 @@
 #include "altrep.h"
-#include "vroom_big_int.h"
-#include "vroom_chr.h"
-#include "vroom_date.h"
-#include "vroom_dbl.h"
-#include "vroom_dttm.h"
-#include "vroom_fct.h"
-#include "vroom_int.h"
-#include "vroom_lgl.h"
-#include "vroom_num.h"
-#include "vroom_time.h"
 
 #include <cpp11/sexp.hpp>
 #include <sstream>
-#include <thread>
-
-[[cpp11::register]] void force_materialization(SEXP x) {
-  // Note: vroom_lgl has no ALTREP implementation, so not included
-  if (R_altrep_inherits(x, vroom_chr::class_t)) {
-    vroom_chr::Materialize(x);
-  } else if (R_altrep_inherits(x, vroom_date::class_t)) {
-    vroom_date::Materialize(x);
-  } else if (R_altrep_inherits(x, vroom_dbl::class_t)) {
-    vroom_dbl::Materialize(x);
-  } else if (R_altrep_inherits(x, vroom_dttm::class_t)) {
-    vroom_dttm::Materialize(x);
-  } else if (R_altrep_inherits(x, vroom_fct::class_t)) {
-    vroom_fct::Materialize(x);
-  } else if (R_altrep_inherits(x, vroom_int::class_t)) {
-    vroom_int::Materialize(x);
-  } else if (R_altrep_inherits(x, vroom_num::class_t)) {
-    vroom_num::Materialize(x);
-  } else if (R_altrep_inherits(x, vroom_time::class_t)) {
-    vroom_time::Materialize(x);
-  } else if (R_altrep_inherits(x, vroom_big_int::class_t)) {
-    vroom_big_int::Materialize(x);
-  }
-}
-
-bool vroom_altrep(SEXP x) {
-  return R_altrep_inherits(x, vroom_chr::class_t) ||
-         R_altrep_inherits(x, vroom_date::class_t) ||
-         R_altrep_inherits(x, vroom_dbl::class_t) ||
-         R_altrep_inherits(x, vroom_dttm::class_t) ||
-         R_altrep_inherits(x, vroom_fct::class_t) ||
-         R_altrep_inherits(x, vroom_int::class_t) ||
-         // R_altrep_inherits(x, vroom_lgl::class_t) ||
-         R_altrep_inherits(x, vroom_num::class_t) ||
-         R_altrep_inherits(x, vroom_time::class_t) ||
-         R_altrep_inherits(x, vroom_big_int::class_t);
-}
-
-[[cpp11::register]] SEXP vroom_materialize(SEXP x, bool replace) {
-  for (R_xlen_t col = 0; col < Rf_xlength(x); ++col) {
-    SEXP elt = VECTOR_ELT(x, col);
-    if (vroom_altrep(elt)) {
-      force_materialization(elt);
-    }
-  }
-
-  // If replace, replace the altrep vectors with their materialized
-  // vectors
-  if (replace) {
-    for (R_xlen_t col = 0; col < Rf_xlength(x); ++col) {
-      SEXP elt = PROTECT(VECTOR_ELT(x, col));
-      if (vroom_altrep(elt)) {
-        SET_VECTOR_ELT(x, col, R_altrep_data2(elt));
-        R_set_altrep_data2(elt, R_NilValue);
-      }
-      UNPROTECT(1);
-    }
-  }
-
-  return x;
-}
 
 [[cpp11::register]] SEXP vroom_convert(SEXP x) {
   SEXP out = PROTECT(Rf_allocVector(VECSXP, Rf_xlength(x)));
@@ -127,6 +56,52 @@ bool vroom_altrep(SEXP x) {
   }
   UNPROTECT(1);
   return out;
+}
+
+// Force in-place materialization of any ALTREP columns in a data frame,
+// without creating copies. For numeric types, accessing the data pointer
+// triggers materialization. For strings, we touch each element.
+[[cpp11::register]] SEXP vroom_materialize(SEXP x, bool replace) {
+  for (R_xlen_t col = 0; col < Rf_xlength(x); ++col) {
+    SEXP elt = VECTOR_ELT(x, col);
+    if (ALTREP(elt)) {
+      R_xlen_t n = Rf_xlength(elt);
+      switch (TYPEOF(elt)) {
+      case LGLSXP:
+        LOGICAL(elt);
+        break;
+      case INTSXP:
+        INTEGER(elt);
+        break;
+      case REALSXP:
+        REAL(elt);
+        break;
+      case STRSXP:
+        // STRING_PTR_RO triggers full materialization for STRSXP ALTREP
+        STRING_PTR_RO(elt);
+        break;
+      default:
+        // For other types, access each element to force materialization
+        for (R_xlen_t i = 0; i < n; ++i) {
+          VECTOR_ELT(elt, i);
+        }
+        break;
+      }
+    }
+  }
+
+  if (replace) {
+    for (R_xlen_t col = 0; col < Rf_xlength(x); ++col) {
+      SEXP elt = PROTECT(VECTOR_ELT(x, col));
+      if (ALTREP(elt) && R_altrep_data2(elt) != R_NilValue) {
+        SET_VECTOR_ELT(x, col, R_altrep_data2(elt));
+        R_set_altrep_data2(elt, R_NilValue);
+      }
+      UNPROTECT(1);
+    }
+  }
+
+  return x;
 }
 
 [[cpp11::register]] std::string vroom_str_(const cpp11::sexp& x) {

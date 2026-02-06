@@ -1,5 +1,17 @@
-#include "vroom_dbl.h"
-#include <ctype.h> /* for tolower */
+#include "parse_helpers.h"
+#include "utils.h"
+
+#include <ctype.h>
+#include <cmath>
+#include <cerrno>
+#include <climits>
+#include <cstdlib>
+
+using namespace vroom;
+
+// ============================================================================
+// bsd_strtod — from former vroom_dbl.cc
+// ============================================================================
 
 /*
     An STL iterator-based string to floating point number conversion.
@@ -7,9 +19,8 @@
     which is based on Berkeley UNIX.
     This function and this function only is BSD license.
 
-    https://retrobsd.googlecode.com/svn/stable/vroom_time.h|31 col 32| for
-   (const autosrc str : info->column.slice(start, end)) {/libc/stdlib/strtod.c
-   */
+    https://retrobsd.googlecode.com/svn/stable/libc/stdlib/strtod.c
+ */
 double bsd_strtod(const char* begin, const char* end, const char decimalMark) {
   if (begin == end) {
     return NA_REAL;
@@ -59,20 +70,6 @@ double bsd_strtod(const char* begin, const char* end, const char decimalMark) {
       1e128,
       1e256,
   };
-#if 0
-        static double powersOf2[] = {
-                2, 4, 16, 256, 65536, 4.294967296e9, 1.8446744073709551616e19,
-                //3.4028236692093846346e38, 1.1579208923731619542e77, 1.3407807929942597099e154,
-        };
-        static double powersOf8[] = {
-                8, 64, 4096, 2.81474976710656e14, 7.9228162514264337593e28,
-                //6.2771017353866807638e57, 3.9402006196394479212e115, 1.5525180923007089351e231,
-        };
-        static double powersOf16[] = {
-                16, 256, 65536, 1.8446744073709551616e19,
-                //3.4028236692093846346e38, 1.1579208923731619542e77, 1.3407807929942597099e154,
-        };
-#endif
 
   /*
    * check for a sign.
@@ -203,41 +200,137 @@ done:
   return sign ? -fraction : fraction;
 }
 
-cpp11::doubles read_dbl(vroom_vec_info* info) {
+// ============================================================================
+// parse_num — from former vroom_num.cc
+// ============================================================================
 
-  R_xlen_t n = info->column->size();
+enum NumberState { STATE_INIT, STATE_LHS, STATE_RHS, STATE_EXP, STATE_FIN };
 
-  cpp11::writable::doubles out(n);
-  const char decimalMark = info->locale->decimalMark_[0];
+// First and last are updated to point to first/last successfully parsed
+// character
+template <typename Iterator, typename Attr>
+static bool parseNumber(
+    const std::string& decimalMark,
+    const std::string& groupingMark,
+    Iterator& first,
+    Iterator& last,
+    Attr& res) {
 
-  try {
-    parallel_for(
-        n,
-        [&](size_t start, size_t end, size_t) {
-          R_xlen_t i = start;
-          auto col = info->column->slice(start, end);
-          for (auto b = col->begin(), e = col->end(); b != e; ++b) {
-            out[i++] = parse_value<double>(
-                b,
-                col,
-                [&](const char* begin, const char* end) -> double {
-                  return bsd_strtod(begin, end, decimalMark);
-                },
-                info->errors,
-                "a double",
-                *info->na);
-          }
-        },
-        info->num_threads);
-  } catch (const std::runtime_error& e) {
-    Rf_errorcall(R_NilValue, "%s", e.what());
+  Iterator cur = first;
+
+  // Advance to first non-character
+  for (; cur != last; ++cur) {
+    if (*cur == '-' || matches(cur, last, decimalMark) ||
+        (*cur >= '0' && *cur <= '9'))
+      break;
   }
 
-  info->errors->warn_for_errors();
+  if (cur == last) {
+    return false;
+  } else { // Move first to start of number
+    first = cur;
+  }
 
-  return out;
+  double sum = 0, denom = 1, exponent = 0;
+  NumberState state = STATE_INIT;
+  bool seenNumber = false, exp_init = true;
+  double sign = 1.0, exp_sign = 1.0;
+
+  for (; cur < last; ++cur) {
+    if (state == STATE_FIN)
+      break;
+
+    switch (state) {
+    case STATE_INIT:
+      if (*cur == '-') {
+        state = STATE_LHS;
+        sign = -1.0;
+      } else if (matches(cur, last, decimalMark)) {
+        cur += decimalMark.size() - 1;
+        state = STATE_RHS;
+      } else if (*cur >= '0' && *cur <= '9') {
+        seenNumber = true;
+        state = STATE_LHS;
+        sum = *cur - '0';
+      } else {
+        goto end;
+      }
+      break;
+    case STATE_LHS:
+      if (matches(cur, last, groupingMark)) {
+        cur += groupingMark.size() - 1;
+      } else if (matches(cur, last, decimalMark)) {
+        cur += decimalMark.size() - 1;
+        state = STATE_RHS;
+      } else if (seenNumber && (*cur == 'e' || *cur == 'E')) {
+        state = STATE_EXP;
+      } else if (*cur >= '0' && *cur <= '9') {
+        seenNumber = true;
+        sum *= 10;
+        sum += *cur - '0';
+      } else {
+        goto end;
+      }
+      break;
+    case STATE_RHS:
+      if (matches(cur, last, groupingMark)) {
+        cur += groupingMark.size() - 1;
+      } else if (seenNumber && (*cur == 'e' || *cur == 'E')) {
+        state = STATE_EXP;
+      } else if (*cur >= '0' && *cur <= '9') {
+        seenNumber = true;
+        denom *= 10;
+        sum += (*cur - '0') / denom;
+      } else {
+        goto end;
+      }
+      break;
+    case STATE_EXP:
+      // negative/positive sign only allowed immediately after 'e' or 'E'
+      if (*cur == '-' && exp_init) {
+        exp_sign = -1.0;
+        exp_init = false;
+      } else if (*cur == '+' && exp_init) {
+        // sign defaults to positive
+        exp_init = false;
+      } else if (*cur >= '0' && *cur <= '9') {
+        exponent *= 10.0;
+        exponent += *cur - '0';
+        exp_init = false;
+      } else {
+        goto end;
+      }
+      break;
+    case STATE_FIN:
+      goto end;
+    }
+  }
+
+end:
+
+  // Set last to point to final character used
+  last = cur;
+
+  res = sign * sum;
+
+  // If the number was in scientific notation, multiply by 10^exponent
+  if (exponent) {
+    res *= pow(10.0, exp_sign * exponent);
+  }
+
+  return seenNumber;
 }
 
-R_altrep_class_t vroom_dbl::class_t;
+double parse_num(
+    const char* start, const char* end, const LocaleInfo& loc, bool strict) {
+  double ret;
+  auto start_p = start;
+  auto end_p = end;
+  bool ok =
+      parseNumber(loc.decimalMark_, loc.groupingMark_, start_p, end_p, ret);
+  if (ok && (!strict || (start_p == start && end_p == end))) {
+    return ret;
+  }
 
-void init_vroom_dbl(DllInfo* dll) { vroom_dbl::Init(dll); }
+  return NA_REAL;
+}

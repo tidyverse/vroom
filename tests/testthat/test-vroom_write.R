@@ -41,6 +41,7 @@ test_that("read_delim/csv/tsv and write_delim round trip special chars", {
   output <- tibble::as_tibble(x)
   output_space <- vroom(
     I(vroom_format(output, delim = " ")),
+    delim = " ",
     trim_ws = FALSE,
     progress = FALSE,
     col_types = list()

@@ -4,7 +4,7 @@
       vroom(tf, col_types = list())
     Condition
       Error:
-      ! '<tempfile>' does not exist.
+      ! Failed to open file: Failed to open file: <tempfile>
 
 ---
 
@@ -12,14 +12,14 @@
       vroom("does-not-exist.csv", col_types = list())
     Condition
       Error:
-      ! 'does-not-exist.csv' does not exist in current working directory: '<workdir>'.
+      ! Failed to open file: Failed to open file: does-not-exist.csv
 
 # vroom errors via https on non-gz file
 
     Code
       vroom(url, col_types = list())
     Condition
-      Error:
+      Error in `vroom()`:
       ! Reading from remote ".bz2" compressed files is not supported.
       i Download the file locally first.
 
@@ -63,8 +63,9 @@
       vroom(c(input, input), locale = locale(encoding = "UTF-16"))
     Condition
       Error in `vroom()`:
-      ! Encoding "UTF-16" is only supported when reading a single input.
-      i `file` has length 2.
+      ! Reading multiple files with encoding "UTF-16" is not supported.
+      i Only ASCII-compatible encodings work with multiple files.
+      i Try reading each file separately.
 
 # writing to .zip without archive package fails informatively
 

@@ -4,11 +4,10 @@
 #include "DateTime.h"
 #include "DateTimeParser.h"
 #include "LocaleInfo.h"
-#include "r_utils.h"
+#include "parse_helpers.h"
+#include "utils.h"
 
-#include "vroom_dbl.h"
-#include "vroom_lgl.h"
-#include "vroom_num.h"
+using namespace vroom;
 
 typedef bool (*canParseFun)(const std::string&, LocaleInfo* pLocale);
 
@@ -47,8 +46,7 @@ bool isNumber(const std::string& x, LocaleInfo* pLocale) {
       !matches(x.data() + 1, x.data() + x.size(), pLocale->decimalMark_))
     return false;
 
-  auto str = vroom::string(x);
-  auto num = parse_num(str.begin(), str.end(), *pLocale, true);
+  auto num = parse_num(x.data(), x.data() + x.size(), *pLocale, true);
 
   return !ISNA(num);
 }

@@ -24,24 +24,12 @@ problems <- function(x = .Last.value, lazy = FALSE) {
     ))
   }
 
-  if (!isTRUE(lazy)) {
-    vroom_materialize(x, replace = FALSE)
-  }
-
   probs <- attr(x, "problems")
   if (is.data.frame(probs)) {
-    # libvroom backend stores problems as a tibble directly
     return(tibble::as_tibble(probs))
   }
-  if (typeof(probs) != "externalptr") {
-    cli::cli_abort(c(
-      "The {.arg x} argument of {.fun vroom::problems} must be a data frame created by vroom:",
-      x = "{.arg x} seems to have been created with something else, maybe {.pkg readr}?"
-    ))
-  }
-  probs <- vroom_errors_(probs)
-  probs <- probs[!duplicated(probs), ]
-  probs <- probs[order(probs$file, probs$row, probs$col), ]
-
-  tibble::as_tibble(probs)
+  cli::cli_abort(c(
+    "The {.arg x} argument of {.fun vroom::problems} must be a data frame created by vroom:",
+    x = "{.arg x} seems to have been created with something else, maybe {.pkg readr}?"
+  ))
 }
