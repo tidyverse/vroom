@@ -125,12 +125,6 @@ test_that("vroom escapes backslashes", {
 })
 
 test_that("vroom ignores leading whitespace", {
-  # libvroom treats the first line as the header; it does not skip leading
-
-  # blank/whitespace-only lines to find the header row.
-  skip(
-    "libvroom does not skip leading blank/whitespace lines before the header"
-  )
   test_vroom(
     '\n\n   \t \t\n  \n\na,b,c\n1,2,3\n',
     delim = ",",
@@ -139,11 +133,6 @@ test_that("vroom ignores leading whitespace", {
 })
 
 test_that("vroom ignores comments", {
-  # libvroom treats the first line as the header; leading blank/whitespace-only
-  # lines before a comment + header are not skipped.
-  skip(
-    "libvroom does not skip leading blank/whitespace lines before comments and header"
-  )
   test_vroom(
     '\n\n \t #a,b,c\na,b,c\n1,2,3\n',
     delim = ",",

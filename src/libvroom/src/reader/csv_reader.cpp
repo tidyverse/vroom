@@ -408,33 +408,60 @@ struct CsvReader::Impl {
   }
 };
 
-// Skip leading comment lines in the data. Returns offset past all leading comment lines.
-// A comment line starts with the comment character (at column 0) and ends at newline.
-static size_t skip_leading_comment_lines(const char* data, size_t size, char comment_char) {
-  if (comment_char == '\0' || size == 0) {
-    return 0;
-  }
+// Skip leading blank/whitespace-only lines and comment lines before the header.
+// A blank line contains only whitespace (space, tab) and a newline.
+// A comment line has optional leading whitespace followed by the comment character.
+// This matches the legacy vroom behavior in find_first_line() / is_blank_or_comment_line().
+static size_t skip_leading_blank_and_comment_lines(
+    const char* data, size_t size, char comment_char, bool skip_empty_rows) {
+  if (size == 0) return 0;
 
   size_t offset = 0;
   while (offset < size) {
-    // Check if current line starts with comment char
-    if (data[offset] != comment_char) {
-      break; // Not a comment line, stop
+    size_t line_start = offset;
+
+    // Skip leading whitespace on this line
+    while (offset < size && (data[offset] == ' ' || data[offset] == '\t')) {
+      offset++;
     }
 
-    // Skip to end of this comment line (handle \n, \r\n, and bare \r)
-    while (offset < size && data[offset] != '\n' && data[offset] != '\r') {
-      offset++;
+    if (offset >= size) {
+      // Reached end of data while scanning whitespace
+      // If skip_empty_rows is false, rewind — this isn't a blank "line" to skip
+      return skip_empty_rows ? offset : line_start;
     }
-    // Skip past the line ending
-    if (offset < size && data[offset] == '\r') {
-      offset++;
-      if (offset < size && data[offset] == '\n') {
-        offset++; // CRLF
+
+    bool is_blank = (data[offset] == '\n' || data[offset] == '\r');
+    bool is_comment = (comment_char != '\0' && data[offset] == comment_char);
+
+    if (is_blank && skip_empty_rows) {
+      // Whitespace-only line — skip past line ending
+      if (data[offset] == '\r') {
+        offset++;
+        if (offset < size && data[offset] == '\n') offset++;
+      } else {
+        offset++;
       }
-    } else if (offset < size && data[offset] == '\n') {
-      offset++;
+      continue;
     }
+
+    if (is_comment) {
+      // Comment line — skip to end of line
+      while (offset < size && data[offset] != '\n' && data[offset] != '\r') {
+        offset++;
+      }
+      if (offset < size && data[offset] == '\r') {
+        offset++;
+        if (offset < size && data[offset] == '\n') offset++;
+      } else if (offset < size && data[offset] == '\n') {
+        offset++;
+      }
+      continue;
+    }
+
+    // Non-blank, non-comment line — stop; rewind to line_start
+    // so the header parser sees the full line including any leading whitespace
+    return line_start;
   }
   return offset;
 }
@@ -540,16 +567,14 @@ Result<bool> CsvReader::open(const std::string& path) {
   ChunkFinder finder(impl_->options.separator, impl_->options.quote, impl_->options.escape_backslash);
   LineParser parser(impl_->options);
 
-  // Skip leading comment lines before header
-  size_t comment_skip = skip_leading_comment_lines(data, size, impl_->options.comment);
+  // Skip leading blank/whitespace-only lines and comment lines before header
+  size_t comment_skip = skip_leading_blank_and_comment_lines(
+      data, size, impl_->options.comment, impl_->options.skip_empty_rows);
   if (comment_skip > 0) {
     impl_->data_ptr += comment_skip;
     impl_->data_size -= comment_skip;
     data = impl_->data_ptr;
     size = impl_->data_size;
-    if (size == 0) {
-      return Result<bool>::failure("File contains only comment lines");
-    }
   }
 
   // Parse header if present
@@ -718,16 +743,14 @@ Result<bool> CsvReader::open_from_buffer(AlignedBuffer buffer) {
   ChunkFinder finder(impl_->options.separator, impl_->options.quote, impl_->options.escape_backslash);
   LineParser parser(impl_->options);
 
-  // Skip leading comment lines before header
-  size_t comment_skip = skip_leading_comment_lines(data, size, impl_->options.comment);
+  // Skip leading blank/whitespace-only lines and comment lines before header
+  size_t comment_skip = skip_leading_blank_and_comment_lines(
+      data, size, impl_->options.comment, impl_->options.skip_empty_rows);
   if (comment_skip > 0) {
     impl_->data_ptr += comment_skip;
     impl_->data_size -= comment_skip;
     data = impl_->data_ptr;
     size = impl_->data_size;
-    if (size == 0) {
-      return Result<bool>::failure("File contains only comment lines");
-    }
   }
 
   // Parse header if present
