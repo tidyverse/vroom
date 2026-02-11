@@ -268,6 +268,14 @@ static std::vector<DataType> infer_fwf_types(
         while (offset < size && data[offset] != '\n' && data[offset] != '\r') {
           offset++;
         }
+        if (offset < size && data[offset] == '\r') {
+          offset++;
+          if (offset < size && data[offset] == '\n') {
+            offset++;
+          }
+        } else if (offset < size && data[offset] == '\n') {
+          offset++;
+        }
         continue;
       }
       break;
