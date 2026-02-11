@@ -545,12 +545,12 @@ vroom <- function(
       # Add id column if requested
       if (!is.null(id)) {
         file_path <- original_path
+        nr <- nrow(res$data)
+        rle_input <- stats::setNames(as.integer(nr), file_path)
+        id_col <- vroom_rle_make(rle_input)
         res$data <- cbind(
           stats::setNames(
-            data.frame(
-              rep(file_path, nrow(res$data)),
-              stringsAsFactors = FALSE
-            ),
+            data.frame(id_col, stringsAsFactors = FALSE),
             id
           ),
           res$data

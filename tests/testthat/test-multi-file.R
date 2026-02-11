@@ -219,3 +219,46 @@ test_that("vroom works for indxes that span file boundries (#383)", {
   idx <- c(c(34, 33), sample(NROW(x), size = 25, replace = T))
   expect_equal(x[idx, 5, drop = TRUE], y[idx, 4])
 })
+
+test_that("id column uses vroom_rle Altrep for single file", {
+  res <- vroom(vroom_example("mtcars.csv"), id = "filename", col_types = list())
+  expect_true(grepl("altrep:true", vroom_str_(res$filename)))
+  expect_true(all(res$filename == vroom_example("mtcars.csv")))
+})
+
+test_that("id column uses vroom_rle Altrep for multiple files", {
+  dir <- withr::local_tempdir()
+
+  splits <- split(mtcars, mtcars$cyl)
+  for (i in seq_along(splits)) {
+    vroom_write(
+      splits[[i]],
+      file.path(dir, paste0("mtcars_", names(splits)[[i]], ".tsv")),
+      delim = "\t"
+    )
+  }
+
+  files <- list.files(dir, full.names = TRUE)
+
+  res <- vroom(files, id = "filename", col_types = list())
+
+  # Verify values are correct
+  filenames <- paste0(
+    "mtcars_",
+    rep(names(splits), vapply(splits, nrow, integer(1))),
+    ".tsv"
+  )
+  expect_equal(basename(res$filename), filenames)
+})
+
+test_that("id column materializes correctly when accessed", {
+  res <- vroom(vroom_example("mtcars.csv"), id = "filename", col_types = list())
+
+  # Element access should work without materialization
+  expect_equal(res$filename[[1]], vroom_example("mtcars.csv"))
+
+  # Full materialization via as.character should also work
+  materialized <- as.character(res$filename)
+  expect_equal(length(materialized), nrow(res))
+  expect_true(all(materialized == vroom_example("mtcars.csv")))
+})

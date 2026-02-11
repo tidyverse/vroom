@@ -75,6 +75,13 @@ extern "C" SEXP _vroom_vroom_libvroom_(SEXP input, SEXP delim, SEXP quote, SEXP 
     return cpp11::as_sexp(vroom_libvroom_(cpp11::as_cpp<cpp11::decay_t<SEXP>>(input), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(delim), cpp11::as_cpp<cpp11::decay_t<char>>(quote), cpp11::as_cpp<cpp11::decay_t<bool>>(has_header), cpp11::as_cpp<cpp11::decay_t<int>>(skip), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(comment), cpp11::as_cpp<cpp11::decay_t<bool>>(skip_empty_rows), cpp11::as_cpp<cpp11::decay_t<bool>>(trim_ws), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(na_values), cpp11::as_cpp<cpp11::decay_t<int>>(num_threads), cpp11::as_cpp<cpp11::decay_t<bool>>(strings_as_factors), cpp11::as_cpp<cpp11::decay_t<bool>>(use_altrep), cpp11::as_cpp<cpp11::decay_t<const std::vector<int>&>>(col_types), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(col_type_names), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(col_formats), cpp11::as_cpp<cpp11::decay_t<int>>(default_col_type), cpp11::as_cpp<cpp11::decay_t<bool>>(escape_backslash), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(locale_mon_ab), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(locale_mon), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(locale_day_ab), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(locale_am_pm), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(locale_date_format), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(locale_time_format), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(locale_decimal_mark), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(locale_tz), cpp11::as_cpp<cpp11::decay_t<int>>(guess_max)));
   END_CPP11
 }
+// vroom_rle.cc
+SEXP vroom_rle_make(cpp11::integers input);
+extern "C" SEXP _vroom_vroom_rle_make(SEXP input) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(vroom_rle_make(cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(input)));
+  END_CPP11
+}
 // vroom_utils.cpp
 bool has_trailing_newline(const cpp11::strings& filename);
 extern "C" SEXP _vroom_has_trailing_newline(SEXP filename) {
@@ -158,6 +165,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vroom_vroom_libvroom_fwf_",     (DL_FUNC) &_vroom_vroom_libvroom_fwf_,     13},
     {"_vroom_vroom_lines_libvroom_",   (DL_FUNC) &_vroom_vroom_lines_libvroom_,    7},
     {"_vroom_vroom_materialize",       (DL_FUNC) &_vroom_vroom_materialize,        2},
+    {"_vroom_vroom_rle_make",          (DL_FUNC) &_vroom_vroom_rle_make,           1},
     {"_vroom_vroom_str_",              (DL_FUNC) &_vroom_vroom_str_,               1},
     {"_vroom_vroom_write_",            (DL_FUNC) &_vroom_vroom_write_,            11},
     {"_vroom_vroom_write_connection_", (DL_FUNC) &_vroom_vroom_write_connection_, 12},
@@ -168,11 +176,13 @@ static const R_CallMethodDef CallEntries[] = {
 
 void init_vroom_arrow_chr(DllInfo* dll);
 void init_vroom_dict_chr(DllInfo* dll);
+void init_vroom_rle(DllInfo* dll);
 
 extern "C" attribute_visible void R_init_vroom(DllInfo* dll){
   R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
   init_vroom_arrow_chr(dll);
   init_vroom_dict_chr(dll);
+  init_vroom_rle(dll);
   R_forceSymbols(dll, TRUE);
 }
