@@ -403,7 +403,7 @@ void vroom_write_out(
 
   // Wait for the last writing to finish
   if (write_fut.valid()) {
-    write_fut.get();
+    static_cast<void>(write_fut.get());
     if (progress) {
       pb->update(1);
     }
