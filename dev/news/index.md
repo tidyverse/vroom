@@ -2,6 +2,9 @@
 
 ## vroom (development version)
 
+- Internal changes requested by CRAN to remove non-API calls to
+  `Rf_findVarInFrame` and `R_NamespaceRegistry`.
+
 ## vroom 1.7.0
 
 CRAN release: 2026-01-27
