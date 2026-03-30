@@ -1,11 +1,9 @@
-This minor release is at the request of CRAN, but also incorporates new features and bug fixes. The specific request from CRAN:
+This patch release (version 1.7.1) is at the request of CRAN and is associated with a deadline of 2026-04-13:
 
-> Specifically, please see the WARNING in the compiled code check about
-using non-API entry points which may be removed soon. 
->
-> Please correct before 2026-02-01 to safely retain your package on CRAN.
+* Removing use of  `Rf_findVarInFrame` and `R_NamespaceRegistry`
+* Preparing for compatibility with clang 22
 
-vroom takes the recommended approach to discontinuing the use of ‘ATTRIB’, ‘SETLENGTH’, ‘SET_TRUELENGTH’.
+The results below pertain to the recent minor release (version 1.7.0 on 2026-01-27). I did not rerun reverse dependency checks given the internal nature of the changes.
 
 ## revdepcheck results
 
