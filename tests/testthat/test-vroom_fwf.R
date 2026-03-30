@@ -464,7 +464,8 @@ test_that("vroom_fwf(n_max = 0) works with connection", {
   result <- vroom_fwf(
     f,
     col_positions = fwf_widths(c(2, 2, 2), c("a", "b", "c")),
-    n_max = 0
+    n_max = 0,
+    show_col_types = FALSE
   )
 
   expect_equal(
