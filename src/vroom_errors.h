@@ -91,7 +91,7 @@ public:
       have_warned_ = true;
       // it is intentional that we aren't using cpp11::package
       // https://github.com/tidyverse/vroom/commit/984a3e5e37e124feacfec3d184dbeb02eb1145c4
-      SEXP cli_ns = Rf_findVarInFrame(R_NamespaceRegistry, Rf_install("cli"));
+      SEXP cli_ns = Rf_eval(Rf_lang2(Rf_install("getNamespace"), Rf_mkString("cli")), R_BaseEnv);
       PROTECT(cli_ns);
       SEXP cli_warn = Rf_findFun(Rf_install("cli_warn"), cli_ns);
       PROTECT(cli_warn);
