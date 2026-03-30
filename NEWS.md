@@ -1,4 +1,4 @@
-# vroom (development version)
+# vroom 1.7.1
 
 * Internal changes requested by CRAN for forward compatibility with clang 22.
 
