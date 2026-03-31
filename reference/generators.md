@@ -95,33 +95,33 @@ gen_name(n)
 ``` r
 # characters
 gen_character(4)
-#> [1] "uX3Rn9MtoVUelMsC1KjUGn5z9" "P3eQ0mGW55S4wwHpdx7RH"    
-#> [3] "3AMTCdfwY6W2T"             "2QfFHPVHD"                
+#> [1] "tt0s7u2hWXhBiIaSQ63" "acdmR"               "ctNbCy3JiOr6mzgGva" 
+#> [4] "26cCjLIAiev3"       
 
 # factors
 gen_factor(4)
-#> [1] old_springbok    rapid_lizard     clever_ram       angry_hartebeest
-#> 14 Levels: powerful_chameleon clever_ram ... panicky_lion
+#> [1] bad_ape      big_puma     big_puma     panicky_newt
+#> 7 Levels: old_ram ancient_gorilla obnoxious_lizard ... cooing_hartebeest
 
 # logical
 gen_logical(4)
-#> [1] FALSE  TRUE FALSE FALSE
+#> [1]  TRUE  TRUE  TRUE FALSE
 
 # numbers
 gen_double(4)
-#> [1] -0.072655731 -0.024083976  1.584497498  0.005675627
+#> [1] -1.0985089 -0.6331782 -2.0636545  2.6489320
 gen_integer(4)
-#> [1] 1109964342 2012064061 1272386238 1652478883
+#> [1]  534125950 1574926487 1220509067  437907847
 
 # temporal data
 gen_time(4)
-#> 17:25:06
-#> 08:48:57
-#> 12:33:44
-#> 11:16:37
+#> 16:56:50
+#> 12:03:15
+#> 12:43:06
+#> 06:12:08
 gen_date(4)
-#> [1] "2018-09-08" "2003-11-17" "2014-05-30" "2009-11-16"
+#> [1] "2016-07-26" "2017-10-09" "2007-06-23" "2009-04-20"
 gen_datetime(4)
-#> [1] "2013-12-28 15:25:30 UTC" "2004-03-07 17:59:08 UTC"
-#> [3] "2006-11-16 20:23:19 UTC" "2018-10-29 20:03:46 UTC"
+#> [1] "2002-06-19 19:01:30 UTC" "2018-09-12 01:07:20 UTC"
+#> [3] "2017-07-15 01:06:36 UTC" "2015-07-08 16:56:14 UTC"
 ```
