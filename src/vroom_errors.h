@@ -91,7 +91,9 @@ public:
       have_warned_ = true;
       // it is intentional that we aren't using cpp11::package
       // https://github.com/tidyverse/vroom/commit/984a3e5e37e124feacfec3d184dbeb02eb1145c4
-      SEXP get_ns_call = Rf_lang2(Rf_install("getNamespace"), Rf_mkString("cli"));
+      SEXP cli_str = Rf_mkString("cli");
+      PROTECT(cli_str);
+      SEXP get_ns_call = Rf_lang2(Rf_install("getNamespace"), cli_str);
       PROTECT(get_ns_call);
       SEXP cli_ns = Rf_eval(get_ns_call, R_BaseEnv);
       PROTECT(cli_ns);
@@ -106,7 +108,7 @@ public:
         bullets,
         Rf_mkString("vroom_parse_issue"));
       Rf_eval(cli_warn_call, R_EmptyEnv);
-      UNPROTECT(3);
+      UNPROTECT(4);
     }
   }
 
