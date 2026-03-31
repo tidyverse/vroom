@@ -2,6 +2,10 @@
 
 ## vroom (development version)
 
+## vroom 1.7.1
+
+CRAN release: 2026-03-31
+
 - Internal changes requested by CRAN for forward compatibility with
   clang 22.
 
