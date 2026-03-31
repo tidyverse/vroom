@@ -16,3 +16,4 @@ investigations
 .claude/settings.local.json
 .clangd
 .cache
+.claude/plans/
