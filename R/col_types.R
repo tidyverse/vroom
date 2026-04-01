@@ -182,7 +182,7 @@ print.col_spec <- function(
   x,
   n = Inf,
   condense = NULL,
-  colour = crayon::has_color(),
+  colour = cli::num_ansi_colors() > 1,
   ...
 ) {
   cat(format.col_spec(x, n = n, condense = condense, colour = colour, ...))
@@ -213,7 +213,7 @@ format.col_spec <- function(
   x,
   n = Inf,
   condense = NULL,
-  colour = crayon::has_color(),
+  colour = cli::num_ansi_colors() > 1,
   ...
 ) {
   if (n == 0) {
@@ -292,7 +292,7 @@ format.col_spec <- function(
   out
 }
 
-colourise_cols <- function(cols, colourise = crayon::has_color()) {
+colourise_cols <- function(cols, colourise = cli::num_ansi_colors() > 1) {
   if (!isTRUE(colourise)) {
     return(cols)
   }
@@ -305,18 +305,18 @@ colourise_cols <- function(cols, colourise = crayon::has_color()) {
       col_guess = cols[[i]],
 
       col_character = ,
-      col_factor = crayon::red(cols[[i]]),
+      col_factor = cli::col_red(cols[[i]]),
 
-      col_logical = crayon::yellow(cols[[i]]),
+      col_logical = cli::col_yellow(cols[[i]]),
 
       col_double = ,
       col_integer = ,
       col_big_integer = ,
-      col_number = green(cols[[i]]),
+      col_number = cli::col_green(cols[[i]]),
 
       col_date = ,
       col_datetime = ,
-      col_time = blue(cols[[i]])
+      col_time = cli::col_blue(cols[[i]])
     )
   }
   cols
@@ -684,7 +684,7 @@ summary.col_spec <- function(
 
   types <- format(vapply(names(type_counts), color_type, character(1)))
   counts <- format(glue::glue("({type_counts})"), justify = "right")
-  col_width <- min(width - (crayon::col_nchar(types) + nchar(counts) + 4))
+  col_width <- min(width - (cli::ansi_nchar(types) + nchar(counts) + 4))
   columns <- vapply(
     split(names(object$cols), col_types),
     function(x) glue::glue_collapse(x, ", ", width = col_width),
@@ -706,7 +706,7 @@ summary.col_spec <- function(
     entries = glue::glue("{format(types)} {counts}: {columns}"),
 
     '
-    {if (nzchar(delim)) paste(bold("Delimiter:"), glue::double_quote(delim)) else ""}
+    {if (nzchar(delim)) paste(cli::style_bold("Delimiter:"), glue::double_quote(delim)) else ""}
     {entries*}
 
 
@@ -753,14 +753,14 @@ color_type <- function(type) {
   switch(
     type,
     chr = ,
-    fct = crayon::red(type),
-    lgl = crayon::yellow(type),
+    fct = cli::col_red(type),
+    lgl = cli::col_yellow(type),
     dbl = ,
     int = ,
-    num = green(type),
+    num = cli::col_green(type),
     date = ,
     dttm = ,
-    time = blue(type),
+    time = cli::col_blue(type),
     "???" = type
   )
 }
