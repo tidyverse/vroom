@@ -281,3 +281,26 @@ test_that("reading archive-only formats without archive package fails informativ
     error = TRUE
   )
 })
+
+test_that("can read non-file paths with non-ascii characters (#618)", {
+  expect_snapshot({
+    vroom(
+      I("text\nEl Ni\xf1o was particularly bad this year"),
+      delim = ",",
+      show_col_types = FALSE
+    )
+  })
+  expect_snapshot({
+    expect_warning(
+      {
+        x <- vroom(
+          "text\nEl Ni\xf1o was particularly bad this year",
+          delim = ",",
+          show_col_types = FALSE
+        )
+      },
+      "literal data"
+    )
+    x
+  })
+})
