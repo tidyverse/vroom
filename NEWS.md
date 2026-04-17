@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* Non-ascii characters in non-file paths no longer cause errors with R >= 4.3 (@jonthegeek, #618).
+
 # vroom 1.7.1
 
 * Internal changes requested by CRAN for forward compatibility with clang 22.
