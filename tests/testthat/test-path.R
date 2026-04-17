@@ -283,6 +283,8 @@ test_that("reading archive-only formats without archive package fails informativ
 })
 
 test_that("can read non-file paths with non-ascii characters (#618)", {
+  skip_if(is_windows() && on_github_actions())
+  skip_if(l10n_info()$`Latin-1`)
   expect_snapshot({
     vroom(
       I("text\nEl Ni\xf1o was particularly bad this year"),
