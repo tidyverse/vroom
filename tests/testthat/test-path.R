@@ -286,6 +286,7 @@ test_that("can read non-file paths with non-ascii characters (#618)", {
   expect_snapshot({
     vroom(
       I("text\nEl Ni\xf1o was particularly bad this year"),
+      locale = locale(encoding = "Latin1"),
       delim = ",",
       show_col_types = FALSE
     )
@@ -295,6 +296,7 @@ test_that("can read non-file paths with non-ascii characters (#618)", {
       {
         x <- vroom(
           "text\nEl Ni\xf1o was particularly bad this year",
+          locale = locale(encoding = "Latin1"),
           delim = ",",
           show_col_types = FALSE
         )
