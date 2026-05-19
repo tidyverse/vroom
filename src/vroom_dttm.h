@@ -20,7 +20,8 @@ double parse_dttm(
     const char* begin,
     const char* end,
     DateTimeParser& parser,
-    const std::string& format);
+    const std::string& format,
+    LocaleInfo* locale);
 
 cpp11::doubles read_dttm(vroom_vec_info* info);
 
@@ -119,7 +120,7 @@ public:
         i,
         info->info->column,
         [&](const char* begin, const char* end) -> double {
-          return parse_dttm(begin, end, *info->parser, info->info->format);
+          return parse_dttm(begin, end, *info->parser, info->info->format, info->info->locale.get());
         },
         info->info->errors,
         err_msg.c_str(),

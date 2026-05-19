@@ -4,7 +4,8 @@ double parse_dttm(
     const char* begin,
     const char* end,
     DateTimeParser& parser,
-    const std::string& format) {
+    const std::string& format,
+    LocaleInfo* locale) {
   if (format == "%s") {
     double out;
     bool ok = parseDouble('.', begin, end, out);
@@ -14,7 +15,15 @@ double parse_dttm(
     return out;
   }
   parser.setDate(begin, end);
-  bool res = (format == "") ? parser.parseISO8601() : parser.parse(format);
+  bool res;
+  if (!locale->dateOrder_.empty() &&
+      locale->dateOrder_.find('_') != std::string::npos) {
+    res = parser.parseDateOrder(locale->dateOrder_);
+  } else if (format.empty()) {
+    res = parser.parseISO8601();
+  } else {
+    res = parser.parse(format);
+  }
 
   if (res) {
     DateTime dt = parser.makeDateTime();
@@ -45,7 +54,7 @@ cpp11::doubles read_dttm(vroom_vec_info* info) {
                 b,
                 col,
                 [&](const char* begin, const char* end) -> double {
-                  return parse_dttm(begin, end, parser, info->format);
+                  return parse_dttm(begin, end, parser, info->format, info->locale.get());
                 },
                 info->errors,
                 err_msg.c_str(),
