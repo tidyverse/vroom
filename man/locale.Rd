@@ -12,7 +12,8 @@ locale(
   decimal_mark = ".",
   grouping_mark = ",",
   tz = "UTC",
-  encoding = "UTF-8"
+  encoding = "UTF-8",
+  date_order = NULL
 )
 
 default_locale()
@@ -44,6 +45,11 @@ DST. It is \emph{not} Eastern Standard Time. It's better to use
 "US/Eastern", "US/Central" etc.}
 
 \item{encoding}{Default encoding.}
+
+\item{date_order}{Order of date components for auto-detection. One of
+\code{"ymd"}, \code{"ydm"}, \code{"mdy"}, \code{"myd"}, \code{"dmy"}, \code{"dym"}, or those combined
+with a time suffix: \code{"_hms"}, \code{"_hm"}, or \code{"_h"} (e.g. \code{"mdy_hms"}).
+Use \code{NULL} (default) for automatic detection.}
 }
 \description{
 A locale object tries to capture all the defaults that can vary between
