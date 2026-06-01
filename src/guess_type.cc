@@ -120,11 +120,17 @@ static bool isDateTime(const std::string& x, LocaleInfo* pLocale) {
     return false;
   }
 
-  // Auto-detection: ISO8601 only (existing behavior — no change)
-  bool ok = parser.parseISO8601();
-  if (!ok) return false;
-  DateTime dt = parser.makeDateTime();
-  return dt.validDateTime();
+  // Auto-detection: ISO8601 first, then year-last (M/D/Y or D/M/Y) heuristic
+  // so MDY/DMY datetimes (including 2-digit years) are recognized. (Issue #36088)
+  if (parser.parseISO8601()) {
+    DateTime dt = parser.makeDateTime();
+    if (dt.validDateTime()) return true;
+  }
+
+  parser.setDate(x.c_str(), x.c_str() + x.size());
+  if (!parser.parseYearLastHeuristicDateTime()) return false;
+  DateTime dt2 = parser.makeDateTime();
+  return dt2.validDateTime();
 }
 
 std::string guess_type__(

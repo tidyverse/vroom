@@ -717,3 +717,68 @@ test_that("vroom() auto-detects MDY with dash separator", {
   expect_s3_class(result$date, "Date")
   expect_equal(result$date, as.Date(c("2024-10-15", "2023-11-20")))
 })
+
+# --- 2-digit-year (M/D/YY) auto-detection ---
+
+test_that("vroom() auto-detects 2-digit-year MDY dates", {
+  csv <- "id,date\n1,5/29/26\n2,5/31/26\n3,12/25/26"
+  result <- vroom::vroom(I(csv), show_col_types = FALSE)
+  expect_s3_class(result$date, "Date")
+  expect_equal(result$date, as.Date(c("2026-05-29", "2026-05-31", "2026-12-25")))
+})
+
+test_that("vroom() auto-detects 2-digit-year DMY dates", {
+  # 29 > 12 in the first part: unambiguously day-first
+  csv <- "id,date\n1,29/5/26\n2,20/1/26"
+  result <- vroom::vroom(I(csv), show_col_types = FALSE)
+  expect_s3_class(result$date, "Date")
+  expect_equal(result$date, as.Date(c("2026-05-29", "2026-01-20")))
+})
+
+test_that("vroom() applies the %y pivot to 2-digit years (00-68 -> 2000s, 69-99 -> 1900s)", {
+  csv <- "id,date\n1,5/29/68\n2,5/29/69"
+  result <- vroom::vroom(I(csv), show_col_types = FALSE)
+  expect_s3_class(result$date, "Date")
+  expect_equal(result$date, as.Date(c("2068-05-29", "1969-05-29")))
+})
+
+test_that("vroom guess_type detects 2-digit-year year-last dates", {
+  expect_s3_class(vroom::guess_type(c("5/29/26", "5/31/26")), "collector_date")
+})
+
+test_that("vroom() does not treat invalid or 3-digit-year values as year-last dates", {
+  for (v in c("13/25/26", "100/200/300")) {
+    result <- vroom::vroom(I(paste0("x\n", v, "\n")), delim = ",", show_col_types = FALSE)
+    expect_type(result$x, "character")
+  }
+})
+
+test_that("vroom() auto-detects 2-digit-year MDY datetimes", {
+  csv <- "id,dt\n1,5/29/26 14:30:00\n2,12/25/26 23:59:59"
+  result <- vroom::vroom(I(csv), show_col_types = FALSE)
+  expect_s3_class(result$dt, "POSIXct")
+  expect_equal(
+    result$dt,
+    as.POSIXct(c("2026-05-29 14:30:00", "2026-12-25 23:59:59"), tz = "UTC")
+  )
+})
+
+test_that("vroom() auto-detects 4-digit-year MDY datetimes", {
+  csv <- "id,dt\n1,5/29/2026 14:30:00\n2,10/15/2024 09:00:00"
+  result <- vroom::vroom(I(csv), show_col_types = FALSE)
+  expect_s3_class(result$dt, "POSIXct")
+  expect_equal(
+    result$dt,
+    as.POSIXct(c("2026-05-29 14:30:00", "2024-10-15 09:00:00"), tz = "UTC")
+  )
+})
+
+test_that("vroom() reads 2-digit-year dates with explicit date_order", {
+  res_mdy <- vroom::vroom(I("id,date\n1,5/29/26\n2,3/15/26"), locale = locale(date_order = "mdy"), show_col_types = FALSE)
+  expect_s3_class(res_mdy$date, "Date")
+  expect_equal(res_mdy$date, as.Date(c("2026-05-29", "2026-03-15")))
+
+  res_dmy <- vroom::vroom(I("id,date\n1,29/5/26\n2,15/3/26"), locale = locale(date_order = "dmy"), show_col_types = FALSE)
+  expect_s3_class(res_dmy$date, "Date")
+  expect_equal(res_dmy$date, as.Date(c("2026-05-29", "2026-03-15")))
+})

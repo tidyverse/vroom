@@ -21,6 +21,12 @@ double parse_dttm(
     res = parser.parseDateOrder(locale->dateOrder_);
   } else if (format.empty()) {
     res = parser.parseISO8601();
+    if (!res) {
+      // Fall back to the year-last (M/D/Y or D/M/Y) heuristic so MDY/DMY
+      // datetimes (including 2-digit years) materialize. (Issue #36088)
+      parser.setDate(begin, end);
+      res = parser.parseYearLastHeuristicDateTime();
+    }
   } else {
     res = parser.parse(format);
   }
