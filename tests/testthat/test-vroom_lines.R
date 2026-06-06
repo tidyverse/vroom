@@ -82,3 +82,16 @@ test_that("vroom_lines works with files with mixed line endings", {
     c("foo", "", "bar", "", "baz")
   )
 })
+
+test_that("vroom_lines preserves problems attribute for problems()", {
+  lines <- vroom_lines(I("a\nb\nc\n"), progress = FALSE)
+
+  expect_null(attr(lines, "problems"))
+})
+
+test_that("problems() errors informatively on bare character vectors", {
+  expect_error(
+    problems(c("a", "b")),
+    "no.*problems.*attribute"
+  )
+})

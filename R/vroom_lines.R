@@ -73,5 +73,10 @@ vroom_lines <- function(
     return(character())
   }
 
-  out[[1]]
+  res <- out[[1]]
+  probs <- attr(out, "problems")
+  if (!is.null(probs) && nrow(vroom_errors_(probs)) > 0) {
+    attr(res, "problems") <- probs
+  }
+  res
 }
