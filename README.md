@@ -42,8 +42,10 @@ non-character columns, and when writing to further improve performance.
 ## Features
 
 vroom has nearly all of the parsing features of
-[readr](https://readr.tidyverse.org) for delimited and fixed width
-files, including
+[readr](https://readr.tidyverse.org) for delimited and fixed width files.
+In fact, readr's second edition (version 2.0.0 and later) uses `vroom::vroom()` as its parsing engine by default.
+
+vroom features include:
 
 - delimiter guessing\*
 - custom delimiters (including multi-byte\* and Unicode\* delimiters)
