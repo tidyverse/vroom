@@ -151,6 +151,7 @@ test_that("can write to a tar.gz file if the archive package is available", {
 
 # https://github.com/tidyverse/vroom/issues/394
 test_that("can read file w/o final newline, w/ multi-byte characters in path", {
+  skip_if(!l10n_info()$`UTF-8`)
   pattern <- "no-trailing-n\u00e8wline-m\u00fblti-byt\u00e9-path-"
   tfile <- withr::local_tempfile(pattern = pattern, fileext = ".csv")
   writeChar("a,b\nA,B", con = tfile, eos = NULL)
@@ -163,6 +164,7 @@ test_that("can read file w/o final newline, w/ multi-byte characters in path", {
 
 # for completeness, w.r.t. test above
 test_that("can read file w/ final newline, w/ multi-byte characters in path", {
+  skip_if(!l10n_info()$`UTF-8`)
   pattern <- "yes-trailing-n\u00e8wline-m\u00fblti-byt\u00e9-path-"
   tfile <- withr::local_tempfile(pattern = pattern, fileext = ".csv")
   writeLines(c("a,b", "A,B"), tfile)
@@ -174,6 +176,7 @@ test_that("can read file w/ final newline, w/ multi-byte characters in path", {
 })
 
 test_that("can write to path with non-ascii characters", {
+  skip_if(!l10n_info()$`UTF-8`)
   pattern <- "cr\u00E8me-br\u00FBl\u00E9e-"
   tfile <- withr::local_tempfile(pattern = pattern, fileext = ".csv")
   dat <- tibble::tibble(a = "A", b = "B")
@@ -213,6 +216,7 @@ test_that("can read/write a compressed file with non-ascii characters in path", 
 })
 
 test_that("can read fwf file w/ non-ascii characters in path", {
+  skip_if(!l10n_info()$`UTF-8`)
   tfile <- withr::local_tempfile(pattern = "fwf-y\u00F6-", fileext = ".txt")
   writeLines(c("A B", "C D"), tfile)
 
