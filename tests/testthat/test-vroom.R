@@ -1406,3 +1406,29 @@ test_that("vroom(col_select =) output has 'spec_tbl_df' class, spec, and problem
     expect_equal(probs$col, 1)
   }
 })
+
+# https://github.com/tidyverse/vroom/issues/521
+test_that("vroom(col_select = any_of()) with no matches returns empty tibble without warning", {
+  foo <- "a,b,c\n1,2,3\n"
+
+  # any_of() with non-existent columns should return empty tibble without warning
+  expect_no_warning(
+    result <- vroom(I(foo), delim = ",", col_select = any_of("d"), show_col_types = FALSE)
+  )
+  expect_s3_class(result, "tbl_df")
+  expect_equal(nrow(result), 0)
+  expect_equal(ncol(result), 0)
+
+  # any_of() with existing columns should work normally
+  expect_no_warning(
+    result <- vroom(I(foo), delim = ",", col_select = any_of("a"), show_col_types = FALSE)
+  )
+  expect_equal(nrow(result), 1)
+  expect_equal(ncol(result), 1)
+  expect_named(result, "a")
+
+  # all_of() with non-existent columns should still error
+  expect_error(
+    vroom(I(foo), delim = ",", col_select = all_of("d"), show_col_types = FALSE)
+  )
+})

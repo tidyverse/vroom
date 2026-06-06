@@ -680,6 +680,11 @@ summary.col_spec <- function(
   ))
   type_counts <- table(col_types)
 
+  # All columns are skipped (e.g. via any_of() selecting nothing)
+  if (length(type_counts) == 0) {
+    return(invisible(object))
+  }
+
   n <- length(type_counts)
 
   types <- format(vapply(names(type_counts), color_type, character(1)))
