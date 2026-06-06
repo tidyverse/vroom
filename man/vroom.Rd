@@ -139,7 +139,7 @@ to add special characters like \verb{\\\\n}.}
 \item{locale}{The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
 \code{\link[=locale]{locale()}} to create your own locale that controls things like
-the default time zone, encoding, decimal mark, big mark, and day/month
+the default time zone, encoding, decimal mark, grouping mark, and day/month
 names.}
 
 \item{guess_max}{Maximum number of lines to use for guessing column types.
@@ -147,7 +147,7 @@ See \code{vignette("column-types", package = "readr")} for more details.}
 
 \item{altrep}{Control which column types use Altrep representations,
 either a character vector of types, \code{TRUE} or \code{FALSE}. See
-\code{\link[=vroom_altrep]{vroom_altrep()}} for for full details.}
+\code{\link[=vroom_altrep]{vroom_altrep()}} for full details.}
 
 \item{num_threads}{Number of threads to use when reading and materializing
 vectors. If your data contains newlines within fields the parser will
@@ -218,7 +218,7 @@ vroom(input_file, col_select = starts_with("d"))
 vroom(input_file, col_select = c(car = model, everything()))
 
 # Column types --------------------------------------------------------------
-# By default, vroom guesses the columns types, looking at 1000 rows
+# By default, vroom guesses the columns types, looking at 100 rows
 # throughout the dataset.
 # You can specify them explicitly with a compact specification:
 vroom(I("x,y\n1,2\n3,4\n"), col_types = "dc")

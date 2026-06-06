@@ -45,12 +45,12 @@ option is \code{TRUE} then blank rows will not be represented at all.  If it is
 \item{locale}{The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
 \code{\link[=locale]{locale()}} to create your own locale that controls things like
-the default time zone, encoding, decimal mark, big mark, and day/month
+the default time zone, encoding, decimal mark, grouping mark, and day/month
 names.}
 
 \item{altrep}{Control which column types use Altrep representations,
 either a character vector of types, \code{TRUE} or \code{FALSE}. See
-\code{\link[=vroom_altrep]{vroom_altrep()}} for for full details.}
+\code{\link[=vroom_altrep]{vroom_altrep()}} for full details.}
 
 \item{num_threads}{Number of threads to use when reading and materializing
 vectors. If your data contains newlines within fields the parser will

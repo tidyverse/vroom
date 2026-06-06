@@ -104,7 +104,7 @@ such column will be created.}
 \item{locale}{The locale controls defaults that vary from place to place.
 The default locale is US-centric (like R), but you can use
 \code{\link[=locale]{locale()}} to create your own locale that controls things like
-the default time zone, encoding, decimal mark, big mark, and day/month
+the default time zone, encoding, decimal mark, grouping mark, and day/month
 names.}
 
 \item{na}{Character vector of strings to interpret as missing values. Set this
@@ -132,7 +132,7 @@ See \code{vignette("column-types", package = "readr")} for more details.}
 
 \item{altrep}{Control which column types use Altrep representations,
 either a character vector of types, \code{TRUE} or \code{FALSE}. See
-\code{\link[=vroom_altrep]{vroom_altrep()}} for for full details.}
+\code{\link[=vroom_altrep]{vroom_altrep()}} for full details.}
 
 \item{num_threads}{Number of threads to use when reading and materializing
 vectors. If your data contains newlines within fields the parser will
@@ -212,7 +212,7 @@ structure explicitly with another \verb{fwf_*()} function or download (and
 decompress, if relevant) the file first.
 }
 \details{
-Here's a enhanced example using the contents of the file accessed via
+Here's an enhanced example using the contents of the file accessed via
 \code{vroom_example("fwf-sample.txt")}.
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{         1         2         3         4

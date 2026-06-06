@@ -87,13 +87,13 @@
 #' @param locale The locale controls defaults that vary from place to place.
 #'   The default locale is US-centric (like R), but you can use
 #'   [locale()] to create your own locale that controls things like
-#'   the default time zone, encoding, decimal mark, big mark, and day/month
+#'   the default time zone, encoding, decimal mark, grouping mark, and day/month
 #'   names.
 #' @param guess_max Maximum number of lines to use for guessing column types.
 #'   See `vignette("column-types", package = "readr")` for more details.
 #' @param altrep Control which column types use Altrep representations,
 #'   either a character vector of types, `TRUE` or `FALSE`. See
-#'   [vroom_altrep()] for for full details.
+#'   [vroom_altrep()] for full details.
 #' @param col_select Columns to include in the results. You can use the same
 #'   mini-language as `dplyr::select()` to refer to the columns by name. Use
 #'   `c()` to use more than one selection expression. Although this
@@ -161,7 +161,7 @@
 #' vroom(input_file, col_select = c(car = model, everything()))
 #'
 #' # Column types --------------------------------------------------------------
-#' # By default, vroom guesses the columns types, looking at 1000 rows
+#' # By default, vroom guesses the columns types, looking at 100 rows
 #' # throughout the dataset.
 #' # You can specify them explicitly with a compact specification:
 #' vroom(I("x,y\n1,2\n3,4\n"), col_types = "dc")
