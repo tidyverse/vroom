@@ -29,3 +29,14 @@ unrecoverable. However there are a number of non-fatal problems that you
 might want to know about. You can retrieve a data frame of these problems
 with this function.
 }
+\examples{
+# Create data with a parsing problem
+x <- vroom(I("x\n1\n2\nb"), delim = ",", col_types = "d", show_col_types = FALSE)
+
+# Inspect the problems
+problems(x)
+
+# No problems in well-formed data
+y <- vroom(I("x\n1\n2\n3"), delim = ",", col_types = "d", show_col_types = FALSE)
+problems(y)
+}

@@ -1066,6 +1066,21 @@ test_that("handles quotes within skips", {
   )
 })
 
+test_that("lone quote in skipped line does not consume rest of file", {
+  # Regression test: a lone double quote in a skipped line should not be
+  # interpreted as the start of a quoted field (github.com/tidyverse/readr#1577)
+  skip("Known bug: lone quote in skipped line consumes rest of file (readr#1577)")
+
+  data <- I('\"\na,b\n1,2\n')
+
+  test_vroom(
+    data,
+    skip = 1,
+    delim = ",",
+    equals = tibble::tibble(a = 1, b = 2)
+  )
+})
+
 test_that("skipped columns retain their name", {
   test_vroom(
     I("1,2,3\n4,5,6"),

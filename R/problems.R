@@ -16,6 +16,16 @@
 #'   - actual - What it actually found
 #'   - file - The file with the problem
 #' @export
+#' @examples
+#' # Create data with a parsing problem
+#' x <- vroom(I("x\n1\n2\nb"), delim = ",", col_types = "d", show_col_types = FALSE)
+#'
+#' # Inspect the problems
+#' problems(x)
+#'
+#' # No problems in well-formed data
+#' y <- vroom(I("x\n1\n2\n3"), delim = ",", col_types = "d", show_col_types = FALSE)
+#' problems(y)
 problems <- function(x = .Last.value, lazy = FALSE) {
   if (!inherits(x, "tbl_df")) {
     cli::cli_abort(c(
