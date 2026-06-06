@@ -58,6 +58,27 @@ test_that("%e allows leading space", {
   )
 })
 
+test_that("%e parses single-digit day without leading space", {
+  test_parse_date(
+    "January 1, 2010",
+    format = "%B %e, %Y",
+    expected = as.Date("2010-01-01")
+  )
+  test_parse_date(
+    "March 5, 2020",
+    format = "%B %e, %Y",
+    expected = as.Date("2020-03-05")
+  )
+})
+
+test_that("%e parses two-digit day", {
+  test_parse_date(
+    "January 15, 2010",
+    format = "%B %e, %Y",
+    expected = as.Date("2010-01-15")
+  )
+})
+
 test_that("%OS captures partial seconds", {
   test_parse_datetime(
     "2001-01-01 00:00:01.125",
