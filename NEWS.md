@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `inst/COPYRIGHTS` now correctly reflects the MIT license, replacing the vestigial GPL 3 reference (#620).
+
 # vroom 1.7.1
 
 * Internal changes requested by CRAN for forward compatibility with clang 22.
