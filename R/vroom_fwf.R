@@ -152,6 +152,17 @@ vroom_fwf <- function(
 
   out <- tibble::as_tibble(out, .name_repair = .name_repair)
 
+  if (!is.null(id)) {
+    nms <- names(out)
+    data_nms <- nms[-1]
+    if (id %in% data_nms) {
+      cli::cli_abort(
+        "The {.arg id} column name ({.val {id}}) is the same as one of the data column names.",
+        call = caller_env()
+      )
+    }
+  }
+
   out <- vroom_select(out, col_select, id)
   class(out) <- c("spec_tbl_df", class(out))
 

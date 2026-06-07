@@ -1406,3 +1406,20 @@ test_that("vroom(col_select =) output has 'spec_tbl_df' class, spec, and problem
     expect_equal(probs$col, 1)
   }
 })
+
+test_that("id column name collision with data column produces error (#536)", {
+  expect_snapshot(
+    vroom(I("a,hello\n1,2\n"), id = "hello", show_col_types = FALSE),
+    error = TRUE
+  )
+
+  expect_snapshot(
+    vroom(I("a,b\n1,2\n"), id = "a", show_col_types = FALSE),
+    error = TRUE
+  )
+
+  # No error when id name doesn't collide
+  expect_no_error(
+    vroom(I("a,b\n1,2\n"), id = "source", show_col_types = FALSE)
+  )
+})
