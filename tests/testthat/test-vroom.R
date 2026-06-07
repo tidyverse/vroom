@@ -1066,6 +1066,16 @@ test_that("handles quotes within skips", {
   )
 })
 
+test_that("lone quote in skipped line does not consume rest of file", {
+  # Regression test for tidyverse/readr#1577
+  test_vroom(
+    I("\"\na,b\n1,2\n"),
+    skip = 1,
+    delim = ",",
+    equals = tibble::tibble(a = 1, b = 2)
+  )
+})
+
 test_that("skipped columns retain their name", {
   test_vroom(
     I("1,2,3\n4,5,6"),

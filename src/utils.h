@@ -130,6 +130,24 @@ find_next_non_quoted_newline(const T& source, size_t start, const char quote) {
     ++pos;
   }
 
+  // If we reached EOF while still in a quoted field, the quote was unclosed.
+  // Fall back to finding the first newline from start (tidyverse/readr#1577).
+  if (in_quote) {
+    pos = start;
+    while (pos < end) {
+      if (buf[pos] == '\n') {
+        return {pos, LF};
+      }
+      if (buf[pos] == '\r') {
+        if (is_crlf(buf, pos, end)) {
+          return {pos + 1, CRLF};
+        }
+        return {pos, CR};
+      }
+      ++pos;
+    }
+  }
+
   if (pos > end) {
     return {end, NA};
   }
