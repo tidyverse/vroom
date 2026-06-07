@@ -1406,3 +1406,23 @@ test_that("vroom(col_select =) output has 'spec_tbl_df' class, spec, and problem
     expect_equal(probs$col, 1)
   }
 })
+
+# https://github.com/tidyverse/vroom/issues/569
+test_that("vroom output drops spec_tbl_df class and attributes on subsetting", {
+  dat <- vroom(
+    I("a,b\n1,2\n3,4\n"),
+    col_types = "dd",
+    show_col_types = FALSE,
+    altrep = FALSE
+  )
+
+  expect_s3_class(dat, "spec_tbl_df")
+  expect_true(!is.null(attr(dat, "spec", exact = TRUE)))
+
+  sub <- dat[1, ]
+
+  expect_s3_class(sub, "tbl_df")
+  expect_false("spec_tbl_df" %in% class(sub))
+  expect_null(attr(sub, "spec", exact = TRUE))
+  expect_null(attr(sub, "problems", exact = TRUE))
+})

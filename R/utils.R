@@ -106,6 +106,16 @@ as.data.frame.spec_tbl_df <- function(x, ...) {
   NextMethod("as.data.frame")
 }
 
+# Conditionally exported in zzz.R
+#' @noRd
+# @export
+`[.spec_tbl_df` <- function(x, ...) {
+  attr(x, "spec") <- NULL
+  attr(x, "problems") <- NULL
+  class(x) <- setdiff(class(x), "spec_tbl_df")
+  NextMethod(`[`)
+}
+
 is_rstudio_console <- function() {
   !(Sys.getenv("RSTUDIO", "") == "" || Sys.getenv("RSTUDIO_TERM", "") != "")
 }
