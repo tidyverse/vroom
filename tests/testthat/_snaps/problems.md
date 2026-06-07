@@ -29,7 +29,7 @@
       problems(a_vector)
     Condition
       Error in `problems()`:
-      ! The `x` argument of `vroom::problems()` must be a data frame created by vroom:
+      ! The `x` argument of `vroom::problems()` must be a data frame created by vroom or a character vector from `vroom::vroom_lines()`:
       x `x` has class <numeric>
 
 ---
