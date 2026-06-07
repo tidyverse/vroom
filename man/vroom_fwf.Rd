@@ -233,6 +233,18 @@ fwf_cols(name = c(1, 20), ssn = c(30, 42))
 fwf_cols(name = 20, state = 10, ssn = 12)
 }\if{html}{\out{</div>}}
 }
+\section{Multi-byte characters}{
+
+Field positions are interpreted as \strong{byte} offsets, not character positions.
+For ASCII-only text these are identical, but for multi-byte encodings such as
+UTF-8 the two can differ.  For example, the degree symbol \verb{\\u00b0} occupies
+one character but two bytes.  When a line contains multi-byte characters,
+field boundaries specified in character positions will be misaligned.
+
+If your fixed-width file contains non-ASCII text, count positions by bytes
+(e.g. \code{nchar(x, type = "bytes")}) rather than by characters.
+}
+
 \examples{
 fwf_sample <- vroom_example("fwf-sample.txt")
 writeLines(vroom_lines(fwf_sample))

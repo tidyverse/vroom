@@ -524,6 +524,32 @@ test_that("vroom_fwf correctly reads DOS files with no trailing newline (https:/
 
 # https://github.com/tidyverse/vroom/issues/554
 # https://github.com/tidyverse/vroom/issues/534
+# https://github.com/tidyverse/vroom/issues/622
+test_that("vroom_fwf interprets positions as byte offsets (#622)", {
+  # The degree symbol ° is 1 character but 2 bytes in UTF-8.
+  # Positions are byte-based, so byte 7 starts at the ° character.
+  lines <- c(
+    "AAAA123456",
+    "BBBB12\u00b0456",
+    "CCCC123456"
+  )
+  out <- vroom_fwf(
+    I(paste(lines, collapse = "\n")),
+    fwf_positions(c(1, 5, 7), c(4, 6, 10), c("f1", "f2", "f3")),
+    col_types = "ccc"
+  )
+
+  # Lines 1 and 3 are pure ASCII: byte and character positions agree.
+  expect_equal(out$f1, c("AAAA", "BBBB", "CCCC"))
+  expect_equal(out$f2, c("12", "12", "12"))
+  expect_equal(out$f3[1], "3456")
+  expect_equal(out$f3[3], "3456")
+
+  # Line 2 contains ° (2 bytes).  Byte 7 is the start of °, so field 3
+  # covers bytes 7-10 which is "\u00b045" (the ° plus two ASCII digits).
+  expect_equal(nchar(out$f3[2], type = "bytes"), 4)
+})
+
 test_that("vroom_fwf(col_select =) output has 'spec_tbl_df' class, spec, and problems when readr is attached", {
   # Register readr's [.spec_tbl_df method which drops attributes and the "spec_tbl_df" class
   readr_single_bracket <- function(x, ...) {

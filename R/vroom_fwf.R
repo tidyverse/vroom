@@ -48,6 +48,16 @@
 #' fwf_cols(name = 20, state = 10, ssn = 12)
 #' ```
 #'
+#' @section Multi-byte characters:
+#' Field positions are interpreted as **byte** offsets, not character positions.
+#' For ASCII-only text these are identical, but for multi-byte encodings such as
+#' UTF-8 the two can differ.  For example, the degree symbol `\u00b0` occupies
+#' one character but two bytes.  When a line contains multi-byte characters,
+#' field boundaries specified in character positions will be misaligned.
+#'
+#' If your fixed-width file contains non-ASCII text, count positions by bytes
+#' (e.g. `nchar(x, type = "bytes")`) rather than by characters.
+#'
 #' @inheritParams vroom
 #' @param col_positions Column positions, as created by [fwf_empty()],
 #'   `fwf_widths()`, `fwf_positions()`, or `fwf_cols()`. To read in only
