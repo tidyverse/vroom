@@ -4,6 +4,10 @@
 #' lazily like [vroom()], so operations like `length()`, `head()`, `tail()` and `sample()`
 #' can be done much more efficiently without reading all the data into R.
 #' @inheritParams vroom
+#' @return A character vector of lines with a `problems` attribute if any
+#'   parsing issues were encountered. Use [problems()] to inspect them.
+#' @seealso [problems()] to inspect parsing problems, [vroom()] to read
+#'   delimited files into a data frame.
 #' @examples
 #' lines <- vroom_lines(vroom_example("mtcars.csv"))
 #'

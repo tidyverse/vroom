@@ -185,6 +185,10 @@ should be either a single integer (a column width) or a pair of integers
 (column start and end positions). All arguments must have the same shape,
 i.e. all widths or all positions.}
 }
+\value{
+A \code{\link[tibble:tibble]{tibble::tibble()}}. Parsing problems are stored in the
+\code{problems} attribute; use \code{\link[=problems]{problems()}} to inspect them.
+}
 \description{
 Fixed-width files store tabular data with each field occupying a specific
 range of character positions in every line. Once the fields are identified,

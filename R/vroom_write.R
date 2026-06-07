@@ -27,6 +27,7 @@
 #' @param append If `FALSE`, will overwrite existing file. If `TRUE`,
 #'   will append to existing file. In both cases, if the file does not exist, a
 #'   new file is created.
+#' @return `vroom_write()` returns the input `x` invisibly.
 #' @export
 #' @examples
 #' # If you only specify a file name, vroom_write() will write
@@ -156,6 +157,7 @@ vroom_write_opts <- function() {
 #' testing.
 #'
 #' @inheritParams vroom_write
+#' @return A single string containing the formatted delimited data.
 #' @export
 vroom_format <- function(
   x,
@@ -207,6 +209,7 @@ vroom_format <- function(
 #'
 #' @param x A character vector.
 #' @inheritParams vroom_write
+#' @return `vroom_write_lines()` returns the input `x` invisibly.
 #' @export
 vroom_write_lines <- function(
   x,

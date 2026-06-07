@@ -55,6 +55,9 @@ excel to read the data with the correct encoding (UTF-8)}
 vectors. If your data contains newlines within fields the parser will
 automatically be forced to use a single thread only.}
 }
+\value{
+A single string containing the formatted delimited data.
+}
 \description{
 This is equivalent to \code{\link[=vroom_write]{vroom_write()}}, but instead of writing to
 disk, it returns a string. It is primarily useful for examples and for

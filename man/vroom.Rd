@@ -182,6 +182,10 @@ This argument is passed on as \code{repair} to \code{\link[vctrs:vec_as_names]{v
 See there for more details on these terms and the strategies used
 to enforce them.}
 }
+\value{
+A \code{\link[tibble:tibble]{tibble::tibble()}}. Parsing problems are stored in the
+\code{problems} attribute; use \code{\link[=problems]{problems()}} to inspect them.
+}
 \description{
 Read a delimited file into a tibble
 }

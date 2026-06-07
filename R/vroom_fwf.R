@@ -57,6 +57,8 @@
 #'   with the comment string at the beginning of the file (before any data
 #'   lines) will be ignored. Unlike [vroom()], comment lines in the middle
 #'   of the file are not filtered out.
+#' @return A [tibble::tibble()]. Parsing problems are stored in the
+#'   `problems` attribute; use [problems()] to inspect them.
 #' @export
 #' @examples
 #' fwf_sample <- vroom_example("fwf-sample.txt")

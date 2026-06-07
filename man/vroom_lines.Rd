@@ -61,6 +61,10 @@ in an interactive session and not while executing in an RStudio notebook
 chunk. The display of the progress bar can be disabled by setting the
 environment variable \code{VROOM_SHOW_PROGRESS} to \code{"false"}.}
 }
+\value{
+A character vector of lines with a \code{problems} attribute if any
+parsing issues were encountered. Use \code{\link[=problems]{problems()}} to inspect them.
+}
 \description{
 \code{vroom_lines()} is similar to \code{readLines()}, however it reads the lines
 lazily like \code{\link[=vroom]{vroom()}}, so operations like \code{length()}, \code{head()}, \code{tail()} and \code{sample()}
@@ -73,4 +77,8 @@ length(lines)
 head(lines, n = 2)
 tail(lines, n = 2)
 sample(lines, size = 2)
+}
+\seealso{
+\code{\link[=problems]{problems()}} to inspect parsing problems, \code{\link[=vroom]{vroom()}} to read
+delimited files into a data frame.
 }

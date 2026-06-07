@@ -69,6 +69,9 @@ in an interactive session and not while executing in an RStudio notebook
 chunk. The display of the progress bar can be disabled by setting the
 environment variable \code{VROOM_SHOW_PROGRESS} to \code{"false"}.}
 }
+\value{
+\code{vroom_write()} returns the input \code{x} invisibly.
+}
 \description{
 Write a data frame to a delimited file
 }

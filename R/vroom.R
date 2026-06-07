@@ -127,6 +127,8 @@
 #'   This argument is passed on as `repair` to [vctrs::vec_as_names()].
 #'   See there for more details on these terms and the strategies used
 #'   to enforce them.
+#' @return A [tibble::tibble()]. Parsing problems are stored in the
+#'   `problems` attribute; use [problems()] to inspect them.
 #' @export
 #' @examples
 #' # get path to example file

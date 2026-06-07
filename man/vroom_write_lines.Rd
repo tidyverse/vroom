@@ -31,6 +31,9 @@ new file is created.}
 vectors. If your data contains newlines within fields the parser will
 automatically be forced to use a single thread only.}
 }
+\value{
+\code{vroom_write_lines()} returns the input \code{x} invisibly.
+}
 \description{
 Write lines to a file
 }
