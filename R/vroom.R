@@ -417,7 +417,7 @@ guess_delim <- function(lines, delims = c(",", "\t", " ", "|", ":", ";")) {
   }
 
   # blank text within quotes
-  lines <- gsub('"[^"]*"', "", lines)
+  lines <- gsub('"[^"]*"', "", lines, useBytes = TRUE)
 
   splits <- lapply(delims, strsplit, x = lines, useBytes = TRUE, fixed = TRUE)
 

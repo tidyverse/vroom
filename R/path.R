@@ -94,7 +94,7 @@ standardise_path <- function(
     return(list(chr_to_file(path, call = call)))
   }
 
-  if (any(grepl("\n", path))) {
+  if (any(grepl("\n", path, useBytes = TRUE))) {
     lifecycle::deprecate_warn(
       "1.5.0",
       "vroom(file = 'must use `I()` for literal data')",
@@ -412,7 +412,7 @@ utils::globalVariables("con")
 chr_to_file <- function(x, call = caller_env()) {
   out <- vroom_tempfile(pattern = "vroom-chr-to-file-")
   con <- file(out, "wb")
-  writeLines(sub("\n$", "", x), con, useBytes = TRUE)
+  writeLines(sub("\n$", "", x, useBytes = TRUE), con, useBytes = TRUE)
   close(con)
 
   withr::defer(unlink(out), envir = call)

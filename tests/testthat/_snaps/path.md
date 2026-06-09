@@ -73,3 +73,28 @@
       Error:
       ! The package "archive" is required to read `.csv.tar.gz` files.
 
+# can read non-file paths with non-ascii characters (#618)
+
+    Code
+      vroom(I("text\nEl Ni\xf1o was particularly bad this year"), locale = locale(
+        encoding = "Latin1"), delim = ",", show_col_types = FALSE)
+    Output
+      # A tibble: 1 x 1
+        text                                  
+        <chr>                                 
+      1 El Niño was particularly bad this year
+
+---
+
+    Code
+      expect_warning({
+        x <- vroom("text\nEl Ni\xf1o was particularly bad this year", locale = locale(
+          encoding = "Latin1"), delim = ",", show_col_types = FALSE)
+      }, "literal data")
+      x
+    Output
+      # A tibble: 1 x 1
+        text                                  
+        <chr>                                 
+      1 El Niño was particularly bad this year
+
