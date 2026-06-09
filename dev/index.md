@@ -62,6 +62,7 @@ files, including
 Install vroom from CRAN with:
 
 ``` r
+
 install.packages("vroom")
 ```
 
@@ -69,6 +70,7 @@ Alternatively, if you need the development version from
 [GitHub](https://github.com/) install it with:
 
 ``` r
+
 # install.packages("pak")
 pak::pak("tidyverse/vroom")
 ```
@@ -81,6 +83,7 @@ to jump start your use of vroom!
 vroom uses the same interface as readr to specify column types.
 
 ``` r
+
 vroom::vroom(
   "mtcars.tsv",
   col_types = list(
@@ -113,6 +116,7 @@ by airline. For the sake of the example, we’ll just take the first 2
 lines of each file.
 
 ``` r
+
 library(nycflights13)
 purrr::iwalk(
   split(flights, flights$carrier),
@@ -132,6 +136,7 @@ filenames directly to vroom. The `id` argument can be used to request a
 column that reveals the filename that each row originated from.
 
 ``` r
+
 files <- fs::dir_ls(glob = "flights*tsv")
 files
 #> flights_9E.tsv flights_AA.tsv flights_AS.tsv flights_B6.tsv flights_DL.tsv 

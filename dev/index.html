@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="favicon.ico">
 <link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -74,8 +74,8 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header">
-<img src="logo.png" class="logo" alt=""><h1 id="vroom-">🏎💨vroom 
-<a class="anchor" aria-label="anchor" href="#vroom-"></a>
+<img src="logo.png" class="logo" alt=""><h1 id="dashvroom-">🏎💨vroom 
+<a class="anchor" aria-label="anchor" href="#dashvroom-"></a>
 </h1>
 </div>
 <!-- badges: start -->
@@ -86,7 +86,7 @@
 <p>vroom doesn’t stop to actually <em>read</em> all of your data, it simply indexes where each record is located so it can be read later. The vectors returned use the <a href="https://svn.r-project.org/R/branches/ALTREP/ALTREP.html" class="external-link">Altrep framework</a> to lazily load the data on-demand when it is accessed, so you only pay for what you use. This lazy access is done automatically, so no changes to your R data-manipulation code are needed.</p>
 <p>vroom also uses multiple threads for indexing, materializing non-character columns, and when writing to further improve performance.</p>
 <table class="table">
-<thead><tr class="header">
+<thead><tr>
 <th align="left">package</th>
 <th align="right">version</th>
 <th align="right">time (sec)</th>
@@ -94,28 +94,28 @@
 <th align="right">throughput</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td align="left">vroom</td>
 <td align="right">1.5.1</td>
 <td align="right">1.36</td>
 <td align="right">53.30</td>
 <td align="right">1.23 GB/sec</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">data.table</td>
 <td align="right">1.14.0</td>
 <td align="right">5.83</td>
 <td align="right">12.40</td>
 <td align="right">281.65 MB/sec</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">readr</td>
 <td align="right">1.4.0</td>
 <td align="right">37.30</td>
 <td align="right">1.94</td>
 <td align="right">44.02 MB/sec</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">read.delim</td>
 <td align="right">4.1.0</td>
 <td align="right">72.31</td>

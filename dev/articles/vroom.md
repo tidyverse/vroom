@@ -10,6 +10,7 @@ or TSV (Tab Separated Values) files, typically these files have a `.csv`
 and `.tsv` suffix respectively.
 
 ``` r
+
 library(vroom)
 ```
 
@@ -38,6 +39,7 @@ We have included an example CSV file in the vroom package for use in
 examples and tests. Access it with `vroom_example("mtcars.csv")`
 
 ``` r
+
 # See where the example file is stored on your machine
 file <- vroom_example("mtcars.csv")
 file
@@ -94,6 +96,7 @@ the `mtcars` data, for cars with different numbers of cylinders. First,
 we get a character vector of these filepaths.
 
 ``` r
+
 ve <- grep("mtcars-[0-9].csv", vroom_examples(), value = TRUE)
 files <- sapply(ve, vroom_example)
 files
@@ -109,6 +112,7 @@ Now we can efficiently read them into one table by passing the filenames
 directly to vroom.
 
 ``` r
+
 vroom(files)
 #> Rows: 32 Columns: 12
 #> ── Column specification ───────────────────────────────────────────────
@@ -134,6 +138,7 @@ the result with the full path to each file. (in this case we name the
 column `path`).
 
 ``` r
+
 vroom(files, id = "path")
 #> Rows: 32 Columns: 13
 #> ── Column specification ───────────────────────────────────────────────
@@ -159,6 +164,7 @@ vroom supports reading zip, gz, bz2 and xz compressed files
 automatically, just pass the filename of the compressed file to vroom.
 
 ``` r
+
 file <- vroom_example("mtcars.csv.gz")
 
 vroom(file)
@@ -193,6 +199,7 @@ If you are reading a zip file that contains multiple files with the same
 format, you can read a subset of the files at once like so:
 
 ``` r
+
 zip_file <- vroom_example("mtcars-multi-cyl.zip")
 filenames <- unzip(zip_file, list = TRUE)$Name
 filenames
@@ -224,6 +231,7 @@ vroom can read files directly from the internet as well by passing the
 URL of the file to vroom.
 
 ``` r
+
 file <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv"
 vroom(file)
 #> Rows: 32 Columns: 12
@@ -247,6 +255,7 @@ vroom(file)
 It can even read compressed files from the internet.
 
 ``` r
+
 file <- "https://raw.githubusercontent.com/tidyverse/vroom/main/inst/extdata/mtcars.csv.gz"
 vroom(file)
 #> Rows: 32 Columns: 12
@@ -277,6 +286,7 @@ example you can select by:
 - A character vector of column names
 
 ``` r
+
 file <- vroom_example("mtcars.csv.gz")
 
 vroom(file, col_select = c(model, cyl, gear))
@@ -300,6 +310,7 @@ vroom(file, col_select = c(model, cyl, gear))
 - A numeric vector of column indexes, e.g. `c(1, 2, 5)`
 
 ``` r
+
 vroom(file, col_select = c(1, 3, 11))
 #> Rows: 32 Columns: 3
 #> ── Column specification ───────────────────────────────────────────────
@@ -324,6 +335,7 @@ vroom(file, col_select = c(1, 3, 11))
   [`ends_with()`](https://tidyselect.r-lib.org/reference/starts_with.html)
 
 ``` r
+
 vroom(file, col_select = starts_with("d"))
 #> Rows: 32 Columns: 2
 #> ── Column specification ───────────────────────────────────────────────
@@ -344,6 +356,7 @@ vroom(file, col_select = starts_with("d"))
 - You can also rename columns
 
 ``` r
+
 vroom(file, col_select = c(car = model, everything()))
 #> Rows: 32 Columns: 12
 #> ── Column specification ───────────────────────────────────────────────
@@ -375,6 +388,7 @@ in conjunction with one of the following helper functions to read the
 file.
 
 ``` r
+
 fwf_sample <- vroom_example("fwf-sample.txt")
 cat(readLines(fwf_sample))
 #> John Smith          WA        418-Y11-4111 Mary Hartford       CA        319-Z19-4341 Evan Nolan          IL        219-532-c301
@@ -384,6 +398,7 @@ cat(readLines(fwf_sample))
   Guess based on the position of empty columns.
 
 ``` r
+
 vroom_fwf(fwf_sample, fwf_empty(fwf_sample, col_names = c("first", "last", "state", "ssn")))
 #> Rows: 3 Columns: 4
 #> ── Column specification ───────────────────────────────────────────────
@@ -404,6 +419,7 @@ vroom_fwf(fwf_sample, fwf_empty(fwf_sample, col_names = c("first", "last", "stat
   Use user provided set of field widths.
 
 ``` r
+
 vroom_fwf(fwf_sample, fwf_widths(c(20, 10, 12), c("name", "state", "ssn")))
 #> Rows: 3 Columns: 3
 #> ── Column specification ───────────────────────────────────────────────
@@ -424,6 +440,7 @@ vroom_fwf(fwf_sample, fwf_widths(c(20, 10, 12), c("name", "state", "ssn")))
   Use user provided sets of start and end positions.
 
 ``` r
+
 vroom_fwf(fwf_sample, fwf_positions(c(1, 30), c(20, 42), c("name", "ssn")))
 #> Rows: 3 Columns: 2
 #> ── Column specification ───────────────────────────────────────────────
@@ -444,6 +461,7 @@ vroom_fwf(fwf_sample, fwf_positions(c(1, 30), c(20, 42), c("name", "ssn")))
   Use user provided named widths.
 
 ``` r
+
 vroom_fwf(fwf_sample, fwf_cols(name = 20, state = 10, ssn = 12))
 #> Rows: 3 Columns: 3
 #> ── Column specification ───────────────────────────────────────────────
@@ -464,6 +482,7 @@ vroom_fwf(fwf_sample, fwf_cols(name = 20, state = 10, ssn = 12))
   Use user provided named pairs of positions.
 
 ``` r
+
 vroom_fwf(fwf_sample, fwf_cols(name = c(1, 20), ssn = c(30, 42)))
 #> Rows: 3 Columns: 2
 #> ── Column specification ───────────────────────────────────────────────
@@ -518,6 +537,7 @@ If you only need to override a single column the most concise way is to
 use a named vector.
 
 ``` r
+
 # read the 'hp' columns as an integer
 vroom(vroom_example("mtcars.csv"), col_types = c(hp = "i"))
 #> # A tibble: 32 × 12
@@ -554,6 +574,7 @@ You can read all the columns with the same type, by using the `.default`
 argument. For example reading everything as a character.
 
 ``` r
+
 vroom(vroom_example("mtcars.csv"), col_types = c(.default = "c"))
 #> # A tibble: 32 × 12
 #>   model     mpg   cyl   disp  hp    drat  wt    qsec  vs    am    gear 
@@ -568,6 +589,7 @@ vroom(vroom_example("mtcars.csv"), col_types = c(.default = "c"))
 However you can also use the `col_*()` functions in a list.
 
 ``` r
+
 vroom(
   vroom_example("mtcars.csv"),
   col_types = list(hp = col_integer(), cyl = col_skip(), gear = col_factor())
@@ -586,6 +608,7 @@ such as for categorical data when you know all of the levels of a
 factor.
 
 ``` r
+
 vroom(
   vroom_example("mtcars.csv"),
   col_types = list(gear = col_factor(levels = c(gear = c("3", "4", "5"))))
@@ -612,6 +635,7 @@ function as the input. This will automatically clean the names to use
 whatever case you specify, here I am setting it to use `ALLCAPS` names.
 
 ``` r
+
 vroom(
   vroom_example("mtcars.csv"),
   .name_repair = \(x) janitor::make_clean_names(x, case = "all_caps")
@@ -630,6 +654,7 @@ tabs - More easily and efficiently ingested by Unix command line tools
 such as `cut`, `perl` and `awk`.
 
 ``` r
+
 vroom_write(mtcars, "mtcars.tsv")
 ```
 
@@ -639,6 +664,7 @@ However you can also use `delim = ','` to write CSV files, which are
 common as inputs to GUI spreadsheet tools like Excel or Google Sheets.
 
 ``` r
+
 vroom_write(mtcars, "mtcars.csv", delim = ",")
 ```
 
@@ -648,6 +674,7 @@ For gzip, bzip2 and xz compression the outputs will be automatically
 compressed if the filename ends in `.gz`, `.bz2` or `.xz`.
 
 ``` r
+
 vroom_write(mtcars, "mtcars.tsv.gz")
 
 vroom_write(mtcars, "mtcars.tsv.bz2")
@@ -673,6 +700,7 @@ is fast enough that the compression speed becomes the bottleneck when
 writing.
 
 ``` r
+
 vroom_write(mtcars, pipe("pigz > mtcars.tsv.gz"))
 ```
 

@@ -112,14 +112,14 @@ sample, filter, and aggregate operations. Consult the associated table
 for detailed timing and memory usage
 statistics.](benchmarks_files/figure-html/unnamed-chunk-2-1.png)
 
-| reading package | manipulating package | altrep | memory |     read | print | head | tail | sample | filter | aggregate |    total |
-|----------------:|---------------------:|-------:|-------:|---------:|------:|-----:|-----:|-------:|-------:|----------:|---------:|
-|      read.delim |                 base |        | 6.18GB | 1m 12.3s |   6ms |  1ms |  1ms |    1ms |   1.3s |     895ms | 1m 14.5s |
-|           readr |                dplyr |        | 6.91GB |    37.3s | 147ms |  2ms |  1ms |   17ms |  249ms |     538ms |    38.3s |
-|           vroom |                dplyr |  FALSE | 6.55GB |    18.4s | 117ms |  2ms |  1ms |   14ms |  961ms |      1.2s |    20.7s |
-|           vroom |                 base |   TRUE | 6.35GB |     1.4s | 158ms |  3ms |  1ms |    1ms |   1.1s |      7.4s |      10s |
-|      data.table |           data.table |        | 6.38GB |     5.8s |  12ms |  1ms |  1ms |    1ms |  104ms |     764ms |     6.7s |
-|           vroom |                dplyr |   TRUE | 6.41GB |     1.3s |  76ms |  2ms |  1ms |   11ms |   1.3s |        4s |     6.7s |
+| reading package | manipulating package | altrep | memory | read | print | head | tail | sample | filter | aggregate | total |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| read.delim | base |  | 6.18GB | 1m 12.3s | 6ms | 1ms | 1ms | 1ms | 1.3s | 895ms | 1m 14.5s |
+| readr | dplyr |  | 6.91GB | 37.3s | 147ms | 2ms | 1ms | 17ms | 249ms | 538ms | 38.3s |
+| vroom | dplyr | FALSE | 6.55GB | 18.4s | 117ms | 2ms | 1ms | 14ms | 961ms | 1.2s | 20.7s |
+| vroom | base | TRUE | 6.35GB | 1.4s | 158ms | 3ms | 1ms | 1ms | 1.1s | 7.4s | 10s |
+| data.table | data.table |  | 6.38GB | 5.8s | 12ms | 1ms | 1ms | 1ms | 104ms | 764ms | 6.7s |
+| vroom | dplyr | TRUE | 6.41GB | 1.3s | 76ms | 2ms | 1ms | 11ms | 1.3s | 4s | 6.7s |
 
 (*N.B. Rcpp used in the dplyr implementation fully materializes all the
 Altrep numeric vectors when using
@@ -152,15 +152,15 @@ performance breakdown by operation type, with data.table performing
 slightly faster than vroom for this numeric-heavy
 workload.](benchmarks_files/figure-html/unnamed-chunk-3-1.png)
 
-| reading package | manipulating package | altrep | memory |     read | print | head | tail | sample | filter | aggregate |    total |
-|----------------:|---------------------:|-------:|-------:|---------:|------:|-----:|-----:|-------:|-------:|----------:|---------:|
-|      read.delim |                 base |        | 4.79GB | 1m 51.4s |  1.4s |  1ms |  1ms |    2ms |   4.5s |      37ms | 1m 57.3s |
-|           readr |                dplyr |        | 2.82GB |    13.1s |  64ms |  2ms |  1ms |   16ms |   18ms |      55ms |    13.3s |
-|           vroom |                dplyr |  FALSE | 2.75GB |     1.3s |  48ms |  1ms |  1ms |   14ms |   18ms |      46ms |     1.5s |
-|           vroom |                 base |  FALSE | 2.69GB |     1.3s |  48ms |  1ms |  1ms |    3ms |    6ms |      55ms |     1.4s |
-|           vroom |                dplyr |   TRUE | 3.29GB |    604ms |  64ms |  1ms |  1ms |   14ms |   42ms |     235ms |    959ms |
-|           vroom |                 base |   TRUE | 3.28GB |    581ms |  55ms |  1ms |  1ms |    3ms |   29ms |     251ms |    920ms |
-|      data.table |           data.table |        | 2.72GB |    256ms |  13ms |  1ms |  1ms |    4ms |    6ms |      25ms |    302ms |
+| reading package | manipulating package | altrep | memory | read | print | head | tail | sample | filter | aggregate | total |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| read.delim | base |  | 4.79GB | 1m 51.4s | 1.4s | 1ms | 1ms | 2ms | 4.5s | 37ms | 1m 57.3s |
+| readr | dplyr |  | 2.82GB | 13.1s | 64ms | 2ms | 1ms | 16ms | 18ms | 55ms | 13.3s |
+| vroom | dplyr | FALSE | 2.75GB | 1.3s | 48ms | 1ms | 1ms | 14ms | 18ms | 46ms | 1.5s |
+| vroom | base | FALSE | 2.69GB | 1.3s | 48ms | 1ms | 1ms | 3ms | 6ms | 55ms | 1.4s |
+| vroom | dplyr | TRUE | 3.29GB | 604ms | 64ms | 1ms | 1ms | 14ms | 42ms | 235ms | 959ms |
+| vroom | base | TRUE | 3.28GB | 581ms | 55ms | 1ms | 1ms | 3ms | 29ms | 251ms | 920ms |
+| data.table | data.table |  | 2.72GB | 256ms | 13ms | 1ms | 1ms | 4ms | 6ms | 25ms | 302ms |
 
 #### Wide
 
@@ -173,15 +173,15 @@ performance breakdown by operation type, with data.table performing
 slightly faster than vroom for this wide numeric
 dataset.](benchmarks_files/figure-html/unnamed-chunk-4-1.png)
 
-| reading package | manipulating package | altrep |  memory |   read | print | head | tail | sample | filter | aggregate |    total |
-|----------------:|---------------------:|-------:|--------:|-------:|------:|-----:|-----:|-------:|-------:|----------:|---------:|
-|      read.delim |                 base |        | 14.41GB | 8m 41s | 131ms |  7ms |  7ms |    9ms |   75ms |       5ms | 8m 41.2s |
-|           readr |                dplyr |        |  5.46GB |  56.1s |  96ms |  3ms |  3ms |   26ms |   18ms |      39ms |    56.3s |
-|           vroom |                dplyr |  FALSE |  5.35GB |   6.9s |  63ms |  3ms |  3ms |   95ms |   14ms |      31ms |     7.1s |
-|           vroom |                 base |  FALSE |  5.34GB |   6.9s |  61ms |  3ms |  3ms |    5ms |    6ms |       7ms |       7s |
-|           vroom |                dplyr |   TRUE |  7.26GB |     3s |  68ms |  4ms | 14ms |   23ms |   20ms |      77ms |     3.2s |
-|           vroom |                 base |   TRUE |  7.26GB |     3s |  68ms |  4ms |  4ms |    5ms |   11ms |      42ms |     3.1s |
-|      data.table |           data.table |        |  5.48GB |   1.3s | 100ms |  1ms |  1ms |    3ms |    4ms |       4ms |     1.4s |
+| reading package | manipulating package | altrep | memory | read | print | head | tail | sample | filter | aggregate | total |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| read.delim | base |  | 14.41GB | 8m 41s | 131ms | 7ms | 7ms | 9ms | 75ms | 5ms | 8m 41.2s |
+| readr | dplyr |  | 5.46GB | 56.1s | 96ms | 3ms | 3ms | 26ms | 18ms | 39ms | 56.3s |
+| vroom | dplyr | FALSE | 5.35GB | 6.9s | 63ms | 3ms | 3ms | 95ms | 14ms | 31ms | 7.1s |
+| vroom | base | FALSE | 5.34GB | 6.9s | 61ms | 3ms | 3ms | 5ms | 6ms | 7ms | 7s |
+| vroom | dplyr | TRUE | 7.26GB | 3s | 68ms | 4ms | 14ms | 23ms | 20ms | 77ms | 3.2s |
+| vroom | base | TRUE | 7.26GB | 3s | 68ms | 4ms | 4ms | 5ms | 11ms | 42ms | 3.1s |
+| data.table | data.table |  | 5.48GB | 1.3s | 100ms | 1ms | 1ms | 3ms | 4ms | 4ms | 1.4s |
 
 ### All character data
 
@@ -199,14 +199,14 @@ vroom with Altrep significantly outperforming other packages due to lazy
 character vector
 evaluation.](benchmarks_files/figure-html/unnamed-chunk-5-1.png)
 
-| reading package | manipulating package | altrep | memory |     read | print | head | tail | sample | filter | aggregate |    total |
-|----------------:|---------------------:|-------:|-------:|---------:|------:|-----:|-----:|-------:|-------:|----------:|---------:|
-|      read.delim |                 base |        | 4.53GB | 1m 43.1s |   8ms |  1ms |  1ms |    2ms |   28ms |     293ms | 1m 43.4s |
-|           readr |                dplyr |        | 4.35GB |  1m 2.6s | 102ms |  2ms |  1ms |   17ms |   20ms |     215ms |  1m 2.9s |
-|           vroom |                dplyr |  FALSE |  4.3GB |    50.5s |  50ms |  2ms |  1ms |   16ms |   21ms |     150ms |    50.7s |
-|      data.table |           data.table |        | 4.73GB |    42.8s |  16ms |  1ms |  1ms |    4ms |   16ms |     149ms |      43s |
-|           vroom |                 base |   TRUE | 3.22GB |    595ms |  46ms |  1ms |  1ms |    3ms |  163ms |      2.1s |     2.9s |
-|           vroom |                dplyr |   TRUE | 3.21GB |    640ms |  58ms |  2ms |  1ms |   16ms |  185ms |      1.2s |     2.1s |
+| reading package | manipulating package | altrep | memory | read | print | head | tail | sample | filter | aggregate | total |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| read.delim | base |  | 4.53GB | 1m 43.1s | 8ms | 1ms | 1ms | 2ms | 28ms | 293ms | 1m 43.4s |
+| readr | dplyr |  | 4.35GB | 1m 2.6s | 102ms | 2ms | 1ms | 17ms | 20ms | 215ms | 1m 2.9s |
+| vroom | dplyr | FALSE | 4.3GB | 50.5s | 50ms | 2ms | 1ms | 16ms | 21ms | 150ms | 50.7s |
+| data.table | data.table |  | 4.73GB | 42.8s | 16ms | 1ms | 1ms | 4ms | 16ms | 149ms | 43s |
+| vroom | base | TRUE | 3.22GB | 595ms | 46ms | 1ms | 1ms | 3ms | 163ms | 2.1s | 2.9s |
+| vroom | dplyr | TRUE | 3.21GB | 640ms | 58ms | 2ms | 1ms | 16ms | 185ms | 1.2s | 2.1s |
 
 #### Wide
 
@@ -219,14 +219,14 @@ vroom with Altrep significantly outperforming other packages due to lazy
 character vector
 evaluation.](benchmarks_files/figure-html/unnamed-chunk-6-1.png)
 
-| reading package | manipulating package | altrep |  memory |     read | print | head | tail | sample | filter | aggregate |    total |
-|----------------:|---------------------:|-------:|--------:|---------:|------:|-----:|-----:|-------:|-------:|----------:|---------:|
-|      read.delim |                 base |        | 13.09GB | 8m 30.4s | 149ms |  7ms |  8ms |   26ms |  224ms |      59ms | 8m 30.9s |
-|           readr |                dplyr |        | 12.21GB | 7m 39.4s | 217ms |  4ms |  3ms |   29ms |   38ms |      57ms | 7m 39.8s |
-|           vroom |                dplyr |  FALSE | 12.14GB |  4m 7.3s |  67ms |  3ms |  3ms |   28ms |   35ms |      37ms |  4m 7.5s |
-|      data.table |           data.table |        | 12.66GB | 3m 21.8s | 135ms |  2ms |  2ms |   33ms |  168ms |      15ms | 3m 22.1s |
-|           vroom |                 base |   TRUE |  6.57GB |     3.1s |  62ms |  5ms |  4ms |    5ms |   55ms |     252ms |     3.5s |
-|           vroom |                dplyr |   TRUE |  6.57GB |     3.1s |  64ms |  5ms |  4ms |   27ms |   82ms |     160ms |     3.4s |
+| reading package | manipulating package | altrep | memory | read | print | head | tail | sample | filter | aggregate | total |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| read.delim | base |  | 13.09GB | 8m 30.4s | 149ms | 7ms | 8ms | 26ms | 224ms | 59ms | 8m 30.9s |
+| readr | dplyr |  | 12.21GB | 7m 39.4s | 217ms | 4ms | 3ms | 29ms | 38ms | 57ms | 7m 39.8s |
+| vroom | dplyr | FALSE | 12.14GB | 4m 7.3s | 67ms | 3ms | 3ms | 28ms | 35ms | 37ms | 4m 7.5s |
+| data.table | data.table |  | 12.66GB | 3m 21.8s | 135ms | 2ms | 2ms | 33ms | 168ms | 15ms | 3m 22.1s |
+| vroom | base | TRUE | 6.57GB | 3.1s | 62ms | 5ms | 4ms | 5ms | 55ms | 252ms | 3.5s |
+| vroom | dplyr | TRUE | 6.57GB | 3.1s | 64ms | 5ms | 4ms | 27ms | 82ms | 160ms | 3.4s |
 
 ## Reading multiple delimited files
 
@@ -242,13 +242,13 @@ packages. Shows vroom's performance advantage when reading multiple
 files
 simultaneously.](benchmarks_files/figure-html/unnamed-chunk-8-1.png)
 
-| reading package | manipulating package | altrep | memory |     read | print | head | tail | sample | filter | aggregate |    total |
-|----------------:|---------------------:|-------:|-------:|---------:|------:|-----:|-----:|-------:|-------:|----------:|---------:|
-|           readr |                dplyr |        | 63.5GB |   7m 55s | 837ms |  1ms |  1ms |   15ms |   4.2s |     13.5s | 8m 13.6s |
-|           vroom |                dplyr |  FALSE | 63.1GB | 3m 52.3s |  2.2s |  2ms |  1ms |   14ms |  10.5s |      7.2s | 4m 12.2s |
-|           vroom |                 base |   TRUE | 88.3GB |    20.3s |    3s |  1ms |  1ms |    1ms |  21.5s |  2m 22.6s |  3m 7.5s |
-|           vroom |                dplyr |   TRUE |   88GB |    20.4s |  2.8s |  1ms |  1ms |   13ms |  23.9s |   1m 5.6s | 1m 52.7s |
-|      data.table |           data.table |        | 59.6GB | 1m 35.3s |   7ms |  1ms |  1ms |    1ms |   1.1s |      4.7s | 1m 41.1s |
+| reading package | manipulating package | altrep | memory | read | print | head | tail | sample | filter | aggregate | total |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| readr | dplyr |  | 63.5GB | 7m 55s | 837ms | 1ms | 1ms | 15ms | 4.2s | 13.5s | 8m 13.6s |
+| vroom | dplyr | FALSE | 63.1GB | 3m 52.3s | 2.2s | 2ms | 1ms | 14ms | 10.5s | 7.2s | 4m 12.2s |
+| vroom | base | TRUE | 88.3GB | 20.3s | 3s | 1ms | 1ms | 1ms | 21.5s | 2m 22.6s | 3m 7.5s |
+| vroom | dplyr | TRUE | 88GB | 20.4s | 2.8s | 1ms | 1ms | 13ms | 23.9s | 1m 5.6s | 1m 52.7s |
+| data.table | data.table |  | 59.6GB | 1m 35.3s | 7ms | 1ms | 1ms | 1ms | 1.1s | 4.7s | 1m 41.1s |
 
 ## Reading fixed width files
 
@@ -274,13 +274,13 @@ analyzing fixed-width format data (US Census data) across different R
 packages. Shows vroom's performance with fixed-width
 files.](benchmarks_files/figure-html/unnamed-chunk-10-1.png)
 
-| reading package | manipulating package | altrep | memory |     read | print | head | tail | sample | filter | aggregate |     total |
-|----------------:|---------------------:|-------:|-------:|---------:|------:|-----:|-----:|-------:|-------:|----------:|----------:|
-|      read.delim |                 base |        | 6.17GB | 18m 9.6s |  16ms |  1ms |  2ms |    3ms |  492ms |      90ms | 18m 10.2s |
-|           readr |                dplyr |        | 6.19GB |    32.6s |  48ms |  2ms |  1ms |   17ms |   95ms |      94ms |     32.8s |
-|           vroom |                dplyr |  FALSE | 5.96GB |    14.7s |  44ms |  1ms |  1ms |   15ms |  468ms |      91ms |     15.3s |
-|           vroom |                 base |   TRUE | 4.65GB |    164ms |  56ms |  1ms |  1ms |    7ms |  285ms |      1.8s |      2.3s |
-|           vroom |                dplyr |   TRUE | 4.62GB |    163ms |  48ms |  2ms |  1ms |   16ms |  306ms |      1.3s |      1.8s |
+| reading package | manipulating package | altrep | memory | read | print | head | tail | sample | filter | aggregate | total |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| read.delim | base |  | 6.17GB | 18m 9.6s | 16ms | 1ms | 2ms | 3ms | 492ms | 90ms | 18m 10.2s |
+| readr | dplyr |  | 6.19GB | 32.6s | 48ms | 2ms | 1ms | 17ms | 95ms | 94ms | 32.8s |
+| vroom | dplyr | FALSE | 5.96GB | 14.7s | 44ms | 1ms | 1ms | 15ms | 468ms | 91ms | 15.3s |
+| vroom | base | TRUE | 4.65GB | 164ms | 56ms | 1ms | 1ms | 7ms | 285ms | 1.8s | 2.3s |
+| vroom | dplyr | TRUE | 4.62GB | 163ms | 48ms | 2ms | 1ms | 16ms | 306ms | 1.3s | 1.8s |
 
 ## Writing delimited files
 

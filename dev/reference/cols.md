@@ -101,21 +101,21 @@ col_time(format = "", ...)
 The available specifications are: (long names in quotes and string
 abbreviations in brackets)
 
-|                               |                       |            |                                                             |
-|-------------------------------|-----------------------|------------|-------------------------------------------------------------|
-| function                      | long name             | short name | description                                                 |
-| `col_logical()`               | "logical"             | "l"        | Logical values containing only `T`, `F`, `TRUE` or `FALSE`. |
-| `col_integer()`               | "integer"             | "i"        | Integer numbers.                                            |
-| `col_big_integer()`           | "big_integer"         | "I"        | Big Integers (64bit), requires the `bit64` package.         |
-| `col_double()`                | "double", "numeric"   | "d"        | 64-bit double floating point numbers.                       |
-| `col_character()`             | "character"           | "c"        | Character string data.                                      |
-| `col_factor(levels, ordered)` | "factor"              | "f"        | A fixed set of values.                                      |
-| `col_date(format = "")`       | "date"                | "D"        | Calendar dates formatted with the locale's `date_format`.   |
-| `col_time(format = "")`       | "time"                | "t"        | Times formatted with the locale's `time_format`.            |
-| `col_datetime(format = "")`   | "datetime", "POSIXct" | "T"        | ISO8601 date times.                                         |
-| `col_number()`                | "number"              | "n"        | Human readable numbers containing the `grouping_mark`       |
-| `col_skip()`                  | "skip", "NULL"        | "\_", "-"  | Skip and don't import this column.                          |
-| `col_guess()`                 | "guess", "NA"         | "?"        | Parse using the "best" guessed type based on the input.     |
+|  |  |  |  |
+|----|----|----|----|
+| function | long name | short name | description |
+| `col_logical()` | "logical" | "l" | Logical values containing only `T`, `F`, `TRUE` or `FALSE`. |
+| `col_integer()` | "integer" | "i" | Integer numbers. |
+| `col_big_integer()` | "big_integer" | "I" | Big Integers (64bit), requires the `bit64` package. |
+| `col_double()` | "double", "numeric" | "d" | 64-bit double floating point numbers. |
+| `col_character()` | "character" | "c" | Character string data. |
+| `col_factor(levels, ordered)` | "factor" | "f" | A fixed set of values. |
+| `col_date(format = "")` | "date" | "D" | Calendar dates formatted with the locale's `date_format`. |
+| `col_time(format = "")` | "time" | "t" | Times formatted with the locale's `time_format`. |
+| `col_datetime(format = "")` | "datetime", "POSIXct" | "T" | ISO8601 date times. |
+| `col_number()` | "number" | "n" | Human readable numbers containing the `grouping_mark` |
+| `col_skip()` | "skip", "NULL" | "\_", "-" | Skip and don't import this column. |
+| `col_guess()` | "guess", "NA" | "?" | Parse using the "best" guessed type based on the input. |
 
 ### Date, time, and datetime formats:
 
