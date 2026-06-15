@@ -197,7 +197,8 @@ connection_or_filepath <- function(path, write = FALSE, call = caller_env()) {
     extension <- split_path_ext(extension)$extension
     formats <- archive_formats(extension)
   }
-  needs_archive <- !is.null(formats) && (write || extension != "zip")
+  needs_archive <- !is.null(formats) &&
+    (write || extension != "zip" || requireNamespace("archive", quietly = TRUE))
 
   if (needs_archive) {
     reason <- glue(

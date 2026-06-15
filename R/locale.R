@@ -28,6 +28,10 @@
 #'   DST. It is *not* Eastern Standard Time. It's better to use
 #'   "US/Eastern", "US/Central" etc.
 #' @param encoding Default encoding.
+#' @param date_order Order of date components for auto-detection. One of
+#'   `"ymd"`, `"ydm"`, `"mdy"`, `"myd"`, `"dmy"`, `"dym"`, or those combined
+#'   with a time suffix: `"_hms"`, `"_hm"`, or `"_h"` (e.g. `"mdy_hms"`).
+#'   Use `NULL` (default) for automatic detection.
 #' @export
 #' @examples
 #' locale()
@@ -42,7 +46,8 @@ locale <- function(
   decimal_mark = ".",
   grouping_mark = ",",
   tz = "UTC",
-  encoding = "UTF-8"
+  encoding = "UTF-8",
+  date_order = NULL
 ) {
   if (is.character(date_names)) {
     date_names <- date_names_lang(date_names)
@@ -73,6 +78,35 @@ locale <- function(
   tz <- check_tz(tz)
   check_encoding(encoding)
 
+  valid_date_orders <- c(
+    "ymd",
+    "ydm",
+    "mdy",
+    "myd",
+    "dmy",
+    "dym",
+    "ymd_hms",
+    "ymd_hm",
+    "ymd_h",
+    "mdy_hms",
+    "mdy_hm",
+    "mdy_h",
+    "dmy_hms",
+    "dmy_hm",
+    "dmy_h",
+    "ydm_hms",
+    "ydm_hm",
+    "ydm_h"
+  )
+  if (!is.null(date_order)) {
+    check_string(date_order)
+  }
+  if (!is.null(date_order) && !date_order %in% valid_date_orders) {
+    cli::cli_abort(
+      "{.arg date_order} must be NULL or one of: {.val {valid_date_orders}}"
+    )
+  }
+
   structure(
     list(
       date_names = date_names,
@@ -81,7 +115,8 @@ locale <- function(
       decimal_mark = decimal_mark,
       grouping_mark = grouping_mark,
       tz = tz,
-      encoding = encoding
+      encoding = encoding,
+      date_order = date_order
     ),
     class = "locale"
   )
@@ -108,6 +143,9 @@ print.locale <- function(x, ...) {
   cat("Formats:  ", x$date_format, " / ", x$time_format, "\n", sep = "")
   cat("Timezone: ", x$tz, "\n", sep = "")
   cat("Encoding: ", x$encoding, "\n", sep = "")
+  if (!is.null(x$date_order)) {
+    cat("Date order: ", x$date_order, "\n", sep = "")
+  }
   print(x$date_names)
 }
 

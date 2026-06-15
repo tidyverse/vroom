@@ -6,9 +6,22 @@ double parse_date(
     const char* begin,
     const char* end,
     DateTimeParser& parser,
-    const std::string& format) {
+    const std::string& format,
+    LocaleInfo* locale) {
   parser.setDate(begin, end);
-  bool res = (format == "") ? parser.parseLocaleDate() : parser.parse(format);
+  bool res;
+  if (!format.empty()) {
+    res = parser.parse(format);
+  } else if (!locale->dateOrder_.empty() &&
+             locale->dateOrder_.find('_') == std::string::npos) {
+    res = parser.parseDateOrder(locale->dateOrder_);
+  } else {
+    res = parser.parseLocaleDate();
+    if (!res) {
+      parser.setDate(begin, end);
+      res = parser.parseYearLastHeuristic();
+    }
+  }
 
   if (res) {
     DateTime dt = parser.makeDate();
@@ -40,7 +53,7 @@ cpp11::doubles read_date(vroom_vec_info* info) {
                 b,
                 col,
                 [&](const char* begin, const char* end) -> double {
-                  return parse_date(begin, end, parser, info->format);
+                  return parse_date(begin, end, parser, info->format, info->locale.get());
                 },
                 info->errors,
                 err_msg.c_str(),

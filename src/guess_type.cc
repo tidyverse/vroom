@@ -84,22 +84,53 @@ bool isTime(const std::string& x, LocaleInfo* pLocale) {
 
 bool isDate(const std::string& x, LocaleInfo* pLocale) {
   DateTimeParser parser(pLocale);
+  parser.setDate(x.c_str(), x.c_str() + x.size());
+
+  // Explicit date-only order (no '_' suffix)
+  if (!pLocale->dateOrder_.empty() &&
+      pLocale->dateOrder_.find('_') == std::string::npos) {
+    return parser.parseDateOrder(pLocale->dateOrder_);
+  }
+
+  // If a datetime order is explicitly set, don't match as date-only
+  if (!pLocale->dateOrder_.empty()) {
+    return false;
+  }
+
+  // Auto-detection: locale date format first, then year-last heuristic
+  if (parser.parseLocaleDate()) return true;
 
   parser.setDate(x.c_str(), x.c_str() + x.size());
-  return parser.parseLocaleDate();
+  return parser.parseYearLastHeuristic();
 }
 
 static bool isDateTime(const std::string& x, LocaleInfo* pLocale) {
   DateTimeParser parser(pLocale);
+  parser.setDate(x.c_str(), x.c_str() + x.size());
+
+  // Explicit datetime order (has '_' suffix)
+  if (!pLocale->dateOrder_.empty() &&
+      pLocale->dateOrder_.find('_') != std::string::npos) {
+    if (!parser.parseDateOrder(pLocale->dateOrder_)) return false;
+    return parser.makeDateTime().validDateTime();
+  }
+
+  // If a date-only order is explicitly set, don't match as datetime
+  if (!pLocale->dateOrder_.empty()) {
+    return false;
+  }
+
+  // Auto-detection: ISO8601 first, then year-last (M/D/Y or D/M/Y) heuristic
+  // so MDY/DMY datetimes (including 2-digit years) are recognized. (Issue #36088)
+  if (parser.parseISO8601()) {
+    DateTime dt = parser.makeDateTime();
+    if (dt.validDateTime()) return true;
+  }
 
   parser.setDate(x.c_str(), x.c_str() + x.size());
-  bool ok = parser.parseISO8601();
-
-  if (!ok)
-    return false;
-
-  DateTime dt = parser.makeDateTime();
-  return dt.validDateTime();
+  if (!parser.parseYearLastHeuristicDateTime()) return false;
+  DateTime dt2 = parser.makeDateTime();
+  return dt2.validDateTime();
 }
 
 std::string guess_type__(

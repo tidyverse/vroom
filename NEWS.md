@@ -1,5 +1,14 @@
 # vroom (development version)
 
+* `locale()` gains a `date_order` argument to control the component order used
+  when parsing dates and date-times (e.g. `"mdy"`, `"dmy"`, `"ymd_hms"`). This
+  makes it possible to read year-last formats such as `10/02/2024` that the
+  automatic type guesser would otherwise treat as character.
+
+* Date and date-time auto-detection now accepts any non-alphanumeric separator
+  between components (e.g. `2024.10.02`, `2024/10/02`), and falls back to a
+  year-last heuristic so unambiguous `D/M/YYYY` values are recognised as dates.
+
 # vroom 1.7.1
 
 * Internal changes requested by CRAN for forward compatibility with clang 22.
