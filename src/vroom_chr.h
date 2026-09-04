@@ -7,14 +7,30 @@
 #include "r_utils.h"
 #include "vroom_vec.h"
 
-cpp11::strings read_chr(vroom_vec_info* info);
+// Allocate and parse a full character vector for `info`, reusing any strings
+// already cached by vroom_chr::string_Elt() (see vroom_chr::EltChunk).
+cpp11::strings read_chr(vroom_vec_info* info, SEXP cache = R_NilValue);
+
+// Parse into `out` every element that is still R_BlankString.
 void fill_chr(vroom_vec_info* info, SEXP out);
+
 SEXP check_na(SEXP na, SEXP val);
 
 struct vroom_chr : vroom_vec {
 
 public:
   static R_altrep_class_t class_t;
+
+  // Strings created by string_Elt() must stay reachable for as long as the
+  // vector does, because R may hold a pointer from STRING_ELT() across a
+  // later allocation. They are kept in fixed-size STRSXP chunks hanging off
+  // a VECSXP in the external pointer's protected slot. Chunks are allocated
+  // on first touch, so sparse access costs one chunk rather than a
+  // full-length vector. Within a chunk, R_BlankString marks a miss: empty
+  // strings share that permanent singleton and need no rooting.
+  static constexpr R_xlen_t chunk_shift = 10;
+  static constexpr R_xlen_t chunk_size = R_xlen_t(1) << chunk_shift;
+  static constexpr R_xlen_t chunk_mask = chunk_size - 1;
 
   // Make an altrep object of class `stdvec_double::class_t`
   static SEXP Make(vroom_vec_info* info) {
@@ -46,20 +62,6 @@ public:
 
   // ALTSTRING methods -----------------
 
-  // Keep strings created by string_Elt() reachable through data1. New
-  // STRSXPs contain R_BlankString, which serves as the cache miss marker.
-  // Empty strings share this permanent singleton and do not need rooting.
-  static SEXP EltCache(SEXP vec) {
-    SEXP ptr = R_altrep_data1(vec);
-    SEXP cache = R_ExternalPtrProtected(ptr);
-    if (cache == nullptr || TYPEOF(cache) != STRSXP) {
-      cache = PROTECT(Rf_allocVector(STRSXP, Length(vec)));
-      R_SetExternalPtrProtected(ptr, cache);
-      UNPROTECT(1);
-    }
-    return cache;
-  }
-
   static SEXP Val(SEXP vec, R_xlen_t i) {
     auto& info = Info(vec);
 
@@ -70,7 +72,7 @@ public:
         PROTECT(info.locale->encoder_.makeSEXP(str.begin(), str.end(), true));
 
     if (Rf_xlength(val) < str.end() - str.begin()) {
-      auto&& itr = info.column->begin();
+      auto itr = col->begin() + i;
       info.errors->add_error(
           itr.index(), col->get_index(), "", "embedded null", itr.filename());
     }
@@ -84,6 +86,33 @@ public:
     return val;
   }
 
+  // The cache chunk holding element `i`, allocating it (and the chunk
+  // vector) on first use.
+  static SEXP EltChunk(SEXP vec, R_xlen_t i) {
+    SEXP ptr = R_altrep_data1(vec);
+    SEXP chunks = R_ExternalPtrProtected(ptr);
+    if (chunks == R_NilValue) {
+      R_xlen_t n_chunks = (Length(vec) + chunk_mask) >> chunk_shift;
+      chunks = PROTECT(Rf_allocVector(VECSXP, n_chunks));
+      R_SetExternalPtrProtected(ptr, chunks);
+      UNPROTECT(1);
+    }
+
+    R_xlen_t c = i >> chunk_shift;
+    SEXP chunk = VECTOR_ELT(chunks, c);
+    if (chunk == R_NilValue) {
+      R_xlen_t len = Length(vec) - (c << chunk_shift);
+      if (len > chunk_size) {
+        len = chunk_size;
+      }
+      chunk = PROTECT(Rf_allocVector(STRSXP, len));
+      SET_VECTOR_ELT(chunks, c, chunk);
+      UNPROTECT(1);
+    }
+
+    return chunk;
+  }
+
   // the element at the index `i`
   //
   // this does not do bounds checking because that's expensive, so
@@ -95,15 +124,15 @@ public:
     }
     SPDLOG_TRACE("{0:x}: vroom_chr string_Elt {1}", (size_t)vec, i);
 
-    SEXP cache = EltCache(vec);
-    SEXP val = STRING_ELT(cache, i);
+    SEXP chunk = EltChunk(vec, i);
+    R_xlen_t j = i & chunk_mask;
+    SEXP val = STRING_ELT(chunk, j);
     if (val == R_BlankString) {
       val = PROTECT(Val(vec, i));
-      if (val != R_BlankString) {
-        SET_STRING_ELT(cache, i, val);
-      }
+      SET_STRING_ELT(chunk, j, val);
       UNPROTECT(1);
     }
+
     return val;
   }
 
@@ -116,21 +145,13 @@ public:
 
     SPDLOG_TRACE("{0:x}: vroom_chr Materialize", (size_t)vec);
     SEXP data1 = R_altrep_data1(vec);
-    SEXP cache = R_ExternalPtrProtected(data1);
-    if (cache != nullptr && TYPEOF(cache) == STRSXP) {
-      fill_chr(&Info(vec), cache);
-      R_set_altrep_data2(vec, cache);
-
-      // Once we have materialized we no longer need the cache or info
-      R_SetExternalPtrProtected(data1, R_NilValue);
-      Finalize(data1);
-
-      return cache;
-    }
-
-    auto out = read_chr(&Info(vec));
+    auto out = read_chr(&Info(vec), R_ExternalPtrProtected(data1));
     R_set_altrep_data2(vec, out);
+
+    // Once we have materialized we no longer need the cache or the info
+    R_SetExternalPtrProtected(data1, R_NilValue);
     Finalize(data1);
+
     return out;
   }
 

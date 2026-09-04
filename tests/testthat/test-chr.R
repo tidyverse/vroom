@@ -67,3 +67,67 @@ test_that("ALTREP character elements stay alive across allocations", {
   expect_identical(first, NA_integer_)
   expect_identical(second, NA_integer_)
 })
+
+test_that("ALTREP character problems report the correct row", {
+  path <- withr::local_tempfile()
+  writeBin(
+    as.raw(c(
+      0x61L, 0x0aL,
+      0x62L, 0x0aL,
+      0x63L, 0x00L, 0x64L, 0x0aL
+    )),
+    path
+  )
+
+  x <- vroom(
+    path,
+    delim = ",",
+    col_names = FALSE,
+    col_types = "c",
+    altrep = "chr",
+    num_threads = 1L,
+    progress = FALSE,
+    show_col_types = FALSE
+  )
+
+  expect_warning(x[[1L]][[3L]], class = "vroom_parse_issue")
+
+  # The problem is recorded correctly before materialization.
+  expect_equal(problems(x, lazy = TRUE)$row, 3)
+
+  # `problems()` materializes by default. Cached values must not cause the
+  # incorrect row to reappear or the correct row to be lost.
+  expect_equal(problems(x)$row, 3)
+})
+
+test_that("partially cached ALTREP character vectors materialize correctly", {
+  n <- 2500L
+  expected <- sprintf("v%04d", seq_len(n))
+  expected[c(3L, 1025L)] <- ""
+  expected[c(4L, 1026L)] <- NA_character_
+
+  path <- withr::local_tempfile()
+  # Quote the empty strings so that they are not skipped as empty rows.
+  lines <- ifelse(expected == "", '""', expected)
+  writeLines(ifelse(is.na(lines), "NA", lines), path)
+
+  x <- vroom(
+    path,
+    delim = ",",
+    col_names = FALSE,
+    col_types = "c",
+    na = "NA",
+    altrep = "chr",
+    num_threads = 1L,
+    progress = FALSE,
+    show_col_types = FALSE
+  )[[1L]]
+
+  # Touch the first, middle and last chunks, including the empty and NA
+  # elements, so that materializing has to merge cached and uncached chunks.
+  idx <- c(1L, 3L, 4L, 1024L, 1025L, 1026L, 2049L, n)
+  expect_identical(vapply(idx, function(i) x[[i]], ""), expected[idx])
+
+  vroom_materialize(list(x), replace = FALSE)
+  expect_identical(x, expected)
+})

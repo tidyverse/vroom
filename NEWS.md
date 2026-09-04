@@ -1,6 +1,6 @@
 # vroom (development version)
 
-* `vroom()` now keeps individually accessed strings from lazy character columns alive across later allocations.
+* Fixed a use-after-free crash when base R held an element of a lazy character column across an allocation. Accessed strings are now retained for the lifetime of the column, so element-wise passes over lazy character columns may use more memory than before. (@traversc, #638)
 
 # vroom 1.7.1
 
