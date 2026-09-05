@@ -100,6 +100,51 @@ test_that("ALTREP character problems report the correct row", {
   expect_equal(problems(x)$row, 3)
 })
 
+test_that("ALTREP character Elt survives re-entrant materialization", {
+  skip_on_os("windows")
+
+  path <- withr::local_tempfile()
+  writeBin(
+    as.raw(c(
+      0x61L, 0x0aL,
+      0x62L, 0x0aL,
+      0x63L, 0x00L, 0x64L, 0x0aL
+    )),
+    path
+  )
+
+  x <- vroom(
+    path,
+    delim = ",",
+    col_names = FALSE,
+    col_types = "c",
+    altrep = "chr",
+    num_threads = 1L,
+    progress = FALSE,
+    show_col_types = FALSE
+  )
+  col <- x[[1L]]
+
+  value <- withCallingHandlers(
+    col[[3L]],
+    vroom_parse_issue = function(cnd) {
+      # Change the mapped bytes before materializing from the warning handler.
+      con <- file(path, "r+b")
+      seek(con, where = 4L, origin = "start", rw = "write")
+      writeBin(charToRaw("xyz"), con)
+      close(con)
+
+      problems(x)
+      invokeRestart("muffleWarning")
+    }
+  )
+
+  # The in-flight Elt() returns the value parsed before re-entry, while the
+  # materialized vector reflects the modified backing bytes.
+  expect_identical(value, "c")
+  expect_identical(col[[3L]], "xyz")
+})
+
 test_that("partially cached ALTREP character vectors materialize correctly", {
   n <- 2500L
   expected <- sprintf("v%04d", seq_len(n))

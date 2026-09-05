@@ -124,7 +124,7 @@ public:
     }
     SPDLOG_TRACE("{0:x}: vroom_chr string_Elt {1}", (size_t)vec, i);
 
-    SEXP chunk = EltChunk(vec, i);
+    SEXP chunk = PROTECT(EltChunk(vec, i));
     R_xlen_t j = i & chunk_mask;
     SEXP val = STRING_ELT(chunk, j);
     if (val == R_BlankString) {
@@ -132,6 +132,7 @@ public:
       SET_STRING_ELT(chunk, j, val);
       UNPROTECT(1);
     }
+    UNPROTECT(1);
 
     return val;
   }
