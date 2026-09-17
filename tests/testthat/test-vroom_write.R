@@ -23,6 +23,25 @@ test_that("empty rows print the headers", {
   expect_equal(strsplit(readLines(out), "\t")[[1]], colnames(mtcars))
 })
 
+test_that("vroom_write() and vroom_format() reject non-flat columns", {
+  inputs <- list(
+    list = tibble::tibble(x = list(1:2, 3:4)),
+    data_frame = tibble::tibble(x = data.frame(y = 1:2)),
+    matrix = tibble::tibble(x = I(matrix(1:4, ncol = 2)))
+  )
+
+  for (input in inputs) {
+    expect_error(
+      vroom_format(input),
+      "must not contain list, data frame, or matrix columns"
+    )
+    expect_error(
+      vroom_write(input, tempfile()),
+      "must not contain list, data frame, or matrix columns"
+    )
+  }
+})
+
 test_that("strings are only quoted if needed", {
   x <- c("a", ',')
 
