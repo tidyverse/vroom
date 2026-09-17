@@ -7,6 +7,7 @@
 #include <cpp11/R.hpp>
 #include <cpp11/function.hpp>
 #include <cpp11/list.hpp>
+#include <cpp11/sexp.hpp>
 #include <cpp11/strings.hpp>
 
 #include <cli/progress.h>
@@ -355,9 +356,8 @@ void vroom_write_out(
     write_buf(header, out);
   }
 
-  SEXP pb = R_NilValue;
+  cpp11::sexp pb = progress ? cli_progress_bar(NA_REAL, R_NilValue) : R_NilValue;
   if (progress) {
-    pb = PROTECT(cli_progress_bar(NA_REAL, R_NilValue));
     cli_progress_set_type(pb, "download");
     cli_progress_set_format(
         pb,
@@ -415,7 +415,6 @@ void vroom_write_out(
 
   if (progress) {
     cli_progress_done(pb);
-    UNPROTECT(1);
   }
 }
 
@@ -510,9 +509,8 @@ void vroom_write_out(
     write_buf_con(header, con_, is_stdout);
   }
 
-  SEXP pb = R_NilValue;
+  cpp11::sexp pb = progress ? cli_progress_bar(NA_REAL, R_NilValue) : R_NilValue;
   if (progress) {
-    pb = PROTECT(cli_progress_bar(NA_REAL, R_NilValue));
     cli_progress_set_type(pb, "download");
     cli_progress_set_format(
         pb,
@@ -554,7 +552,6 @@ void vroom_write_out(
 
   if (progress) {
     cli_progress_done(pb);
-    UNPROTECT(1);
   }
 
   // Close the connection
