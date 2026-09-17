@@ -1,6 +1,6 @@
 # vroom (development version)
 
-* `vroom()`, `vroom_fwf()`, and `vroom_write()` now use cli for progress reporting, including support for Positron (#583).
+* `vroom()`, `vroom_fwf()`, and `vroom_write()` now use cli for progress reporting, including support for Positron (@jimhester, #583).
 
 # vroom 1.7.1
 
