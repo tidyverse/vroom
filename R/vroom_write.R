@@ -63,6 +63,8 @@ vroom_write <- function(
 
   opts <- get_vroom_write_opts(quote, escape, bom)
 
+  check_simple_columns(x)
+
   file <- connection_or_filepath(file, write = TRUE)
 
   if (NCOL(x) == 0) {
@@ -126,6 +128,23 @@ vroom_write <- function(
 }
 
 
+check_simple_columns <- function(x) {
+  is_simple <- vapply(
+    x,
+    function(x) !is.list(x) && is.null(dim(x)),
+    logical(1)
+  )
+
+  if (any(!is_simple)) {
+    cli::cli_abort(c(
+      "`x` must not contain list, data frame, or matrix columns.",
+      "x" = "Invalid columns: {paste(names(x)[!is_simple], collapse = ', ')}."
+    ))
+  }
+
+  invisible(NULL)
+}
+
 get_vroom_write_opts <- function(quote, escape, bom) {
   v_opts <- vroom_write_opts()
   bitwOr(
@@ -178,6 +197,8 @@ vroom_format <- function(
   escape <- arg_match(escape)
 
   opts <- get_vroom_write_opts(quote, escape, bom)
+
+  check_simple_columns(x)
 
   # This seems to work ok in practice
   buf_lines <- max(
