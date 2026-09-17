@@ -6,11 +6,13 @@ test_that("connection progress uses the existing format and clears", {
       cli.ansi = FALSE
     ),
     testthat::capture_messages(
-      vroom(
-        rawConnection(charToRaw("x,y\n1,2\n3,4\n")),
-        delim = ",",
-        col_types = list(),
-        progress = TRUE
+      cli:::cli_with_ticks(
+        vroom(
+          rawConnection(charToRaw("x,y\n1,2\n3,4\n")),
+          delim = ",",
+          col_types = list(),
+          progress = TRUE
+        )
       )
     )
   )

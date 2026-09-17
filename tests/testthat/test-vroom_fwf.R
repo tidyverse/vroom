@@ -7,11 +7,13 @@ test_that("file progress uses the existing format and clears", {
       width = 200
     ),
     testthat::capture_messages(
-      vroom_fwf(
-        test_path("fwf-trailing.txt"),
-        fwf_empty(test_path("fwf-trailing.txt")),
-        col_types = list(),
-        progress = TRUE
+      cli:::cli_with_ticks(
+        vroom_fwf(
+          test_path("fwf-trailing.txt"),
+          fwf_empty(test_path("fwf-trailing.txt")),
+          col_types = list(),
+          progress = TRUE
+        )
       )
     )
   )

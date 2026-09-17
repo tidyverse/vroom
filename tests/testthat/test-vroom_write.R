@@ -238,7 +238,9 @@ test_that("write progress uses the existing format and clears", {
       cli.ansi = FALSE
     ),
     testthat::capture_messages(
-      vroom_write(data.frame(x = 1:10), out, progress = TRUE)
+      cli:::cli_with_ticks(
+        vroom_write(data.frame(x = 1:10), out, progress = TRUE)
+      )
     )
   )
 

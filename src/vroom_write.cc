@@ -3,6 +3,7 @@
 #include <functional>
 #include <future>
 #include <iterator>
+#include <vector>
 
 #include <cpp11/R.hpp>
 #include <cpp11/function.hpp>
