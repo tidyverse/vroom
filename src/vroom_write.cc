@@ -9,9 +9,8 @@
 #include <cpp11/list.hpp>
 #include <cpp11/strings.hpp>
 
-#include "RProgress.h"
+#include <cli/progress.h>
 #include "connection.h"
-#include "r_utils.h"
 
 #include "unicode_fopen.h"
 
@@ -356,10 +355,15 @@ void vroom_write_out(
     write_buf(header, out);
   }
 
-  std::unique_ptr<RProgress::RProgress> pb = nullptr;
+  SEXP pb = R_NilValue;
   if (progress) {
-    pb = std::unique_ptr<RProgress::RProgress>(
-        new RProgress::RProgress(vroom::get_pb_format("write"), 1e12));
+    pb = PROTECT(cli_progress_bar(NA_REAL, R_NilValue));
+    cli_progress_set_type(pb, "download");
+    cli_progress_set_format(
+        pb,
+        "{.strong wrote} {.green {cli::pb_current_bytes}} in {.cyan "
+        "{cli::pb_elapsed}}, {.green {cli::pb_rate_bytes}}");
+    cli_progress_set_clear(pb, 1);
   }
 
   while (begin < num_rows) {
@@ -384,7 +388,7 @@ void vroom_write_out(
     if (write_fut.valid()) {
       auto sz = write_fut.get();
       if (progress) {
-        pb->tick(sz);
+        cli_progress_add(pb, sz);
       }
     }
 
@@ -403,10 +407,15 @@ void vroom_write_out(
 
   // Wait for the last writing to finish
   if (write_fut.valid()) {
-    static_cast<void>(write_fut.get());
+    auto sz = write_fut.get();
     if (progress) {
-      pb->update(1);
+      cli_progress_add(pb, sz);
     }
+  }
+
+  if (progress) {
+    cli_progress_done(pb);
+    UNPROTECT(1);
   }
 }
 
@@ -501,10 +510,15 @@ void vroom_write_out(
     write_buf_con(header, con_, is_stdout);
   }
 
-  std::unique_ptr<RProgress::RProgress> pb = nullptr;
+  SEXP pb = R_NilValue;
   if (progress) {
-    pb = std::unique_ptr<RProgress::RProgress>(
-        new RProgress::RProgress(vroom::get_pb_format("write"), 1e12));
+    pb = PROTECT(cli_progress_bar(NA_REAL, R_NilValue));
+    cli_progress_set_type(pb, "download");
+    cli_progress_set_format(
+        pb,
+        "{.strong wrote} {.green {cli::pb_current_bytes}} in {.cyan "
+        "{cli::pb_elapsed}}, {.green {cli::pb_rate_bytes}}");
+    cli_progress_set_clear(pb, 1);
   }
 
   while (begin < num_rows) {
@@ -531,7 +545,7 @@ void vroom_write_out(
       write_buf_con(buf, con_, is_stdout);
       auto sz = buf.size();
       if (progress) {
-        pb->tick(sz);
+        cli_progress_add(pb, sz);
       }
     }
 
@@ -539,7 +553,8 @@ void vroom_write_out(
   }
 
   if (progress) {
-    pb->update(1);
+    cli_progress_done(pb);
+    UNPROTECT(1);
   }
 
   // Close the connection

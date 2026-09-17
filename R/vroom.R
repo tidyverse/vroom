@@ -395,18 +395,6 @@ pb_connection_format <- function(unused) {
   )
 }
 
-pb_write_format <- function(unused) {
-  withr::with_options(
-    list(
-      crayon.enabled = (!is_rstudio_console() ||
-        is_rstudio_version("1.2.1578")) &&
-        getOption("crayon.enabled", TRUE)
-    ),
-    glue::glue_col(
-      "{bold}wrote{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}"
-    )
-  )
-}
 
 # Guess delimiter by splitting every line by each delimiter and choosing the
 # delimiter which splits the lines into the highest number of consistent fields.
