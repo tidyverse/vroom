@@ -121,10 +121,7 @@ delimited_index::delimited_index(
 
   if (progress_) {
 #ifndef VROOM_STANDALONE
-    auto format = get_pb_format("file", filename);
-    auto width = get_pb_width(format);
-    pb = std::unique_ptr<multi_progress>(
-        new multi_progress(format, file_size, width));
+    pb = std::unique_ptr<multi_progress>(new multi_progress(file_size, filename));
     pb->tick(start);
 #endif
   }

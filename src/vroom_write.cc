@@ -3,17 +3,16 @@
 #include <functional>
 #include <future>
 #include <iterator>
+#include <vector>
 
 #include <cpp11/R.hpp>
 #include <cpp11/function.hpp>
 #include <cpp11/list.hpp>
 #include <cpp11/strings.hpp>
 
-#include "RProgress.h"
 #include "connection.h"
-#include "r_utils.h"
-
 #include "unicode_fopen.h"
+#include "vroom_progress.h"
 
 typedef enum {
   quote_needed = 1,
@@ -356,11 +355,7 @@ void vroom_write_out(
     write_buf(header, out);
   }
 
-  std::unique_ptr<RProgress::RProgress> pb = nullptr;
-  if (progress) {
-    pb = std::unique_ptr<RProgress::RProgress>(
-        new RProgress::RProgress(vroom::get_pb_format("write"), 1e12));
-  }
+  vroom::progress_bar pb(progress, vroom::progress_type::write);
 
   while (begin < num_rows) {
     size_t t = 0;
@@ -384,7 +379,7 @@ void vroom_write_out(
     if (write_fut.valid()) {
       auto sz = write_fut.get();
       if (progress) {
-        pb->tick(sz);
+        pb.tick(sz);
       }
     }
 
@@ -403,10 +398,14 @@ void vroom_write_out(
 
   // Wait for the last writing to finish
   if (write_fut.valid()) {
-    static_cast<void>(write_fut.get());
+    auto sz = write_fut.get();
     if (progress) {
-      pb->update(1);
+      pb.tick(sz);
     }
+  }
+
+  if (progress) {
+    pb.done();
   }
 }
 
@@ -501,11 +500,7 @@ void vroom_write_out(
     write_buf_con(header, con_, is_stdout);
   }
 
-  std::unique_ptr<RProgress::RProgress> pb = nullptr;
-  if (progress) {
-    pb = std::unique_ptr<RProgress::RProgress>(
-        new RProgress::RProgress(vroom::get_pb_format("write"), 1e12));
-  }
+  vroom::progress_bar pb(progress, vroom::progress_type::write);
 
   while (begin < num_rows) {
     size_t t = 0;
@@ -531,7 +526,7 @@ void vroom_write_out(
       write_buf_con(buf, con_, is_stdout);
       auto sz = buf.size();
       if (progress) {
-        pb->tick(sz);
+        pb.tick(sz);
       }
     }
 
@@ -539,7 +534,7 @@ void vroom_write_out(
   }
 
   if (progress) {
-    pb->update(1);
+    pb.done();
   }
 
   // Close the connection

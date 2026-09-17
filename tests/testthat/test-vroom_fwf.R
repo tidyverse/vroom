@@ -1,3 +1,30 @@
+test_that("file progress uses the existing format and clears", {
+  progress_output <- withr::with_options(
+    list(
+      cli.dynamic = TRUE,
+      cli.progress_show_after = 0,
+      cli.ansi = FALSE,
+      width = 200
+    ),
+    testthat::capture_messages(
+      cli:::cli_with_ticks(
+        vroom_fwf(
+          test_path("fwf-trailing.txt"),
+          fwf_empty(test_path("fwf-trailing.txt")),
+          col_types = list(),
+          progress = TRUE
+        )
+      )
+    )
+  )
+
+  expect_match(
+    trimws(progress_output[[1]]),
+    "^indexing fwf-trailing.txt \\[.+\\] .*B/s, eta: .+$"
+  )
+  expect_match(tail(progress_output, 1), "^\\r +\\r$")
+})
+
 test_that("trailing spaces omitted", {
   spec <- fwf_empty(test_path("fwf-trailing.txt"))
   expect_equal(spec$begin, c(0, 4))

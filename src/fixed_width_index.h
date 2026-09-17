@@ -13,11 +13,10 @@
 #endif
 // clang-format on
 
-#ifndef VROOM_STANDALONE
-#include "r_utils.h"
-#include "RProgress.h"
-#else
 #include "utils.h"
+#include "vroom_progress.h"
+
+#ifdef VROOM_STANDALONE
 #define NA_INTEGER INT_MIN
 #endif
 
@@ -97,13 +96,11 @@ public:
         false,
         /* quote */ '\0');
 
-    std::unique_ptr<RProgress::RProgress> pb = nullptr;
+    std::unique_ptr<progress_bar> pb = nullptr;
     if (progress) {
 #ifndef VROOM_STANDALONE
-      auto format = get_pb_format("file", filename);
-      auto width = get_pb_width(format);
-      pb = std::unique_ptr<RProgress::RProgress>(
-          new RProgress::RProgress(format, file_size, width));
+      pb = std::unique_ptr<progress_bar>(new progress_bar(
+          true, progress_type::file, file_size, filename));
       pb->tick(start);
 #endif
     }
@@ -136,7 +133,7 @@ public:
 
     if (progress) {
 #ifndef VROOM_STANDALONE
-      pb->update(1);
+      pb->done();
 #endif
     }
 
@@ -235,7 +232,7 @@ public:
       const char* comment,
       const bool skip_empty_rows,
       size_t n_max,
-      std::unique_ptr<RProgress::RProgress>& pb,
+      std::unique_ptr<progress_bar>& pb,
       size_t update_size = -1) {
 
     size_t pos;
