@@ -1,67 +1,21 @@
 #pragma once
 
+#include "vroom_progress.h"
+
+#include <chrono>
 #include <condition_variable>
 #include <mutex>
-
-#ifdef VROOM_STANDALONE
-
-// A stub class that doesn't do anything
-
-namespace RProgress {
-
-class RProgress {
-public:
-  RProgress(
-      std::string format = "[:bar] :percent",
-      double total = 100,
-      int width = 80 - 2,
-      const char* complete_char = "=",
-      const char* middle_char = "=",
-      const char* incomplete_char = "-",
-      bool clear = true,
-      double show_after = 0.2) {}
-
-  void update(double) {}
-  void tick(double) {}
-  void set_reverse(bool) {}
-};
-
-} // namespace RProgress
-
-#else
-
-#include <cpp11/R.hpp>
-
-#include "RProgress.h"
-
-#endif
+#include <string>
 
 class multi_progress {
 public:
-  multi_progress(
-      std::string format = "[:bar] :percent",
-      size_t total = 100,
-      int width = 78,
-      const char* complete_char = "=",
-      const char* incomplete_char = "-",
-      bool clear = true,
-      double show_after = 0.2)
-      : pb_(new RProgress::RProgress(
-            format,
-            total,
-            width,
-            complete_char,
-            complete_char,
-            incomplete_char,
-            clear,
-            show_after)),
+  multi_progress(size_t total, const std::string& filename)
+      : pb_(true, vroom::progress_type::file, total, filename),
         progress_(0),
         total_(total),
         last_progress_(0),
         last_time_(std::chrono::system_clock::now()),
-        update_interval_(10) {
-    pb_->set_reverse(false);
-  }
+        update_interval_(10) {}
 
   void tick(size_t progress) {
     std::lock_guard<std::mutex> guard(mutex_);
@@ -83,7 +37,7 @@ public:
         auto now = std::chrono::system_clock::now();
         std::chrono::duration<float, std::milli> diff = now - last_time_;
         if (diff > update_interval_) {
-          pb_->tick(progress_ - last_progress_);
+          pb_.tick(progress_ - last_progress_);
           last_progress_ = progress_;
           last_time_ = std::chrono::system_clock::now();
         }
@@ -91,11 +45,14 @@ public:
         break;
       }
     }
-    pb_->update(1);
+    if (last_progress_ < total_) {
+      pb_.tick(total_ - last_progress_);
+    }
+    pb_.done();
   }
 
 private:
-  std::unique_ptr<RProgress::RProgress> pb_;
+  vroom::progress_bar pb_;
   size_t progress_;
   size_t total_;
   size_t last_progress_;

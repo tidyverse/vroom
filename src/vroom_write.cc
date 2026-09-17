@@ -7,13 +7,11 @@
 #include <cpp11/R.hpp>
 #include <cpp11/function.hpp>
 #include <cpp11/list.hpp>
-#include <cpp11/sexp.hpp>
 #include <cpp11/strings.hpp>
 
-#include <cli/progress.h>
 #include "connection.h"
-
 #include "unicode_fopen.h"
+#include "vroom_progress.h"
 
 typedef enum {
   quote_needed = 1,
@@ -356,15 +354,7 @@ void vroom_write_out(
     write_buf(header, out);
   }
 
-  cpp11::sexp pb = progress ? cli_progress_bar(NA_REAL, R_NilValue) : R_NilValue;
-  if (progress) {
-    cli_progress_set_type(pb, "download");
-    cli_progress_set_format(
-        pb,
-        "{.strong wrote} {.green {cli::pb_current_bytes}} in {.cyan "
-        "{cli::pb_elapsed}}, {.green {cli::pb_rate_bytes}}");
-    cli_progress_set_clear(pb, 1);
-  }
+  vroom::progress_bar pb(progress, vroom::progress_type::write);
 
   while (begin < num_rows) {
     size_t t = 0;
@@ -388,7 +378,7 @@ void vroom_write_out(
     if (write_fut.valid()) {
       auto sz = write_fut.get();
       if (progress) {
-        cli_progress_add(pb, sz);
+        pb.tick(sz);
       }
     }
 
@@ -409,12 +399,12 @@ void vroom_write_out(
   if (write_fut.valid()) {
     auto sz = write_fut.get();
     if (progress) {
-      cli_progress_add(pb, sz);
+      pb.tick(sz);
     }
   }
 
   if (progress) {
-    cli_progress_done(pb);
+    pb.done();
   }
 }
 
@@ -509,15 +499,7 @@ void vroom_write_out(
     write_buf_con(header, con_, is_stdout);
   }
 
-  cpp11::sexp pb = progress ? cli_progress_bar(NA_REAL, R_NilValue) : R_NilValue;
-  if (progress) {
-    cli_progress_set_type(pb, "download");
-    cli_progress_set_format(
-        pb,
-        "{.strong wrote} {.green {cli::pb_current_bytes}} in {.cyan "
-        "{cli::pb_elapsed}}, {.green {cli::pb_rate_bytes}}");
-    cli_progress_set_clear(pb, 1);
-  }
+  vroom::progress_bar pb(progress, vroom::progress_type::write);
 
   while (begin < num_rows) {
     size_t t = 0;
@@ -543,7 +525,7 @@ void vroom_write_out(
       write_buf_con(buf, con_, is_stdout);
       auto sz = buf.size();
       if (progress) {
-        cli_progress_add(pb, sz);
+        pb.tick(sz);
       }
     }
 
@@ -551,7 +533,7 @@ void vroom_write_out(
   }
 
   if (progress) {
-    cli_progress_done(pb);
+    pb.done();
   }
 
   // Close the connection

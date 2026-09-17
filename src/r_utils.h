@@ -19,18 +19,6 @@
 
 namespace vroom {
 
-inline std::string
-get_pb_format(const std::string& which, const std::string& filename = "") {
-  auto fun_name = std::string("pb_") + which + "_format";
-  auto fun = cpp11::package("vroom")[fun_name.c_str()];
-  return cpp11::as_cpp<std::string>(fun(filename));
-}
-
-inline int get_pb_width(const std::string& format) {
-  auto pb_width = cpp11::package("vroom")["pb_width"];
-  return cpp11::as_cpp<int>(pb_width(format));
-}
-
 template <typename T>
 static char guess_delim(
     const T& source,

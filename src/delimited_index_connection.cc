@@ -11,6 +11,7 @@
 #include <sstream>
 
 #include "r_utils.h"
+#include "vroom_progress.h"
 
 #ifdef VROOM_LOG
 #include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
@@ -126,11 +127,9 @@ delimited_index_connection::delimited_index_connection(
     }
   }
 
-  std::unique_ptr<RProgress::RProgress> pb = nullptr;
+  progress_bar pb(progress_, progress_type::connection);
   if (progress_) {
-    pb = std::unique_ptr<RProgress::RProgress>(
-        new RProgress::RProgress(get_pb_format("connection"), 1e12));
-    pb->tick(start);
+    pb.tick(start);
   }
 
   bool n_max_set = n_max != static_cast<size_t>(-1);
@@ -223,7 +222,7 @@ delimited_index_connection::delimited_index_connection(
     });
 
     if (progress_) {
-      pb->tick(sz);
+      pb.tick(sz);
     }
 
     total_read += sz;
@@ -297,7 +296,7 @@ delimited_index_connection::delimited_index_connection(
   }
 
   if (progress_) {
-    pb->update(1);
+    pb.done();
   }
 
   std::error_code error;
