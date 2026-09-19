@@ -1,3 +1,29 @@
+test_that("connection progress uses the existing format and clears", {
+  progress_output <- withr::with_options(
+    list(
+      cli.dynamic = TRUE,
+      cli.progress_show_after = 0,
+      cli.ansi = FALSE
+    ),
+    testthat::capture_messages(
+      cli:::cli_with_ticks(
+        vroom(
+          rawConnection(charToRaw("x,y\n1,2\n3,4\n")),
+          delim = ",",
+          col_types = list(),
+          progress = TRUE
+        )
+      )
+    )
+  )
+
+  expect_match(
+    trimws(progress_output[[1]]),
+    "^indexed .*B in .+, .*B/s$"
+  )
+  expect_match(tail(progress_output, 1), "^\\r +\\r$")
+})
+
 test_that("reading from connection is consistent with reading directly from a file", {
   skip_if(is_windows() && on_github_actions())
 

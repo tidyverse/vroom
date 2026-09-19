@@ -3,17 +3,16 @@
 #include <functional>
 #include <future>
 #include <iterator>
+#include <vector>
 
 #include <cpp11/R.hpp>
 #include <cpp11/function.hpp>
 #include <cpp11/list.hpp>
 #include <cpp11/strings.hpp>
 
-#include "RProgress.h"
 #include "connection.h"
-#include "r_utils.h"
-
 #include "unicode_fopen.h"
+#include "vroom_progress.h"
 
 typedef enum {
   quote_needed = 1,
@@ -335,6 +334,8 @@ void vroom_write_out(
   size_t begin = 0;
   size_t num_rows = Rf_xlength(input[0]);
 
+  vroom::progress_bar pb(progress, vroom::progress_type::write);
+
   std::array<std::vector<std::future<std::vector<char>>>, 2> futures;
   futures[0].resize(num_threads);
   futures[1].resize(num_threads);
@@ -342,6 +343,7 @@ void vroom_write_out(
   std::future<size_t> write_fut;
 
   int idx = 0;
+  size_t pending_progress = 0;
 
   auto types = get_types(input);
   auto ptrs = get_ptrs(input);
@@ -354,12 +356,6 @@ void vroom_write_out(
   if (col_names) {
     auto header = get_header(input, delim, eol, options);
     write_buf(header, out);
-  }
-
-  std::unique_ptr<RProgress::RProgress> pb = nullptr;
-  if (progress) {
-    pb = std::unique_ptr<RProgress::RProgress>(
-        new RProgress::RProgress(vroom::get_pb_format("write"), 1e12));
   }
 
   while (begin < num_rows) {
@@ -382,10 +378,15 @@ void vroom_write_out(
     }
 
     if (write_fut.valid()) {
-      auto sz = write_fut.get();
-      if (progress) {
-        pb->tick(sz);
+      pending_progress += write_fut.get();
+    }
+
+    if (progress && pending_progress > 0 && pb.should_tick()) {
+      for (size_t i = 0; i < t; ++i) {
+        futures[idx][i].wait();
       }
+      pb.tick(pending_progress);
+      pending_progress = 0;
     }
 
     write_fut = std::async([&, idx, t] {
@@ -403,10 +404,14 @@ void vroom_write_out(
 
   // Wait for the last writing to finish
   if (write_fut.valid()) {
-    static_cast<void>(write_fut.get());
-    if (progress) {
-      pb->update(1);
+    pending_progress += write_fut.get();
+  }
+
+  if (progress) {
+    if (pending_progress > 0) {
+      pb.tick(pending_progress);
     }
+    pb.done();
   }
 }
 
@@ -485,6 +490,8 @@ void vroom_write_out(
 
   bool should_close = should_open;
 
+  vroom::progress_bar pb(progress, vroom::progress_type::write);
+
   std::array<std::vector<std::future<std::vector<char>>>, 2> futures;
   futures[0].resize(num_threads);
   futures[1].resize(num_threads);
@@ -492,6 +499,7 @@ void vroom_write_out(
   std::future<size_t> write_fut;
 
   int idx = 0;
+  size_t pending_progress = 0;
 
   auto types = get_types(input);
   auto ptrs = get_ptrs(input);
@@ -499,12 +507,6 @@ void vroom_write_out(
   if (col_names) {
     auto header = get_header(input, delim, eol, options);
     write_buf_con(header, con_, is_stdout);
-  }
-
-  std::unique_ptr<RProgress::RProgress> pb = nullptr;
-  if (progress) {
-    pb = std::unique_ptr<RProgress::RProgress>(
-        new RProgress::RProgress(vroom::get_pb_format("write"), 1e12));
   }
 
   while (begin < num_rows) {
@@ -529,17 +531,22 @@ void vroom_write_out(
     for (size_t i = 0; i < t; ++i) {
       auto buf = futures[idx][i].get();
       write_buf_con(buf, con_, is_stdout);
-      auto sz = buf.size();
-      if (progress) {
-        pb->tick(sz);
-      }
+      pending_progress += buf.size();
+    }
+
+    if (progress && pending_progress > 0 && pb.should_tick()) {
+      pb.tick(pending_progress);
+      pending_progress = 0;
     }
 
     idx = (idx + 1) % 2;
   }
 
   if (progress) {
-    pb->update(1);
+    if (pending_progress > 0) {
+      pb.tick(pending_progress);
+    }
+    pb.done();
   }
 
   // Close the connection

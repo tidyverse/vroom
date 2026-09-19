@@ -3,8 +3,8 @@
 
 #include "connection.h"
 #include "fixed_width_index_connection.h"
-#include "r_utils.h"
 #include "unicode_fopen.h"
+#include "vroom_progress.h"
 #include <array>
 #include <atomic>
 #include <fstream>
@@ -87,11 +87,9 @@ fixed_width_index_connection::fixed_width_index_connection(
 
   bool n_max_set = n_max != static_cast<size_t>(-1);
 
-  std::unique_ptr<RProgress::RProgress> pb = nullptr;
+  progress_bar pb(progress, progress_type::connection);
   if (progress) {
-    pb = std::unique_ptr<RProgress::RProgress>(
-        new RProgress::RProgress(get_pb_format("connection"), 1e12));
-    pb->tick(start);
+    pb.tick(start);
   }
 
   size_t total_read = 0;
@@ -99,7 +97,7 @@ fixed_width_index_connection::fixed_width_index_connection(
   std::future<void> write_fut;
   size_t lines_read = 0;
   size_t lines_remaining = n_max;
-  std::unique_ptr<RProgress::RProgress> empty_pb = nullptr;
+  std::unique_ptr<progress_bar> empty_pb = nullptr;
 
   std::atomic<bool> write_error(false);
 
@@ -140,7 +138,7 @@ fixed_width_index_connection::fixed_width_index_connection(
     });
 
     if (progress) {
-      pb->tick(sz);
+      pb.tick(sz);
     }
 
     total_read += sz;
@@ -203,7 +201,7 @@ fixed_width_index_connection::fixed_width_index_connection(
   }
 
   if (progress) {
-    pb->update(1);
+    pb.done();
   }
 
   std::error_code error;

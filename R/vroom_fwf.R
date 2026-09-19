@@ -291,9 +291,9 @@ fwf_col_names <- function(nm, n) {
 }
 
 verify_fwf_positions <- function(col_positions) {
-  is_greater <- stats::na.omit(col_positions$begin > col_positions$end)
-  if (any(is_greater)) {
-    bad_cols <- col_positions$col_names[is_greater]
+  is_greater <- col_positions$begin > col_positions$end
+  if (any(is_greater, na.rm = TRUE)) {
+    bad_cols <- col_positions$col_names[is_greater %in% TRUE]
     cli::cli_abort(
       c(
         "{.arg begin} cannot be greater than {.arg end}.",

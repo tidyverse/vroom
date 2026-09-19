@@ -363,51 +363,6 @@ vroom_progress <- function() {
     !isTRUE(getOption("rstudio.notebook.executing"))
 }
 
-pb_file_format <- function(filename) {
-  # Workaround RStudio bug https://github.com/rstudio/rstudio/issues/4777
-  withr::with_options(
-    list(
-      crayon.enabled = (!is_rstudio_console() ||
-        is_rstudio_version("1.2.1578")) &&
-        getOption("crayon.enabled", TRUE)
-    ),
-    glue::glue_col(
-      "{bold}indexing{reset} {blue}{basename(filename)}{reset} [:bar] {green}:rate{reset}, eta: {cyan}:eta{reset}"
-    )
-  )
-}
-
-pb_width <- function(format) {
-  ansii_chars <- nchar(format) - crayon::col_nchar(format)
-  getOption("width", 80L) + ansii_chars
-}
-
-pb_connection_format <- function(unused) {
-  withr::with_options(
-    list(
-      crayon.enabled = (!is_rstudio_console() ||
-        is_rstudio_version("1.2.1578")) &&
-        getOption("crayon.enabled", TRUE)
-    ),
-    glue::glue_col(
-      "{bold}indexed{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}"
-    )
-  )
-}
-
-pb_write_format <- function(unused) {
-  withr::with_options(
-    list(
-      crayon.enabled = (!is_rstudio_console() ||
-        is_rstudio_version("1.2.1578")) &&
-        getOption("crayon.enabled", TRUE)
-    ),
-    glue::glue_col(
-      "{bold}wrote{reset} {green}:bytes{reset} in {cyan}:elapsed{reset}, {green}:rate{reset}"
-    )
-  )
-}
-
 # Guess delimiter by splitting every line by each delimiter and choosing the
 # delimiter which splits the lines into the highest number of consistent fields.
 # This looks like dead code on the R side, but it's called from C++.
