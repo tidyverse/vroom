@@ -230,6 +230,7 @@ test_that("hms NAs are written without padding (#930)", {
 test_that("write progress uses the existing format and clears", {
   out <- tempfile()
   on.exit(unlink(out))
+  data <- data.frame(x = 1:10)
 
   progress_output <- withr::with_options(
     list(
@@ -239,7 +240,10 @@ test_that("write progress uses the existing format and clears", {
     ),
     testthat::capture_messages(
       cli:::cli_with_ticks(
-        vroom_write(data.frame(x = 1:10), out, progress = TRUE)
+        withr::with_envvar(
+          c("VROOM_WRITE_BUFFER_LINES" = "2"),
+          vroom_write(data, out, progress = TRUE)
+        )
       )
     )
   )
@@ -249,6 +253,10 @@ test_that("write progress uses the existing format and clears", {
     "^wrote .*B in .+, .*B/s$"
   )
   expect_match(tail(progress_output, 1), "^\\r +\\r$")
+  expect_equal(
+    as.data.frame(vroom(out, delim = "\t", col_types = list())),
+    data
+  )
 })
 
 test_that("vroom_write equals the same thing as vroom_format", {

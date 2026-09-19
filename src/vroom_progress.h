@@ -22,6 +22,7 @@ public:
       double = 0,
       const std::string& = std::string()) {}
 
+  bool should_tick() const { return false; }
   void tick(double) {}
   void done() {}
 };
@@ -41,11 +42,13 @@ public:
 
   ~progress_bar();
 
+  bool should_tick() const;
   void tick(double increment);
   void done();
 
 private:
   static std::string basename(const std::string& path);
+  void cleanup() noexcept;
 
   bool enabled_;
   cpp11::sexp bar_;

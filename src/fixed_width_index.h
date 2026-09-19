@@ -133,6 +133,9 @@ public:
 
     if (progress) {
 #ifndef VROOM_STANDALONE
+      if (!n_max_set) {
+        pb->tick(1);
+      }
       pb->done();
 #endif
     }
