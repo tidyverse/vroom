@@ -9,9 +9,10 @@
 #' @param lazy If `TRUE`, just the problems found so far are returned. If
 #'   `FALSE` (the default) the lazy data is first read completely and all
 #'   problems are returned.
-#' @return A data frame with one row for each problem and four columns:
-#'   - row,col - Row and column number that caused the problem, referencing the
-#'   original input
+#' @return A data frame with one row for each problem and six columns:
+#'   - line - Physical line in the original input that caused the problem
+#'   - row,col - Parsed row within the corresponding input and column that
+#'     caused the problem
 #'   - expected - What vroom expected to find
 #'   - actual - What it actually found
 #'   - file - The file with the problem
@@ -37,7 +38,7 @@ problems <- function(x = .Last.value, lazy = FALSE) {
   }
   probs <- vroom_errors_(probs)
   probs <- probs[!duplicated(probs), ]
-  probs <- probs[order(probs$file, probs$row, probs$col), ]
+  probs <- probs[order(probs$file, probs$line, probs$col), ]
 
   tibble::as_tibble(probs)
 }

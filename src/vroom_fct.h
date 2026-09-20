@@ -36,7 +36,8 @@ int parse_factor(
           col->get_index(),
           "value in level set",
           std::string(str.begin(), str.end() - str.begin()),
-          itr.filename());
+          itr.filename(),
+          itr.line());
     }
     return NA_INTEGER;
   }
@@ -63,7 +64,8 @@ int parse_factor(
           col->get_index(),
           "value in level set",
           std::string(str.begin(), str.end() - str.begin()),
-          itr.filename());
+          itr.filename(),
+          itr.line());
     }
     return NA_INTEGER;
   }

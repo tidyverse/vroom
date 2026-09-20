@@ -565,7 +565,8 @@ test_that("vroom_fwf(col_select =) output has 'spec_tbl_df' class, spec, and pro
   expect_no_error(probs <- problems(dat))
   if (exists("probs")) {
     expect_equal(nrow(probs), 2)
-    expect_equal(probs$row, c(1, 2))
+    expect_equal(probs$line, c(1, 3))
+    expect_equal(probs$row, c(1, 3))
     expect_equal(probs$col, c(1, 1))
   }
 })

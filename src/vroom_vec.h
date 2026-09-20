@@ -63,7 +63,8 @@ static auto parse_value(
         col->get_index(),
         expected,
         std::string(str.begin(), str.end() - str.begin()),
-        itr.filename());
+        itr.filename(),
+        itr.line());
   }
 
   return out;
@@ -91,7 +92,8 @@ static auto parse_value(
         col->get_index(),
         expected,
         std::string(str.begin(), str.end() - str.begin()),
-        itr.filename());
+        itr.filename(),
+        itr.line());
   }
 
   return out;

@@ -1,11 +1,13 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <cpp11/R.hpp>
 #include <cstring>
 #include <sstream>
 #include <string>
 #include <tuple>
+#include <vector>
 
 namespace vroom {
 
@@ -19,7 +21,36 @@ is_comment(const char* begin, const char* end, const std::string& comment) {
 }
 
 template <typename T>
-inline size_t skip_rest_of_line(const T& source, size_t start) {
+inline std::vector<size_t> find_line_endings(const T& source) {
+  std::vector<size_t> out;
+
+  for (size_t i = 0; i < source.size(); ++i) {
+    if (source[i] == '\r' && i + 1 < source.size() && source[i + 1] == '\n') {
+      out.push_back(++i);
+    } else if (source[i] == '\r' || source[i] == '\n') {
+      out.push_back(i);
+    }
+  }
+
+  return out;
+}
+
+inline size_t source_line(
+    const std::vector<size_t>& line_endings,
+    size_t position,
+    size_t source_size) {
+  if (
+      source_size > 0 && position >= source_size && !line_endings.empty() &&
+      line_endings.back() == source_size - 1) {
+    position = source_size - 1;
+  }
+
+  return std::lower_bound(line_endings.begin(), line_endings.end(), position) -
+      line_endings.begin() + 1;
+}
+
+template <typename T>
+size_t skip_rest_of_line(const T& source, size_t start) {
   auto out = memchr(source.data() + start, '\n', source.size() - start);
   if (!out) {
     return (source.size());

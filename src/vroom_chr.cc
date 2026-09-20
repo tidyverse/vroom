@@ -29,7 +29,12 @@ cpp11::strings read_chr(vroom_vec_info* info) {
       PROTECT(val);
       if (Rf_xlength(val) < str.end() - str.begin()) {
         info->errors->add_error(
-            b.index(), col->get_index(), "", "embedded null", b.filename());
+            b.index(),
+            col->get_index(),
+            "",
+            "embedded null",
+            b.filename(),
+            b.line());
       }
 
       SET_STRING_ELT(out, i++, check_na(nas, val));

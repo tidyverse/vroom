@@ -239,6 +239,92 @@ test_that("locale affects months", {
   test_parse_date("1 janvier 2010", "%d %B %Y", locale = fr, expected = jan1)
 })
 
+test_that("locale date names match only at the current position", {
+  walloon <- locale(
+    date_names(
+      day = c(
+        "londi",
+        "mårdi",
+        "mierkidi",
+        "djudi",
+        "vénrdi",
+        "semdi",
+        "dimegne"
+      ),
+      mon = c(
+        "djanvî",
+        "fevrî",
+        "måss",
+        "avri",
+        "may",
+        "djun",
+        "djulete",
+        "awousse",
+        "setimbre",
+        "octôbe",
+        "nôvimbe",
+        "decimbe"
+      ),
+      day_ab = c("lon", "mår", "mie", "dju", "vén", "sem", "dim"),
+      mon_ab = c(
+        "djan",
+        "fev",
+        "mås",
+        "avr",
+        "may",
+        "djun",
+        "djul",
+        "awou",
+        "set",
+        "oct",
+        "nôv",
+        "dec"
+      )
+    ),
+    encoding = "UTF-8"
+  )
+
+  values <- c(
+    "vén 1 avri 2016",
+    "vén 3 djun 2016",
+    "sem 2 djulete 2016",
+    "vén 1 djulete 2016"
+  )
+  expected <- as.Date(c(
+    "2016-04-01",
+    "2016-06-03",
+    "2016-07-02",
+    "2016-07-01"
+  ))
+
+  test_parse_date(
+    values,
+    "%a %d %B %Y",
+    locale = walloon,
+    expected = expected
+  )
+
+  latin1_file <- withr::local_tempfile()
+  latin1_input <- iconv(
+    paste(c("x", values), collapse = "\n"),
+    from = "UTF-8",
+    to = "ISO-8859-1",
+    toRaw = TRUE
+  )[[1]]
+  writeBin(latin1_input, latin1_file)
+  walloon$encoding <- "ISO-8859-1"
+
+  out <- vroom(
+    latin1_file,
+    delim = ",",
+    col_types = cols(x = col_date(format = "%a %d %B %Y")),
+    locale = walloon,
+    altrep = FALSE
+  )
+  expect_equal(out$x, expected)
+  expect_equal(nrow(problems(out)), 0)
+})
+
 test_that("locale affects day of week", {
   a <- as.POSIXct("2010-01-01", tz = "UTC")
   b <- .POSIXct(unclass(as.Date("2010-01-01")) * 86400, tz = "UTC")

@@ -14,10 +14,11 @@ problems(x = .Last.value, lazy = FALSE)
 problems are returned.}
 }
 \value{
-A data frame with one row for each problem and four columns:
+A data frame with one row for each problem and six columns:
 \itemize{
-\item row,col - Row and column number that caused the problem, referencing the
-original input
+\item line - Physical line in the original input that caused the problem
+\item row,col - Parsed row within the corresponding input and column that
+caused the problem
 \item expected - What vroom expected to find
 \item actual - What it actually found
 \item file - The file with the problem

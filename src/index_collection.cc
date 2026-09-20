@@ -252,6 +252,7 @@ index_collection::index_collection(
       progress);
 
   indexes_.push_back(first);
+  indexes_by_filename_.emplace(first->filename(), first);
   columns_ = first->num_columns();
   rows_ = first->num_rows();
 
@@ -277,6 +278,7 @@ index_collection::index_collection(
 
     rows_ += idx->num_rows();
 
+    indexes_by_filename_.emplace(idx->filename(), idx);
     indexes_.emplace_back(std::move(idx));
   }
 }
@@ -369,8 +371,18 @@ index_collection::index_collection(
 
     rows_ += idx->num_rows();
 
+    indexes_by_filename_.emplace(idx->filename(), idx);
     indexes_.emplace_back(std::move(idx));
   }
+}
+
+size_t index_collection::source_line(
+    size_t position, const std::string& filename) const {
+  auto index = indexes_by_filename_.find(filename);
+  if (index == indexes_by_filename_.end()) {
+    return 0;
+  }
+  return index->second->source_line(position, filename);
 }
 
 string index_collection::get(size_t row, size_t column) const {

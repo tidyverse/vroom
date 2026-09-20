@@ -1402,7 +1402,8 @@ test_that("vroom(col_select =) output has 'spec_tbl_df' class, spec, and problem
   expect_no_error(probs <- problems(dat))
   if (exists("probs")) {
     expect_equal(nrow(probs), 1)
-    expect_equal(probs$row, 3)
+    expect_equal(probs$line, 3)
+    expect_equal(probs$row, 2)
     expect_equal(probs$col, 1)
   }
 })

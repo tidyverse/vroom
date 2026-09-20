@@ -145,6 +145,8 @@ delimited_index::delimited_index(
     num_threads = 1;
   }
 
+  size_t parse_errors_start = errors->parse_error_count();
+
 start_indexing:
 
   try {
@@ -267,7 +269,11 @@ start_indexing:
     // newline_error as soon as a newline is seen inside QUOTED_FIELD.
     if (num_threads == 1 && state == QUOTED_FIELD) {
       errors->add_parse_error(
-          file_size, num_delims, "closing quote", "end of file");
+          file_size,
+          num_delims,
+          "closing quote",
+          "end of file",
+          filename_);
       // Finalize the current record so we don't lose all data
       if (columns_ > 0) {
         resolve_columns(file_size, num_delims, columns_, idx_[1], errors);
@@ -277,7 +283,7 @@ start_indexing:
 
   } catch (newline_error& e) {
     num_threads = 1;
-    errors->clear();
+    errors->rollback_parse_errors(parse_errors_start);
     goto start_indexing;
   }
   size_t total_size = std::accumulate(

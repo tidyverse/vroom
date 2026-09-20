@@ -55,9 +55,14 @@ public:
         PROTECT(info.locale->encoder_.makeSEXP(str.begin(), str.end(), true));
 
     if (Rf_xlength(val) < str.end() - str.begin()) {
-      auto&& itr = info.column->begin();
+      auto itr = info.column->begin() + i;
       info.errors->add_error(
-          itr.index(), col->get_index(), "", "embedded null", itr.filename());
+          itr.index(),
+          col->get_index(),
+          "",
+          "embedded null",
+          itr.filename(),
+          itr.line());
     }
 
     val = check_na(*info.na, val);

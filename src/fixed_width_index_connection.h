@@ -5,8 +5,6 @@
 namespace vroom {
 
 class fixed_width_index_connection : public fixed_width_index {
-  std::string filename_;
-
 public:
   fixed_width_index_connection(
       SEXP in,

@@ -1,5 +1,9 @@
 # vroom (development version)
 
+* `problems()` now returns a new `line` column for the physical input line and uses `row` for the parsed row within the corresponding input, including after skipped, commented, empty, or multiline records. Problem locations are also correctly attributed for multiple files and lazy subsets and correctly tracked for connections (#295, #448, #642).
+
+* `vroom()` now correctly parses localized date names when another date name appears later in the same field, including UTF-8 names (#414).
+
 # vroom 1.7.1
 
 * Internal changes requested by CRAN for forward compatibility with clang 22.

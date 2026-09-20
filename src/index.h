@@ -34,11 +34,10 @@ public:
     };
     string value() const override {
       size_t cur = (*indexes_)[i_];
-      ptrdiff_t diff = cur - prev_;
-      if (diff < 0) {
+      if (cur < prev_) {
         it_ = start_ + cur;
       } else {
-        it_ += diff;
+        it_ += cur - prev_;
       }
       prev_ = cur;
       return *it_;
@@ -48,10 +47,13 @@ public:
       return copy;
     };
 
-    string at(ptrdiff_t n) const override { return it_[(*indexes_)[n]]; }
+    string at(ptrdiff_t n) const override { return start_[(*indexes_)[n]]; }
 
-    std::string filename() const override { return it_.filename(); }
+    std::string filename() const override {
+      return (start_ + (*indexes_)[i_]).filename();
+    }
     size_t index() const override { return (start_ + (*indexes_)[i_]).index(); }
+    size_t line() const override { return (start_ + (*indexes_)[i_]).line(); }
 
     size_t position() const override {
       // There is no known use of this method for subset_iterator.
@@ -101,6 +103,9 @@ public:
 
   virtual size_t num_columns() const = 0;
   virtual size_t num_rows() const = 0;
+  virtual std::string filename() const = 0;
+  virtual size_t source_line(
+      size_t position, const std::string& filename = "") const = 0;
 
   virtual string get(size_t row, size_t col) const = 0;
   virtual std::string get_delim() const = 0;

@@ -17,6 +17,7 @@
 
 #include "utils.h"
 #include <array>
+#include <mutex>
 
 #include "multi_progress.h"
 #include "vroom_errors.h"
@@ -87,7 +88,10 @@ public:
       return idx_->get_trimmed_val(i, is_first_, is_last_);
     }
     std::string filename() const override { return idx_->filename_; }
-    size_t index() const override { return i_ / idx_->columns_; }
+    size_t index() const override {
+      return i_ / idx_->columns_ - idx_->has_header_;
+    }
+    size_t line() const override { return idx_->source_line(position()); }
     size_t position() const override {
       size_t begin, end;
       std::tie(begin, end) = idx_->get_cell(i_, is_first_);
@@ -128,6 +132,7 @@ public:
     size_t index() const override {
       return i_ - (row_ + idx_->has_header_) * idx_->columns_;
     }
+    size_t line() const override { return idx_->source_line(position()); }
     size_t position() const override {
       size_t begin, end;
       std::tie(begin, end) = idx_->get_cell(i_, i_ == 0);
@@ -144,7 +149,18 @@ public:
 
   size_t num_rows() const override { return rows_; }
 
-  std::string filename() const { return filename_; }
+  size_t source_line(
+      size_t position, const std::string& filename = "") const override {
+    if (!filename.empty() && filename != filename_) {
+      return 0;
+    }
+    std::call_once(line_endings_once_, [&] {
+      line_endings_ = find_line_endings(mmap_);
+    });
+    return vroom::source_line(line_endings_, position, mmap_.size());
+  }
+
+  std::string filename() const override { return filename_; }
 
   std::string get_delim() const override { return delim_; }
 
@@ -174,6 +190,8 @@ public:
   using idx_t = std::vector<size_t>;
   std::string filename_;
   mio::mmap_source mmap_;
+  mutable std::once_flag line_endings_once_;
+  mutable std::vector<size_t> line_endings_;
   std::vector<idx_t> idx_;
   bool has_header_;
   char quote_;
@@ -279,7 +297,8 @@ public:
     if (num_delims != num_cols - 1) {
       std::string expected = std::to_string(num_cols) + " columns";
       std::string actual = std::to_string(num_delims + 1) + " columns";
-      errors->add_parse_error(pos, num_delims, expected, actual);
+      errors->add_parse_error(
+          pos, num_delims, expected, actual, filename_);
     }
     // If we found too many delimiters, remove the extra field start positions
     // from the index.
