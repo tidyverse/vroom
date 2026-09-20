@@ -244,32 +244,32 @@ test_that("locale date names match only at the current position", {
     date_names(
       day = c(
         "londi",
-        "mårdi",
+        "m\u00e5rdi",
         "mierkidi",
         "djudi",
-        "vénrdi",
+        "v\u00e9nrdi",
         "semdi",
         "dimegne"
       ),
       mon = c(
-        "djanvî",
-        "fevrî",
-        "måss",
+        "djanv\u00ee",
+        "fevr\u00ee",
+        "m\u00e5ss",
         "avri",
         "may",
         "djun",
         "djulete",
         "awousse",
         "setimbre",
-        "octôbe",
-        "nôvimbe",
+        "oct\u00f4be",
+        "n\u00f4vimbe",
         "decimbe"
       ),
-      day_ab = c("lon", "mår", "mie", "dju", "vén", "sem", "dim"),
+      day_ab = c("lon", "m\u00e5r", "mie", "dju", "v\u00e9n", "sem", "dim"),
       mon_ab = c(
         "djan",
         "fev",
-        "mås",
+        "m\u00e5s",
         "avr",
         "may",
         "djun",
@@ -277,7 +277,7 @@ test_that("locale date names match only at the current position", {
         "awou",
         "set",
         "oct",
-        "nôv",
+        "n\u00f4v",
         "dec"
       )
     ),
@@ -285,10 +285,10 @@ test_that("locale date names match only at the current position", {
   )
 
   values <- c(
-    "vén 1 avri 2016",
-    "vén 3 djun 2016",
+    "v\u00e9n 1 avri 2016",
+    "v\u00e9n 3 djun 2016",
     "sem 2 djulete 2016",
-    "vén 1 djulete 2016"
+    "v\u00e9n 1 djulete 2016"
   )
   expected <- as.Date(c(
     "2016-04-01",
