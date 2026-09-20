@@ -11,7 +11,7 @@ test_that("vroom_lines works with normal files", {
 
   expect_equal(tail(actual), tail(expected))
 
-  expect_equal(actual, expected, ignore_attr = TRUE)
+  expect_equal(actual, expected)
 })
 
 test_that("vroom_lines works with connections files", {
@@ -29,7 +29,7 @@ test_that("vroom_lines works with connections files", {
 
   expect_equal(tail(actual), tail(expected))
 
-  expect_equal(actual, expected, ignore_attr = TRUE)
+  expect_equal(actual, expected)
 })
 
 
@@ -38,21 +38,20 @@ test_that("vroom_lines works with files with no trailing newline", {
   on.exit(unlink(f))
 
   writeBin(charToRaw("foo"), f)
-  expect_equal(vroom_lines(f), "foo", ignore_attr = TRUE)
+  expect_equal(vroom_lines(f), "foo")
 
   f2 <- tempfile()
   on.exit(unlink(f2), add = TRUE)
 
   writeBin(charToRaw("foo\nbar"), f2)
-  expect_equal(vroom_lines(f2), c("foo", "bar"), ignore_attr = TRUE)
+  expect_equal(vroom_lines(f2), c("foo", "bar"))
 })
 
 test_that("vroom_lines respects n_max", {
   infile <- vroom_example("mtcars.csv")
   expect_equal(
     vroom_lines(infile, n_max = 2),
-    readLines(infile, n = 2),
-    ignore_attr = TRUE
+    readLines(infile, n = 2)
   )
 })
 
@@ -67,31 +66,26 @@ test_that("vroom_lines works with empty files", {
 test_that("vroom_lines uses na argument", {
   expect_equal(
     vroom_lines(I("abc\n123"), progress = FALSE),
-    c("abc", "123"),
-    ignore_attr = TRUE
+    c("abc", "123")
   )
   expect_equal(
     vroom_lines(I("abc\n123"), na = "abc", progress = FALSE),
-    c(NA_character_, "123"),
-    ignore_attr = TRUE
+    c(NA_character_, "123")
   )
   expect_equal(
     vroom_lines(I("abc\n123"), na = "123", progress = FALSE),
-    c("abc", NA_character_),
-    ignore_attr = TRUE
+    c("abc", NA_character_)
   )
   expect_equal(
     vroom_lines(I("abc\n123"), na = c("abc", "123"), progress = FALSE),
-    c(NA_character_, NA_character_),
-    ignore_attr = TRUE
+    c(NA_character_, NA_character_)
   )
 })
 
 test_that("vroom_lines works with files with mixed line endings", {
   expect_equal(
     vroom_lines(I("foo\r\n\nbar\n\r\nbaz\r\n")),
-    c("foo", "", "bar", "", "baz"),
-    ignore_attr = TRUE
+    c("foo", "", "bar", "", "baz")
   )
 })
 
@@ -103,8 +97,10 @@ test_that("problems works with vroom_lines output", {
     lines <- suppressWarnings(vroom_lines(path, altrep = altrep))
     probs <- suppressWarnings(problems(lines))
 
+    expect_s3_class(lines, "vroom_lines")
     expect_identical(typeof(attr(lines, "problems")), "externalptr")
-    expect_equal(lines, c("line1", ""), ignore_attr = TRUE)
+    expect_equal(lines, c("line1", ""))
+    expect_true(isTRUE(all.equal(lines, c("line1", ""))))
     expect_equal(probs$line, 2)
     expect_equal(probs$row, 2)
     expect_equal(probs$col, 1)

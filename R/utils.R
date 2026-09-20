@@ -73,6 +73,47 @@ compare_proxy.spec_tbl_df <- function(x, path) {
   }
 }
 
+strip_vroom_lines <- function(x) {
+  if (!inherits(x, "vroom_lines")) {
+    return(x)
+  }
+
+  attr(x, "problems") <- NULL
+  class(x) <- setdiff(class(x), "vroom_lines")
+  x
+}
+
+# Conditionally exported in zzz.R
+#' @noRd
+# @export
+compare.vroom_lines <- function(x, y, ...) {
+  x <- strip_vroom_lines(x)
+  y <- strip_vroom_lines(y)
+  NextMethod("compare")
+}
+
+# Conditionally exported in zzz.R
+#' @noRd
+# @export
+compare_proxy.vroom_lines <- function(x, path) {
+  x <- strip_vroom_lines(x)
+
+  if ("path" %in% names(formals(waldo::compare_proxy))) {
+    list(object = x, path = path)
+  } else {
+    x
+  }
+}
+
+# Conditionally exported in zzz.R
+#' @noRd
+# @export
+all.equal.vroom_lines <- function(target, current, ...) {
+  target <- strip_vroom_lines(target)
+  current <- strip_vroom_lines(current)
+  NextMethod("all.equal")
+}
+
 # Conditionally exported in zzz.R
 #' @noRd
 # @export

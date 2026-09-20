@@ -269,8 +269,7 @@ test_that("vroom_write(append = TRUE) works with R connections", {
 
   expect_equal(
     vroom_lines(f),
-    c("x\ty", "1\t2", "1\t2"),
-    ignore_attr = TRUE
+    c("x\ty", "1\t2", "1\t2")
   )
 })
 
@@ -281,7 +280,7 @@ test_that("vroom_write() works with an empty delimiter", {
   on.exit(unlink(f))
 
   vroom::vroom_write(df, f, delim = "")
-  expect_equal(vroom_lines(f), c("xy", "foobar"), ignore_attr = TRUE)
+  expect_equal(vroom_lines(f), c("xy", "foobar"))
 })
 
 test_that("vroom_write_lines() works with empty", {
@@ -297,7 +296,7 @@ test_that("vroom_write_lines() works with normal input", {
   on.exit(unlink(f))
 
   vroom::vroom_write_lines(c("foo", "bar"), f)
-  expect_equal(vroom_lines(f), c("foo", "bar"), ignore_attr = TRUE)
+  expect_equal(vroom_lines(f), c("foo", "bar"))
 })
 
 test_that("vroom_write_lines() does not escape or quote lines", {
@@ -307,8 +306,7 @@ test_that("vroom_write_lines() does not escape or quote lines", {
   vroom::vroom_write_lines(c('"foo"', "bar"), f)
   expect_equal(
     vroom_lines(f),
-    c('"foo"', "bar"),
-    ignore_attr = TRUE
+    c('"foo"', "bar")
   )
 })
 
@@ -371,7 +369,6 @@ test_that("vroom_write() does not overwrite file when appending empty data frame
 
   expect_equal(
     vroom_lines(tf, altrep = FALSE),
-    c("a,b,c", "1,2,3"),
-    ignore_attr = TRUE
+    c("a,b,c", "1,2,3")
   )
 })
