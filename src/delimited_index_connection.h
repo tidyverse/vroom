@@ -3,8 +3,6 @@
 namespace vroom {
 
 class delimited_index_connection : public delimited_index {
-  std::string filename_;
-
 public:
   delimited_index_connection(
       SEXP in,

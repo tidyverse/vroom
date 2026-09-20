@@ -249,7 +249,12 @@ delimited_index_connection::delimited_index_connection(
   // If we finish indexing a connection and we're in QUOTED_FIELD, warn about
   // an unclosed quote
   if (state == QUOTED_FIELD) {
-    errors->add_parse_error(total_read, num_delims, "closing quote", "end of file");
+    errors->add_parse_error(
+        total_read,
+        num_delims,
+        "closing quote",
+        "end of file",
+        filename_);
     // Finalize the current record so we don't lose all data
     if (columns_ > 0) {
       resolve_columns(total_read, num_delims, columns_, idx_[1], errors);

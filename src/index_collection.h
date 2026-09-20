@@ -6,6 +6,7 @@
 
 #include <cpp11/list.hpp>
 #include <memory>
+#include <unordered_map>
 
 #ifdef VROOM_LOG
 #include "spdlog/spdlog.h"
@@ -52,6 +53,11 @@ public:
 
   size_t num_rows() const override { return rows_; }
 
+  std::string filename() const override { return ""; }
+
+  size_t source_line(
+      size_t position, const std::string& filename = "") const override;
+
   std::vector<size_t> row_sizes() const {
     std::vector<size_t> out;
     for (const auto& index : indexes_) {
@@ -86,6 +92,7 @@ public:
     string at(ptrdiff_t n) const override;
     std::string filename() const override { return it_.filename(); }
     size_t index() const override { return it_.index(); }
+    size_t line() const override { return it_.line(); }
     size_t position() const override { return it_.position(); }
     virtual ~full_iterator() {}
   };
@@ -119,6 +126,7 @@ public:
 
 private:
   std::vector<std::shared_ptr<index>> indexes_;
+  std::unordered_map<std::string, std::shared_ptr<index>> indexes_by_filename_;
 
   size_t rows_;
   size_t columns_;

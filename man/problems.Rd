@@ -7,17 +7,19 @@
 problems(x = .Last.value, lazy = FALSE)
 }
 \arguments{
-\item{x}{A data frame from \code{vroom::vroom()}.}
+\item{x}{A data frame from \code{\link[=vroom]{vroom()}} or a character vector from
+\code{\link[=vroom_lines]{vroom_lines()}}.}
 
 \item{lazy}{If \code{TRUE}, just the problems found so far are returned. If
 \code{FALSE} (the default) the lazy data is first read completely and all
 problems are returned.}
 }
 \value{
-A data frame with one row for each problem and four columns:
+A data frame with one row for each problem and six columns:
 \itemize{
-\item row,col - Row and column number that caused the problem, referencing the
-original input
+\item line - Physical line in the original input that caused the problem
+\item row,col - Parsed row within the corresponding input and column that
+caused the problem
 \item expected - What vroom expected to find
 \item actual - What it actually found
 \item file - The file with the problem

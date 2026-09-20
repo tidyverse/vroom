@@ -20,6 +20,19 @@ LocaleInfo::LocaleInfo(const cpp11::list& x)
   dayAb_ = cpp11::as_cpp<std::vector<std::string>>(date_names["day_ab"]);
   amPm_ = cpp11::as_cpp<std::vector<std::string>>(date_names["am_pm"]);
 
+  Iconv date_names_encoder("UTF-8", encoding_);
+  auto encode_date_names = [&](std::vector<std::string>& names) {
+    for (auto& name : names) {
+      name = date_names_encoder.makeString(
+          name.data(), name.data() + name.size());
+    }
+  };
+  encode_date_names(mon_);
+  encode_date_names(monAb_);
+  encode_date_names(day_);
+  encode_date_names(dayAb_);
+  encode_date_names(amPm_);
+
   decimalMark_ = cpp11::as_cpp<std::string>(x["decimal_mark"]);
   groupingMark_ = cpp11::as_cpp<std::string>(x["grouping_mark"]);
 

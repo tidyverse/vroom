@@ -440,15 +440,25 @@ private:
   // Assumes `pOut` is 1-indexed
   inline bool
   consumeString(const std::vector<std::string>& haystack, int* pOut) {
-    // haystack is always in UTF-8
-    std::string needleUTF8 = pLocale_->encoder_.makeString(dateItr_, dateEnd_);
-    std::transform(
-        needleUTF8.begin(), needleUTF8.end(), needleUTF8.begin(), ::tolower);
+    auto equal_ascii_case = [](unsigned char lhs, unsigned char rhs) {
+      if (lhs < 0x80) {
+        lhs = static_cast<unsigned char>(std::tolower(lhs));
+      }
+      if (rhs < 0x80) {
+        rhs = static_cast<unsigned char>(std::tolower(rhs));
+      }
+      return lhs == rhs;
+    };
 
     for (size_t i = 0; i < haystack.size(); ++i) {
-      std::string hay = haystack[i];
-      std::transform(hay.begin(), hay.end(), hay.begin(), ::tolower);
-      if (needleUTF8.find(hay) != std::string::npos) {
+      const auto& hay = haystack[i];
+      if (
+          static_cast<size_t>(dateEnd_ - dateItr_) >= hay.size() &&
+          std::equal(
+              hay.begin(),
+              hay.end(),
+              dateItr_,
+              equal_ascii_case)) {
         *pOut = i + 1;
         dateItr_ += hay.size();
         return true;

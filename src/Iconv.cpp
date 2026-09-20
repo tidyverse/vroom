@@ -3,7 +3,7 @@
 #include <cstring>
 
 Iconv::Iconv(const std::string& from, const std::string& to) {
-  if (from == "UTF-8") {
+  if (from == to) {
     cd_ = nullptr;
   } else {
     cd_ = Riconv_open(to.c_str(), from.c_str());

@@ -3,7 +3,9 @@
 #' `vroom_lines()` is similar to `readLines()`, however it reads the lines
 #' lazily like [vroom()], so operations like `length()`, `head()`, `tail()` and `sample()`
 #' can be done much more efficiently without reading all the data into R.
+#' Parsing problems can be retrieved with [problems()].
 #' @inheritParams vroom
+#' @return A character vector with class `vroom_lines`.
 #' @examples
 #' lines <- vroom_lines(vroom_example("mtcars.csv"))
 #'
@@ -73,5 +75,8 @@ vroom_lines <- function(
     return(character())
   }
 
-  out[[1]]
+  lines <- out[[1]]
+  attr(lines, "problems") <- attr(out, "problems", exact = TRUE)
+  class(lines) <- c("vroom_lines", class(lines))
+  lines
 }

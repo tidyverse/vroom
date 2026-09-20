@@ -239,6 +239,143 @@ test_that("locale affects months", {
   test_parse_date("1 janvier 2010", "%d %B %Y", locale = fr, expected = jan1)
 })
 
+test_that("locale date names match only at the current position", {
+  walloon <- locale(
+    date_names(
+      day = c(
+        "londi",
+        "m\u00e5rdi",
+        "mierkidi",
+        "djudi",
+        "v\u00e9nrdi",
+        "semdi",
+        "dimegne"
+      ),
+      mon = c(
+        "djanv\u00ee",
+        "fevr\u00ee",
+        "m\u00e5ss",
+        "avri",
+        "may",
+        "djun",
+        "djulete",
+        "awousse",
+        "setimbre",
+        "oct\u00f4be",
+        "n\u00f4vimbe",
+        "decimbe"
+      ),
+      day_ab = c("lon", "m\u00e5r", "mie", "dju", "v\u00e9n", "sem", "dim"),
+      mon_ab = c(
+        "djan",
+        "fev",
+        "m\u00e5s",
+        "avr",
+        "may",
+        "djun",
+        "djul",
+        "awou",
+        "set",
+        "oct",
+        "n\u00f4v",
+        "dec"
+      )
+    ),
+    encoding = "UTF-8"
+  )
+
+  values <- c(
+    "v\u00e9n 1 avri 2016",
+    "v\u00e9n 3 djun 2016",
+    "sem 2 djulete 2016",
+    "v\u00e9n 1 djulete 2016"
+  )
+  expected <- as.Date(c(
+    "2016-04-01",
+    "2016-06-03",
+    "2016-07-02",
+    "2016-07-01"
+  ))
+
+  test_parse_date(
+    values,
+    "%a %d %B %Y",
+    locale = walloon,
+    expected = expected
+  )
+
+  latin1_file <- withr::local_tempfile()
+  latin1_input <- iconv(
+    paste(c("x", values), collapse = "\n"),
+    from = "UTF-8",
+    to = "ISO-8859-1",
+    toRaw = TRUE
+  )[[1]]
+  writeBin(latin1_input, latin1_file)
+  walloon$encoding <- "ISO-8859-1"
+
+  out <- vroom(
+    latin1_file,
+    delim = ",",
+    col_types = cols(x = col_date(format = "%a %d %B %Y")),
+    locale = walloon,
+    altrep = FALSE
+  )
+  expect_equal(out$x, expected)
+  expect_equal(nrow(problems(out)), 0)
+})
+
+test_that("latin1 datetime parsing is thread safe", {
+  times <- c(
+    "31JAN2015:18:47:49",
+    "31JAN2015:19:35:09",
+    "31JAN2015:21:10:28",
+    "31JAN2015:20:02:19",
+    "31JAN2015:18:04:39",
+    "31JAN2015:19:58:32",
+    "31JAN2015:18:07:25",
+    "31JAN2015:18:30:29",
+    "31JAN2015:19:54:57",
+    "31JAN2015:20:17:13",
+    "31JAN2015:19:44:46",
+    "31JAN2015:20:30:18",
+    "31JAN2015:20:01:47",
+    "31JAN2015:20:35:36",
+    "31JAN2015:20:21:47",
+    "31JAN2015:18:39:52",
+    "31JAN2015:20:51:51",
+    "31JAN2015:21:26:30",
+    "31JAN2015:21:27:06",
+    "31JAN2015:20:07:45",
+    "31JAN2015:22:02:21",
+    "31JAN2015:20:35:48",
+    "31JAN2015:20:23:30",
+    "31JAN2015:21:10:12",
+    "31JAN2015:22:05:21",
+    "31JAN2015:20:26:31",
+    "31JAN2015:22:16:10",
+    "31JAN2015:22:11:14",
+    "01FEB2015:01:08:45"
+  )
+  values <- rep(times, 100)
+  path <- withr::local_tempfile()
+  writeLines(c("a", values), path, useBytes = TRUE)
+
+  out <- vroom(
+    path,
+    delim = ",",
+    progress = FALSE,
+    num_threads = 2,
+    locale = locale(encoding = "ISO-8859-1"),
+    col_types = cols(a = col_datetime(format = "%d%b%Y:%H:%M:%OS")),
+    altrep = FALSE
+  )
+
+  expect_equal(nrow(out), length(values))
+  expect_equal(sum(is.na(out$a)), 0)
+  expect_equal(nrow(problems(out)), 0)
+})
+
 test_that("locale affects day of week", {
   a <- as.POSIXct("2010-01-01", tz = "UTC")
   b <- .POSIXct(unclass(as.Date("2010-01-01")) * 86400, tz = "UTC")

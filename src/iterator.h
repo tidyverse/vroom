@@ -18,6 +18,7 @@ public:
   virtual ~base_iterator() {}
   virtual std::string filename() const = 0;
   virtual size_t index() const = 0;
+  virtual size_t line() const = 0;
   virtual size_t position() const = 0;
 };
 
@@ -97,6 +98,8 @@ public:
   std::string filename() const { return it_->filename(); }
 
   size_t index() const { return it_->index(); }
+
+  size_t line() const { return it_->line(); }
 
   size_t position() const { return it_->position(); }
 

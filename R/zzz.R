@@ -19,6 +19,10 @@
     s3_register("testthat::compare", "spec_tbl_df")
     s3_register("waldo::compare_proxy", "spec_tbl_df")
   }
+
+  s3_register("base::all.equal", "vroom_lines")
+  s3_register("testthat::compare", "vroom_lines")
+  s3_register("waldo::compare_proxy", "vroom_lines")
 }
 
 .conflicts.OK <- TRUE

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "index.h"
+#include <mutex>
 
 // clang-format off
 #ifdef __clang__
@@ -37,6 +38,8 @@ class fixed_width_index
 protected:
   fixed_width_index() : trim_ws_(0) {}
   std::vector<size_t> newlines_;
+  mutable std::once_flag line_endings_once_;
+  mutable std::vector<size_t> line_endings_;
   std::vector<int> col_starts_;
   std::vector<int> col_ends_;
   mio::mmap_source mmap_;
@@ -158,6 +161,17 @@ public:
   }
   size_t num_columns() const override { return col_starts_.size(); }
 
+  size_t source_line(
+      size_t position, const std::string& filename = "") const override {
+    if (!filename.empty() && filename != filename_) {
+      return 0;
+    }
+    std::call_once(line_endings_once_, [&] {
+      line_endings_ = find_line_endings(mmap_);
+    });
+    return vroom::source_line(line_endings_, position, mmap_.size());
+  }
+
   std::string get_delim() const override {
     /* TODO: FIXME */
     return "";
@@ -211,8 +225,9 @@ public:
     }
     string at(ptrdiff_t n) const override { return idx_->get(n, column_); }
     std::string filename() const override { return idx_->filename_; }
-    size_t index() const override { return i_ / idx_->num_columns(); }
-    size_t position() const override { return i_; }
+    size_t index() const override { return i_; }
+    size_t line() const override { return idx_->source_line(position()); }
+    size_t position() const override { return idx_->newlines_[i_] + 1; }
     virtual ~column_iterator() = default;
   };
 
@@ -298,6 +313,6 @@ public:
     return nullptr;
   }
 
-  std::string filename() const { return filename_; }
+  std::string filename() const override { return filename_; }
 };
 } // namespace vroom

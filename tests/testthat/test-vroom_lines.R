@@ -49,7 +49,10 @@ test_that("vroom_lines works with files with no trailing newline", {
 
 test_that("vroom_lines respects n_max", {
   infile <- vroom_example("mtcars.csv")
-  expect_equal(vroom_lines(infile, n_max = 2), readLines(infile, n = 2))
+  expect_equal(
+    vroom_lines(infile, n_max = 2),
+    readLines(infile, n = 2)
+  )
 })
 
 test_that("vroom_lines works with empty files", {
@@ -61,7 +64,10 @@ test_that("vroom_lines works with empty files", {
 })
 
 test_that("vroom_lines uses na argument", {
-  expect_equal(vroom_lines(I("abc\n123"), progress = FALSE), c("abc", "123"))
+  expect_equal(
+    vroom_lines(I("abc\n123"), progress = FALSE),
+    c("abc", "123")
+  )
   expect_equal(
     vroom_lines(I("abc\n123"), na = "abc", progress = FALSE),
     c(NA_character_, "123")
@@ -81,4 +87,24 @@ test_that("vroom_lines works with files with mixed line endings", {
     vroom_lines(I("foo\r\n\nbar\n\r\nbaz\r\n")),
     c("foo", "", "bar", "", "baz")
   )
+})
+
+test_that("problems works with vroom_lines output", {
+  path <- withr::local_tempfile()
+  writeBin(c(charToRaw("line1\n"), as.raw(0), charToRaw("line2\n")), path)
+
+  for (altrep in c(FALSE, TRUE)) {
+    lines <- suppressWarnings(vroom_lines(path, altrep = altrep))
+    probs <- suppressWarnings(problems(lines))
+
+    expect_s3_class(lines, "vroom_lines")
+    expect_identical(typeof(attr(lines, "problems")), "externalptr")
+    expect_equal(lines, c("line1", ""))
+    expect_true(isTRUE(all.equal(lines, c("line1", ""))))
+    expect_equal(probs$line, 2)
+    expect_equal(probs$row, 2)
+    expect_equal(probs$col, 1)
+    expect_equal(probs$actual, "embedded null")
+    expect_equal(normalizePath(probs$file), normalizePath(path))
+  }
 })

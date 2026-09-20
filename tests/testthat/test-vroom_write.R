@@ -267,7 +267,10 @@ test_that("vroom_write(append = TRUE) works with R connections", {
   vroom::vroom_write(df, f)
   vroom::vroom_write(df, f, append = TRUE)
 
-  expect_equal(vroom_lines(f), c("x\ty", "1\t2", "1\t2"))
+  expect_equal(
+    vroom_lines(f),
+    c("x\ty", "1\t2", "1\t2")
+  )
 })
 
 test_that("vroom_write() works with an empty delimiter", {
@@ -301,7 +304,10 @@ test_that("vroom_write_lines() does not escape or quote lines", {
   on.exit(unlink(f))
 
   vroom::vroom_write_lines(c('"foo"', "bar"), f)
-  expect_equal(vroom_lines(f), c('"foo"', "bar"))
+  expect_equal(
+    vroom_lines(f),
+    c('"foo"', "bar")
+  )
 })
 
 test_that("vroom_write() always outputs in UTF-8", {
@@ -361,5 +367,8 @@ test_that("vroom_write() does not overwrite file when appending empty data frame
   vroom_write(data, file = tf, delim = ",")
   vroom_write(data.frame(), file = tf, append = TRUE, delim = ",")
 
-  expect_equal(vroom_lines(tf, altrep = FALSE), c("a,b,c", "1,2,3"))
+  expect_equal(
+    vroom_lines(tf, altrep = FALSE),
+    c("a,b,c", "1,2,3")
+  )
 })
