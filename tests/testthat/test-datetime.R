@@ -325,6 +325,57 @@ test_that("locale date names match only at the current position", {
   expect_equal(nrow(problems(out)), 0)
 })
 
+test_that("latin1 datetime parsing is thread safe", {
+  times <- c(
+    "31JAN2015:18:47:49",
+    "31JAN2015:19:35:09",
+    "31JAN2015:21:10:28",
+    "31JAN2015:20:02:19",
+    "31JAN2015:18:04:39",
+    "31JAN2015:19:58:32",
+    "31JAN2015:18:07:25",
+    "31JAN2015:18:30:29",
+    "31JAN2015:19:54:57",
+    "31JAN2015:20:17:13",
+    "31JAN2015:19:44:46",
+    "31JAN2015:20:30:18",
+    "31JAN2015:20:01:47",
+    "31JAN2015:20:35:36",
+    "31JAN2015:20:21:47",
+    "31JAN2015:18:39:52",
+    "31JAN2015:20:51:51",
+    "31JAN2015:21:26:30",
+    "31JAN2015:21:27:06",
+    "31JAN2015:20:07:45",
+    "31JAN2015:22:02:21",
+    "31JAN2015:20:35:48",
+    "31JAN2015:20:23:30",
+    "31JAN2015:21:10:12",
+    "31JAN2015:22:05:21",
+    "31JAN2015:20:26:31",
+    "31JAN2015:22:16:10",
+    "31JAN2015:22:11:14",
+    "01FEB2015:01:08:45"
+  )
+  values <- rep(times, 100)
+  path <- withr::local_tempfile()
+  writeLines(c("a", values), path, useBytes = TRUE)
+
+  out <- vroom(
+    path,
+    delim = ",",
+    progress = FALSE,
+    num_threads = 2,
+    locale = locale(encoding = "ISO-8859-1"),
+    col_types = cols(a = col_datetime(format = "%d%b%Y:%H:%M:%OS")),
+    altrep = FALSE
+  )
+
+  expect_equal(nrow(out), length(values))
+  expect_equal(sum(is.na(out$a)), 0)
+  expect_equal(nrow(problems(out)), 0)
+})
+
 test_that("locale affects day of week", {
   a <- as.POSIXct("2010-01-01", tz = "UTC")
   b <- .POSIXct(unclass(as.Date("2010-01-01")) * 86400, tz = "UTC")

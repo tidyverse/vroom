@@ -35,3 +35,43 @@ test_that("encodings are respected", {
   )
   expect_equal(x[[1]], expected)
 })
+
+test_that("shorter UTF-8 output does not report an embedded null", {
+  path <- withr::local_tempfile()
+  bytes <- iconv("\u00c9", "UTF-8", "GB18030", toRaw = TRUE)[[1]]
+  writeBin(c(charToRaw("x\n"), bytes, charToRaw("\n")), path)
+
+  for (altrep in c(FALSE, TRUE)) {
+    out <- suppressWarnings(vroom(
+      path,
+      delim = ",",
+      col_types = "c",
+      locale = locale(encoding = "GB18030"),
+      altrep = altrep
+    ))
+    value <- suppressWarnings(out$x[[1]])
+    probs <- suppressWarnings(problems(out))
+
+    expect_equal(value, "\u00c9")
+    expect_equal(nrow(probs), 0)
+  }
+})
+
+test_that("character columns report actual embedded nulls", {
+  path <- withr::local_tempfile()
+  writeBin(c(charToRaw("x\na"), as.raw(0), charToRaw("b\n")), path)
+
+  for (altrep in c(FALSE, TRUE)) {
+    out <- suppressWarnings(vroom(
+      path,
+      delim = ",",
+      col_types = "c",
+      altrep = altrep
+    ))
+    value <- suppressWarnings(out$x[[1]])
+    probs <- suppressWarnings(problems(out))
+
+    expect_equal(value, "a")
+    expect_equal(probs$actual, "embedded null")
+  }
+})

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cpp11/strings.hpp>
 
 #include "altrep.h"
@@ -54,7 +55,7 @@ public:
     auto val =
         PROTECT(info.locale->encoder_.makeSEXP(str.begin(), str.end(), true));
 
-    if (Rf_xlength(val) < str.end() - str.begin()) {
+    if (std::find(str.begin(), str.end(), '\0') != str.end()) {
       auto itr = info.column->begin() + i;
       info.errors->add_error(
           itr.index(),

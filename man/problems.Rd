@@ -7,7 +7,8 @@
 problems(x = .Last.value, lazy = FALSE)
 }
 \arguments{
-\item{x}{A data frame from \code{vroom::vroom()}.}
+\item{x}{A data frame from \code{\link[=vroom]{vroom()}} or a character vector from
+\code{\link[=vroom_lines]{vroom_lines()}}.}
 
 \item{lazy}{If \code{TRUE}, just the problems found so far are returned. If
 \code{FALSE} (the default) the lazy data is first read completely and all

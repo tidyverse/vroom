@@ -137,9 +137,8 @@ public:
       SEXP cli_warn = Rf_findFun(Rf_install("cli_warn"), cli_ns);
       PROTECT(cli_warn);
       cpp11::strings bullets({
-        "w"_nm = "One or more parsing issues, call {.fun problems} on your data frame for details, e.g.:",
-        " "_nm = "dat <- vroom(...)",
-        " "_nm = "problems(dat)"});
+        "w"_nm = "One or more parsing issues, call {.fun problems} on your data for details, e.g.:",
+        " "_nm = "problems(x)"});
       cpp11::sexp cli_warn_call = Rf_lang3(
         cli_warn,
         bullets,

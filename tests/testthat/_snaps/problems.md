@@ -4,9 +4,8 @@
       vroom(I("a,b,c\nx,y,z,,"), altrep = FALSE, col_types = "ccc")
     Condition
       Warning:
-      One or more parsing issues, call `problems()` on your data frame for details, e.g.:
-        dat <- vroom(...)
-        problems(dat)
+      One or more parsing issues, call `problems()` on your data for details, e.g.:
+        problems(x)
     Output
       # A tibble: 1 x 3
         a     b     c    
@@ -29,7 +28,7 @@
       problems(a_vector)
     Condition
       Error in `problems()`:
-      ! The `x` argument of `vroom::problems()` must be a data frame created by vroom:
+      ! The `x` argument of `vroom::problems()` must be an object created by vroom:
       x `x` has class <numeric>
 
 ---
@@ -38,6 +37,6 @@
       problems(a_tibble)
     Condition
       Error in `problems()`:
-      ! The `x` argument of `vroom::problems()` must be a data frame created by vroom:
+      ! The `x` argument of `vroom::problems()` must be an object created by vroom:
       x `x` seems to have been created with something else, maybe readr?
 

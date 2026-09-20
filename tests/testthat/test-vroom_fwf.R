@@ -522,6 +522,22 @@ test_that("vroom_fwf correctly reads DOS files with no trailing newline (https:/
   expect_equal(out, out2)
 })
 
+test_that("vroom_fwf() reports problem rows correctly", {
+  out <- vroom_fwf(
+    I("15AB12\n161013\n161013\n17AC14\n18AB15"),
+    col_positions = fwf_widths(c(2, 2, 2), c("a", "b", "c")),
+    col_types = "iii"
+  )
+
+  expect_warning(
+    probs <- problems(out),
+    class = "vroom_parse_issue"
+  )
+  expect_equal(probs$row, c(1, 4, 5))
+  expect_equal(probs$line, c(1, 4, 5))
+  expect_equal(probs$col, c(2, 2, 2))
+})
+
 # https://github.com/tidyverse/vroom/issues/554
 # https://github.com/tidyverse/vroom/issues/534
 test_that("vroom_fwf(col_select =) output has 'spec_tbl_df' class, spec, and problems when readr is attached", {

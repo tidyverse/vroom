@@ -65,6 +65,7 @@ environment variable \code{VROOM_SHOW_PROGRESS} to \code{"false"}.}
 \code{vroom_lines()} is similar to \code{readLines()}, however it reads the lines
 lazily like \code{\link[=vroom]{vroom()}}, so operations like \code{length()}, \code{head()}, \code{tail()} and \code{sample()}
 can be done much more efficiently without reading all the data into R.
+Parsing problems can be retrieved with \code{\link[=problems]{problems()}}.
 }
 \examples{
 lines <- vroom_lines(vroom_example("mtcars.csv"))
