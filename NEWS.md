@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* `vroom_write()` and `vroom_format()` now reject list, data-frame, and matrix columns instead of silently writing invalid output (@jimhester, #391).
+
 # vroom 1.7.1
 
 * Internal changes requested by CRAN for forward compatibility with clang 22.
