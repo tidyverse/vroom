@@ -189,6 +189,10 @@ vroom_format <- function(
   )
 
   x[] <- lapply(x, output_column)
+
+  # We need to convert any altrep vectors to normal vectors otherwise we can't
+  # fill the write buffers from other threads.
+  x <- vroom_convert(x)
   vroom_format_(
     x,
     delim = delim,
