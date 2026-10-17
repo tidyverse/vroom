@@ -54,6 +54,7 @@ public:
 
   std::vector<size_t> row_sizes() const {
     std::vector<size_t> out;
+    out.reserve(indexes_.size());
     for (const auto& index : indexes_) {
       out.push_back(index->num_rows());
     }
