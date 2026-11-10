@@ -591,6 +591,15 @@ test_that("Files with windows newlines and missing fields work", {
   )
 })
 
+test_that("an empty row after the header preserves the following rows", {
+  test_vroom(
+    "a,b\n\n1,2\n3,4\n",
+    col_types = "ii",
+    skip_empty_rows = FALSE,
+    equals = tibble::tibble(a = c(NA, 1L, 3L), b = c(NA, 2L, 4L))
+  )
+})
+
 test_that("vroom can read files with no trailing newline", {
   f <- tempfile()
   on.exit(unlink(f))

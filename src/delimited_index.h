@@ -411,7 +411,7 @@ public:
           ++pos;
           continue;
         }
-        if (num_cols > 0 && pos > start) {
+        if (num_cols > 0) {
           resolve_columns(
               pos + file_offset, num_delims, num_cols, destination, errors);
         }
