@@ -157,9 +157,7 @@ double bsd_strtod(const char* begin, const char* end, const char decimalMark) {
    * Skim off the exponent.
    */
   p = pExp;
-  if (p != end &&
-      (*p == 'E' || *p == 'e' || *p == 'S' || *p == 's' || *p == 'F' ||
-       *p == 'f' || *p == 'D' || *p == 'd' || *p == 'L' || *p == 'l')) {
+  if (p != end && (*p == 'E' || *p == 'e')) {
     ++p;
     if (p != end && *p == '-') {
       expSign = 1;

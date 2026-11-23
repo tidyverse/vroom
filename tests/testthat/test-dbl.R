@@ -9,6 +9,35 @@ test_that("Large exponents can parse", {
   expect_equal(res[[2]], 1e-64)
 })
 
+test_that("only e and E introduce decimal exponents", {
+  test_vroom(
+    "x\n1e2\n1E-2\n-2e+1\n",
+    delim = "\t",
+    col_types = "d",
+    equals = tibble::tibble(x = c(100, 0.01, -20))
+  )
+
+  values <- c(
+    "1F",
+    paste0("1176413", c("d", "D", "f", "F", "l", "L", "s", "S"), "03")
+  )
+  input <- paste0(c("x", values, ""), collapse = "\n")
+  for (value in c("1F", "1176413S03")) {
+    test_vroom(
+      paste0("x\n", value, "\n"),
+      delim = "\t",
+      equals = tibble::tibble(x = value)
+    )
+  }
+
+  expect_warning(
+    parsed <- vroom(I(input), delim = "\t", col_types = "d", altrep = FALSE),
+    class = "vroom_parse_issue"
+  )
+  expect_identical(parsed$x, rep(NA_real_, length(values)))
+  expect_identical(problems(parsed)$actual, values)
+})
+
 test_that("Doubles parse correctly with comma as decimal separator", {
   res <- vroom(
     I("23,4\n"),

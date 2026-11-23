@@ -1,5 +1,7 @@
 # vroom (development version)
 
+* The double parser accepts only `e` and `E` as exponent markers. Type guessing preserves identifiers such as `1F` and `1176413S03` as text (https://github.com/tidyverse/readr/issues/1650).
+
 # vroom 1.7.1
 
 * Internal changes requested by CRAN for forward compatibility with clang 22.
